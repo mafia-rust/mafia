@@ -8,6 +8,7 @@ import Icon from "../../../components/Icon";
 import { usePlayerState } from "../../../components/useHooks";
 import StyledText from "../../../components/StyledText";
 import { sanitizePlayerMessage } from "../../../components/ChatMessage";
+import { getSingleRoleJsonData } from "../../../game/roleState.d";
 
 
 export default function WillMenu(): ReactElement {
@@ -16,7 +17,11 @@ export default function WillMenu(): ReactElement {
         ["yourSendChatGroups"]
     )!;
 
-    
+    const role = usePlayerState(
+        playerState => playerState.roleState.type,
+        ["yourRoleState"]
+    )!;
+
     const alibi = usePlayerState(
         playerState => playerState.will,
         ["yourWill"]
@@ -76,14 +81,14 @@ export default function WillMenu(): ReactElement {
                     }}
                 />
             })}
-            <TextDropdownArea
+            {getSingleRoleJsonData(role).canWriteDeathNote===true ? <TextDropdownArea
                 titleString={translate("menu.will.deathNote")}
                 savedText={deathNote}
                 cantPost={cantPost}
                 onSave={(text) => {
                     GAME_MANAGER.sendSaveDeathNotePacket(text);
                 }}
-            />
+            />:null}
         </section>
     </div>
 }
