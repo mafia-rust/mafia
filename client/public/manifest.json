@@ -1,28 +1,19 @@
 {
-  "short_name": "Midnight Machinations",
-  "name": "Midnight Machinations",
-  "icons": [
-    {
-      "src": "mafia_logo.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon",
-      "purpose": "maskable"
-    },
-    {
-      "src": "mafia_logo192.png",
-      "type": "image/png",
-      "sizes": "192x192",
-      "purpose": "maskable"
-    },
-    {
-      "src": "mafia_logo512.png",
-      "type": "image/png",
-      "sizes": "512x512",
-      "purpose": "maskable"
-    }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#2d3646"
+    "short_name": "Midnight Machinations",
+    "name": "Midnight Machinations",
+    "icons":[
+        {
+            "src":"/android-chrome-192x192.png",
+            "sizes":"192x192",
+            "type":"image/png"
+        },
+        {
+            "src":"/android-chrome-512x512.png",
+            "sizes":"512x512",
+            "type":"image/png"
+        }
+    ],
+    "theme_color":"#ffffff",
+    "background_color":"#2d3646",
+    "display":"standalone"
 }
