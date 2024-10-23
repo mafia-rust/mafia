@@ -71,7 +71,7 @@ export function createPlayerGameState(): PlayerGameState {
         roleState: { type: "detective" },
 
         will: "",
-        notes: "",
+        notes: [],
         crossedOutOutlines: [],
         chatFilter: null,
         deathNote: "",

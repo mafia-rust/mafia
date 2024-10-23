@@ -53,10 +53,10 @@ impl PlayerReference{
         self.send_packet(game, ToClientPacket::YourWill { will: self.deref(game).will.clone() });
     }
     
-    pub fn notes<'a>(&self, game: &'a Game) -> &'a String {
+    pub fn notes<'a>(&self, game: &'a Game) -> &'a Vec<String> {
         &self.deref(game).notes
     }
-    pub fn set_notes(&self, game: &mut Game, notes: String){
+    pub fn set_notes(&self, game: &mut Game, notes: Vec<String>){
         self.deref_mut(game).notes = notes;
         self.send_packet(game, ToClientPacket::YourNotes { notes: self.deref(game).notes.clone() })
     }
