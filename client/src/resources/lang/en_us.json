@@ -1218,6 +1218,7 @@
     "wiki.article.standard.claim.title":"Claim",
     "wiki.article.standard.claim.title:var.0":"Claiming",
     "wiki.article.standard.claim.title:var.1":"Claimed",
+    "wiki.article.standard.claim.title:var.2":"Claims",
     "wiki.article.standard.claim.text":"When a player asks you to claim. They are likely asking you to say what your role is, and send your alibi in chat. This is not necessarily because they think your evil, but they want information from you.",
 
     "wiki.article.standard.claimswap.title":"Claim swap",
