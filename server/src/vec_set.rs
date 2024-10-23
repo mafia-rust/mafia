@@ -1,3 +1,5 @@
+use macros::vec_set;
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct VecSet<T> {
     vec: Vec<T>,
@@ -24,6 +26,9 @@ impl<T> VecSet<T> {
         VecSet {
             vec: Vec::new(),
         }
+    }
+    pub fn new_one(value: T) -> Self where T: PartialEq{
+        vec_set!(value)
     }
 
     pub fn with_capacity(capacity: usize) -> Self {
@@ -168,12 +173,15 @@ impl<T> VecSet<T> {
     }
 }
 
-mod macros {
+pub mod macros {
     macro_rules! vec_set {
-        ($($x:expr),*) => {{
+        (
+            $($x:expr),*
+        ) => {{
             let mut set = VecSet::new();
             $(set.insert($x);)*
             set
         }};
     }
+    pub(crate) use vec_set;
 }
