@@ -53,7 +53,7 @@ export default function WillMenu(): ReactElement {
                 }}
             />
             {notes.map((note, i) => {
-                const title = note.trim().split('\n')[0] || translate("menu.will.notes");
+                const title = note.split('\n')[0] || translate("menu.will.notes");
                 return <TextDropdownArea
                     key={title + i}
                     titleString={title}
@@ -128,7 +128,7 @@ function TextDropdownArea(props: Readonly<{
     return (<details open={props.open ?? false}>
         <summary>
             <div>
-                {props.titleString}
+                <StyledText>{props.titleString}</StyledText>
                 <span>
                     {props.onSubtract ? <Button
                         onClick={() => {
