@@ -1,18 +1,12 @@
 .large-reporter-menu {
     padding-top: .2rem;
 }
-.large-reporter-menu textarea {
-    text-align: left;
-    height: 19em;
-    resize: none;
-    width: 100%;
-    margin: 0;
-}
-.large-reporter-menu div {
+.large-reporter-menu > div:first-child {
     margin: .2rem;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
 }
 .large-reporter-menu label {
     display: inline-block;
