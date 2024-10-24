@@ -391,7 +391,7 @@
     "role.counterfeiter.name:var.0": "Counterfeiters",
     "role.counterfeiter.target": "Attack",
     "role.counterfeiter.dayTarget": "Backup",
-    "role.counterfeiter.roleDataText": "You choose ",
+    "role.counterfeiter.roleDataText": "You choose \\0",
 
     "role.recruiter.name": "Recruiter",
     "role.recruiter.name:var.0": "Recruiters",

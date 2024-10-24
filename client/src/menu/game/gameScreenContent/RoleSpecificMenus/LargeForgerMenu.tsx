@@ -1,134 +1,57 @@
+import { ReactElement } from "react";
 import React from "react";
+import translate from "../../../../game/lang";
 import GAME_MANAGER from "../../../..";
 import { Role, roleJsonData } from "../../../../game/roleState.d";
-import translate from "../../../../game/lang";
-import "./largeForgerMenu.css";
-import { Button } from "../../../../components/Button";
-import Icon from "../../../../components/Icon";
+import { usePlayerState } from "../../../../components/useHooks";
+import Counter from "../../../../components/Counter";
+import { TextDropdownArea } from "../../../../components/TextAreaDropdown";
+import { defaultAlibi } from "../WillMenu";
 
-type LargeForgerMenuProps = {
-}
-type LargeForgerMenuState = {
-    localRole: Role,
-    savedRole: Role,
-    localWill: string,
-    savedWill: string,
-    forgesRemaining: number,
-}
-export default class LargeForgerMenu extends React.Component<LargeForgerMenuProps, LargeForgerMenuState> {
-    listener: () => void;
-    constructor(props: LargeForgerMenuState) {
-        super(props);
+export default function ForgerMenu (props: {}): ReactElement {
+    
+    const forgesRemaining = usePlayerState<number>(
+        playerState => playerState.roleState.type === "forger" ? playerState.roleState.forgesRemaining : 0,
+        ["yourRoleState"]
+    )!;
+    const savedRole = usePlayerState<Role>(
+        playerState => playerState.roleState.type === "forger" ? playerState.roleState.fakeRole : "jester",
+        ["yourRoleState"]
+    )!;
+    const savedWill = usePlayerState<string>(
+        playerState => playerState.roleState.type === "forger" ? playerState.roleState.fakeWill : "",
+        ["yourRoleState"]
+    )!;
 
-        if(
-            GAME_MANAGER.state.stateType === "game" && 
-            GAME_MANAGER.state.clientState.type === "player" && 
-            GAME_MANAGER.state.clientState.roleState?.type === "forger"
-        )
-            this.state = {
-                localRole: GAME_MANAGER.state.clientState.roleState?.fakeRole,
-                savedRole: GAME_MANAGER.state.clientState.roleState?.fakeRole,
-                localWill: GAME_MANAGER.state.clientState.roleState?.fakeWill,
-                savedWill: GAME_MANAGER.state.clientState.roleState?.fakeWill,
-                forgesRemaining: GAME_MANAGER.state.clientState.roleState?.forgesRemaining,
-            };
-        this.listener = ()=>{
-            if(
-                GAME_MANAGER.state.stateType === "game" &&
-                GAME_MANAGER.state.clientState.type === "player" &&
-                GAME_MANAGER.state.clientState.roleState?.type === "forger"
-            ){
-                this.setState({
-                    savedWill: GAME_MANAGER.state.clientState.roleState.fakeWill,
-                    savedRole: GAME_MANAGER.state.clientState.roleState.fakeRole,
-                    forgesRemaining: GAME_MANAGER.state.clientState.roleState.forgesRemaining,
-                });
-            }
-        };  
-    }
-    componentDidMount() {
-        GAME_MANAGER.addStateListener(this.listener);
-    }
-    componentWillUnmount() {
-        GAME_MANAGER.removeStateListener(this.listener);
-    }
-    handleSave(){
-        let role = this.state.localRole;
-        let will = this.state.localWill;
-
-        if(will === ""){
-            will = "ROLE\nNight 1: \nNight 2:";
-        }
-
-        this.setState({
-            localWill: will,
-        });
-
-        GAME_MANAGER.sendSetForgerWill(role, will);
-    }
-    handleSend(){
-        GAME_MANAGER.sendSendMessagePacket('\n' + this.state.savedWill);
+    let forgerRoleOptions: JSX.Element[] = [];
+    for(let role of Object.keys(roleJsonData()) as Role[]){
+        forgerRoleOptions.push(
+            <option key={role} value={role}>{translate("role."+role+".name")}</option>
+        );
     }
 
-    render(){
-
-        let forgerRoleOptions: JSX.Element[] = [];
-        for(let role of Object.keys(roleJsonData()) as Role[]){
-            forgerRoleOptions.push(
-                <option key={role} value={role}>{translate("role."+role+".name")}</option>
-            );
-        }
-
-        return <div className="large-forger-menu">
-            <div>
-                <select
-                    value={this.state.localRole?this.state.localRole:"jester"} 
-                    onChange={(e)=>{
-                        this.setState({localRole: e.target.value as Role});
-                    }}>
-                    {forgerRoleOptions}
-                </select>
-                <div>
-                    <Button
-                        highlighted={this.state.localWill !== this.state.savedWill || this.state.localRole !== this.state.savedRole}
-                        onClick={() => {
-                            this.handleSave();
-                            return true;
-                        }}
-                        pressedChildren={() => <Icon>done</Icon>}
-                    >
-                        <Icon>save</Icon>
-                    </Button>
-                    <Button
-                        onClick={() => {
-                            this.handleSend()
-                            return true;
-                        }}
-                        pressedChildren={() => <Icon>done</Icon>}
-                    >
-                        <Icon>send</Icon>
-                    </Button>
-                </div>
-            </div>
-            <textarea
-                value={this.state.localWill}
-                onChange={(e) => {
-                    this.setState({ localWill: e.target.value });
+    return <div className="large-forger-menu">
+        <div>
+            <select
+                value={savedRole} 
+                onChange={(e)=>{
+                    GAME_MANAGER.sendSetForgerWill(e.target.value as Role, savedWill);
                 }}
-                onKeyDown={(e) => {
-                    if (e.ctrlKey) {
-                        if (e.key === 's') {
-                            e.preventDefault();
-                            this.handleSave();
-                        } else if (e.key === "Enter") {
-                            this.handleSave();
-                        }
-                    }
-                }}>
-            </textarea>
-            <div>
-                {translate("role.forger.menu.forgesRemaining", this.state.forgesRemaining ?? 0)}
-            </div>
+            >
+                {forgerRoleOptions}
+            </select>
+            <Counter max={3} current={forgesRemaining}>
+                {translate("role.forger.menu.forgesRemaining", forgesRemaining)}
+            </Counter>
         </div>
-    }
+        <TextDropdownArea
+            open={true}
+            titleString={translate("forge")}
+            savedText={savedWill}
+            onSave={(text)=>{
+                GAME_MANAGER.sendSetForgerWill(savedRole, text===""?defaultAlibi():text);
+            }}
+            cantPost={false}
+        />
+    </div>;
 }
