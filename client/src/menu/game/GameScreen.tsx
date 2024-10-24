@@ -20,12 +20,13 @@ import { useGameState, usePlayerState } from "../../components/useHooks";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
-    GraveyardMenu = "GraveyardMenu",
     PlayerListMenu = "PlayerListMenu",
+    RoleSpecificMenu = "RoleSpecificMenu",
     WillMenu = "WillMenu",
+    GraveyardMenu = "GraveyardMenu",
     WikiMenu = "WikiMenu",
-    RoleSpecificMenu = "RoleSpecificMenu"
 }
+const ALL_CONTENT_MENUS = Object.values(ContentMenu);
 
 export interface MenuController {
     closeOrOpenMenu(menu: ContentMenu): void;
@@ -74,7 +75,7 @@ export function useMenuController<C extends Partial<Record<ContentMenu, boolean>
             const newMenus = setAndGetContentMenus(menu, open)
 
             const menusOpen = getMenuController().menusOpen();
-            if(menusOpen.length + 1 > maxContent && menusOpen.length > 0){
+            if(menusOpen.length + 1 > maxContent && menusOpen.length > 0 && open) {
                 const menuToClose = menusOpen[menusOpen.length - 1];
                 newMenus[menuToClose] = false;
             }
@@ -143,10 +144,10 @@ export default function GameScreen(): ReactElement {
         {
             ChatMenu: true,
             PlayerListMenu: true,
+            RoleSpecificMenu: !mobile && roleSpecificMenuType(roleState.type) === "standalone",
             WillMenu: !mobile,
             GraveyardMenu: !mobile,
             WikiMenu: false,
-            RoleSpecificMenu: !mobile && roleSpecificMenuType(roleState.type) === "standalone"
         },
         () => MENU_CONTROLLER_HOLDER.controller!,
         menuController => MENU_CONTROLLER_HOLDER.controller = menuController
@@ -171,40 +172,29 @@ export default function GameScreen(): ReactElement {
 
     useEffect(() => {
         const swipeEventListener = (right: boolean) => {
-            const allowedToOpenRoleSpecific = roleSpecificMenuType(roleState.type) === "standalone"
-    
-            //close this menu and open the next one
-            const menusOpen = menuController.menusOpen();
-            const lastOpenMenu = menusOpen[menusOpen.length - 1];
-
-            const ALL_MENUS: Readonly<ContentMenu[]> = [
-                ContentMenu.ChatMenu,
-                ContentMenu.PlayerListMenu,
-                ContentMenu.WillMenu,
-                ContentMenu.RoleSpecificMenu,
-                ContentMenu.GraveyardMenu,
-                ContentMenu.WikiMenu
-            ];
-    
-            const indexOfLastOpenMenu = ALL_MENUS.indexOf(lastOpenMenu);
-    
-            let nextIndex = modulus(
-                indexOfLastOpenMenu + (right?-1:1), 
-                ALL_MENUS.length
-            );
-    
-            if(
-                (nextIndex === ALL_MENUS.indexOf(ContentMenu.RoleSpecificMenu) && !allowedToOpenRoleSpecific) ||
-                (menuController.menusOpen().includes(ALL_MENUS[nextIndex]))
-            ){
-                nextIndex = modulus(
-                    nextIndex + (right?-1:1),
-                    ALL_MENUS.length
-                );
-            }
+            // Close the furthest right menu, open the next one to the left or right
             
-            menuController.closeMenu(lastOpenMenu);
-            menuController.openMenu(ALL_MENUS[nextIndex]);
+            const menusOpen = menuController.menusOpen();
+            if (menusOpen.length === 0) {
+                return;
+            }
+
+            const allowedMenus = ALL_CONTENT_MENUS.filter(menu => {
+                //not open and 
+                return !menusOpen.includes(menu) && (menu === ContentMenu.RoleSpecificMenu ?
+                    roleSpecificMenuType(roleState.type) === "standalone"
+                    : true);
+            });
+
+            const rightMostMenu = menusOpen[menusOpen.length - 1];
+            const index = ALL_CONTENT_MENUS.indexOf(rightMostMenu);
+            let nextMenu = ALL_CONTENT_MENUS[modulus(index + (right ? -1 : 1), ALL_CONTENT_MENUS.length)];
+            while (!allowedMenus.includes(nextMenu)) {
+                nextMenu = ALL_CONTENT_MENUS[modulus(ALL_CONTENT_MENUS.indexOf(nextMenu) + (right ? -1 : 1), ALL_CONTENT_MENUS.length)];
+            }
+
+            menuController.closeMenu(rightMostMenu);
+            menuController.openMenu(nextMenu);
         }
 
         addSwipeEventListener(swipeEventListener);

@@ -19,6 +19,7 @@ import AudioController from "../menu/AudioController";
 import NightMessagePopup from "../components/NightMessagePopup";
 import PlayMenu from "../menu/main/PlayMenu";
 import StartMenu from "../menu/main/StartMenu";
+import { defaultAlibi } from "../menu/game/gameScreenContent/WillMenu";
 
 
 function sendDefaultName() {
@@ -386,7 +387,7 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.clientState.will = packet.will;
 
                 if(GAME_MANAGER.state.clientState.will === ""){
-                    GAME_MANAGER.sendSaveWillPacket("ROLE\nNight 1: \nNight 2:");
+                    GAME_MANAGER.sendSaveWillPacket(defaultAlibi());
                 }
             }
         break;
