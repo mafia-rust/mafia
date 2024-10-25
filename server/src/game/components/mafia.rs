@@ -1,6 +1,6 @@
 use rand::seq::SliceRandom;
 
-use crate::game::{phase::PhaseType, player::PlayerReference, role::{Role, RoleState}, role_list::RoleSet, visit::Visit, Game};
+use crate::game::{modifiers::{ModifierType, Modifiers}, phase::PhaseType, player::PlayerReference, role::{Role, RoleState}, role_list::RoleSet, visit::Visit, Game};
 
 use super::revealed_group::RevealedGroupID;
 
@@ -43,6 +43,11 @@ impl Mafia{
         game: &mut Game,
         role: RoleState
     ){
+
+        if Modifiers::modifier_is_enabled(game, ModifierType::NoMafiaKilling) {
+            return;
+        }
+
         let living_players_to_convert = PlayerReference::all_players(game).into_iter().filter(
             |p|
             RevealedGroupID::Mafia.is_player_in_revealed_group(game, *p) &&

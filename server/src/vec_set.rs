@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::vec_map::VecMap;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct VecSet<K> where K: Eq {
     vec: VecMap<K, ()>,
 }
@@ -17,12 +17,12 @@ impl <K> VecSet<K> where K: Eq {
         VecSet { vec: VecMap::new() }
     }
 
-    pub fn insert(&mut self, key: K) -> bool {
-        self.vec.insert(key, ()).is_none()
+    pub fn insert(&mut self, key: K) -> Option<K> {
+        self.vec.insert(key, ()).map(|(k, _)| k)
     }
 
     pub fn contains(&self, key: &K) -> bool {
-        self.vec.get(key).is_some()
+        self.vec.get_kvp(key).is_some()
     }
 
     pub fn remove(&mut self, key: &K) -> Option<K> {
@@ -51,6 +51,16 @@ impl <K> VecSet<K> where K: Eq {
 
     pub fn elements(&self) -> impl Iterator<Item = &K> {
         self.vec.keys()
+    }
+
+    pub fn subtract(&self, other: &Self) -> Self where K: Clone {
+        self.vec.keys().cloned().filter(|k| !other.contains(k)).collect()
+    }
+    pub fn intersection(&self, other: &Self) -> Self where K: Clone {
+        self.vec.keys().cloned().filter(|k| other.contains(k)).collect()
+    }
+    pub fn union(&self, other: &Self) -> Self where K: Clone {
+        self.vec.keys().cloned().chain(other.vec.keys().cloned()).collect()
     }
 }
 impl<K> IntoIterator for VecSet<K> where K: Eq {

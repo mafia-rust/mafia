@@ -716,6 +716,8 @@
     "vision": "Vision",
     "pitchfork": "Pitchfork",
     "pitchfork.description": "Vote for a player before night starts. If two-thirds of town loyalists vote for a player, that player dies.",
+    "hitOrder": "Hit Order",
+    "hitOrder.description": "Vote for a player to get a hit order placed on them. If a mafia insider visits a player with a hit order on them, the player with the hit order is attacked.",
     "nobodyDiedLastNight": "Nobody died last night.",
     "nobody": "nobody",
     "modifiers": "Modifiers",
@@ -724,6 +726,7 @@
     "deadCanChat": "Dead Can Chat",
     "noAbstaining": "No Abstaining",
     "noDeathCause": "No Death Cause",
+    "noMafiaKilling": "No Mafia Killing",
     "nightMessages": "Night Messages",
     
     "simplify":"Simplify",
@@ -1204,6 +1207,9 @@
     "wiki.article.standard.noAbstaining.text":"No Abstaining is a game modifier that changes the game such that no players can abstain during judgement. It will default to voting innocent instead of defaulting to abstaining.",
     "wiki.article.standard.noDeathCause.title":"No Death Cause",
     "wiki.article.standard.noDeathCause.text":"No Death Cause is a game modifier that changes the game such that every grave says that the cause of death is execution.",
+    "wiki.article.standard.noMafiaKilling.title":"No Mafia Killing",
+    "wiki.article.standard.noMafiaKilling.text":"No Mafia Killing is a game modifier. Mafia no longer has a mafia killing role. Instead, each night, the mafia votes to order a hit on a player. If any mafia insider visits a player with a hit order that insider attacks that player, and the mark goes away.\n - A hit order cannot be placed on night 1\n - If there is a tie in who to order a hit on, the mafia insider with the highest player number gets their hit order placed, the others do not.\n - A player can only have one hit order placed on them at a time.\n- If a player is attacked using a hit order, the hit order is removed.\n- If a player is attacked using a hit order, the mafia insider who visited the player with the hit order does the attack so they are told if the target had defense or not.\n- If a player is attacked by a hit order, the player who placed the hit order is told that the player was attacked by a hit order.\n- If a player is attacked by a hit order, the player who was attacked is told that they were attacked by a hit order.",
+
 
     "wiki.article.standard.nobody.title":"Nobody",
     "wiki.article.standard.nobody.title:var.0":"No body",

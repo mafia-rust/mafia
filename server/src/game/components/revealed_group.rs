@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::game::{player::PlayerReference, Game};
+use crate::{game::{player::PlayerReference, Game}, vec_set::VecSet};
 
 #[derive(Default)]
 pub struct RevealedGroups{
@@ -23,19 +23,19 @@ pub enum RevealedGroupID{
 }
 #[derive(Default)]
 pub struct RevealedGroup{
-    players: HashSet<PlayerReference>
+    players: VecSet<PlayerReference>
 }
-impl From<RevealedGroup> for HashSet<PlayerReference> {
+impl From<RevealedGroup> for VecSet<PlayerReference> {
     fn from(revealed_group: RevealedGroup)->Self{
         revealed_group.players
     }
 }
-impl<'a> From<&'a RevealedGroup> for &'a HashSet<PlayerReference> {
+impl<'a> From<&'a RevealedGroup> for &'a VecSet<PlayerReference> {
     fn from(revealed_group: &'a RevealedGroup)->Self{
         &revealed_group.players
     }
 }
-impl<'a> From<&'a mut RevealedGroup> for &'a mut HashSet<PlayerReference> {
+impl<'a> From<&'a mut RevealedGroup> for &'a mut VecSet<PlayerReference> {
     fn from(revealed_group: &'a mut RevealedGroup)->Self{
         &mut revealed_group.players
     }
@@ -64,7 +64,7 @@ impl RevealedGroupID{
         }
     }
     pub fn reveal_group_players(&self, game: &mut Game){
-        let players: HashSet<PlayerReference> = <&RevealedGroup as Into<&HashSet<PlayerReference>>>::
+        let players: VecSet<PlayerReference> = <&RevealedGroup as Into<&VecSet<PlayerReference>>>::
             into(self.revealed_group(game)).clone();
 
         for a in players.clone() {
@@ -73,22 +73,22 @@ impl RevealedGroupID{
             }
         }
     }
-    pub fn players<'a>(&self, game: &'a Game)->&'a HashSet<PlayerReference>{
+    pub fn players<'a>(&self, game: &'a Game)->&'a VecSet<PlayerReference>{
         self.revealed_group(game).into()
     }
     pub fn add_player_to_revealed_group(&self, game: &mut Game, player: PlayerReference){
-        let players: &mut HashSet<PlayerReference> = self.revealed_group_mut(game).into();
-        if players.insert(player) {
+        let players: &mut VecSet<PlayerReference> = self.revealed_group_mut(game).into();
+        if players.insert(player).is_none() {
             self.reveal_group_players(game);
         }
     }
     pub fn remove_player_from_revealed_group(&self, game: &mut Game, player: PlayerReference){
-        let players: &mut HashSet<PlayerReference> = self.revealed_group_mut(game).into();
-        if players.remove(&player) {
+        let players: &mut VecSet<PlayerReference> = self.revealed_group_mut(game).into();
+        if players.remove(&player).is_some() {
             self.reveal_group_players(game);
         }
     }
-    pub fn set_player_revealed_groups(set: HashSet<RevealedGroupID>, game: &mut Game, player: PlayerReference){
+    pub fn set_player_revealed_groups(set: VecSet<RevealedGroupID>, game: &mut Game, player: PlayerReference){
         for group in RevealedGroupID::all(){
             if set.contains(&group){
                 group.add_player_to_revealed_group(game, player);
@@ -97,27 +97,27 @@ impl RevealedGroupID{
             }
         }
     }
-    pub fn start_game_set_player_revealed_groups(set: HashSet<RevealedGroupID>, game: &mut Game, player: PlayerReference){
+    pub fn start_game_set_player_revealed_groups(set: VecSet<RevealedGroupID>, game: &mut Game, player: PlayerReference){
         for group in RevealedGroupID::all(){
             if set.contains(&group){
-                let players: &mut HashSet<PlayerReference> = group.revealed_group_mut(game).into();
+                let players: &mut VecSet<PlayerReference> = group.revealed_group_mut(game).into();
                 players.insert(player);
             }
         }
     }
     pub fn on_remove_role_label(&self, game: &mut Game, player: PlayerReference, concealed_player: PlayerReference){
         
-        let players: &HashSet<PlayerReference> = self.revealed_group(game).into();
+        let players: &VecSet<PlayerReference> = self.revealed_group(game).into();
         if players.contains(&concealed_player) && players.contains(&player) {
             self.reveal_group_players(game);
         }
     }
     pub fn is_player_in_revealed_group(&self, game: &Game, player: PlayerReference)->bool{
-        let players: &HashSet<PlayerReference> = self.revealed_group(game).into();
+        let players: &VecSet<PlayerReference> = self.revealed_group(game).into();
         players.contains(&player)
     }
     pub fn players_both_in_revealed_group(&self, game: &Game, a: PlayerReference, b: PlayerReference)->bool{
-        let players: &HashSet<PlayerReference> = self.revealed_group(game).into();
+        let players: &VecSet<PlayerReference> = self.revealed_group(game).into();
         players.contains(&a) && players.contains(&b)
     }
     pub fn players_in_same_revealed_group(game: &Game, a: PlayerReference, b: PlayerReference)->bool{

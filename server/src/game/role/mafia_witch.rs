@@ -57,7 +57,7 @@ impl RoleStateImpl for MafiaWitch {
             actor_ref.set_role_state(game, RoleState::MafiaWitch(MafiaWitch { currently_used_player: None }));
         }
     }
-    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::revealed_group::RevealedGroupID> {
         vec![
             crate::game::components::revealed_group::RevealedGroupID::Mafia
         ].into_iter().collect()

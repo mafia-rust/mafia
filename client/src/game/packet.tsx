@@ -167,6 +167,9 @@ export type ToClientPacket = {
 } | {
     type: "yourPitchforkVote",
     player: PlayerIndex | null
+} | {
+    type: "yourHitOrderVote",
+    player: PlayerIndex | null
 }
 
 export type ToServerPacket = {
@@ -329,5 +332,8 @@ export type ToServerPacket = {
     forfeit: boolean
 } | {
     type: "pitchforkVote",
+    player: PlayerIndex | null
+} | {
+    type: "hitOrderVote",
     player: PlayerIndex | null
 }

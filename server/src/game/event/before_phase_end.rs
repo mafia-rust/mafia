@@ -1,4 +1,4 @@
-use crate::game::{components::verdicts_today::VerdictsToday, phase::PhaseType, Game};
+use crate::game::{components::verdicts_today::VerdictsToday, modifiers::Modifiers, phase::PhaseType, Game};
 
 #[must_use = "Event must be invoked"]
 pub struct BeforePhaseEnd{
@@ -10,5 +10,6 @@ impl BeforePhaseEnd{
     }
     pub fn invoke(self, game: &mut Game){
         VerdictsToday::before_phase_end(game, self.phase);
+        Modifiers::before_phase_end(game, self.phase);
     }
 }

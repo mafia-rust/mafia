@@ -2,6 +2,7 @@
 #![allow(clippy::get_first)]
 
 use std::collections::HashSet;
+use crate::vec_set::VecSet;
 
 use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
@@ -46,8 +47,8 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
-    fn default_revealed_groups(self) -> HashSet<RevealedGroupID> {
-        HashSet::new()
+    fn default_revealed_groups(self) -> VecSet<RevealedGroupID> {
+        VecSet::new()
     }
     fn default_win_condition(self) -> WinCondition where RoleState: From<Self>{
         let role_state: RoleState = self.into();
@@ -277,7 +278,7 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.get_current_receive_chat_groups(game, actor_ref)),*
                     }
                 }
-                pub fn default_revealed_groups(self) -> HashSet<RevealedGroupID>{
+                pub fn default_revealed_groups(self) -> VecSet<RevealedGroupID>{
                     match self {
                         $(Self::$name(role_struct) => role_struct.default_revealed_groups()),*
                     }

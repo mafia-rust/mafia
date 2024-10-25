@@ -94,6 +94,7 @@ export type PlayerGameState = {
     
     forfeitVote: boolean,
     pitchforkVote: PlayerIndex | null,
+    hitOrderVote: PlayerIndex | null,
 
     sendChatGroups: ChatGroup[],
 }
@@ -126,7 +127,7 @@ export type PhaseTimes = Record<PhaseType, number>;
 
 export type Tag = | "godfatherBackup" | "werewolfTracked" | "doused" | "revolutionaryTarget" | "morticianTagged" | "puppeteerMarionette" | "loveLinked" | "forfeitVote";
 
-export const MODIFIERS = ["obscuredGraves", "randomLoveLinks", "deadCanChat", "noAbstaining", "noDeathCause"] as const;
+export const MODIFIERS = ["obscuredGraves", "randomLoveLinks", "deadCanChat", "noAbstaining", "noDeathCause", "noMafiaKilling"] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 
 export type Player = {
