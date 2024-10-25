@@ -1,6 +1,6 @@
 use crate::game::{chat::{ChatGroup, ChatMessageVariant}, phase::PhaseType, player::PlayerReference, role::{apostle::Apostle, disciple::Disciple, zealot::Zealot, Role, RoleState}, role_list::RoleSet, Game};
 
-use super::revealed_group::RevealedGroupID;
+use super::insider_group::InsiderGroupRef;
 
 impl Game {
     pub fn cult(&self)->&Cult{
@@ -66,7 +66,7 @@ impl Cult{
     pub fn get_members(game: &Game)->Vec<PlayerReference>{
         PlayerReference::all_players(game).filter(|p| 
             RoleSet::Cult.get_roles().contains(&p.role(game)) &&
-            RevealedGroupID::Cult.is_player_in_revealed_group(game, *p)
+            InsiderGroupRef::Cult.is_player_in_revealed_group(game, *p)
         ).collect()
     }
 
@@ -77,7 +77,7 @@ impl Cult{
         // Remove dead
         cult.ordered_cultists = cult.ordered_cultists.iter().cloned().filter(|p|
             RoleSet::Cult.get_roles().contains(&p.role(game)) &&
-            RevealedGroupID::Cult.is_player_in_revealed_group(game, *p) &&
+            InsiderGroupRef::Cult.is_player_in_revealed_group(game, *p) &&
             p.alive(game)
         ).collect();
 
@@ -85,7 +85,7 @@ impl Cult{
         for player in PlayerReference::all_players(game){
             if 
                 RoleSet::Cult.get_roles().contains(&player.role(game)) &&
-                RevealedGroupID::Cult.is_player_in_revealed_group(game, player) &&
+                InsiderGroupRef::Cult.is_player_in_revealed_group(game, player) &&
                 player.alive(game) &&
                 !cult.ordered_cultists.contains(&player)
             {

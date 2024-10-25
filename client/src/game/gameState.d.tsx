@@ -127,7 +127,7 @@ export type PhaseTimes = Record<PhaseType, number>;
 
 export type Tag = | "godfatherBackup" | "werewolfTracked" | "doused" | "revolutionaryTarget" | "morticianTagged" | "puppeteerMarionette" | "loveLinked" | "forfeitVote";
 
-export const MODIFIERS = ["obscuredGraves", "randomLoveLinks", "deadCanChat", "noAbstaining", "noDeathCause", "noMafiaKilling"] as const;
+export const MODIFIERS = ["obscuredGraves", "randomLoveLinks", "deadCanChat", "noAbstaining", "noDeathCause", "mafiaHitOrders"] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 
 export type Player = {

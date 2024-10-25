@@ -3,14 +3,14 @@ pub mod random_love_links;
 pub mod dead_can_chat;
 pub mod no_abstaining;
 pub mod no_death_cause;
-pub mod no_mafia_killing;
+pub mod mafia_hit_orders;
 
 use dead_can_chat::DeadCanChat;
 use no_abstaining::NoAbstaining;
 use obscured_graves::ObscuredGraves;
 use random_love_links::RandomLoveLinks;
 use no_death_cause::NoDeathCause;
-use no_mafia_killing::NoMafiaKilling;
+use mafia_hit_orders::MafiaHitOrders;
 use serde::{Deserialize, Serialize};
 
 use crate::{vec_map::VecMap, vec_set::VecSet};
@@ -24,6 +24,8 @@ pub trait ModifierTrait where Self: Clone + Sized{
     fn before_phase_end(self, _game: &mut Game, _phase: super::phase::PhaseType) {}
     fn on_grave_added(self, _game: &mut Game, _event: GraveReference) {}
     fn on_game_start(self, _game: &mut Game) {}
+    fn on_any_death(self, _game: &mut Game, _player: crate::game::player::PlayerReference) {}
+    fn before_initial_role_creation(self, _game: &mut Game) {}
 }
 
 #[enum_delegate::implement(ModifierTrait)]
@@ -34,7 +36,7 @@ pub enum ModifierState{
     DeadCanChat(DeadCanChat),
     NoAbstaining(NoAbstaining),
     NoDeathCause(NoDeathCause),
-    NoMafiaKilling(NoMafiaKilling),
+    MafiaHitOrders(MafiaHitOrders),
 }
 #[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Debug, Hash)]
 #[serde(rename_all = "camelCase")]
@@ -44,7 +46,7 @@ pub enum ModifierType{
     DeadCanChat,
     NoAbstaining,
     NoDeathCause,
-    NoMafiaKilling,
+    MafiaHitOrders,
 }
 impl ModifierType{
     pub fn default_state(&self)->ModifierState{
@@ -54,7 +56,7 @@ impl ModifierType{
             Self::DeadCanChat => ModifierState::DeadCanChat(DeadCanChat::default()),
             Self::NoAbstaining => ModifierState::NoAbstaining(NoAbstaining::default()),
             Self::NoDeathCause => ModifierState::NoDeathCause(NoDeathCause::default()),
-            Self::NoMafiaKilling => ModifierState::NoMafiaKilling(NoMafiaKilling::default()),
+            Self::MafiaHitOrders => ModifierState::MafiaHitOrders(MafiaHitOrders::default()),
         }
     }
 }
@@ -66,7 +68,7 @@ impl From<&ModifierState> for ModifierType{
             ModifierState::DeadCanChat(_) => Self::DeadCanChat,
             ModifierState::NoAbstaining(_) => Self::NoAbstaining,
             ModifierState::NoDeathCause(_) => Self::NoDeathCause,
-            ModifierState::NoMafiaKilling(_) => Self::NoMafiaKilling,
+            ModifierState::MafiaHitOrders(_) => Self::MafiaHitOrders,
         }
     }
 }
@@ -103,7 +105,7 @@ impl Modifiers{
             state
         );
     }
-    pub fn from_settings(modifiers: VecSet<ModifierType>)->Self{
+    pub fn default_from_settings(modifiers: VecSet<ModifierType>)->Self{
         let modifiers = modifiers
             .into_iter().map(|m|{let state = m.default_state(); (m, state)}).collect();
         Self{
@@ -128,6 +130,16 @@ impl Modifiers{
     pub fn before_phase_end(game: &mut Game, phase: super::phase::PhaseType){
         for modifier in game.modifiers.modifiers.clone(){
             modifier.1.before_phase_end(game, phase);
+        }
+    }
+    pub fn on_any_death(game: &mut Game, player: crate::game::player::PlayerReference){
+        for modifier in game.modifiers.modifiers.clone(){
+            modifier.1.on_any_death(game, player);
+        }
+    }
+    pub fn before_initial_role_creation(game: &mut Game){
+        for modifier in game.modifiers.modifiers.clone(){
+            modifier.1.before_initial_role_creation(game);
         }
     }
 }

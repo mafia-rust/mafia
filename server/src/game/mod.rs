@@ -30,8 +30,8 @@ use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
 use components::poison::Poison;
 use components::detained::Detained;
-use components::revealed_group::RevealedGroupID;
-use components::revealed_group::RevealedGroups;
+use components::insider_group::InsiderGroupRef;
+use components::insider_group::RevealedGroups;
 use components::verdicts_today::VerdictsToday;
 use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
@@ -181,7 +181,7 @@ impl Game {
                 players: new_players.into_boxed_slice(),
                 graves: Vec::new(),
                 phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
-                modifiers: Modifiers::from_settings(settings.enabled_modifiers.clone()),
+                modifiers: Modifiers::default_from_settings(settings.enabled_modifiers.clone()),
                 settings,
 
                 cult: Cult::default(),
@@ -218,7 +218,7 @@ impl Game {
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         
-            RevealedGroupID::start_game_set_player_revealed_groups(
+            InsiderGroupRef::start_game_set_player_revealed_groups(
                 role_data.clone().default_revealed_groups(),
                 &mut game,
                 player
@@ -241,7 +241,7 @@ impl Game {
         }
 
         //reveal groups
-        for group in RevealedGroupID::all() {
+        for group in InsiderGroupRef::all() {
             group.reveal_group_players(&mut game);
         }
 
@@ -437,7 +437,7 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, revealed_group::RevealedGroupID, verdicts_today::VerdictsToday},
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, insider_group::InsiderGroupRef, verdicts_today::VerdictsToday},
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -513,7 +513,7 @@ pub mod test {
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         
-            RevealedGroupID::start_game_set_player_revealed_groups(
+            InsiderGroupRef::start_game_set_player_revealed_groups(
                 role_data.clone().default_revealed_groups(),
                 &mut game,
                 player

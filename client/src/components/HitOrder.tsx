@@ -31,7 +31,7 @@ export default function HitOrder(props: Readonly<{
     )!;
 
     if(
-        !enabledModifiers.includes("noMafiaKilling") ||
+        !enabledModifiers.includes("mafiaHitOrders") ||
         phaseState.type !== "night" ||
         dayNumber === 1
     ){

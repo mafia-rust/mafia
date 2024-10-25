@@ -1,5 +1,5 @@
 use crate::game::{
-    components::revealed_group::RevealedGroups, player::PlayerReference, Game
+    components::insider_group::RevealedGroups, player::PlayerReference, Game
 };
 
 #[must_use = "Event must be invoked"]

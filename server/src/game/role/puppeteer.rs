@@ -89,9 +89,9 @@ impl RoleStateImpl for Puppeteer {
             actor_ref.set_role_state(game, RoleState::Puppeteer(self))
         }
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::revealed_group::RevealedGroupID> {
+     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupRef> {
         vec![
-            crate::game::components::revealed_group::RevealedGroupID::Puppeteer
+            crate::game::components::insider_group::InsiderGroupRef::Puppeteer
         ].into_iter().collect()
     }
 }

@@ -9,7 +9,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{RevealedGroupID, Priority, RoleStateImpl};
+use super::{InsiderGroupRef, Priority, RoleStateImpl};
 
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -70,7 +70,7 @@ impl RoleStateImpl for Eros {
             },
             ErosAction::Kill => {
                 game.day_number() > 1 &&
-                !RevealedGroupID::players_in_same_revealed_group(game, actor_ref, target_ref) &&
+                !InsiderGroupRef::players_in_same_revealed_group(game, actor_ref, target_ref) &&
                 selected.is_empty()
             },
         }
@@ -98,9 +98,9 @@ impl RoleStateImpl for Eros {
             }
         }
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::revealed_group::RevealedGroupID> {
+     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupRef> {
         vec![
-            crate::game::components::revealed_group::RevealedGroupID::Mafia
+            crate::game::components::insider_group::InsiderGroupRef::Mafia
         ].into_iter().collect()
     }
 }

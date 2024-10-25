@@ -90,9 +90,9 @@ impl RoleStateImpl for Forger {
             ..self
         }));
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::revealed_group::RevealedGroupID> {
+     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupRef> {
         vec![
-            crate::game::components::revealed_group::RevealedGroupID::Mafia
+            crate::game::components::insider_group::InsiderGroupRef::Mafia
         ].into_iter().collect()
     }
 }
