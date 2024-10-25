@@ -84,6 +84,7 @@ export function createPlayerGameState(): PlayerGameState {
         hitOrderVote: null,
 
         sendChatGroups: [],
+        insiderGroups: [],
     }
 }
 

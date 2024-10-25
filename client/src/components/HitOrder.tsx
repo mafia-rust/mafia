@@ -29,14 +29,19 @@ export default function HitOrder(props: Readonly<{
         gameState => gameState.dayNumber,
         ["phase"]
     )!;
+    
+    const insiderGroups = usePlayerState(
+        playerState => playerState.insiderGroups,
+        ["yourInsiderGroups"]
+    )!;
 
     if(
         !enabledModifiers.includes("mafiaHitOrders") ||
         phaseState.type !== "night" ||
-        dayNumber === 1
-    ){
+        dayNumber === 1 ||
+        !insiderGroups.includes("mafia")
+    )
         return null;
-    }
     else
         return (<details className="role-specific-colors small-role-specific-menu" open={props.hitOrderOpen}>
             <summary

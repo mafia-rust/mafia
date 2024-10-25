@@ -31,7 +31,7 @@ use components::mafia_recruits::MafiaRecruits;
 use components::poison::Poison;
 use components::detained::Detained;
 use components::insider_group::InsiderGroupID;
-use components::insider_group::RevealedGroups;
+use components::insider_group::InsiderGroups;
 use components::verdicts_today::VerdictsToday;
 use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
@@ -100,7 +100,7 @@ pub struct Game {
     pub pitchfork: Pitchfork,
     pub poison: Poison,
     pub modifiers: Modifiers,
-    pub revealed_groups: RevealedGroups,
+    pub revealed_groups: InsiderGroups,
     pub detained: Detained,
     pub confused: Confused,
     pub drunk_aura: DrunkAura,
@@ -194,7 +194,7 @@ impl Game {
                 pitchfork: Pitchfork::default(),
                 poison: Poison::default(),
 
-                revealed_groups: RevealedGroups::default(),
+                revealed_groups: InsiderGroups::default(),
                 detained: Detained::default(),
                 confused: Confused::default(),
                 drunk_aura: DrunkAura::default(),

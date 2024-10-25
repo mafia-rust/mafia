@@ -1,4 +1,4 @@
-import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, LobbyClientID, ChatGroup, PhaseState, LobbyClient, ModifierType } from "./gameState.d"
+import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, LobbyClientID, ChatGroup, PhaseState, LobbyClient, ModifierType, InsiderGroup } from "./gameState.d"
 import { Grave } from "./graveState"
 import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
@@ -109,6 +109,9 @@ export type ToClientPacket = {
 } | {
     type: "yourSendChatGroups",
     sendChatGroups: ChatGroup[]
+} | {
+    type: "yourInsiderGroups",
+    insiderGroups: InsiderGroup[]
 } | {
     type: "yourButtons", 
     buttons: [{

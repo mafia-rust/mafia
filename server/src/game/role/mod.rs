@@ -278,7 +278,7 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.get_current_receive_chat_groups(game, actor_ref)),*
                     }
                 }
-                pub fn default_revealed_groups(self) -> VecSet<InsiderGroupRef>{
+                pub fn default_revealed_groups(self) -> VecSet<InsiderGroupID>{
                     match self {
                         $(Self::$name(role_struct) => role_struct.default_revealed_groups()),*
                     }
