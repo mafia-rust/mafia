@@ -37,9 +37,9 @@ impl RoleStateImpl for MafiaSupportWildcard {
             _ => {}
         }
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupRef> {
+     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
-            crate::game::components::insider_group::InsiderGroupRef::Mafia
+            crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
 }

@@ -2,7 +2,7 @@ use rand::seq::SliceRandom;
 
 use crate::game::{modifiers::{mafia_hit_orders::MafiaHitOrders, ModifierType, Modifiers}, phase::PhaseType, player::PlayerReference, role::{Role, RoleState}, role_list::RoleSet, visit::Visit, Game};
 
-use super::insider_group::InsiderGroupRef;
+use super::insider_group::InsiderGroupID;
 
 
 const DEFAULT_MAFIA_KILLING_ROLE: Role = Role::Godfather;
@@ -52,7 +52,7 @@ impl Mafia{
 
         let living_players_to_convert = PlayerReference::all_players(game).into_iter().filter(
             |p|
-            InsiderGroupRef::Mafia.is_player_in_revealed_group(game, *p) &&
+            InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p) &&
             RoleSet::Mafia.get_roles().contains(&p.role(game)) &&
             p.alive(game)
         ).collect::<Vec<_>>();

@@ -30,7 +30,7 @@ use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
 use components::poison::Poison;
 use components::detained::Detained;
-use components::insider_group::InsiderGroupRef;
+use components::insider_group::InsiderGroupID;
 use components::insider_group::RevealedGroups;
 use components::verdicts_today::VerdictsToday;
 use modifiers::Modifiers;
@@ -218,7 +218,7 @@ impl Game {
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         
-            InsiderGroupRef::start_game_set_player_revealed_groups(
+            InsiderGroupID::start_game_set_player_revealed_groups(
                 role_data.clone().default_revealed_groups(),
                 &mut game,
                 player
@@ -241,7 +241,7 @@ impl Game {
         }
 
         //reveal groups
-        for group in InsiderGroupRef::all() {
+        for group in InsiderGroupID::all() {
             group.reveal_group_players(&mut game);
         }
 
@@ -437,7 +437,7 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, insider_group::InsiderGroupRef, verdicts_today::VerdictsToday},
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, insider_group::InsiderGroupID, verdicts_today::VerdictsToday},
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -513,7 +513,7 @@ pub mod test {
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         
-            InsiderGroupRef::start_game_set_player_revealed_groups(
+            InsiderGroupID::start_game_set_player_revealed_groups(
                 role_data.clone().default_revealed_groups(),
                 &mut game,
                 player

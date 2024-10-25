@@ -4,7 +4,7 @@ use rand::seq::SliceRandom;
 
 use crate::{game::{
     attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
-        arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette, insider_group::InsiderGroupRef
+        arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette, insider_group::InsiderGroupID
     }, event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, game_conclusion::GameConclusion, grave::{Grave, GraveKiller, GraveReference}, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, win_condition::WinCondition, Game
 }, packet::ToClientPacket};
 
@@ -185,7 +185,7 @@ impl PlayerReference{
             self.add_private_chat_message(game, ChatMessageVariant::RoleAssignment{role: self.role(game)});
         }
         self.set_win_condition(game, self.role_state(game).clone().default_win_condition());
-        InsiderGroupRef::set_player_revealed_groups(
+        InsiderGroupID::set_player_revealed_groups(
             self.role_state(game).clone().default_revealed_groups(), 
             game, *self
         );
@@ -211,7 +211,7 @@ impl PlayerReference{
     
         self.set_win_condition(game, self.role_state(game).clone().default_win_condition());
         
-        InsiderGroupRef::set_player_revealed_groups(
+        InsiderGroupID::set_player_revealed_groups(
             self.role_state(game).clone().default_revealed_groups(), 
             game, *self
         );

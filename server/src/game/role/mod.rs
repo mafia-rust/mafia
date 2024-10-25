@@ -13,7 +13,7 @@ use crate::game::attack_power::DefensePower;
 
 use serde::{Serialize, Deserialize};
 
-use super::{components::insider_group::InsiderGroupRef, event::before_role_switch::BeforeRoleSwitch, grave::GraveReference, win_condition::WinCondition};
+use super::{components::insider_group::InsiderGroupID, event::before_role_switch::BeforeRoleSwitch, grave::GraveReference, win_condition::WinCondition};
 
 pub trait GetClientRoleState<CRS> {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> CRS;
@@ -47,7 +47,7 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
-    fn default_revealed_groups(self) -> VecSet<InsiderGroupRef> {
+    fn default_revealed_groups(self) -> VecSet<InsiderGroupID> {
         VecSet::new()
     }
     fn default_win_condition(self) -> WinCondition where RoleState: From<Self>{

@@ -1,6 +1,6 @@
 use crate::{
     game::{
-        components::insider_group::InsiderGroupRef, player::PlayerReference,
+        components::insider_group::InsiderGroupID, player::PlayerReference,
         role::{mafioso::Mafioso, Priority}, role_list::{RoleOutline, RoleOutlineOption, RoleSet}, tag::Tag, Game
     },
     packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet
@@ -45,7 +45,7 @@ impl MafiaHitOrders{
         if !modifier.active {return}
 
         if !voter.alive(game) {return}
-        if !InsiderGroupRef::Mafia.is_player_in_revealed_group(game, voter) {return}
+        if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, voter) {return}
         if let Some(target) = target{
             if !target.alive(game) {return}
         }
@@ -82,7 +82,7 @@ impl MafiaHitOrders{
         if !modifier.active {return}
         if modifier.hit_order_players.insert(player).is_some() {return;}
 
-        for insider in InsiderGroupRef::Mafia.players(game).clone(){
+        for insider in InsiderGroupID::Mafia.players(game).clone(){
             insider.push_player_tag(game, player, Tag::GodfatherBackup);
         }
         Modifiers::set_modifier(game, modifier.into());
@@ -90,7 +90,7 @@ impl MafiaHitOrders{
     pub fn remove_hit_order_player(game: &mut Game, player: PlayerReference){
         let Some(mut modifier) = Modifiers::get_modifier_inner::<Self>(game, ModifierType::MafiaHitOrders).cloned() else {return};
         modifier.hit_order_players.remove(&player);
-        for insider in InsiderGroupRef::Mafia.players(game).clone(){
+        for insider in InsiderGroupID::Mafia.players(game).clone(){
             insider.remove_player_tag(game, player, Tag::GodfatherBackup);
         }
         Modifiers::set_modifier(game, modifier.into());
@@ -99,7 +99,7 @@ impl MafiaHitOrders{
 
 
     fn check_if_one_remains(game: &mut Game){
-        let living_insiders = InsiderGroupRef::Mafia.players(game)
+        let living_insiders = InsiderGroupID::Mafia.players(game)
             .clone()
             .into_iter()
             .filter(|p|p.alive(game))
@@ -129,7 +129,7 @@ impl ModifierTrait for MafiaHitOrders{
         let mut players_to_remove_hit_order = VecSet::new();
 
         for player in PlayerReference::all_players(game){
-            if !InsiderGroupRef::Mafia.is_player_in_revealed_group(game, player) {continue;}
+            if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player) {continue;}
 
             for visit in player.night_visits(game).clone(){
                 if !self.hit_order_players.contains(&visit.target) {continue;}
@@ -164,7 +164,7 @@ impl ModifierTrait for MafiaHitOrders{
     }
     fn on_any_death(self, game: &mut Game, player: PlayerReference){
         if !self.active {return}
-        if !InsiderGroupRef::Mafia.is_player_in_revealed_group(game, player) {return;}
+        if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player) {return;}
         Self::check_if_one_remains(game);
     }
     fn before_initial_role_creation(mut self, game: &mut Game) {
@@ -174,7 +174,7 @@ impl ModifierTrait for MafiaHitOrders{
         // If there is only 1 mafia insider, then deactivate this modifier instantly
         // Imagine getting the role godfather and then instantly switching to mafioso with no benefits 
         // because of this modifier
-        let active = if InsiderGroupRef::Mafia.players(game).len() == 1 {
+        let active = if InsiderGroupID::Mafia.players(game).len() == 1 {
             false
         }else{
             let possibilities = 1 + game.settings.enabled_roles.iter()
@@ -191,7 +191,7 @@ impl ModifierTrait for MafiaHitOrders{
         // change all mafia killing roles to a random mafia support
         for player in PlayerReference::all_players(game){
             if
-                InsiderGroupRef::Mafia.is_player_in_revealed_group(game, player) &&
+                InsiderGroupID::Mafia.is_player_in_revealed_group(game, player) &&
                 RoleSet::MafiaKilling.get_roles().contains(&player.role(game))
                 
             {

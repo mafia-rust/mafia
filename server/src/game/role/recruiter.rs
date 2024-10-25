@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::mafia_recruits::MafiaRecruits;
-use crate::game::components::insider_group::InsiderGroupRef;
+use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -104,7 +104,7 @@ impl RoleStateImpl for Recruiter {
         game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackup { backup: backup.map(|p|p.index()) });
 
         for player_ref in PlayerReference::all_players(game){
-            if !InsiderGroupRef::Mafia.is_player_in_revealed_group(game, player_ref){
+            if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player_ref){
                 continue;
             }
             player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
@@ -112,7 +112,7 @@ impl RoleStateImpl for Recruiter {
 
         if let Some(backup) = backup {
             for player_ref in PlayerReference::all_players(game){
-                if !InsiderGroupRef::Mafia.is_player_in_revealed_group(game, player_ref) {
+                if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player_ref) {
                     continue;
                 }
                 player_ref.push_player_tag(game, backup, Tag::GodfatherBackup);
@@ -124,7 +124,7 @@ impl RoleStateImpl for Recruiter {
         actor_ref != target_ref &&
         actor_ref.alive(game) && target_ref.alive(game) &&
         RoleSet::Mafia.get_roles().contains(&target_ref.role(game)) &&
-        InsiderGroupRef::Mafia.is_player_in_revealed_group(game, target_ref)
+        InsiderGroupID::Mafia.is_player_in_revealed_group(game, target_ref)
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         crate::game::role::common_role::can_night_select(game, actor_ref, target_ref) &&
@@ -151,7 +151,7 @@ impl RoleStateImpl for Recruiter {
 
             actor_ref.set_role_state(game, Recruiter{backup: None, ..self.clone()});
             for player_ref in PlayerReference::all_players(game){
-                if InsiderGroupRef::Mafia.is_player_in_revealed_group(game, player_ref){
+                if InsiderGroupID::Mafia.is_player_in_revealed_group(game, player_ref){
                     continue;
                 }
                 player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
@@ -197,7 +197,7 @@ impl RoleStateImpl for Recruiter {
                 //special case here. I don't want to use set_role because it alerts the player their role changed
                 //NOTE: It will still send a packet to the player that their role state updated,
                 //so it might be deducable that there is a recruiter
-                InsiderGroupRef::Mafia.remove_player_from_revealed_group(game, random_mafia_player);
+                InsiderGroupID::Mafia.remove_player_from_revealed_group(game, random_mafia_player);
                 random_mafia_player.set_win_condition(game, crate::game::win_condition::WinCondition::GameConclusionReached{
                     win_if_any: vec![GameConclusion::Town].into_iter().collect()
                 });
@@ -207,9 +207,9 @@ impl RoleStateImpl for Recruiter {
         }
         
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupRef> {
+     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
-            crate::game::components::insider_group::InsiderGroupRef::Mafia
+            crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
 }

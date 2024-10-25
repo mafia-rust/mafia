@@ -36,9 +36,9 @@ impl RoleStateImpl for Mafioso {
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupRef> {
+     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
-            crate::game::components::insider_group::InsiderGroupRef::Mafia
+            crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
 }

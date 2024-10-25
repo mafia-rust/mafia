@@ -10,13 +10,13 @@ pub struct RevealedGroups{
 }
 impl RevealedGroups{
     pub fn on_remove_role_label(game: &mut Game, player: PlayerReference, concealed_player: PlayerReference){
-        InsiderGroupRef::Mafia.on_remove_role_label(game, player, concealed_player);
-        InsiderGroupRef::Cult.on_remove_role_label(game, player, concealed_player);
-        InsiderGroupRef::Puppeteer.on_remove_role_label(game, player, concealed_player);
+        InsiderGroupID::Mafia.on_remove_role_label(game, player, concealed_player);
+        InsiderGroupID::Cult.on_remove_role_label(game, player, concealed_player);
+        InsiderGroupID::Puppeteer.on_remove_role_label(game, player, concealed_player);
     }
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
-pub enum InsiderGroupRef{
+pub enum InsiderGroupID{
     Mafia,
     Cult,
     Puppeteer
@@ -41,26 +41,26 @@ impl<'a> From<&'a mut RevealedGroup> for &'a mut VecSet<PlayerReference> {
     }
 }
 
-impl InsiderGroupRef{
-    pub fn all()->HashSet<InsiderGroupRef>{
+impl InsiderGroupID{
+    pub fn all()->HashSet<InsiderGroupID>{
         vec![
-            InsiderGroupRef::Mafia,
-            InsiderGroupRef::Cult,
-            InsiderGroupRef::Puppeteer
+            InsiderGroupID::Mafia,
+            InsiderGroupID::Cult,
+            InsiderGroupID::Puppeteer
         ].into_iter().collect()
     }
     fn revealed_group<'a>(&self, game: &'a Game)->&'a RevealedGroup{
         match self{
-            InsiderGroupRef::Mafia=>&game.revealed_groups.mafia,
-            InsiderGroupRef::Cult=>&game.revealed_groups.cult,
-            InsiderGroupRef::Puppeteer=>&game.revealed_groups.puppeteer
+            InsiderGroupID::Mafia=>&game.revealed_groups.mafia,
+            InsiderGroupID::Cult=>&game.revealed_groups.cult,
+            InsiderGroupID::Puppeteer=>&game.revealed_groups.puppeteer
         }
     }
     fn revealed_group_mut<'a>(&self, game: &'a mut Game)->&'a mut RevealedGroup{
         match self{
-            InsiderGroupRef::Mafia=>&mut game.revealed_groups.mafia,
-            InsiderGroupRef::Cult=>&mut game.revealed_groups.cult,
-            InsiderGroupRef::Puppeteer=>&mut game.revealed_groups.puppeteer
+            InsiderGroupID::Mafia=>&mut game.revealed_groups.mafia,
+            InsiderGroupID::Cult=>&mut game.revealed_groups.cult,
+            InsiderGroupID::Puppeteer=>&mut game.revealed_groups.puppeteer
         }
     }
     pub fn reveal_group_players(&self, game: &mut Game){
@@ -88,8 +88,8 @@ impl InsiderGroupRef{
             self.reveal_group_players(game);
         }
     }
-    pub fn set_player_revealed_groups(set: VecSet<InsiderGroupRef>, game: &mut Game, player: PlayerReference){
-        for group in InsiderGroupRef::all(){
+    pub fn set_player_revealed_groups(set: VecSet<InsiderGroupID>, game: &mut Game, player: PlayerReference){
+        for group in InsiderGroupID::all(){
             if set.contains(&group){
                 group.add_player_to_revealed_group(game, player);
             }else{
@@ -97,8 +97,8 @@ impl InsiderGroupRef{
             }
         }
     }
-    pub fn start_game_set_player_revealed_groups(set: VecSet<InsiderGroupRef>, game: &mut Game, player: PlayerReference){
-        for group in InsiderGroupRef::all(){
+    pub fn start_game_set_player_revealed_groups(set: VecSet<InsiderGroupID>, game: &mut Game, player: PlayerReference){
+        for group in InsiderGroupID::all(){
             if set.contains(&group){
                 let players: &mut VecSet<PlayerReference> = group.revealed_group_mut(game).into();
                 players.insert(player);
@@ -121,6 +121,6 @@ impl InsiderGroupRef{
         players.contains(&a) && players.contains(&b)
     }
     pub fn players_in_same_revealed_group(game: &Game, a: PlayerReference, b: PlayerReference)->bool{
-        InsiderGroupRef::all().iter().any(|group| group.players_both_in_revealed_group(game, a, b))
+        InsiderGroupID::all().iter().any(|group| group.players_both_in_revealed_group(game, a, b))
     }
 }

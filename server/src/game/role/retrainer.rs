@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::components::insider_group::InsiderGroupRef;
+use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::RoleSet;
@@ -86,7 +86,7 @@ impl RoleStateImpl for Retrainer {
         game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackup { backup: backup.map(|p|p.index()) });
 
         for player_ref in PlayerReference::all_players(game){
-            if !InsiderGroupRef::Mafia.is_player_in_revealed_group(game, player_ref){
+            if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player_ref){
                 continue;
             }
             player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
@@ -94,7 +94,7 @@ impl RoleStateImpl for Retrainer {
 
         if let Some(backup) = backup {
             for player_ref in PlayerReference::all_players(game){
-                if !InsiderGroupRef::Mafia.is_player_in_revealed_group(game, player_ref) {
+                if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player_ref) {
                     continue;
                 }
                 player_ref.push_player_tag(game, backup, Tag::GodfatherBackup);
@@ -106,7 +106,7 @@ impl RoleStateImpl for Retrainer {
         actor_ref != target_ref &&
         actor_ref.alive(game) && target_ref.alive(game) &&
         RoleSet::Mafia.get_roles().contains(&target_ref.role(game)) &&
-        InsiderGroupRef::Mafia.is_player_in_revealed_group(game, target_ref)
+        InsiderGroupID::Mafia.is_player_in_revealed_group(game, target_ref)
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
@@ -118,7 +118,7 @@ impl RoleStateImpl for Retrainer {
 
             actor_ref.set_role_state(game, RoleState::Retrainer(Retrainer{backup: None, ..self}));
             for player_ref in PlayerReference::all_players(game){
-                if InsiderGroupRef::Mafia.is_player_in_revealed_group(game, player_ref){
+                if InsiderGroupID::Mafia.is_player_in_revealed_group(game, player_ref){
                     continue;
                 }
                 player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
@@ -133,9 +133,9 @@ impl RoleStateImpl for Retrainer {
             actor_ref.set_role_state(game, RoleState::Retrainer(Retrainer{backup: None, ..self}));
         }
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupRef> {
+     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
-            crate::game::components::insider_group::InsiderGroupRef::Mafia
+            crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
 }

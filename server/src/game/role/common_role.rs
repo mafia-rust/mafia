@@ -4,7 +4,7 @@ use crate::game::{
     chat::ChatGroup, components::{detained::Detained, puppeteer_marionette::PuppeteerMarionette}, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, game_conclusion::GameConclusion, role_list::RoleSet, visit::Visit, win_condition::WinCondition, Game
 };
 
-use super::{reporter::Reporter, medium::Medium, InsiderGroupRef, Role, RoleState};
+use super::{reporter::Reporter, medium::Medium, InsiderGroupID, Role, RoleState};
 
 
 pub(super) fn can_night_select(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -14,7 +14,7 @@ pub(super) fn can_night_select(game: &Game, actor_ref: PlayerReference, target_r
     actor_ref.selection(game).is_empty() &&
     actor_ref.alive(game) &&
     target_ref.alive(game) &&
-    !InsiderGroupRef::players_in_same_revealed_group(game, actor_ref, target_ref)
+    !InsiderGroupID::players_in_same_revealed_group(game, actor_ref, target_ref)
 }
 
 pub(super) fn convert_selection_to_visits(_game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, attack: bool) -> Vec<Visit> {
@@ -44,13 +44,13 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         PhaseState::Obituary => {
             let mut evil_chat_groups = HashSet::new();
 
-            if InsiderGroupRef::Puppeteer.is_player_in_revealed_group(game, actor_ref) {
+            if InsiderGroupID::Puppeteer.is_player_in_revealed_group(game, actor_ref) {
                 evil_chat_groups.insert(ChatGroup::Puppeteer);
             }
-            if InsiderGroupRef::Cult.is_player_in_revealed_group(game, actor_ref) {
+            if InsiderGroupID::Cult.is_player_in_revealed_group(game, actor_ref) {
                 evil_chat_groups.insert(ChatGroup::Cult);
             }
-            if InsiderGroupRef::Mafia.is_player_in_revealed_group(game, actor_ref) {
+            if InsiderGroupID::Mafia.is_player_in_revealed_group(game, actor_ref) {
                 evil_chat_groups.insert(ChatGroup::Mafia);
             }
 
@@ -116,13 +116,13 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
             ) {
                 vec![ChatGroup::Kidnapped]
             }else{
-                if InsiderGroupRef::Puppeteer.is_player_in_revealed_group(game, actor_ref){
+                if InsiderGroupID::Puppeteer.is_player_in_revealed_group(game, actor_ref){
                     night_chat_groups.push(ChatGroup::Puppeteer);
                 }
-                if InsiderGroupRef::Mafia.is_player_in_revealed_group(game, actor_ref){
+                if InsiderGroupID::Mafia.is_player_in_revealed_group(game, actor_ref){
                     night_chat_groups.push(ChatGroup::Mafia);
                 }
-                if InsiderGroupRef::Cult.is_player_in_revealed_group(game, actor_ref){
+                if InsiderGroupID::Cult.is_player_in_revealed_group(game, actor_ref){
                     night_chat_groups.push(ChatGroup::Cult);
                 }
                 night_chat_groups
@@ -143,13 +143,13 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
         out.push(ChatGroup::Dead);
     }
 
-    if InsiderGroupRef::Mafia.is_player_in_revealed_group(game, actor_ref) {
+    if InsiderGroupID::Mafia.is_player_in_revealed_group(game, actor_ref) {
         out.push(ChatGroup::Mafia);
     }
-    if InsiderGroupRef::Cult.is_player_in_revealed_group(game, actor_ref) {
+    if InsiderGroupID::Cult.is_player_in_revealed_group(game, actor_ref) {
         out.push(ChatGroup::Cult);
     }
-    if InsiderGroupRef::Puppeteer.is_player_in_revealed_group(game, actor_ref){
+    if InsiderGroupID::Puppeteer.is_player_in_revealed_group(game, actor_ref){
         out.push(ChatGroup::Puppeteer);
     }
 

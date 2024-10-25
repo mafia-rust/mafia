@@ -7,7 +7,7 @@ use crate::game::{attack_power::DefensePower, player::PlayerReference};
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{InsiderGroupRef, Priority, Role, RoleStateImpl};
+use super::{InsiderGroupID, Priority, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -47,7 +47,7 @@ impl RoleStateImpl for Framer {
                 let mut chat_messages = Vec::new();
 
                 for player in PlayerReference::all_players(game){
-                    if !InsiderGroupRef::players_in_same_revealed_group(game, actor_ref, player) {continue;}
+                    if !InsiderGroupID::players_in_same_revealed_group(game, actor_ref, player) {continue;}
 
                     let visitors_roles: Vec<Role> = PlayerReference::all_appeared_visitors(player, game)
                         .iter()
@@ -63,7 +63,7 @@ impl RoleStateImpl for Framer {
                 }
 
                 for player in PlayerReference::all_players(game){
-                    if !InsiderGroupRef::players_in_same_revealed_group(game, actor_ref, player) {continue;}
+                    if !InsiderGroupID::players_in_same_revealed_group(game, actor_ref, player) {continue;}
                     for msg in chat_messages.iter(){
                         player.push_night_message(game, msg.clone());
                     }
@@ -83,7 +83,7 @@ impl RoleStateImpl for Framer {
             actor_ref.selection(game).is_empty() &&
             actor_ref != target_ref &&
             target_ref.alive(game) &&
-            !InsiderGroupRef::players_in_same_revealed_group(game, actor_ref, target_ref)
+            !InsiderGroupID::players_in_same_revealed_group(game, actor_ref, target_ref)
         ) || 
         (
             actor_ref.selection(game).len() == 1
@@ -104,9 +104,9 @@ impl RoleStateImpl for Framer {
             Vec::new()
         }
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupRef> {
+     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
-            crate::game::components::insider_group::InsiderGroupRef::Mafia
+            crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
 }

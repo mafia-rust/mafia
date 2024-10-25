@@ -10,7 +10,7 @@ use crate::game::{
     tag::Tag, 
     win_condition::WinCondition, 
     Game,
-    InsiderGroupRef
+    InsiderGroupID
 };
 
 impl Game{
@@ -30,11 +30,11 @@ impl MafiaRecruits{
     pub fn recruit(game: &mut Game, player: PlayerReference)->bool{
         let mut recruiter_recruits = game.mafia_recruits().clone();
 
-        if InsiderGroupRef::Mafia.is_player_in_revealed_group(game, player) {return false;}
+        if InsiderGroupID::Mafia.is_player_in_revealed_group(game, player) {return false;}
         if !recruiter_recruits.recruits.insert(player){return false;}
 
         game.set_recruiter_recruits(recruiter_recruits);
-        InsiderGroupRef::Mafia.add_player_to_revealed_group(game, player);
+        InsiderGroupID::Mafia.add_player_to_revealed_group(game, player);
         player.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any: vec![GameConclusion::Mafia].into_iter().collect() });
 
 
@@ -70,7 +70,7 @@ impl MafiaRecruits{
     }
 
     pub fn give_tags_and_labels(game: &mut Game){
-        for player_a in InsiderGroupRef::Mafia.players(game).clone() {
+        for player_a in InsiderGroupID::Mafia.players(game).clone() {
             for player_b in Self::recruits(game) {
                 if 
                     player_a.player_has_tag(game, player_b, Tag::PuppeteerMarionette) == 0
@@ -93,7 +93,7 @@ impl MafiaRecruits{
     }
     pub fn mafia_members(game: &Game)->HashSet<PlayerReference>{
         PlayerReference::all_players(game)
-            .filter(|p|InsiderGroupRef::Mafia.is_player_in_revealed_group(game, *p))
+            .filter(|p|InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p))
             .map(|p|p.clone())
             .collect()
     }
