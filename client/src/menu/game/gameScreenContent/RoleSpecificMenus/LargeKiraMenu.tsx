@@ -7,12 +7,12 @@ import "./largeKiraMenu.css";
 
 export const KIRA_GUESSES = [
     "none",
-    "mafia", "neutral", "fiends", "cult",
+    "nonTown",
     "jailor", "villager",  
-    "detective", "lookout", "spy", "tracker", "philosopher", "psychic", "auditor", "snoop", "gossip", "flowerGirl",
-    "doctor",  "bodyguard",  "cop", "bouncer", "engineer", "armorsmith",
-    "vigilante",  "veteran", "marksman", "deputy",
-    "escort",  "medium",  "retributionist", "journalist", "mayor",  "transporter", 
+    "detective", "lookout", "spy", "tracker", "philosopher", "psychic", "auditor", "snoop", "gossip", "tallyClerk",
+    "doctor",  "bodyguard",  "cop", "bouncer", "engineer", "armorsmith", "steward",
+    "vigilante",  "veteran", "marksman", "deputy", "rabblerouser",
+    "escort",  "medium",  "retributionist", "reporter", "mayor",  "transporter", "warper",
 ];
 
 export type KiraGuess = typeof KIRA_GUESSES[number];

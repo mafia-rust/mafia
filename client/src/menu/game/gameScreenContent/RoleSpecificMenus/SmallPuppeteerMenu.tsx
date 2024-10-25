@@ -15,15 +15,14 @@ export default function SmallPuppeteerMenu(props: {action: PuppeteerAction, mari
     }
 
     return <>
+        <StyledText>{translate("role.puppeteer.smallRoleMenu", translate(props.action))}</StyledText>
         <Counter
             max={3}
             current={props.marionettesRemaining}
         >
             <StyledText>{translate("role.puppeteer.smallRoleMenu.marionettesRemaining", props.marionettesRemaining)}</StyledText>
         </Counter>
-        {props.marionettesRemaining === 0 && <StyledText>{translate("role.puppeteer.smallRoleMenu.noneRemaining")}</StyledText>}
         {props.marionettesRemaining > 0 && props.phase === "night" ? <div>
-            <StyledText>{translate("role.puppeteer.smallRoleMenu")}</StyledText>
             <ActionTypeDropdown
                 action={props.action}
                 onChange={(a)=>{sendAction(a)}}

@@ -7,33 +7,35 @@ use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 
 use crate::game::Game;
 use super::{Priority, RoleState, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Journalist {
+pub struct Reporter {
     pub public: bool,
-    pub journal: String,
+    pub report: String,
     pub interviewed_target: Option<PlayerReference>, 
 }
-impl Default for Journalist {
+
+impl Default for Reporter {
     fn default() -> Self {
-        Journalist {
+        Reporter {
             public: true,
-            journal: "".to_string(),
+            report: "".to_string(),
             interviewed_target: None,
         }
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Journalist {
+impl RoleStateImpl for Reporter {
+    type ClientRoleState = Reporter;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if 
             priority == Priority::Investigative &&
@@ -42,18 +44,18 @@ impl RoleStateImpl for Journalist {
             !actor_ref.night_blocked(game) &&
             !actor_ref.night_silenced(game)
         {
-            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::JournalistJournal { journal: self.journal.clone()});    
+            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::ReporterReport { report: self.report.clone()});    
         }
     }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
         if let Some(old_target_ref) = self.interviewed_target {
             if old_target_ref == target_ref {
-                actor_ref.set_role_state(game, RoleState::Journalist(Journalist { interviewed_target: None, ..self}));
+                actor_ref.set_role_state(game, RoleState::Reporter(Reporter { interviewed_target: None, ..self}));
             } else {
-                actor_ref.set_role_state(game, RoleState::Journalist(Journalist { interviewed_target: Some(target_ref), ..self }));
+                actor_ref.set_role_state(game, RoleState::Reporter(Reporter { interviewed_target: Some(target_ref), ..self }));
             }
         } else {
-            actor_ref.set_role_state(game, RoleState::Journalist(Journalist { interviewed_target: Some(target_ref), ..self }));
+            actor_ref.set_role_state(game, RoleState::Reporter(Reporter { interviewed_target: Some(target_ref), ..self }));
         }
     }
     fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -97,8 +99,8 @@ impl RoleStateImpl for Journalist {
                         let mut message_sent = false;
                         for chat_group in interviewed_target_ref.get_current_send_chat_groups(game){
                             match chat_group {
-                                ChatGroup::All | ChatGroup::Jail | ChatGroup::Interview | ChatGroup::Dead => {},
-                                ChatGroup::Mafia | ChatGroup::Cult  => {
+                                ChatGroup::All | ChatGroup::Jail | ChatGroup::Kidnapped | ChatGroup::Interview | ChatGroup::Dead => {},
+                                ChatGroup::Mafia | ChatGroup::Cult | ChatGroup::Puppeteer  => {
                                     game.add_message_to_chat_group(
                                         chat_group,
                                         ChatMessageVariant::PlayerIsBeingInterviewed { player_index: interviewed_target_ref.index() }
@@ -115,16 +117,17 @@ impl RoleStateImpl for Journalist {
 
                     }else{
                         self.interviewed_target = None;
-                        actor_ref.set_role_state(game, RoleState::Journalist(Journalist{interviewed_target: None, ..self}));
+                        actor_ref.set_role_state(game, RoleState::Reporter(Reporter{interviewed_target: None, ..self}));
                     }
                 }
             },
             PhaseType::Obituary => {
                 self.interviewed_target = None;
-                actor_ref.set_role_state(game, RoleState::Journalist(Journalist{interviewed_target: None, ..self}));
+                actor_ref.set_role_state(game, RoleState::Reporter(Reporter{interviewed_target: None, ..self}));
             },
             _ => {}
         }
         
     }
+    fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
 }

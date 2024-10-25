@@ -7,24 +7,27 @@ use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::{PhaseType, PhaseState};
 use crate::game::player::PlayerReference;
 use crate::game::role::RoleState;
-use crate::game::role_list::Faction;
+
 use crate::game::verdict::Verdict;
 
 use crate::game::Game;
-use super::{Priority, RoleStateImpl};
+use super::{GetClientRoleState, Priority, RoleStateImpl};
 
-#[derive(Clone, Serialize, Debug, Default)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Default)]
 pub struct Jester {
     lynched_yesterday: bool,
     won: bool,
 }
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+#[derive(Clone, Serialize, Debug)]
+pub struct ClientRoleState;
+
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Jester {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::TopPriority {return;}
         if actor_ref.alive(game) {return;}
@@ -44,7 +47,7 @@ impl RoleStateImpl for Jester {
                 *target_ref
             },
         };
-        player.try_night_kill(actor_ref, game, 
+        player.try_night_kill_single_attacker(actor_ref, game, 
             crate::game::grave::GraveKiller::Role(super::Role::Jester), AttackPower::ProtectionPiercing, true
         );
     }
@@ -55,9 +58,6 @@ impl RoleStateImpl for Jester {
         target_ref.alive(game) &&
         target_ref.verdict(game) != Verdict::Innocent &&
         self.lynched_yesterday
-    }
-    fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
-        self.won
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         match game.current_phase() {
@@ -85,5 +85,16 @@ impl RoleStateImpl for Jester {
         {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::JesterWon);
         }
+    }
+}
+impl GetClientRoleState<ClientRoleState> for Jester {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
+        ClientRoleState
+    }
+}
+
+impl Jester {
+    pub fn won(&self) -> bool {
+        self.won
     }
 }

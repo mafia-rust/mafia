@@ -4,8 +4,9 @@ use serde::Serialize;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::cult::{Cult, CultAbility};
+use crate::game::components::revealed_group::RevealedGroupID;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 use crate::game::Game;
 
@@ -23,19 +24,23 @@ pub enum SpyBug{
     Transported, Possessed
 }
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Spy {
+    type ClientRoleState = Spy;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+        
+        if !actor_ref.alive(game) {return;}
+
         match priority {
             Priority::Investigative => {
                 if actor_ref.night_blocked(game) {return;}
 
                 let mut mafia_visits = vec![];
                 for other_player in PlayerReference::all_players(game){
-                    if other_player.role(game).faction() == Faction::Mafia{
+                    if RevealedGroupID::Mafia.is_player_in_revealed_group(game, other_player) {
                         mafia_visits.append(&mut other_player.night_visits(game).iter().map(|v|v.target.index()).collect());
                     }
                 }
@@ -64,7 +69,7 @@ impl RoleStateImpl for Spy {
                 if actor_ref.night_blocked(game) {return;}
 
                 let count = PlayerReference::all_players(game).filter(|p|
-                    p.role(game).faction() == Faction::Cult && p.alive(game)
+                    p.alive(game) && RevealedGroupID::Cult.is_player_in_revealed_group(game, *p)
                 ).count() as u8;
 
                 if count > 0 {

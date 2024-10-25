@@ -1,11 +1,11 @@
-import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, LobbyClientID, ChatGroup, PhaseState, LobbyClient } from "./gameState.d"
+import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, LobbyClientID, ChatGroup, PhaseState, LobbyClient, ModifierType } from "./gameState.d"
 import { Grave } from "./graveState"
 import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
 import { Role, RoleState } from "./roleState.d"
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu"
-import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu"
 import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu"
+import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu"
 
 export type LobbyPreviewData = {
     name: string,
@@ -17,6 +17,10 @@ export type ToClientPacket = {
     type: "pong",
 } | {
     type: "rateLimitExceeded",
+} | {
+    type: "forcedOutsideLobby"
+} | {
+    type: "forcedDisconnect"
 } | {
     type: "lobbyList",
     lobbies: Record<number, LobbyPreviewData>,
@@ -50,6 +54,9 @@ export type ToClientPacket = {
     type: "playersHost",
     hosts: LobbyClientID[],
 } | {
+    type: "playersReady",
+    ready: LobbyClientID[],
+} | {
     type: "playersLostConnection",
     lostConnection: LobbyClientID[],
 } | {
@@ -78,7 +85,10 @@ export type ToClientPacket = {
 } | {
     type: "enabledRoles",
     roles: Role[]
-} | 
+} | {
+    type: "enabledModifiers",
+    modifiers: ModifierType[]
+} |
 // Game
 {
     type: "phase",
@@ -117,7 +127,7 @@ export type ToClientPacket = {
     will: string
 } | {
     type: "yourNotes",
-    notes: string
+    notes: string[]
 } | {
     type: "yourCrossedOutOutlines",
     crossedOutOutlines: number[]
@@ -143,6 +153,9 @@ export type ToClientPacket = {
     type: "addChatMessages",
     chatMessages: ChatMessage[]
 } | {
+    type: "nightMessages",
+    chatMessages: ChatMessage[]
+} | {
     type: "addGrave",
     grave: Grave
 } | {
@@ -151,6 +164,9 @@ export type ToClientPacket = {
 } | {
     type: "yourForfeitVote",
     forfeit: boolean
+} | {
+    type: "yourPitchforkVote",
+    player: PlayerIndex | null
 }
 
 export type ToServerPacket = {
@@ -177,6 +193,9 @@ export type ToServerPacket = {
 } | {
     type: "setName", 
     name: string
+} | {
+    type: "readyUp", 
+    ready: boolean
 } | {
     type: "sendLobbyMessage",
     text: string
@@ -205,6 +224,9 @@ export type ToServerPacket = {
     type: "setEnabledRoles", 
     roles: Role[], 
 } | {
+    type: "setEnabledModifiers",
+    modifiers: ModifierType[]
+} | {
     type: "backToLobby",
 } |
 // Game
@@ -232,7 +254,7 @@ export type ToServerPacket = {
     will: string
 } | {
     type: "saveNotes", 
-    notes: string
+    notes: string[]
 } | {
     type: "saveCrossedOutOutlines",
     crossedOutOutlines: number[]
@@ -262,10 +284,10 @@ export type ToServerPacket = {
     type: "setWildcardRole",
     role: Role
 } | {
-    type: "setJournalistJournal",
-    journal: string
+    type: "setReporterReport",
+    report: string
 } | {
-    type: "setJournalistJournalPublic",
+    type: "setReporterReportPublic",
     public: boolean
 } | {
     type: "setConsortOptions",
@@ -285,11 +307,11 @@ export type ToServerPacket = {
     type: "setAuditorChosenOutline",
     index: number
 } | {
-    type: "setOjoAction",
-    action: OjoAction
-} | {
     type: "setPuppeteerAction",
     action: PuppeteerAction
+} | {
+    type: "setRecruiterAction",
+    action: RecruiterAction
 } | {
     type: "setErosAction",
     action: "loveLink" | "kill"
@@ -297,9 +319,15 @@ export type ToServerPacket = {
     type: "retrainerRetrain",
     role: Role
 } | {
+    type: "setRoleChosen",
+    role: Role | null
+} | {
     type: "voteFastForwardPhase",
     fastForward: boolean
 } | {
     type: "forfeitVote",
     forfeit: boolean
+} | {
+    type: "pitchforkVote",
+    player: PlayerIndex | null
 }

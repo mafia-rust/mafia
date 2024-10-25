@@ -3,11 +3,11 @@ use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::resolution_state::ResolutionState;
+use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 
 use crate::game::Game;
 use super::{RoleStateImpl, Role, RoleState};
@@ -20,17 +20,19 @@ use super::{RoleStateImpl, Role, RoleState};
 pub struct Deputy {
     bullets_remaining: u8,
 }
+
 impl Default for Deputy {
     fn default() -> Self {
         Self { bullets_remaining: 1 }
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Deputy {
+    type ClientRoleState = Deputy;
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
 
         target_ref.add_private_chat_message(game, ChatMessageVariant::DeputyShotYou);
@@ -49,7 +51,7 @@ impl RoleStateImpl for Deputy {
             target_ref.die(game, grave);
             
 
-            if ResolutionState::requires_only_this_resolution_state(game, target_ref, ResolutionState::Town) {
+            if target_ref.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) {
                 actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
             }
         }

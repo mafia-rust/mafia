@@ -3,15 +3,15 @@ import GameState, { LobbyClient, LobbyState, PhaseTimes, Player, LobbyClientID, 
 
 export function defaultPhaseTimes(): PhaseTimes {
     return {
-        briefing: 20,
-        obituary: 10,
-        discussion: 100,
+        briefing: 45,
+        obituary: 60,
+        discussion: 120,
         nomination: 120,
         testimony: 30,
-        judgement: 30,
-        finalWords: 7,
-        dusk: 7,
-        night: 45,
+        judgement: 60,
+        finalWords: 30,
+        dusk: 30,
+        night: 60,
     }
 }
 
@@ -24,8 +24,9 @@ export function createLobbyState(): LobbyState {
         myId: null,
 
         roleList: [],
-        enabledRoles: [],
         phaseTimes: defaultPhaseTimes(),
+        enabledRoles: [],
+        enabledModifiers: [],
 
         players: new Map<LobbyClientID, LobbyClient>(),
         chatMessages: [],
@@ -51,6 +52,7 @@ export function createGameState(): GameState {
         roleList: [],
         enabledRoles: [],
         phaseTimes: defaultPhaseTimes(),
+        enabledModifiers: [],
 
         ticking: true,
 
@@ -69,7 +71,7 @@ export function createPlayerGameState(): PlayerGameState {
         roleState: { type: "detective" },
 
         will: "",
-        notes: "",
+        notes: [],
         crossedOutOutlines: [],
         chatFilter: null,
         deathNote: "",
@@ -78,6 +80,7 @@ export function createPlayerGameState(): PlayerGameState {
         judgement: "abstain",
 
         forfeitVote: false,
+        pitchforkVote: null,
 
         sendChatGroups: [],
     }

@@ -4,7 +4,7 @@ use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::{role_can_generate, Faction};
+use crate::game::role_list::role_can_generate;
 use crate::game::Game;
 
 use super::{RoleStateImpl, Role};
@@ -14,6 +14,7 @@ use super::{RoleStateImpl, Role};
 pub struct Wildcard{
     pub role: Role
 }
+
 impl Default for Wildcard {
     fn default() -> Self {
         Self {
@@ -22,11 +23,12 @@ impl Default for Wildcard {
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Wildcard {
+    type ClientRoleState = Wildcard;
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Night => {
@@ -52,7 +54,7 @@ impl Wildcard {
                     .collect::<Vec<Role>>()
             )
         {
-            actor_ref.set_role(game, self.role.default_state());
+            actor_ref.set_role_and_win_condition_and_revealed_group(game, self.role.default_state());
         }else{
             actor_ref.add_private_chat_message(game, ChatMessageVariant::WildcardConvertFailed{role: self.role.clone()})
         }

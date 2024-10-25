@@ -12,9 +12,20 @@ use crate::game::attack_power::DefensePower;
 
 use serde::{Serialize, Deserialize};
 
-use super::{event::before_role_switch::BeforeRoleSwitch, grave::GraveReference};
+use super::{components::revealed_group::RevealedGroupID, event::before_role_switch::BeforeRoleSwitch, grave::GraveReference, win_condition::WinCondition};
 
-trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
+pub trait GetClientRoleState<CRS> {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> CRS;
+}
+//Automatically implement this for the case where RoleState = ClientRoleState
+impl<T> GetClientRoleState<T> for T {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> T {
+        self
+    }
+}
+
+pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<<Self as RoleStateImpl>::ClientRoleState> {
+    type ClientRoleState: Clone + std::fmt::Debug + Serialize;
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {}
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
 
@@ -35,8 +46,12 @@ trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
-    fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::get_won_game(game, actor_ref)
+    fn default_revealed_groups(self) -> HashSet<RevealedGroupID> {
+        HashSet::new()
+    }
+    fn default_win_condition(self) -> WinCondition where RoleState: From<Self>{
+        let role_state: RoleState = self.into();
+        crate::game::role::common_role::default_win_condition(role_state.role())
     }
 
     fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType) {}
@@ -45,6 +60,8 @@ trait RoleStateImpl: Clone + std::fmt::Debug + Serialize + Default {
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference) {}
     fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave: GraveReference) {}
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference) {}
+    fn on_game_start(self, _game: &mut Game, _actor_ref: PlayerReference) {}
+    fn before_initial_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
 }
 
 // Creates the Role enum
@@ -61,7 +78,7 @@ macros::roles! {
     Auditor : auditor,
     Snoop : snoop,
     Gossip : gossip,
-    FlowerGirl : flower_girl,
+    TallyClerk : tally_clerk,
 
     Doctor : doctor,
     Bodyguard : bodyguard,
@@ -69,16 +86,18 @@ macros::roles! {
     Bouncer : bouncer,
     Engineer : engineer,
     Armorsmith : armorsmith,
+    Steward : steward,
 
     Vigilante : vigilante,
     Veteran : veteran,
     Marksman: marksman,
     Deputy : deputy,
+    Rabblerouser : rabblerouser,
 
     Escort : escort,
     Medium : medium,
     Retributionist : retributionist,
-    Journalist : journalist,
+    Reporter : reporter,
     Mayor : mayor,
     Transporter : transporter,
 
@@ -86,8 +105,11 @@ macros::roles! {
     Godfather : godfather,
     Eros: eros,
     Counterfeiter : counterfeiter,
+    Impostor : impostor,
     Retrainer : retrainer,
+    Recruiter : recruiter,
     Mafioso : mafioso,
+    MafiaKillingWildcard : mafia_killing_wildcard,
 
     MadeMan : made_man,
     Consort : consort,
@@ -95,7 +117,7 @@ macros::roles! {
     Hypnotist : hypnotist,
     Blackmailer : blackmailer,
     Informant: informant,
-    Witch : witch,
+    MafiaWitch : mafia_witch,
     Necromancer : necromancer,
     Mortician : mortician,
     Framer : framer,
@@ -105,13 +127,17 @@ macros::roles! {
 
     // Neutral
     Jester : jester,
-    RabbleRouser : rabble_rouser,
+    Revolutionary : revolutionary,
     Politician : politician,
-
-    Minion : minion,
-    Scarecrow : scarecrow,
     Doomsayer : doomsayer,
     Death : death,
+    Drunk : drunk,
+
+    Witch : witch,
+    Scarecrow : scarecrow,
+    Warper : warper,
+    Kidnapper : kidnapper,
+    Chronokaiser : chronokaiser,
 
     Arsonist : arsonist,
     Werewolf : werewolf,
@@ -135,6 +161,7 @@ macros::priorities! {
     Ward,
 
     Transporter,
+    Warper,
 
     Possess,
     Roleblock,
@@ -147,6 +174,7 @@ macros::priorities! {
 
     Heal,
     Kill,
+    Poison,
     Investigative,
 
     Cupid,
@@ -167,6 +195,7 @@ mod macros {
             $($name:ident : $file:ident),*
         ) => {
             $(pub mod $file;)*
+            $(use crate::game::role::$file::$name;)*
 
             #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, Serialize, Deserialize, PartialOrd, Ord)]
             #[serde(rename_all = "camelCase")]
@@ -187,11 +216,6 @@ mod macros {
                         $(Self::$name => $file::MAXIMUM_COUNT),*
                     }
                 }
-                pub fn faction(&self) -> crate::game::role_list::Faction {
-                    match self {
-                        $(Self::$name => $file::FACTION),*
-                    }
-                }
                 pub fn defense(&self) -> DefensePower {
                     match self {
                         $(Self::$name => $file::DEFENSE),*
@@ -199,10 +223,15 @@ mod macros {
                 }
             }
 
-            // This does not need to implement Deserialize or PartialEq!
-            // Use Role for those things!
             #[derive(Clone, Debug, Serialize)]
             #[serde(tag = "type", rename_all = "camelCase")]
+            pub enum ClientRoleStateEnum {
+                $($name(<$name as RoleStateImpl>::ClientRoleState)),*
+            }
+
+            // This does not need to implement Deserialize or PartialEq!
+            // Use Role for those things!
+            #[derive(Clone, Debug)]
             pub enum RoleState {
                 $($name($file::$name)),*
             }
@@ -248,9 +277,14 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.get_current_receive_chat_groups(game, actor_ref)),*
                     }
                 }
-                pub fn get_won_game(self, game: &Game, actor_ref: PlayerReference) -> bool{
+                pub fn default_revealed_groups(self) -> HashSet<RevealedGroupID>{
                     match self {
-                        $(Self::$name(role_struct) => role_struct.get_won_game(game, actor_ref)),*
+                        $(Self::$name(role_struct) => role_struct.default_revealed_groups()),*
+                    }
+                }
+                pub fn default_win_condition(self) -> WinCondition{
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.default_win_condition()),*
                     }
                 }
                 pub fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
@@ -278,12 +312,34 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.on_grave_added(game, actor_ref, grave)),*
                     }
                 }
+                pub fn on_game_start(self, game: &mut Game, actor_ref: PlayerReference){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_game_start(game, actor_ref)),*
+                    }
+                }
                 pub fn on_game_ending(self, game: &mut Game, actor_ref: PlayerReference){
                     match self {
                         $(Self::$name(role_struct) => role_struct.on_game_ending(game, actor_ref)),*
                     }
                 }
+                pub fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.before_initial_role_creation(game, actor_ref)),*
+                    }
+                }
+                pub fn get_client_role_state(self, game: &Game, actor_ref: PlayerReference) -> ClientRoleStateEnum {
+                    match self {
+                        $(Self::$name(role_struct) => ClientRoleStateEnum::$name(role_struct.get_client_role_state(game, actor_ref))),*
+                    }
+                }
             }
+            $(
+                impl From<$file::$name> for RoleState where $name: RoleStateImpl {
+                    fn from(role_struct: $file::$name) -> Self {
+                        RoleState::$name(role_struct)
+                    }
+                }
+            )*
         }
     }
 
@@ -310,12 +366,12 @@ mod macros {
 impl Role{
     pub fn possession_immune(&self)->bool{
         match self {
-            Role::FlowerGirl
+            Role::TallyClerk
             | Role::Bouncer
             | Role::Veteran
             | Role::Transporter | Role::Retributionist
-            | Role::Minion | Role::Doomsayer | Role::Scarecrow
-            | Role::Witch | Role::Necromancer
+            | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper
+            | Role::MafiaWitch | Role::Necromancer
             | Role::Ojo => true,
             _ => false,
         }
@@ -325,16 +381,15 @@ impl Role{
             Role::Bouncer |
             Role::Veteran | 
             Role::Transporter | Role::Escort | Role::Retributionist | 
-            Role::Jester | Role::Minion | Role::Scarecrow |
-            Role::Hypnotist | Role::Consort | Role::Witch | Role::Necromancer => true,
+            Role::Jester | Role::Witch | Role::Scarecrow | Role::Warper |
+            Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer => true,
             _ => false,
         }
     }
     pub fn wardblock_immune(&self)->bool{
         match self {
-            Role::Jailor
-            | Role::Bouncer
-            | Role::Scarecrow => true,
+            Role::Jailor | Role::Kidnapper |
+            Role::Bouncer | Role::Scarecrow => true,
             _ => false
         }
     }
@@ -348,12 +403,6 @@ impl Role{
         }
     }
     pub fn has_suspicious_aura(&self, _game: &Game)->bool{
-        match self {
-            _ => false,
-        }
+        false
     }
-}
-pub fn same_evil_team(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    (actor_ref.role(game).faction() == super::role_list::Faction::Mafia && target_ref.role(game).faction() == super::role_list::Faction::Mafia) ||
-    (actor_ref.role(game).faction() == super::role_list::Faction::Cult && target_ref.role(game).faction() == super::role_list::Faction::Cult)
 }

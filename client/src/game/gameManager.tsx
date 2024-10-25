@@ -16,6 +16,7 @@ import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
 import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import AudioController from "../menu/AudioController";
+
 export function createGameManager(): GameManager {
 
     console.log("Game manager created.");
@@ -79,7 +80,7 @@ export function createGameManager(): GameManager {
                 GAME_MANAGER.state.roleList = lobbyState.roleList;
                 GAME_MANAGER.state.phaseTimes = lobbyState.phaseTimes;
                 GAME_MANAGER.state.enabledRoles = lobbyState.enabledRoles;
-                GAME_MANAGER.state.host = lobbyState.players.get(lobbyState.myId!)?.host ?? false;
+                GAME_MANAGER.state.host = lobbyState.players.get(lobbyState.myId!)?.ready === "host";
             }
         },
         setSpectatorGameState() {
@@ -121,7 +122,7 @@ export function createGameManager(): GameManager {
         },
         getMyHost() {
             if (gameManager.state.stateType === "lobby")
-                return gameManager.state.players.get(gameManager.state.myId!)?.host;
+                return gameManager.state.players.get(gameManager.state.myId!)?.ready === "host";
             if (gameManager.state.stateType === "game")
                 return gameManager.state.host;
             return undefined;
@@ -212,7 +213,7 @@ export function createGameManager(): GameManager {
                 this.server.sendPacket({ type: "leave" });
             }
             deleteReconnectData();
-            this.setOutsideLobbyState();
+            this.setDisconnectedState();
             ANCHOR_CONTROLLER?.setContent(<PlayMenu/>);
         },
 
@@ -304,6 +305,13 @@ export function createGameManager(): GameManager {
             this.server.sendPacket({
                 type: "setName",
                 name: name
+            });
+        },
+
+        sendReadyUpPacket(ready) {
+            this.server.sendPacket({
+                type: "readyUp",
+                ready: ready
             });
         },
         sendSendLobbyMessagePacket(text) {
@@ -448,6 +456,12 @@ export function createGameManager(): GameManager {
                 roles: roles
             });
         },
+        sendEnabledModifiersPacket(modifiers) {
+            this.server.sendPacket({
+                type: "setEnabledModifiers",
+                modifiers: modifiers
+            });
+        },
 
         sendSetDoomsayerGuess(guesses) {
             this.server.sendPacket({
@@ -473,15 +487,15 @@ export function createGameManager(): GameManager {
                 role: role
             });
         },
-        sendSetJournalistJournal(journal: string) {
+        sendSetReporterReport(report: string) {
             this.server.sendPacket({
-                type: "setJournalistJournal",
-                journal: journal,
+                type: "setReporterReport",
+                report: report,
             });
         },
-        sendSetJournalistJournalPublic(isPublic: boolean) {
+        sendSetReporterReportPublic(isPublic: boolean) {
             this.server.sendPacket({
-                type: "setJournalistJournalPublic",
+                type: "setReporterReportPublic",
                 public: isPublic,
             });
         },
@@ -525,15 +539,15 @@ export function createGameManager(): GameManager {
                 index: index
             });
         },
-        sendSetOjoAction(action) {
-            this.server.sendPacket({
-                type: "setOjoAction",
-                action: action
-            });
-        },
         sendSetPuppeteerAction(action) {
             this.server.sendPacket({
                 type: "setPuppeteerAction",
+                action: action
+            });
+        },
+        sendSetRecruiterAction(action) {
+            this.server.sendPacket({
+                type: "setRecruiterAction",
                 action: action
             });
         },
@@ -546,6 +560,12 @@ export function createGameManager(): GameManager {
         sendRetrainerRetrain(role) {
             this.server.sendPacket({
                 type: "retrainerRetrain",
+                role: role
+            });
+        },
+        sendSetRoleChosen(role: Role | null) {
+            this.server.sendPacket({
+                type: "setRoleChosen",
                 role: role
             });
         },
@@ -562,22 +582,18 @@ export function createGameManager(): GameManager {
                 forfeit
             });
         },
+        sendPitchforkVotePacket(player: PlayerIndex | null) {
+            this.server.sendPacket({
+                type: "pitchforkVote",
+                player: player
+            });
+        },
 
         messageListener(serverMessage) {
             messageListener(serverMessage);
         },
 
-        lastPingTime: 0,
-        pingCalculation: 0,
         tick(timePassedMs) {
-            if (gameManager.state.stateType !== "disconnected") {
-                if(gameManager.lastPingTime + (30 * 1000) < Date.now()){
-                    gameManager.lastPingTime = Date.now();
-                    this.server.sendPacket({
-                        type: "ping"
-                    });
-                }
-            }
             if (gameManager.state.stateType === "game") {
                 if (!gameManager.state.ticking) return;
 

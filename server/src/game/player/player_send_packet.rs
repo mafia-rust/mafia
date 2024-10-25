@@ -57,6 +57,9 @@ impl PlayerReference{
             },
             ToClientPacket::EnabledRoles { roles: game.settings.enabled_roles.clone().into_iter().collect() },
             ToClientPacket::RoleList {role_list: game.settings.role_list.clone()},
+            ToClientPacket::EnabledModifiers {
+                modifiers: game.settings.enabled_modifiers.clone().into_iter().collect()
+            },
             ToClientPacket::PlayerAlive{
                 alive: PlayerReference::all_players(game).map(|p|p.alive(game)).collect()
             }
@@ -85,11 +88,14 @@ impl PlayerReference{
         self.send_available_buttons(game);
 
         self.send_packets(game, vec![
+            ToClientPacket::YourSendChatGroups {
+                send_chat_groups: self.get_current_send_chat_groups(game).into_iter().collect()
+            },
             ToClientPacket::YourPlayerIndex { 
                 player_index: self.index() 
             },
             ToClientPacket::YourRoleState {
-                role_state: self.role_state(game).clone()
+                role_state: self.role_state(game).clone().get_client_role_state(game, *self)
             },
             ToClientPacket::YourRoleLabels { 
                 role_labels: PlayerReference::ref_map_to_index(self.role_label_map(game)) 

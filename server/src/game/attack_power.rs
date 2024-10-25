@@ -1,11 +1,11 @@
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub enum AttackPower {
     Basic = 1,
     ArmorPiercing = 2,
     ProtectionPiercing = 3
 }
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub enum DefensePower {
     None = 0,
     Armor = 1,

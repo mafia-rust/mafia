@@ -5,24 +5,31 @@ use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 
 use crate::game::visit::Visit;
 use crate::game::Game;
-use super::{Priority, RoleStateImpl, RoleState, Role};
+use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 
-#[derive(Debug, Clone, Default, Serialize)]
+#[derive(Debug, Clone, Default)]
 pub struct Death{
     souls: u8,
     won: bool,
 }
+
+#[derive(Clone, Debug, Serialize)]
+pub struct ClientRoleState {
+    souls: u8
+}
+
 const NEEDED_SOULS: u8 = 6;
-pub(super) const FACTION: Faction = Faction::Neutral;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Death {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority == Priority::Heal && self.souls >= NEEDED_SOULS{
             actor_ref.set_night_upgraded_defense(game, Some(DefensePower::Invincible))
@@ -33,7 +40,7 @@ impl RoleStateImpl for Death {
 
         let mut souls_to_gain = 1;
 
-        if !actor_ref.night_jailed(game) {
+        if !crate::game::components::detained::Detained::is_detained(game, actor_ref) {
             if let Some(visit) = actor_ref.night_visits(game).first(){
                 let target_ref = visit.target;
                 if target_ref.night_died(game) {
@@ -53,9 +60,6 @@ impl RoleStateImpl for Death {
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
-    }
-    fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
-        self.won
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
@@ -80,6 +84,17 @@ impl RoleStateImpl for Death {
             },
             _=>{}
         }
-        
+    }
+}
+impl GetClientRoleState<ClientRoleState> for Death {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
+        ClientRoleState{
+            souls: self.souls
+        }
+    }
+}
+impl Death {
+    pub fn won(&self) -> bool {
+        self.won
     }
 }

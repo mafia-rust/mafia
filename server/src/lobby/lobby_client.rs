@@ -1,3 +1,6 @@
+use std::collections::VecDeque;
+use std::time::Instant;
+
 use serde::Serialize;
 
 use crate::game::player::PlayerReference;
@@ -13,9 +16,20 @@ pub type LobbyClientID = u32;
 #[serde(rename_all = "camelCase")]
 pub struct LobbyClient{
     pub connection: ClientConnection,
-    pub host: bool,
+    pub ready: Ready,
     pub client_type: LobbyClientType,
+    
+    #[serde(skip)]
+    pub last_message_times: VecDeque<Instant>,
 }
+
+#[derive(Clone, Debug, Serialize, PartialEq, Eq)]
+pub enum Ready {
+    Host,
+    Ready,
+    NotReady,
+}
+
 #[derive(Clone, Debug, Serialize)]
 #[serde(tag = "type")]
 #[serde(rename_all = "camelCase")]
@@ -29,7 +43,10 @@ pub enum LobbyClientType{
 impl LobbyClient {
     pub fn new(name: String, connection: ClientSender, host: bool)->Self{
         LobbyClient{
-           connection: ClientConnection::Connected(connection), host, client_type: LobbyClientType::Player{name}
+            connection: ClientConnection::Connected(connection),
+            ready: if host { Ready::Host } else { Ready::NotReady },
+            client_type: LobbyClientType::Player{name},
+            last_message_times: VecDeque::new()
         }
     }
     pub fn new_from_game_client(game: &Game, game_client: GameClient)->Self{
@@ -39,16 +56,18 @@ impl LobbyClient {
                 let player_ref = PlayerReference::new_unchecked(index);
                 LobbyClient{
                     connection: player_ref.connection(game).clone(),
-                    host: game_client.host,
-                    client_type: LobbyClientType::Player{name: player_ref.name(game).to_string()}
+                    ready: if game_client.host { Ready::Host } else { Ready::Ready },
+                    client_type: LobbyClientType::Player{name: player_ref.name(game).to_string()},
+                    last_message_times: VecDeque::new()
                 }
             },
             GameClientLocation::Spectator(index) => {
                 let spectator_pointer = SpectatorPointer::new(index);
                 LobbyClient{
                     connection:spectator_pointer.connection(game),
-                    host: game_client.host,
-                    client_type: LobbyClientType::Spectator
+                    ready: if game_client.host { Ready::Host } else { Ready::Ready },
+                    client_type: LobbyClientType::Spectator,
+                    last_message_times: VecDeque::new()
                 }
             }
         }
@@ -56,7 +75,11 @@ impl LobbyClient {
         
     }
     pub fn set_host(&mut self) {
-        self.host = true;
+        self.ready = Ready::Host;
+    }
+
+    pub fn is_host(&self) -> bool {
+        self.ready == Ready::Host
     }
 
     pub fn send(&self, message: ToClientPacket) {

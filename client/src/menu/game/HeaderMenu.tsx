@@ -16,8 +16,19 @@ export default function HeaderMenu(props: Readonly<{
     chatMenuNotification: boolean
 }>): ReactElement {
     const mobile = useContext(MobileContext)!;
+    
+    const phaseState = useGameState(
+        gameState => gameState.phaseState,
+        ["phase", "playerOnTrial"]
+    )!
 
-    return <div className="header-menu">
+    const backgroundStyle = 
+        phaseState.type === "briefing" ? "background-none" :
+        (phaseState.type === "night" || phaseState.type === "obituary") ? "background-night" : 
+        "background-day";
+
+
+    return <div className={"header-menu " + backgroundStyle}>
         {!(GAME_MANAGER.getMySpectator() && !GAME_MANAGER.getMyHost()) && <FastForwardButton />}
         <Information />
         {!(GAME_MANAGER.getMySpectator() && !mobile) && <MenuButtons chatMenuNotification={props.chatMenuNotification}/>}
@@ -77,18 +88,22 @@ function Information(): ReactElement {
         return myIndex === undefined ? undefined : players[myIndex]?.toString()
     }, [myIndex, players])
 
-    return <div className="information">
-        <div>
-            <h3>
-                <div>
-                    {translate("phase."+phaseState.type)} {dayNumber}⏳{Math.floor(timeLeftMs/1000)}
-                </div>
-            </h3>
-            {GAME_MANAGER.getMySpectator() 
-                || <StyledText>
-                    {myName + " (" + translate("role."+(roleState!.type)+".name") + ")"}
-                </StyledText>
-            }
+    
+
+    return <div className="information"> 
+        <div className="my-information">
+            <div>
+                <h3>
+                    <div>
+                        {translate("phase."+phaseState.type)} {dayNumber}⏳{Math.floor(timeLeftMs/1000)}
+                    </div>
+                </h3>
+                {GAME_MANAGER.getMySpectator() 
+                    || <StyledText>
+                        {myName + " (" + translate("role."+(roleState!.type)+".name") + ")"}
+                    </StyledText>
+                }
+            </div>
         </div>
         <PhaseSpecificInformation players={players} myIndex={myIndex} phaseState={phaseState}/>
     </div>
@@ -99,6 +114,10 @@ export function PhaseSpecificInformation(props: Readonly<{
     players: Player[],
     myIndex: number | undefined
 }>): ReactElement | null {
+    const enabledModifiers = useGameState(
+        gameState => gameState.enabledModifiers,
+        ["enabledModifiers"]
+    )!
     if (
         props.phaseState.type === "testimony"
         || props.phaseState.type === "finalWords"
@@ -116,7 +135,13 @@ export function PhaseSpecificInformation(props: Readonly<{
                         } else if (!props.players[props.myIndex!].alive) {
                             return translate("judgement.cannotVote.dead");
                         } else {
-                            return (["guilty", "abstain", "innocent"] as const).map((verdict) => {
+                            return (["guilty", "abstain", "innocent"] as const)
+                                    .filter((verdict)=>{
+                                        if(enabledModifiers.includes("noAbstaining") && verdict === "abstain"){
+                                            return false;
+                                        }
+                                        return true
+                                    }).map((verdict) => {
                                 return <VerdictButton key={verdict} verdict={verdict}/>
                             })
                         }
@@ -146,7 +171,7 @@ function VerdictButton(props: Readonly<{ verdict: Verdict }>) {
     </Button>
 }
 
-function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactElement {
+function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactElement | null {
     const roleState = usePlayerState(
         clientState => clientState.roleState,
         ["yourRoleState"]

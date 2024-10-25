@@ -1,15 +1,16 @@
 use serde::Serialize;
 
+use crate::game::components::confused::Confused;
+use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
-use crate::game::resolution_state::ResolutionState;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 use crate::game::Game;
 
 use super::{Priority, RoleStateImpl};
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
@@ -17,14 +18,19 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 pub struct Gossip;
 
 impl RoleStateImpl for Gossip {
+    type ClientRoleState = Gossip;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 
         if let Some(visit) = actor_ref.night_visits(game).first(){
             
-            let message = ChatMessageVariant::GossipResult {
-                enemies: Gossip::enemies(game, visit.target)
+            let enemies = if Confused::is_confused(game, actor_ref){
+                false
+            }else{
+                Gossip::enemies(game, visit.target)
             };
+
+            let message = ChatMessageVariant::GossipResult{ enemies };
             
             actor_ref.push_night_message(game, message);
         }
@@ -51,7 +57,7 @@ impl Gossip {
                 }else if visited_player.has_innocent_aura(game){
                     false
                 }else{
-                    !ResolutionState::can_win_together(game, player_ref, visited_player)
+                    !WinCondition::can_win_together(player_ref.win_condition(game), visited_player.win_condition(game))
                 }
             )
     }

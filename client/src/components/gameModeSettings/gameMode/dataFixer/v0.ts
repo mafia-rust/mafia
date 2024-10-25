@@ -12,7 +12,7 @@ const v0: VersionConverter = {
 export default v0;
 
 
-function convertGameModeStorage(json: NonNullable<any>): ParseResult<GameModeStorage> {
+function convertGameModeStorage(json: NonNullable<any>): ParseResult<any> {
     if (typeof json !== "object" || Array.isArray(json)) {
         return Failure("gameModeStorageNotObject", json);
     }
@@ -99,7 +99,7 @@ function parseGameModeDataRecord(json: NonNullable<any>): ParseResult<Record<num
     return Success(parsedEntries);
 }
 
-function parseGameModeData(json: NonNullable<any>): ParseResult<GameModeData> {
+function parseGameModeData(json: NonNullable<any>): ParseResult<any> {
     if (typeof json !== "object" || Array.isArray(json)) {
         return Failure("gameModeDataNotObject", json);
     }
@@ -123,6 +123,6 @@ function parseGameModeData(json: NonNullable<any>): ParseResult<GameModeData> {
     return Success({
         roleList: roleList.value, 
         phaseTimes: phaseTimes.value, 
-        enabledRoles: enabledRoles 
+        enabledRoles: enabledRoles
     });
 }

@@ -8,7 +8,7 @@ import { Tag } from "./gameState.d";
 import { Role } from "./roleState.d";
 import translate from "./lang";
 import { computePlayerKeywordData, computePlayerKeywordDataForLobby } from "../components/StyledText";
-import { deleteReconnectData, saveReconnectData } from "./localStorage";
+import { deleteReconnectData, loadSettingsParsed, saveReconnectData } from "./localStorage";
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import React from "react";
 import WikiArticle from "../components/WikiArticle";
@@ -16,6 +16,17 @@ import SpectatorGameScreen from "../menu/spectator/SpectatorGameScreen";
 import LobbyMenu from "../menu/lobby/LobbyMenu";
 import LoadingScreen from "../menu/LoadingScreen";
 import AudioController from "../menu/AudioController";
+import NightMessagePopup from "../components/NightMessagePopup";
+import PlayMenu from "../menu/main/PlayMenu";
+import StartMenu from "../menu/main/StartMenu";
+
+
+function sendDefaultName() {
+    const defaultName = loadSettingsParsed().defaultName;
+    if(defaultName !== null && defaultName !== undefined && defaultName !== ""){
+        GAME_MANAGER.sendSetNamePacket(defaultName)
+    }
+} 
 
 export default function messageListener(packet: ToClientPacket){
 
@@ -24,12 +35,23 @@ export default function messageListener(packet: ToClientPacket){
 
     switch(packet.type) {
         case "pong":
-            GAME_MANAGER.pingCalculation = Date.now() - GAME_MANAGER.lastPingTime;
-            console.log("Ping: "+GAME_MANAGER.pingCalculation);
+            if (GAME_MANAGER.state.stateType !== "disconnected") {
+                GAME_MANAGER.server.sendPacket({
+                    type: "ping"
+                });
+            }
         break;
         case "rateLimitExceeded":
             ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rateLimitExceeded"), body: "" });
         break;
+        case "forcedOutsideLobby":
+            GAME_MANAGER.setOutsideLobbyState();
+            ANCHOR_CONTROLLER?.setContent(<PlayMenu/>);
+        break;
+        case "forcedDisconnect":
+            GAME_MANAGER.setDisconnectedState();
+            ANCHOR_CONTROLLER?.setContent(<StartMenu/>);
+        break
         case "lobbyList":
             if(GAME_MANAGER.state.stateType === "outsideLobby"){
                 GAME_MANAGER.state.lobbies = new Map();
@@ -59,6 +81,7 @@ export default function messageListener(packet: ToClientPacket){
         
 
             saveReconnectData(packet.roomCode, packet.playerId);
+            sendDefaultName();
             ANCHOR_CONTROLLER?.clearCoverCard();
         break;
         case "rejectJoin":
@@ -117,7 +140,23 @@ export default function messageListener(packet: ToClientPacket){
         case "playersHost":
             if(GAME_MANAGER.state.stateType === "lobby"){
                 for(let [playerId, player] of GAME_MANAGER.state.players){
-                    player.host = packet.hosts.includes(playerId);
+                    if (packet.hosts.includes(playerId)) {
+                        player.ready = "host";
+                    } else {
+                        player.ready = player.ready === "host" ? "ready" : player.ready
+                    }
+                }
+                GAME_MANAGER.state.players = new Map(GAME_MANAGER.state.players.entries());
+            }
+        break;
+        case "playersReady":
+            if(GAME_MANAGER.state.stateType === "lobby"){
+                for(let [playerId, player] of GAME_MANAGER.state.players){
+                    if (packet.ready.includes(playerId)) {
+                        player.ready = "ready";
+                    } else {
+                        player.ready = player.ready === "host" ? "host" : "notReady"
+                    }
                 }
                 GAME_MANAGER.state.players = new Map(GAME_MANAGER.state.players.entries());
             }
@@ -144,13 +183,20 @@ export default function messageListener(packet: ToClientPacket){
 
             //TODO jack Im sorry
             AudioController.clearQueue();
-            AudioController.pauseQueue();
         break;
         case "lobbyClients":
             if(GAME_MANAGER.state.stateType === "lobby"){
+
+                let oldMySpectator = GAME_MANAGER.getMySpectator();
                 GAME_MANAGER.state.players = new Map();
                 for(let [clientId, lobbyClient] of Object.entries(packet.clients)){
                     GAME_MANAGER.state.players.set(Number.parseInt(clientId), lobbyClient);
+                }
+                let newMySpectator = GAME_MANAGER.getMySpectator();
+
+                
+                if (oldMySpectator && !newMySpectator){
+                    sendDefaultName();
                 }
 
                 // Recompute keyword data, since player names are keywords.
@@ -240,6 +286,10 @@ export default function messageListener(packet: ToClientPacket){
         case "enabledRoles":
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
                 GAME_MANAGER.state.enabledRoles = packet.roles;
+        break;
+        case "enabledModifiers":
+            if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game")
+                GAME_MANAGER.state.enabledModifiers = packet.modifiers;
         break;
         case "phase":
             if(GAME_MANAGER.state.stateType === "game"){
@@ -344,10 +394,18 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 GAME_MANAGER.state.clientState.notes = packet.notes;
                 
-                if(GAME_MANAGER.state.clientState.notes === ""){
-                    GAME_MANAGER.sendSaveNotesPacket(GAME_MANAGER.state.players.map((player) => {
-                        return player.toString();
-                    }).join(" - \n") + " - \n");
+                if(GAME_MANAGER.state.clientState.notes.length === 0){
+                    const myIndex = GAME_MANAGER.state.clientState.myIndex;
+                    const myRoleKey = `role.${GAME_MANAGER.state.clientState.roleState.type}.name`;
+
+                    GAME_MANAGER.sendSaveNotesPacket([
+                        "Claims\n" + 
+                        GAME_MANAGER.state.players
+                            .map(player => 
+                                `@${player.index + 1} - ${player.index === myIndex ? translate(myRoleKey) : ''}\n`
+                            )
+                            .join('')
+                    ]);
                 }
             }
         break;
@@ -384,6 +442,10 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
                 GAME_MANAGER.state.clientState.forfeitVote = packet.forfeit;
         break;
+        case "yourPitchforkVote":
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                GAME_MANAGER.state.clientState.pitchforkVote = packet.player;
+        break;
         case "addChatMessages":
             if(GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby"){
                 GAME_MANAGER.state.chatMessages = GAME_MANAGER.state.chatMessages.concat(packet.chatMessages);
@@ -392,6 +454,14 @@ export default function messageListener(packet: ToClientPacket){
                     let audioSrc = chatMessageToAudio(chatMessage);
                     if(audioSrc)
                         AudioController.queueFile(audioSrc);
+                }
+            }
+        break;
+        case "nightMessages":
+            if(GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby"){
+
+                if(ANCHOR_CONTROLLER?.getCoverCard()===null && packet.chatMessages.length!==0){
+                    ANCHOR_CONTROLLER?.setCoverCard(<NightMessagePopup messages={packet.chatMessages}/>)
                 }
             }
         break;

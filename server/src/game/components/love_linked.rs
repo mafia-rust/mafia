@@ -37,21 +37,21 @@ impl LoveLinked {
         }
     }
 
-    pub fn is_love_linked(&self, player1: PlayerReference, player2: PlayerReference) -> bool {
-        self.love_linked_players.contains(&(player1, player2)) || self.love_linked_players.contains(&(player2, player1))
-    }
-
-    pub fn get_links(&self, player: PlayerReference) -> HashSet<PlayerReference> {
-        self.love_linked_players
+    pub fn get_links(game: &Game, player: PlayerReference) -> HashSet<PlayerReference> {
+        game.love_linked().love_linked_players
             .iter()
             .filter(|(p1, p2)| *p1 == player || *p2 == player)
             .map(|(p1, p2)| if *p1 == player { *p2 } else { *p1 })
             .collect()
     }
 
+    pub fn is_love_linked(&self, player1: PlayerReference, player2: PlayerReference) -> bool {
+        self.love_linked_players.contains(&(player1, player2)) || self.love_linked_players.contains(&(player2, player1))
+    }
+
     pub fn on_any_death(game: &mut Game, player: PlayerReference) {
         //die of a broken heart
-        let links = game.love_linked().get_links(player);
+        let links = LoveLinked::get_links(game, player);
 
         links.iter().for_each(|p| {
             if p.alive(game) {

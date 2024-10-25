@@ -22,7 +22,7 @@ export default function GlobalMenu(): ReactElement {
             if (state.stateType === "game") {
                 return state.host
             } else {
-                return state.players.get(state.myId!)?.host
+                return state.players.get(state.myId!)?.ready === "host"
             }
         },
         ["lobbyClients", "playersHost", "gamePlayers"]
@@ -97,6 +97,7 @@ export function RoomLinkButton(): JSX.Element {
     const code = useLobbyOrGameState(
         state => {
             const code = new URL(window.location.href);
+            code.pathname = "/connect"
             code.searchParams.set("code", state.roomCode.toString(18))
             return code;
         }, ["acceptJoin", "backToLobby"]

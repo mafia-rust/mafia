@@ -5,22 +5,25 @@ use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 
 use crate::game::Game;
-use super::{RoleStateImpl, RoleState};
+use super::{GetClientRoleState, RoleState, RoleStateImpl};
 
-#[derive(Clone, Debug, Serialize, Default)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Default)]
 pub struct Mayor {
     pub revealed: bool
 }
 
-pub(super) const FACTION: Faction = Faction::Town;
+#[derive(Clone, Debug, Serialize)]
+pub struct ClientRoleState;
+
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Mayor {
+    type ClientRoleState = ClientRoleState;
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, _target_ref: PlayerReference) {
 
         if !actor_ref.alive(game) || !game.current_phase().is_day() {
@@ -43,5 +46,10 @@ impl RoleStateImpl for Mayor {
         actor_ref == target_ref &&
         actor_ref.alive(game) &&
         PhaseType::Night != game.current_phase().phase()
+    }
+}
+impl GetClientRoleState<ClientRoleState> for Mayor {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
+        ClientRoleState
     }
 }

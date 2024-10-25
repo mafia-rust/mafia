@@ -4,7 +4,7 @@ import "./anchor.css";
 import translate, { switchLanguage } from "../game/lang";
 import GlobalMenu from "./GlobalMenu";
 import SettingsMenu from './Settings';
-import { loadSettings } from "../game/localStorage";
+import { loadSettingsParsed } from "../game/localStorage";
 import LoadingScreen from "./LoadingScreen";
 import { Theme } from "..";
 import Icon from "../components/Icon";
@@ -20,6 +20,7 @@ export type AnchorController = {
     reload: () => void,
     setContent: (content: JSX.Element) => void,
     contentType: string | JSXElementConstructor<any>,
+    getCoverCard: () => JSX.Element | null,
     setCoverCard: (content: JSX.Element) => void,
     clearCoverCard: () => void,
     pushErrorCard: (error: ErrorData) => void,
@@ -48,7 +49,7 @@ export default function Anchor(props: Readonly<{
     const [mobile, setMobile] = useState<boolean>(false);
 
     useEffect(() => {
-        const onResize = () => setMobile(window.innerWidth <= MOBILE_MAX_WIDTH_PX)
+        const onResize = () => {setMobile(window.innerWidth <= MOBILE_MAX_WIDTH_PX)}
         onResize();
 
         window.addEventListener("resize", onResize);
@@ -99,7 +100,7 @@ export default function Anchor(props: Readonly<{
 
     // Load settings
     useEffect(() => {
-        const settings = loadSettings();
+        const settings = loadSettingsParsed();
 
         AudioController.setVolume(settings.volume);
         switchLanguage(settings.language)
@@ -132,6 +133,9 @@ export default function Anchor(props: Readonly<{
         reload,
         setContent: setChildren,
         contentType: children.type,
+        getCoverCard: ()=>{
+            return coverCard
+        },
         setCoverCard: (coverCard: JSX.Element, callback?: () => void) => {
             let coverCardTheme: Theme | null = null;
             if (coverCard.type === WikiCoverCard || coverCard.type === WikiArticle) {
@@ -160,7 +164,7 @@ export default function Anchor(props: Readonly<{
         },
         openGlobalMenu: () => setGlobalMenuOpen(true),
         closeGlobalMenu: () => setGlobalMenuOpen(false),
-    }), [reload, children])
+    }), [reload, children, coverCard])
 
     useEffect(() => {
         ANCHOR_CONTROLLER = anchorController

@@ -2,15 +2,17 @@ use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::components::revealed_group::RevealedGroupID;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
+use crate::game::role_list::RoleSet;
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, Role, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 
 #[derive(Debug, Clone, Serialize)]
@@ -25,6 +27,19 @@ pub struct Counterfeiter{
 
     pub action: CounterfeiterAction
 }
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ClientRoleState{
+    backup: Option<PlayerReference>,
+    
+    pub fake_role: Role,
+    pub fake_will: String,
+    pub forges_remaining: u8,
+
+    pub action: CounterfeiterAction
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub enum CounterfeiterAction{
@@ -46,11 +61,12 @@ impl Default for Counterfeiter {
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Mafia;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Counterfeiter {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         
@@ -70,8 +86,8 @@ impl RoleStateImpl for Counterfeiter {
                     Priority::Kill => {
                         if let Some(visit) = backup.night_visits(game).first(){
                             let target_ref = visit.target;
-                            target_ref.try_night_kill(
-                                backup, game, GraveKiller::Faction(Faction::Mafia), AttackPower::Basic, false
+                            target_ref.try_night_kill_single_attacker(
+                                backup, game, GraveKiller::RoleSet(RoleSet::Mafia), AttackPower::Basic, false
                             );
                         }
                     },
@@ -98,8 +114,8 @@ impl RoleStateImpl for Counterfeiter {
                     if let Some(visit) = actor_ref.night_visits(game).first(){
                         let target_ref = visit.target;
                 
-                        target_ref.try_night_kill(
-                            actor_ref, game, GraveKiller::Faction(Faction::Mafia), AttackPower::Basic, false
+                        target_ref.try_night_kill_single_attacker(
+                            actor_ref, game, GraveKiller::RoleSet(RoleSet::Mafia), AttackPower::Basic, false
                         );
                     }
                 },
@@ -140,7 +156,7 @@ impl RoleStateImpl for Counterfeiter {
         game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackup { backup: backup.map(|p|p.index()) });
 
         for player_ref in PlayerReference::all_players(game){
-            if player_ref.role(game).faction() != Faction::Mafia{
+            if !RevealedGroupID::Mafia.is_player_in_revealed_group(game, player_ref) {
                 continue;
             }
             player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
@@ -148,7 +164,7 @@ impl RoleStateImpl for Counterfeiter {
 
         if let Some(backup) = backup {
             for player_ref in PlayerReference::all_players(game){
-                if player_ref.role(game).faction() != Faction::Mafia {
+                if !RevealedGroupID::Mafia.is_player_in_revealed_group(game, player_ref) {
                     continue;
                 }
                 player_ref.push_player_tag(game, backup, Tag::GodfatherBackup);
@@ -159,7 +175,8 @@ impl RoleStateImpl for Counterfeiter {
     fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         actor_ref != target_ref &&
         actor_ref.alive(game) && target_ref.alive(game) &&
-        target_ref.role(game).faction() == Faction::Mafia
+        RoleSet::Mafia.get_roles().contains(&target_ref.role(game)) &&
+        RevealedGroupID::Mafia.is_player_in_revealed_group(game, target_ref)
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
@@ -176,7 +193,7 @@ impl RoleStateImpl for Counterfeiter {
 
             actor_ref.set_role_state(game, RoleState::Counterfeiter(Counterfeiter{backup: None, ..self.clone()}));
             for player_ref in PlayerReference::all_players(game){
-                if player_ref.role(game).faction() != Faction::Mafia{
+                if RevealedGroupID::Mafia.is_player_in_revealed_group(game, player_ref){
                     continue;
                 }
                 player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
@@ -185,10 +202,26 @@ impl RoleStateImpl for Counterfeiter {
             if !backup.alive(game){return}
 
             //convert backup to Counterfeiter
-            backup.set_role(game, RoleState::Counterfeiter(Counterfeiter{backup: None, ..self}));
+            backup.set_role_and_win_condition_and_revealed_group(game, RoleState::Counterfeiter(Counterfeiter{backup: None, ..self}));
         }
         else if self.backup.is_some_and(|p|p == dead_player_ref) {
             actor_ref.set_role_state(game, RoleState::Counterfeiter(Counterfeiter{backup: None, ..self}));
+        }
+    }
+    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+        vec![
+            crate::game::components::revealed_group::RevealedGroupID::Mafia
+        ].into_iter().collect()
+    }
+}
+impl GetClientRoleState<ClientRoleState> for Counterfeiter {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
+        ClientRoleState{
+            backup: self.backup,
+            fake_role: self.fake_role,
+            fake_will: self.fake_will,
+            forges_remaining: self.forges_remaining,
+            action: self.action,
         }
     }
 }

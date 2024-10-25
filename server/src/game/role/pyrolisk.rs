@@ -7,24 +7,27 @@ use crate::game::chat::ChatMessageVariant;
 use crate::game::event::before_role_switch::BeforeRoleSwitch;
 use crate::game::grave::{GraveInformation, GraveKiller, GraveReference};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{Priority, Role, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
-#[derive(Debug, Clone, Serialize, Default)]
-#[serde(rename_all = "camelCase")]
+#[derive(Debug, Clone, Default)]
 pub struct Pyrolisk{
     pub tagged_for_obscure: HashSet<PlayerReference>
 }
 
-pub(super) const FACTION: Faction = Faction::Fiends;
+#[derive(Debug, Clone, Serialize)]
+pub struct ClientRoleState;
+
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Pyrolisk {
+    type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         let mut tagged_for_obscure = self.tagged_for_obscure.clone();
         
@@ -33,7 +36,7 @@ impl RoleStateImpl for Pyrolisk {
                 if game.day_number() != 1 {
                     if let Some(visit) = actor_ref.night_visits(game).first(){
                         let target_ref = visit.target;
-                        target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Pyrolisk), AttackPower::ArmorPiercing, true);
+                        target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Pyrolisk), AttackPower::ArmorPiercing, true);
                         
                         tagged_for_obscure.insert(target_ref);
                         actor_ref.push_player_tag(game, target_ref, Tag::MorticianTagged);
@@ -45,7 +48,7 @@ impl RoleStateImpl for Pyrolisk {
                             *other_player_ref != actor_ref
                         ).collect::<Vec<PlayerReference>>()
                     {
-                        other_player_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Pyrolisk), AttackPower::ArmorPiercing, true);
+                        other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Pyrolisk), AttackPower::ArmorPiercing, true);
                         
                         tagged_for_obscure.insert(other_player_ref);
                         actor_ref.push_player_tag(game, other_player_ref, Tag::MorticianTagged);
@@ -109,5 +112,10 @@ impl RoleStateImpl for Pyrolisk {
         if event.player() == actor_ref && event.new_role().role() != Role::Mortician {
             actor_ref.remove_player_tag_on_all(game, Tag::MorticianTagged);
         }
+    }
+}
+impl GetClientRoleState<ClientRoleState> for Pyrolisk {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
+        ClientRoleState
     }
 }

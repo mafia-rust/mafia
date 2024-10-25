@@ -2,41 +2,31 @@ use serde::Serialize;
 
 use crate::game::{attack_power::DefensePower, components::arsonist_doused::ArsonistDoused};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleStateImpl, Role};
+use super::{Priority, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Arsonist;
 
-pub(super) const FACTION: Faction = Faction::Fiends;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Arsonist {
+    type ClientRoleState = Arsonist;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         
 
         match priority {
             Priority::Deception => {
-                if !actor_ref.night_jailed(game) {
-                    //douse target
-                    if let Some(visit) = actor_ref.night_visits(game).first(){
-                        let target_ref = visit.target;
-                        ArsonistDoused::douse(game, target_ref);
-                    }
-
-                    
-                }else{
-                    //douse the jailor if jailed
-                    for player_ref in PlayerReference::all_players(game){
-                        if player_ref.alive(game) && player_ref.role(game) == Role::Jailor {
-                            ArsonistDoused::douse(game, player_ref);
-                        }
-                    }
+                //douse target
+                if let Some(visit) = actor_ref.night_visits(game).first(){
+                    let target_ref = visit.target;
+                    ArsonistDoused::douse(game, target_ref);
                 }
                 
                 //douse all visitors
@@ -51,21 +41,18 @@ impl RoleStateImpl for Arsonist {
                     ArsonistDoused::douse(game, other_player_ref);
                 }
             },
-            Priority::Kill => {
-                if actor_ref.night_jailed(game) {return}
-                
+            Priority::Kill => {                
                 if let Some(visit) = actor_ref.night_visits(game).first(){
                     if actor_ref == visit.target{
                         ArsonistDoused::ignite(game, actor_ref);
                     }
                 }
-                
             }
             _ => {}
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        !actor_ref.night_jailed(game) &&
+        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         actor_ref.selection(game).is_empty() &&
         actor_ref.alive(game) &&
         target_ref.alive(game)

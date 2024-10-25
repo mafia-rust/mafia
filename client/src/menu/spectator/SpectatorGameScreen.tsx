@@ -7,7 +7,7 @@ import ChatMenu from "../game/gameScreenContent/ChatMenu";
 import PlayerListMenu from "../game/gameScreenContent/PlayerListMenu";
 import GraveyardMenu from "../game/gameScreenContent/GraveyardMenu";
 import HeaderMenu from "../game/HeaderMenu";
-import { MenuController, ContentMenu, useMenuController } from "../game/GameScreen";
+import { MenuController, ContentMenu, useMenuController, MenuControllerContext } from "../game/GameScreen";
 import { MobileContext } from "../Anchor";
 
 
@@ -56,18 +56,20 @@ export default function SpectatorGameScreen(): ReactElement {
 
 
     return (
-        <div className="game-screen spectator-game-screen">
-            <div className="header">
-                <HeaderMenu chatMenuNotification={false}/>
+        <MenuControllerContext.Provider value={contentController}>
+            <div className="game-screen spectator-game-screen">
+                <div className="header">
+                    <HeaderMenu chatMenuNotification={false}/>
+                </div>
+                {showStartedScreen 
+                    ? <PhaseStartedScreen/>
+                    : <div className="content">
+                        {contentController.menuOpen(ContentMenu.ChatMenu) && <ChatMenu/>}
+                        {contentController.menuOpen(ContentMenu.PlayerListMenu) && <PlayerListMenu/>}
+                        {contentController.menuOpen(ContentMenu.GraveyardMenu) && <GraveyardMenu/>}
+                    </div>}
             </div>
-            {showStartedScreen 
-                ? <PhaseStartedScreen/>
-                : <div className="content">
-                    {contentController.menuOpen(ContentMenu.ChatMenu) && <ChatMenu/>}
-                    {contentController.menuOpen(ContentMenu.PlayerListMenu) && <PlayerListMenu/>}
-                    {contentController.menuOpen(ContentMenu.GraveyardMenu) && <GraveyardMenu/>}
-                </div>}
-        </div>
+        </MenuControllerContext.Provider>
     );
     
 }

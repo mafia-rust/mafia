@@ -16,6 +16,7 @@ import Counter from "../../../components/Counter";
 import SelectionInformation from "../../../components/SelectionInformation";
 import { useGameState, usePlayerState } from "../../../components/useHooks";
 import { roleSpecificMenuType } from "../../Settings";
+import PlayerDropdown from "../../../components/PlayerDropdown";
 
 type PlayerFilter = "all"|"living"|"usable";
 
@@ -69,12 +70,13 @@ function useDayTargetedPlayers(): PlayerIndex[] {
             if (roleState.backup !== null) return [roleState.backup]
             break;
         case "jailor":
+        case "kidnapper":
             if (roleState.jailedTargetRef !== null) return [roleState.jailedTargetRef]
             break;
         case "medium":
             if (roleState.seancedTarget !== null) return [roleState.seancedTarget]
             break;
-        case "journalist":
+        case "reporter":
             if (roleState.interviewedTarget !== null) return [roleState.interviewedTarget]
             break;
         case "marksman":
@@ -98,10 +100,18 @@ export default function PlayerListMenu(): ReactElement {
         gameState => gameState.phaseState,
         ["phase", "playerOnTrial"]
     )!
+    const enabledRoles = useGameState(
+        gameState => gameState.enabledRoles,
+        ["enabledRoles"]
+    )!
 
     const forfeitVote = usePlayerState(
         gameState => gameState.forfeitVote,
         ["yourForfeitVote"]
+    )
+    const pitchforkVote = usePlayerState(
+        gameState => gameState.pitchforkVote,
+        ["yourPitchforkVote"]
     )
     const roleState = usePlayerState(
         gameState => gameState.roleState,
@@ -170,6 +180,7 @@ export default function PlayerListMenu(): ReactElement {
     }
 
     const [roleSpecificOpen, setRoleSpecificOpen] = useState<boolean>(true);
+    const [pitchforkVoteOpen, setPitchforkVoteOpen] = useState<boolean>(false);
 
 
     return <div className="player-list-menu player-list-menu-colors">
@@ -185,6 +196,30 @@ export default function PlayerListMenu(): ReactElement {
                 >{translate("role."+roleState?.type+".name")}</summary>
                 <SelectionInformation />
                 <RoleSpecificSection/>
+            </details>
+        }
+        {
+            !GAME_MANAGER.getMySpectator() && 
+            enabledRoles.includes("rabblerouser") && 
+            phaseState.type !== "night" &&
+            phaseState.type !== "obituary" &&
+            <details className="role-specific-colors small-role-specific-menu" open={pitchforkVoteOpen}>
+                <summary
+                    onClick={(e)=>{
+                        e.preventDefault();
+                        setPitchforkVoteOpen(!pitchforkVoteOpen);
+                    }}
+                >{translate("pitchfork")}</summary>
+                <div>
+                    <StyledText>{translate("pitchfork.description")}</StyledText>
+                    <div>
+                    <PlayerDropdown 
+                        value={pitchforkVote===undefined?null:pitchforkVote}
+                        onChange={(player)=>{GAME_MANAGER.sendPitchforkVotePacket(player)}}
+                        choosablePlayers={players.filter((player)=>player.alive).map((player)=>player.index)}
+                        canChooseNone={true}
+                    /></div>
+                </div>
             </details>
         }
 
