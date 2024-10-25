@@ -84,7 +84,6 @@ export default function GameModesEditor(props: Readonly<{
             <meta name="twitter:site" content={translate("menu.start.title")}></meta>
             <meta name="twitter:title" content={props.initialGameMode?.name}></meta>
             <meta name="twitter:card" content="summary_large_image"></meta>
-            {/* <meta name="twitter:image:src" content="https://placehold.co/600x400"></meta> */}
         </Helmet>
         <header>
             <h1>{translate("menu.globalMenu.gameSettingsEditor")}</h1>
