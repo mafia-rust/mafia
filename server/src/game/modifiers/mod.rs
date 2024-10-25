@@ -4,14 +4,14 @@ pub mod dead_can_chat;
 pub mod no_abstaining;
 pub mod no_death_cause;
 
-use std::collections::HashSet;
-
 use dead_can_chat::DeadCanChat;
 use no_abstaining::NoAbstaining;
 use obscured_graves::ObscuredGraves;
 use random_love_links::RandomLoveLinks;
 use no_death_cause::NoDeathCause;
 use serde::{Deserialize, Serialize};
+
+use crate::{vec_map::VecMap, vec_set::VecSet};
 
 use super::{grave::GraveReference, Game};
 
@@ -55,27 +55,28 @@ impl ModifierType{
 
 #[derive(Default)]
 pub struct Modifiers{
-    modifiers: HashSet<ModifierState>,
+    modifiers: VecMap<ModifierType, ModifierState>,
 }
 
 impl Modifiers{
     pub fn modifier_is_enabled(game: &Game, modifier: ModifierType)->bool{
-        game.modifiers.modifiers.iter().any(|m| m.modifier_type() == modifier)
+        game.modifiers.modifiers.contains(&modifier)
     }
-    pub fn from_settings(modifiers: HashSet<ModifierType>)->Self{
-        let modifiers = modifiers.into_iter().map(|m| m.default_state()).collect();
+    pub fn from_settings(modifiers: VecSet<ModifierType>)->Self{
+        let modifiers = modifiers
+            .into_iter().map(|m|{let state = m.default_state(); (m, state)}).collect();
         Self{
             modifiers,
         }
     }
     pub fn on_grave_added(game: &mut Game, event: GraveReference){
-        for modifier in game.modifiers.modifiers.iter().map(|m| m.clone()).collect::<Vec<_>>(){
-            modifier.on_grave_added(game, event);
+        for modifier in game.modifiers.modifiers.clone(){
+            modifier.1.on_grave_added(game, event);
         }
     }
     pub fn on_game_start(game: &mut Game){
-        for modifier in game.modifiers.modifiers.iter().map(|m| m.clone()).collect::<Vec<_>>(){
-            modifier.on_game_start(game);
+        for modifier in game.modifiers.modifiers.clone(){
+            modifier.1.on_game_start(game);
         }
     }
 }
