@@ -99,7 +99,6 @@ impl MafiaHitOrders{
 
 
     fn check_if_one_remains(game: &mut Game){
-        
         let living_insiders = InsiderGroupRef::Mafia.players(game)
             .clone()
             .into_iter()
@@ -170,20 +169,24 @@ impl ModifierTrait for MafiaHitOrders{
     }
     fn before_initial_role_creation(mut self, game: &mut Game) {
         //random weather or not to enable this modifier
-        //chance = 1/(num_enabled_mafia_killing_roles)
         //if no mafia killing roles are enabled, then this modifier is active
 
+        // If there is only 1 mafia insider, then deactivate this modifier instantly
+        // Imagine getting the role godfather and then instantly switching to mafioso with no benefits 
+        // because of this modifier
+        let active = if InsiderGroupRef::Mafia.players(game).len() == 1 {
+            false
+        }else{
+            let possibilities = 1 + game.settings.enabled_roles.iter()
+                .filter(|role|RoleSet::MafiaKilling.get_roles().contains(role))
+                .count();
+            rand::random::<usize>() % possibilities == 0
+        };
 
-        //get num of enabled mafia killing roles
-        let possibilities = 1 + game.settings.enabled_roles.iter()
-            .filter(|role|RoleSet::MafiaKilling.get_roles().contains(role))
-            .count();
-
-
-        self.active = rand::random::<usize>() % possibilities == 0;
-        let active = self.active;
+        self.active = active;
         Modifiers::set_modifier(game, self.into());
         if !active {return;}
+
 
         // change all mafia killing roles to a random mafia support
         for player in PlayerReference::all_players(game){
@@ -198,10 +201,14 @@ impl ModifierTrait for MafiaHitOrders{
                         PlayerReference::all_players(game).map(|p|p.role(game)).collect::<Vec<_>>().as_slice()
                     )
                 {
-                    player.set_role(game, role.default_state());
+                    player.set_role_state(game, role.default_state());
                 }
             }
         }
         
+    }
+    fn on_game_start(self, game: &mut Game) {
+        if !self.active {return;}
+        Self::check_if_one_remains(game);
     }
 }
