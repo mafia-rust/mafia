@@ -88,6 +88,8 @@
     "menu.will.deathNote:var.2": "Death Notes",
     "menu.will.save": "Save",
     "menu.will.post": "Post",
+    "menu.will.add": "Add",
+    "menu.will.subtract": "Subtract",
 
     "menu.wiki.title": "Encyclopedia",
     "menu.wiki.icon": "🔎",
@@ -389,7 +391,7 @@
     "role.counterfeiter.name:var.0": "Counterfeiters",
     "role.counterfeiter.target": "Attack",
     "role.counterfeiter.dayTarget": "Backup",
-    "role.counterfeiter.roleDataText": "You choose ",
+    "role.counterfeiter.roleDataText": "You choose \\0",
 
     "role.recruiter.name": "Recruiter",
     "role.recruiter.name:var.0": "Recruiters",
@@ -448,7 +450,7 @@
     "role.mortician.name": "Mortician",
     "role.mortician.name:var.0": "Morticians",
     "role.mortician.target": "Tag",
-    "role.mortician.roleDataText": "\\0 tags remaining",
+    "role.mortician.roleDataText": "\\0 cremations remaining",
     "role.mortician.youAreSelecting": "You are tagging \\0 for cremation.",
     "role.mortician.youAreSelecting.null": "You aren't tagging anyone.",
 
@@ -903,8 +905,8 @@
     "chatMessage.informantResult.visited.nobody": "Your target didn't visit anybody",
     "chatMessage.informantResult.visitedBy": "Your target was visited by \\0",
     "chatMessage.informantResult.visitedBy.nobody": "Your target was not visited by anybody.",
-    "chatMessage.framerResult": "\\0 was visited by townies with these roles: \\1.",
-    "chatMessage.framerResult.nobody": "\\0 was not visited by any townies.",
+    "chatMessage.framerResult": "\\0 was visited by town loyalists with these roles: \\1.",
+    "chatMessage.framerResult.nobody": "\\0 was not visited by any town loyalists.",
     "chatMessage.scarecrowResult": "You wardblocked these players: \\0.",
     "chatMessage.scarecrowResult.nobody": "You didn't wardblock anybody.",
     "chatMessage.wildcardConvertFailed": "You failed to convert to the role \\0. The role might have been disabled or taken.",
@@ -1216,6 +1218,7 @@
     "wiki.article.standard.claim.title":"Claim",
     "wiki.article.standard.claim.title:var.0":"Claiming",
     "wiki.article.standard.claim.title:var.1":"Claimed",
+    "wiki.article.standard.claim.title:var.2":"Claims",
     "wiki.article.standard.claim.text":"When a player asks you to claim. They are likely asking you to say what your role is, and send your alibi in chat. This is not necessarily because they think your evil, but they want information from you.",
 
     "wiki.article.standard.claimswap.title":"Claim swap",
@@ -1469,10 +1472,10 @@
     "wiki.article.role.mafiaWitch.attributes":"* The first player you visit is told that they were possessed or immune to possession\n* You are told all night information messages that the player you possess gets told",
     "wiki.article.role.mafiaWitch.extra":"* You are immune to getting roleblocked and possession\n* You can't select other mafia members for your first target, but you can select any living player for your second target\n* Your second target gets erased after you change your targets visit, so no other roles can interact with it\n    * A tracker will only see you visit your first target",
 
-    "wiki.article.role.mortician.guide": "- At night, select a player to tag them for obscuring\n    - A player who is tagged for obscuring gets obscured when they die, erasing their role and alibi from their grave so nobody knows who they are\n    - You are told the obscured players role and alibi when they die\n- You can only tag three players",
+    "wiki.article.role.mortician.guide": "- At night, select a player to tag them for obscuring\n    - A player who is tagged for obscuring gets obscured when they die, erasing their role and alibi from their grave so nobody knows who they are\n    - You are told the obscured players role and alibi when they die\n- You can tag as many players as you want, but you can only obscure 3 players",
     "wiki.article.role.mortician.abilities":"* Visit a player to tag them for obscuring\n* If a player is obscured, that player's role and alibi do not appear in the graveyard\n* You are told the role and alibi of the player you obscured when they die.",
-    "wiki.article.role.mortician.attributes":"* You can only ever tag three players per game",
-    "wiki.article.role.mortician.extra":"* If you are roleblocked, it doesn't cost an ability use\n* If you visit a jailed player, it doesn't cost an ability use\n* You can target other mafia members, but not yourself",
+    "wiki.article.role.mortician.attributes":"* You can only ever obscure three players per game",
+    "wiki.article.role.mortician.extra":"* You can target other mafia members, but not yourself\n* Your ability doesn't work after you are dead\n- You can't select a player who is already tagged",
 
     "wiki.article.role.forger.guide": "- At night, select a player who dies to forge their role and alibi\n- Forging a player on the night they die allows you to edit their role and alibi in their grave\n- You can use your ability 3 times\n\nYou should select the same player as the godfather or mafia killing so your ability actually works.",
     "wiki.article.role.forger.abilities":"* Visit a player to forge their grave only if they die tonight\n* If a grave is forged, that player's role and alibi appear to be what you choose\n* You are told the original role and alibi of the player you forge",

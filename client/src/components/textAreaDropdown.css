@@ -1,14 +1,14 @@
-.will-menu details > div {
+.text-area-dropdown details > div {
     padding: .13rem;
 }
-.will-menu .textarea, .will-menu textarea {
+.text-area-dropdown .textarea, .text-area-dropdown textarea {
     text-align: left;
     height: 19em;
     resize: none;
     width: 100%;
     margin: 0;
 }
-.will-menu summary > div {
+.text-area-dropdown summary > div {
     display: inline-flex;
     width: 100%;
     flex-direction: row;
@@ -19,7 +19,7 @@
     /* This is a little hacky. This whole thing is a little hacky.*/
     padding-right: .75rem;
 }
-.will-menu summary > div > div {
+.text-area-dropdown summary > div > div {
     display:flex;
     flex-wrap: wrap;
     gap: 0.25rem;

@@ -2,14 +2,13 @@ import React from "react"
 import GAME_MANAGER from "../../../.."
 import translate from "../../../../game/lang"
 import "./largeReporterMenu.css"
-import { Button } from "../../../../components/Button"
 import Icon from "../../../../components/Icon"
+import { TextDropdownArea } from "../../../../components/TextAreaDropdown"
 
 type LargeReporterMenuProps = {
 }
 type LargeReporterMenuState = {
     syncedPublic: boolean,
-    localReport: string,
     syncedReport: string,
 }
 export default class LargeReporterMenu extends React.Component<LargeReporterMenuProps, LargeReporterMenuState> {
@@ -24,7 +23,6 @@ export default class LargeReporterMenu extends React.Component<LargeReporterMenu
         )
             this.state = {
                 syncedPublic: GAME_MANAGER.state.clientState.roleState?.public,
-                localReport: GAME_MANAGER.state.clientState.roleState?.report,
                 syncedReport: GAME_MANAGER.state.clientState.roleState?.report,
             };
         this.listener = ()=>{
@@ -51,11 +49,6 @@ export default class LargeReporterMenu extends React.Component<LargeReporterMenu
             !this.state.syncedPublic
         );
     }
-    handleSave(){
-        GAME_MANAGER.sendSetReporterReport(
-            this.state.localReport,
-        );
-    }
     handleSend(){
         GAME_MANAGER.sendSendMessagePacket('\n' + this.state.syncedReport);
     }
@@ -63,51 +56,22 @@ export default class LargeReporterMenu extends React.Component<LargeReporterMenu
     render(){
         return <div className="large-reporter-menu">
             <div>
-                {translate("role.reporter.menu.report")}
-                <div>
-                    <Button
-                        highlighted={this.state.syncedReport !== this.state.localReport}
-                        onClick={() => {
-                            this.handleSave();
-                            return true;
-                        }}
-                        pressedChildren={() => <Icon>done</Icon>}
-                    >
-                        <Icon>save</Icon>
-                    </Button>
-                    <Button
-                        onClick={() => {
-                            this.handleSend();
-                            return true;
-                        }}
-                        pressedChildren={() => <Icon>done</Icon>}
-                    >
-                        <Icon>send</Icon>
-                    </Button>
-                </div>
-            </div>
-            <div>
                 {translate("role.reporter.menu.public")}
                 <label onClick={()=>this.handlePublicToggle()}>
                     <Icon>{this.state.syncedPublic ? "check" : "close"}</Icon>
                 </label>
             </div>
-            <textarea
-                value={this.state.localReport}
-                onChange={(e) => {
-                    this.setState({ localReport: e.target.value });
+            <TextDropdownArea
+                open={true}
+                titleString={translate("role.reporter.menu.report")}
+                savedText={this.state.syncedReport}
+                onSave={(text)=>{
+                    GAME_MANAGER.sendSetReporterReport(
+                        text,
+                    );
                 }}
-                onKeyDown={(e) => {
-                    if (e.ctrlKey) {
-                        if (e.key === 's') {
-                            e.preventDefault();
-                            this.handleSave();
-                        } else if (e.key === "Enter") {
-                            this.handleSave();
-                        }
-                    }
-                }}>
-            </textarea>
+                cantPost={false}
+            />
         </div>
     }
 }

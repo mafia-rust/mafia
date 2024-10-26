@@ -127,7 +127,7 @@ export type ToClientPacket = {
     will: string
 } | {
     type: "yourNotes",
-    notes: string
+    notes: string[]
 } | {
     type: "yourCrossedOutOutlines",
     crossedOutOutlines: number[]
@@ -254,7 +254,7 @@ export type ToServerPacket = {
     will: string
 } | {
     type: "saveNotes", 
-    notes: string
+    notes: string[]
 } | {
     type: "saveCrossedOutOutlines",
     crossedOutOutlines: number[]

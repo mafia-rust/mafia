@@ -1,13 +1,13 @@
 import { ReactElement } from "react";
-import StyledText from "../../../../components/StyledText";
 import React from "react";
 import translate from "../../../../game/lang";
 import GAME_MANAGER from "../../../..";
 import { Role, roleJsonData } from "../../../../game/roleState.d";
 import { usePlayerState } from "../../../../components/useHooks";
-import Icon from "../../../../components/Icon";
-import { Button } from "../../../../components/Button";
 import Counter from "../../../../components/Counter";
+import { TextDropdownArea } from "../../../../components/TextAreaDropdown";
+import { defaultAlibi } from "../WillMenu";
+import StyledText from "../../../../components/StyledText";
 
 export default function CounterfeiterMenu (props: {}): ReactElement {
     
@@ -28,26 +28,6 @@ export default function CounterfeiterMenu (props: {}): ReactElement {
         ["yourRoleState"]
     )!;
 
-    const [localRole, setLocalRole] = React.useState<Role>(savedRole);
-    const [localWill, setLocalWill] = React.useState<string>(savedWill=== "" ? "ROLE\nNight 1: \nNight 2:" : savedWill);
-
-
-    const handleSave = ()=>{
-        let role = localRole;
-        let will = localWill;
-
-        if(will === ""){
-            will = "ROLE\nNight 1: \nNight 2:";
-            setLocalWill(will);
-        }
-
-
-        GAME_MANAGER.sendSetForgerWill(role, will);
-    }
-    const handleSend = () => {
-        GAME_MANAGER.sendSendMessagePacket('\n' + savedWill);
-    }
-
     let forgerRoleOptions: JSX.Element[] = [];
     for(let role of Object.keys(roleJsonData()) as Role[]){
         forgerRoleOptions.push(
@@ -56,56 +36,8 @@ export default function CounterfeiterMenu (props: {}): ReactElement {
     }
 
     return <div className="large-forger-menu">
-        <div>
-            <select
-                value={localRole} 
-                onChange={(e)=>{
-                    setLocalRole(e.target.value as Role);
-                }}>
-                {forgerRoleOptions}
-            </select>
-            <div>
-                <Button
-                    highlighted={localWill !== savedWill || localRole !== savedRole}
-                    onClick={() => {
-                        handleSave();
-                        return true;
-                    }}
-                    pressedChildren={() => <Icon>done</Icon>}
-                >
-                    <Icon>save</Icon>
-                </Button>
-                <Button
-                    onClick={() => {
-                        handleSend()
-                        return true;
-                    }}
-                    pressedChildren={() => <Icon>done</Icon>}
-                >
-                    <Icon>send</Icon>
-                </Button>
-            </div>
-        </div>
-        <textarea
-            value={localWill}
-            onChange={(e) => {
-                setLocalWill(e.target.value);
-            }}
-            onKeyDown={(e) => {
-                if (e.ctrlKey) {
-                    if (e.key === 's') {
-                        e.preventDefault();
-                        handleSave();
-                    } else if (e.key === "Enter") {
-                        handleSave();
-                    }
-                }
-            }}>
-        </textarea>
-        <div>
-            <StyledText>
-                {translate("role.counterfeiter.roleDataText")}
-            </StyledText>
+        <div className="large-forger-menu-option">
+            <StyledText>{translate("role.counterfeiter.roleDataText", translate(action))}</StyledText>
             <select
                 value={action}
                 onChange={e => {
@@ -118,7 +50,29 @@ export default function CounterfeiterMenu (props: {}): ReactElement {
                     <option value={"forge"} key={"forge"}>{translate("forge")}</option>
                 }
             </select>
-            <Counter max={3} current={forgesRemaining}>{translate("role.forger.menu.forgesRemaining", forgesRemaining)}</Counter>
         </div>
+        <div className="large-forger-menu-option">
+            <StyledText>{translate("role.counterfeiter.roleDataText", translate("role."+savedRole+".name"))}</StyledText>
+            <select
+                value={savedRole} 
+                onChange={(e)=>{
+                    GAME_MANAGER.sendSetForgerWill(e.target.value as Role, savedWill);
+                }}
+            >
+                {forgerRoleOptions}
+            </select>
+        </div>
+        <Counter max={3} current={forgesRemaining}>
+            {translate("role.forger.menu.forgesRemaining", forgesRemaining)}
+        </Counter>
+        <TextDropdownArea
+            open={true}
+            titleString={translate("forge")}
+            savedText={savedWill}
+            onSave={(text)=>{
+                GAME_MANAGER.sendSetForgerWill(savedRole, text===""?defaultAlibi():text);
+            }}
+            cantPost={false}
+        />
     </div>;
 }
