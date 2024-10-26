@@ -1,14 +1,16 @@
 use crate::game::{grave::{GraveInformation, GraveReference}, Game};
 
-use super::ModifierTrait;
+use super::{ModifierTrait, ModifierType};
 
 #[derive(Clone, Default, PartialEq, Eq, Hash)]
 pub struct NoDeathCause;
 
-impl ModifierTrait for NoDeathCause{
-    fn modifier_type(&self) -> super::ModifierType {
-        super::ModifierType::NoDeathCause
+impl From<&NoDeathCause> for ModifierType{
+    fn from(_: &NoDeathCause) -> Self {
+        ModifierType::NoDeathCause
     }
+}
+impl ModifierTrait for NoDeathCause{
     fn on_grave_added(self, game: &mut Game, grave: GraveReference) {
         match grave.deref(game).information.clone() {
             GraveInformation::Obscured => {},

@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use crate::{
-    client_connection::ClientConnection, game::{available_buttons::AvailableButtons, chat::ChatMessageVariant, phase::PhaseState, Game, GameOverReason}, lobby::GAME_DISCONNECT_TIMER_SECS, packet::ToClientPacket, websocket_connections::connection::ClientSender
+    client_connection::ClientConnection, game::{available_buttons::AvailableButtons, chat::ChatMessageVariant, components::insider_group::InsiderGroupID, phase::PhaseState, Game, GameOverReason}, lobby::GAME_DISCONNECT_TIMER_SECS, packet::ToClientPacket, websocket_connections::connection::ClientSender
 };
 
 use super::PlayerReference;
@@ -86,6 +86,7 @@ impl PlayerReference{
         self.requeue_chat_messages(game);
         self.send_chat_messages(game);
         self.send_available_buttons(game);
+        InsiderGroupID::send_player_insider_groups(game, *self);
 
         self.send_packets(game, vec![
             ToClientPacket::YourSendChatGroups {

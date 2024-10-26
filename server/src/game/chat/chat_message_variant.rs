@@ -122,6 +122,7 @@ pub enum ChatMessageVariant {
     JailedSomeone{player_index: PlayerIndex},
     JailorDecideExecute {target: Option<PlayerIndex>},
     MediumHauntStarted{medium: PlayerIndex, player: PlayerIndex},
+    MediumExists,
     #[serde(rename_all = "camelCase")]
     DeputyKilled{shot_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]

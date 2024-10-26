@@ -81,4 +81,7 @@ impl RoleStateImpl for Medium {
             _=>{}
         }
     }
+    fn on_any_death(self, game: &mut Game, _actor_ref: PlayerReference, dead_player_ref: PlayerReference) {
+        dead_player_ref.add_private_chat_message(game, ChatMessageVariant::MediumExists);
+    }
 }
