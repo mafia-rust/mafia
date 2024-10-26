@@ -144,7 +144,16 @@ impl InsiderGroupID{
         let players: &VecSet<PlayerReference> = self.revealed_group(game).into();
         players.contains(&a) && players.contains(&b)
     }
-    pub fn players_in_same_revealed_group(game: &Game, a: PlayerReference, b: PlayerReference)->bool{
+    pub fn in_same_revealed_group(game: &Game, a: PlayerReference, b: PlayerReference)->bool{
         InsiderGroupID::all().iter().any(|group| group.players_both_in_revealed_group(game, a, b))
+    }
+    pub fn all_players_in_same_revealed_group_with_actor(game: &Game, actor_ref: PlayerReference)->VecSet<PlayerReference>{
+        let mut players = VecSet::new();
+        for group in InsiderGroupID::all(){
+            if group.is_player_in_revealed_group(game, actor_ref){
+                players.extend(group.players(game).clone());
+            }
+        }
+        players
     }
 }

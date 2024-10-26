@@ -21,6 +21,12 @@ impl <K> VecSet<K> where K: Eq {
         self.vec.insert(key, ()).map(|(k, _)| k)
     }
 
+    pub fn extend(&mut self, keys: impl IntoIterator<Item = K>) {
+        for key in keys {
+            self.insert(key);
+        }
+    }
+
     pub fn contains(&self, key: &K) -> bool {
         self.vec.get_kvp(key).is_some()
     }

@@ -47,7 +47,7 @@ impl RoleStateImpl for Framer {
                 let mut chat_messages = Vec::new();
 
                 for player in PlayerReference::all_players(game){
-                    if !InsiderGroupID::players_in_same_revealed_group(game, actor_ref, player) {continue;}
+                    if !InsiderGroupID::in_same_revealed_group(game, actor_ref, player) {continue;}
 
                     let visitors_roles: Vec<Role> = PlayerReference::all_appeared_visitors(player, game)
                         .iter()
@@ -63,7 +63,7 @@ impl RoleStateImpl for Framer {
                 }
 
                 for player in PlayerReference::all_players(game){
-                    if !InsiderGroupID::players_in_same_revealed_group(game, actor_ref, player) {continue;}
+                    if !InsiderGroupID::in_same_revealed_group(game, actor_ref, player) {continue;}
                     for msg in chat_messages.iter(){
                         player.push_night_message(game, msg.clone());
                     }
@@ -83,7 +83,7 @@ impl RoleStateImpl for Framer {
             actor_ref.selection(game).is_empty() &&
             actor_ref != target_ref &&
             target_ref.alive(game) &&
-            !InsiderGroupID::players_in_same_revealed_group(game, actor_ref, target_ref)
+            !InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref)
         ) || 
         (
             actor_ref.selection(game).len() == 1

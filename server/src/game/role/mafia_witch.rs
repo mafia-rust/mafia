@@ -37,7 +37,7 @@ impl RoleStateImpl for MafiaWitch {
         ((
             actor_ref != target_ref &&
             actor_ref.selection(game).is_empty() &&
-            !InsiderGroupID::players_in_same_revealed_group(game, actor_ref, target_ref)
+            !InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref)
         ) || (
             actor_ref.selection(game).len() == 1
         ))

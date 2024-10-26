@@ -70,7 +70,7 @@ impl RoleStateImpl for Eros {
             },
             ErosAction::Kill => {
                 game.day_number() > 1 &&
-                !InsiderGroupID::players_in_same_revealed_group(game, actor_ref, target_ref) &&
+                !InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref) &&
                 selected.is_empty()
             },
         }
