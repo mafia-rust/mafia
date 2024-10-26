@@ -62,6 +62,7 @@
     "marksmanChosenMarks": "special",
     "silenced": "warning",
     "mediumHauntStarted": "special",
+    "mediumExists": "special",
     "targetWasAttacked": "result",
     "youWereProtected": "result",
     "revolutionaryWon": "special",

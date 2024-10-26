@@ -647,6 +647,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "chronokaiserSpeedUp":
             return translate("chatMessage.chronokaiserSpeedUp", message.percent);
         case "deputyShotYou":
+        case "mediumExists":
         case "deathCollectedSouls":
         case "targetWasAttacked":
         case "youWereProtected":
@@ -809,6 +810,8 @@ export type ChatMessageVariant = {
     type: "mediumHauntStarted",
     medium: PlayerIndex,
     player: PlayerIndex
+} | {
+    type: "mediumExists"
 } | {
     type: "deputyKilled",
     shotIndex: PlayerIndex

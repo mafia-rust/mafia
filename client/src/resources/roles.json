@@ -424,6 +424,7 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
+            {"type": "mediumExists"},
             {"type": "mediumHauntStarted", "medium":32, "player":10},
             {
                 "type": "normal", 
