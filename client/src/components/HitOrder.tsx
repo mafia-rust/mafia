@@ -4,6 +4,7 @@ import GAME_MANAGER from "..";
 import translate from "../game/lang";
 import StyledText from "./StyledText";
 import PlayerDropdown from "./PlayerDropdown";
+import { Button } from "./Button";
 
 export default function HitOrder(props: Readonly<{
     hitOrderOpen: boolean,
@@ -53,16 +54,24 @@ export default function HitOrder(props: Readonly<{
             <div>
                 <StyledText>{translate("hitOrder.description")}</StyledText>
                 <div>
-                <PlayerDropdown 
-                    value={hitOrderVote===undefined?null:hitOrderVote}
-                    onChange={(player)=>{
-                        GAME_MANAGER.sendHitOrderVotePacket(player)
-                    }}
-                    choosablePlayers={
-                        players.filter((player)=>player.alive).map((player)=>player.index)
-                    }
-                    canChooseNone={true}
-                /></div>
+                    <Button
+                        onClick={()=>{
+                            GAME_MANAGER.sendHitOrderSwitchMafiosoPacket()
+                        }}
+                    >
+                        {translate("switchToMafioso")}
+                    </Button>
+                    <PlayerDropdown 
+                        value={hitOrderVote===undefined?null:hitOrderVote}
+                        onChange={(player)=>{
+                            GAME_MANAGER.sendHitOrderVotePacket(player)
+                        }}
+                        choosablePlayers={
+                            players.filter((player)=>player.alive).map((player)=>player.index)
+                        }
+                        canChooseNone={true}
+                    />
+                </div>
             </div>
         </details>);
 }

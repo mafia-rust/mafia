@@ -436,6 +436,9 @@ impl Game {
             ToServerPacket::HitOrderVote { player } => {
                 MafiaHitOrders::mark_vote_action(self, sender_player_ref, player);
             }
+            ToServerPacket::HitOrderSwitchToMafioso => {
+                MafiaHitOrders::switch_to_mafioso_action(self, sender_player_ref);
+            }
             _ => {
                 log!(fatal "Game"; "Unimplemented ToServerPacket: {incoming_packet:?}");
                 unreachable!();

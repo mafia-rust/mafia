@@ -339,4 +339,6 @@ export type ToServerPacket = {
 } | {
     type: "hitOrderVote",
     player: PlayerIndex | null
+} | {
+    type: "hitOrderSwitchToMafioso"
 }

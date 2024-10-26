@@ -286,4 +286,5 @@ pub enum ToServerPacket{
     ForfeitVote{forfeit: bool},
     PitchforkVote{player: Option<PlayerReference>},
     HitOrderVote{player: Option<PlayerReference>},
+    HitOrderSwitchToMafioso,
 }

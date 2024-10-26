@@ -40,6 +40,30 @@ impl MafiaHitOrders{
         modifier.hit_order_players.contains(&player)
     }
 
+    pub fn switch_to_mafioso_action(game: &mut Game, player: PlayerReference){
+        let Some(mut modifier) = Modifiers::get_modifier_inner::<Self>(game, ModifierType::MafiaHitOrders).cloned() else {return};
+        if !modifier.active {return}
+        if !player.alive(game) {return}
+        if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player) {return}
+
+        //if the mafia has any mafia killing role
+        if PlayerReference::all_players(game).into_iter()
+            .filter(|p|InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p))
+            .any(|p|RoleSet::MafiaKilling.get_roles().contains(&p.role(game)))
+        {
+            return;
+        }
+
+        player.set_role(game, Mafioso::default());
+        player.set_selection(game, player.selection(game).clone());
+        modifier.active = false;
+
+        for insider in InsiderGroupID::Mafia.players(game).clone(){
+            insider.remove_player_tag_on_all(game, Tag::GodfatherBackup);
+        }
+
+        Modifiers::set_modifier(game, modifier.into());
+    }
     pub fn mark_vote_action(game: &mut Game, voter: PlayerReference, target: Option<PlayerReference>){
         let Some(mut modifier) = Modifiers::get_modifier_inner::<Self>(game, ModifierType::MafiaHitOrders).cloned() else {return};
         if !modifier.active {return}
@@ -95,22 +119,6 @@ impl MafiaHitOrders{
         }
         Modifiers::set_modifier(game, modifier.into());
     }
-
-
-
-    fn check_if_one_remains(game: &mut Game){
-        let living_insiders = InsiderGroupID::Mafia.players(game)
-            .clone()
-            .into_iter()
-            .filter(|p|p.alive(game))
-            .collect::<VecSet<PlayerReference>>();
-        
-        if living_insiders.len() != 1 {return}
-
-        for insider in living_insiders{
-            insider.set_role(game, Mafioso::default());
-        }
-    }
 }
 
 impl ModifierTrait for MafiaHitOrders{
@@ -130,6 +138,7 @@ impl ModifierTrait for MafiaHitOrders{
 
         for player in PlayerReference::all_players(game){
             if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player) {continue;}
+            if !RoleSet::MafiaKilling.get_roles().contains(&player.role(game)) {continue;}
 
             for visit in player.night_visits(game).clone(){
                 if !self.hit_order_players.contains(&visit.target) {continue;}
@@ -161,11 +170,6 @@ impl ModifierTrait for MafiaHitOrders{
         for player in players_to_remove_hit_order.clone(){
             MafiaHitOrders::remove_hit_order_player(game, player);
         }
-    }
-    fn on_any_death(self, game: &mut Game, player: PlayerReference){
-        if !self.active {return}
-        if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player) {return;}
-        Self::check_if_one_remains(game);
     }
     fn before_initial_role_creation(mut self, game: &mut Game) {
         //random weather or not to enable this modifier
@@ -206,9 +210,5 @@ impl ModifierTrait for MafiaHitOrders{
             }
         }
         
-    }
-    fn on_game_start(self, game: &mut Game) {
-        if !self.active {return;}
-        Self::check_if_one_remains(game);
     }
 }

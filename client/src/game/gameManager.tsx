@@ -594,6 +594,11 @@ export function createGameManager(): GameManager {
                 player: player
             });
         },
+        sendHitOrderSwitchMafiosoPacket() {
+            this.server.sendPacket({
+                type: "hitOrderSwitchToMafioso",
+            });
+        },
 
         messageListener(serverMessage) {
             messageListener(serverMessage);
