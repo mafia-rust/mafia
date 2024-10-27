@@ -1,6 +1,6 @@
 use serde::{ser::SerializeMap, Deserialize, Serialize};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct VecMap<K, V> where K: Eq {
     vec: Vec<(K, V)>,
 }
@@ -29,7 +29,14 @@ impl<K, V> VecMap<K, V> where K: Eq {
         }
     }
 
-    pub fn get(&self, key: &K) -> Option<(&K, &V)> {
+    pub fn get(&self, key: &K) -> Option<&V> {
+        self.get_kvp(key).map(|(_, v)| v)
+    }
+    pub fn get_mut(&mut self, key: &K) -> Option<&mut V> {
+        self.get_kvp_mut(key).map(|(_, v)| v)
+    }
+
+    pub fn get_kvp(&self, key: &K) -> Option<(&K, &V)> {
         for (k, v) in &self.vec {
             if k == key {
                 return Some((k, v));
@@ -38,7 +45,7 @@ impl<K, V> VecMap<K, V> where K: Eq {
         None
     }
 
-    pub fn get_mut(&mut self, key: &K) -> Option<(&K, &mut V)> {
+    pub fn get_kvp_mut(&mut self, key: &K) -> Option<(&K, &mut V)> {
         for (k, v) in &mut self.vec {
             if k == key {
                 return Some((k ,v));

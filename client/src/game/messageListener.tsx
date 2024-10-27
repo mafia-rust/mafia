@@ -343,6 +343,11 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.clientState.sendChatGroups = [...packet.sendChatGroups];
             }
         break;
+        case "yourInsiderGroups":
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                GAME_MANAGER.state.clientState.insiderGroups = [...packet.insiderGroups];
+            }
+        break;
         case "yourButtons":
             if(GAME_MANAGER.state.stateType === "game"){
                 for(let i = 0; i < GAME_MANAGER.state.players.length && i < packet.buttons.length; i++){
@@ -446,6 +451,10 @@ export default function messageListener(packet: ToClientPacket){
         case "yourPitchforkVote":
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
                 GAME_MANAGER.state.clientState.pitchforkVote = packet.player;
+        break;
+        case "yourHitOrderVote":
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                GAME_MANAGER.state.clientState.hitOrderVote = packet.player;
         break;
         case "addChatMessages":
             if(GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby"){

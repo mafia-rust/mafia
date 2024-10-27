@@ -7,7 +7,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{RevealedGroupID, GetClientRoleState, Priority, RoleState, RoleStateImpl};
+use super::{InsiderGroupID, GetClientRoleState, Priority, RoleState, RoleStateImpl};
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
@@ -37,7 +37,7 @@ impl RoleStateImpl for MafiaWitch {
         ((
             actor_ref != target_ref &&
             actor_ref.selection(game).is_empty() &&
-            !RevealedGroupID::in_same_revealed_group(game, actor_ref, target_ref)
+            !InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref)
         ) || (
             actor_ref.selection(game).len() == 1
         ))
@@ -57,9 +57,9 @@ impl RoleStateImpl for MafiaWitch {
             actor_ref.set_role_state(game, RoleState::MafiaWitch(MafiaWitch { currently_used_player: None }));
         }
     }
-    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
-            crate::game::components::revealed_group::RevealedGroupID::Mafia
+            crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
 }

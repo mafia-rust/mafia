@@ -4,7 +4,7 @@ use serde::Serialize;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
-use crate::game::components::revealed_group::RevealedGroupID;
+use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::event::before_role_switch::BeforeRoleSwitch;
 use crate::game::grave::GraveInformation;
 use crate::game::grave::GraveReference;
@@ -53,7 +53,7 @@ impl RoleStateImpl for Mortician {
                     self.obscured_players.insert(target_ref);
                     actor_ref.set_role_state(game, RoleState::Mortician(self));
 
-                    for player in RevealedGroupID::all_players_in_same_revealed_group_with_actor(game, actor_ref){
+                    for player in InsiderGroupID::all_players_in_same_revealed_group_with_actor(game, actor_ref){
                         player.push_player_tag(game, target_ref, Tag::MorticianTagged);
                     }
                 }
@@ -95,9 +95,9 @@ impl RoleStateImpl for Mortician {
             actor_ref.set_role_state(game, self);
         }
     }
-    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
-            crate::game::components::revealed_group::RevealedGroupID::Mafia
+            crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
 }

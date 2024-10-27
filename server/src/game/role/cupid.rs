@@ -6,7 +6,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{RevealedGroupID, Priority, RoleStateImpl};
+use super::{InsiderGroupID, Priority, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -47,7 +47,7 @@ impl RoleStateImpl for Cupid {
         )) &&
         actor_ref.alive(game) &&
         target_ref.alive(game) &&
-        !RevealedGroupID::in_same_revealed_group(game, actor_ref, target_ref)
+        !InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref)
     }
     fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
@@ -59,9 +59,9 @@ impl RoleStateImpl for Cupid {
             Vec::new()
         }
     }
-    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
-            crate::game::components::revealed_group::RevealedGroupID::Mafia
+            crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
 }

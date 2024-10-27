@@ -127,6 +127,8 @@ export type GameManager = {
     sendVoteFastForwardPhase(fastForward: boolean): void;
     sendForfeitVotePacket(forfeit: boolean): void;
     sendPitchforkVotePacket(player: PlayerIndex | null): void;
+    sendHitOrderVotePacket(player: PlayerIndex | null): void;
+    sendHitOrderSwitchMafiosoPacket(): void;
 
     messageListener(serverMessage: ToClientPacket): void;
 

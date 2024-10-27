@@ -81,8 +81,10 @@ export function createPlayerGameState(): PlayerGameState {
 
         forfeitVote: false,
         pitchforkVote: null,
+        hitOrderVote: null,
 
         sendChatGroups: [],
+        insiderGroups: [],
     }
 }
 

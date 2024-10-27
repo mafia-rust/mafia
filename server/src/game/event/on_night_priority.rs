@@ -5,9 +5,7 @@ use crate::game::{
         mafia_recruits::MafiaRecruits,
         pitchfork::Pitchfork, poison::Poison,
         puppeteer_marionette::PuppeteerMarionette
-    },
-    role::Priority,
-    Game
+    }, modifiers::Modifiers, role::Priority, Game
 };
 
 ///runs before all players' night actions
@@ -26,5 +24,6 @@ impl OnNightPriority{
         MafiaRecruits::on_night_priority(game, self.priority);
         Pitchfork::on_night_priority(game, self.priority);
         DrunkAura::on_night_priority(game, self.priority);
+        Modifiers::on_night_priority(game, self.priority);
     }
 }
