@@ -654,7 +654,7 @@
             {"type": "wildcardConvertFailed", "role": "godfather"}
         ]
     },
-    "madeMan": {
+    "goon": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia"],
         "armor": false,

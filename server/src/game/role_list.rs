@@ -182,7 +182,7 @@ impl RoleSet{
                 vec![Role::Medium, Role::Retributionist, Role::Transporter, Role::Escort, Role::Mayor, Role::Reporter],
             RoleSet::Mafia =>
                 vec![
-                    Role::MadeMan, Role::MafiaSupportWildcard, Role::MafiaKillingWildcard
+                    Role::Goon, Role::MafiaSupportWildcard, Role::MafiaKillingWildcard
                 ].into_iter().chain(
                     RoleSet::MafiaKilling.get_roles().into_iter()
                 ).chain(

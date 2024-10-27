@@ -122,7 +122,7 @@ export type RoleState = {
     type: "mafiaKillingWildcard"
     role: Role
 } | {
-    type: "madeMan"
+    type: "goon"
 } |
 (Hypnotist & {type: "hypnotist"})
  | {
