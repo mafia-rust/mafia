@@ -112,7 +112,7 @@ macros::roles! {
     Mafioso : mafioso,
     MafiaKillingWildcard : mafia_killing_wildcard,
 
-    MadeMan : made_man,
+    Goon : made_man,
     Consort : consort,
     
     Hypnotist : hypnotist,
