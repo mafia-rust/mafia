@@ -43,7 +43,7 @@ export default function StartMenu(): ReactElement {
                     <Button onClick={()=>{
                         window.open("https://discord.gg/Vxw7gFPfJj", "_blank")
                     }}>
-                        Discord
+                        <Icon>public</Icon> Discord
                     </Button>
                 </div>
                 
