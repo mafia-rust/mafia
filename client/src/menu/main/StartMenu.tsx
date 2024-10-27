@@ -56,9 +56,6 @@ export default function StartMenu(): ReactElement {
                     <li><a href="https://discord.gg/Vxw7gFPfJj">Discord</a></li>
                     {/* eslint-disable no-script-url */}
                     {/* eslint-disable jsx-a11y/anchor-is-valid */}
-                    {/* <li><a href="https://netgames.io/games/">Net Games</a></li>
-                    <li><a href="https://clocktower.online/">Clocktower Online</a></li>
-                    <li><a href="https://secret-hitler.com/">Secret Hitler</a></li> */}
                 </ul>
             </nav>
         </footer>
