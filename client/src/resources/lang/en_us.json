@@ -1260,14 +1260,14 @@
     "wiki.article.role.noExtra": "There is no extras section written for this page.",
     "wiki.article.role.details": "Details",
 
-    "wiki.article.role.jailor.reminder": "Each day choose a player to detain. Each night*, you can kill your detainee.",
+    "wiki.article.role.jailor.reminder": "Each day, choose a player to detain. Each night*, you can kill your detainee.",
     "wiki.article.role.jailor.guide": "- Each day, choose a player to jail. At night, you interrogate them in text chat\n- You can kill your prisoner up to three times\n- You can talk to your prisoner during the night, and they are not told who you are\n- If you kill a townie, you lose the ability to kill your prisoner\n- The players you jail are warded and roleblocked.",
     "wiki.article.role.jailor.abilities":"* Choose one player to jail during the day\n* Visit your prisoner to attack them",
     "wiki.article.role.jailor.attributes":"* You may talk with your prisoner at night in jail chat\n* If you kill a town loyalist, you forfeit the ability to execute prisoners\n* Players in jail are warded and roleblocked, they also can't select anybody",
     "wiki.article.role.jailor.extra":"* The Jailor can not kill someone on night one\n* If you kill a townie, or run out of kills, you can not select to kill anymore\n* You invisibly roleblock the player you put in jail, they aren't told their roleblocked\n* Players in jail don't see your name on your messages. The messages you send appear to be from the jailor\n* If you jail a cult or syndicate member, their teammates know that that player is in jail",
 
-    "wiki.article.role.villager.reminder": "You are a good guy with no ability.",
-    "wiki.article.role.villager.guide": "You have no nighttime ability, but you can still speak and vote. Try to help find out who is evil and vote them. Your only ability is your own critical thinking.",
+    "wiki.article.role.villager.reminder": "You have no ability.",
+    "wiki.article.role.villager.guide": "You have no ability, but you can still speak and vote. Try to help find out who is evil and vote them. Your only ability is your own critical thinking.",
     "wiki.article.role.villager.abilities":"None",
     "wiki.article.role.villager.attributes":"None",
     "wiki.article.role.villager.extra":"None",
@@ -1278,7 +1278,7 @@
     "wiki.article.role.mayor.attributes":"* You get 3 votes during both nomination and judgement after you enfranchise\n* After you enfranchise you can't whisper or be whispered to",
     "wiki.article.role.mayor.extra": "* If you are converted to a different role, players will still see that you are the mayor\n* Enfranchising does not increase the number of votes required to put someone on trial",
 
-    "wiki.article.role.transporter.reminder": "Each night, transport 2 players with each other. All visits targeting one player are now targeting the other.",
+    "wiki.article.role.transporter.reminder": "Each night, transport 2 players with each other. All visits targeting one player redirect to targeting the other.",
     "wiki.article.role.transporter.guide": "- At night, select 2 players\n    - If somebody else tries to visit the first player, they will instead visit the second player, and vice versa\n\n _For example_\n- If a godfather tries to attack @1, but you transported @1 and @4, then @4 will die instead\n\nIts often a good strategy to transport innocent looking players with suspicious looking ones to divert a potential attack from the innocent player onto the suspicious player.\n\n",
     "wiki.article.role.transporter.abilities":"* Visit 2 players to transport them",
     "wiki.article.role.transporter.attributes":"* All visits to first player instead visit the second player\n* All visits to the second player instead visit first player\n* The players you visit get a message saying that they were transported",
@@ -1359,7 +1359,7 @@
     "wiki.article.role.cop.reminder": "Each night*, protect a player from an attack and attack one random visitor to them.",
     "wiki.article.role.cop.guide": "- At night, select a player to protect\n - You attack one random other player who visits your target\n- You can't use your ability night 1\n\n You should try to protect people you think are townies who will be attacked. You could easily accidentally kill town loyalists, so you should try to make sure no other town loyalists visit the player you protect.",
     "wiki.article.role.cop.abilities":"* Visit a player to protect for the night\n* Attack a random visitor of the player you protect",
-    "wiki.article.role.cop.attributes":"* Your attack prioritizes a random evil player over town royalists\n* You can't attack yourself",
+    "wiki.article.role.cop.attributes":"* Your attack prioritizes a random evil player over town loyalists\n* You can't attack yourself",
     "wiki.article.role.cop.extra":"* You can't select yourself\n* You are told if your target is attacked\n* Your target is only be told that they are protected if they are attacked\n* Your attack is indirect and basic\n* You can't attack dead players",
 
     "wiki.article.role.bouncer.reminder": "Each night, ward a player.",
@@ -1420,17 +1420,19 @@
     "wiki.article.role.rabblerouser.attributes":"- Non Town Loyalists are not counted as voters for the pitchfork\n- The attack is indirect and protection piercing",
     "wiki.article.role.rabblerouser.extra":"- The pitchfork menu stays available\n   - Even if all Rabblerousers are dead\n    - Even if there is no Rabblerouser\n    - Even if all three uses are consumed\n- Multiple Rabblerousers does not mean multiple attacks or more uses. There is a maximum of 3 uses and a maximum of 1 attack per night",
 
-    "wiki.article.role.veteran.reminder":"At night*, rampage",
+    "wiki.article.role.veteran.reminder":"At night*, rampage to kill all visitors to you.",
     "wiki.article.role.veteran.guide": "- At night, you can select yourself to gain protected defense for the night and rampage yourself, attacking everyone who visits you\n- You can only use your ability three times\n- You can't use your ability on night 1\n* You should try to trick evil players into visiting you, so you can block the attack and kill them. Try to avoid killing unnecessary townies.\n* There can only be one veteran in a game.",
     "wiki.article.role.veteran.abilities":"* Select yourself\n    - rampage yourself\n    - gain protected defense for the night",
     "wiki.article.role.veteran.attributes":"* You only have three uses of your ability\n* You are told when a visitor is attacked by your rampage\n* You have an indirect, armor-piercing attack\n- You can't use your ability night 1",
     "wiki.article.role.veteran.extra":"* While you have 0 uses left, you can not select yourself\n* You are immune to getting roleblocked and getting possessed\n* Players who visit you while your ability is active are told they are attacked by a veteran\n* When you select yourself, you don't visit yourself\n* You can't attack dead players",
 
+    "wiki.article.role.marksman.reminder": "Each night*, mark up to 3 players and camp up to 3 players. If a marked player visits a camped player, you attack the marked player.",
     "wiki.article.role.marksman.guide": "- Each night, choose up to three players to mark, and select up to three players to camp\n    - If a marked player visits a camped player, you attack the marked player\n- You can't do anything on the first night\n- If you kill a townie, you can't use your ability again\n- You should try to mark players who act suspicious, and camp players that they would only visit if they're evil",
     "wiki.article.role.marksman.abilities":"* Choose to mark up to 3 players\n* Select up to 3 players, if you have nobody marked, you can't select anyone\n    - If a marked player visits any of your targets, you attack them",
     "wiki.article.role.marksman.attributes":"* You can't mark or select to camp on night 1\n* If you kill a town loyalist, you can't mark or select again\n* You have an indirect, basic attack",
     "wiki.article.role.marksman.extra":"* You can't select to camp yourself\n- You only visit the players you select, not the players you mark, even if you attack the marked players",
 
+    "wiki.article.role.deputy.reminder": "Once per game, during the day*, shoot a player.",
     "wiki.article.role.deputy.guide":"- Once per game, you can shoot a player during the day\n- If you kill a townie, you instantly leave town\n- If you kill someone, everyone is told that a deputy shot someone\n- If the player you shoot survives your attack, only the player you attacked is told, nobody else is told\n- You can only shoot during discussion or nomination\n\nIf you attack someone and they survive it is likely that they are a role that is armored. Most roles that are armored are evil.",
     "wiki.article.role.deputy.abilities":"* Once per game, during the discussion or nomination phase after day 1, you may choose a player to attack.",
     "wiki.article.role.deputy.attributes":"* If the player you attack has defense, they are told they were attacked by a deputy\n* When you kill someone, everyone is told a deputy shot someone\n* If you kill a town loyalist, you instantly leave town",
@@ -1601,21 +1603,25 @@
     "wiki.article.role.trueWildcard.attributes":"* You can not become a role that is disabled\n* You can become a role that is taken by too many players",
     "wiki.article.role.trueWildcard.extra":"* If you choose a role that was disabled you stay as the True Wildcard\n* You can choose true wildcard to stay as true wildcard\n* You can become a role that is at its role limit, if there is a veteran in the game, you still can become one",
 
+    "wiki.article.role.witch.reminder": "Each night, possess a player, forcing them to visit another player.",
     "wiki.article.role.witch.guide": "- You win if town loses, when town loses you leave town\n- At night, possess a player by selecting 2 players\n    - The first player you select will be forced to visit the second player you select\n\n_For example_\n- You can posses a vigilante to attack another townie by selecting the vigilante first and the townie second",
     "wiki.article.role.witch.abilities":"* Visit 2 players to make the first player visit the second player\n* If there are no living townies, you win, and leave town at the start of the next phase",
     "wiki.article.role.witch.attributes":"* The first player you visit is told that they were possessed or immune to possession\n* You are told all night information messages that the player you possess gets told",
     "wiki.article.role.witch.extra":"* You are immune to getting roleblocked and possession\n* Your second target gets erased after you change your targets visit, so no other roles can interact with it\n    * A tracker will only see you visit your first target",
     
+    "wiki.article.role.scarecrow.reminder": "Each night, ward a player. All players you wardblock are revealed to you.",
     "wiki.article.role.scarecrow.guide": "- You win if town loses, when town loses you leave town\n- At night, select a player to ward them, stopping almost all abilities from working on them.\n    - You are told who you wardblocked, and their roles are revealed to you\n\n_For Example_\n- A detective attempts to investigate @11 but you warded @11, so the detective gets wardblocked and doesn't learn anything, but you learn that you stopped the @11\n\nYou aren't told players who are wardblock immune because you can't wardblock them",
     "wiki.article.role.scarecrow.abilities":"* Visit a player to ward them\n    - Everyone visitor to your target has their visits erased, and receives a chat message informing them they are wardblocked\n- You are told who you wardblocked, and they are revealed\n- If there are no living townies, you win, and leave town at the start of the next phase",
     "wiki.article.role.scarecrow.attributes":"* Your target isn't told they are warded",
     "wiki.article.role.scarecrow.extra":"* You can't select yourself\n* You are immune to roleblocks, wardblocks, and possession\n- You aren't told the names of players who aren't wardblocked, even if they still somehow visit your target, for example, a bouncer is wardblock immune",
     
+    "wiki.article.role.kidnapper.reminder": "Each day, choose a player to detain. Each night*, you can kill your detainee.",
     "wiki.article.role.kidnapper.guide": "- Each day, choose a player to kidnap. At night, you interrogate them in text chat\n- You can kill your prisoner one time\n- You can talk to your prisoner during the night, and they are not told who you are\n- The players you kidnap are warded and roleblocked.",
     "wiki.article.role.kidnapper.abilities":"* Choose one player to kidnap during the day\n* Visit your prisoner to attack them\n- If you kill your prisoner, their grave shows that they were killed by a jailor",
     "wiki.article.role.kidnapper.attributes":"* You may talk with your prisoner at night in kidnapped chat\n* Players you kidnap are warded and roleblocked, they also can't select anybody",
     "wiki.article.role.kidnapper.extra":"* The Kidnapper can not kill someone on night one\n* You invisibly roleblock the player you detain, they aren't told their roleblocked\n* Players you kidnap don't see your name on your messages. The messages you send appear to be from the jailor\n* If you kidnap a cult or syndicate member, their teammates are told that player is in jail",
 
+    "wiki.article.role.warper.reminder": "Each night, transport 1 player with another player. All visits targeting the transported player redirect to targeting the other player.",
     "wiki.article.role.warper.guide": "- At night, select 2 players\n    - If somebody else tries to visit the first player, they instead visit the second player\n    - The first player is told they are transported, but the second is not\n    - You can't choose yourself as your first target, you can't warp yourself\n\n _For example_\n- If a godfather tries to attack @1, but you warped @1 to @4, then @4 will die instead, and @1 is told they are transported\n\nYou are a minion, so you should try to harm the town as much as possible while looking to benefit non-town players.\n\n",
     "wiki.article.role.warper.abilities":" - Visit 2 players to warp visits from the first player to the second player\n - You can't select yourself as the first target, you cannot warp yourself",
     "wiki.article.role.warper.attributes":" -  All visits to first player instead visit the second player\n - The first player you visit is told they were transported",
