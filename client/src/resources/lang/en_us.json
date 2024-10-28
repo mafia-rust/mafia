@@ -1248,6 +1248,8 @@
 
     "wiki.article.role": "# \\0\n### \\1\n<br/>\n\n### Guide\n\\2\n### Abilities\n\\3\n### Attributes\n\\4\n### Extra\n\\5\n<br/>\n\n### Role Limit: \\6\n### Defense: \\7\n\n<br>\n\n### Keywords\n\\8",
     "wiki.article.role.chatMessages": "Chat Messages",
+    "wiki.article.role.reminder": "Reminder",
+    "wiki.article.role.noReminder": "There is no reminder section written for this page.",
     "wiki.article.role.guide": "Guide",
     "wiki.article.role.noGuide": "There is no guide section written for this page.",
     "wiki.article.role.abilities": "Abilities",
