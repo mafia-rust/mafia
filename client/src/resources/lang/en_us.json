@@ -1260,7 +1260,7 @@
     "wiki.article.role.noExtra": "There is no extras section written for this page.",
     "wiki.article.role.details": "Details",
 
-    "wiki.article.role.jailor.reminder": "Each day choose a player to detain. Each night*, you can kill your detainee.",
+    "wiki.article.role.jailor.reminder": "Each day, choose a player to detain. Each night*, you can kill your detainee.",
     "wiki.article.role.jailor.guide": "- Each day, choose a player to jail. At night, you interrogate them in text chat\n- You can kill your prisoner up to three times\n- You can talk to your prisoner during the night, and they are not told who you are\n- If you kill a townie, you lose the ability to kill your prisoner\n- The players you jail are warded and roleblocked.",
     "wiki.article.role.jailor.abilities":"* Choose one player to jail during the day\n* Visit your prisoner to attack them",
     "wiki.article.role.jailor.attributes":"* You may talk with your prisoner at night in jail chat\n* If you kill a town loyalist, you forfeit the ability to execute prisoners\n* Players in jail are warded and roleblocked, they also can't select anybody",
@@ -1278,7 +1278,7 @@
     "wiki.article.role.mayor.attributes":"* You get 3 votes during both nomination and judgement after you enfranchise\n* After you enfranchise you can't whisper or be whispered to",
     "wiki.article.role.mayor.extra": "* If you are converted to a different role, players will still see that you are the mayor\n* Enfranchising does not increase the number of votes required to put someone on trial",
 
-    "wiki.article.role.transporter.reminder": "Each night, transport 2 players with each other. All visits targeting one player are now targeting the other.",
+    "wiki.article.role.transporter.reminder": "Each night, transport 2 players with each other. All visits targeting one player redirect to targeting the other.",
     "wiki.article.role.transporter.guide": "- At night, select 2 players\n    - If somebody else tries to visit the first player, they will instead visit the second player, and vice versa\n\n _For example_\n- If a godfather tries to attack @1, but you transported @1 and @4, then @4 will die instead\n\nIts often a good strategy to transport innocent looking players with suspicious looking ones to divert a potential attack from the innocent player onto the suspicious player.\n\n",
     "wiki.article.role.transporter.abilities":"* Visit 2 players to transport them",
     "wiki.article.role.transporter.attributes":"* All visits to first player instead visit the second player\n* All visits to the second player instead visit first player\n* The players you visit get a message saying that they were transported",
@@ -1583,21 +1583,25 @@
     "wiki.article.role.trueWildcard.attributes":"* You can not become a role that is disabled\n* You can become a role that is taken by too many players",
     "wiki.article.role.trueWildcard.extra":"* If you choose a role that was disabled you stay as the True Wildcard\n* You can choose true wildcard to stay as true wildcard\n* You can become a role that is at its role limit, if there is a veteran in the game, you still can become one",
 
+    "wiki.article.role.witch.reminder": "Each night, possess a player, forcing them to visit another player.",
     "wiki.article.role.witch.guide": "- You win if town loses, when town loses you leave town\n- At night, possess a player by selecting 2 players\n    - The first player you select will be forced to visit the second player you select\n\n_For example_\n- You can posses a vigilante to attack another townie by selecting the vigilante first and the townie second",
     "wiki.article.role.witch.abilities":"* Visit 2 players to make the first player visit the second player\n* If there are no living townies, you win, and leave town at the start of the next phase",
     "wiki.article.role.witch.attributes":"* The first player you visit is told that they were possessed or immune to possession\n* You are told all night information messages that the player you possess gets told",
     "wiki.article.role.witch.extra":"* You are immune to getting roleblocked and possession\n* Your second target gets erased after you change your targets visit, so no other roles can interact with it\n    * A tracker will only see you visit your first target",
     
+    "wiki.article.role.scarecrow.reminder": "Each night, ward a player. All players you wardblock are revealed to you.",
     "wiki.article.role.scarecrow.guide": "- You win if town loses, when town loses you leave town\n- At night, select a player to ward them, stopping almost all abilities from working on them.\n    - You are told who you wardblocked, and their roles are revealed to you\n\n_For Example_\n- A detective attempts to investigate @11 but you warded @11, so the detective gets wardblocked and doesn't learn anything, but you learn that you stopped the @11\n\nYou aren't told players who are wardblock immune because you can't wardblock them",
     "wiki.article.role.scarecrow.abilities":"* Visit a player to ward them\n    - Everyone visitor to your target has their visits erased, and receives a chat message informing them they are wardblocked\n- You are told who you wardblocked, and they are revealed\n- If there are no living townies, you win, and leave town at the start of the next phase",
     "wiki.article.role.scarecrow.attributes":"* Your target isn't told they are warded",
     "wiki.article.role.scarecrow.extra":"* You can't select yourself\n* You are immune to roleblocks, wardblocks, and possession\n- You aren't told the names of players who aren't wardblocked, even if they still somehow visit your target, for example, a bouncer is wardblock immune",
     
+    "wiki.article.role.kidnapper.reminder": "Each day, choose a player to detain. Each night*, you can kill your detainee.",
     "wiki.article.role.kidnapper.guide": "- Each day, choose a player to kidnap. At night, you interrogate them in text chat\n- You can kill your prisoner one time\n- You can talk to your prisoner during the night, and they are not told who you are\n- The players you kidnap are warded and roleblocked.",
     "wiki.article.role.kidnapper.abilities":"* Choose one player to kidnap during the day\n* Visit your prisoner to attack them\n- If you kill your prisoner, their grave shows that they were killed by a jailor",
     "wiki.article.role.kidnapper.attributes":"* You may talk with your prisoner at night in kidnapped chat\n* Players you kidnap are warded and roleblocked, they also can't select anybody",
     "wiki.article.role.kidnapper.extra":"* The Kidnapper can not kill someone on night one\n* You invisibly roleblock the player you detain, they aren't told their roleblocked\n* Players you kidnap don't see your name on your messages. The messages you send appear to be from the jailor\n* If you kidnap a cult or syndicate member, their teammates are told that player is in jail",
 
+    "wiki.article.role.warper.reminder": "Each night, transport 1 player with another player. All visits targeting the transported player redirect to targeting the other player.",
     "wiki.article.role.warper.guide": "- At night, select 2 players\n    - If somebody else tries to visit the first player, they instead visit the second player\n    - The first player is told they are transported, but the second is not\n    - You can't choose yourself as your first target, you can't warp yourself\n\n _For example_\n- If a godfather tries to attack @1, but you warped @1 to @4, then @4 will die instead, and @1 is told they are transported\n\nYou are a minion, so you should try to harm the town as much as possible while looking to benefit non-town players.\n\n",
     "wiki.article.role.warper.abilities":" - Visit 2 players to warp visits from the first player to the second player\n - You can't select yourself as the first target, you cannot warp yourself",
     "wiki.article.role.warper.attributes":" -  All visits to first player instead visit the second player\n - The first player you visit is told they were transported",
