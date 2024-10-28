@@ -209,7 +209,6 @@ export default function Anchor(props: Readonly<{
                     setTouchCurrent(null)
                 }}
             >
-                <title>🌹{translate("menu.start.title")}🔪</title>
                 <Button className="global-menu-button" 
                     onClick={() => {
                         if (!globalMenuOpen) {
