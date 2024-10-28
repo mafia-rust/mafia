@@ -1,7 +1,7 @@
 import React, { JSXElementConstructor, ReactElement, useRef, createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import "../index.css";
 import "./anchor.css";
-import translate, { switchLanguage } from "../game/lang";
+import { switchLanguage } from "../game/lang";
 import GlobalMenu from "./GlobalMenu";
 import SettingsMenu from './Settings';
 import { loadSettingsParsed } from "../game/localStorage";
