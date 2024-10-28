@@ -19,6 +19,7 @@ import AudioController from "../menu/AudioController";
 import NightMessagePopup from "../components/NightMessagePopup";
 import PlayMenu from "../menu/main/PlayMenu";
 import StartMenu from "../menu/main/StartMenu";
+import { defaultAlibi } from "../menu/game/gameScreenContent/WillMenu";
 
 
 function sendDefaultName() {
@@ -342,6 +343,11 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.clientState.sendChatGroups = [...packet.sendChatGroups];
             }
         break;
+        case "yourInsiderGroups":
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                GAME_MANAGER.state.clientState.insiderGroups = [...packet.insiderGroups];
+            }
+        break;
         case "yourButtons":
             if(GAME_MANAGER.state.stateType === "game"){
                 for(let i = 0; i < GAME_MANAGER.state.players.length && i < packet.buttons.length; i++){
@@ -386,7 +392,7 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.clientState.will = packet.will;
 
                 if(GAME_MANAGER.state.clientState.will === ""){
-                    GAME_MANAGER.sendSaveWillPacket("ROLE\nNight 1: \nNight 2:");
+                    GAME_MANAGER.sendSaveWillPacket(defaultAlibi());
                 }
             }
         break;
@@ -394,10 +400,18 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 GAME_MANAGER.state.clientState.notes = packet.notes;
                 
-                if(GAME_MANAGER.state.clientState.notes === ""){
-                    GAME_MANAGER.sendSaveNotesPacket(GAME_MANAGER.state.players.map((player) => {
-                        return player.toString();
-                    }).join(" - \n") + " - \n");
+                if(GAME_MANAGER.state.clientState.notes.length === 0){
+                    const myIndex = GAME_MANAGER.state.clientState.myIndex;
+                    const myRoleKey = `role.${GAME_MANAGER.state.clientState.roleState.type}.name`;
+
+                    GAME_MANAGER.sendSaveNotesPacket([
+                        "Claims\n" + 
+                        GAME_MANAGER.state.players
+                            .map(player => 
+                                `@${player.index + 1} - ${player.index === myIndex ? translate(myRoleKey) : ''}\n`
+                            )
+                            .join('')
+                    ]);
                 }
             }
         break;
@@ -437,6 +451,10 @@ export default function messageListener(packet: ToClientPacket){
         case "yourPitchforkVote":
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
                 GAME_MANAGER.state.clientState.pitchforkVote = packet.player;
+        break;
+        case "yourHitOrderVote":
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                GAME_MANAGER.state.clientState.hitOrderVote = packet.player;
         break;
         case "addChatMessages":
             if(GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby"){

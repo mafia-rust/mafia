@@ -40,7 +40,7 @@ pub struct Player {
     role_state: RoleState,
     alive: bool,
     will: String,
-    notes: String,
+    notes: Vec<String>,
     crossed_out_outlines: Vec<u8>,
     death_note: Option<String>,
 
@@ -96,7 +96,7 @@ impl Player {
             role_state: role.default_state(),
             alive: true,
             will: "".to_string(),
-            notes: "".to_string(),
+            notes: vec![],
             crossed_out_outlines: vec![],
             death_note: None,
 
@@ -157,7 +157,7 @@ pub mod test {
             role_state: role.default_state(),
             alive: true,
             will: "".to_string(),
-            notes: "".to_string(),
+            notes: vec![],
             crossed_out_outlines: vec![],
             death_note: None,
 

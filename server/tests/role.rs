@@ -3,7 +3,7 @@ use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::{components::{cult::CultAbility, revealed_group::RevealedGroupID}, role::{armorsmith::Armorsmith, drunk::Drunk, ojo::Ojo, recruiter::Recruiter, scarecrow::Scarecrow, tally_clerk::TallyClerk, warper::Warper}, role_list::RoleSet};
+use mafia_server::game::{components::{cult::CultAbility, insider_group::InsiderGroupID}, role::{armorsmith::Armorsmith, drunk::Drunk, ojo::Ojo, recruiter::Recruiter, scarecrow::Scarecrow, tally_clerk::TallyClerk, warper::Warper}, role_list::RoleSet};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -1621,7 +1621,7 @@ fn cult_alternates() {
     assert!(apostle.set_night_selection_single(b));
     game.next_phase();
     assert!(b.alive());
-    assert!(RevealedGroupID::Cult.is_player_in_revealed_group(game.deref(), b.player_ref()));
+    assert!(InsiderGroupID::Cult.is_player_in_revealed_group(game.deref(), b.player_ref()));
 
     //zealot kills, apostle waits
     game.skip_to(Night, 2);
@@ -1632,7 +1632,7 @@ fn cult_alternates() {
     game.next_phase();
     assert!(!c.alive());
     assert!(d.alive());
-    assert!(!RevealedGroupID::Cult.is_player_in_revealed_group(game.deref(), d.player_ref()));
+    assert!(!InsiderGroupID::Cult.is_player_in_revealed_group(game.deref(), d.player_ref()));
 
     //zealot waits, apostle converts
     game.skip_to(Night, 3);
@@ -1642,7 +1642,7 @@ fn cult_alternates() {
     game.next_phase();
     assert!(e.alive());
     assert!(d.alive());
-    assert!(RevealedGroupID::Cult.is_player_in_revealed_group(game.deref(), d.player_ref()));
+    assert!(InsiderGroupID::Cult.is_player_in_revealed_group(game.deref(), d.player_ref()));
 
     //zealot kills, apostle waits
     game.skip_to(Night, 4);

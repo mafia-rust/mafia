@@ -95,9 +95,9 @@ impl RoleStateImpl for Hypnotist {
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
     }
-    fn default_revealed_groups(self) -> std::collections::HashSet<crate::game::components::revealed_group::RevealedGroupID> {
+     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
-            crate::game::components::revealed_group::RevealedGroupID::Mafia
+            crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
 }

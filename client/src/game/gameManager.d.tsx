@@ -89,7 +89,7 @@ export type GameManager = {
     sendTargetPacket(targetIndexList: number[]): void;
     sendDayTargetPacket(targetIndex: number): void;
     sendSaveWillPacket(will: string): void;
-    sendSaveNotesPacket(notes: string): void;
+    sendSaveNotesPacket(notes: string[]): void;
     sendSaveCrossedOutOutlinesPacket(crossedOutOutlines: number[]): void;
     sendSaveDeathNotePacket(notes: string): void;
     sendSendMessagePacket(text: string): void;
@@ -127,6 +127,8 @@ export type GameManager = {
     sendVoteFastForwardPhase(fastForward: boolean): void;
     sendForfeitVotePacket(forfeit: boolean): void;
     sendPitchforkVotePacket(player: PlayerIndex | null): void;
+    sendHitOrderVotePacket(player: PlayerIndex | null): void;
+    sendHitOrderSwitchMafiosoPacket(): void;
 
     messageListener(serverMessage: ToClientPacket): void;
 

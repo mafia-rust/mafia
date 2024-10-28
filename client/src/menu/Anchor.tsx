@@ -32,7 +32,8 @@ const AnchorControllerContext = createContext<AnchorController | undefined>(unde
 
 export { MobileContext, AnchorControllerContext };
 
-const MIN_SWIPE_DISTANCE = 40;
+const MIN_SWIPE_DISTANCE_X = 60;
+const MAX_SWIPE_DISTANCE_Y = 60;
 const MOBILE_MAX_WIDTH_PX = 600;
 
 /**
@@ -95,8 +96,9 @@ export default function Anchor(props: Readonly<{
 
     const [globalMenuOpen, setGlobalMenuOpen] = useState<boolean>(false);
 
-    const [touchStartX, setTouchStartX] = useState<number | null>(null);
-    const [touchCurrentX, setTouchCurrentX] = useState<number | null>(null);
+
+    const [touchStart, setTouchStart] = useState<[number, number] | null>(null);
+    const [touchCurrent, setTouchCurrent] = useState<[number, number] | null>(null);
 
     // Load settings
     useEffect(() => {
@@ -180,27 +182,31 @@ export default function Anchor(props: Readonly<{
             <div
                 className="anchor"
                 onTouchStart={(e) => {
-                    setTouchStartX(e.targetTouches[0].clientX)
-                    setTouchCurrentX(e.targetTouches[0].clientX)
+                    setTouchStart([e.targetTouches[0].clientX,e.targetTouches[0].clientY])
+                    setTouchCurrent([e.targetTouches[0].clientX,e.targetTouches[0].clientY])
                 }}
                 onTouchMove={(e) => {
-                    setTouchCurrentX(e.targetTouches[0].clientX)
+                    setTouchCurrent([e.targetTouches[0].clientX,e.targetTouches[0].clientY])
                 }}
                 onTouchEnd={(e) => {
-                    if(touchStartX !== null && touchCurrentX !== null){
-                        if(touchStartX - touchCurrentX > MIN_SWIPE_DISTANCE) {
+                    if(touchStart !== null && touchCurrent !== null){
+
+                        if(touchStart[1] - touchCurrent[1] > MAX_SWIPE_DISTANCE_Y) {
+                            return;
+                        }
+                        if(touchStart[0] - touchCurrent[0] > MIN_SWIPE_DISTANCE_X) {
                             for(let listener of swipeEventListeners) {
                                 listener(false);
                             }
-                        } else if (touchStartX - touchCurrentX < -MIN_SWIPE_DISTANCE) {
+                        } else if (touchStart[0] - touchCurrent[0] < -MIN_SWIPE_DISTANCE_X) {
                             for(let listener of swipeEventListeners) {
                                 listener(true);
                             }
                         }
                     }
             
-                    setTouchStartX(null)
-                    setTouchCurrentX(null)
+                    setTouchStart(null)
+                    setTouchCurrent(null)
                 }}
             >
                 <title>🌹{translate("menu.start.title")}🔪</title>

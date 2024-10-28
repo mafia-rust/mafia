@@ -588,6 +588,17 @@ export function createGameManager(): GameManager {
                 player: player
             });
         },
+        sendHitOrderVotePacket(player: PlayerIndex | null) {
+            this.server.sendPacket({
+                type: "hitOrderVote",
+                player: player
+            });
+        },
+        sendHitOrderSwitchMafiosoPacket() {
+            this.server.sendPacket({
+                type: "hitOrderSwitchToMafioso",
+            });
+        },
 
         messageListener(serverMessage) {
             messageListener(serverMessage);

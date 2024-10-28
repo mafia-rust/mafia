@@ -1,4 +1,4 @@
-import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, LobbyClientID, ChatGroup, PhaseState, LobbyClient, ModifierType } from "./gameState.d"
+import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, LobbyClientID, ChatGroup, PhaseState, LobbyClient, ModifierType, InsiderGroup } from "./gameState.d"
 import { Grave } from "./graveState"
 import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
@@ -110,6 +110,9 @@ export type ToClientPacket = {
     type: "yourSendChatGroups",
     sendChatGroups: ChatGroup[]
 } | {
+    type: "yourInsiderGroups",
+    insiderGroups: InsiderGroup[]
+} | {
     type: "yourButtons", 
     buttons: [{
         dayTarget: boolean,
@@ -127,7 +130,7 @@ export type ToClientPacket = {
     will: string
 } | {
     type: "yourNotes",
-    notes: string
+    notes: string[]
 } | {
     type: "yourCrossedOutOutlines",
     crossedOutOutlines: number[]
@@ -166,6 +169,9 @@ export type ToClientPacket = {
     forfeit: boolean
 } | {
     type: "yourPitchforkVote",
+    player: PlayerIndex | null
+} | {
+    type: "yourHitOrderVote",
     player: PlayerIndex | null
 }
 
@@ -254,7 +260,7 @@ export type ToServerPacket = {
     will: string
 } | {
     type: "saveNotes", 
-    notes: string
+    notes: string[]
 } | {
     type: "saveCrossedOutOutlines",
     crossedOutOutlines: number[]
@@ -330,4 +336,9 @@ export type ToServerPacket = {
 } | {
     type: "pitchforkVote",
     player: PlayerIndex | null
+} | {
+    type: "hitOrderVote",
+    player: PlayerIndex | null
+} | {
+    type: "hitOrderSwitchToMafioso"
 }

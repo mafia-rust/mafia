@@ -1,124 +1,97 @@
-import React, { ReactElement, useEffect, useMemo, useState } from "react";
+import React, { ReactElement } from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import { ContentMenu, ContentTab } from "../GameScreen";
-import "./willMenu.css"
-import { StateEventType } from "../../../game/gameManager.d";
-import { Button } from "../../../components/Button";
-import Icon from "../../../components/Icon";
+import "./willMenu.css";
 import { usePlayerState } from "../../../components/useHooks";
+import { getSingleRoleJsonData } from "../../../game/roleState.d";
+import { TextDropdownArea } from "../../../components/TextAreaDropdown";
 
-
-type FieldType = "will" | "notes" | "deathNote";
+export function defaultAlibi(): string {
+    return DEFAULT_ALIBI;
+}
+const DEFAULT_ALIBI = "ROLE\nNight 1: \nNight 2:";
 
 export default function WillMenu(): ReactElement {
     const cantPost = usePlayerState(
         playerState => playerState.sendChatGroups.length === 0,
         ["yourSendChatGroups"]
     )!;
+
+    const role = usePlayerState(
+        playerState => playerState.roleState.type,
+        ["yourRoleState"]
+    )!;
+
+    const alibi = usePlayerState(
+        playerState => playerState.will,
+        ["yourWill"]
+    )!;
+    const notes = usePlayerState(
+        playerState => playerState.notes,
+        ["yourNotes"]
+    )!;
+    const deathNote = usePlayerState(
+        playerState => playerState.deathNote,
+        ["yourDeathNote"]
+    )!;
     
     return <div className="will-menu will-menu-colors">
-        <ContentTab close={ContentMenu.WillMenu} helpMenu={"standard/alibi"}>{translate("menu.will.title")}</ContentTab>
+        <ContentTab
+            close={ContentMenu.WillMenu}
+            helpMenu={"standard/alibi"}
+        >
+                {translate("menu.will.title")}
+        </ContentTab>
         <section>
-            <TextDropdownArea type="will" cantPost={cantPost} />
-            <TextDropdownArea type="notes" cantPost={cantPost} />
-            <TextDropdownArea type="deathNote" cantPost={cantPost} />
+            <TextDropdownArea
+                titleString={translate("menu.will.will")}
+                open={true}
+                savedText={alibi}
+                cantPost={cantPost}
+                onSave={(text) => {
+                    GAME_MANAGER.sendSaveWillPacket(text);
+                }}
+            />
+            {notes.map((note, i) => {
+                const title = note.split('\n')[0] || translate("menu.will.notes");
+                return <TextDropdownArea
+                    key={title + i}
+                    titleString={title}
+                    savedText={note}
+                    cantPost={cantPost}
+                    onAdd={() => {
+                        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                            const notes = [...GAME_MANAGER.state.clientState.notes];
+                            notes.splice(i+1, 0, "");
+                            GAME_MANAGER.sendSaveNotesPacket(notes);
+                        }
+                    }}
+                    onSubtract={() => {
+                        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                            const notes = [...GAME_MANAGER.state.clientState.notes];
+                            notes.splice(i, 1);
+                            GAME_MANAGER.sendSaveNotesPacket(notes);
+                        }
+                    }}
+                    onSave={(text) => {
+                        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                            const notes = [...GAME_MANAGER.state.clientState.notes];
+                            notes[i] = text;
+                            GAME_MANAGER.sendSaveNotesPacket(notes);
+                        }
+                    }}
+                />
+            })}
+            {getSingleRoleJsonData(role).canWriteDeathNote===true ? <TextDropdownArea
+                titleString={translate("menu.will.deathNote")}
+                savedText={deathNote}
+                cantPost={cantPost}
+                onSave={(text) => {
+                    GAME_MANAGER.sendSaveDeathNotePacket(text);
+                }}
+            />:null}
         </section>
     </div>
 }
 
-function TextDropdownArea(props: Readonly<{ type: FieldType, cantPost: boolean }>): ReactElement {
-    let packet: StateEventType = (() => {
-        switch (props.type) {
-            case "will":
-                return "yourWill"
-            case "notes":
-                return "yourNotes"
-            case "deathNote":
-                return "yourDeathNote"
-        }
-    })();
-    const savedField = usePlayerState(
-        playerState => playerState[props.type],
-        [packet]
-    )!;
-    const [field, setField] = useState<string>(savedField);
-
-    useEffect(() => {
-        setField(savedField)
-    }, [savedField])
-
-    const unsaved = useMemo(() => {
-        return savedField !== field
-    }, [field, savedField]);
-
-
-    function send(field: string){
-        save(field);
-        GAME_MANAGER.sendSendMessagePacket('\n' + field);
-    }
-
-    function save(field: string) {
-        switch(props.type){
-            case "will":
-                GAME_MANAGER.sendSaveWillPacket(field);
-                break;
-            case "notes":
-                GAME_MANAGER.sendSaveNotesPacket(field);
-                break;
-            case "deathNote":
-                GAME_MANAGER.sendSaveDeathNotePacket(field);
-                break;
-        }
-    }
-
-    return (<details open={props.type !== "deathNote"}>
-        <summary>
-            <div>
-                {translate("menu.will." + props.type)}
-                <div>
-                    {unsaved ? "Unsaved" : "Saved"}
-                    <Button
-                        highlighted={unsaved}
-                        onClick={() => {
-                            save(field);
-                            return true;
-                        }}
-                        pressedChildren={() => <Icon>done</Icon>}
-                        aria-label={translate("menu.will.save")}
-                    >
-                        <Icon>save</Icon>
-                    </Button>
-                    <Button
-                        disabled={props.cantPost}
-                        onClick={() => {
-                            send(field);
-                            return true;
-                        }}
-                        pressedChildren={() => <Icon>done</Icon>}
-                        aria-label={translate("menu.will.post")}
-                    >
-                        <Icon>send</Icon>
-                    </Button>
-                </div>
-            </div>
-        </summary>
-        
-        <div>
-            <textarea
-                value={field}
-                onChange={e => setField(e.target.value)}
-                onKeyDown={(e) => {
-                    if (e.ctrlKey) {
-                        if (e.key === 's') {
-                            e.preventDefault();
-                            save(field);
-                        } else if (e.key === "Enter") {
-                            send(field);
-                        }
-                    }
-                }}>
-            </textarea>
-        </div>
-    </details>)
-}

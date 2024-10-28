@@ -11,6 +11,7 @@ import { Role } from "../../game/roleState.d";
 import "./selectorSection.css";
 import { defaultPhaseTimes } from "../../game/gameState";
 import { GameModeSelector } from "./GameModeSelector";
+import { Helmet } from "react-helmet";
 import { ShareableGameMode } from "./gameMode";
 import { EnabledModifiersDisplay } from "./EnabledModifiersDisplay";
 
@@ -91,6 +92,11 @@ export default function GameModesEditor(props: Readonly<{
     
     
     return <div className="game-modes-editor">
+        <Helmet>
+            <meta name="twitter:site" content={translate("menu.start.title")}></meta>
+            <meta name="twitter:title" content={props.initialGameMode?.name}></meta>
+            <meta name="twitter:card" content="summary_large_image"></meta>
+        </Helmet>
         <header>
             <h1>{translate("menu.globalMenu.gameSettingsEditor")}</h1>
         </header>
