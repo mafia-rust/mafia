@@ -35,6 +35,7 @@
     "wiki.article.role.attributes": { "style": "keyword-info"},
     "wiki.article.role.extra": { "style": "keyword-info"},
     "wiki.article.role.guide": { "style": "keyword-info"},
+    "wiki.article.role.reminder": { "style": "keyword-info"},
     "grave.deathCause.execution": { "style": "keyword-info"},
     "grave.deathCause.leftTown": { "style": "keyword-info"},
     "grave.killer.suicide": { "style": "keyword-info"},
