@@ -946,7 +946,7 @@
     "wiki.article.standard.town.text": "Town is the main good faction. The players are Town loyalists but not Town Insiders. Usually, the majority of the players in each game are town loyalists. Town wins by eliminating all opposing teams (syndicate, cult, arsonist, werewolf, etc). The town loyalists need to work together to find out who the evils are. Their main power is in communication and voting.",
     "wiki.article.standard.mafia.title": "Syndicate",
     "wiki.article.standard.mafia.title:var.0": "Mafia",
-    "wiki.article.standard.mafia.text": "The Syndicate is the main evil team. The players on the Syndicate are Syndicate insiders and Syndicate loyalists. The syndicate always has a role from the Syndicate Killing role set who attacks someone each night. If the Syndicate Killing player dies, a different player takes their role. That player must be a Syndicate Insider and have a Syndicate Role.",
+    "wiki.article.standard.mafia.text": "The Syndicate is the main evil team. The players on the Syndicate are Syndicate insiders and Syndicate loyalists. The syndicate always has a role from the Syndicate Killing role set who attacks someone each night. If the Syndicate Killing player dies, a different player takes their role. The player who becomes the new Syndicate Killing must be alive, a Syndicate Insider, and have a Syndicate Role.",
     "wiki.article.standard.neutral.title": "Neutral",
     "wiki.article.standard.neutral.text": "Neutrals are not all on the same team. Each neutral role has special win conditions. Most of them are against both the town and the syndicate. Some neutral roles can win before the game ends like the Jester, Revolutionary, and Doomsayer.",
     "wiki.article.standard.fiends.title": "Fiends",
