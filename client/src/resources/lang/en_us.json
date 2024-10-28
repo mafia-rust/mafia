@@ -1266,8 +1266,8 @@
     "wiki.article.role.jailor.attributes":"* You may talk with your prisoner at night in jail chat\n* If you kill a town loyalist, you forfeit the ability to execute prisoners\n* Players in jail are warded and roleblocked, they also can't select anybody",
     "wiki.article.role.jailor.extra":"* The Jailor can not kill someone on night one\n* If you kill a townie, or run out of kills, you can not select to kill anymore\n* You invisibly roleblock the player you put in jail, they aren't told their roleblocked\n* Players in jail don't see your name on your messages. The messages you send appear to be from the jailor\n* If you jail a cult or syndicate member, their teammates know that that player is in jail",
 
-    "wiki.article.role.villager.reminder": "You are a good guy with no ability.",
-    "wiki.article.role.villager.guide": "You have no nighttime ability, but you can still speak and vote. Try to help find out who is evil and vote them. Your only ability is your own critical thinking.",
+    "wiki.article.role.villager.reminder": "You have no ability.",
+    "wiki.article.role.villager.guide": "You have no ability, but you can still speak and vote. Try to help find out who is evil and vote them. Your only ability is your own critical thinking.",
     "wiki.article.role.villager.abilities":"None",
     "wiki.article.role.villager.attributes":"None",
     "wiki.article.role.villager.extra":"None",
@@ -1359,7 +1359,7 @@
     "wiki.article.role.cop.reminder": "Each night*, protect a player from an attack and attack one random visitor to them.",
     "wiki.article.role.cop.guide": "- At night, select a player to protect\n - You attack one random other player who visits your target\n- You can't use your ability night 1\n\n You should try to protect people you think are townies who will be attacked. You could easily accidentally kill town loyalists, so you should try to make sure no other town loyalists visit the player you protect.",
     "wiki.article.role.cop.abilities":"* Visit a player to protect for the night\n* Attack a random visitor of the player you protect",
-    "wiki.article.role.cop.attributes":"* Your attack prioritizes a random evil player over town royalists\n* You can't attack yourself",
+    "wiki.article.role.cop.attributes":"* Your attack prioritizes a random evil player over town loyalists\n* You can't attack yourself",
     "wiki.article.role.cop.extra":"* You can't select yourself\n* You are told if your target is attacked\n* Your target is only be told that they are protected if they are attacked\n* Your attack is indirect and basic\n* You can't attack dead players",
 
     "wiki.article.role.bouncer.reminder": "Each night, ward a player.",
@@ -1420,17 +1420,19 @@
     "wiki.article.role.rabblerouser.attributes":"- Non Town Loyalists are not counted as voters for the pitchfork\n- The attack is indirect and protection piercing",
     "wiki.article.role.rabblerouser.extra":"- The pitchfork menu stays available\n   - Even if all Rabblerousers are dead\n    - Even if there is no Rabblerouser\n    - Even if all three uses are consumed\n- Multiple Rabblerousers does not mean multiple attacks or more uses. There is a maximum of 3 uses and a maximum of 1 attack per night",
 
-    "wiki.article.role.veteran.reminder":"At night*, rampage",
+    "wiki.article.role.veteran.reminder":"At night*, rampage to kill all visitors to you.",
     "wiki.article.role.veteran.guide": "- At night, you can select yourself to gain protected defense for the night and rampage yourself, attacking everyone who visits you\n- You can only use your ability three times\n- You can't use your ability on night 1\n* You should try to trick evil players into visiting you, so you can block the attack and kill them. Try to avoid killing unnecessary townies.\n* There can only be one veteran in a game.",
     "wiki.article.role.veteran.abilities":"* Select yourself\n    - rampage yourself\n    - gain protected defense for the night",
     "wiki.article.role.veteran.attributes":"* You only have three uses of your ability\n* You are told when a visitor is attacked by your rampage\n* You have an indirect, armor-piercing attack\n- You can't use your ability night 1",
     "wiki.article.role.veteran.extra":"* While you have 0 uses left, you can not select yourself\n* You are immune to getting roleblocked and getting possessed\n* Players who visit you while your ability is active are told they are attacked by a veteran\n* When you select yourself, you don't visit yourself\n* You can't attack dead players",
 
+    "wiki.article.role.marksman.reminder": "Each night*, mark up to 3 players and camp up to 3 players. If a marked player visits a camped player, you attack the marked player.",
     "wiki.article.role.marksman.guide": "- Each night, choose up to three players to mark, and select up to three players to camp\n    - If a marked player visits a camped player, you attack the marked player\n- You can't do anything on the first night\n- If you kill a townie, you can't use your ability again\n- You should try to mark players who act suspicious, and camp players that they would only visit if they're evil",
     "wiki.article.role.marksman.abilities":"* Choose to mark up to 3 players\n* Select up to 3 players, if you have nobody marked, you can't select anyone\n    - If a marked player visits any of your targets, you attack them",
     "wiki.article.role.marksman.attributes":"* You can't mark or select to camp on night 1\n* If you kill a town loyalist, you can't mark or select again\n* You have an indirect, basic attack",
     "wiki.article.role.marksman.extra":"* You can't select to camp yourself\n- You only visit the players you select, not the players you mark, even if you attack the marked players",
 
+    "wiki.article.role.deputy.reminder": "Once per game, during the day*, shoot a player.",
     "wiki.article.role.deputy.guide":"- Once per game, you can shoot a player during the day\n- If you kill a townie, you instantly leave town\n- If you kill someone, everyone is told that a deputy shot someone\n- If the player you shoot survives your attack, only the player you attacked is told, nobody else is told\n- You can only shoot during discussion or nomination\n\nIf you attack someone and they survive it is likely that they are a role that is armored. Most roles that are armored are evil.",
     "wiki.article.role.deputy.abilities":"* Once per game, during the discussion or nomination phase after day 1, you may choose a player to attack.",
     "wiki.article.role.deputy.attributes":"* If the player you attack has defense, they are told they were attacked by a deputy\n* When you kill someone, everyone is told a deputy shot someone\n* If you kill a town loyalist, you instantly leave town",
