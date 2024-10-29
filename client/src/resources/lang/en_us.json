@@ -1002,7 +1002,7 @@
     "wiki.article.standard.hypnotize.title:var.0": "Hypnotized",
     "wiki.article.standard.hypnotize.title:var.1": "Hypnotizes",
     "wiki.article.standard.hypnotize.title:var.2": "Hypnotizing",
-    "wiki.article.standard.hypnotize.text": "A player who is hypnotized was a hypnotists target.",
+    "wiki.article.standard.hypnotize.text": "A player who is hypnotized was a hypnotists target. They potentially are told a fake message from the hypnotist. They may have been roleblocked.",
     "wiki.article.standard.frame.title": "Frame",
     "wiki.article.standard.frame.title:var.0": "Framed",
     "wiki.article.standard.frame.title:var.1": "Frames",
