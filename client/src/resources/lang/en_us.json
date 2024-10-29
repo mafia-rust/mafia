@@ -1684,6 +1684,13 @@
     "wiki.article.role.zealot.attributes":"* When another player is converted to a zealot, you become a disciple.",
     "wiki.article.role.zealot.extra":"* There can never be more than one zealot\n* You can not select other cultists",
     
+    "credits":"Credits",
+    "leadDevelopers":"Lead Developers",
+    "otherContributors":"Other Contributors",
+    "playTesters":"Play Testers",
+    
+    
     "random.gay":"GAY",
     "random.trans":"TRANS"
+
 }
