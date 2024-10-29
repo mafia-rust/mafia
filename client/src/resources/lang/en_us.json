@@ -1262,8 +1262,8 @@
     "wiki.article.role.noExtra": "There is no extras section written for this role.",
     "wiki.article.role.details": "Details",
 
-    "wiki.article.role.jailor.reminder": "Each day, choose a player to jail. At night, talk to your prisoner, and decide weather or not kill them, with a max of 3 attack uses.",
-    "wiki.article.role.jailor.guide": "- Each day, choose a player to jail. At night, you interrogate them in text chat\n- You can kill your prisoner up to three times\n- You can talk to your prisoner during the night, and they are not told who you are\n- If you kill a townie, you lose the ability to kill your prisoner\n- The players you jail are warded and roleblocked.",
+    "wiki.article.role.jailor.reminder": "Each day, choose a player to detain. At night, talk to your prisoner, and decide weather or not kill them, with a max of 3 attack uses.",
+    "wiki.article.role.jailor.guide": "- Each day, choose a player to detain. At night, you interrogate them in text chat\n- You can kill your prisoner up to three times\n- You can talk to your prisoner during the night, and they are not told who you are\n- If you kill a townie, you lose the ability to kill your prisoner\n- The players you jail are warded and roleblocked.",
     "wiki.article.role.jailor.abilities":"* Choose one player to jail during the day\n* Visit your prisoner to attack them",
     "wiki.article.role.jailor.attributes":"* You may talk with your prisoner at night in jail chat\n* If you kill a town loyalist, you forfeit the ability to execute prisoners\n* Players in jail are warded and roleblocked, they also can't select anybody",
     "wiki.article.role.jailor.extra":"* The Jailor can not kill someone on night one\n* If you kill a townie, or run out of kills, you can not select to kill anymore\n* You invisibly roleblock the player you put in jail, they aren't told their roleblocked\n* Players in jail don't see your name on your messages. The messages you send appear to be from the jailor\n* If you jail a cult or syndicate member, their teammates know that that player is in jail",
@@ -1570,11 +1570,13 @@
     "wiki.article.role.revolutionary.attributes":"* When your execution target is executed, you win\n* After you win, you leave town at the start of final words\n* You are armored",
     "wiki.article.role.revolutionary.extra":"* If your target dies by something other than execution, you convert to a jester immediately, even while dead\n* If there are no valid targets in the game when you become the Revolutionary, you convert to a Jester",
 
+    "wiki.article.role.doomsayer.reminder": "Guess the role of three different players correctly to win. When you win you attack the players you guessed.",
     "wiki.article.role.doomsayer.guide": "- Guess the role of three different players correctly to win\n- If you get all your guesses correct and win, you attack all three players, and then leave town\n- You can't guess town investigative roles\n- If a player has a non town role, you don't need to guess their exact role, just that they are non town\n\n In order to counter a doomsayer, players often claimswap",
     "wiki.article.role.doomsayer.abilities":"* Use the Doomsayer menu to guess the role of three different living players in one night, attacking them and winning",
     "wiki.article.role.doomsayer.attributes":"* When you win, you leave town at the start of the next obituary\n* You have to guess the exact role of townies, but you only need to guess the faction of all other roles\n* You can't try to guess town investigative roles\n* When there are not enough players left for you to guess, you convert to a jester\n* You have an indirect, protection-piercing attack",
     "wiki.article.role.doomsayer.extra":"* Your three guesses must be three different players\n* If the players you guessed correctly don't die, you still win\n* You do not visit when you attack\n* You can't try to guess a martyr\n* If you are blocked, your ability does nothing",
     
+    "wiki.article.role.chronokaiser.reminder": "Each day while you are alive, time speeds up by 60%. You win if you live to the end of the game.",
     "wiki.article.role.chronokaiser.guide": "- Each day while you are alive, time speeds up by 60%\n - Every discussion phase, the amount that you sped up the game is announced in chat\n - If you are alive at the end of the game, you win",
     "wiki.article.role.chronokaiser.abilities":"* You passively speed up the game by 60%\n- If you are alive at the end of the game, you win",
     "wiki.article.role.chronokaiser.attributes":"* You have no night time ability\n* Everyone is told how much you sped up the game each day",
@@ -1585,6 +1587,7 @@
     "wiki.article.role.death.attributes":"* Once you've collected six souls, you curse the town. At the start of the next night you win and attack everyone.\n* You have invincible defense once you have six souls\n* You have a protection-piercing attack",
     "wiki.article.role.death.extra":"* You will still passively gain souls in jail",
 
+    "wiki.article.role.martyr.reminder": "If you die, you win, and everyone else dies too",
     "wiki.article.role.martyr.guide": "If you die, you win, and everyone commits suicide in an attempt to follow you to the afterlife. The entire town knows that you're the martyr. Good Luck!",
     "wiki.article.role.martyr.abilities":"* Visit yourself to attack yourself and spend one bullet\n* You start with 2 bullets\n* When you die, everyone else commits suicide and you win.",
     "wiki.article.role.martyr.attributes":"* When you have zero bullets left, you leave town and lose\n* You have a basic attack",
@@ -1618,6 +1621,7 @@
     "wiki.article.role.scarecrow.attributes":"* Your target isn't told they are warded",
     "wiki.article.role.scarecrow.extra":"* You can't select yourself\n* You are immune to roleblocks, wardblocks, and possession\n- You aren't told the names of players who aren't wardblocked, even if they still somehow visit your target, for example, a bouncer is wardblock immune",
     
+    "wiki.article.role.kidnapper.reminder": "Each day, choose a player to detain. At night, talk to your prisoner, and decide weather or not kill them, with a max of 1 attack use. You appear the same as a jailor to your prisoner.",
     "wiki.article.role.kidnapper.guide": "- Each day, choose a player to kidnap. At night, you interrogate them in text chat\n- You can kill your prisoner one time\n- You can talk to your prisoner during the night, and they are not told who you are\n- The players you kidnap are warded and roleblocked.",
     "wiki.article.role.kidnapper.abilities":"* Choose one player to kidnap during the day\n* Visit your prisoner to attack them\n- If you kill your prisoner, their grave shows that they were killed by a jailor",
     "wiki.article.role.kidnapper.attributes":"* You may talk with your prisoner at night in kidnapped chat\n* Players you kidnap are warded and roleblocked, they also can't select anybody",
@@ -1629,61 +1633,79 @@
     "wiki.article.role.warper.attributes":" -  All visits to first player instead visit the second player\n - The first player you visit is told they were transported",
     "wiki.article.role.warper.extra": " - Some abilities are not affected by yours due to the priority system. _For example_ You can't stop a jester from haunting their target using a transport, this depends on priorities and whether or not an ability is indirect\n* Warpers act after transporters\n* Warpers do not warp the visits of a transporter",
 
+    "wiki.article.role.politician.reminder": "If town is about to win, you win instead, and kill all town loyalists.",
     "wiki.article.role.politician.guide":"* If the town would win, instead you win and they all die. Try to help to the town to win while staying alive.",
     "wiki.article.role.politician.abilities": "* When town would win, you win, instantly attack ever townie, and all politicians leave town",
     "wiki.article.role.politician.attributes": "* You win with other politicians\n* When you first become this role, if there are no townies alive, you become a jester\n* You have a protection-piercing attack",
     "wiki.article.role.politician.extra":"* If all town loyalists die, you leave town\n* If the only players left are politicians, you win",
 
+    "wiki.article.role.arsonist.reminder": "Each night, douse a player in gasoline. Ignite to attack all doused players.",
     "wiki.article.role.arsonist.guide":"- Select a player to douse them in gasoline\n- Select yourself to ignite and attack every player who is doused\n- You know who is doused\n\nTry not to douse players you think the syndicate will kill, because then you waste your night dousing someone who is going to die anyway.",
     "wiki.article.role.arsonist.abilities":"* Visit a player to douse them\n* Visit yourself to ignite to all doused players\n* If a player visits you, you will douse them",
     "wiki.article.role.arsonist.attributes":"* You can't be doused\n* You are shown who is doused\n* All doused players have a suspicious aura while you are alive",
     "wiki.article.role.arsonist.extra":"* If you are roleblocked, you still douse visitors\n* Igniting a is an indirect, protection-piercing attack\n* When you ignite, you don't attack dead players\n* When you become an arsonist, you clean the gas off yourself\n* An arsonist can not be attacked by an arsonist igniting",
 
+    "wiki.article.role.werewolf.reminder": "On some nights, rampage a player, attacking them and all visitors to them. On other nights, choose a player to track their scent.",
     "wiki.article.role.werewolf.guide": "You have a different ability depending on whether or not it is a full moon tonight. It is a full moon every night except night 1 and 3.\n- On full moon nights\n    - Select someone to attack them and rampage, attacking everyone else who visits that player\n    - Select nobody to rampage yourself, attacking everyone who visits you\n- On non full moon nights\n    - Select someone to gain their scent\n    - Passively gain the scent of everyone who visits you\n    - You have an innocent aura\n- Every night\n    - If you have someones scent, you are told who they visit\n\n Try to attack players who will get visited by many people in order to kill more players. The information you receive can help you claim town investigative roles such as the Tracker",
     "wiki.article.role.werewolf.abilities":"* On full moon nights\n    * Visit a player to attack and rampage\n    * If you visit nobody, you rampage yourself\n* On non-full moon nights\n    * Visit a player to gain their scent\n    * You passively gain the scent of every player that visits you\n    * You have an innocent aura",
     "wiki.article.role.werewolf.attributes":"* You track each player you have the scent of. You are told who each player you are tracking visits.\n* You still track the scent of players after you die\n* Your attack is armor-piercing",
     "wiki.article.role.werewolf.extra":"* You attack yourself if you visit yourself\n* A roleblock has no effect on you besides erasing your visits. If you are roleblocked, it is as if you visited nobody\n* You don't visit players attacked by a rampage",
 
+    "wiki.article.role.ojo.reminder": "Each night, select an outline to learn the role generated from it. Each night*, attack all players with a role you select.",
     "wiki.article.role.ojo.guide":"- You have multiple night abilities\n - Each night, select an outline, you are told what role generated from that outline\n - Each night except the first, select a role, you attack all players with that role\n - You see the role of all players who visit you, their role is revealed to you, this is a passive ability",
     "wiki.article.role.ojo.abilities":"- You have multiple night abilities\n - Each night, select an outline, you are told what role generated from that outline\n - Each night except the first, select a role, you attack all players with that role\n - You see the role of all players who visit you, their role is revealed to you, this is a passive ability",
     "wiki.article.role.ojo.attributes":"- If you are dead, you cant select to use your ability\n* If you are blocked, you have no ability\n* Your attack is an armor-piercing attack\n* You can't attack anybody on night 1",
     "wiki.article.role.ojo.extra":"- Your attack ability works on the person you actually visited, so if a transporter transports a player you visit with someone else, you attack the other player, this only applies to the attack ability, not any other ability of yours\n- You wont visit dead players using your attack ability\n- You are immune to possession, but not wardblocks or roleblocks",
 
+    "wiki.article.role.puppeteer.reminder": "Each night, select a player to either poison them or recruit them.",
     "wiki.article.role.puppeteer.guide":"- You may choose to do one of the following\n    - Select and poison a player\n        - They are told they are poisoned, and then they are attacked the next night\n\n    - Select a player to string up into a marionette\n        - They are told they are strung up, and that they will win with fiends, regardless of their role\n        - They attacked the following night, and every night until they die\n        - They should try their hardest to help you and should NOT say they were strung up\n - At night all puppeteers and marionettes can chat in the puppeteer chat, even if dead\n    - The players in the puppeteer chat that are dead can chat during the day or night",
     "wiki.article.role.puppeteer.abilities":"- You may choose to do one of the following\n    - Visit a player to poison them\n        - They are told they are poisoned\n        - They are indirectly hit with an armor-piercing attack on the following night\n\n    - Visit a player to string up into a marionette\n        - They are told they are strung up, and they now win with fiends, regardless of their role\n        - They will be indirectly hit with a protection-piercing attack every night by all puppeteers until they die, if there are no puppeteers they are still attacked",
     "wiki.article.role.puppeteer.attributes":"- You and the marionettes are all puppeteer insiders\n- Stringing someone up is armor-piercing, if a player has higher defense than armor when you attempt to string them up, they are instead poisoned\n - At night all puppeteers and marionettes can chat in the puppeteer chat, even if dead\n    - The players in the puppeteer chat that are dead can chat during the day or night",
     "wiki.article.role.puppeteer.extra":"- You can't select anybody who is a puppeteer, marionette, or is being strung into a marionette\n- A puppeteer can't be stringed into a marionette\n- A marionette can't be stringed into a marionette twice, if 2 puppeteers choose a player to be turned into a marionette on the same night, they get the message only once",
     
+    "wiki.article.role.kira.reminder": "Each night, guess players roles, if all your guesses are correct, you attack all of the players you guessed.",
     "wiki.article.role.kira.guide":"- Each night, guess players roles, if all your guesses are correct, you attack all of the players you guessed.\n- You can choose not to guess a players role by selecting none, this doesn't count as a wrong guess\n- Each night you get a result, for each guess, you are told if your guess was correct, incorrect but someone has that role, or incorrect and nobody has that role\n- You can't attack night 1, but you can still make guesses\n\n_For Example_\n- You guess @1 is a lookout, @2 is a tracker, and don't guess anyone else by selecting none. If @1 is a lookout, @2 is a tracker, you attack @1 and @2, but nobody else.",
     "wiki.article.role.kira.abilities":"- Each night, make a guess for every living player\n    - Your options for guesses are, any specific town role, none, and non town. So if they aren't town, you don't need to know their exact role\n    - If all of your guesses are one of either correct or none, you attack all of the players you guessed correctly with an indirect armor-piercing attack\n- Every night, you get a result\n    - For each player you guessed as something non none, you learn one of three things\n        - Your guess is correct, that player has that role\n        - Your guess is incorrect, that player doesn't have that role, but someone else in the game does have that role\n        - Your guess is incorrect, that player doesn't have that role, and nobody else in the game has that role\n- If it is night 1, you don't attack anyone, but you still get your result",
     "wiki.article.role.kira.attributes":"- You don't visit anyone\n- Your attack is armor-piercing\n- You don't attack anyone night 1",
     "wiki.article.role.kira.extra":"- You can't guess dead players or yourself, nor can you attack them\n* If you are blocked, your ability does nothing",
     
+    "wiki.article.role.pyrolisk.reminder": "Each night*, select a player to attack them. You passively attack everyone who visits you. Everyone you kill is obscured.",
     "wiki.article.role.pyrolisk.guide":"- Select a player to attack them, and obscure them\n- You passively attack and obscure everyone who visits you\n- On night 1, you don't attack anyone, but still tag them for obscuring, if they die later you obscure them\n- You are told the players you obscures role and alibi",
     "wiki.article.role.pyrolisk.abilities":"* On night one\n    * Visit a player to tag them for obscuring\n    * All players who visit you are tagged for obscuring\n* On other nights\n    * Visit a player to attack them and tag them for obscuring\n    * All players who visit you are attacked by you and tagged for obscuring\n* All players you tagged for obscuring are obscured when they die, you are told their role and alibi",
     "wiki.article.role.pyrolisk.attributes":"* If you are roleblocked, you still attack or tag visitors, but don't attack or tag the person you visit\n* Your attack is armor piercing",
     "wiki.article.role.pyrolisk.extra":"* When you first become a pyrolisk, you tag yourself for obscuring\n* As long as a pyrolisk exists, dead or alive, players marked for obscuring by pyrolisks are obscured when they die",
 
+    "wiki.article.role.fiendsWildcard.reminder": "Choose a fiends role to become at start of night.",
     "wiki.article.role.fiendsWildcard.guide": "* Choose a fiends role to become that role\n    * You become that role when night starts\n* You can't become a role that has exceeded its role limit",
     "wiki.article.role.fiendsWildcard.abilities":"* Become a role you choose at the start of night",
     "wiki.article.role.fiendsWildcard.attributes":"* You can not become a role that is disabled\n* You can not become a role that is taken by too many players",
     "wiki.article.role.fiendsWildcard.extra":"* If you choose a role that was disabled you stay as the Fiends Wildcard\n* You can choose Fiends Wildcard to stay as Fiends Wildcard\n* You can't become a role that is at its role limit",
 
+    "wiki.article.role.apostle.reminder": "Each night, carry out the task of the cult.",
     "wiki.article.role.apostle.guide": "- At night, either kill or convert\n    - If the cult can convert tonight, select a player to convert\n    - If the cult can kill tonight and there is no zealot, select a player to kill",
     "wiki.article.role.apostle.abilities":"* On nights the cult kills\n    * If you are the only cultist, visit a player to attack\n* On nights the cult convert\n    * Visit a player to convert them to a Zealot on the cultist team",
     "wiki.article.role.apostle.attributes":"* You can't convert a player who has any defense",
     "wiki.article.role.apostle.extra":"* There can only be one Apostle, if you die, the next oldest cultist becomes an Apostle\n*  Once you convert a player to a zealot, the previous zealot (if any) becomes a disciple\n* You can not select other cultists\n- Converting is not an attacking visit, but attacking is",
 
+    "wiki.article.role.disciple.reminder": "You have no ability",
     "wiki.article.role.disciple.guide": "- If an Apostle dies, and you are the next oldest cultist, you are converted to an Apostle\n    - Oldest cultist means that you were a cultist before any other player was, and if there is a tie, then the player with a lower player number is the oldest\n\nEven though you have no ability you are essential to your team. You should lie and communicate with fellow cultists to convince the town to execute someone who isn't a cultist.",
     "wiki.article.role.disciple.abilities":"* When an Apostle dies and you are the oldest cultist, you will become an Apostle",
     "wiki.article.role.disciple.attributes":"* The oldest cultist is the one that has been a cultist the longest. If there is a tie, the oldest cultist is the one with the lowest player number",
     "wiki.article.role.disciple.extra":"* None",
 
+    "wiki.article.role.zealot.reminder": "On cult kill nights, you attack a player instead of the apostle attacking a player.",
     "wiki.article.role.zealot.guide": "- At night, if the cult is killing tonight, select a player to attack them\n- You become a disciple when another player is converted to zealot\n\nMake sure you don't choose the same player as an Apostle, because then you might kill a cultist.",
     "wiki.article.role.zealot.abilities":"* If it is a night the cult kills, visit a player to attack",
     "wiki.article.role.zealot.attributes":"* When another player is converted to a zealot, you become a disciple.",
     "wiki.article.role.zealot.extra":"* There can never be more than one zealot\n* You can not select other cultists",
     
+    "credits":"Credits",
+    "leadDevelopers":"Lead Developers",
+    "otherContributors":"Other Contributors",
+    "playTesters":"Play Testers",
+    
+    
     "random.gay":"GAY",
     "random.trans":"TRANS"
+
 }

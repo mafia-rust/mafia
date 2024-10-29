@@ -8,6 +8,9 @@
     width: 100%;
     margin: 0;
 }
+.text-area-dropdown .textarea > * {
+    text-wrap: pretty;
+}
 .text-area-dropdown summary > div {
     display: inline-flex;
     width: 100%;

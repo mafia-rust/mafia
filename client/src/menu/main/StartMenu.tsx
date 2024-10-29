@@ -11,6 +11,7 @@ import Icon from "../../components/Icon";
 import SettingsMenu from "../Settings";
 import StandaloneWiki from "./StandaloneWiki";
 import { Button } from "../../components/Button";
+import Credits from "./Credits";
 
 export default function StartMenu(): ReactElement {
     const mobile = useContext(MobileContext)!;
@@ -52,8 +53,19 @@ export default function StartMenu(): ReactElement {
         <footer>
             <nav>
                 <ul>
-                    <li><a href="https://www.github.com/ItsSammyM/mafia-rust">Github</a></li>
-                    <li><a href="https://discord.gg/Vxw7gFPfJj">Discord</a></li>
+                    <li>
+                        <a href="https://www.github.com/ItsSammyM/mafia-rust">Github</a>
+                    </li>
+                    <li>
+                        <Button onClick={()=>{
+                            window.open("https://discord.gg/Vxw7gFPfJj", "_blank")
+                        }}>
+                            <Icon>public</Icon> Discord
+                        </Button>
+                    </li>
+                    <li>
+                        <Button onClick={()=>{setAnchorContent(<Credits/>)}}>{translate("credits")}</Button>
+                    </li>
                     {/* eslint-disable no-script-url */}
                     {/* eslint-disable jsx-a11y/anchor-is-valid */}
                 </ul>
