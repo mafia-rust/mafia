@@ -138,7 +138,7 @@ impl ModifierTrait for MafiaHitOrders{
 
         for player in PlayerReference::all_players(game){
             if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player) {continue;}
-            if !RoleSet::MafiaKilling.get_roles().contains(&player.role(game)) {continue;}
+            if RoleSet::MafiaKilling.get_roles().contains(&player.role(game)) {continue;}
 
             for visit in player.night_visits(game).clone(){
                 if !self.hit_order_players.contains(&visit.target) {continue;}
