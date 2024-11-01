@@ -122,7 +122,7 @@ export type RoleState = {
     type: "mafiaKillingWildcard"
     role: Role
 } | {
-    type: "madeMan"
+    type: "goon"
 } |
 (Hypnotist & {type: "hypnotist"})
  | {
@@ -133,7 +133,8 @@ export type RoleState = {
     type: "informant",
 } | {
     type: "mortician",
-    obscuredPlayers: PlayerIndex[]
+    obscuredPlayers: PlayerIndex[],
+    cremationsRemaining: number
 } | {
     type: "forger",
     fakeRole: Role,

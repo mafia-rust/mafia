@@ -16,7 +16,8 @@ import Counter from "../../../components/Counter";
 import SelectionInformation from "../../../components/SelectionInformation";
 import { useGameState, usePlayerState } from "../../../components/useHooks";
 import { roleSpecificMenuType } from "../../Settings";
-import PlayerDropdown from "../../../components/PlayerDropdown";
+import Pitchfork from "../../../components/Pitchfork";
+import HitOrder from "../../../components/HitOrder";
 
 type PlayerFilter = "all"|"living"|"usable";
 
@@ -100,18 +101,10 @@ export default function PlayerListMenu(): ReactElement {
         gameState => gameState.phaseState,
         ["phase", "playerOnTrial"]
     )!
-    const enabledRoles = useGameState(
-        gameState => gameState.enabledRoles,
-        ["enabledRoles"]
-    )!
 
     const forfeitVote = usePlayerState(
         gameState => gameState.forfeitVote,
         ["yourForfeitVote"]
-    )
-    const pitchforkVote = usePlayerState(
-        gameState => gameState.pitchforkVote,
-        ["yourPitchforkVote"]
     )
     const roleState = usePlayerState(
         gameState => gameState.roleState,
@@ -181,6 +174,7 @@ export default function PlayerListMenu(): ReactElement {
 
     const [roleSpecificOpen, setRoleSpecificOpen] = useState<boolean>(true);
     const [pitchforkVoteOpen, setPitchforkVoteOpen] = useState<boolean>(false);
+    const [hitOrderOpen, setHitOrderOpen] = useState<boolean>(false);
 
 
     return <div className="player-list-menu player-list-menu-colors">
@@ -200,27 +194,11 @@ export default function PlayerListMenu(): ReactElement {
         }
         {
             !GAME_MANAGER.getMySpectator() && 
-            enabledRoles.includes("rabblerouser") && 
-            phaseState.type !== "night" &&
-            phaseState.type !== "obituary" &&
-            <details className="role-specific-colors small-role-specific-menu" open={pitchforkVoteOpen}>
-                <summary
-                    onClick={(e)=>{
-                        e.preventDefault();
-                        setPitchforkVoteOpen(!pitchforkVoteOpen);
-                    }}
-                >{translate("pitchfork")}</summary>
-                <div>
-                    <StyledText>{translate("pitchfork.description")}</StyledText>
-                    <div>
-                    <PlayerDropdown 
-                        value={pitchforkVote===undefined?null:pitchforkVote}
-                        onChange={(player)=>{GAME_MANAGER.sendPitchforkVotePacket(player)}}
-                        choosablePlayers={players.filter((player)=>player.alive).map((player)=>player.index)}
-                        canChooseNone={true}
-                    /></div>
-                </div>
-            </details>
+            <Pitchfork pitchforkVoteOpen={pitchforkVoteOpen} setPitchforkVoteOpen={setPitchforkVoteOpen}/>
+        }
+        {
+            !GAME_MANAGER.getMySpectator() && 
+            <HitOrder hitOrderOpen={hitOrderOpen} setHitOrderOpen={setHitOrderOpen}/>
         }
 
         {(myIndex !== undefined && phaseState.type === "discussion" && players[myIndex!].alive) ? <Button
