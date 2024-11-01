@@ -5,6 +5,7 @@
     "language:var.2": "American English",
 
     "menu.start.title": "Midnight Machinations",
+    "menu.start.description": "A game about deception and manipulation",
     "menu.start.button.play": "Play",
 
     "menu.play.title": "Server Browser",

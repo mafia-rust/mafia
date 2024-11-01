@@ -93,9 +93,8 @@ export default function GameModesEditor(props: Readonly<{
     
     return <div className="game-modes-editor">
         <Helmet>
-            <meta name="twitter:site" content={translate("menu.start.title")}></meta>
             <meta name="twitter:title" content={props.initialGameMode?.name}></meta>
-            <meta name="twitter:card" content="summary_large_image"></meta>
+            <meta name="og:title" content={props.initialGameMode?.name}></meta>
         </Helmet>
         <header>
             <h1>{translate("menu.globalMenu.gameSettingsEditor")}</h1>

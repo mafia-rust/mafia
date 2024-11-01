@@ -29,6 +29,8 @@ export default function Credits(): ReactElement {
                 <span>Firefly</span>
                 <span>Gabriel Arias</span>
                 <span>Genevieve Rolnick</span>
+                <span>Jamin Chen</span>
+                <span>Kate Horne</span>
                 <span>Marcus Moher</span>
                 <span>Myanmar (Mascot :3)</span>
                 <span>Thomas Berrios</span>
