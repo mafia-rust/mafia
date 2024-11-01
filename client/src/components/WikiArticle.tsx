@@ -8,7 +8,7 @@ import ChatElement, { ChatMessageVariant } from "./ChatMessage";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { GeneratedArticle, WikiArticleLink } from "./WikiArticleLink";
 import "./wiki.css";
-import { replaceMentions } from "..";
+import GAME_MANAGER, { replaceMentions } from "..";
 import { useLobbyOrGameState } from "./useHooks";
 
 function WikiStyledText(props: Omit<StyledTextProps, 'markdown' | 'playerKeywordData'>): ReactElement {
@@ -129,42 +129,36 @@ function RoleSetArticle(): ReactElement {
         state => state.enabledRoles,
         ["enabledRoles"]
     );
-    
-    let mainElements = [
-        <section key="title"><WikiStyledText>
-            {"# "+translate("wiki.article.generated.roleSet.title")}
-        </WikiStyledText></section>
-    ];
-    
-    for(let set of ROLE_SETS){
-        let elements = getRolesFromRoleSet(set).map((role)=>{
 
-            let className = "";
-            if(enabledRoles !== undefined && !enabledRoles.includes(role)) {
-                className = "keyword-disabled";
-            }
+    return <div>
+        <section key="title">
+            <WikiStyledText>{"# "+translate("wiki.article.generated.roleSet.title")}</WikiStyledText>
+        </section>
+        {ROLE_SETS.map(set => {
+            const description = translateChecked(`${set}.description`);
+            return <>
+                <h3 key={set+"title"} className="wiki-search-divider">
+                    <StyledText>{translate(set)}</StyledText>
+                </h3>
+                {description && <p><StyledText>{description}</StyledText></p>}
+                {getRolesFromRoleSet(set).map((role)=>{
+                    let className = "";
+                    if(enabledRoles !== undefined && !enabledRoles.includes(role)) {
+                        className = "keyword-disabled";
+                    }
 
-            return <button key={role} className={className}>
-                <StyledText>
-                    {translate("role."+role+".name")}
-                </StyledText>
-            </button>
-        });
-
-        mainElements.push(<section key={set+"title"}><WikiStyledText>
-            {"### "+translate(set)}
-        </WikiStyledText></section>);
-        mainElements.push(<blockquote key={set}>
-            {elements}
-        </blockquote>);
-    }
-    mainElements.push(
+                    return <button key={role} className={className} 
+                        onClick={() => GAME_MANAGER.setWikiArticle(`role/${role}`)}
+                    >
+                        <StyledText noLinks={true}>{translate("role."+role+".name")}</StyledText>
+                    </button>
+                })}
+            </>
+        })}
         <WikiStyledText key={"extra"}>
             {translate("wiki.article.generated.roleSet.extra", Object.keys(roleJsonData()).length)}
         </WikiStyledText>
-    );
-
-    return <div>{mainElements}</div>;
+    </div>;
 }
 
 function getSearchStringsGenerated(article: GeneratedArticle): string[]{

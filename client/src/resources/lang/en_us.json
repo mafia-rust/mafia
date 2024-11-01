@@ -616,6 +616,7 @@
 
     "townCommon":"Town Common",
     "townCommon:var.0":"TC",
+    "townCommon.description":"All Town roles except Jailor, Villager, and Drunk.",
     "townInvestigative":"Town Investigative",
     "townInvestigative:var.0":"TI",
     "townProtective":"Town Protective",
