@@ -30,6 +30,13 @@ impl RoleOutlineReference{
     pub fn deref_as_role_and_player_originally_generated<'a>(&self, game: &'a Game)->OriginallyGeneratedRoleAndPlayer{
         game.roles_originally_generated[self.index as usize]
     }
+
+    pub fn all_outlines(game: &Game) -> RoleOutlineReferenceIterator {
+        RoleOutlineReferenceIterator {
+            current: 0,
+            end: game.settings.role_list.0.len() as OutlineIndex
+        }
+    }
 }
 
 
@@ -45,3 +52,32 @@ impl<'a> Deserialize<'a> for RoleOutlineReference {
         })
     }
 }
+
+
+pub struct RoleOutlineReferenceIterator {
+    current: OutlineIndex,
+    end: OutlineIndex
+}
+
+impl Iterator for RoleOutlineReferenceIterator {
+    type Item = RoleOutlineReference;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        unsafe {
+            if self.current >= self.end {
+                None
+            } else {
+                let ret: RoleOutlineReference = RoleOutlineReference::new_unchecked(self.current);
+                self.current += 1;
+                Some(ret)
+            }
+        }
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let size = (self.end - self.current) as usize;
+        (size, Some(size))
+    }
+}
+
+impl ExactSizeIterator for RoleOutlineReferenceIterator {}
