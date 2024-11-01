@@ -18,37 +18,30 @@ export default function StartMenu(): ReactElement {
     const { setContent: setAnchorContent, setCoverCard } = useContext(AnchorControllerContext)!;
     return <div className="sm">
         <main>
-            <section id="main">
-                {
-                    mobile ? 
-                    <h2>{translate("menu.start.title")}</h2> :
-                    <h1>{translate("menu.start.title")}</h1>
-                }
-                <div>
-                    <Button onClick={async () => {
-                        setAnchorContent(<LoadingScreen type="default"/>);
-                        await GAME_MANAGER.setOutsideLobbyState();
-                        setAnchorContent(<PlayMenu/>);
-                    }}>
-                        <Icon>play_arrow</Icon> {translate("menu.start.button.play")}
-                    </Button>
-                    <Button onClick={() => setCoverCard(<SettingsMenu />)}>
-                        <Icon>settings</Icon> {translate("menu.settings.title")}
-                    </Button>
-                    <Button onClick={() => setCoverCard(<GameModesEditor/>)}>
-                        <Icon>edit</Icon> {translate("menu.globalMenu.gameSettingsEditor")}
-                    </Button>
-                    <Button onClick={() => setAnchorContent(<StandaloneWiki/>)}>
-                        <Icon>menu_book</Icon> {translate("menu.wiki.title")}
-                    </Button>
-                    <Button onClick={()=>{
-                        window.open("https://discord.gg/Vxw7gFPfJj", "_blank")
-                    }}>
-                        <Icon>public</Icon> Discord
-                    </Button>
-                </div>
-                
-            </section>
+            <h1>{translate("menu.start.title")}</h1>
+            <div>
+                <Button onClick={async () => {
+                    setAnchorContent(<LoadingScreen type="default"/>);
+                    await GAME_MANAGER.setOutsideLobbyState();
+                    setAnchorContent(<PlayMenu/>);
+                }}>
+                    <Icon>play_arrow</Icon> {translate("menu.start.button.play")}
+                </Button>
+                <Button onClick={() => setCoverCard(<SettingsMenu />)}>
+                    <Icon>settings</Icon> {translate("menu.settings.title")}
+                </Button>
+                <Button onClick={() => setCoverCard(<GameModesEditor/>)}>
+                    <Icon>edit</Icon> {translate("menu.globalMenu.gameSettingsEditor")}
+                </Button>
+                <Button onClick={() => setAnchorContent(<StandaloneWiki/>)}>
+                    <Icon>menu_book</Icon> {translate("menu.wiki.title")}
+                </Button>
+                <Button onClick={()=>{
+                    window.open("https://discord.gg/Vxw7gFPfJj", "_blank")
+                }}>
+                    <Icon>public</Icon> Discord
+                </Button>
+            </div>
         </main>
         <footer>
             <nav>
@@ -66,8 +59,7 @@ export default function StartMenu(): ReactElement {
                     <li>
                         <Button onClick={()=>{setAnchorContent(<Credits/>)}}>{translate("credits")}</Button>
                     </li>
-                    {/* eslint-disable no-script-url */}
-                    {/* eslint-disable jsx-a11y/anchor-is-valid */}
+                    <li><a href="https://mafia.dev.jackpapel.com">Dev (Experimental)</a></li>
                 </ul>
             </nav>
         </footer>
