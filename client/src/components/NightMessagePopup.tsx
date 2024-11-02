@@ -18,6 +18,7 @@ export default function NightMessagePopup(props: Readonly<{
                 key={index}
                 message={props.messages[index]}
             />}
+            atBottomThreshold={15}
         />
     </div>
 }
