@@ -1,6 +1,3 @@
-.game-screen .content > .graveyard-menu {
-    width: 20%;
-}
 @media only screen and (max-width: 600px) {
     .game-screen .content > .graveyard-menu {
         width: 100%;
