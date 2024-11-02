@@ -13,13 +13,12 @@ export default function Select<T extends string | number | symbol>(props: {
 }) {
 
     const [open, setOpen]= React.useState(false);
-    const [focused, setFocused] = React.useState(false);
     const [searchString, setSearchString] = React.useState("");
     
 
     const handleOnChange = (value: T) => {
         setSearchString("");
-        if(props.onChange) {
+        if(props.onChange && value !== props.value) {
             props.onChange(value);
         }
     }
@@ -38,12 +37,15 @@ export default function Select<T extends string | number | symbol>(props: {
                 break;
             case "Enter":
                 const found = Object.keys(props.options).find((val) => {
-                    if(val.toString().toLowerCase().includes(searchString.toLowerCase())) {
-                        return true;
+
+                    for(let search of searchString.split(" ")) {
+                        if(!val.toString().toLowerCase().includes(search.toLowerCase())) {
+                            return false;
+                        }
                     }
-                    return false;
+
+                    return true;
                 });
-                console.log(searchString);
         
                 if(found) {
                     handleOnChange(found as T);
@@ -65,8 +67,6 @@ export default function Select<T extends string | number | symbol>(props: {
 
 
     return <Button
-        onFocus={()=>{setFocused(true)}}
-        onBlur={()=>{setFocused(false)}}
         disabled={props.disabled}
         onClick={()=>{handleSetOpen(!open)}}
         className={"custom-select "+(props.className?props.className:"")}
@@ -92,9 +92,7 @@ export default function Select<T extends string | number | symbol>(props: {
             onChange={(value)=>{
                 if(props.disabled) return;
                 handleSetOpen(false);
-                if(value !== props.value) {
-                    handleOnChange(value as T);
-                }
+                handleOnChange(value as T);
             }}
             
         />
@@ -110,19 +108,21 @@ function SelectOptions<T extends string | number | symbol>(props: {
     return props.open?<div
         className="custom-select-options"
     >
-        {Object.entries(props.options)
-            .map(([key, value]) => {
-                return <Button
-                    key={key}
-                    onClick={()=>{
-                        if(props.onChange) {
-                            props.onChange(key as T);
-                        }
-                    }}
-                >
-                    {value as React.ReactNode}
-                </Button>
-            })
-        }
+        <div>
+            {Object.entries(props.options)
+                .map(([key, value]) => {
+                    return <Button
+                        key={key}
+                        onClick={()=>{
+                            if(props.onChange) {
+                                props.onChange(key as T);
+                            }
+                        }}
+                    >
+                        {value as React.ReactNode}
+                    </Button>
+                })
+            }
+        </div>
     </div>:null
 }
