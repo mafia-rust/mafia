@@ -87,7 +87,7 @@ function TextDropdownLabel(
     }
 
     return <div>
-        <StyledText>{props.titleString}</StyledText>
+        <StyledText>{replaceMentions(props.titleString)}</StyledText>
         <span>
             {props.onSubtract ? <Button
                 onClick={() => {
