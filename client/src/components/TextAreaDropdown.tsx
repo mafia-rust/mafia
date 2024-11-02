@@ -29,7 +29,7 @@ export function TextDropdownArea(props: Readonly<{
 
     function send(field: string){
         save(field);
-        GAME_MANAGER.sendSendMessagePacket('\n' + field);
+        GAME_MANAGER.sendSendChatMessagePacket('\n' + field, true);
     }
 
     function save(field: string) {
@@ -83,7 +83,7 @@ function TextDropdownLabel(
 
     function send(field: string){
         save(field);
-        GAME_MANAGER.sendSendMessagePacket('\n' + field);
+        GAME_MANAGER.sendSendChatMessagePacket('\n' + field, true);
     }
 
     return <div>

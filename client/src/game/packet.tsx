@@ -249,8 +249,9 @@ export type ToServerPacket = {
     type: "dayTarget", 
     playerIndex:  PlayerIndex
 } | {
-    type: "sendMessage", 
-    text: string
+    type: "sendChatMessage", 
+    text: string,
+    block: boolean,
 } | {
     type: "sendWhisper", 
     playerIndex: PlayerIndex, 

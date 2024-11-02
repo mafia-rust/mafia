@@ -92,7 +92,7 @@ export type GameManager = {
     sendSaveNotesPacket(notes: string[]): void;
     sendSaveCrossedOutOutlinesPacket(crossedOutOutlines: number[]): void;
     sendSaveDeathNotePacket(notes: string): void;
-    sendSendMessagePacket(text: string): void;
+    sendSendChatMessagePacket(text: string, block: boolean): void;
     sendSendWhisperPacket(playerIndex: number, text: string): void;
     sendEnabledRolesPacket(roles: Role[]): void;
     sendEnabledModifiersPacket(modifiers: ModifierType[]): void;
