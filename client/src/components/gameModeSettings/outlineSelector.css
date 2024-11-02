@@ -8,6 +8,9 @@
     flex-direction: row;
     justify-content: space-evenly;
 }
+.role-outline-option-selector {
+    width: 100%;
+}
 .role-picker select {
     width: 100%;
     margin-left: 0;

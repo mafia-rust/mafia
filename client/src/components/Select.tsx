@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "./Button";
 import "./select.css";
+import Icon from "./Icon";
 
 
 
@@ -72,8 +73,6 @@ export default function Select<T extends string | number | symbol>(props: {
         className={"custom-select "+(props.className?props.className:"")}
         onKeyDown={(e)=>{
             if(props.disabled) return;
-            // if(!focused) return;
-
             if(e.key === "Enter" && !open) {
                 e.preventDefault();
                 handleSetOpen(true);
@@ -85,6 +84,9 @@ export default function Select<T extends string | number | symbol>(props: {
             }
         }}
     >
+            {open ===true ? 
+                <Icon>keyboard_arrow_up</Icon> :
+                <Icon>keyboard_arrow_down</Icon>}
         {props.options[props.value]}
         <SelectOptions
             options={props.options}

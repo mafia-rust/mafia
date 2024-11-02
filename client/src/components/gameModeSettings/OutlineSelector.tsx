@@ -156,6 +156,7 @@ export class RoleOutlineOptionSelector extends React.Component<RoleOutlineOption
         });
 
         return <Select
+            className="role-outline-option-selector"
             disabled={this.props.disabled}
             value={this.props.roleOutlineOption==="any"?"any":JSON.stringify(this.props.roleOutlineOption)}
             onChange={(value) => {
