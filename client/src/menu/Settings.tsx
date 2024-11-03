@@ -107,7 +107,7 @@ export default function SettingsMenu(): ReactElement {
                         {translate("menu.settings.font")}
                         <CheckBox checked={accessibilityFontEnabled} onChange={(checked: boolean) => {
                             setAccessibilityFontEnabled(checked);
-                            saveSettings({accessibilityFont: accessibilityFontEnabled});
+                            saveSettings({accessibilityFont: checked});
                         }}></CheckBox>
                     </label>
                 </section>
