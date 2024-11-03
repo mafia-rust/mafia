@@ -18,7 +18,6 @@ import { useGameState, usePlayerState } from "../../../components/useHooks";
 import { roleSpecificMenuType } from "../../Settings";
 import Pitchfork from "../../../components/Pitchfork";
 import HitOrder from "../../../components/HitOrder";
-import { TextDropdownArea } from "../../../components/TextAreaDropdown";
 
 type PlayerFilter = "all"|"living"|"usable";
 
@@ -266,7 +265,6 @@ function PlayerCard(props: Readonly<{
     phaseState: PhaseState,
     chatGroups: ChatGroup[] | undefined
 }>): ReactElement{
-    const isPlayerSelf = props.player.index === props.myIndex;
     const { player, myIndex, roleState, graveRolesStrings, chatFilter, phaseState, chatGroups } = props;
 
     let roleString = (()=>{
@@ -289,21 +287,6 @@ function PlayerCard(props: Readonly<{
         .concat(useDayTargetedPlayers())
         .concat(usePlayerVotedFor() ?? []);
 
-    //most recent block message sent by this player
-    const chatMessage = useGameState(
-        gameState => {
-            const reversed = [...gameState.chatMessages].reverse();
-            return reversed.find((message)=>{
-                return message.chatGroup === "all" &&
-                    message.variant.type === "normal" &&
-                    message.variant.block === true &&
-                    message.variant.messageSender.type === "player" &&
-                    message.variant.messageSender.player === player.index;
-            })
-        },
-        ["addChatMessages"]
-    )
-
     return <div 
         className={`player ${chosenPlayers.includes(player.index) ? "highlighted" : ""}`}
         key={player.index}
@@ -311,57 +294,27 @@ function PlayerCard(props: Readonly<{
         {usePlayerVotedFor() === player.index
             ? <div className="voted-popup">{translate("menu.playerList.player.youAreVoting")}</div>
             : undefined}
-        <div className="top">
-            <div className="player-list-card-top-name">
-                {(() => {
-                    if (phaseState.type === "testimony" || phaseState.type === "judgement" || phaseState.type === "finalWords") {
-                        if (phaseState.playerOnTrial === player.index) {
-                            return <StyledText>{translate("trial.icon")} </StyledText>
-                        }
+        <div className="top">  
+            {(() => {
+                if (phaseState.type === "testimony" || phaseState.type === "judgement" || phaseState.type === "finalWords") {
+                    if (phaseState.playerOnTrial === player.index) {
+                        return <StyledText>{translate("trial.icon")} </StyledText>
                     }
-                })()}
-                <StyledText>{(player.alive?"":translate("dead.icon"))} </StyledText>
-                <StyledText>{player.toString()}</StyledText>
-                {roleString !== null && <StyledText> {roleString}</StyledText>}
-                <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
-            </div>
-            <div className="player-list-card-top-buttons">
-                {(() => {
-                    const filter = props.player.index;
-                    const isFilterSet = props.chatFilter === filter;
-
-                    return <Button 
-                        className={"filter"} 
-                        highlighted={isFilterSet}
-                        onClick={() => {
-                            GAME_MANAGER.updateChatFilter(isFilterSet ? null : filter);
-                            return true;
-                        }}
-                        pressedChildren={result => <Icon>{result ? "done" : "warning"}</Icon>}
-                        aria-label={translate("menu.playerList.button.filter")}
-                    >
-                        <Icon>filter_alt</Icon>
-                    </Button>
-                })()}
-                {!isPlayerSelf && props.player.alive && (props.chatGroups ?? []).includes("all") && <Button 
-                    onClick={()=>{GAME_MANAGER.prependWhisper(props.player.index); return true;}}
-                    pressedChildren={() => <Icon>done</Icon>}
-                    >
-                    <Icon>chat</Icon>
-                    </Button>
                 }
-            </div>
+            })()}
+            <StyledText>{(player.alive?"":translate("dead.icon"))} </StyledText>
+            <StyledText>{player.toString()}</StyledText>
+            {roleString !== null && <StyledText> {roleString}</StyledText>}
+            <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
         </div>
-        {
-            chatMessage !== undefined && 
-            chatMessage.variant.type === "normal" &&
-            chatMessage.variant.messageSender.type === "player" && <TextDropdownArea
-                titleString={chatMessage.variant.text.split("\n")[0]}
-                savedText={chatMessage.variant.text}
-                cantPost={false}
-                cantEdit={true}
-            />
-        }
+        
+        {phaseState.type === "nomination" && player.alive && 
+            <Counter 
+                max={GAME_MANAGER.getVotesRequired()!} 
+                current={player.numVoted}
+            >
+                <StyledText>{translate("menu.playerList.player.votes", player.numVoted)}</StyledText>
+            </Counter>}
 
         {GAME_MANAGER.getMySpectator() || <PlayerButtons
             player={player}
@@ -384,23 +337,41 @@ function PlayerButtons(props: Readonly<{
     phaseState: PhaseState,
     chatGroups: ChatGroup[] | undefined
 }>): ReactElement {
+    const isPlayerSelf = props.player.index === props.myIndex;
+
     return <div className="buttons">
+        <div className="chat-buttons">
+            {(() => {
+
+                const filter = props.player.index;
+                const isFilterSet = props.chatFilter === filter;
+                
+                return <Button 
+                    className={"filter"} 
+                    highlighted={isFilterSet}
+                    onClick={() => {
+                        GAME_MANAGER.updateChatFilter(isFilterSet ? null : filter);
+                        return true;
+                    }}
+                    pressedChildren={result => <Icon>{result ? "done" : "warning"}</Icon>}
+                    aria-label={translate("menu.playerList.button.filter")}
+                >
+                    <Icon>filter_alt</Icon>
+                </Button>
+            })()}
+            {!isPlayerSelf && props.player.alive && (props.chatGroups ?? []).includes("all") && <Button 
+                onClick={()=>{GAME_MANAGER.prependWhisper(props.player.index); return true;}}
+                pressedChildren={() => <Icon>done</Icon>}
+            >
+                <Icon>chat</Icon>
+            </Button>}
+        </div>
         <div className="day-target">
             {props.player.buttons.dayTarget && <DayTargetButton player={props.player} roleState={props.roleState}/>}
         </div>
         <div className="target-or-vote">
             <TargetButton player={props.player} roleState={props.roleState}/>
             <VoteButton player={props.player} roleState={props.roleState}/>
-        </div>
-        <div className="nomination-count">
-            {props.phaseState.type === "nomination" && props.player.alive && 
-                <Counter 
-                    max={GAME_MANAGER.getVotesRequired()!} 
-                    current={props.player.numVoted}
-                >
-                    <StyledText>{translate("menu.playerList.player.votes", props.player.numVoted)}</StyledText>
-                </Counter>
-            }
         </div>
     </div>
 }
@@ -450,9 +421,9 @@ function VoteButton(props: Readonly<{
     const playerVotedFor = usePlayerVotedFor();
 
     if (props.player.buttons.vote) {
-        return <Button 
+        return <button 
             onClick={()=>GAME_MANAGER.sendVotePacket(props.player.index)}
-        >{translate("menu.playerList.button.vote")}</Button>
+        >{translate("menu.playerList.button.vote")}</button>
     } else if (playerVotedFor === props.player.index) {
         return <Button
             highlighted={true}

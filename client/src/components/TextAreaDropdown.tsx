@@ -14,12 +14,10 @@ export function TextDropdownArea(props: Readonly<{
     open?: boolean,
     onAdd?: () => void,
     onSubtract?: () => void,
-    onSave?: (text: string) => void,
-    cantPost: boolean,
-    cantEdit?: boolean
+    onSave: (text: string) => void,
+    cantPost: boolean
 }>): ReactElement {
     const [field, setField] = useState<string>(props.savedText);
-    const cantEdit = props.cantEdit===undefined?false:props.cantEdit;
 
     useEffect(() => {
         setField(props.savedText)
@@ -30,9 +28,12 @@ export function TextDropdownArea(props: Readonly<{
     }, [field, props.savedText]);
 
     function send(field: string){
-        if (props.onSave)
-            props.onSave(field);
+        save(field);
         GAME_MANAGER.sendSendChatMessagePacket('\n' + field, true);
+    }
+
+    function save(field: string) {
+        props.onSave(field);
     }
 
     return (
@@ -44,7 +45,7 @@ export function TextDropdownArea(props: Readonly<{
                     field={field}
                     onAdd={props.onAdd}
                     onSubtract={props.onSubtract}
-                    onSave={props.onSave}
+                    onSave={save}
                     cantPost={props.cantPost}
                 />
             </summary>
@@ -52,9 +53,8 @@ export function TextDropdownArea(props: Readonly<{
             <PrettyTextArea
                 field={field}
                 setField={setField}
-                save={props.onSave ?? (() => {})}
+                save={save}
                 send={send}
-                cantEdit={cantEdit}
             />
         </details>
     )
@@ -68,7 +68,7 @@ function TextDropdownLabel(
         open?: boolean,
         onAdd?: () => void,
         onSubtract?: () => void,
-        onSave?: (text: string) => void,
+        onSave: (text: string) => void,
         cantPost: boolean
     }>
 ): ReactElement {
@@ -78,8 +78,7 @@ function TextDropdownLabel(
     }, [props.field, props.savedText]);
 
     function save(field: string) {
-        if (props.onSave)
-            props.onSave(field);
+        props.onSave(field);
     }
 
     function send(field: string){
@@ -110,7 +109,7 @@ function TextDropdownLabel(
             >
                 <Icon size="small">add</Icon>
             </Button> : null}
-            {props.onSave ? <Button
+            <Button
                 highlighted={unsaved}
                 onClick={() => {
                     save(props.field);
@@ -120,7 +119,7 @@ function TextDropdownLabel(
                 aria-label={translate("menu.will.save")}
             >
                 <Icon size="small">save</Icon>
-            </Button> : null}
+            </Button>
             <Button
                 disabled={props.cantPost}
                 onClick={() => {
@@ -141,11 +140,9 @@ function PrettyTextArea(props: Readonly<{
     setField: (field: string) => void,
     save: (field: string) => void,
     send: (field: string) => void,
-    cantEdit?: boolean
 }>): ReactElement {
     const [writing, setWriting] = useState<boolean>(false);
     const [hover, setHover] = useState<boolean>(false);
-    const cantEdit = props.cantEdit===undefined?false:props.cantEdit;
 
     return <div
         onMouseEnter={() => setHover(true)}
@@ -153,7 +150,7 @@ function PrettyTextArea(props: Readonly<{
         onFocus={() => setWriting(true)}
         onBlur={() => setWriting(false)}
     >
-        {cantEdit||(!writing && !hover)
+        {(!writing && !hover)
             ? <div className="textarea">
                 <StyledText noLinks={true}>{sanitizePlayerMessage(replaceMentions(props.field))}</StyledText>
             </div>
