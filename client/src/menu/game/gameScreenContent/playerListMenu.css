@@ -31,6 +31,7 @@
     border-left: .13rem solid transparent;
     border-right: .13rem solid transparent;
     background-color: var(--secondary-color);
+    margin-bottom: .25rem;
 }
 
 .player-list-menu .dead-players-separator {
@@ -45,8 +46,13 @@
 .player-list-menu .player.highlighted {
     outline: .13rem solid yellow;
 }
-
-.player-list-menu .player .top {
+.player-list-menu .player .top{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.player-list-menu .player .top .player-list-card-top-name{
     text-align: left;
     text-wrap: wrap;
     padding: 0.25rem 0;
@@ -58,7 +64,7 @@
 }
 .player-list-menu .buttons {
     display: grid;
-    grid-template-columns: min-content 1fr 1fr;
+    grid-template-columns: min-content 1fr 1fr 1fr;
 }
 .player-list-menu .buttons > div {
     width: 1fr;
@@ -70,15 +76,13 @@
 .player-list-menu .buttons > div > button {
     flex-grow: 1;
 }
-.player-list-menu div.chat-buttons {
-    grid-column: 1;
-    width: min-content;
-    flex-wrap: nowrap;
-}
 .player-list-menu .day-target {
-    grid-column: 2;
+    grid-column: 1;
 }
 .player-list-menu .target-or-vote {
+    grid-column: 2;
+}
+.player-list-menu .nomination-count {
     grid-column: 3;
 }
 .player-list-menu .playerTags{
