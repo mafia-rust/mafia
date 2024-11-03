@@ -46,6 +46,7 @@ export type Settings = {
     format: CurrentFormat;
     volume: number;
     fontSize: number;
+    accessibilityFont: boolean;
     defaultName: string | null;
     language: Language;
     roleSpecificMenus: Role[] // RoleSpecificMenuType=standalone for all listed roles, otherwise it should be playerlist
@@ -121,6 +122,7 @@ export const DEFAULT_SETTINGS: Readonly<Settings> = {
     format: "v3",
     volume: 0.5,
     fontSize: 1,
+    accessibilityFont: false,
     language: "en_us",
     defaultName: null,
     roleSpecificMenus: []
