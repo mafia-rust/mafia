@@ -27,6 +27,7 @@ export type AnchorController = {
     pushErrorCard: (error: ErrorData) => void,
     openGlobalMenu: () => void,
     closeGlobalMenu: () => void,
+    setFontSize: (fontSize: number) => void
 }
 
 const AnchorControllerContext = createContext<AnchorController | undefined>(undefined);
@@ -100,12 +101,16 @@ export default function Anchor(props: Readonly<{
 
     const [touchStart, setTouchStart] = useState<[number, number] | null>(null);
     const [touchCurrent, setTouchCurrent] = useState<[number, number] | null>(null);
+    const setFontSize = (n: number) => {
+        document.documentElement.style.fontSize = `${n}em`;
+    }
 
     // Load settings
     useEffect(() => {
         const settings = loadSettingsParsed();
 
         AudioController.setVolume(settings.volume);
+        setFontSize(settings.fontSize);
         switchLanguage(settings.language)
     }, [])
 
@@ -167,6 +172,9 @@ export default function Anchor(props: Readonly<{
         },
         openGlobalMenu: () => setGlobalMenuOpen(true),
         closeGlobalMenu: () => setGlobalMenuOpen(false),
+        setFontSize: (fontSize: number) => {
+            setFontSize(fontSize);
+        }
     }), [reload, children, coverCard])
 
     useEffect(() => {
@@ -178,6 +186,7 @@ export default function Anchor(props: Readonly<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props])
     
+
     return <MobileContext.Provider value={mobile} >
         <AnchorControllerContext.Provider value={anchorController}>
             <div
