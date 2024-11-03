@@ -386,7 +386,9 @@ function PlayerButtons(props: Readonly<{
 }>): ReactElement {
     return <div className="buttons">
         <div className="day-target">
-            {props.player.buttons.dayTarget && <DayTargetButton player={props.player} roleState={props.roleState}/>}
+            {props.player.buttons.dayTarget && 
+                <DayTargetButton player={props.player} roleState={props.roleState}/>
+            }
         </div>
         <div className="target-or-vote">
             <TargetButton player={props.player} roleState={props.roleState}/>

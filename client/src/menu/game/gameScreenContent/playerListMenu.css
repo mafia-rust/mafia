@@ -64,7 +64,7 @@
 }
 .player-list-menu .buttons {
     display: grid;
-    grid-template-columns: min-content 1fr 1fr 1fr;
+    grid-template-columns: min-content 1fr 1fr;
 }
 .player-list-menu .buttons > div {
     width: 1fr;
