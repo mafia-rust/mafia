@@ -45,6 +45,7 @@ export function loadReconnectData(): {
 export type Settings = {
     format: CurrentFormat;
     volume: number;
+    fontSize: number;
     defaultName: string | null;
     language: Language;
     roleSpecificMenus: Role[] // RoleSpecificMenuType=standalone for all listed roles, otherwise it should be playerlist
@@ -119,6 +120,7 @@ export function deleteGameModes() {
 export const DEFAULT_SETTINGS: Readonly<Settings> = {
     format: "v3",
     volume: 0.5,
+    fontSize: 1,
     language: "en_us",
     defaultName: null,
     roleSpecificMenus: []

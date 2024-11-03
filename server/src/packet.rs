@@ -237,7 +237,7 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     DayTarget{player_index:  PlayerIndex},
 
-    SendMessage{text: String},
+    SendChatMessage{text: String, block: bool},
     #[serde(rename_all = "camelCase")]
     SendWhisper{player_index: PlayerIndex, text: String},
     SaveWill{will: String},

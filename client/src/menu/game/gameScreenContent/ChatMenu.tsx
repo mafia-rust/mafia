@@ -211,7 +211,7 @@ export function ChatTextInput(props: Readonly<{ disabled?: boolean }>): ReactEle
             if (whispering !== null) {
                 GAME_MANAGER.sendSendWhisperPacket(whispering, text);
             } else {
-                GAME_MANAGER.sendSendMessagePacket(text);
+                GAME_MANAGER.sendSendChatMessagePacket(text, false);
             }
         } else if (stateType === "lobby") {
             GAME_MANAGER.sendSendLobbyMessagePacket(text);
