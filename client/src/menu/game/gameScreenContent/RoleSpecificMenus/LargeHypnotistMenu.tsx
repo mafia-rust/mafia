@@ -3,8 +3,8 @@ import GAME_MANAGER from "../../../.."
 import translate from "../../../../game/lang"
 import "./largeHypnotistMenu.css"
 import ChatElement from "../../../../components/ChatMessage"
-import Icon from "../../../../components/Icon"
 import StyledText from "../../../../components/StyledText"
+import CheckBox from "../../../../components/CheckBox"
 
 export type Hypnotist = {
     roleblock: boolean,
@@ -152,9 +152,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                 <StyledText>
                     {translate("wiki.article.standard.roleblock.title")}
                 </StyledText>
-                <label onClick={()=>this.handleRoleblockToggle()}>
-                    <Icon>{this.state.roleblock ? "check" : "close"}</Icon>
-                </label>
+                <CheckBox checked={this.state.roleblock} onChange={(_)=>this.handleRoleblockToggle()}/>
             </div>
             <div>
                 <ChatElement message={{
@@ -171,10 +169,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                     },
                     chatGroup:null
                 }}/>
-                <label onClick={()=>this.handleYouWereRoleblockedMessageToggle()}>
-                    <Icon>{this.state.youWereRoleblockedMessage ? "check" : "close"}</Icon>
-                </label>
-                
+                <CheckBox checked={this.state.youWereRoleblockedMessage} onChange={(_)=>this.handleYouWereRoleblockedMessageToggle()}/>
             </div>
             <div>
                 <ChatElement message={{
@@ -183,10 +178,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                     },
                     chatGroup:null
                 }}/>
-                <label onClick={()=>this.handleYouSurvivedAttackMessageToggle()}>
-                    <Icon>{this.state.youSurvivedAttackMessage ? "check" : "close"}</Icon>
-                </label>
-                
+                <CheckBox checked={this.state.youSurvivedAttackMessage} onChange={(_)=>this.handleYouSurvivedAttackMessageToggle()}/>
             </div>
             <div>
                 <ChatElement message={{
@@ -195,10 +187,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                     },
                     chatGroup:null
                 }}/>
-                <label onClick={()=>this.handleYouWereProtectedMessageToggle()}>
-                    <Icon>{this.state.youWereProtectedMessage ? "check" : "close"}</Icon>
-                </label>
-                
+                <CheckBox checked={this.state.youWereProtectedMessage} onChange={(_)=>this.handleYouWereProtectedMessageToggle()}/>
             </div>
             <div>
                 <ChatElement message={{
@@ -207,10 +196,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                     },
                     chatGroup:null
                 }}/>
-                <label onClick={()=>this.handleYouWereTransportedMessageToggle()}>
-                    <Icon>{this.state.youWereTransportedMessage ? "check" : "close"}</Icon>
-                </label>
-                
+                <CheckBox checked={this.state.youWereTransportedMessage} onChange={(_)=>this.handleYouWereTransportedMessageToggle()}/>
             </div>
             <div>
                 <ChatElement message={{
@@ -227,10 +213,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                     },
                     chatGroup:null
                 }}/>
-                <label onClick={()=>this.handleYouWerePossessedMessageToggle()}>
-                    <Icon>{this.state.youWerePossessedMessage ? "check" : "close"}</Icon>
-                </label>
-                
+                <CheckBox checked={this.state.youWerePossessedMessage} onChange={(_)=>this.handleYouWerePossessedMessageToggle()}/>
             </div>
             <div>
                 <ChatElement message={{
@@ -239,9 +222,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                     },
                     chatGroup:null
                 }}/>
-                <label onClick={()=>this.handleYourTargetWasJailedMessageToggle()}>
-                    <Icon>{this.state.yourTargetWasJailedMessage ? "check" : "close"}</Icon>
-                </label>
+                <CheckBox checked={this.state.yourTargetWasJailedMessage} onChange={(_)=>this.handleYourTargetWasJailedMessageToggle()}/>
             </div>            
         </div>
     }
