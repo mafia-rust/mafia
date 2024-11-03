@@ -1,7 +1,6 @@
 .custom-select {
     position: relative; /* Position relative to contain absolute children */
     overflow: visible;
-
     
     display: inline-flex;
     flex-direction: row;
@@ -10,9 +9,6 @@
 .custom-select-options {
     position: absolute;
     top: 100%;
-    /* center it horiz */
-    left: 50%;
-    transform: translateX(-50%);
     z-index: 1000;
 
     padding: .13rem .25rem;
@@ -23,6 +19,8 @@
 
     overflow-y: auto;
     max-height: 25rem;
+    width: 100%;
+    min-width: max-content;
 }
 
 .custom-select-options > div {

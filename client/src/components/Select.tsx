@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { Button } from "./Button";
 import "./select.css";
 import Icon from "./Icon";
@@ -23,10 +23,10 @@ export default function Select<T extends string | number | symbol>(props: {
             props.onChange(value);
         }
     }
-    const handleSetOpen = (value: boolean) => {
+    const handleSetOpen = useCallback((value: boolean) => {
         setOpen(value);
         setSearchString("");
-    }
+    }, [setOpen, setSearchString]);
 
     const handleKeyInput = (key: string) => {
         switch(key) {
@@ -64,8 +64,20 @@ export default function Select<T extends string | number | symbol>(props: {
         }
     }
 
-    
+    const ref = React.useRef<HTMLDivElement>(null);
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (!ref.current?.contains(event.target as Node) && open) {
+                handleSetOpen(false);
+            }
+        };
+
+        setTimeout(() => {
+            document.addEventListener("click", handleClickOutside);
+        })
+        return () => document.removeEventListener("click", handleClickOutside);
+    }, [handleSetOpen, open]);
 
     return <Button
         disabled={props.disabled}
@@ -89,6 +101,7 @@ export default function Select<T extends string | number | symbol>(props: {
                 <Icon>keyboard_arrow_down</Icon>}
         {props.options[props.value]}
         <SelectOptions
+            ref={ref}
             options={props.options}
             open={open}
             onChange={(value)=>{
@@ -96,18 +109,19 @@ export default function Select<T extends string | number | symbol>(props: {
                 handleSetOpen(false);
                 handleOnChange(value as T);
             }}
-            
         />
     </Button>
 }
 
 function SelectOptions<T extends string | number | symbol>(props: {
+    ref: React.RefObject<HTMLDivElement>,
     options: Record<T, React.ReactNode>
     open: boolean,
     onChange?: (value: T)=>void,
 }) {
 
     return props.open?<div
+        ref={props.ref}
         className="custom-select-options"
     >
         <div>
