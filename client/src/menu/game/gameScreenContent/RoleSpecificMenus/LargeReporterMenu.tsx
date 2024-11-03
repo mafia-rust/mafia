@@ -49,9 +49,6 @@ export default class LargeReporterMenu extends React.Component<LargeReporterMenu
             !this.state.syncedPublic
         );
     }
-    handleSend(){
-        GAME_MANAGER.sendSendMessagePacket('\n' + this.state.syncedReport);
-    }
 
     render(){
         return <div className="large-reporter-menu">

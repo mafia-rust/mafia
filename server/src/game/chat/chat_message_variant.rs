@@ -31,6 +31,7 @@ pub enum ChatMessageVariant {
     Normal{
         message_sender: MessageSender, 
         text: String,
+        block: bool,
     },
 
     #[serde(rename_all = "camelCase")]

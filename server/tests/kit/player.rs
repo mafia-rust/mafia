@@ -62,7 +62,7 @@ impl TestPlayer {
 
     pub fn send_message(&self, message: &str) {
         game!(self).on_client_message(self.0.index(), 
-            ToServerPacket::SendMessage { text: message.to_string() }
+            ToServerPacket::SendChatMessage { text: message.to_string(), block: false }
         );
     }
 
