@@ -152,7 +152,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                 <StyledText>
                     {translate("wiki.article.standard.roleblock.title")}
                 </StyledText>
-                <CheckBox checked={this.state.roleblock} onChange={(_)=>this.handleRoleblockToggle()}/>
+                <CheckBox checked={this.state.roleblock} onChange={(checked)=>this.handleRoleblockToggle()}/>
             </div>
             <div>
                 <ChatElement message={{
@@ -169,7 +169,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                     },
                     chatGroup:null
                 }}/>
-                <CheckBox checked={this.state.youWereRoleblockedMessage} onChange={(_)=>this.handleYouWereRoleblockedMessageToggle()}/>
+                <CheckBox checked={this.state.youWereRoleblockedMessage} onChange={(checked)=>this.handleYouWereRoleblockedMessageToggle()}/>
             </div>
             <div>
                 <ChatElement message={{
@@ -178,7 +178,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                     },
                     chatGroup:null
                 }}/>
-                <CheckBox checked={this.state.youSurvivedAttackMessage} onChange={(_)=>this.handleYouSurvivedAttackMessageToggle()}/>
+                <CheckBox checked={this.state.youSurvivedAttackMessage} onChange={(checked)=>this.handleYouSurvivedAttackMessageToggle()}/>
             </div>
             <div>
                 <ChatElement message={{
@@ -187,7 +187,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                     },
                     chatGroup:null
                 }}/>
-                <CheckBox checked={this.state.youWereProtectedMessage} onChange={(_)=>this.handleYouWereProtectedMessageToggle()}/>
+                <CheckBox checked={this.state.youWereProtectedMessage} onChange={(checked)=>this.handleYouWereProtectedMessageToggle()}/>
             </div>
             <div>
                 <ChatElement message={{
@@ -196,7 +196,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                     },
                     chatGroup:null
                 }}/>
-                <CheckBox checked={this.state.youWereTransportedMessage} onChange={(_)=>this.handleYouWereTransportedMessageToggle()}/>
+                <CheckBox checked={this.state.youWereTransportedMessage} onChange={(checked)=>this.handleYouWereTransportedMessageToggle()}/>
             </div>
             <div>
                 <ChatElement message={{
@@ -213,7 +213,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                     },
                     chatGroup:null
                 }}/>
-                <CheckBox checked={this.state.youWerePossessedMessage} onChange={(_)=>this.handleYouWerePossessedMessageToggle()}/>
+                <CheckBox checked={this.state.youWerePossessedMessage} onChange={(checked)=>this.handleYouWerePossessedMessageToggle()}/>
             </div>
             <div>
                 <ChatElement message={{
@@ -222,7 +222,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                     },
                     chatGroup:null
                 }}/>
-                <CheckBox checked={this.state.yourTargetWasJailedMessage} onChange={(_)=>this.handleYourTargetWasJailedMessageToggle()}/>
+                <CheckBox checked={this.state.yourTargetWasJailedMessage} onChange={(checked)=>this.handleYourTargetWasJailedMessageToggle()}/>
             </div>            
         </div>
     }
