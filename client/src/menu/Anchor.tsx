@@ -101,14 +101,16 @@ export default function Anchor(props: Readonly<{
 
     const [touchStart, setTouchStart] = useState<[number, number] | null>(null);
     const [touchCurrent, setTouchCurrent] = useState<[number, number] | null>(null);
-    const [fontSizeState, setFontSizeState] = useState(1);
+    const setFontSize = (n: number) => {
+        document.documentElement.style.fontSize = `${n}em`;
+    }
 
     // Load settings
     useEffect(() => {
         const settings = loadSettingsParsed();
 
         AudioController.setVolume(settings.volume);
-        setFontSizeState(settings.fontSize);
+        setFontSize(settings.fontSize);
         switchLanguage(settings.language)
     }, [])
 
@@ -171,7 +173,7 @@ export default function Anchor(props: Readonly<{
         openGlobalMenu: () => setGlobalMenuOpen(true),
         closeGlobalMenu: () => setGlobalMenuOpen(false),
         setFontSize: (fontSize: number) => {
-            setFontSizeState(fontSize);
+            setFontSize(fontSize);
         }
     }), [reload, children, coverCard])
 
@@ -188,7 +190,6 @@ export default function Anchor(props: Readonly<{
     return <MobileContext.Provider value={mobile} >
         <AnchorControllerContext.Provider value={anchorController}>
             <div
-                style={{ fontSize: `${fontSizeState}em` }}
                 className="anchor"
                 onTouchStart={(e) => {
                     setTouchStart([e.targetTouches[0].clientX,e.targetTouches[0].clientY])

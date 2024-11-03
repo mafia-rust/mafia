@@ -47,6 +47,7 @@ export default function SettingsMenu(): ReactElement {
                         }/>
                     </section>
                     <section className="standout">
+                        <h2>{translate("menu.settings.fontSize")}</h2>
                         <input type="number" min="0.5" max="2" step="0.1"
                             value={fontSizeState}
                             onChange={(e)=>{
