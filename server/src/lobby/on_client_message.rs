@@ -16,7 +16,7 @@ impl Lobby {
             ToServerPacket::Judgement { .. } |
             ToServerPacket::Target { .. } |
             ToServerPacket::DayTarget { .. } |
-            ToServerPacket::SendMessage { .. } |
+            ToServerPacket::SendChatMessage { .. } |
             ToServerPacket::SendLobbyMessage { .. } |
             ToServerPacket::SendWhisper { .. } => {
 

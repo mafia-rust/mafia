@@ -437,10 +437,11 @@ export function createGameManager(): GameManager {
                 deathNote: notes.trim().length === 0 ? null : notes
             });
         },
-        sendSendMessagePacket(text) {
+        sendSendChatMessagePacket(text, block) {
             this.server.sendPacket({
-                type: "sendMessage",
-                text: text
+                type: "sendChatMessage",
+                text: text,
+                block: block
             });
         },
         sendSendWhisperPacket(playerIndex, text) {
