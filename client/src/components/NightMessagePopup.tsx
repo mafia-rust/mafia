@@ -10,15 +10,15 @@ export default function NightMessagePopup(props: Readonly<{
 
     return <div className="chat-menu chat-menu-colors night-message-popup">
         <h2>{translate("nightMessages")}</h2>
-        <Virtuoso
-            alignToBottom={true}
-            totalCount={props.messages.length}
-            followOutput={'smooth'}
-            itemContent={(index) => <ChatElement
-                key={index}
-                message={props.messages[index]}
-            />}
-            atBottomThreshold={15}
-        />
+        <div className="chat-message-section">
+            <div className="chat-message-list">
+                {props.messages.map((msg, index) => {
+                    return <ChatElement
+                        key={index}
+                        message={msg}
+                    />;
+                })}
+            </div>
+        </div>
     </div>
 }
