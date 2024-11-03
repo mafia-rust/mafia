@@ -20,6 +20,7 @@ export default function Credits(): ReactElement {
             <p>
                 <span>copop22</span>
                 <span>Gabriel Arias</span>
+                <span>Thomas Berrios</span>
                 <span>Willow Thompson</span>
             </p>
             <h3>{translate("playTesters")}</h3>
@@ -33,7 +34,6 @@ export default function Credits(): ReactElement {
                 <span>Kate Horne</span>
                 <span>Marcus Moher</span>
                 <span>Myanmar (Mascot :3)</span>
-                <span>Thomas Berrios</span>
                 <span>Vigil</span>
                 <span>Willow Thompson</span>
             </p>
