@@ -27,7 +27,8 @@ export type AnchorController = {
     pushErrorCard: (error: ErrorData) => void,
     openGlobalMenu: () => void,
     closeGlobalMenu: () => void,
-    setFontSize: (fontSize: number) => void
+    setFontSize: (fontSize: number) => void,
+    setAccessibilityFontEnabled: (accessibilityFontEnabled: boolean) => void
 }
 
 const AnchorControllerContext = createContext<AnchorController | undefined>(undefined);
@@ -104,6 +105,14 @@ export default function Anchor(props: Readonly<{
     const setFontSize = (n: number) => {
         document.documentElement.style.fontSize = `${n}em`;
     }
+    const setAccessibilityFontEnabled = (enabled: boolean) => {
+        const font = enabled ? 'game-accessible' : 'game-base';
+        const iconFactor = enabled ? '1.2' : '1';
+
+        document.documentElement.style.setProperty('--game-font', font);
+        document.documentElement.style.setProperty('--kira-font', font === `game-base` ? `game-kira` : font);
+        document.documentElement.style.setProperty('--icon-factor', iconFactor);
+    }
 
     // Load settings
     useEffect(() => {
@@ -111,6 +120,7 @@ export default function Anchor(props: Readonly<{
 
         AudioController.setVolume(settings.volume);
         setFontSize(settings.fontSize);
+        setAccessibilityFontEnabled(settings.accessibilityFont);
         switchLanguage(settings.language)
     }, [])
 
@@ -174,6 +184,9 @@ export default function Anchor(props: Readonly<{
         closeGlobalMenu: () => setGlobalMenuOpen(false),
         setFontSize: (fontSize: number) => {
             setFontSize(fontSize);
+        },
+        setAccessibilityFontEnabled: (enabled: boolean) => {
+            setAccessibilityFontEnabled(enabled);
         }
     }), [reload, children, coverCard])
 
