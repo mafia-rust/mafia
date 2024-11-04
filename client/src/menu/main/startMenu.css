@@ -3,6 +3,7 @@
     max-height: 100%;
     display: flex;
     flex-direction: column;
+    background: 10% 20% /10% no-repeat url('../moon.png');
 }
 
 .sm > main {
