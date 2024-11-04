@@ -28,24 +28,28 @@
     src: url('resources/fonts/opendyslexic/OpenDyslexic-Regular.woff2');
     font-weight: normal;
     font-style: normal;
+    size-adjust: 80%;
 }
 @font-face {
     font-family: game-accessible;
     src: url('resources/fonts/opendyslexic/OpenDyslexic-Bold.woff2');
     font-weight: bold;
     font-style: normal;
+    size-adjust: 80%;
 }
 @font-face {
     font-family: game-accessible;
     src: url('resources/fonts/opendyslexic/OpenDyslexic-Italic.woff2');
     font-weight: normal;
     font-style: italic;
+    size-adjust: 80%;
 }
 @font-face {
     font-family: game-accessible;
     src: url('resources/fonts/opendyslexic/OpenDyslexic-Bold-Italic.woff2');
     font-weight: bold;
     font-style: italic;
+    size-adjust: 80%;
 }
 
 
