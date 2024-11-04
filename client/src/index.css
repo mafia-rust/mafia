@@ -95,7 +95,7 @@ s {
 
     color: white;
 
-    font-family: var(--game-font);
+    font-family: var(--game-font, Ariel);
 }
 .timer-box{
     width: 100%;
