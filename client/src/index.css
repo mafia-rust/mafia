@@ -52,6 +52,12 @@
     size-adjust: 80%;
 }
 
+@font-face {
+    font-family: game-kira;
+    src: url(resources/fonts/canterbury.regular.ttf) format('truetype');
+    size-adjust: 120%;
+}
+
 
 :root{
     --background-color: #0E1026;
@@ -73,6 +79,7 @@
     font-size: 1em;
     
     --game-font: game-base;
+    --kira-font: game-kira;
 }
 
 s {
