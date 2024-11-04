@@ -1194,6 +1194,19 @@
             {"type": "youSurvivedAttack"}
         ]
     },
+    "serialKiller": {
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "someoneSurvivedYourAttack"}
+        ]
+    },
     "fiendsWildcard": {
         "mainRoleSet": "fiends",
         "roleSets": ["fiends"],
