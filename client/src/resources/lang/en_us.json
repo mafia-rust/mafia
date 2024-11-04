@@ -1494,8 +1494,8 @@
     "wiki.article.role.serialKiller.reminder": "Each night, select a player to attack.",
     "wiki.article.role.serialKiller.guide": "- At night select a player to attack them\n- You can't use your ability night 1.",
     "wiki.article.role.serialKiller.abilities":"* Visit a player to attack",
-    "wiki.article.role.serialKiller.attributes":"* None",
-    "wiki.article.role.serialKiller.extra":"* Different from Mafioso. Try to kill as many players as you can.",
+    "wiki.article.role.serialKiller.attributes":"",
+    "wiki.article.role.serialKiller.extra":"",
     
     "wiki.article.role.mafiaKillingWildcard.reminder": "Choose a syndicate killing role to become that role when night starts.",
     "wiki.article.role.mafiaKillingWildcard.guide": "* Choose a syndicate killing role to become that role\n    * You become that role when night starts\n* You likely can't become a role if someone already has that role (You can't become a role that has exceeded its role limit)",

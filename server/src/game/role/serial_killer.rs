@@ -1,14 +1,13 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
-use crate::game::role_list::RoleSet;
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleStateImpl};
+use super::{Priority, Role, RoleStateImpl};
 
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct SerialKiller;
@@ -26,7 +25,7 @@ impl RoleStateImpl for SerialKiller {
 
             let target_ref = visit.target;
             
-            target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::RoleSet(RoleSet::Fiends), AttackPower::Basic, true);
+            target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::SerialKiller), AttackPower::Basic, true);
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
