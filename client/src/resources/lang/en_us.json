@@ -409,7 +409,7 @@
     "role.mafioso.target": "Attack",
     "role.mafioso.youAreSelecting": "You are attacking \\0.",
     "role.mafioso.youAreSelecting.null": "You aren't attacking anyone.",
-
+    
     "role.mafiaKillingWildcard.name": "Syndicate Killing Wildcard",
     "role.mafiaKillingWildcard.name:var.0": "Syndicate Killing Wildcards",
     "role.mafiaKillingWildcard.smallRoleMenu": "Choose a syndicate killing role to become",
@@ -525,7 +525,7 @@
 
     "role.arsonist.name": "Arsonist",
     "role.arsonist.name:var.0": "Arsonists",
-    
+
     "role.werewolf.name": "Werewolf",
     "role.werewolf.name:var.0": "Werewolves",
 
@@ -547,6 +547,12 @@
     
     "role.kira.name": "Kira",
     "role.kira.name:var.0": "Kiras",
+
+    "role.serialKiller.name": "Serial Killer",
+    "role.serialKiller.name:var.0": "Serial Killers",
+    "role.serialKiller.target": "Attack",
+    "role.serialKiller.youAreSelecting": "You are attacking \\0.",
+    "role.serialKiller.youAreSelecting.null": "You aren't attacking anyone.",
 
     "role.fiendsWildcard.name": "Fiends Wildcard",
     "role.fiendsWildcard.name:var.0": "Fiends Wildcards",
@@ -1486,6 +1492,12 @@
     "wiki.article.role.mafioso.abilities":"* Visit a player to attack",
     "wiki.article.role.mafioso.attributes":"* None",
     "wiki.article.role.mafioso.extra":"* You can't target other syndicate members",
+
+    "wiki.article.role.serialKiller.reminder": "Each night, select a player to attack.",
+    "wiki.article.role.serialKiller.guide": "- At night select a player to attack them\n- You can't use your ability night 1.",
+    "wiki.article.role.serialKiller.abilities":"* Visit a player to attack",
+    "wiki.article.role.serialKiller.attributes":"",
+    "wiki.article.role.serialKiller.extra":"",
     
     "wiki.article.role.mafiaKillingWildcard.reminder": "Choose a syndicate killing role to become that role when night starts.",
     "wiki.article.role.mafiaKillingWildcard.guide": "* Choose a syndicate killing role to become that role\n    * You become that role when night starts\n* You likely can't become a role if someone already has that role (You can't become a role that has exceeded its role limit)",

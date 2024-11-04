@@ -211,6 +211,8 @@ Doomsayer
     type: "disciple"
 } | {
     type: "zealot"
+} | {
+    type: "serialKiller"
 }
 
 
