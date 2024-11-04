@@ -3,6 +3,7 @@
     max-height: 100%;
     display: flex;
     flex-direction: column;
+    background: 10% 20% /10% no-repeat url('../moon.png');
 }
 
 .sm > main {
@@ -37,16 +38,18 @@
 }
 
 .sm > main > h1 {
-    font-size: 8em;
+    font-size: 6em;
+    font-weight: 400;
+    font-family: 'dankduck', 'Roboto', sans-serif;
 }
 
 @media only screen and (max-width: 800px),
        only screen and (max-height: 700px) {
     .sm > main > h1 {
-        font-size: 5em;
+        font-size: 4em;
     }
     .sm > main > div > button {
-        font-size: 1.25em;
+        font-size: 1em;
     }
 }
 
