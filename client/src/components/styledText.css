@@ -79,7 +79,7 @@
     text-shadow: -.05rem -.05rem .1rem #ffffff66, .1rem .1rem .1rem rgb(0, 0, 0);
 }
 .keyword-kira {
-    font-family: var(--kira-font, Ariel);
+    font-family: var(--kira-font, Arial);
 }
 .keyword-trans {
     background-image: linear-gradient(to left, cyan, pink, white, pink, cyan);
