@@ -6,7 +6,7 @@ import { Role, roleJsonData } from "../../game/roleState.d";
 import Icon from "../Icon";
 import { DragAndDrop } from "../DragAndDrop";
 import { GameModeContext } from "./GameModesEditor";
-import Select from "../Select";
+import Select, { SelectOptionsRecord } from "../Select";
 import StyledText from "../StyledText";
 
 type RoleOutlineSelectorProps = {
@@ -137,22 +137,22 @@ export class RoleOutlineOptionSelector extends React.Component<RoleOutlineOption
     render(): React.ReactNode {
 
 
-        const optionsMap: Record<string, React.ReactNode> = {};
+        const optionsMap: SelectOptionsRecord<string> = {};
 
-        optionsMap["any"] = <StyledText
+        optionsMap["any"] = [<StyledText
             noLinks={!this.props.disabled}
-        >{translate("any")}</StyledText>;
+        >{translate("any")}</StyledText>, translate("any")];
 
         ROLE_SETS.forEach((roleSet) => {
-            optionsMap[JSON.stringify({type: "roleSet", roleSet: roleSet})] = <StyledText
+            optionsMap[JSON.stringify({type: "roleSet", roleSet: roleSet})] = [<StyledText
                 noLinks={!this.props.disabled}
-            >{translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})}</StyledText>;
+            >{translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})}</StyledText>, translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})];
         });
         
         Object.keys(roleJsonData()).forEach((role) => {
-            optionsMap[JSON.stringify({type: "role", role: role})] = <StyledText
+            optionsMap[JSON.stringify({type: "role", role: role})] = [<StyledText
                 noLinks={!this.props.disabled}
-            >{translateRoleOutlineOptionOrAny({type: "role", role: role as Role})}</StyledText>;
+            >{translateRoleOutlineOptionOrAny({type: "role", role: role as Role})}</StyledText>, translateRoleOutlineOptionOrAny({type: "role", role: role as Role})];
         });
 
         return <Select
@@ -164,7 +164,7 @@ export class RoleOutlineOptionSelector extends React.Component<RoleOutlineOption
                     value === "any" ? "any" : JSON.parse(value)
                 );
             }}
-            options={optionsMap}
+            optionsSearch={optionsMap}
         />
     }
 }

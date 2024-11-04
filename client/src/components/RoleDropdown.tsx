@@ -1,9 +1,10 @@
 import { ReactElement } from "react"
-import { Role, roleJsonData } from "../game/roleState.d"
+import { Role } from "../game/roleState.d"
 import React from "react"
 import translate from "../game/lang"
-import Select from "./Select"
+import Select, { SelectOptionsRecord } from "./Select"
 import StyledText from "./StyledText"
+import { getAllRoles } from "../game/roleListState.d"
 
 
 type RoleDropdownProps = {
@@ -20,14 +21,14 @@ type RoleDropdownProps = {
 
 export default function RoleDropdown(props: RoleDropdownProps): ReactElement {
 
-    const optionMap: Record<string, React.ReactNode> = {};
+    const optionMap: SelectOptionsRecord<Role | "none"> = {};
 
     if (props.canChooseNone)
-        optionMap["none"] = <StyledText noLinks={true}>{translate("none")}</StyledText>
+        optionMap["none"] = [<StyledText noLinks={true}>{translate("none")}</StyledText>, translate("none")]
     
-    for (const role in roleJsonData()) {
+    for (const role in getAllRoles()) {
         if (props.enabledRoles === undefined || props.enabledRoles.includes(role as Role)) {
-            optionMap[role] = <StyledText noLinks={true}>{translate("role."+role+".name")}</StyledText>
+            optionMap[role as Role] = [<StyledText noLinks={true}>{translate("role."+role+".name")}</StyledText>, translate("role."+role+".name")]
         }
     }
 
@@ -38,6 +39,6 @@ export default function RoleDropdown(props: RoleDropdownProps): ReactElement {
             props.canChooseNone===true?props.onChange(value==="none"?null:value as Role | null):
             props.onChange(value as Role)
         }
-        options={optionMap}
+        optionsSearch={optionMap}
     />
 }

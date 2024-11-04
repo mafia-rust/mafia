@@ -3,15 +3,34 @@ import { Button } from "./Button";
 import "./select.css";
 import Icon from "./Icon";
 
+export type SelectOptionKey = string | number | symbol;
+export type SelectOptionsNoSearch<T extends SelectOptionKey> = Partial<Record<T, React.ReactNode>>;
+export type SelectOptionsRecord<T extends SelectOptionKey> = Partial<Record<T, [React.ReactNode, string]>>;
 
-
-export default function Select<T extends string | number | symbol>(props: {
+export default function Select<T extends SelectOptionKey>(props: {
     value: T,
     disabled?: boolean,
-    options: Record<T, React.ReactNode>,
     className?: string,
     onChange?: (value: T)=>void
-}) {
+} & ({
+    options: SelectOptionsNoSearch<T>,
+} | {
+    optionsSearch: SelectOptionsRecord<T>,
+})) {
+    let options: SelectOptionsRecord<T> = {};
+    let optionsNoSearch: SelectOptionsNoSearch<T> = {};
+
+    if("optionsSearch" in props) {
+        options = props.optionsSearch;
+        for(let key in props.optionsSearch) {
+            optionsNoSearch[key] = props.optionsSearch[key]![0];
+        }
+    }else{
+        for(let key in props.options) {
+            options[key] = [props.options[key], key.toString()];
+        }
+        optionsNoSearch = props.options;
+    }
 
     const [open, setOpen]= React.useState(false);
     const [searchString, setSearchString] = React.useState("");
@@ -37,10 +56,9 @@ export default function Select<T extends string | number | symbol>(props: {
                 handleSetOpen(false);
                 break;
             case "Enter":
-                const found = Object.keys(props.options).find((val) => {
-
+                const found = Object.keys(options).find((key) => {
                     for(let search of searchString.split(" ")) {
-                        if(!val.toString().toLowerCase().includes(search.toLowerCase())) {
+                        if(!options[key as keyof typeof options]![1].toString().toLowerCase().includes(search.toLowerCase())) {
                             return false;
                         }
                     }
@@ -79,6 +97,13 @@ export default function Select<T extends string | number | symbol>(props: {
         return () => document.removeEventListener("click", handleClickOutside);
     }, [handleSetOpen, open]);
 
+    if(props.value === undefined) {
+        throw new Error("Select value is undefined");
+    }
+    if(options[props.value] === undefined && options[props.value]) {
+        throw new Error("Select value not in options");
+    }
+
     return <Button
         disabled={props.disabled}
         onClick={()=>{handleSetOpen(!open)}}
@@ -99,10 +124,10 @@ export default function Select<T extends string | number | symbol>(props: {
             {open ===true ? 
                 <Icon>keyboard_arrow_up</Icon> :
                 <Icon>keyboard_arrow_down</Icon>}
-        {props.options[props.value]}
+        {options[props.value]![0]}
         <SelectOptions
             ref={ref}
-            options={props.options}
+            options={optionsNoSearch}
             open={open}
             onChange={(value)=>{
                 if(props.disabled) return;
@@ -113,9 +138,9 @@ export default function Select<T extends string | number | symbol>(props: {
     </Button>
 }
 
-function SelectOptions<T extends string | number | symbol>(props: {
+function SelectOptions<T extends SelectOptionKey>(props: {
     ref: React.RefObject<HTMLDivElement>,
-    options: Record<T, React.ReactNode>
+    options: SelectOptionsNoSearch<T>,
     open: boolean,
     onChange?: (value: T)=>void,
 }) {
