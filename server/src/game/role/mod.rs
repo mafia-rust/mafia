@@ -147,6 +147,7 @@ macros::roles! {
     Pyrolisk : pyrolisk,
     Kira : kira,
     FiendsWildcard : fiends_wildcard,
+    SerialKiller : serial_killer,
 
     Wildcard : wild_card,
     TrueWildcard : true_wildcard,
