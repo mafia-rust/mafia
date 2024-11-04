@@ -106,12 +106,11 @@ export default function Anchor(props: Readonly<{
         document.documentElement.style.fontSize = `${n}em`;
     }
     const setAccessibilityFontEnabled = (enabled: boolean) => {
-        if (enabled) {
-            document.documentElement.style.setProperty('--game-font', 'game-accessible');
-        }
-        else {
-            document.documentElement.style.setProperty('--game-font', 'game-base');
-        }
+        const font = enabled ? 'game-accessible' : 'game-base';
+        const iconFactor = enabled ? '1.2' : '1';
+
+        document.documentElement.style.setProperty('--game-font', font);
+        document.documentElement.style.setProperty('--icon-factor', iconFactor);
     }
 
     // Load settings
