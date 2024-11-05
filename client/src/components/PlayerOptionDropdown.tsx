@@ -4,26 +4,27 @@ import translate from "../game/lang"
 import { PlayerIndex } from "../game/gameState.d"
 import { useGameState } from "./useHooks"
 import StyledText from "./StyledText"
-import Select from "./Select"
+import Select, { SelectOptionsRecord } from "./Select"
 
-export default function PlayerDropdown(props: {
+export default function PlayerOptionDropdown(props: {
     value: PlayerIndex | null,
     onChange: (player: PlayerIndex | null) => void,
     choosablePlayers?: PlayerIndex[],
     canChooseNone?: boolean
 }): ReactElement {
 
-    const SENTINEL_VALUE_FOR_NONE = -1;
-
     let players = useGameState(
         gameState => gameState.players.map(player => [player.index, player.toString()] as [PlayerIndex, string]),
         ["gamePlayers"]
     )!;
 
-    const optionMap: Record<PlayerIndex, React.ReactNode> = {};
+    const optionMap: SelectOptionsRecord<PlayerIndex | "none"> = {};
 
     if(props.canChooseNone === true){
-        optionMap[-1] = <StyledText noLinks={true}>{translate("none")}</StyledText>;
+        optionMap["none"] = [
+            <StyledText noLinks={true}>{translate("none")}</StyledText>,
+            translate("none")
+        ];
     }
 
     for (const [index, name] of players) {
@@ -31,13 +32,16 @@ export default function PlayerDropdown(props: {
             props.choosablePlayers === undefined ||
             props.choosablePlayers.includes(index)
         ){
-            optionMap[index] = <StyledText noLinks={true}>{name.toString()}</StyledText>;
+            optionMap[index] = [
+                <StyledText noLinks={true}>{name}</StyledText>,
+                name
+            ];
         }
     }
 
     return <Select
-        value={props.value ?? SENTINEL_VALUE_FOR_NONE}
-        options={optionMap}
-        onChange={value => props.onChange(value === SENTINEL_VALUE_FOR_NONE ? null : value)}
+        value={props.value===null ? "none" : props.value}
+        optionsSearch={optionMap}
+        onChange={value => props.onChange(value === "none" ? null : value)}
     />
 }

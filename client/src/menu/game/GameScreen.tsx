@@ -8,7 +8,7 @@ import GAME_MANAGER, { modulus } from "../..";
 import WikiMenu from "./gameScreenContent/WikiMenu";
 import "../../index.css";
 import "./gameScreen.css";
-import RoleSpecificMenu from "./gameScreenContent/RoleSpecificMenu";
+import AbilityMenu from "./gameScreenContent/AbilityMenu";
 import { addSwipeEventListener, MobileContext, removeSwipeEventListener } from "../Anchor";
 import StyledText from "../../components/StyledText";
 import { WikiArticleLink } from "../../components/WikiArticleLink";
@@ -212,7 +212,7 @@ export default function GameScreen(): ReactElement {
                 {menuController.menuOpen(ContentMenu.ChatMenu) && <ChatMenu/>}
                 {menuController.menuOpen(ContentMenu.PlayerListMenu) && <PlayerListMenu/>}
                 {menuController.menuOpen(ContentMenu.WillMenu) && <WillMenu/>}
-                {menuController.menuOpen(ContentMenu.RoleSpecificMenu) && <RoleSpecificMenu/>}
+                {menuController.menuOpen(ContentMenu.RoleSpecificMenu) && <AbilityMenu/>}
                 {menuController.menuOpen(ContentMenu.GraveyardMenu) && <GraveyardMenu/>}
                 {menuController.menuOpen(ContentMenu.WikiMenu) && <WikiMenu/>}
                 {allMenusClosed && <div className="no-content">

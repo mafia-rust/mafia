@@ -11,14 +11,8 @@ import { RoleState } from "../../../game/roleState.d";
 import Icon from "../../../components/Icon";
 import { Button } from "../../../components/Button";
 import { Grave } from "../../../game/graveState";
-import RoleSpecificSection from "../../../components/RoleSpecific";
 import Counter from "../../../components/Counter";
-import SelectionInformation from "../../../components/SelectionInformation";
 import { useGameState, usePlayerState } from "../../../components/useHooks";
-import { roleSpecificMenuType } from "../../Settings";
-import Pitchfork from "../../../components/Pitchfork";
-import HitOrder from "../../../components/HitOrder";
-
 type PlayerFilter = "all"|"living"|"usable";
 
 
@@ -172,34 +166,8 @@ export default function PlayerListMenu(): ReactElement {
         }
     }
 
-    const [roleSpecificOpen, setRoleSpecificOpen] = useState<boolean>(true);
-    const [pitchforkVoteOpen, setPitchforkVoteOpen] = useState<boolean>(false);
-    const [hitOrderOpen, setHitOrderOpen] = useState<boolean>(false);
-
-
     return <div className="player-list-menu player-list-menu-colors">
         <ContentTab close={ContentMenu.PlayerListMenu} helpMenu={"standard/playerList"}>{translate("menu.playerList.title")}</ContentTab>
-
-        {!GAME_MANAGER.getMySpectator() && roleSpecificMenuType(roleState!.type) === "playerList"
-        && <details className="role-specific-colors small-role-specific-menu" open={roleSpecificOpen}>
-                <summary
-                    onClick={(e)=>{
-                        e.preventDefault();
-                        setRoleSpecificOpen(!roleSpecificOpen);
-                    }}
-                >{translate("role."+roleState?.type+".name")}</summary>
-                <SelectionInformation />
-                <RoleSpecificSection/>
-            </details>
-        }
-        {
-            !GAME_MANAGER.getMySpectator() && 
-            <Pitchfork pitchforkVoteOpen={pitchforkVoteOpen} setPitchforkVoteOpen={setPitchforkVoteOpen}/>
-        }
-        {
-            !GAME_MANAGER.getMySpectator() && 
-            <HitOrder hitOrderOpen={hitOrderOpen} setHitOrderOpen={setHitOrderOpen}/>
-        }
 
         {(myIndex !== undefined && phaseState.type === "discussion" && players[myIndex!].alive) ? <Button
             className={forfeitVote ? "highlighted" : ""}

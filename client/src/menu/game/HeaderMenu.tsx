@@ -9,7 +9,6 @@ import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import { useGameState, usePlayerState } from "../../components/useHooks";
 import { MobileContext } from "../Anchor";
-import { roleSpecificMenuType } from "../Settings";
 
 
 export default function HeaderMenu(props: Readonly<{
@@ -202,15 +201,16 @@ function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactE
             {translate("menu.will.icon")}
             <span className="mobile-hidden">{translate("menu.will.title")}</span>
         </Button>}
-        {!GAME_MANAGER.getMySpectator() && roleSpecificMenuType(roleState!.type) === "standalone"
-            && <Button className="role-specific-colors" 
+        {!GAME_MANAGER.getMySpectator() &&
+            <Button className="role-specific-colors" 
                 highlighted={menuController.menusOpen().includes(ContentMenu.RoleSpecificMenu)}
                 onClick={()=>menuController.closeOrOpenMenu(ContentMenu.RoleSpecificMenu)}
             >
                 <StyledText noLinks={true}>
                     {translate("role."+roleState?.type+".name")}
                 </StyledText>
-            </Button>}
+            </Button>
+        }
         <Button className="graveyard-menu-colors" 
             highlighted={menuController.menusOpen().includes(ContentMenu.GraveyardMenu)}
             onClick={()=>menuController.closeOrOpenMenu(ContentMenu.GraveyardMenu)}

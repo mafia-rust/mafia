@@ -3,7 +3,7 @@ import { useGameState, usePlayerState } from "./useHooks";
 import GAME_MANAGER from "..";
 import translate from "../game/lang";
 import StyledText from "./StyledText";
-import PlayerDropdown from "./PlayerDropdown";
+import PlayerOptionDropdown from "./PlayerOptionDropdown";
 import { Button } from "./Button";
 
 export default function HitOrder(props: Readonly<{
@@ -61,7 +61,7 @@ export default function HitOrder(props: Readonly<{
                     >
                         {translate("switchToMafioso")}
                     </Button>
-                    <PlayerDropdown 
+                    <PlayerOptionDropdown 
                         value={hitOrderVote===undefined?null:hitOrderVote}
                         onChange={(player)=>{
                             GAME_MANAGER.sendHitOrderVotePacket(player)
