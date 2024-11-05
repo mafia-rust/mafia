@@ -1,12 +1,14 @@
-import React, { useCallback, useEffect } from "react";
-import { Button } from "./Button";
+import React, { forwardRef, ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
+import { Button, ButtonProps, RawButton } from "./Button";
 import "./select.css";
 import Icon from "./Icon";
+import ReactDOM from "react-dom/client";
+import { THEME_CSS_ATTRIBUTES } from "..";
 
 export type SelectOptionsNoSearch<K extends { toString(): string}> = Map<K, React.ReactNode>;
 export type SelectOptionsSearch<K extends { toString(): string}> = Map<K, [React.ReactNode, string]>;
 
-export default function Select<K extends { toString(): string}>(props: {
+export default function Select<K extends { toString(): string}>(props: Readonly<{
     value: K,
     disabled?: boolean,
     className?: string,
@@ -15,32 +17,44 @@ export default function Select<K extends { toString(): string}>(props: {
     optionsSearch: SelectOptionsSearch<K>,
 } | {
     optionsNoSearch: SelectOptionsNoSearch<K>,
-})) {
-    let optionsSearch: SelectOptionsSearch<K> = new Map<K, [React.ReactNode, string]>();
-    let optionsNoSearch: SelectOptionsNoSearch<K> = new Map<K, React.ReactNode>();
+})>) {
+    const optionsSearch: SelectOptionsSearch<K> = useMemo(() => {
+        if("optionsSearch" in props) {
+            return props.optionsSearch;
+        } else {
+            let optionsSearch = new Map<K, [React.ReactNode, string]>()
 
-    if("optionsSearch" in props) {
-        optionsSearch = props.optionsSearch;
-        for(let [key, val] of props.optionsSearch.entries()) {
-            optionsNoSearch.set(key, val[0]);
+            for(let [key, val] of props.optionsNoSearch.entries()) {
+                optionsSearch.set(key, [val, key.toString()]);
+            }
+            return optionsSearch
         }
-    }else{
-        for(let [key, val] of props.optionsNoSearch.entries()) {
-            optionsSearch.set(key, [val, key.toString()]);
+    }, [props]);
+
+    const optionsNoSearch: SelectOptionsNoSearch<K> = useMemo(() => {
+        if ("optionsSearch" in props) {
+            let optionsNoSearch = new Map<K, React.ReactNode>()
+
+            for(let [key, val] of props.optionsSearch.entries()) {
+                optionsNoSearch.set(key, val[0]);
+            }
+
+            return optionsNoSearch;
+        } else {
+            return props.optionsNoSearch;
         }
-        optionsNoSearch = props.optionsNoSearch;
-    }
+    }, [props]);
 
     const [open, setOpen]= React.useState(false);
     const [searchString, setSearchString] = React.useState("");
     
 
-    const handleOnChange = (key: K) => {
+    const handleOnChange = useCallback((key: K) => {
         setSearchString("");
         if(props.onChange && key !== props.value) {
             props.onChange(key);
         }
-    }
+    }, [props]);
     const handleSetOpen = useCallback((isOpen: boolean) => {
         setOpen(isOpen);
         setSearchString("");
@@ -54,7 +68,7 @@ export default function Select<K extends { toString(): string}>(props: {
             case "Escape":
                 handleSetOpen(false);
                 break;
-            case "Enter":
+            case "Enter": {
                 const found = [...optionsSearch.keys()].find((key) => {
                     for(const search of searchString.split(" ")) {
                         
@@ -73,21 +87,110 @@ export default function Select<K extends { toString(): string}>(props: {
                 handleSetOpen(false);
 
                 break;
+            }
             case "Backspace":
                 setSearchString("");
                 break;
             default:
-                if(inputKey.match(/^[a-zA-Z0-9- ]$/)) {
+                if(/^[a-zA-Z0-9- ]$/.test(inputKey)) {
                     setSearchString(searchString+inputKey);
                 }
         }
     }
 
-    const ref = React.useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const dropdownRef = useRef<HTMLDivElement>(document.createElement('div'));
+
+    const dropdownRoot = useMemo(() => {
+        const dropdownElement = dropdownRef.current;
+        dropdownElement.style.position = "absolute";
+
+        document.body.appendChild(dropdownElement);
+        return ReactDOM.createRoot(dropdownElement);
+    }, [dropdownRef])
+
+    useEffect(() => {
+        const initialDropdown = dropdownRef.current;
+        return () => {
+            dropdownRoot.unmount();
+            initialDropdown.remove();
+            
+            dropdownRef.current = document.createElement('div');
+        }
+    }, [dropdownRoot])
+
+    useEffect(() => {
+        const buttonElement = buttonRef.current;
+        const dropdownElement = dropdownRef.current;
+        
+        if (buttonElement) {
+            // Match styles
+            THEME_CSS_ATTRIBUTES.forEach(prop => {
+                dropdownElement.style.setProperty(`--${prop}`, getComputedStyle(buttonElement).getPropertyValue(`--${prop}`))
+            })
+
+            dropdownElement.className = 'custom-select-options'
+        }
+    }, [buttonRef])
+
+    useEffect(() => {
+        const listener = (ev: Event) => {
+            if (!(ev.target instanceof Node) || !dropdownRef.current.contains(ev.target)) {
+                setOpen(false);
+            }
+        };
+        
+        window.addEventListener("scroll", listener, true);
+        window.addEventListener("resize", listener);
+        return () => {
+            window.removeEventListener("scroll", listener, true);
+            window.removeEventListener("resize", listener);
+        }
+    })
+
+    useEffect(() => {
+        dropdownRoot.render(<SelectOptions
+            options={optionsNoSearch}
+            onChange={(value)=>{
+                if(props.disabled) return;
+                handleSetOpen(false);
+                handleOnChange(value);
+            }}
+        />);
+
+        const buttonElement = buttonRef.current;
+        const dropdownElement = dropdownRef.current;
+
+        if (buttonElement && open) {
+            dropdownElement.hidden = false;
+
+            const buttonBounds = buttonElement.getBoundingClientRect();
+            // Position
+            dropdownElement.style.width = `${buttonBounds.width}px`;
+            dropdownElement.style.left = `${buttonBounds.left}px`;
+
+            const spaceAbove = buttonBounds.top;
+            const spaceBelow = window.innerHeight - buttonBounds.bottom;
+
+            const oneRem = parseFloat(getComputedStyle(buttonElement).fontSize);
+
+            if (spaceAbove > spaceBelow) {
+                dropdownElement.style.height = `${spaceAbove - .25 * oneRem}px`;
+                dropdownElement.style.top = `unset`;
+                dropdownElement.style.bottom = `${spaceBelow + buttonBounds.height + .25 * oneRem}px`;
+            } else {
+                dropdownElement.style.height = `${spaceBelow - .25 * oneRem}px`;
+                dropdownElement.style.top = `${spaceAbove + buttonBounds.height + .25 * oneRem}px`;
+                dropdownElement.style.bottom = `unset`;
+            }
+        } else {
+            dropdownElement.hidden = true;
+        }
+    }, [handleOnChange, handleSetOpen, open, props.disabled, optionsNoSearch, buttonRef, dropdownRef, dropdownRoot])
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (!ref.current?.contains(event.target as Node) && open) {
+            if (!dropdownRef.current?.contains(event.target as Node) && open) {
                 handleSetOpen(false);
             }
         };
@@ -103,7 +206,8 @@ export default function Select<K extends { toString(): string}>(props: {
         throw new Error("Select value not in options");
     }
 
-    return <Button
+    return <RawButton
+        ref={buttonRef}
         disabled={props.disabled}
         onClick={()=>{handleSetOpen(!open)}}
         className={"custom-select "+(props.className?props.className:"")}
@@ -120,49 +224,32 @@ export default function Select<K extends { toString(): string}>(props: {
             }
         }}
     >
-        {open ===true ? 
+        {open === true ? 
             <Icon>keyboard_arrow_up</Icon> :
             <Icon>keyboard_arrow_down</Icon>}
         {value[0]}
-        <SelectOptions
-            ref={ref}
-            options={optionsNoSearch}
-            open={open}
-            onChange={(value)=>{
-                if(props.disabled) return;
-                handleSetOpen(false);
-                handleOnChange(value);
-            }}
-        />
-    </Button>
+    </RawButton>
 }
 
-function SelectOptions<K extends { toString(): string}>(props: {
-    ref: React.RefObject<HTMLDivElement>,
+function SelectOptions<K extends { toString(): string}>(props: Readonly<{
     options: SelectOptionsNoSearch<K>,
-    open: boolean,
     onChange?: (value: K)=>void,
-}) {
+}>) {
 
-    return props.open?<div
-        ref={props.ref}
-        className="custom-select-options"
-    >
-        <div>
-            {[...props.options.entries()]
-                .map(([key, value]) => {
-                    return <Button
-                        key={key.toString()}
-                        onClick={()=>{
-                            if(props.onChange) {
-                                props.onChange(key);
-                            }
-                        }}
-                    >
-                        {value}
-                    </Button>
-                })
-            }
-        </div>
-    </div>:null
+    return <div>
+        {[...props.options.entries()]
+            .map(([key, value]) => {
+                return <Button
+                    key={key.toString()}
+                    onClick={()=>{
+                        if(props.onChange) {
+                            props.onChange(key);
+                        }
+                    }}
+                >
+                    {value}
+                </Button>
+            })
+        }
+    </div>
 }

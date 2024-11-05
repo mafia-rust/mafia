@@ -8,19 +8,14 @@
 
 .custom-select-options {
     position: absolute;
-    top: 100%;
-    z-index: 1000;
+    min-width: max-content;
+    max-height: 25rem;
+    overflow-y: scroll;
 
     padding: .13rem .25rem;
-    margin-top: .25rem;
     background-color: var(--secondary-color);
     border-radius: .25rem;
     border: .13rem solid var(--primary-border-color);
-
-    overflow-y: auto;
-    max-height: 25rem;
-    width: 100%;
-    min-width: max-content;
 }
 
 .custom-select-options > div {
