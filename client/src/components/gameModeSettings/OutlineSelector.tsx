@@ -6,7 +6,7 @@ import { Role, roleJsonData } from "../../game/roleState.d";
 import Icon from "../Icon";
 import { DragAndDrop } from "../DragAndDrop";
 import { GameModeContext } from "./GameModesEditor";
-import Select, { SelectOptionsRecord } from "../Select";
+import Select, { SelectOptionsSearch } from "../Select";
 import StyledText from "../StyledText";
 
 type RoleOutlineSelectorProps = {
@@ -137,22 +137,37 @@ export class RoleOutlineOptionSelector extends React.Component<RoleOutlineOption
     render(): React.ReactNode {
 
 
-        const optionsMap: SelectOptionsRecord<string> = {};
+        const optionsSearch: SelectOptionsSearch<string> = new Map();
 
-        optionsMap["any"] = [<StyledText
-            noLinks={!this.props.disabled}
-        >{translate("any")}</StyledText>, translate("any")];
+        optionsSearch.set("any", [
+            <StyledText
+                noLinks={!this.props.disabled}
+            >
+                {translate("any")}
+            </StyledText>, 
+            translate("any")
+        ]);
 
         ROLE_SETS.forEach((roleSet) => {
-            optionsMap[JSON.stringify({type: "roleSet", roleSet: roleSet})] = [<StyledText
-                noLinks={!this.props.disabled}
-            >{translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})}</StyledText>, translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})];
+            optionsSearch.set(JSON.stringify({type: "roleSet", roleSet: roleSet}), [
+                <StyledText
+                    noLinks={!this.props.disabled}
+                >
+                    {translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})}
+                </StyledText>, 
+                translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})]
+            );
         });
         
         Object.keys(roleJsonData()).forEach((role) => {
-            optionsMap[JSON.stringify({type: "role", role: role})] = [<StyledText
-                noLinks={!this.props.disabled}
-            >{translateRoleOutlineOptionOrAny({type: "role", role: role as Role})}</StyledText>, translateRoleOutlineOptionOrAny({type: "role", role: role as Role})];
+            optionsSearch.set(JSON.stringify({type: "role", role: role}), [
+                <StyledText
+                    noLinks={!this.props.disabled}
+                >
+                    {translateRoleOutlineOptionOrAny({type: "role", role: role as Role})}
+                </StyledText>,
+                translateRoleOutlineOptionOrAny({type: "role", role: role as Role})
+            ]);
         });
 
         return <Select
@@ -164,7 +179,7 @@ export class RoleOutlineOptionSelector extends React.Component<RoleOutlineOption
                     value === "any" ? "any" : JSON.parse(value)
                 );
             }}
-            optionsSearch={optionsMap}
+            optionsSearch={optionsSearch}
         />
     }
 }

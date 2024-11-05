@@ -3,52 +3,51 @@ import { Button } from "./Button";
 import "./select.css";
 import Icon from "./Icon";
 
-export type SelectOptionKey = string | number | symbol;
-export type SelectOptionsNoSearch<T extends SelectOptionKey> = Partial<Record<T, React.ReactNode>>;
-export type SelectOptionsRecord<T extends SelectOptionKey> = Partial<Record<T, [React.ReactNode, string]>>;
+export type SelectOptionsNoSearch<K extends { toString(): string}> = Map<K, React.ReactNode>;
+export type SelectOptionsSearch<K extends { toString(): string}> = Map<K, [React.ReactNode, string]>;
 
-export default function Select<T extends SelectOptionKey>(props: {
-    value: T,
+export default function Select<K extends { toString(): string}>(props: {
+    value: K,
     disabled?: boolean,
     className?: string,
-    onChange?: (value: T)=>void
+    onChange?: (value: K)=>void
 } & ({
-    options: SelectOptionsNoSearch<T>,
+    optionsSearch: SelectOptionsSearch<K>,
 } | {
-    optionsSearch: SelectOptionsRecord<T>,
+    optionsNoSearch: SelectOptionsNoSearch<K>,
 })) {
-    let options: SelectOptionsRecord<T> = {};
-    let optionsNoSearch: SelectOptionsNoSearch<T> = {};
+    let optionsSearch: SelectOptionsSearch<K> = new Map<K, [React.ReactNode, string]>();
+    let optionsNoSearch: SelectOptionsNoSearch<K> = new Map<K, React.ReactNode>();
 
     if("optionsSearch" in props) {
-        options = props.optionsSearch;
-        for(let key in props.optionsSearch) {
-            optionsNoSearch[key] = props.optionsSearch[key]![0];
+        optionsSearch = props.optionsSearch;
+        for(let [key, val] of props.optionsSearch.entries()) {
+            optionsNoSearch.set(key, val[0]);
         }
     }else{
-        for(let key in props.options) {
-            options[key] = [props.options[key], key.toString()];
+        for(let [key, val] of props.optionsNoSearch.entries()) {
+            optionsSearch.set(key, [val, key.toString()]);
         }
-        optionsNoSearch = props.options;
+        optionsNoSearch = props.optionsNoSearch;
     }
 
     const [open, setOpen]= React.useState(false);
     const [searchString, setSearchString] = React.useState("");
     
 
-    const handleOnChange = (value: T) => {
+    const handleOnChange = (key: K) => {
         setSearchString("");
-        if(props.onChange && value !== props.value) {
-            props.onChange(value);
+        if(props.onChange && key !== props.value) {
+            props.onChange(key);
         }
     }
-    const handleSetOpen = useCallback((value: boolean) => {
-        setOpen(value);
+    const handleSetOpen = useCallback((isOpen: boolean) => {
+        setOpen(isOpen);
         setSearchString("");
     }, [setOpen, setSearchString]);
 
-    const handleKeyInput = (key: string) => {
-        switch(key) {
+    const handleKeyInput = (inputKey: string) => {
+        switch(inputKey) {
             case "ArrowDown":
                 handleSetOpen(true);
                 break;
@@ -56,18 +55,20 @@ export default function Select<T extends SelectOptionKey>(props: {
                 handleSetOpen(false);
                 break;
             case "Enter":
-                const found = Object.keys(options).find((key) => {
-                    for(let search of searchString.split(" ")) {
-                        if(!options[key as keyof typeof options]![1].toString().toLowerCase().includes(search.toLowerCase())) {
+                const found = [...optionsSearch.keys()].find((key) => {
+                    for(const search of searchString.split(" ")) {
+                        
+                        const val = optionsSearch.get(key);
+                        if(val === undefined) {return false}
+                        if(!val[1].toLowerCase().includes(search.toLowerCase())){
                             return false;
                         }
                     }
-
                     return true;
                 });
         
-                if(found) {
-                    handleOnChange(found as T);
+                if(found !== undefined) {
+                    handleOnChange(found);
                 }
                 handleSetOpen(false);
 
@@ -76,8 +77,8 @@ export default function Select<T extends SelectOptionKey>(props: {
                 setSearchString("");
                 break;
             default:
-                if(key.match(/^[a-zA-Z0-9- ]$/)) {
-                    setSearchString(searchString+key);
+                if(inputKey.match(/^[a-zA-Z0-9- ]$/)) {
+                    setSearchString(searchString+inputKey);
                 }
         }
     }
@@ -97,10 +98,8 @@ export default function Select<T extends SelectOptionKey>(props: {
         return () => document.removeEventListener("click", handleClickOutside);
     }, [handleSetOpen, open]);
 
-    if(props.value === undefined) {
-        throw new Error("Select value is undefined");
-    }
-    if(options[props.value] === undefined && options[props.value]) {
+    const value = optionsSearch.get(props.value);
+    if(value === undefined) {
         throw new Error("Select value not in options");
     }
 
@@ -121,10 +120,10 @@ export default function Select<T extends SelectOptionKey>(props: {
             }
         }}
     >
-            {open ===true ? 
-                <Icon>keyboard_arrow_up</Icon> :
-                <Icon>keyboard_arrow_down</Icon>}
-        {options[props.value]![0]}
+        {open ===true ? 
+            <Icon>keyboard_arrow_up</Icon> :
+            <Icon>keyboard_arrow_down</Icon>}
+        {value[0]}
         <SelectOptions
             ref={ref}
             options={optionsNoSearch}
@@ -132,17 +131,17 @@ export default function Select<T extends SelectOptionKey>(props: {
             onChange={(value)=>{
                 if(props.disabled) return;
                 handleSetOpen(false);
-                handleOnChange(value as T);
+                handleOnChange(value);
             }}
         />
     </Button>
 }
 
-function SelectOptions<T extends SelectOptionKey>(props: {
+function SelectOptions<K extends { toString(): string}>(props: {
     ref: React.RefObject<HTMLDivElement>,
-    options: SelectOptionsNoSearch<T>,
+    options: SelectOptionsNoSearch<K>,
     open: boolean,
-    onChange?: (value: T)=>void,
+    onChange?: (value: K)=>void,
 }) {
 
     return props.open?<div
@@ -150,17 +149,17 @@ function SelectOptions<T extends SelectOptionKey>(props: {
         className="custom-select-options"
     >
         <div>
-            {Object.entries(props.options)
+            {[...props.options.entries()]
                 .map(([key, value]) => {
                     return <Button
-                        key={key}
+                        key={key.toString()}
                         onClick={()=>{
                             if(props.onChange) {
-                                props.onChange(key as T);
+                                props.onChange(key);
                             }
                         }}
                     >
-                        {value as React.ReactNode}
+                        {value}
                     </Button>
                 })
             }
