@@ -15,8 +15,7 @@ import { WikiArticleLink } from "../../components/WikiArticleLink";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import translate from "../../game/lang";
-import { roleSpecificMenuType } from "../Settings";
-import { useGameState, usePlayerState } from "../../components/useHooks";
+import { useGameState } from "../../components/useHooks";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
@@ -133,10 +132,6 @@ const MenuControllerContext = createContext<MenuController | undefined>(undefine
 export { MenuControllerContext }
 
 export default function GameScreen(): ReactElement {
-    const roleState = usePlayerState(
-        playerState => playerState.roleState,
-        ["yourRoleState"]
-    )!;
     const mobile = useContext(MobileContext)!;
 
     const menuController = useMenuController(
@@ -144,25 +139,13 @@ export default function GameScreen(): ReactElement {
         {
             ChatMenu: true,
             PlayerListMenu: true,
-            RoleSpecificMenu: !mobile && roleSpecificMenuType(roleState.type) === "standalone",
+            RoleSpecificMenu: !mobile,
             WillMenu: !mobile,
             GraveyardMenu: !mobile,
             WikiMenu: false,
         },
         () => MENU_CONTROLLER_HOLDER.controller!,
         menuController => MENU_CONTROLLER_HOLDER.controller = menuController
-    );
-    
-    usePlayerState(
-        playerState => {
-            if (
-                roleSpecificMenuType(playerState.roleState.type) !== "standalone" 
-                && menuController.menuOpen(ContentMenu.RoleSpecificMenu)
-            ) {
-                menuController.closeMenu(ContentMenu.RoleSpecificMenu)
-            }
-        },
-        ["yourRoleState"]
     );
 
     const chatMenuNotification = useGameState(
@@ -179,11 +162,8 @@ export default function GameScreen(): ReactElement {
                 return;
             }
 
-            const allowedMenus = ALL_CONTENT_MENUS.filter(menu => {
-                //not open and 
-                return !menusOpen.includes(menu) && (menu === ContentMenu.RoleSpecificMenu ?
-                    roleSpecificMenuType(roleState.type) === "standalone"
-                    : true);
+            const allowedMenus = ALL_CONTENT_MENUS.filter(menu => { 
+                return !menusOpen.includes(menu)
             });
 
             const rightMostMenu = menusOpen[menusOpen.length - 1];

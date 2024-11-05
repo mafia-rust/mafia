@@ -201,8 +201,7 @@ function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactE
             {translate("menu.will.icon")}
             <span className="mobile-hidden">{translate("menu.will.title")}</span>
         </Button>}
-        {!GAME_MANAGER.getMySpectator() &&
-            <Button className="role-specific-colors" 
+        {!GAME_MANAGER.getMySpectator() && <Button className="role-specific-colors" 
                 highlighted={menuController.menusOpen().includes(ContentMenu.RoleSpecificMenu)}
                 onClick={()=>menuController.closeOrOpenMenu(ContentMenu.RoleSpecificMenu)}
             >

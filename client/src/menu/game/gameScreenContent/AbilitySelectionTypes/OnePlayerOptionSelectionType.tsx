@@ -1,29 +1,27 @@
 import React from "react";
-import Select, { SelectOptionsRecord } from "../../../../components/Select";
 import { PlayerIndex } from "../../../../game/gameState.d";
-import { useGameState } from "../../../../components/useHooks";
-import StyledText from "../../../../components/StyledText";
+import { usePlayerState } from "../../../../components/useHooks";
+import PlayerOptionDropdown from "../../../../components/PlayerOptionDropdown";
+import GAME_MANAGER from "../../../..";
+import SelectionInformation from "../../../../components/SelectionInformation";
 
 export default function OnePlayerOptionSelectionType(props: {}){
-    const options: SelectOptionsRecord<PlayerIndex> = {};
 
-    const players = useGameState(
-        gameState => gameState.players,
-        ["gamePlayers"]
+    const selection = usePlayerState(
+        playerState => playerState.targets,
+        ["yourSelection"]
     )!;
 
-    for(let playerIndex in players) {
-        options[playerIndex] = [
-            <StyledText noLinks={true}>{players[playerIndex].toString()}</StyledText>, 
-            players[playerIndex].toString()
-        ];
+    const handleSelection = (player: PlayerIndex | null) => {
+        GAME_MANAGER.sendTargetPacket(player===null ? [] : [player]);
     }
 
-    const [selectedPlayer, setSelectedPlayer] = React.useState<PlayerIndex | "none">("none");
-
-
-    return <Select
-        value={0}
-        optionsSearch={options}
-    />
+    return <div>
+        <SelectionInformation/>
+        <PlayerOptionDropdown
+            value={selection[0]===undefined ? null : selection[0]}
+            onChange={handleSelection}
+            canChooseNone={true}
+        />
+    </div>
 }

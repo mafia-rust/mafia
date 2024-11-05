@@ -6,6 +6,8 @@ import { useGameState } from "./useHooks"
 import StyledText from "./StyledText"
 import Select, { SelectOptionsSearch } from "./Select"
 
+/// A dropdown menu for selecting a player.
+/// canChooseNone defaults to false.
 export default function PlayerOptionDropdown(props: {
     value: PlayerIndex | null,
     onChange: (player: PlayerIndex | null) => void,

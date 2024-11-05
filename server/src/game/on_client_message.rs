@@ -67,6 +67,7 @@ impl Game {
                     },
                 };
                 sender_player_ref.set_selection(self, target_ref_list.clone());
+                let target_ref_list = sender_player_ref.selection(self).clone();
                 
                 let mut target_message_sent = false;
                 for chat_group in sender_player_ref.get_current_send_chat_groups(self){
