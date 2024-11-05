@@ -9,7 +9,7 @@
 .custom-select-options {
     position: absolute;
     min-width: max-content;
-    max-height: 25rem;
+    max-height: min-content;
     overflow-y: scroll;
 
     padding: .13rem .25rem;

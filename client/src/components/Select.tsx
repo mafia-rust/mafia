@@ -1,5 +1,5 @@
-import React, { forwardRef, ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
-import { Button, ButtonProps, RawButton } from "./Button";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import { Button, RawButton } from "./Button";
 import "./select.css";
 import Icon from "./Icon";
 import ReactDOM from "react-dom/client";
@@ -175,11 +175,13 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
             const oneRem = parseFloat(getComputedStyle(buttonElement).fontSize);
 
             if (spaceAbove > spaceBelow) {
-                dropdownElement.style.height = `${spaceAbove - .25 * oneRem}px`;
+                const newHeight = Math.min((25 - .25) * oneRem, spaceAbove - .25 * oneRem);
+                dropdownElement.style.height = `${newHeight}px`;
                 dropdownElement.style.top = `unset`;
                 dropdownElement.style.bottom = `${spaceBelow + buttonBounds.height + .25 * oneRem}px`;
             } else {
-                dropdownElement.style.height = `${spaceBelow - .25 * oneRem}px`;
+                const newHeight = Math.min((25 - .25) * oneRem, spaceBelow - .25 * oneRem);
+                dropdownElement.style.height = `${newHeight}px`;
                 dropdownElement.style.top = `${spaceAbove + buttonBounds.height + .25 * oneRem}px`;
                 dropdownElement.style.bottom = `unset`;
             }
