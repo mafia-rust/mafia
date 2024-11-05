@@ -1,33 +1,31 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
-use crate::game::role_list::RoleSet;
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleStateImpl};
-
+use super::{Priority, Role, RoleStateImpl};
 
 #[derive(Debug, Clone, Serialize, Default)]
-pub struct Mafioso;
+pub struct SerialKiller;
 
+pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: DefensePower = DefensePower::None;
-
-impl RoleStateImpl for Mafioso {
-    type ClientRoleState = Mafioso;
+impl RoleStateImpl for SerialKiller {
+    type ClientRoleState = SerialKiller;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return}
         if game.day_number() == 1 {return}
-        
+
         if let Some(visit) = actor_ref.night_visits(game).first(){
+
             let target_ref = visit.target;
-    
-            target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::RoleSet(RoleSet::Mafia), AttackPower::Basic, false);
+            
+            target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::SerialKiller), AttackPower::Basic, true);
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -35,10 +33,5 @@ impl RoleStateImpl for Mafioso {
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
-    }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
-        vec![
-            crate::game::components::insider_group::InsiderGroupID::Mafia
-        ].into_iter().collect()
     }
 }
