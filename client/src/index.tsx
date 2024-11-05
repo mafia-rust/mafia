@@ -8,6 +8,15 @@ import route from './routing';
 
 export type Theme = "player-list-menu-colors" | "will-menu-colors" | "role-specific-colors" | "graveyard-menu-colors" | "wiki-menu-colors"
 
+const THEME_CSS_ATTRIBUTES = [
+    'background-color', 'fade-color', 'primary-color', 'secondary-color', 
+    'text-color', 'primary-border-color', 'primary-border-shadow-color', 
+    'background-border-color', 'background-border-shadow-color', 
+    'hover-color', 'focus-outline-color'
+];
+
+export { THEME_CSS_ATTRIBUTES }
+
 const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
 const TIME_PERIOD = 1000;

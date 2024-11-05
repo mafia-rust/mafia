@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useRef } from "react";
-import { ReactElement, useState } from "react";
+import React, { useEffect, useMemo, useRef, ReactElement, useState, forwardRef } from "react";
 import "./button.css";
 import ReactDOM from "react-dom/client";
+import { THEME_CSS_ATTRIBUTES } from "..";
 
 export type ButtonProps<R> = Omit<JSX.IntrinsicElements['button'], 'onClick' | 'ref'> & {
     onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => (R | void | Promise<R | void>)
@@ -23,8 +23,23 @@ function reconcileProps<R>(props: ButtonProps<R>): JSX.IntrinsicElements['button
 const POPUP_TIMEOUT_MS = 1000;
 
 export function Button<R>(props: ButtonProps<R>): ReactElement {
+    return <RawButton {...props} />
+}
+
+const RawButton = forwardRef<HTMLButtonElement, ButtonProps<any>>(function RawButton<R>(props: ButtonProps<R>, passedRef: React.ForwardedRef<HTMLButtonElement>): ReactElement {
     const [success, setSuccess] = useState<R | "unclicked">("unclicked");
     const ref = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        if (typeof passedRef === "function") {
+            passedRef(ref.current);
+        } else if (passedRef) {
+            passedRef.current = ref.current
+        } else if (passedRef === null) {
+            passedRef = { current: ref.current }
+        }
+    }, [props, ref]);
+
     const popupContainer = useRef<HTMLDivElement>(document.createElement('div'));
 
     let lastTimeout: NodeJS.Timeout | null = null;
@@ -67,7 +82,9 @@ export function Button<R>(props: ButtonProps<R>): ReactElement {
             }
         }}
     >{children}</button>
-}
+})
+
+export { RawButton };
 
 function ButtonPopup(props: { children: React.ReactNode, button: HTMLButtonElement }): ReactElement {
     const ref = useRef<HTMLDivElement>(null);
@@ -78,7 +95,7 @@ function ButtonPopup(props: { children: React.ReactNode, button: HTMLButtonEleme
         const buttonBounds = props.button.getBoundingClientRect();
         ref.current.style.top = `${buttonBounds.bottom}px`;
         ref.current.style.left = `${(buttonBounds.left + buttonBounds.width / 2)}px`;
-        ['background-color', 'primary-border-color', 'primary-color', 'secondary-color', 'tab-color'].forEach(prop => {
+        THEME_CSS_ATTRIBUTES.forEach(prop => {
             if ((ref.current) === null) return;
             ref.current.style.setProperty(`--${prop}`, getComputedStyle(props.button).getPropertyValue(`--${prop}`))
         })

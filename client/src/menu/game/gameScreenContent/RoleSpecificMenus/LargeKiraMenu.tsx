@@ -4,6 +4,7 @@ import GAME_MANAGER from "../../../.."
 import translate, { translateChecked } from "../../../../game/lang"
 import StyledText from "../../../../components/StyledText";
 import "./largeKiraMenu.css";
+import Select, { SelectOptionsSearch } from "../../../../components/Select";
 
 export const KIRA_GUESSES = [
     "none",
@@ -12,7 +13,7 @@ export const KIRA_GUESSES = [
     "detective", "lookout", "spy", "tracker", "philosopher", "psychic", "auditor", "snoop", "gossip", "tallyClerk",
     "doctor",  "bodyguard",  "cop", "bouncer", "engineer", "armorsmith", "steward",
     "vigilante",  "veteran", "marksman", "deputy", "rabblerouser",
-    "escort",  "medium",  "retributionist", "reporter", "mayor",  "transporter", "warper",
+    "escort",  "medium",  "retributionist", "reporter", "mayor",  "transporter",
 ];
 
 export type KiraGuess = typeof KIRA_GUESSES[number];
@@ -96,15 +97,20 @@ function KiraGuessPicker(props: {
         return ()=>GAME_MANAGER.removeStateListener(listener);
     }, [setPlayers]);
 
-    let guessOptions: ReactElement[] = [];
+    const guessOptions: SelectOptionsSearch<KiraGuess> = new Map();
     for(let guess of KIRA_GUESSES){
-        guessOptions.push(<option key={guess} value={guess}>{kiraGuessTranslate(guess)}</option>)
+        guessOptions.set(guess, [
+            <StyledText noLinks={true}>{kiraGuessTranslate(guess)}</StyledText>,
+            kiraGuessTranslate(guess)
+        ]);
     }
 
     return <div className="kira-guess-picker">
         <StyledText>{players[props.playerIndex].toString()}</StyledText>
-        <select value={props.guess} onChange={(e) => props.onChange(e.target.value as KiraGuess)}>
-            {guessOptions}
-        </select>
+        <Select
+            value={props.guess}
+            onChange={(e) => props.onChange(e)}
+            optionsSearch={guessOptions}
+        />
     </div>
 }
