@@ -4,7 +4,7 @@ import translate from "../game/lang"
 import { PlayerIndex } from "../game/gameState.d"
 import { useGameState } from "./useHooks"
 import StyledText from "./StyledText"
-import Select from "./Select"
+import Select, { SelectOptionsSearch } from "./Select"
 
 export default function PlayerDropdown(props: {
     value: PlayerIndex | null,
@@ -13,17 +13,15 @@ export default function PlayerDropdown(props: {
     canChooseNone?: boolean
 }): ReactElement {
 
-    const SENTINEL_VALUE_FOR_NONE = -1;
-
     let players = useGameState(
         gameState => gameState.players.map(player => [player.index, player.toString()] as [PlayerIndex, string]),
         ["gamePlayers"]
     )!;
 
-    const optionMap: Record<PlayerIndex, React.ReactNode> = {};
+    const optionMap: SelectOptionsSearch<PlayerIndex | "none"> = new Map();
 
     if(props.canChooseNone === true){
-        optionMap[-1] = <StyledText noLinks={true}>{translate("none")}</StyledText>;
+        optionMap.set("none", [<StyledText noLinks={true}>{translate("none")}</StyledText>, translate("none")]);
     }
 
     for (const [index, name] of players) {
@@ -31,13 +29,13 @@ export default function PlayerDropdown(props: {
             props.choosablePlayers === undefined ||
             props.choosablePlayers.includes(index)
         ){
-            optionMap[index] = <StyledText noLinks={true}>{name.toString()}</StyledText>;
+            optionMap.set(index, [<StyledText noLinks={true}>{name.toString()}</StyledText>, name]);
         }
     }
 
     return <Select
-        value={props.value ?? SENTINEL_VALUE_FOR_NONE}
-        options={optionMap}
-        onChange={value => props.onChange(value === SENTINEL_VALUE_FOR_NONE ? null : value)}
+        value={(props.value===null ?"none":props.value) as PlayerIndex | "none"}
+        optionsSearch={optionMap}
+        onChange={value => props.onChange(value === "none" ? null : value)}
     />
 }

@@ -2,7 +2,7 @@ import { ReactElement } from "react"
 import { Role } from "../game/roleState.d"
 import React from "react"
 import translate from "../game/lang"
-import Select, { SelectOptionsRecord } from "./Select"
+import Select, { SelectOptionsSearch } from "./Select"
 import StyledText from "./StyledText"
 import { getAllRoles } from "../game/roleListState.d"
 
@@ -21,24 +21,28 @@ type RoleDropdownProps = {
 
 export default function RoleDropdown(props: RoleDropdownProps): ReactElement {
 
-    const optionMap: SelectOptionsRecord<Role | "none"> = {};
+    const optionMap: SelectOptionsSearch<Role | "none"> = new Map();
 
     if (props.canChooseNone)
-        optionMap["none"] = [<StyledText noLinks={true}>{translate("none")}</StyledText>, translate("none")]
+        optionMap.set("none", [<StyledText noLinks={true}>{translate("none")}</StyledText>, translate("none")]);
     
-    for (const role in getAllRoles()) {
-        if (props.enabledRoles === undefined || props.enabledRoles.includes(role as Role)) {
-            optionMap[role as Role] = [<StyledText noLinks={true}>{translate("role."+role+".name")}</StyledText>, translate("role."+role+".name")]
+    for (const role of getAllRoles()) {
+        if (props.enabledRoles === undefined || props.enabledRoles.includes(role)) {
+            optionMap.set(role, [<StyledText noLinks={true}>{translate("role."+role+".name")}</StyledText>, translate("role."+role+".name")]);
         }
     }
 
 
     return <Select
-        value={props.value??"none"}
-        onChange={value => 
-            props.canChooseNone===true?props.onChange(value==="none"?null:value as Role | null):
-            props.onChange(value as Role)
-        }
+        value={(props.value??"none") as Role | "none"}
+        onChange={value => {
+            if(props.canChooseNone){
+                const newRole: Role | null = (value==="none"?null:value) as Role | null;
+                props.onChange(newRole)
+            }else{
+                props.onChange(value as Role)
+            }
+        }}
         optionsSearch={optionMap}
     />
 }
