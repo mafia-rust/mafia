@@ -4,9 +4,9 @@ use rand::seq::SliceRandom;
 
 use crate::{game::{
     attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
-        arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette, insider_group::InsiderGroupID
+        arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura, insider_group::InsiderGroupID, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette
     }, event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, game_conclusion::GameConclusion, grave::{Grave, GraveKiller, GraveReference}, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, win_condition::WinCondition, Game
-}, packet::ToClientPacket};
+}, packet::ToClientPacket, vec_set::VecSet};
 
 use super::PlayerReference;
 
@@ -37,7 +37,7 @@ impl PlayerReference{
         }
         wardblocked
     }
-    pub fn night_blocked(&self, game: &mut Game)->bool{
+    pub fn night_blocked(&self, game: &Game)->bool{
         self.night_roleblocked(game) || self.night_wardblocked(game)
     }
 
@@ -51,7 +51,7 @@ impl PlayerReference{
             should_leave_death_note
         )
     }
-    pub fn try_night_kill(&self, attacker_refs: &HashSet<PlayerReference>, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
+    pub fn try_night_kill(&self, attacker_refs: &VecSet<PlayerReference>, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
         self.set_night_attacked(game, true);
 
         if self.night_defense(game).can_block(attack){
@@ -70,7 +70,7 @@ impl PlayerReference{
         self.push_night_grave_killers(game, grave_killer);
             
         if should_leave_death_note {
-            for attacker in attacker_refs {
+            for attacker in attacker_refs.iter() {
                 if let Some(note) = attacker.death_note(game) {
                     self.push_night_grave_death_notes(game, note.clone());
                 }
@@ -86,7 +86,7 @@ impl PlayerReference{
     }
     pub fn try_night_kill_no_attacker(&self, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower) -> bool {
         self.try_night_kill(
-            &HashSet::new(),
+            &VecSet::new(),
             game,
             grave_killer,
             attack,

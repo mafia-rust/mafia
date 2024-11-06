@@ -1,8 +1,8 @@
 use std::collections::HashSet;
 
-use crate::game::{player::PlayerReference, role::Priority, Game};
+use crate::game::{player::PlayerReference, Game};
 
-use super::{confused::Confused, mafia::Mafia};
+use super::confused::Confused;
 
 #[derive(Default, Clone)]
 pub struct DrunkAura {
@@ -32,14 +32,6 @@ impl DrunkAura {
         if Self::has_drunk_aura(game, player) {
             Self::remove_player(game, player);
             Confused::remove_player(game, player);
-        }
-    }
-
-    pub fn on_night_priority(game: &mut Game, priority: Priority) {
-        if priority != Priority::Deception { return; }
-
-        for player in Self::drunk_aura(game).players.clone() {
-            player.set_night_appeared_visits(game, Some(Mafia::mafia_killing_visits(game)));
         }
     }
 }
