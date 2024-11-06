@@ -58,7 +58,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
     const handleSetOpen = useCallback((isOpen: boolean) => {
         setOpen(isOpen);
         setSearchString("");
-    }, [setOpen, setSearchString]);
+    }, []);
 
     const handleKeyInput = (inputKey: string) => {
         switch(inputKey) {
@@ -107,12 +107,14 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
 
         document.body.appendChild(dropdownElement);
         return ReactDOM.createRoot(dropdownElement);
-    }, [dropdownRef])
+    }, [])
 
     useEffect(() => {
         const initialDropdown = dropdownRef.current;
         return () => {
-            dropdownRoot.unmount();
+            setTimeout(() => {
+                dropdownRoot.unmount();
+            })
             initialDropdown.remove();
             
             dropdownRef.current = document.createElement('div');
@@ -131,7 +133,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
 
             dropdownElement.className = 'custom-select-options'
         }
-    }, [buttonRef])
+    }, [])
 
     useEffect(() => {
         const listener = (ev: Event) => {
@@ -149,19 +151,19 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
     })
 
     useEffect(() => {
-        dropdownRoot.render(<SelectOptions
-            options={optionsNoSearch}
-            onChange={(value)=>{
-                if(props.disabled) return;
-                handleSetOpen(false);
-                handleOnChange(value);
-            }}
-        />);
-
         const buttonElement = buttonRef.current;
         const dropdownElement = dropdownRef.current;
 
         if (buttonElement && open) {
+            dropdownRoot.render(<SelectOptions
+                options={optionsNoSearch}
+                onChange={(value)=>{
+                    if(props.disabled) return;
+                    handleSetOpen(false);
+                    handleOnChange(value);
+                }}
+            />);
+
             dropdownElement.hidden = false;
 
             const buttonBounds = buttonElement.getBoundingClientRect();
@@ -188,7 +190,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
         } else {
             dropdownElement.hidden = true;
         }
-    }, [handleOnChange, handleSetOpen, open, props.disabled, optionsNoSearch, buttonRef, dropdownRef, dropdownRoot])
+    }, [handleOnChange, handleSetOpen, open, props.disabled, optionsNoSearch, dropdownRoot])
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {

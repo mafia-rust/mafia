@@ -201,18 +201,20 @@ impl Lobby {
     }
     pub fn remove_player_rejoinable(&mut self, id: LobbyClientID) {
 
+        
+
         match &mut self.lobby_state {
             LobbyState::Lobby {clients, settings: _settings} => {
                 let Some(client) = clients.get_mut(&id) else {return};
 
-                
+                if client.is_spectator() {
+                    self.remove_player(id);
+                    return;
+                }
+
                 client.connection = ClientConnection::CouldReconnect { 
                     disconnect_timer: Duration::from_secs(LOBBY_DISCONNECT_TIMER_SECS)
                 };
-                
-                if client.is_spectator() {
-                    clients.remove(&id);
-                }
 
                 if !clients.iter().any(|p|p.1.is_host()) {
                     if let Some(new_host) = clients.values_mut().next(){

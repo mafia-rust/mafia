@@ -35,10 +35,8 @@ const RawButton = forwardRef<HTMLButtonElement, ButtonProps<any>>(function RawBu
             passedRef(ref.current);
         } else if (passedRef) {
             passedRef.current = ref.current
-        } else if (passedRef === null) {
-            passedRef = { current: ref.current }
         }
-    }, [props, ref]);
+    }, [props, ref, passedRef]);
 
     const popupContainer = useRef<HTMLDivElement>(document.createElement('div'));
 
