@@ -52,7 +52,7 @@ impl Pitchfork{
     pub fn on_night_priority(game: &mut Game, priority: Priority){
         if priority != Priority::Kill {return;}
         if game.day_number() <= 1 {return;}
-        if !Pitchfork::usable_pitchfork_owners(game).len() >= 1 {return;}
+        if Pitchfork::usable_pitchfork_owners(game).len() < 1 {return;}
         
         if let Some(target) = Pitchfork::angry_mobbed_player(game) {
             target.try_night_kill(
@@ -63,7 +63,6 @@ impl Pitchfork{
                 false
             );
             Pitchfork::set_pitchfork_uses_remaining(game,
-
                 Pitchfork::pitchfork_uses_remaining(game).saturating_sub(1)
             );
         }
@@ -88,12 +87,12 @@ impl Pitchfork{
             {continue;}
 
             let count: u8 = if let Some(count) = votes.get(target){
-                *count
+                *count + 1
             }else{
-                0
+                1
             };
             if count >= Pitchfork::number_of_votes_needed(game) {return Some(*target);}
-            votes.insert(*target, count+1);
+            votes.insert(*target, count);
         }
         None
     }
