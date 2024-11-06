@@ -3,6 +3,8 @@ import React from "react"
 import translate from "../game/lang"
 import { PlayerIndex } from "../game/gameState.d"
 import { useGameState } from "./useHooks"
+import StyledText from "./StyledText"
+import Select, { SelectOptionsSearch } from "./Select"
 
 export default function PlayerDropdown(props: {
     value: PlayerIndex | null,
@@ -16,24 +18,24 @@ export default function PlayerDropdown(props: {
         ["gamePlayers"]
     )!;
 
-    let options = players.filter((player)=>
-            props.choosablePlayers === undefined ||
-            props.choosablePlayers.includes(player[0])
-        )
-        .map((player) => {
-            return <option value={player[0]} key={player[0]}>{player[1]}</option>
-        }
-    );
+    const optionMap: SelectOptionsSearch<PlayerIndex | "none"> = new Map();
+
     if(props.canChooseNone === true){
-        options.unshift(<option value={"none"} key={"none"}>{translate("none")}</option>);
+        optionMap.set("none", [<StyledText noLinks={true}>{translate("none")}</StyledText>, translate("none")]);
     }
 
-    return <select
-        value={props.value===null?"none":props.value}
-        onChange={e => props.onChange(
-            e.target.value==="none"?null:Number.parseInt(e.target.value)
-        )}
-    >
-        {options}
-    </select>
+    for (const [index, name] of players) {
+        if(
+            props.choosablePlayers === undefined ||
+            props.choosablePlayers.includes(index)
+        ){
+            optionMap.set(index, [<StyledText noLinks={true}>{name.toString()}</StyledText>, name]);
+        }
+    }
+
+    return <Select
+        value={(props.value===null ?"none":props.value) as PlayerIndex | "none"}
+        optionsSearch={optionMap}
+        onChange={value => props.onChange(value === "none" ? null : value)}
+    />
 }

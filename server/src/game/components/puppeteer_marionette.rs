@@ -1,10 +1,12 @@
 use std::collections::HashSet;
 
-use crate::game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, player::PlayerReference, game_conclusion::GameConclusion, role::{
+use crate::{game::{
+    attack_power::AttackPower, chat::ChatMessageVariant, game_conclusion::GameConclusion, 
+    player::PlayerReference, 
+    role::{
         Priority, Role
     }, tag::Tag, win_condition::WinCondition, Game
-};
+}, vec_set::VecSet};
 
 use super::insider_group::InsiderGroupID;
 
@@ -53,7 +55,7 @@ impl PuppeteerMarionette{
     }
     fn attack_players(game: &mut Game, players: Vec<PlayerReference>, attack_power: AttackPower){
         
-        let puppeteers: HashSet<_> = PlayerReference::all_players(game)
+        let puppeteers: VecSet<_> = PlayerReference::all_players(game)
             .filter(|p|p.role(game)==Role::Puppeteer)
             .map(|p|p.clone())
             .collect();
