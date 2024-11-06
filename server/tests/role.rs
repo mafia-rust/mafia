@@ -102,7 +102,8 @@ fn medium_receives_dead_messages_from_jail() {
     assert_contains!(medium.get_messages(), 
         ChatMessageVariant::Normal { 
             text: dead_message.to_string(),
-            message_sender: MessageSender::Player { player: townie.index() }
+            message_sender: MessageSender::Player { player: townie.index() },
+            block: false
         }
     );
 }
@@ -906,14 +907,16 @@ fn can_type_in_jail() {
     assert_contains!(jailor.get_messages(), 
         ChatMessageVariant::Normal { 
             message_sender: MessageSender::Player { player: detective.index() }, 
-            text: "Hello!".to_string()
+            text: "Hello!".to_string(),
+            block: false
         }
     );
     
     assert_contains!(detective.get_messages(), 
         ChatMessageVariant::Normal { 
             message_sender: MessageSender::Player { player: detective.index() }, 
-            text: "Hello!".to_string()
+            text: "Hello!".to_string(),
+            block: false
         }
     );
 }

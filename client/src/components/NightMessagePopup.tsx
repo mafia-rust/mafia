@@ -6,6 +6,7 @@ import "./nightMessagePopup.css";
 export default function NightMessagePopup(props: Readonly<{
     messages: ChatMessage[]
 }>): ReactElement {
+
     return <div className="chat-menu chat-menu-colors night-message-popup">
         <h2>{translate("nightMessages")}</h2>
         <div className="chat-message-section">

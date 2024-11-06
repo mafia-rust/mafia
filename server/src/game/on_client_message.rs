@@ -111,7 +111,7 @@ impl Game {
                     sender_player_ref.do_day_action(self, target_ref);
                 }
             },
-            ToServerPacket::SendMessage { text } => {
+            ToServerPacket::SendChatMessage { text, block } => {
 
                 if text.replace(['\n', '\r'], "").trim().is_empty() {
                     break 'packet_match;
@@ -150,6 +150,7 @@ impl Game {
                         ChatMessageVariant::Normal{
                             message_sender,
                             text: text.trim_newline().trim_whitespace().truncate(400).truncate_lines(20), 
+                            block
                         }
                     );
                 }

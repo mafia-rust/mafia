@@ -78,15 +78,8 @@
     animation: scrolling-rainbow 3s linear infinite;
     text-shadow: -.05rem -.05rem .1rem #ffffff66, .1rem .1rem .1rem rgb(0, 0, 0);
 }
-@font-face {
-    font-family: 'canterbury-regular';
-    font-style: normal;
-    font-weight: 400;
-    src: url(canterbury.regular.ttf) format('truetype');
-}
 .keyword-kira {
-    font-family: 'canterbury-regular', 'Roboto', sans-serif;
-    font-size: 1.2em;
+    font-family: var(--kira-font, Arial);
 }
 .keyword-trans {
     background-image: linear-gradient(to left, cyan, pink, white, pink, cyan);

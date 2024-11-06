@@ -28,3 +28,7 @@
     gap: 0.25rem;
     align-items: center;
 }
+.text-area-dropdown > summary {
+    /* margin: 0;
+    padding: 0 .25rem; */
+}

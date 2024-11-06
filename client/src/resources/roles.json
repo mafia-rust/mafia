@@ -17,7 +17,8 @@
                     "type": "jailor"
                 },
                 "text": "Claim right now or else!", 
-                "chatGroup": "jail"
+                "chatGroup": "jail",
+                "block": false
             },
             {
                 "type": "normal", 
@@ -26,7 +27,8 @@
                     "player": 7
                 },
                 "text": "I'm jester", 
-                "chatGroup": "jail"
+                "chatGroup": "jail",
+                "block": false
             },
             {"type": "jailorDecideExecute","target": 7},
             {"type": "jailorDecideExecute","target": null},
@@ -433,7 +435,8 @@
                     "player": 10
                 },
                 "text": "Why didn't you claim what your role was while you were alive.", 
-                "chatGroup": "dead"
+                "chatGroup": "dead",
+                "block": false
             },
             {
                 "type": "normal", 
@@ -442,7 +445,8 @@
                     "player": 32
                 },
                 "text": "I was legit looking it up when they killed me. Google said a lookout is \"a place from which to keep watch or view landscape\".", 
-                "chatGroup": "dead"
+                "chatGroup": "dead",
+                "block": false
             }
         ]
     },
@@ -478,7 +482,8 @@
                     "type": "reporter"
                 },
                 "text": "Alright! Who wants to throw me around like a football?", 
-                "chatGroup": "interview"
+                "chatGroup": "interview",
+                "block": false
             },
             {
                 "type": "normal", 
@@ -487,7 +492,8 @@
                     "player": 1
                 },
                 "text": "I wanna throw you around like a football", 
-                "chatGroup": "interview"
+                "chatGroup": "interview",
+                "block": false
             },
             {
                 "type": "reporterReport",
@@ -1134,7 +1140,8 @@
                     "player": 32
                 },
                 "text": "Erm... Guys? What do i do, they're gonna catch me!", 
-                "chatGroup": "puppeteer"
+                "chatGroup": "puppeteer",
+                "block": false
             },
             {"type": "puppeteerActionChosen", "action": "poison"},
             {"type": "puppeteerActionChosen", "action": "string"}
@@ -1185,6 +1192,19 @@
             {"type": "youAttackedSomeone"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
+        ]
+    },
+    "serialKiller": {
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "someoneSurvivedYourAttack"}
         ]
     },
     "fiendsWildcard": {

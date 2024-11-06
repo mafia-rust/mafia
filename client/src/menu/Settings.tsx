@@ -4,10 +4,11 @@ import translate, { Language, languageName, LANGUAGES, switchLanguage } from "..
 import StyledText, { computeKeywordData } from "../components/StyledText";
 import Icon from "../components/Icon";
 import { loadSettingsParsed, RoleSpecificMenuType, saveSettings } from "../game/localStorage";
-import { MobileContext, AnchorControllerContext } from "./Anchor";
+import { MobileContext, AnchorControllerContext, ANCHOR_CONTROLLER } from "./Anchor";
 import { Role, roleJsonData } from "../game/roleState.d";
 import AudioController from "./AudioController";
 import { getAllRoles } from "../game/roleListState.d";
+import CheckBox from "../components/CheckBox";
 
 export function roleSpecificMenuType(role: Role): RoleSpecificMenuType | null {
     return roleJsonData()[role].roleSpecificMenu === false ? null :
@@ -16,15 +17,19 @@ export function roleSpecificMenuType(role: Role): RoleSpecificMenuType | null {
 
 export default function SettingsMenu(): ReactElement {
     const [volume, setVolume] = useState<number>(loadSettingsParsed().volume);
+    const [fontSizeState, setFontSize] = useState<number>(loadSettingsParsed().fontSize);
     const [defaultName, setDefaultName] = useState<string | null>(loadSettingsParsed().defaultName);
     const [roleSpecificMenuSettings, setRoleSpecificMenuSettings] = useState(loadSettingsParsed().roleSpecificMenus);
+    const [accessibilityFontEnabled, setAccessibilityFontEnabled] = useState(loadSettingsParsed().accessibilityFont);
     const mobile = useContext(MobileContext)!;
     const anchorController = useContext(AnchorControllerContext)!;
 
     useEffect(() => {
         AudioController.setVolume(volume);
-    }, [volume]);
-    
+        ANCHOR_CONTROLLER?.setFontSize(fontSizeState);
+        ANCHOR_CONTROLLER?.setAccessibilityFontEnabled(accessibilityFontEnabled);
+    }, [volume, fontSizeState, accessibilityFontEnabled]);
+
     return <div className="settings-menu-card">
         <header>
             <h1>{translate("menu.settings.title")}</h1>
@@ -43,6 +48,19 @@ export default function SettingsMenu(): ReactElement {
                                 setVolume(volume);
                             }
                         }/>
+                    </section>
+                    <section className="standout">
+                        <h2>{translate("menu.settings.fontSize")}</h2>
+                        <input type="number" min="0.5" max="2" step="0.1"
+                            value={fontSizeState}
+                            onChange={(e)=>{
+                                if(e.target.value === "") return;
+                                const fontSize = parseFloat(e.target.value);
+                                if(fontSize < 0.5 || fontSize > 2) return;
+                                saveSettings({fontSize});
+                                setFontSize(fontSize);
+                            }}
+                        />
                     </section>
                     <section className="standout">
                         <h2><Icon size="small">language</Icon> {translate("menu.settings.language")}</h2>
@@ -82,6 +100,16 @@ export default function SettingsMenu(): ReactElement {
                             setDefaultName(defaultName);
                         }
                     }/>
+                </section>
+                <section className="standout">
+                    <h2>{translate("menu.settings.accessibility")}</h2>
+                    <label>
+                        {translate("menu.settings.font")}
+                        <CheckBox checked={accessibilityFontEnabled} onChange={(checked: boolean) => {
+                            setAccessibilityFontEnabled(checked);
+                            saveSettings({accessibilityFont: checked});
+                        }}></CheckBox>
+                    </label>
                 </section>
                 <section>
                     {mobile && <h2>{translate("menu.settings.advanced")}</h2>}
