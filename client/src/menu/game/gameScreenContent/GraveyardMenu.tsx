@@ -137,9 +137,9 @@ function GraveButton(props: Readonly<{
     >
         <span>
             {
-                props.extended ? 
-                    <Icon>menu</Icon> :
-                    <Icon>menu_open</Icon>
+                props.extended===true ? 
+                    <Icon>keyboard_arrow_up</Icon> :
+                    <Icon>keyboard_arrow_down</Icon>
             }
             <StyledText noLinks={true}>{props.playerName}</StyledText>
             <StyledText noLinks={true}>

@@ -6,6 +6,8 @@ import { Role, roleJsonData } from "../../game/roleState.d";
 import Icon from "../Icon";
 import { DragAndDrop } from "../DragAndDrop";
 import { GameModeContext } from "./GameModesEditor";
+import Select, { SelectOptionsSearch } from "../Select";
+import StyledText from "../StyledText";
 
 type RoleOutlineSelectorProps = {
     roleOutline: RoleOutline,
@@ -123,42 +125,62 @@ type RoleOutlineOptionSelectorProps = {
     onChange: (value: RoleOutlineOption | "any") => void,
 })
 
+function translateRoleOutlineOptionOrAny(roleOutlineOption: RoleOutlineOption | "any"): string {
+    if(roleOutlineOption === "any") {
+        return translate("any");
+    }else
+        return translateRoleOutlineOption(roleOutlineOption);
+}
 export class RoleOutlineOptionSelector extends React.Component<RoleOutlineOptionSelectorProps> {
 
-    translateRoleOutlineOptionOrAny(roleOutlineOption: RoleOutlineOption | "any"): string {
-        if(roleOutlineOption === "any") {
-            return translate("any");
-        }else
-            return translateRoleOutlineOption(roleOutlineOption);
-    }
+    
     render(): React.ReactNode {
-        return <select
+
+
+        const optionsSearch: SelectOptionsSearch<string> = new Map();
+
+        optionsSearch.set("any", [
+            <StyledText
+                noLinks={!this.props.disabled}
+            >
+                {translate("any")}
+            </StyledText>, 
+            translate("any")
+        ]);
+
+        ROLE_SETS.forEach((roleSet) => {
+            optionsSearch.set(JSON.stringify({type: "roleSet", roleSet: roleSet}), [
+                <StyledText
+                    noLinks={!this.props.disabled}
+                >
+                    {translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})}
+                </StyledText>, 
+                translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})]
+            );
+        });
+        
+        Object.keys(roleJsonData()).forEach((role) => {
+            optionsSearch.set(JSON.stringify({type: "role", role: role}), [
+                <StyledText
+                    noLinks={!this.props.disabled}
+                >
+                    {translateRoleOutlineOptionOrAny({type: "role", role: role as Role})}
+                </StyledText>,
+                translateRoleOutlineOptionOrAny({type: "role", role: role as Role})
+            ]);
+        });
+
+        return <Select
+            className="role-outline-option-selector"
             disabled={this.props.disabled}
-            value={JSON.stringify(this.props.roleOutlineOption)} 
-            onChange={(e) => {
-                if(e.target.value === "any" && this.props.excludeAny !== true) {
-                    this.props.onChange("any");
-                } else {
-                    this.props.onChange(
-                        JSON.parse(e.target.options[e.target.selectedIndex].value)
-                    );
-                }
-            }
-        }>
-            {this.props.excludeAny || <option key={"any"} value="any">
-                {this.translateRoleOutlineOptionOrAny("any")}
-            </option>}
-            {ROLE_SETS.map((roleSet) => {
-                return <option key={roleSet} value={JSON.stringify({type: "roleSet", roleSet: roleSet})}>
-                        {this.translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})}
-                </option>
-            })}
-            {Object.keys(roleJsonData()).map((role) => {
-                return <option key={role} value={JSON.stringify({type: "role", role: role})}>
-                        {this.translateRoleOutlineOptionOrAny({type: "role", role: role as Role})}
-                </option>
-            })}
-        </select>        
+            value={this.props.roleOutlineOption==="any"?"any":JSON.stringify(this.props.roleOutlineOption)}
+            onChange={(value) => {
+                this.props.onChange(
+                    value === "any" ? "any" : JSON.parse(value)
+                );
+            }}
+            optionsSearch={optionsSearch}
+        />
     }
 }
 
