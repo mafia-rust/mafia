@@ -290,7 +290,7 @@
 
     "role.steward.name": "Steward",
     "role.steward.name:var.0": "Stewards",
-    "role.steward.roleDataText": "\\0 steward protects remaining.",
+    "role.steward.roleDataText": "You have the ability to protect the role steward with \\0 charge remaining.",
     "role.steward.youAreSelecting": "Choose a role to protect.",
 
     "role.mayor.name": "Mayor",
@@ -1427,9 +1427,9 @@
     "wiki.article.role.vigilante.attributes":"* If your attack overpowers a town loyalist's defense and they die, you commit suicide on the following night\n* When it is night one, when you have 0 bullets left, when you are going to commit suicide, or when you have already committed suicide, you can not select or attack anyone",
     "wiki.article.role.vigilante.extra": "* You only have a basic attack\n* Even while dead, killing someone requires and spends a bullet (such as when you get possessed)",
 
-    "wiki.article.role.rabblerouser.reminder": "As long as you are alive, each day, the town can choose to pitchfork somebody. If 2/3rds of town loyalists vote the same player, that player is attacked. You can do this up to 3 times.",
-    "wiki.article.role.rabblerouser.guide":"- If a Rabblerouser is alive in the game, everyone can vote using the pitchfork menu\n- If two-thirds of town loyalists vote the same player, that player is killed\n- This ability can be used up to 3 times",
-    "wiki.article.role.rabblerouser.abilities":"- You and all other Rabblerousers are told when the pitchfork attacks someone, or if the attacked player has defense and survive\n- You don't visit due to your ability\n- The pitchfork can only be used to kill someone up to 3 times",
+    "wiki.article.role.rabblerouser.reminder": "As long as you are alive, each day, the town can choose to pitchfork somebody. If 2/3rds of town loyalists vote the same player, that player is attacked.\n-  You can do this up to 3 times.\n- You can't pitchfork night 1\n- If you are blocked, you can't attack.",
+    "wiki.article.role.rabblerouser.guide":"- If a Rabblerouser is in the game, everyone can vote using the pitchfork menu\n- If two-thirds of town loyalists vote the same player, that player is killed\n- This ability can be used up to 3 times\n- This ability doesn't work on night 1\n- This ability only works if there is an alive rabblerouser who isnt blocked",
+    "wiki.article.role.rabblerouser.abilities":"- All alive non-blocked Rabblerousers are told when the pitchfork attacks someone, or if the attacked player has defense and survive\n- You don't visit due to your ability\n- The pitchfork can only be used to kill someone up to 3 times",
     "wiki.article.role.rabblerouser.attributes":"- Non Town Loyalists are not counted as voters for the pitchfork\n- The attack is indirect and protection piercing",
     "wiki.article.role.rabblerouser.extra":"- The pitchfork menu stays available\n   - Even if all Rabblerousers are dead\n    - Even if there is no Rabblerouser\n    - Even if all three uses are consumed\n- Multiple Rabblerousers does not mean multiple attacks or more uses. There is a maximum of 3 uses and a maximum of 1 attack per night",
 
@@ -1610,7 +1610,7 @@
     "wiki.article.role.martyr.extra":"* When you visit a player while you have zero bullets left you will not attack them\n* You're an ex-cultist, they rejected you because you told the truth",
 
     "wiki.article.role.drunk.reminder": "You are told you are a town investigate role, not the drunk, but you get dubious information.",
-    "wiki.article.role.drunk.guide": "Before the game starts, whoever gets this role switches roles without being told, and they become confused until the end of the game. Their role switches to either Detective, Philosopher, Snoop, Gossip, Tally Clerk, Auditor, or Psychic\n - This means that if you got one of those roles, you could be confused and not even know it.\n - The drunk is a town loyalist, so you still win with town.\n - You have suspicious aura and appear to visit the same player that the syndicate killing player visited (even if detained)\n - If your role changes, you stop being confused, you don't have suspicious aura anymore, and you stop appearing to visit the same player as the syndicate killing player.",
+    "wiki.article.role.drunk.guide": "Before the game starts, whoever gets this role switches roles without being told, and they become confused until the end of the game. Their role switches to either Detective, Philosopher, Snoop, Gossip, Tally Clerk, Auditor, or Psychic\n - This means that if you got one of those roles, you could be confused and not even know it.\n - The drunk is a town loyalist, so you still win with town.\n - You have suspicious aura\n - If your role changes, you stop being confused and you don't have suspicious aura anymore.",
     "wiki.article.role.drunk.abilities": "",
     "wiki.article.role.drunk.attributes": "",
     "wiki.article.role.drunk.extra": "",
