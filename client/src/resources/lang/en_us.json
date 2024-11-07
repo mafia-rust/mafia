@@ -379,6 +379,8 @@
     
     "role.impostor.name": "Impostor",
     "role.impostor.name:var.0": "Impostors",
+    "role.impostor.name:var.1": "Imposter",
+    "role.impostor.name:var.2": "Imposters",
     "role.impostor.target": "Attack",
     "role.impostor.dayTarget": "Backup",
     "role.impostor.youAreSelecting": "You are organizing an attack on \\0.",
@@ -496,7 +498,7 @@
     "role.chronokaiser.name:var.0": "Chronokaisers",
     
     "role.witch.name": "Witch",
-    "role.witch.name:var.0": "Witchs",
+    "role.witch.name:var.0": "Witches",
     "role.witch.youAreSelecting": "You are possessing \\0 into \\1.",
     "role.witch.youAreSelecting.null": "You aren't possessing anyone.",
     
