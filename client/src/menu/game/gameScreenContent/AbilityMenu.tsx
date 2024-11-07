@@ -8,6 +8,7 @@ import Pitchfork from "../../../components/Pitchfork";
 import HitOrder from "../../../components/HitOrder";
 import OnePlayerOptionSelectionType from "./AbilitySelectionTypes/OnePlayerOptionSelectionType";
 import TwoPlayerOptionSelectionType from "./AbilitySelectionTypes/TwoPlayerOptionSelectionType";
+import OldSelectionType from "./AbilitySelectionTypes/OldSelectionType";
 
 export default function AbilityMenu(): ReactElement {
     const roleState = usePlayerState(
@@ -40,8 +41,9 @@ export default function AbilityMenu(): ReactElement {
                 </summary>
                 <SelectionInformation />
                 <RoleSpecificSection/>
-                <OnePlayerOptionSelectionType/>
-                <TwoPlayerOptionSelectionType/>
+                <OldSelectionType/>
+                {/* <OnePlayerOptionSelectionType/>
+                <TwoPlayerOptionSelectionType/> */}
             </details>
         }
         {
