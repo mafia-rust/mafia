@@ -19,6 +19,7 @@
     "targeted": "target",
     "mayorRevealed": "special",
     "mayorCantWhisper": "special",
+    "politicanCountdownStarted": "special", 
     "martyrRevealed": "special",
     "reporterReport": "result",
     "playerIsBeingInterviewed": "special",

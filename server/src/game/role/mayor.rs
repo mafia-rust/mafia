@@ -7,6 +7,7 @@ use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 
+use crate::game::tag::Tag;
 use crate::game::Game;
 use super::{GetClientRoleState, RoleState, RoleStateImpl};
 
@@ -36,7 +37,7 @@ impl RoleStateImpl for Mayor {
             revealed: true
         }));
         for player in PlayerReference::all_players(game){
-            player.insert_role_label(game, actor_ref);
+            player.push_player_tag(game, actor_ref, Tag::Enfranchised);
         }
         game.count_votes_and_start_trial();
     }

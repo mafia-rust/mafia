@@ -519,7 +519,9 @@
 
     "role.politician.name": "Politician",
     "role.politician.name:var.0": "Politicians",
-    
+    "role.politician.name:politicianCountdownStarted":"The politician is about to seize control of the town! This is your last chance to execute them before they take over!",
+    "role.politician.dayTarget": "Enfranchise",
+
     "role.drunk.name": "Drunk",
     "role.drunk.name:var.0": "Drunks",
 
@@ -642,6 +644,8 @@
     "mafiaKilling:var.0":"MK",
     "mafiaKilling:var.1":"SK",
 
+    "tag.enfranchised":"🏛️",
+    "tag.enfranchised.name":"Enfranchised",
     "tag.godfatherBackup":"🌹",
     "tag.godfatherBackup.name":"Killing backup",
     "tag.revolutionaryTarget":"🎯",
@@ -825,8 +829,8 @@
     "chatMessage.targeted":"\\0 selected \\1.",
     "chatMessage.targeted.cleared":"\\0 cleared their selection.",
 
-    "chatMessage.mayorRevealed":"The mayor, \\0, is using emergency executive voting power!",
-    "chatMessage.mayorCantWhisper":"A Mayor can't whisper after activating executive voting power.",
+    "chatMessage.mayorRevealed":"\\0 has enfranchised!",
+    "chatMessage.mayorCantWhisper":"You can not whisper with an enfranchised player.",
     "chatMessage.martyrRevealed":"Praise the Martyr \\0, for they will lead us to harmony!",
     "chatMessage.reporterReport":"The town report states this: \\0",
     "chatMessage.youAreInterviewingPlayer":"You are interviewing \\0.",
@@ -1284,8 +1288,8 @@
     "wiki.article.role.villager.attributes":"None",
     "wiki.article.role.villager.extra":"None",
 
-    "wiki.article.role.mayor.reminder": "Once per game you can enfranchise, revealing yourself to everyone, and getting 3x voting power.",
-    "wiki.article.role.mayor.guide": "Choose to enfranchise during the day to make your vote count as three votes for the rest of the game.\n- When you enfranchise\n    - Everyone is told you are the mayor\n    - You can't whisper or be whispered to\n    - You have triple voting power every day",
+    "wiki.article.role.mayor.reminder": "Once per game you can enfranchise to gain 3x voting power.",
+    "wiki.article.role.mayor.guide": "Choose to enfranchise during the day to make your vote count as three votes for the rest of the game.\n- When you enfranchise\n    - Everyone is told you have enfranchised\n    - You can't whisper or be whispered to\n    - You have triple voting power every day",
     "wiki.article.role.mayor.abilities":"* Enfranchise during the day to triple your voting power, revealing to everyone that you are the Mayor",
     "wiki.article.role.mayor.attributes":"* You get 3 votes during both nomination and judgement after you enfranchise\n* After you enfranchise you can't whisper or be whispered to",
     "wiki.article.role.mayor.extra": "* If you are converted to a different role, players will still see that you are the mayor\n* Enfranchising does not increase the number of votes required to put someone on trial",
@@ -1649,11 +1653,11 @@
     "wiki.article.role.warper.attributes":" -  All visits to first player instead visit the second player\n - The first player you visit is told they were transported",
     "wiki.article.role.warper.extra": " - Some abilities are not affected by yours due to the priority system. _For example_ You can't stop a jester from haunting their target using a transport, this depends on priorities and whether or not an ability is indirect\n* Warpers act after transporters\n* Warpers do not warp the visits of a transporter",
 
-    "wiki.article.role.politician.reminder": "If town is about to win, you win instead, and kill all town loyalists.",
-    "wiki.article.role.politician.guide":"* If the town would win, instead you win and they all die. Try to help to the town to win while staying alive.",
-    "wiki.article.role.politician.abilities": "* When town would win, you win, instantly attack ever townie, and all politicians leave town",
-    "wiki.article.role.politician.attributes": "* You win with other politicians\n* When you first become this role, if there are no townies alive, you become a jester\n* You have a protection-piercing attack",
-    "wiki.article.role.politician.extra":"* If all town loyalists die, you leave town\n* If the only players left are politicians, you win",
+    "wiki.article.role.politician.reminder": "If town is about to win, you win instead, and kill all non-politicians.",
+    "wiki.article.role.politician.guide":"* If the town would win, instead the game instantly goes to trial and if you survive until dusk, you win (killing all other players)\n* Try to help to the town to win while staying alive\n* You can enfranchise to gain more votes, but be careful because this sends a message to everyone.",
+    "wiki.article.role.politician.abilities": "* You may enfranchise during the day to gain 3x voting power\n* If the town would win while you are alive, instead the game instantly goes to nominations and all players are told the politician is about to win. If you survive this trial, you win and all non-politicians die\n* You can't whisper or be whispered to",
+    "wiki.article.role.politician.attributes": "* You win with other politicians\n* If there are no town loyalists alive, you leave town.\n* You have armor",
+    "wiki.article.role.politician.extra":"* If the only players left are politicians, you win",
 
     "wiki.article.role.arsonist.reminder": "Each night, douse a player in gasoline. Ignite to attack all doused players.",
     "wiki.article.role.arsonist.guide":"- Select a player to douse them in gasoline\n- Select yourself to ignite and attack every player who is doused\n- You know who is doused\n\nTry not to douse players you think the syndicate will kill, because then you waste your night dousing someone who is going to die anyway.",

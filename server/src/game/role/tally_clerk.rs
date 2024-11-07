@@ -59,7 +59,7 @@ impl TallyClerk {
         }else if player_ref.has_innocent_aura(game){
             false
         }else{
-            !player_ref.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town)
+            !player_ref.win_condition(game).is_loyalist_for(GameConclusion::Town)
         }
     }
 }

@@ -50,7 +50,7 @@ impl RoleStateImpl for Jailor {
                         target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Jailor), AttackPower::ProtectionPiercing, false);
         
                         self.executions_remaining = 
-                            if target_ref.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) {0} else {self.executions_remaining - 1};
+                            if target_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) {0} else {self.executions_remaining - 1};
                         actor_ref.set_role_state(game, self);
                     }
                 }

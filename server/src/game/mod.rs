@@ -271,6 +271,11 @@ impl Game {
                     voting_power += 2;
                 }
             }
+            if let RoleState::Politician(politician) = player_ref.role_state(self).clone(){
+                if politician.revealed {
+                    voting_power += 2;
+                }
+            }
             
             match player_ref.verdict(self) {
                 Verdict::Innocent => innocent += voting_power,
@@ -294,6 +299,11 @@ impl Game {
             let mut voting_power = 1;
             if let RoleState::Mayor(mayor) = player.role_state(self).clone() {
                 if mayor.revealed {
+                    voting_power = 3;
+                }
+            }
+            else if let RoleState::Politician(politician) = player.role_state(self).clone() {
+                if politician.revealed {
                     voting_power = 3;
                 }
             }
@@ -383,7 +393,13 @@ impl Game {
 
     pub fn add_grave(&mut self, grave: Grave){
         self.graves.push(grave.clone());
-        if let Some(grave_ref) = GraveReference::new(self, self.graves.len() as u8 - 1){
+        if let Some(grave_ref) = GraveReference::new(
+            self, 
+            self.graves.len()
+                .saturating_sub(1)
+                .try_into()
+                .expect("There can not be more than u8::MAX graves"))
+        {
             OnGraveAdded::new(grave_ref).invoke(self);
         }
     }

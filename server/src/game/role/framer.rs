@@ -53,7 +53,7 @@ impl RoleStateImpl for Framer {
                         .iter()
                         .filter(|player|
                             player.win_condition(game)
-                                .requires_only_this_resolution_state(crate::game::game_conclusion::GameConclusion::Town)
+                                .is_loyalist_for(crate::game::game_conclusion::GameConclusion::Town)
                         )
                         .map(|player| player.role(game))
                         .collect();

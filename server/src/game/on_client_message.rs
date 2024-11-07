@@ -4,10 +4,7 @@ use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
     chat::{ChatGroup, ChatMessageVariant, MessageSender}, components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, modifiers::mafia_hit_orders::MafiaHitOrders, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
-        impostor::Impostor, kira::{Kira, KiraGuess},
-        mayor::Mayor, puppeteer::PuppeteerAction, recruiter::RecruiterAction,
-        retrainer::Retrainer,
-        Role, RoleState
+        impostor::Impostor, kira::{Kira, KiraGuess}, mayor::Mayor, politician::Politician, puppeteer::PuppeteerAction, recruiter::RecruiterAction, retrainer::Retrainer, Role, RoleState
     }, role_list::RoleSet, role_outline_reference::RoleOutlineReference, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
@@ -179,6 +176,15 @@ impl Game {
                     sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
                     break 'packet_match;
                 }
+                if let RoleState::Politician(Politician{revealed: true, ..}) = whisperee_ref.role_state(self) {
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
+                    break 'packet_match;
+                }
+                if let RoleState::Politician(Politician{revealed: true, ..}) = sender_player_ref.role_state(self) {
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
+                    break 'packet_match;
+                }
+
 
                 self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::BroadcastWhisper { whisperer: sender_player_index, whisperee: whispered_to_player_index });
                 let message = ChatMessageVariant::Whisper { 
