@@ -7,13 +7,14 @@ import { Button } from "../../../../components/Button";
 import GAME_MANAGER from "../../../..";
 import { RoleState } from "../../../../game/roleState.d";
 import PlayerNamePlate from "../../../../components/PlayerNamePlate";
+import "./oldSelectionType.css";
 
 export default function OldSelectionType(): ReactElement {
     const playerCount = useGameState(
         gameState => gameState.players.length,
         ["gamePlayers"]
     );
-    return <div>
+    return <div className="old-selection-type">
         {[...Array(playerCount).keys()].map(idx => <PlayerCard playerIndex={idx}/>)}
     </div>
 }

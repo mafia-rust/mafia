@@ -1,11 +1,10 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement } from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import "./playerListMenu.css"
 import "./../gameScreen.css"
 import { ChatGroup, PhaseState, Player, PlayerIndex } from "../../../game/gameState.d";
 import { ContentMenu, ContentTab } from "../GameScreen";
-import { StateEventType } from "../../../game/gameManager.d";
 import StyledText from "../../../components/StyledText";
 import { RoleState } from "../../../game/roleState.d";
 import Icon from "../../../components/Icon";
@@ -13,8 +12,6 @@ import { Button } from "../../../components/Button";
 import Counter from "../../../components/Counter";
 import { useGameState, usePlayerState } from "../../../components/useHooks";
 import PlayerNamePlate from "../../../components/PlayerNamePlate";
-type PlayerFilter = "all"|"living"|"usable";
-
 
 function usePlayerVotedFor(): PlayerIndex | null {
     return usePlayerState(
@@ -88,58 +85,10 @@ export default function PlayerListMenu(): ReactElement {
         ["yourSendChatGroups"]
     )
 
-    const [playerFilter, setPlayerFilter] = useState<PlayerFilter>(GAME_MANAGER.getMySpectator() ? "all" : "living");
-
-    useEffect(() => {
-        const listener = (type?: StateEventType) => {
-            if (type !== "phase" && type !== "gamePlayers" && type !== "yourVoting" && type !== "yourSelection" && type !== "yourRoleState") {
-                return;
-            }
-
-            if(GAME_MANAGER.getMySpectator()){
-                setPlayerFilter("all");
-                return;
-            }
-    
-            if(playerFilter !== "all" && players[myIndex!]?.alive){
-                if(phaseState.type === "night"){
-                    setPlayerFilter("usable");
-                }else if(phaseState.type === "obituary"){
-                    setPlayerFilter("living");
-                }
-            }
-            //if there are no usable players, switch to living
-            if(playerFilter==="usable" && !players.some((player)=>{return Object.values(player.buttons).includes(true)})){
-                setPlayerFilter("living");
-            }
-            //if there are no living players, switch to all
-            if(playerFilter==="living" && !players.some((player)=>{return player.alive})){
-                setPlayerFilter("all");
-            }
-        };
-
-        GAME_MANAGER.addStateListener(listener);
-        return () => GAME_MANAGER.removeStateListener(listener);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [myIndex, players, phaseState]);
-
     const chatFilter = usePlayerState(
         playerState => playerState.chatFilter,
         ["filterUpdate"]
     );
-
-    const chosenPlayers = useSelectedPlayers()
-        .concat(useDayTargetedPlayers())
-        .concat(usePlayerVotedFor() ?? []);
-
-    const shouldShowPlayer = function (player: Player) {
-        switch(playerFilter){
-            case "all": return true;
-            case "living": return player.alive;
-            case "usable": return Object.values(player.buttons).includes(true) || chosenPlayers.includes(player.index)
-            default: return false;
-        }
-    }
 
     return <div className="player-list-menu player-list-menu-colors">
         <ContentTab close={ContentMenu.PlayerListMenu} helpMenu={"standard/playerList"}>{translate("menu.playerList.title")}</ContentTab>
@@ -153,21 +102,8 @@ export default function PlayerListMenu(): ReactElement {
             <StyledText noLinks={true}>{translate("forfeitVote")}</StyledText>
         </Button> : null}
 
-        {GAME_MANAGER.getMySpectator() || <div>
-            {(["all", "living", "usable"] as const)
-                .map(filter => 
-                    <Button key={filter}
-                        highlighted={playerFilter === filter}
-                        onClick={()=>setPlayerFilter(filter)}
-                    >
-                        {translate("menu.playerList.button." + filter)}
-                    </Button>
-                )}
-        </div>}
-
         <div className="player-list">
             {players
-                .filter(shouldShowPlayer)
                 .filter(player => player.alive)
                 .map(player => <PlayerCard 
                     key={player.name} 
@@ -178,10 +114,10 @@ export default function PlayerListMenu(): ReactElement {
                     phaseState={phaseState}
                     chatGroups={chatGroups}
                 />)}
-            {players.filter(shouldShowPlayer).filter(player => !player.alive).length === 0 || <>
+            {players
+                .filter(player => !player.alive).length === 0 || <>
                 <div className="dead-players-separator">{translate("dead.icon")} {translate("dead")}</div>
                 {players
-                    .filter(shouldShowPlayer)
                     .filter(player => !player.alive)
                     .map(player => <PlayerCard 
                         key={player.name} 
