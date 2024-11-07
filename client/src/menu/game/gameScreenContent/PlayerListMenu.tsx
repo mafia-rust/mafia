@@ -20,44 +20,6 @@ function usePlayerVotedFor(): PlayerIndex | null {
     ) ?? null;
 }
 
-function useSelectedPlayers(): PlayerIndex[] {
-    return usePlayerState(
-        (playerState, gameState) => gameState.phaseState.type === "night" ? playerState.targets : [],
-        ["phase", "yourSelection"],
-        []
-    )!;
-}
-
-function useDayTargetedPlayers(): PlayerIndex[] {
-    const roleState = usePlayerState(
-        playerState => playerState.roleState,
-        ["yourRoleState"],
-    );
-
-    switch (roleState?.type){
-        case "godfather":
-        case "retrainer":
-        case "counterfeiter":
-            if (roleState.backup !== null) return [roleState.backup]
-            break;
-        case "jailor":
-        case "kidnapper":
-            if (roleState.jailedTargetRef !== null) return [roleState.jailedTargetRef]
-            break;
-        case "medium":
-            if (roleState.seancedTarget !== null) return [roleState.seancedTarget]
-            break;
-        case "reporter":
-            if (roleState.interviewedTarget !== null) return [roleState.interviewedTarget]
-            break;
-        case "marksman":
-            if (roleState.state.type === "marks") return roleState.state.marks
-            break
-    }
-
-    return []
-}
-
 export default function PlayerListMenu(): ReactElement {
     const players = useGameState(
         gameState => gameState.players,
@@ -143,12 +105,8 @@ function PlayerCard(props: Readonly<{
 }>): ReactElement{
     const isPlayerSelf = props.player.index === props.myIndex;
 
-    const chosenPlayers = useSelectedPlayers()
-        .concat(useDayTargetedPlayers())
-        .concat(usePlayerVotedFor() ?? []);
-
     return <div 
-        className={`player-card ${chosenPlayers.includes(props.player.index) ? "highlighted" : ""}`}
+        className={`player-card`}
         key={props.player.index}
     >
         {GAME_MANAGER.getMySpectator() || (() => {
@@ -180,7 +138,7 @@ function PlayerCard(props: Readonly<{
                 <Icon>chat</Icon>
             </Button>
         )}
-        <VoteButton player={props.player} roleState={props.roleState}/>
+        <VoteButton player={props.player}/>
         {
             props.phaseState.type === "nomination" && props.player.alive && 
             <Counter 
@@ -195,8 +153,7 @@ function PlayerCard(props: Readonly<{
 }
 
 function VoteButton(props: Readonly<{
-    player: Player,
-    roleState: RoleState | undefined
+    player: Player
 }>): ReactElement | null {
     const playerVotedFor = usePlayerVotedFor();
 

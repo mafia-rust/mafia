@@ -171,11 +171,6 @@ function VerdictButton(props: Readonly<{ verdict: Verdict }>) {
 }
 
 function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactElement | null {
-    const roleState = usePlayerState(
-        clientState => clientState.roleState,
-        ["yourRoleState"]
-    )
-
     const menuController = useContext(MenuControllerContext)!;
 
     return <div className="menu-buttons">
@@ -205,9 +200,10 @@ function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactE
                 highlighted={menuController.menusOpen().includes(ContentMenu.RoleSpecificMenu)}
                 onClick={()=>menuController.closeOrOpenMenu(ContentMenu.RoleSpecificMenu)}
             >
-                <StyledText noLinks={true}>
-                    {translate("role."+roleState?.type+".name")}
-                </StyledText>
+                {translate("menu.ability.icon")}
+                <span className="mobile-hidden">
+                    {translate("menu.ability.title")}
+                </span>
             </Button>
         }
         <Button className="graveyard-menu-colors" 

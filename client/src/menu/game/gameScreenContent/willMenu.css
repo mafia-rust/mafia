@@ -1,3 +1,6 @@
+.game-screen .content > .will-menu {
+    width: 10%;
+}
 .will-menu details > div {
     padding: .13rem;
 }

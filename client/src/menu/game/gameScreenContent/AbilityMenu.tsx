@@ -2,20 +2,16 @@ import React, { ReactElement, useState } from "react";
 import translate from "../../../game/lang";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import RoleSpecificSection from "../../../components/RoleSpecific";
-import SelectionInformation from "../../../components/SelectionInformation";
 import { useGameState, usePlayerState } from "../../../components/useHooks";
 import Pitchfork from "../../../components/Pitchfork";
 import HitOrder from "../../../components/HitOrder";
 import OldSelectionType from "./AbilitySelectionTypes/OldSelectionType";
-// import OnePlayerOptionSelectionType from "./AbilitySelectionTypes/OnePlayerOptionSelectionType";
-// import TwoPlayerOptionSelectionType from "./AbilitySelectionTypes/TwoPlayerOptionSelectionType";
 
 export default function AbilityMenu(): ReactElement {
     const roleState = usePlayerState(
         playerState => playerState.roleState,
         ["yourRoleState"]
     )!;
-    const role = roleState.type;
     const mySpectator = useGameState(
         gameState => gameState.clientState.type === "spectator",
         ["gamePlayers", "acceptJoin"]
@@ -26,8 +22,8 @@ export default function AbilityMenu(): ReactElement {
     const [hitOrderOpen, setHitOrderOpen] = useState<boolean>(false);
 
     return <div className="role-specific-colors">
-        <ContentTab close={ContentMenu.RoleSpecificMenu} helpMenu={null}>
-            {translate("role."+role+".name")}
+        <ContentTab close={ContentMenu.RoleSpecificMenu} helpMenu={"standard/abilityMenu"}>
+            {translate("menu.ability.title")}
         </ContentTab>
         {!mySpectator &&
             <details className="role-specific-colors small-role-specific-menu" open={roleSpecificOpen}>
@@ -39,11 +35,8 @@ export default function AbilityMenu(): ReactElement {
                 >
                     {translate("role."+roleState?.type+".name")}
                 </summary>
-                <SelectionInformation />
                 <RoleSpecificSection/>
                 <OldSelectionType/>
-                {/* <OnePlayerOptionSelectionType/>
-                <TwoPlayerOptionSelectionType/> */}
             </details>
         }
         {

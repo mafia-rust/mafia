@@ -1,6 +1,6 @@
 import React from "react";
 import { ReactElement } from "react";
-import { useGameState, usePlayerState } from "../../../../components/useHooks";
+import { usePlayerState } from "../../../../components/useHooks";
 import { PlayerIndex } from "../../../../game/gameState.d";
 import translate, { translateAny } from "../../../../game/lang";
 import { Button } from "../../../../components/Button";
@@ -8,15 +8,25 @@ import GAME_MANAGER from "../../../..";
 import { RoleState } from "../../../../game/roleState.d";
 import PlayerNamePlate from "../../../../components/PlayerNamePlate";
 import "./oldSelectionType.css";
+import StyledText from "../../../../components/StyledText";
+import SelectionInformation from "../../../../components/SelectionInformation";
 
 export default function OldSelectionType(): ReactElement {
-    const playerCount = useGameState(
-        gameState => gameState.players.length,
-        ["gamePlayers"]
-    );
-    return <div className="old-selection-type">
-        {[...Array(playerCount).keys()].map(idx => <PlayerCard playerIndex={idx}/>)}
-    </div>
+    const useablePlayers = usePlayerState(
+        (playerState, gameState) => gameState.players
+            .filter((player) => player.buttons.target || player.buttons.dayTarget)
+            .map((player) => player.index),
+        ["yourButtons"]
+    )!;
+
+
+    return <>
+        <SelectionInformation />
+        <div className="old-selection-type">
+            {useablePlayers.map(idx => <PlayerCard playerIndex={idx}/>)}
+            {useablePlayers.length === 0 && <StyledText>{translate("none")}</StyledText>}
+        </div>
+    </>
 }
 
 function useSelectedPlayers(): PlayerIndex[] {

@@ -323,14 +323,12 @@ function WildcardRoleSpecificMenu(props: Readonly<{
 
     return <div className="role-information">
         <StyledText>{translate(`role.${props.roleState.type}.smallRoleMenu`)}</StyledText>
-        <div>
-            <RoleDropdown 
-                value={props.roleState.role} 
-                enabledRoles={choosable}
-                onChange={(rle)=>{
-                    GAME_MANAGER.sendSetWildcardRoleOutline(rle);
-                }}
-            />
-        </div>
+        <RoleDropdown 
+            value={props.roleState.role} 
+            enabledRoles={choosable}
+            onChange={(rle)=>{
+                GAME_MANAGER.sendSetWildcardRoleOutline(rle);
+            }}
+        />
     </div>;
 }
