@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useState } from "react";
-import translate, { translateAny } from "../../../game/lang";
+import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import "./playerListMenu.css"
 import "./../gameScreen.css"
@@ -10,32 +10,11 @@ import StyledText from "../../../components/StyledText";
 import { RoleState } from "../../../game/roleState.d";
 import Icon from "../../../components/Icon";
 import { Button } from "../../../components/Button";
-import { Grave } from "../../../game/graveState";
 import Counter from "../../../components/Counter";
 import { useGameState, usePlayerState } from "../../../components/useHooks";
+import PlayerNamePlate from "../../../components/PlayerNamePlate";
 type PlayerFilter = "all"|"living"|"usable";
 
-
-//indexed by player index, returns the role on the players grave
-function getGraveRolesStrings(graves: Grave[], playerCount: number): (string | null)[] {
-
-
-    let rolesStrings: (string | null)[] = [];
-    
-    for(let i = 0; i < playerCount; i++){
-        rolesStrings.push(null);
-    }
-
-    graves.forEach((grave: Grave)=>{
-        if (grave.information.type === "normal"){
-            rolesStrings[grave.player] = "("+translate("role."+grave.information.role+".name")+")";
-        } else {
-            rolesStrings[grave.player] = "("+translate("obscured")+")";
-        }
-    });
-
-    return rolesStrings;
-}
 
 function usePlayerVotedFor(): PlayerIndex | null {
     return usePlayerState(
@@ -86,10 +65,6 @@ export default function PlayerListMenu(): ReactElement {
     const players = useGameState(
         gameState => gameState.players,
         ["gamePlayers", "yourButtons", "playerAlive", "yourPlayerTags", "yourRoleLabels", "playerVotes"]
-    )!
-    const graveRolesStrings = useGameState(
-        gameState => getGraveRolesStrings(gameState.graves, gameState.players.length),
-        ["addGrave", "yourButtons", "playerAlive", "yourPlayerTags", "yourRoleLabels", "playerVotes"]
     )!
     const phaseState = useGameState(
         gameState => gameState.phaseState,
@@ -199,7 +174,6 @@ export default function PlayerListMenu(): ReactElement {
                     player={player}
                     myIndex={myIndex}
                     roleState={roleState}
-                    graveRolesStrings={graveRolesStrings}
                     chatFilter={chatFilter}
                     phaseState={phaseState}
                     chatGroups={chatGroups}
@@ -214,7 +188,6 @@ export default function PlayerListMenu(): ReactElement {
                         player={player}
                         myIndex={myIndex}
                         roleState={roleState}
-                        graveRolesStrings={graveRolesStrings}
                         chatFilter={chatFilter}
                         phaseState={phaseState}
                         chatGroups={chatGroups}
@@ -229,157 +202,60 @@ function PlayerCard(props: Readonly<{
     myIndex: PlayerIndex | undefined, 
     roleState: RoleState | undefined, 
     chatFilter: number | null | undefined
-    graveRolesStrings: (string | null)[],
     phaseState: PhaseState,
     chatGroups: ChatGroup[] | undefined
 }>): ReactElement{
-    const { player, myIndex, roleState, graveRolesStrings, chatFilter, phaseState, chatGroups } = props;
-
-    let roleString = (()=>{
-        if(player.index === myIndex){
-            return ("("+translate("role."+roleState?.type+".name")+")");
-        }
-
-        if(player.alive && player.roleLabel !== null){
-            return ("("+translate("role."+player.roleLabel+".name")+")");
-        }
-        
-        if (!player.alive && graveRolesStrings[player.index] !== null){
-            return graveRolesStrings[player.index];
-        }
-
-        return "";
-    })();
+    const isPlayerSelf = props.player.index === props.myIndex;
 
     const chosenPlayers = useSelectedPlayers()
         .concat(useDayTargetedPlayers())
         .concat(usePlayerVotedFor() ?? []);
 
     return <div 
-        className={`player ${chosenPlayers.includes(player.index) ? "highlighted" : ""}`}
-        key={player.index}
+        className={`player-card ${chosenPlayers.includes(props.player.index) ? "highlighted" : ""}`}
+        key={props.player.index}
     >
-        {usePlayerVotedFor() === player.index
-            ? <div className="voted-popup">{translate("menu.playerList.player.youAreVoting")}</div>
-            : undefined}
-        <div className="top">  
-            {(() => {
-                if (phaseState.type === "testimony" || phaseState.type === "judgement" || phaseState.type === "finalWords") {
-                    if (phaseState.playerOnTrial === player.index) {
-                        return <StyledText>{translate("trial.icon")} </StyledText>
-                    }
-                }
-            })()}
-            <StyledText>{(player.alive?"":translate("dead.icon"))} </StyledText>
-            <StyledText>{player.toString()}</StyledText>
-            {roleString !== null && <StyledText> {roleString}</StyledText>}
-            <StyledText>{player.playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
-        </div>
-        
-        {phaseState.type === "nomination" && player.alive && 
-            <Counter 
-                max={GAME_MANAGER.getVotesRequired()!} 
-                current={player.numVoted}
+        {GAME_MANAGER.getMySpectator() || (() => {
+            const filter = props.player.index;
+            const isFilterSet = props.chatFilter === filter;
+            
+            return <Button 
+                className={"filter"} 
+                highlighted={isFilterSet}
+                onClick={() => {
+                    GAME_MANAGER.updateChatFilter(isFilterSet ? null : filter);
+                    return true;
+                }}
+                pressedChildren={result => <Icon>{result ? "done" : "warning"}</Icon>}
+                aria-label={translate("menu.playerList.button.filter")}
             >
-                <StyledText>{translate("menu.playerList.player.votes", player.numVoted)}</StyledText>
-            </Counter>}
+                <Icon>filter_alt</Icon>
+            </Button>
+        })()}
 
-        {GAME_MANAGER.getMySpectator() || <PlayerButtons
-            player={player}
-            myIndex={myIndex}
-            roleState={roleState}
-            graveRolesStrings={graveRolesStrings}
-            chatFilter={chatFilter}
-            phaseState={phaseState}
-            chatGroups={chatGroups}
-        />}
-    </div>
-}
-
-function PlayerButtons(props: Readonly<{
-    player: Player, 
-    myIndex: PlayerIndex | undefined, 
-    roleState: RoleState | undefined, 
-    chatFilter: number | null | undefined
-    graveRolesStrings: (string | null)[],
-    phaseState: PhaseState,
-    chatGroups: ChatGroup[] | undefined
-}>): ReactElement {
-    const isPlayerSelf = props.player.index === props.myIndex;
-
-    return <div className="buttons">
-        <div className="chat-buttons">
-            {(() => {
-
-                const filter = props.player.index;
-                const isFilterSet = props.chatFilter === filter;
-                
-                return <Button 
-                    className={"filter"} 
-                    highlighted={isFilterSet}
-                    onClick={() => {
-                        GAME_MANAGER.updateChatFilter(isFilterSet ? null : filter);
-                        return true;
-                    }}
-                    pressedChildren={result => <Icon>{result ? "done" : "warning"}</Icon>}
-                    aria-label={translate("menu.playerList.button.filter")}
-                >
-                    <Icon>filter_alt</Icon>
-                </Button>
-            })()}
-            {!isPlayerSelf && props.player.alive && (props.chatGroups ?? []).includes("all") && <Button 
+        <PlayerNamePlate playerIndex={props.player.index}/>
+        
+        
+        {GAME_MANAGER.getMySpectator() || (!isPlayerSelf && props.player.alive && (props.chatGroups ?? []).includes("all") && 
+            <Button 
                 onClick={()=>{GAME_MANAGER.prependWhisper(props.player.index); return true;}}
                 pressedChildren={() => <Icon>done</Icon>}
             >
                 <Icon>chat</Icon>
-            </Button>}
-        </div>
-        <div className="day-target">
-            {props.player.buttons.dayTarget && <DayTargetButton player={props.player} roleState={props.roleState}/>}
-        </div>
-        <div className="target-or-vote">
-            <TargetButton player={props.player} roleState={props.roleState}/>
-            <VoteButton player={props.player} roleState={props.roleState}/>
-        </div>
+            </Button>
+        )}
+        <VoteButton player={props.player} roleState={props.roleState}/>
+        {
+            props.phaseState.type === "nomination" && props.player.alive && 
+            <Counter 
+                max={GAME_MANAGER.getVotesRequired()!} 
+                current={props.player.numVoted}
+            >
+                <StyledText>{translate("menu.playerList.player.votes", props.player.numVoted)}</StyledText>
+            </Counter>
+        }
+
     </div>
-}
-
-function DayTargetButton(props: Readonly<{
-    player: Player,
-    roleState: RoleState | undefined
-}>): ReactElement {
-    return <Button 
-        highlighted={useDayTargetedPlayers().includes(props.player.index)} 
-        onClick={()=>GAME_MANAGER.sendDayTargetPacket(props.player.index)}
-    >
-        {translateAny(["role."+props.roleState?.type+".dayTarget", "dayTarget"])}
-    </Button>
-}
-
-function TargetButton(props: Readonly<{
-    player: Player,
-    roleState: RoleState | undefined
-}>): ReactElement | null {
-    const targets = usePlayerState(
-        playerState => playerState.targets,
-        ["yourSelection"]
-    )!;
-
-    const selectedPlayers = useSelectedPlayers();
-
-    if(props.player.buttons.target) {
-        return <button onClick={() => GAME_MANAGER.sendTargetPacket([...targets, props.player.index])}>
-            {translateAny(["role."+props.roleState?.type+".target", "target"])}
-        </button>
-    } else if (selectedPlayers.includes(props.player.index)) {
-        let newTargets = [...targets];
-        newTargets.splice(newTargets.indexOf(props.player.index), 1);
-        return <Button highlighted={true} onClick={() => GAME_MANAGER.sendTargetPacket(newTargets)}>
-            {translate("cancel")}
-        </Button>
-    } else {
-        return null;
-    }
 }
 
 function VoteButton(props: Readonly<{
@@ -389,9 +265,9 @@ function VoteButton(props: Readonly<{
     const playerVotedFor = usePlayerVotedFor();
 
     if (props.player.buttons.vote) {
-        return <button 
+        return <Button 
             onClick={()=>GAME_MANAGER.sendVotePacket(props.player.index)}
-        >{translate("menu.playerList.button.vote")}</button>
+        >{translate("menu.playerList.button.vote")}</Button>
     } else if (playerVotedFor === props.player.index) {
         return <Button
             highlighted={true}

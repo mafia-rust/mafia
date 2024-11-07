@@ -113,7 +113,6 @@
     "menu.playerList.button.dayTarget":"Day Target",
     "menu.playerList.button.filter":"Filter",
     "menu.playerList.player.votes":"\\0 votes",
-    "menu.playerList.player.youAreVoting":"You nominate:",
 
     "youAreSelecting": "You are selecting \\0.",
     "youAreSelecting.null": "You haven't selected anyone",

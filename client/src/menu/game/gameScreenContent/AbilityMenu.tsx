@@ -6,9 +6,9 @@ import SelectionInformation from "../../../components/SelectionInformation";
 import { useGameState, usePlayerState } from "../../../components/useHooks";
 import Pitchfork from "../../../components/Pitchfork";
 import HitOrder from "../../../components/HitOrder";
-import OnePlayerOptionSelectionType from "./AbilitySelectionTypes/OnePlayerOptionSelectionType";
-import TwoPlayerOptionSelectionType from "./AbilitySelectionTypes/TwoPlayerOptionSelectionType";
 import OldSelectionType from "./AbilitySelectionTypes/OldSelectionType";
+// import OnePlayerOptionSelectionType from "./AbilitySelectionTypes/OnePlayerOptionSelectionType";
+// import TwoPlayerOptionSelectionType from "./AbilitySelectionTypes/TwoPlayerOptionSelectionType";
 
 export default function AbilityMenu(): ReactElement {
     const roleState = usePlayerState(
