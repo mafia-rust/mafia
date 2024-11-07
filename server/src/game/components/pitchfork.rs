@@ -1,16 +1,16 @@
-use std::{collections::{HashMap, HashSet}, ops::Mul};
+use std::ops::Mul;
 
 use crate::{game::{
-    attack_power::AttackPower, grave::GraveKiller, phase::PhaseType, player::PlayerReference, game_conclusion::GameConclusion, role::Priority, role_list::RoleSet, Game
-}, packet::ToClientPacket};
+    attack_power::AttackPower, game_conclusion::GameConclusion, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::Priority, role_list::RoleSet, Game
+}, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
 #[derive(Clone)]
 pub struct Pitchfork{
-    pitchfork_owners: HashSet<PlayerReference>,
+    pitchfork_owners: VecSet<PlayerReference>,
 
     pitchfork_uses_remaining: u8,
 
-    angry_mob_vote: HashMap<PlayerReference, PlayerReference>,
+    angry_mob_vote: VecMap<PlayerReference, PlayerReference>,
     angry_mobbed_player: Option<PlayerReference>,
 }
 
@@ -52,26 +52,32 @@ impl Pitchfork{
     pub fn on_night_priority(game: &mut Game, priority: Priority){
         if priority != Priority::Kill {return;}
         if game.day_number() <= 1 {return;}
-        if !Pitchfork::pitchfork_owners(game).iter().any(|p|p.alive(game)) {return;}
+        if Pitchfork::usable_pitchfork_owners(game).len() < 1 {return;}
         
         if let Some(target) = Pitchfork::angry_mobbed_player(game) {
             target.try_night_kill(
-                &Pitchfork::pitchfork_owners(game).iter().filter(|p|p.alive(game)).map(|p|*p).collect(), 
+                &Pitchfork::usable_pitchfork_owners(game), 
                 game, 
                 GraveKiller::RoleSet(RoleSet::Town), 
                 AttackPower::ProtectionPiercing, 
                 false
             );
-            Pitchfork::set_pitchfork_uses_remaining(game, 
+            Pitchfork::set_pitchfork_uses_remaining(game,
                 Pitchfork::pitchfork_uses_remaining(game).saturating_sub(1)
             );
         }
     }
 
+    pub fn usable_pitchfork_owners(game: &Game) -> VecSet<PlayerReference> {
+        Pitchfork::pitchfork_owners(game).iter()
+            .filter(|p|p.alive(game) && !p.night_blocked(game))
+            .map(|p|*p).collect()
+    }
+
     
     pub fn player_is_voted(game: &Game) -> Option<PlayerReference> {
         let pitchfork = game.pitchfork().clone();
-        let mut votes: HashMap<PlayerReference, u8> = HashMap::new();
+        let mut votes: VecMap<PlayerReference, u8> = VecMap::new();
 
         for (voter, target) in pitchfork.angry_mob_vote.iter(){
             if 
@@ -80,9 +86,13 @@ impl Pitchfork{
                 !voter.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) 
             {continue;}
 
-            let count = votes.entry(*target).or_insert(0);
-            *count += 1;
-            if *count >= Pitchfork::number_of_votes_needed(game) {return Some(*target);}
+            let count: u8 = if let Some(count) = votes.get(target){
+                *count + 1
+            }else{
+                1
+            };
+            if count >= Pitchfork::number_of_votes_needed(game) {return Some(*target);}
+            votes.insert(*target, count);
         }
         None
     }
@@ -140,7 +150,7 @@ impl Pitchfork{
         pitchfork.angry_mobbed_player = player_ref;
         game.set_pitchfork(pitchfork);
     }
-    pub fn pitchfork_owners(game: &Game) -> HashSet<PlayerReference>{
+    pub fn pitchfork_owners(game: &Game) -> VecSet<PlayerReference>{
         game.pitchfork().pitchfork_owners.clone()
     }
     pub fn has_pitchfork(game: &Game, player_ref: PlayerReference) -> bool{

@@ -4,7 +4,7 @@ import "./anchor.css";
 import translate, { switchLanguage } from "../game/lang";
 import GlobalMenu from "./GlobalMenu";
 import SettingsMenu from './Settings';
-import { loadSettings } from "../game/localStorage";
+import { loadSettingsParsed } from "../game/localStorage";
 import LoadingScreen from "./LoadingScreen";
 import { Theme } from "..";
 import Icon from "../components/Icon";
@@ -13,6 +13,7 @@ import { ChatMessage } from "../components/ChatMessage";
 import WikiCoverCard from "../components/WikiCoverCard";
 import WikiArticle from "../components/WikiArticle";
 import AudioController from "./AudioController";
+import { Helmet } from "react-helmet";
 
 const MobileContext = createContext<boolean | undefined>(undefined);
 
@@ -26,13 +27,16 @@ export type AnchorController = {
     pushErrorCard: (error: ErrorData) => void,
     openGlobalMenu: () => void,
     closeGlobalMenu: () => void,
+    setFontSize: (fontSize: number) => void,
+    setAccessibilityFontEnabled: (accessibilityFontEnabled: boolean) => void
 }
 
 const AnchorControllerContext = createContext<AnchorController | undefined>(undefined);
 
 export { MobileContext, AnchorControllerContext };
 
-const MIN_SWIPE_DISTANCE = 40;
+const MIN_SWIPE_DISTANCE_X = 60;
+const MAX_SWIPE_DISTANCE_Y = 60;
 const MOBILE_MAX_WIDTH_PX = 600;
 
 /**
@@ -95,14 +99,28 @@ export default function Anchor(props: Readonly<{
 
     const [globalMenuOpen, setGlobalMenuOpen] = useState<boolean>(false);
 
-    const [touchStartX, setTouchStartX] = useState<number | null>(null);
-    const [touchCurrentX, setTouchCurrentX] = useState<number | null>(null);
+
+    const [touchStart, setTouchStart] = useState<[number, number] | null>(null);
+    const [touchCurrent, setTouchCurrent] = useState<[number, number] | null>(null);
+    const setFontSize = (n: number) => {
+        document.documentElement.style.fontSize = `${n}em`;
+    }
+    const setAccessibilityFontEnabled = (enabled: boolean) => {
+        const font = enabled ? 'game-accessible' : 'game-base';
+        const iconFactor = enabled ? '1.2' : '1';
+
+        document.documentElement.style.setProperty('--game-font', font);
+        document.documentElement.style.setProperty('--kira-font', font === `game-base` ? `game-kira` : font);
+        document.documentElement.style.setProperty('--icon-factor', iconFactor);
+    }
 
     // Load settings
     useEffect(() => {
-        const settings = loadSettings();
+        const settings = loadSettingsParsed();
 
         AudioController.setVolume(settings.volume);
+        setFontSize(settings.fontSize);
+        setAccessibilityFontEnabled(settings.accessibilityFont);
         switchLanguage(settings.language)
     }, [])
 
@@ -164,6 +182,12 @@ export default function Anchor(props: Readonly<{
         },
         openGlobalMenu: () => setGlobalMenuOpen(true),
         closeGlobalMenu: () => setGlobalMenuOpen(false),
+        setFontSize: (fontSize: number) => {
+            setFontSize(fontSize);
+        },
+        setAccessibilityFontEnabled: (enabled: boolean) => {
+            setAccessibilityFontEnabled(enabled);
+        }
     }), [reload, children, coverCard])
 
     useEffect(() => {
@@ -175,35 +199,49 @@ export default function Anchor(props: Readonly<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props])
     
+
     return <MobileContext.Provider value={mobile} >
         <AnchorControllerContext.Provider value={anchorController}>
             <div
                 className="anchor"
                 onTouchStart={(e) => {
-                    setTouchStartX(e.targetTouches[0].clientX)
-                    setTouchCurrentX(e.targetTouches[0].clientX)
+                    setTouchStart([e.targetTouches[0].clientX,e.targetTouches[0].clientY])
+                    setTouchCurrent([e.targetTouches[0].clientX,e.targetTouches[0].clientY])
                 }}
                 onTouchMove={(e) => {
-                    setTouchCurrentX(e.targetTouches[0].clientX)
+                    setTouchCurrent([e.targetTouches[0].clientX,e.targetTouches[0].clientY])
                 }}
                 onTouchEnd={(e) => {
-                    if(touchStartX !== null && touchCurrentX !== null){
-                        if(touchStartX - touchCurrentX > MIN_SWIPE_DISTANCE) {
+                    if(touchStart !== null && touchCurrent !== null){
+
+                        if(touchStart[1] - touchCurrent[1] > MAX_SWIPE_DISTANCE_Y) {
+                            return;
+                        }
+                        if(touchStart[0] - touchCurrent[0] > MIN_SWIPE_DISTANCE_X) {
                             for(let listener of swipeEventListeners) {
                                 listener(false);
                             }
-                        } else if (touchStartX - touchCurrentX < -MIN_SWIPE_DISTANCE) {
+                        } else if (touchStart[0] - touchCurrent[0] < -MIN_SWIPE_DISTANCE_X) {
                             for(let listener of swipeEventListeners) {
                                 listener(true);
                             }
                         }
                     }
             
-                    setTouchStartX(null)
-                    setTouchCurrentX(null)
+                    setTouchStart(null)
+                    setTouchCurrent(null)
                 }}
             >
-                <title>🌹{translate("menu.start.title")}🔪</title>
+                <Helmet>
+                    <title>🌹{translate("menu.start.title")}🔪</title>
+                    <meta name="twitter:site" content={translate("menu.start.title")}></meta>
+                    <meta name="og:site" content={translate("menu.start.title")}></meta>
+                    <meta name="twitter:title" content={translate("menu.start.title")}></meta>
+                    <meta name="og:title" content={translate("menu.start.title")}></meta>
+                    <meta name="twitter:description" content={translate("menu.start.description")}></meta>
+                    <meta name="og:description" content={translate("menu.start.description")}></meta>
+                    <meta name="twitter:card" content="summary_large_image"></meta>
+                </Helmet>
                 <Button className="global-menu-button" 
                     onClick={() => {
                         if (!globalMenuOpen) {

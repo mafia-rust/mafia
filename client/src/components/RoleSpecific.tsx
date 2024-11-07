@@ -124,9 +124,9 @@ export default function RoleSpecificSection(){
         case "mortician":
             return <Counter
                 max={3}
-                current={3-roleState.obscuredPlayers.length}
+                current={roleState.cremationsRemaining}
             >
-                <StyledText>{translate("role.mortician.roleDataText", (3-roleState.obscuredPlayers.length))}</StyledText>
+                <StyledText>{translate("role.mortician.roleDataText", roleState.cremationsRemaining)}</StyledText>
             </Counter>
         case "death":
             return <Counter

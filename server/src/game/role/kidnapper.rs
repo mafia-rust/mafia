@@ -111,31 +111,34 @@ impl RoleStateImpl for Kidnapper {
         match phase {
             PhaseType::Night => {
                 if let Some(jailed_ref) = self.jailed_target_ref {
-                    if jailed_ref.alive(game) && actor_ref.alive(game) && 
-                    //there is no alive jailor who wants to jail you
-                    !PlayerReference::all_players(game).any(|p|
-                        p.alive(game) && match p.role_state(game) {
-                            RoleState::Jailor(jailor_ref) => jailor_ref.jailed_target_ref == Some(actor_ref),
-                            _ => false
-                        }
-                    ) && 
+                    if jailed_ref.alive(game) && actor_ref.alive(game)
+                    // && 
+                    // //there is no alive jailor who wants to jail you
+                    // !PlayerReference::all_players(game).any(|p|
+                    //     p.alive(game) && match p.role_state(game) {
+                    //         RoleState::Jailor(jailor_ref) => jailor_ref.jailed_target_ref == Some(actor_ref),
+                    //         _ => false
+                    //     }
+                    // ) && 
                     //there is no alive jailor who wants to jail your target
-                    !PlayerReference::all_players(game).any(|p|
-                        p.alive(game) && match p.role_state(game) {
-                            RoleState::Jailor(jailor_ref) => jailor_ref.jailed_target_ref == Some(jailed_ref),
-                            _ => false
-                        }
-                    ) &&
+                    // !PlayerReference::all_players(game).any(|p|
+                    //     p.alive(game) && match p.role_state(game) {
+                    //         RoleState::Jailor(jailor_ref) => jailor_ref.jailed_target_ref == Some(jailed_ref),
+                    //         _ => false
+                    //     }
+                    // )
+                    // &&
                     //you cant jail a jailor
-                    jailed_ref.role(game) != Role::Jailor &&
-                    jailed_ref.role(game) != Role::Kidnapper
+                    // jailed_ref.role(game) != Role::Jailor &&
+                    // jailed_ref.role(game) != Role::Kidnapper
                     {
                 
                         Detained::add_detain(game, jailed_ref);
                         actor_ref.add_private_chat_message(game, 
                             ChatMessageVariant::JailedTarget{ player_index: jailed_ref.index() }
                         );
-                    }else{
+                    }else
+                    {
                         self.jailed_target_ref = None;
                         actor_ref.set_role_state(game, self);
                     }

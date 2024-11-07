@@ -242,6 +242,12 @@ function NormalChatMessage(props: Readonly<{
         style += " mention";
     }
 
+
+    if (props.message.variant.block) {
+        style += " block";
+    }
+
+
     return <div
         className={"chat-message-div"}
         onMouseOver={() => props.setMouseHovering(true)}
@@ -328,7 +334,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "lobbyMessage":
             return sanitizePlayerMessage(replaceMentions(message.text, playerNames));
         case "normal":
-            return sanitizePlayerMessage(replaceMentions(message.text, playerNames));
+            return (message.block===true?"\n":"")+sanitizePlayerMessage(replaceMentions(message.text, playerNames));
         case "whisper":
             return translate("chatMessage.whisper", 
                 playerNames[message.fromPlayerIndex],
@@ -647,6 +653,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "chronokaiserSpeedUp":
             return translate("chatMessage.chronokaiserSpeedUp", message.percent);
         case "deputyShotYou":
+        case "mediumExists":
         case "deathCollectedSouls":
         case "targetWasAttacked":
         case "youWereProtected":
@@ -696,7 +703,8 @@ export type ChatMessageVariant = {
 } | {
     type: "normal", 
     messageSender: MessageSender,
-    text: string
+    text: string,
+    block: boolean
 } | {
     type: "whisper", 
     fromPlayerIndex: PlayerIndex, 
@@ -809,6 +817,8 @@ export type ChatMessageVariant = {
     type: "mediumHauntStarted",
     medium: PlayerIndex,
     player: PlayerIndex
+} | {
+    type: "mediumExists"
 } | {
     type: "deputyKilled",
     shotIndex: PlayerIndex

@@ -1,7 +1,7 @@
 .will-menu details > div {
     padding: .13rem;
 }
-.will-menu textarea {
+.will-menu .textarea, .will-menu textarea {
     text-align: left;
     height: 19em;
     resize: none;

@@ -122,7 +122,7 @@ export type RoleState = {
     type: "mafiaKillingWildcard"
     role: Role
 } | {
-    type: "madeMan"
+    type: "goon"
 } |
 (Hypnotist & {type: "hypnotist"})
  | {
@@ -133,7 +133,8 @@ export type RoleState = {
     type: "informant",
 } | {
     type: "mortician",
-    obscuredPlayers: PlayerIndex[]
+    obscuredPlayers: PlayerIndex[],
+    cremationsRemaining: number
 } | {
     type: "forger",
     fakeRole: Role,
@@ -210,6 +211,8 @@ Doomsayer
     type: "disciple"
 } | {
     type: "zealot"
+} | {
+    type: "serialKiller"
 }
 
 
@@ -221,6 +224,7 @@ export type SingleRoleJsonData = {
     aura: null | "innocent" | "suspicious",
     maxCount: null | number,
     roleSpecificMenu: boolean,
+    canWriteDeathNote: boolean,
     canBeConvertedTo: Role[],
     chatMessages: ChatMessageVariant[] 
 }
@@ -232,4 +236,8 @@ export function getMainRoleSetFromRole(role: Role): RoleSet {
 
 export function roleJsonData(): RoleJsonData {
     return ROLES as RoleJsonData;
+}
+
+export function getSingleRoleJsonData(role: Role): SingleRoleJsonData {
+    return roleJsonData()[role];
 }

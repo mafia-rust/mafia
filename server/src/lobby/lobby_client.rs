@@ -82,6 +82,13 @@ impl LobbyClient {
         self.ready == Ready::Host
     }
 
+    pub fn is_spectator(&self) -> bool {
+        match self.client_type {
+            LobbyClientType::Spectator => true,
+            _ => false
+        }
+    }
+
     pub fn send(&self, message: ToClientPacket) {
         if let ClientConnection::Connected(ref sender) = self.connection {
             sender.send(message);

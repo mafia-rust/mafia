@@ -4,7 +4,7 @@ use serde::Serialize;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::cult::{Cult, CultAbility};
-use crate::game::components::revealed_group::RevealedGroupID;
+use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
@@ -40,7 +40,7 @@ impl RoleStateImpl for Spy {
 
                 let mut mafia_visits = vec![];
                 for other_player in PlayerReference::all_players(game){
-                    if RevealedGroupID::Mafia.is_player_in_revealed_group(game, other_player) {
+                    if InsiderGroupID::Mafia.is_player_in_revealed_group(game, other_player) {
                         mafia_visits.append(&mut other_player.night_visits(game).iter().map(|v|v.target.index()).collect());
                     }
                 }
@@ -69,7 +69,7 @@ impl RoleStateImpl for Spy {
                 if actor_ref.night_blocked(game) {return;}
 
                 let count = PlayerReference::all_players(game).filter(|p|
-                    p.alive(game) && RevealedGroupID::Cult.is_player_in_revealed_group(game, *p)
+                    p.alive(game) && InsiderGroupID::Cult.is_player_in_revealed_group(game, *p)
                 ).count() as u8;
 
                 if count > 0 {

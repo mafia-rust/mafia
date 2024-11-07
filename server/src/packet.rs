@@ -23,20 +23,18 @@ use vec1::Vec1;
 
 use crate::{
     game::{
-        available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, 
-        modifiers::ModifierType, phase::{PhaseState, PhaseType}, 
-        player::{PlayerIndex, PlayerReference}, 
-        role::{
+        available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage},
+        components::insider_group::InsiderGroupID,
+        grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType},
+        player::{PlayerIndex, PlayerReference}, role::{
             counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess,
             eros::ErosAction, kira::KiraGuess, 
             puppeteer::PuppeteerAction, recruiter::RecruiterAction, 
             ClientRoleStateEnum, Role
-        },
-        role_list::{RoleList, RoleOutline}, 
-        settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game,
-        GameOverReason, RejectStartReason
+        }, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings,
+        tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
     }, 
-    listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log
+    listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log, vec_set::VecSet
 };
 
 #[derive(Serialize, Debug, Clone)]
@@ -113,6 +111,8 @@ pub enum ToClientPacket{
 
     #[serde(rename_all = "camelCase")]
     YourSendChatGroups{send_chat_groups: Vec<ChatGroup>},
+    #[serde(rename_all = "camelCase")]
+    YourInsiderGroups{insider_groups: VecSet<InsiderGroupID>},
 
     YourButtons{buttons: Vec<AvailableButtons>},
     #[serde(rename_all = "camelCase")]
@@ -120,7 +120,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourPlayerTags{player_tags: HashMap<PlayerIndex, Vec1<Tag>>},
     YourWill{will: String},
-    YourNotes{notes: String},
+    YourNotes{notes: Vec<String>},
     #[serde(rename_all = "camelCase")]
     YourCrossedOutOutlines{crossed_out_outlines: Vec<u8>},
     #[serde(rename_all = "camelCase")]
@@ -138,6 +138,8 @@ pub enum ToClientPacket{
     YourForfeitVote{forfeit: bool},
     #[serde(rename_all = "camelCase")]
     YourPitchforkVote{player: Option<PlayerReference>},
+    #[serde(rename_all = "camelCase")]
+    YourHitOrderVote{player: Option<PlayerReference>},
 
     #[serde(rename_all = "camelCase")]
     AddChatMessages{chat_messages: Vec<ChatMessage>},
@@ -235,11 +237,11 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     DayTarget{player_index:  PlayerIndex},
 
-    SendMessage{text: String},
+    SendChatMessage{text: String, block: bool},
     #[serde(rename_all = "camelCase")]
     SendWhisper{player_index: PlayerIndex, text: String},
     SaveWill{will: String},
-    SaveNotes{notes: String},
+    SaveNotes{notes: Vec<String>},
     #[serde(rename_all = "camelCase")]
     SaveCrossedOutOutlines{crossed_out_outlines: Vec<u8>},
     #[serde(rename_all = "camelCase")]
@@ -283,4 +285,6 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     ForfeitVote{forfeit: bool},
     PitchforkVote{player: Option<PlayerReference>},
+    HitOrderVote{player: Option<PlayerReference>},
+    HitOrderSwitchToMafioso,
 }

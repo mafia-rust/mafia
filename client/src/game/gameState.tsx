@@ -4,7 +4,7 @@ import GameState, { LobbyClient, LobbyState, PhaseTimes, Player, LobbyClientID, 
 export function defaultPhaseTimes(): PhaseTimes {
     return {
         briefing: 45,
-        obituary: 10,
+        obituary: 60,
         discussion: 120,
         nomination: 120,
         testimony: 30,
@@ -71,7 +71,7 @@ export function createPlayerGameState(): PlayerGameState {
         roleState: { type: "detective" },
 
         will: "",
-        notes: "",
+        notes: [],
         crossedOutOutlines: [],
         chatFilter: null,
         deathNote: "",
@@ -81,8 +81,10 @@ export function createPlayerGameState(): PlayerGameState {
 
         forfeitVote: false,
         pitchforkVote: null,
+        hitOrderVote: null,
 
         sendChatGroups: [],
+        insiderGroups: [],
     }
 }
 

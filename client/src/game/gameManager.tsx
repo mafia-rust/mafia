@@ -437,10 +437,11 @@ export function createGameManager(): GameManager {
                 deathNote: notes.trim().length === 0 ? null : notes
             });
         },
-        sendSendMessagePacket(text) {
+        sendSendChatMessagePacket(text, block) {
             this.server.sendPacket({
-                type: "sendMessage",
-                text: text
+                type: "sendChatMessage",
+                text: text,
+                block: block
             });
         },
         sendSendWhisperPacket(playerIndex, text) {
@@ -586,6 +587,17 @@ export function createGameManager(): GameManager {
             this.server.sendPacket({
                 type: "pitchforkVote",
                 player: player
+            });
+        },
+        sendHitOrderVotePacket(player: PlayerIndex | null) {
+            this.server.sendPacket({
+                type: "hitOrderVote",
+                player: player
+            });
+        },
+        sendHitOrderSwitchMafiosoPacket() {
+            this.server.sendPacket({
+                type: "hitOrderSwitchToMafioso",
             });
         },
 

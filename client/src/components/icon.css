@@ -1,5 +1,5 @@
 .icon {
-    font-size: 1.2em;
+    font-size: calc(1.2em * var(--icon-factor));
     user-select: none;
 }
 
@@ -8,11 +8,11 @@ button .icon {
 }
 
 .icon-small {
-    font-size: 1em;
-    vertical-align:auto;
+    font-size: calc(1em * var(--icon-factor));
+    vertical-align: middle;
 }
 
 .icon-tiny {
-    font-size: 0.75em;
+    font-size: calc(0.75em * var(--icon-factor));
     vertical-align:auto;
 }

@@ -70,7 +70,7 @@ impl KiraGuess{
             //Mafia
             Role::Godfather | Role::Mafioso | Role::Eros |
             Role::Counterfeiter | Role::Retrainer | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
-            Role::MadeMan |
+            Role::Goon |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::MafiaWitch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
@@ -85,7 +85,8 @@ impl KiraGuess{
 
             //Fiends
             Role::Arsonist | Role::Werewolf | 
-            Role::Ojo | Role::Puppeteer | Role::Pyrolisk | Role::Kira |
+            Role::Ojo | Role::Puppeteer | Role::Pyrolisk | Role::Kira | 
+            Role::SerialKiller |
             Role::FiendsWildcard => Some(Self::NonTown),
             
             //Cult

@@ -1,4 +1,63 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@font-face {
+    font-family: game-base;
+    src: url('resources/fonts/Roboto/Roboto-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: game-base;
+    src: url('resources/fonts/Roboto/Roboto-Bold.ttf');
+    font-weight: bold;
+    font-style: normal;
+}
+@font-face {
+    font-family: game-base;
+    src: url('resources/fonts/Roboto/Roboto-Italic.ttf');
+    font-weight: normal;
+    font-style: italic;
+}
+@font-face {
+    font-family: game-base;
+    src: url('resources/fonts/Roboto/Roboto-BoldItalic.ttf');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: game-accessible;
+    src: url('resources/fonts/opendyslexic/OpenDyslexic-Regular.woff2');
+    font-weight: normal;
+    font-style: normal;
+    size-adjust: 80%;
+}
+@font-face {
+    font-family: game-accessible;
+    src: url('resources/fonts/opendyslexic/OpenDyslexic-Bold.woff2');
+    font-weight: bold;
+    font-style: normal;
+    size-adjust: 80%;
+}
+@font-face {
+    font-family: game-accessible;
+    src: url('resources/fonts/opendyslexic/OpenDyslexic-Italic.woff2');
+    font-weight: normal;
+    font-style: italic;
+    size-adjust: 80%;
+}
+@font-face {
+    font-family: game-accessible;
+    src: url('resources/fonts/opendyslexic/OpenDyslexic-Bold-Italic.woff2');
+    font-weight: bold;
+    font-style: italic;
+    size-adjust: 80%;
+}
+
+@font-face {
+    font-family: game-kira;
+    src: url(resources/fonts/canterbury.regular.ttf) format('truetype');
+    size-adjust: 120%;
+}
+
 
 :root{
     --background-color: #0E1026;
@@ -18,6 +77,9 @@
     --focus-outline-color: #929ccc;
 
     font-size: 1em;
+    
+    --game-font: game-base;
+    --kira-font: game-kira;
 }
 
 s {
@@ -34,13 +96,13 @@ s {
 
     margin: 0;
     padding: 0;
-    /* font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
-    font-family: 'Roboto', sans-serif;
     
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
     color: white;
+
+    font-family: var(--game-font, Arial);
 }
 .timer-box{
     width: 100%;
@@ -50,7 +112,7 @@ s {
     background-color: #220000;
 }
 
-button, input, select, option, textarea, summary {
+button, input, select, option, textarea, .textarea, summary {
     border-radius: 0.4rem;
     margin: .13rem;
     background-color: var(--secondary-color);
@@ -60,6 +122,22 @@ button, input, select, option, textarea, summary {
     color: white;
     font-size: 1em;
     padding: 0.13rem 0.25rem;
+}
+
+/*
+Ensure the CSS is EXACTLY the same (FUCK YOU CHROME)
+*/
+textarea, .textarea {
+    display: inline-block;
+    unicode-bidi: normal;
+    overflow-wrap: normal;
+    cursor: text;
+    white-space-collapse: preserve;
+    text-rendering: optimizeLegibility;
+    vertical-align: text-bottom;
+    white-space: pre;
+    overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 *:focus-visible {
@@ -91,7 +169,7 @@ button, select, summary {
     border-right-color: var(--primary-border-shadow-color);
     user-select: none;
 }
-input, option, textarea {
+input, option, textarea, .textarea {
     border-top-color: var(--background-border-shadow-color);
     border-left-color: var(--background-border-shadow-color);
 }
@@ -120,7 +198,7 @@ button.close {
     padding: 0;
 }
 
-button:disabled, input:disabled, select:disabled, option:disabled, textarea:disabled, summary:disabled {
+button:disabled, input:disabled, select:disabled, option:disabled, textarea:disabled, .textarea:disabled, summary:disabled {
     opacity: 0.5;
     box-shadow: 0 0 100vmax #55555555 inset;
 }

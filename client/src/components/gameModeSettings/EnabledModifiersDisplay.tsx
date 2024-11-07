@@ -4,6 +4,7 @@ import React from "react";
 import translate from "../../game/lang";
 import StyledText from "../StyledText";
 import { GameModeContext } from "./GameModesEditor";
+import Select, { SelectOptionsSearch } from "../Select";
 
 export function EnabledModifiersDisplay(props: {
     disabled: boolean,
@@ -18,31 +19,27 @@ export function EnabledModifiersDisplay(props: {
 
     return <div className="chat-menu-colors selector-section">
             <h2><StyledText>{translate("modifiers")}</StyledText></h2>
-            {dropdownsSelected.map((modifier, index) => {
+            {dropdownsSelected.map((currentModifier, index) => {
                 return <EnabledModifierDisplay
                     key={index}
-                    modifier={modifier}
+                    modifier={currentModifier}
                     disabled={props.disabled}
                     choosableModifiers={
-                        Object.values(MODIFIERS).filter((m) => !enabledModifiers.includes(m)||m===modifier)
+                        Object.values(MODIFIERS).filter((m) => !enabledModifiers.includes(m)||m===currentModifier)
                     }
-                    onChange={modifier => {
+                    onChange={newModifier => {
                         if (props.onChange === undefined)
                             return;
                         
-                        let currentModifiers = enabledModifiers;
+                        let currentModifiers: (ModifierType | null)[] = [...enabledModifiers];
+                        currentModifiers.splice(index, 1, newModifier);
 
-                        if (modifier === null) {
-                            currentModifiers.splice(index, 1);
-                        } else {
-                            currentModifiers.push(modifier);
-                        }
+                        //make sure to remove duplicates & null
+                        const out = currentModifiers
+                            .filter((value, index, self) => self.indexOf(value) === index)
+                            .filter(modifier => modifier !== null) as ModifierType[];
 
-                        //make sure to remove duplicates
-                        currentModifiers = currentModifiers.filter((value, index, self) => self.indexOf(value) === index);
-                        currentModifiers = currentModifiers.filter(modifier => modifier !== null);
-
-                        props.onChange(currentModifiers);
+                        props.onChange(out);
                     }}
                 />
                 
@@ -56,20 +53,25 @@ function EnabledModifierDisplay(props: {
     disabled: boolean,
     onChange: (modifier: ModifierType | null) => void,
 }): ReactElement {
-    return <select
-        value={props.modifier? props.modifier : "none"}
+
+    const optionMap: SelectOptionsSearch<ModifierType | "none"> = new Map();
+    optionMap.set("none", [
+        <StyledText noLinks={true}>{translate("none")}</StyledText>,
+        translate("none")
+    ]);
+    for (let modifier of (props.choosableModifiers ?? MODIFIERS)) {
+        optionMap.set(modifier, [
+            <StyledText noLinks={true}>{translate(modifier)}</StyledText>,
+            translate(modifier)
+        ]);
+    }
+
+    return <Select
+        value={props.modifier === null ?  "none" : props.modifier}
         disabled={props.disabled}
+        optionsSearch={optionMap}
         onChange={e => props.onChange(
-            e.target.value === "none"?null:e.target.value as ModifierType 
+            e === "none" ? null : e as ModifierType 
         )}
-    >
-        {
-            Object.values(MODIFIERS)
-                .filter(modifier => props.choosableModifiers===undefined || props.choosableModifiers.includes(modifier))
-                .map((modifier) => {
-                    return <option key={modifier} value={modifier}>{translate(modifier)}</option>
-                })
-                .concat([<option key="none" value="none">{translate("none")}</option>])
-        }
-    </select>
+    />
 }

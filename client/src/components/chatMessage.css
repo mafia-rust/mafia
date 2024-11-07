@@ -15,6 +15,13 @@
     max-width: 100%;
     display: flex;
     align-items: center;
+    font-size: 1.15rem;
+}
+.chat-message.block {
+    background-color: var(--primary-color);
+    border: .13rem solid var(--primary-border-color);
+    border-radius: .5rem;
+    padding: .25rem;
 }
 .chat-message {
     width: 100%;

@@ -87,6 +87,9 @@
     padding: 0;
     height: 1.2em;
 }
+.content-tab > button > .icon-small {
+    vertical-align: super;
+}
 .content-tab > .close {
     position: absolute;
     right: 0;

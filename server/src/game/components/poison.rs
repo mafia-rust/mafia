@@ -1,10 +1,8 @@
-use std::collections::HashSet;
-
-use crate::game::{
+use crate::{game::{
     attack_power::AttackPower, chat::ChatMessageVariant,
     grave::GraveKiller, player::PlayerReference,
     role::Priority, Game
-};
+}, vec_set::VecSet};
 
 impl Game {
     pub fn poison(&self)->&Poison{
@@ -25,7 +23,7 @@ struct PlayerPoison{
     player: PlayerReference,
     attack_power: AttackPower,
     grave_killer: GraveKiller,
-    attackers: HashSet<PlayerReference>,
+    attackers: VecSet<PlayerReference>,
     leave_death_note: bool,
 }
 impl PlayerPoison{
@@ -33,7 +31,7 @@ impl PlayerPoison{
         player: PlayerReference,
         attack_power: AttackPower,
         grave_killer: GraveKiller,
-        attackers: HashSet<PlayerReference>,
+        attackers: VecSet<PlayerReference>,
         leave_death_note: bool,
     )->Self{
         Self{
@@ -53,7 +51,7 @@ impl Poison{
         player: PlayerReference,
         attack_power: AttackPower,
         grave_killer: GraveKiller,
-        attackers: HashSet<PlayerReference>,
+        attackers: VecSet<PlayerReference>,
         death_note: bool,
     ){
         let mut poison = game.poison().clone();

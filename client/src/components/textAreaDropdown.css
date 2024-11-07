@@ -1,0 +1,34 @@
+.text-area-dropdown details > div {
+    padding: .13rem;
+}
+.text-area-dropdown .textarea, .text-area-dropdown textarea {
+    text-align: left;
+    height: 19em;
+    resize: none;
+    width: 100%;
+    margin: 0;
+}
+.text-area-dropdown .textarea > * {
+    text-wrap: pretty;
+}
+.text-area-dropdown summary > div {
+    display: inline-flex;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    text-align: left;
+    align-items: baseline;
+    /* This is a little hacky. This whole thing is a little hacky.*/
+    padding-right: .75rem;
+}
+.text-area-dropdown summary > div > div {
+    display:flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    align-items: center;
+}
+.text-area-dropdown > summary {
+    /* margin: 0;
+    padding: 0 .25rem; */
+}

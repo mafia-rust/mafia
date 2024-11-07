@@ -18,6 +18,7 @@ type v3ShareableGameMode = ShareableGameMode
 type v3GameMode = GameMode
 type v3GameModeStorage = GameModeStorage
 
+
 function parseGameModeStorage(json: NonNullable<any>): ParseResult<v3GameModeStorage> {
     if (typeof json !== "object" || Array.isArray(json)) {
         return Failure("gameModeStorageNotObject", json);
@@ -71,7 +72,7 @@ function parseShareableGameModeData(json: NonNullable<any>): ParseResult<v3Share
         const name = parseName(json.name);
         if (isFailure(name)) return name;
 
-        return Success({ format: "v2", name: name.value, ...gameMode.value });
+        return Success({ format: "v3", name: name.value, ...gameMode.value });
     }
 }
 

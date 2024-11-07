@@ -18,23 +18,26 @@ pub mod game_listeners;
 pub mod attack_power;
 pub mod modifiers;
 pub mod win_condition;
+pub mod role_outline_reference;
 
 use std::collections::HashMap;
 use std::time::Duration;
 use components::confused::Confused;
+use components::drunk_aura::DrunkAura;
 use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
 use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
 use components::poison::Poison;
 use components::detained::Detained;
-use components::revealed_group::RevealedGroupID;
-use components::revealed_group::RevealedGroups;
+use components::insider_group::InsiderGroupID;
+use components::insider_group::InsiderGroups;
 use components::verdicts_today::VerdictsToday;
 use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
+use role_outline_reference::OriginallyGeneratedRoleAndPlayer;
 use serde::Serialize;
 
 use crate::client_connection::ClientConnection;
@@ -75,7 +78,7 @@ pub struct Game {
     pub spectators: Vec<Spectator>,
     pub spectator_chat_messages: Vec<ChatMessageVariant>,
 
-    pub roles_originally_generated: Vec<(Role, PlayerReference)>,
+    pub roles_originally_generated: Vec<OriginallyGeneratedRoleAndPlayer>,
 
     pub players: Box<[Player]>,
     pub graves: Vec<Grave>,
@@ -97,9 +100,10 @@ pub struct Game {
     pub pitchfork: Pitchfork,
     pub poison: Poison,
     pub modifiers: Modifiers,
-    pub revealed_groups: RevealedGroups,
+    pub revealed_groups: InsiderGroups,
     pub detained: Detained,
     pub confused: Confused,
+    pub drunk_aura: DrunkAura,
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -177,7 +181,7 @@ impl Game {
                 players: new_players.into_boxed_slice(),
                 graves: Vec::new(),
                 phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
-                modifiers: Modifiers::from_settings(settings.enabled_modifiers.clone()),
+                modifiers: Modifiers::default_from_settings(settings.enabled_modifiers.clone()),
                 settings,
 
                 cult: Cult::default(),
@@ -190,9 +194,10 @@ impl Game {
                 pitchfork: Pitchfork::default(),
                 poison: Poison::default(),
 
-                revealed_groups: RevealedGroups::default(),
+                revealed_groups: InsiderGroups::default(),
                 detained: Detained::default(),
                 confused: Confused::default(),
+                drunk_aura: DrunkAura::default(),
             };
 
             if !game.game_is_over() {
@@ -213,7 +218,7 @@ impl Game {
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         
-            RevealedGroupID::start_game_set_player_revealed_groups(
+            InsiderGroupID::start_game_set_player_revealed_groups(
                 role_data.clone().default_revealed_groups(),
                 &mut game,
                 player
@@ -225,8 +230,7 @@ impl Game {
         //on role creation needs to be called after all players roles are known
         //trigger role event listeners
         for player_ref in PlayerReference::all_players(&game){
-            let role_data_copy = player_ref.role_state(&game).clone();
-            player_ref.set_role_and_win_condition_and_revealed_group(&mut game, role_data_copy);
+            player_ref.initial_role_creation(&mut game);
         }
 
         for player_ref in PlayerReference::all_players(&game){
@@ -237,7 +241,7 @@ impl Game {
         }
 
         //reveal groups
-        for group in RevealedGroupID::all() {
+        for group in InsiderGroupID::all() {
             group.reveal_group_players(&mut game);
         }
 
@@ -433,7 +437,7 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, revealed_group::RevealedGroupID, verdicts_today::VerdictsToday},
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, insider_group::InsiderGroupID, verdicts_today::VerdictsToday},
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -496,11 +500,11 @@ pub mod test {
             verdicts_today: VerdictsToday::default(),
             pitchfork: Pitchfork::default(),
             poison: Poison::default(),
-
             modifiers: Default::default(),
             revealed_groups: Default::default(),
             detained: Default::default(),
             confused: Default::default(),
+            drunk_aura: Default::default(),
         };
 
         //set wincons and revealed groups
@@ -509,7 +513,7 @@ pub mod test {
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         
-            RevealedGroupID::start_game_set_player_revealed_groups(
+            InsiderGroupID::start_game_set_player_revealed_groups(
                 role_data.clone().default_revealed_groups(),
                 &mut game,
                 player
@@ -520,8 +524,7 @@ pub mod test {
 
         //on role creation needs to be called after all players roles are known
         for player_ref in PlayerReference::all_players(&game){
-            let role_data_copy = player_ref.role_state(&game).clone();
-            player_ref.set_role_and_win_condition_and_revealed_group(&mut game, role_data_copy);
+            player_ref.initial_role_creation(&mut game);
         }
 
         OnGameStart::invoke(&mut game);

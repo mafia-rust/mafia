@@ -2,7 +2,7 @@ use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::Serialize;
 
-use crate::game::win_condition::WinCondition;
+use crate::game::components::drunk_aura::DrunkAura;
 use crate::game::{attack_power::DefensePower, components::confused::Confused};
 use crate::game::player::PlayerReference;
 use crate::game::Game;
@@ -18,9 +18,6 @@ pub struct Drunk;
 
 impl RoleStateImpl for Drunk {
     type ClientRoleState = Drunk;
-    fn default_win_condition(self) -> crate::game::win_condition::WinCondition where super::RoleState: From<Self> {
-        WinCondition::new_single_resolution_state(crate::game::game_conclusion::GameConclusion::Town)
-    }
     fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
 
         let possible_roles = Self::POSSIBLE_ROLES.iter()
@@ -35,10 +32,13 @@ impl RoleStateImpl for Drunk {
         }
 
         Confused::add_player(game, actor_ref);
+        DrunkAura::add_player(game, actor_ref);
     }
 }
 impl Drunk{
-    const POSSIBLE_ROLES: [Role; 4] = [
-        Role::Detective, Role::Snoop, Role::Gossip, Role::Philosopher
+    const POSSIBLE_ROLES: [Role; 7] = [
+        Role::Detective, Role::Snoop, Role::Gossip,
+        Role::Philosopher, Role::Psychic, Role::TallyClerk,
+        Role::Auditor
     ];
 }

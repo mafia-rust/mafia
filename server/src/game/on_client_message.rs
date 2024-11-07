@@ -3,17 +3,12 @@ use std::collections::HashMap;
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender},
-    components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward,
-    phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference},
-    role::{
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, modifiers::mafia_hit_orders::MafiaHitOrders, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
         impostor::Impostor, kira::{Kira, KiraGuess},
         mayor::Mayor, puppeteer::PuppeteerAction, recruiter::RecruiterAction,
         retrainer::Retrainer,
         Role, RoleState
-    }, 
-    role_list::RoleSet, 
-    spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    }, role_list::RoleSet, role_outline_reference::RoleOutlineReference, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
 
@@ -116,7 +111,7 @@ impl Game {
                     sender_player_ref.do_day_action(self, target_ref);
                 }
             },
-            ToServerPacket::SendMessage { text } => {
+            ToServerPacket::SendChatMessage { text, block } => {
 
                 if text.replace(['\n', '\r'], "").trim().is_empty() {
                     break 'packet_match;
@@ -155,6 +150,7 @@ impl Game {
                         ChatMessageVariant::Normal{
                             message_sender,
                             text: text.trim_newline().trim_whitespace().truncate(400).truncate_lines(20), 
+                            block
                         }
                     );
                 }
@@ -330,32 +326,34 @@ impl Game {
             ToServerPacket::SetAuditorChosenOutline { index } => {
                 if !sender_player_ref.alive(self) {break 'packet_match;}
 
+                let outline_ref = RoleOutlineReference::new(self, index);
+
                 match sender_player_ref.role_state(self).clone() {
                     RoleState::Auditor(mut auditor)=>{
-                        if auditor.chosen_outline.is_some_and(|f|f == index) {
+                        if auditor.chosen_outline.is_some_and(|f|f.index() == index) {
                             auditor.chosen_outline = None;
                         }
     
                         if  self.roles_originally_generated.get(index as usize).is_some() && 
-                            !auditor.previously_given_results.iter().any(|(i, _)| *i == index)
+                            !auditor.previously_given_results.iter().any(|(i, _)| i.index() == index)
                         {
-                            auditor.chosen_outline = Some(index);
+                            auditor.chosen_outline = outline_ref;
                         }
     
                         sender_player_ref.set_role_state(self, auditor);
                     }
                     RoleState::Ojo(mut ojo) => {
-                    if ojo.chosen_outline.is_some_and(|f|f == index) {
-                        ojo.chosen_outline = None;
-                    }
+                        if ojo.chosen_outline.is_some_and(|f|f.index() == index) {
+                            ojo.chosen_outline = None;
+                        }
 
-                    if  self.roles_originally_generated.get(index as usize).is_some() && 
-                        !ojo.previously_given_results.iter().any(|(i, _)| *i == index)
-                    {
-                        ojo.chosen_outline = Some(index);
-                    }
+                        if  self.roles_originally_generated.get(index as usize).is_some() && 
+                            !ojo.previously_given_results.iter().any(|(i, _)| i.index() == index)
+                        {
+                            ojo.chosen_outline = outline_ref;
+                        }
 
-                    sender_player_ref.set_role_state(self, ojo);
+                        sender_player_ref.set_role_state(self, ojo);
                     }
                     _ => {}
                 }
@@ -435,6 +433,12 @@ impl Game {
             },
             ToServerPacket::PitchforkVote { player } => {
                 Pitchfork::player_votes_for_angry_mob_action(self, sender_player_ref, player);
+            }
+            ToServerPacket::HitOrderVote { player } => {
+                MafiaHitOrders::mark_vote_action(self, sender_player_ref, player);
+            }
+            ToServerPacket::HitOrderSwitchToMafioso => {
+                MafiaHitOrders::switch_to_mafioso_action(self, sender_player_ref);
             }
             _ => {
                 log!(fatal "Game"; "Unimplemented ToServerPacket: {incoming_packet:?}");
