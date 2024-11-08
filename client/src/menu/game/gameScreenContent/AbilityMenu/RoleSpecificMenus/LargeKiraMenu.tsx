@@ -1,10 +1,10 @@
 import React, { ReactElement, useEffect, useState } from "react"
-import { PlayerIndex } from "../../../../game/gameState.d"
-import GAME_MANAGER from "../../../.."
-import translate, { translateChecked } from "../../../../game/lang"
-import StyledText from "../../../../components/StyledText";
 import "./largeKiraMenu.css";
-import Select, { SelectOptionsSearch } from "../../../../components/Select";
+import GAME_MANAGER from "../../../../..";
+import translate, { translateChecked } from "../../../../../game/lang";
+import StyledText from "../../../../../components/StyledText";
+import Select, { SelectOptionsSearch } from "../../../../../components/Select";
+import { PlayerIndex } from "../../../../../game/gameState.d";
 
 export const KIRA_GUESSES = [
     "none",

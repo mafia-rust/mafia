@@ -10,11 +10,6 @@ import AudioController from "./AudioController";
 import { getAllRoles } from "../game/roleListState.d";
 import CheckBox from "../components/CheckBox";
 
-export function roleSpecificMenuType(role: Role): RoleSpecificMenuType | null {
-    return roleJsonData()[role].roleSpecificMenu === false ? null :
-        loadSettingsParsed().roleSpecificMenus.includes(role) ? "standalone" : "playerList";
-}
-
 export default function SettingsMenu(): ReactElement {
     const [volume, setVolume] = useState<number>(loadSettingsParsed().volume);
     const [fontSizeState, setFontSize] = useState<number>(loadSettingsParsed().fontSize);

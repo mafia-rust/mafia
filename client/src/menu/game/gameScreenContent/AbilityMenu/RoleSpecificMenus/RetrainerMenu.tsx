@@ -1,14 +1,14 @@
-import { ReactElement, useState } from "react"
-import RoleDropdown from "../../../../components/RoleDropdown";
-import StyledText from "../../../../components/StyledText";
-import translate from "../../../../game/lang";
+import { ReactElement, useState } from "react";
+import GAME_MANAGER from "../../../../..";
+import { useGameState, usePlayerState } from "../../../../../components/useHooks";
+import { Role, roleJsonData } from "../../../../../game/roleState.d";
+import Counter from "../../../../../components/Counter";
 import React from "react";
-import { Role, roleJsonData } from "../../../../game/roleState.d";
-import GAME_MANAGER from "../../../..";
-import { Button } from "../../../../components/Button";
-import Counter from "../../../../components/Counter";
-import { useGameState, usePlayerState } from "../../../../components/useHooks";
-import { PhaseType } from "../../../../game/gameState.d";
+import RoleDropdown from "../../../../../components/RoleDropdown";
+import StyledText from "../../../../../components/StyledText";
+import translate from "../../../../../game/lang";
+import { PhaseType } from "../../../../../game/gameState.d";
+import { Button } from "../../../../../components/Button";
 
 export default function RetrainerMenu(): ReactElement {
 

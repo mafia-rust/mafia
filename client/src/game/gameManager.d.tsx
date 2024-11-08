@@ -1,8 +1,8 @@
 import { WikiArticleLink } from "../components/WikiArticleLink";
-import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
-import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
-import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
-import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
+import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
+import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeKiraMenu";
+import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
+import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
 import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player, ModifierType } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleList, RoleOutline } from "./roleListState.d";

@@ -14,8 +14,8 @@ import { createGameState, createLobbyState } from "./gameState";
 import { Role } from "./roleState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
-import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import AudioController from "../menu/AudioController";
+import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeKiraMenu";
 
 export function createGameManager(): GameManager {
 

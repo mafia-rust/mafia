@@ -1,13 +1,13 @@
 import { ReactElement } from "react";
 import React from "react";
-import translate from "../../../../game/lang";
-import GAME_MANAGER from "../../../..";
-import { Role, roleJsonData } from "../../../../game/roleState.d";
-import { usePlayerState } from "../../../../components/useHooks";
-import Counter from "../../../../components/Counter";
-import { TextDropdownArea } from "../../../../components/TextAreaDropdown";
-import { defaultAlibi } from "../WillMenu";
-import StyledText from "../../../../components/StyledText";
+import { usePlayerState } from "../../../../../components/useHooks";
+import { Role, roleJsonData } from "../../../../../game/roleState.d";
+import translate from "../../../../../game/lang";
+import StyledText from "../../../../../components/StyledText";
+import GAME_MANAGER from "../../../../..";
+import { TextDropdownArea } from "../../../../../components/TextAreaDropdown";
+import Counter from "../../../../../components/Counter";
+import { defaultAlibi } from "../../WillMenu";
 
 export default function CounterfeiterMenu (props: {}): ReactElement {
     

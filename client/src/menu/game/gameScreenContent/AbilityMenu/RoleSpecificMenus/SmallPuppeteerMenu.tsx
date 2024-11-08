@@ -1,10 +1,10 @@
-import { ReactElement } from "react"
-import React from "react"
-import GAME_MANAGER from "../../../.."
-import translate from "../../../../game/lang"
-import StyledText from "../../../../components/StyledText"
-import { PhaseType } from "../../../../game/gameState.d"
-import Counter from "../../../../components/Counter"
+import { ReactElement } from "react";
+import GAME_MANAGER from "../../../../..";
+import Counter from "../../../../../components/Counter";
+import React from "react";
+import StyledText from "../../../../../components/StyledText";
+import translate from "../../../../../game/lang";
+import { PhaseType } from "../../../../../game/gameState.d";
 
 export type PuppeteerAction = "string" | "poison"
 
