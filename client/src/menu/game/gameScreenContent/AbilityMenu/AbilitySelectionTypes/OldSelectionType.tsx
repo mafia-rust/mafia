@@ -1,15 +1,15 @@
 import React from "react";
 import { ReactElement } from "react";
-import { usePlayerState } from "../../../../components/useHooks";
-import { PlayerIndex } from "../../../../game/gameState.d";
-import translate, { translateAny } from "../../../../game/lang";
-import { Button } from "../../../../components/Button";
-import GAME_MANAGER from "../../../..";
-import { RoleState } from "../../../../game/roleState.d";
-import PlayerNamePlate from "../../../../components/PlayerNamePlate";
+import { usePlayerState } from "../../../../../components/useHooks";
+import { PlayerIndex } from "../../../../../game/gameState.d";
+import translate, { translateAny } from "../../../../../game/lang";
+import { Button } from "../../../../../components/Button";
+import GAME_MANAGER from "../../../../..";
+import { RoleState } from "../../../../../game/roleState.d";
+import PlayerNamePlate from "../../../../../components/PlayerNamePlate";
 import "./oldSelectionType.css";
-import StyledText from "../../../../components/StyledText";
-import SelectionInformation from "../../../../components/SelectionInformation";
+import StyledText from "../../../../../components/StyledText";
+import SelectionInformation from "../SelectionInformation";
 
 export default function OldSelectionType(): ReactElement {
     const useablePlayers = usePlayerState(

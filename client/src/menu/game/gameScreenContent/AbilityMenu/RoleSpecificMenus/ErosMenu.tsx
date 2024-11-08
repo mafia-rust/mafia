@@ -1,9 +1,9 @@
-import { ReactElement } from "react";
-import StyledText from "../../../../components/StyledText";
-import React from "react";
-import translate from "../../../../game/lang";
-import GAME_MANAGER from "../../../..";
-import { useGameState, usePlayerState } from "../../../../components/useHooks";
+import { ReactElement, useEffect, useState } from "react"
+import React from "react"
+import { useGameState, usePlayerState } from "../../../../../components/useHooks";
+import GAME_MANAGER from "../../../../..";
+import translate from "../../../../../game/lang";
+import StyledText from "../../../../../components/StyledText";
 
 export default function ErosMenu (props: {}): ReactElement {
     const action = usePlayerState(

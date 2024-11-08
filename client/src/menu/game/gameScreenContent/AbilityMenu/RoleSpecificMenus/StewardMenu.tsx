@@ -1,12 +1,14 @@
-import { ReactElement } from "react"
-import { Role, roleJsonData, RoleState } from "../../../../game/roleState.d"
-import React from "react"
-import RoleDropdown from "../../../../components/RoleDropdown"
-import GAME_MANAGER from "../../../.."
-import translate from "../../../../game/lang"
-import StyledText from "../../../../components/StyledText"
-import { usePlayerState } from "../../../../components/useHooks"
-import Counter from "../../../../components/Counter"
+import { ReactElement } from "react";
+import GAME_MANAGER from "../../../../..";
+import { usePlayerState } from "../../../../../components/useHooks";
+import { Role, RoleState } from "../../../../../game/roleState.d";
+import Counter from "../../../../../components/Counter";
+import React from "react";
+import RoleDropdown from "../../../../../components/RoleDropdown";
+import { getAllRoles } from "../../../../../game/roleListState.d";
+import StyledText from "../../../../../components/StyledText";
+import translate from "../../../../../game/lang";
+
 
 
 export default function StewardMenu(
@@ -32,7 +34,7 @@ export default function StewardMenu(
         <Counter max={1} current={props.roleState.stewardProtectsRemaining}><StyledText>{translate("role.steward.roleDataText", props.roleState.stewardProtectsRemaining)}</StyledText></Counter>
         <div>
             <RoleDropdown
-                enabledRoles={(Object.keys(roleJsonData()) as Role[])
+                enabledRoles={getAllRoles()
                     .filter(role=>role!=="steward"||props.roleState.stewardProtectsRemaining!==0)
                     .filter(role=>role!==props.roleState.previousRoleChosen)
                 }

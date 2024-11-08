@@ -1,74 +1,77 @@
 import { ReactElement, useEffect, useState } from "react"
-import { Role } from "../../../../game/roleState.d"
 import React from "react"
-import { RoleList, translateRoleOutline } from "../../../../game/roleListState.d"
-import StyledText from "../../../../components/StyledText"
-import GAME_MANAGER from "../../../.."
-import "./largeAuditorMenu.css"
-import translate from "../../../../game/lang"
+import { useGameState } from "../../../../../components/useHooks";
+import GAME_MANAGER from "../../../../..";
+import { Role, RoleState } from "../../../../../game/roleState.d";
+import { AuditorResult } from "./LargeAuditorMenu";
+import RoleDropdown from "../../../../../components/RoleDropdown";
+import translate from "../../../../../game/lang";
+import { RoleList, translateRoleOutline } from "../../../../../game/roleListState.d";
+import StyledText from "../../../../../components/StyledText";
 
-export type AuditorResult = {
-    type: "two",
-    roles: [Role, Role]
-} | {
-    type: "one",
-    role: Role
-}
 
-export default function LargeAuditorMenu(props: {}): ReactElement {
+export default function OjoMenu(
+    props: {
+        roleState: RoleState & {type: "ojo"}
+    }
+): ReactElement | null {
+
+    const sendRoleChosen = (roleChosen: Role | null) => {
+        GAME_MANAGER.sendSetRoleChosen(roleChosen);
+    }
+
+    const dayNumber = useGameState(
+        state=>state.dayNumber,
+        ["phase"]
+    )!;
+
+    const roleList = useGameState(
+        state=>state.roleList,
+        ["roleList"]
+    )!;
 
     const [buttons, setButtons] = useState<
-        ({type:"notUsed", chosen: boolean} | {type:"used", result:AuditorResult})[]
-    >([])
+        ({type:"notUsed", chosen: boolean} | {type:"used", result: AuditorResult})[]
+    >([]);
 
     useEffect(()=>{
-        const listener = ()=>{
-            if(
-                GAME_MANAGER.state.stateType !== "game" ||
-                GAME_MANAGER.state.clientState.type !== "player" ||
-                GAME_MANAGER.state.clientState.roleState?.type !== "auditor"
-            ){
-                return;
+        setButtons(roleList.map((entry, index)=>{
+            let found = props.roleState.previouslyGivenResults.find(result=>result[0] === index);
+            if(found){
+                return {type:"used" as "used", result: found[1]};
+            }else{
+                return {type:"notUsed"  as "notUsed", chosen: props.roleState.chosenOutline === index};
             }
-    
-            let new_buttons = [];
-            for(let i = 0; i < GAME_MANAGER.state.roleList.length; i++){
-                let found = GAME_MANAGER.state.clientState.roleState.previouslyGivenResults.find(result=>result[0] === i);
-                if(found){
-                    new_buttons.push({type:"used" as "used", result: found[1]});
-                }else{
-                    new_buttons.push({type:"notUsed"  as "notUsed", chosen: GAME_MANAGER.state.clientState.roleState.chosenOutline === i});
-                }
-            }
-            setButtons(new_buttons);
-        };
+        }));
+    }, [props.roleState.previouslyGivenResults, props.roleState.chosenOutline, roleList]);
 
-        listener();
-        GAME_MANAGER.addStateListener(listener);
-        return ()=>GAME_MANAGER.removeStateListener(listener);
-    }, [setButtons])
 
-    if(
-        GAME_MANAGER.state.stateType !== "game" ||
-        GAME_MANAGER.state.clientState.type !== "player" ||
-        GAME_MANAGER.state.clientState.roleState?.type !== "auditor"
-    )
-        return <></>
-    
-    
-    return <div className="large-auditor-menu">
-        <div className="grid">
-            <RoleListDisplay
-                roleList={GAME_MANAGER.state.roleList}
-                strikenOutlineIndexs={
-                    GAME_MANAGER.state.clientState.roleState.previouslyGivenResults.map(result=>{return result[0] as number})
-                }
-            />
-            <ChooseButtons
-                buttons={buttons}
-            />
+    return <>
+        <div className="large-auditor-menu">
+            {translate("role.ojo.audit")}
+            <div className="grid">
+                <RoleListDisplay
+                    roleList={roleList}
+                    strikenOutlineIndexs={
+                        props.roleState.previouslyGivenResults.map(result=>{return result[0] as number})
+                    }
+                />
+                <ChooseButtons
+                    buttons={buttons}
+                />
+            </div>
         </div>
-    </div>
+        {(dayNumber > 1) && <div>
+            {translate("role.ojo.attack")}
+            <RoleDropdown
+                value={props.roleState.roleChosen}
+                onChange={(roleOption)=>{
+                    sendRoleChosen(roleOption)
+                }}
+                canChooseNone={true}
+            />
+        </div>}
+    </>
 }
 function RoleListDisplay(props: {
     roleList: RoleList,

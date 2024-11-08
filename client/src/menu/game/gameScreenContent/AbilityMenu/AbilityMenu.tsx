@@ -1,10 +1,10 @@
 import React, { ReactElement, useState } from "react";
-import translate from "../../../game/lang";
-import { ContentMenu, ContentTab } from "../GameScreen";
-import RoleSpecificSection from "../../../components/RoleSpecific";
-import { useGameState, usePlayerState } from "../../../components/useHooks";
-import Pitchfork from "../../../components/Pitchfork";
-import HitOrder from "../../../components/HitOrder";
+import translate from "../../../../game/lang";
+import { ContentMenu, ContentTab } from "../../GameScreen";
+import RoleSpecificSection from "./RoleSpecific";
+import { useGameState, usePlayerState } from "../../../../components/useHooks";
+import Pitchfork from "../../../../components/Pitchfork";
+import HitOrder from "../../../../components/HitOrder";
 import OldSelectionType from "./AbilitySelectionTypes/OldSelectionType";
 
 export default function AbilityMenu(): ReactElement {

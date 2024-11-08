@@ -1,11 +1,11 @@
 import { ReactElement } from "react"
-import RoleDropdown from "../../../../components/RoleDropdown";
-import StyledText from "../../../../components/StyledText";
-import translate from "../../../../game/lang";
+import { usePlayerState } from "../../../../../components/useHooks";
+import { Role, roleJsonData } from "../../../../../game/roleState.d";
+import GAME_MANAGER from "../../../../..";
+import translate from "../../../../../game/lang";
+import RoleDropdown from "../../../../../components/RoleDropdown";
 import React from "react";
-import { Role, roleJsonData } from "../../../../game/roleState.d";
-import GAME_MANAGER from "../../../..";
-import { usePlayerState } from "../../../../components/useHooks";
+import StyledText from "../../../../../components/StyledText";
 
 export default function ImpostorMenu(): ReactElement {
 
