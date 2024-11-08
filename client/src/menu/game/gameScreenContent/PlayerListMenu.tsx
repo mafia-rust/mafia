@@ -12,6 +12,7 @@ import { Button } from "../../../components/Button";
 import Counter from "../../../components/Counter";
 import { useGameState, usePlayerState } from "../../../components/useHooks";
 import PlayerNamePlate from "../../../components/PlayerNamePlate";
+import ChatMessage, { translateChatMessage } from "../../../components/ChatMessage";
 
 function usePlayerVotedFor(): PlayerIndex | null {
     return usePlayerState(
@@ -105,7 +106,36 @@ function PlayerCard(props: Readonly<{
 }>): ReactElement{
     const isPlayerSelf = props.player.index === props.myIndex;
 
-    return <div 
+    type NonAnonymousBlockMessage = {
+        variant: {
+            type: "normal", 
+            messageSender: {
+                type: "player", 
+                player: PlayerIndex
+            } | {
+                type: "livingToDead",
+                player: PlayerIndex,
+            },
+            text: string,
+            block: true
+        }
+        chatGroup: "all"
+    }
+
+    const mostRecentBlockMessage: undefined | NonAnonymousBlockMessage = useGameState(
+        gameState => findLast(gameState.chatMessages, message =>
+                message.chatGroup === "all" && 
+                message.variant.type === "normal" &&
+                message.variant.block &&
+                (message.variant.messageSender.type === "player" || message.variant.messageSender.type === "livingToDead") &&
+                message.variant.messageSender.player === props.player.index
+            ),
+        ["addChatMessages", "gamePlayers"]
+    ) as undefined | NonAnonymousBlockMessage;
+
+    const [alibiOpen, setAlibiOpen] = React.useState(false);
+
+    return <><div 
         className={`player-card`}
         key={props.player.index}
     >
@@ -128,6 +158,11 @@ function PlayerCard(props: Readonly<{
         })()}
 
         <PlayerNamePlate playerIndex={props.player.index}/>
+        {mostRecentBlockMessage !== undefined ? 
+            <Button onClick={()=>setAlibiOpen(!alibiOpen)}>
+                <StyledText noLinks={true}>{translateChatMessage(mostRecentBlockMessage.variant).split("\n")[1]}</StyledText>
+            </Button>
+        : null}
         
         
         {GAME_MANAGER.getMySpectator() || (!isPlayerSelf && props.player.alive && (props.chatGroups ?? []).includes("all") && 
@@ -150,6 +185,10 @@ function PlayerCard(props: Readonly<{
         }
 
     </div>
+    {alibiOpen && mostRecentBlockMessage !== undefined ? <div className="alibi">
+        <ChatMessage message={mostRecentBlockMessage}/>
+    </div> : null}
+    </>
 }
 
 function VoteButton(props: Readonly<{
@@ -170,3 +209,9 @@ function VoteButton(props: Readonly<{
         return null
     }
 }
+
+function findLast<T>(array: T[], predicate: (e: T, i: number, array: T[])=>boolean): T | undefined {
+    for(let i = array.length - 1; i >= 0; i--) 
+        if(predicate( array[i], i, array )) return array[i];
+    return undefined;
+};
