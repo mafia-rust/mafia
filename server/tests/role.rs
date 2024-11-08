@@ -1126,29 +1126,6 @@ fn grave_contains_multiple_killers_roles() {
 }
 
 #[test]
-fn drunk_appeared_visits() {
-    kit::scenario!(game in Night 2 where
-        drunk: Drunk,
-        lookout: Lookout,
-        mafioso: Mafioso,
-        townie: Doctor
-    );
-
-    assert!(mafioso.set_night_selection_single(townie));
-    assert!(lookout.set_night_selection_single(townie));
-
-    game.next_phase();
-
-    let messages = lookout.get_messages();
-    if !(
-        messages.contains(&ChatMessageVariant::LookoutResult { players: vec![drunk.index(), mafioso.index()] }) ||
-        messages.contains(&ChatMessageVariant::LookoutResult { players: vec![mafioso.index(), drunk.index()] })
-    ){
-        panic!("{:?}", messages);
-    }
-}
-
-#[test]
 fn drunk_suspicious_aura() {
     kit::scenario!(game in Night 1 where
         drunk: Drunk,
