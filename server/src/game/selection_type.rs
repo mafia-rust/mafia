@@ -42,9 +42,16 @@ impl AbilityInput{
                         if !auditor.previously_given_results.iter().any(|(i, _)| *i == outline) {
                             auditor.chosen_outline.1 = Some(outline);
                         }
-                    }{
+                    }else{
                         auditor.chosen_outline.1 = None;
                     }
+                    
+                    if auditor.chosen_outline.0.is_some() && auditor.chosen_outline.1 == auditor.chosen_outline.0{
+                        auditor.chosen_outline.1 = None;
+                    }
+
+                    println!("Auditor input got {:?}", input);
+                    println!("Auditor set to {:?}", auditor.chosen_outline);
 
                     actor_ref.set_role_state(game, auditor);
                 }
