@@ -185,7 +185,7 @@ function PlayerCard(props: Readonly<{
         }
 
     </div>
-    {alibiOpen && mostRecentBlockMessage !== undefined ? <div className="alibi">
+    {alibiOpen && mostRecentBlockMessage !== undefined ? <div onClick={()=>setAlibiOpen(false)}>
         <ChatMessage message={mostRecentBlockMessage}/>
     </div> : null}
     </>
