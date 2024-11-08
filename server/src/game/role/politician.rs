@@ -1,10 +1,12 @@
+use std::time::Duration;
+
 use serde::Serialize;
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::Grave;
-use crate::game::phase::{PhaseState, PhaseStateMachine, PhaseType};
+use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 
@@ -18,7 +20,8 @@ use super::{GetClientRoleState, RoleState, RoleStateImpl};
 #[derive(Debug, Clone, Default)]
 pub struct Politician{
     pub revealed: bool,
-    countdown_started: bool
+    countdown_started: bool,
+    countdown_nomination_started: bool,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -55,7 +58,7 @@ impl RoleStateImpl for Politician {
         PhaseType::Night != game.current_phase().phase()
     }
 
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
+    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         if
             actor_ref.alive(game) &&
             PlayerReference::all_players(game)
@@ -68,12 +71,23 @@ impl RoleStateImpl for Politician {
         {
             actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
         }
-        if phase == PhaseType::Dusk {
-            if self.countdown_started {
-                Politician::kill_all(game);
+
+        if self.countdown_started {
+            match phase {
+                PhaseType::Nomination => {
+                    self.countdown_nomination_started = true;
+                    actor_ref.set_role_state(game, self);
+                },
+                PhaseType::Dusk => {
+                    if self.countdown_nomination_started {
+                        Politician::kill_all(game);
+                    }
+                },
+                _ => {
+                    game.phase_machine.time_remaining = Duration::from_secs(0);
+                }
             }
         }
-        
     }
     
     fn on_any_death(mut self, game: &mut Game, actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
@@ -90,7 +104,7 @@ impl RoleStateImpl for Politician {
             });
         
         if self.countdown_started {
-            Politician::start_countdown(game);
+            Politician::start_countdown(&mut self, game);
         }
 
         actor_ref.set_role_state(game, self);
@@ -108,13 +122,13 @@ impl GetClientRoleState<ClientRoleState> for Politician {
 }
 
 impl Politician {
-    fn start_countdown(game: &mut Game){
-        PhaseStateMachine::next_phase(game, Some(PhaseState::
-            Nomination {
-            trials_left: 3,
-            nomination_time_remaining: PhaseStateMachine::get_start_time(game, PhaseType::Nomination)
-        }));
+    fn start_countdown(&mut self, game: &mut Game){
         game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::PoliticianCountdownStarted);
+        
+        if game.current_phase().phase() != PhaseType::Nomination {
+            game.phase_machine.time_remaining = Duration::from_secs(0);
+        }
+        self.countdown_started = true;
     }
 
     fn kill_all(game: &mut Game){
