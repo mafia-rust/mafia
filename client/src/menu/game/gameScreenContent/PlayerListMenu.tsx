@@ -8,7 +8,6 @@ import { ContentMenu, ContentTab } from "../GameScreen";
 import StyledText from "../../../components/StyledText";
 import Icon from "../../../components/Icon";
 import { Button } from "../../../components/Button";
-import Counter from "../../../components/Counter";
 import { useGameState, usePlayerState } from "../../../components/useHooks";
 import PlayerNamePlate from "../../../components/PlayerNamePlate";
 import ChatMessage, { translateChatMessage } from "../../../components/ChatMessage";
