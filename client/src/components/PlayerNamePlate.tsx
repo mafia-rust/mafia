@@ -6,7 +6,7 @@ import { useGameState, usePlayerState } from "./useHooks"
 import "./playerNamePlate.css"
 
 export default function PlayerNamePlate(props: Readonly<{
-    playerIndex: number,    //garuntee this index is valid please
+    playerIndex: number,    //guarantee this index is valid please
 }>): ReactElement {
 
         const phaseState = useGameState(

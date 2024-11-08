@@ -3,10 +3,9 @@ import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import "./playerListMenu.css"
 import "./../gameScreen.css"
-import { ChatGroup, PhaseState, Player, PlayerIndex } from "../../../game/gameState.d";
+import { PlayerIndex } from "../../../game/gameState.d";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import StyledText from "../../../components/StyledText";
-import { RoleState } from "../../../game/roleState.d";
 import Icon from "../../../components/Icon";
 import { Button } from "../../../components/Button";
 import Counter from "../../../components/Counter";
@@ -26,32 +25,20 @@ export default function PlayerListMenu(): ReactElement {
         gameState => gameState.players,
         ["gamePlayers", "yourButtons", "playerAlive", "yourPlayerTags", "yourRoleLabels", "playerVotes"]
     )!
-    const phaseState = useGameState(
-        gameState => gameState.phaseState,
-        ["phase", "playerOnTrial"]
-    )!
 
     const forfeitVote = usePlayerState(
-        gameState => gameState.forfeitVote,
+        playerState => playerState.forfeitVote,
         ["yourForfeitVote"]
     )
-    const roleState = usePlayerState(
-        gameState => gameState.roleState,
-        ["yourRoleState"]
-    )
+    const phaseState = useGameState(
+        gameState => gameState.phaseState,
+        ["phase"]
+    )!
     const myIndex = usePlayerState(
-        gameState => gameState.myIndex,
+        playerState => playerState.myIndex,
         ["yourPlayerIndex"]
     )
-    const chatGroups = usePlayerState(
-        gameState => gameState.sendChatGroups,
-        ["yourSendChatGroups"]
-    )
 
-    const chatFilter = usePlayerState(
-        playerState => playerState.chatFilter,
-        ["filterUpdate"]
-    );
 
     return <div className="player-list-menu player-list-menu-colors">
         <ContentTab close={ContentMenu.PlayerListMenu} helpMenu={"standard/playerList"}>{translate("menu.playerList.title")}</ContentTab>
@@ -68,43 +55,47 @@ export default function PlayerListMenu(): ReactElement {
         <div className="player-list">
             {players
                 .filter(player => player.alive)
-                .map(player => <PlayerCard 
-                    key={player.name} 
-                    player={player}
-                    myIndex={myIndex}
-                    roleState={roleState}
-                    chatFilter={chatFilter}
-                    phaseState={phaseState}
-                    chatGroups={chatGroups}
-                />)}
+                .map(player => <PlayerCard playerIndex={player.index}/>)}
             {players
                 .filter(player => !player.alive).length === 0 || <>
                 <div className="dead-players-separator">{translate("dead.icon")} {translate("dead")}</div>
                 {players
                     .filter(player => !player.alive)
-                    .map(player => <PlayerCard 
-                        key={player.name} 
-                        player={player}
-                        myIndex={myIndex}
-                        roleState={roleState}
-                        chatFilter={chatFilter}
-                        phaseState={phaseState}
-                        chatGroups={chatGroups}
-                    />)}
+                    .map(player => <PlayerCard playerIndex={player.index}/>)}
             </>}
         </div>
     </div>
 }
 
 function PlayerCard(props: Readonly<{ 
-    player: Player, 
-    myIndex: PlayerIndex | undefined, 
-    roleState: RoleState | undefined, 
-    chatFilter: number | null | undefined
-    phaseState: PhaseState,
-    chatGroups: ChatGroup[] | undefined
+    playerIndex: number
 }>): ReactElement{
-    const isPlayerSelf = props.player.index === props.myIndex;
+    const isPlayerSelf = usePlayerState(
+        playerState => playerState.myIndex === props.playerIndex,
+        ["yourPlayerIndex"],
+        false
+    )!;
+    const chatFilter = usePlayerState(
+        playerState => playerState.chatFilter,
+        ["filterUpdate"],
+    );
+    const playerAlive = useGameState(
+        gameState => gameState.players[props.playerIndex].alive,
+        ["gamePlayers", "playerAlive"]
+    )!;
+    const canWhisper = usePlayerState(
+        gameState => gameState.sendChatGroups.includes("all"),
+        ["yourSendChatGroups"],
+        false
+    )!;
+    const phaseState = useGameState(
+        gameState => gameState.phaseState,
+        ["phase", "playerOnTrial"]
+    )!
+    const numVoted = useGameState(
+        gameState => gameState.players[props.playerIndex].numVoted,
+        ["gamePlayers", "playerVotes"]
+    )!;
 
     type NonAnonymousBlockMessage = {
         variant: {
@@ -128,7 +119,7 @@ function PlayerCard(props: Readonly<{
                 message.variant.type === "normal" &&
                 message.variant.block &&
                 (message.variant.messageSender.type === "player" || message.variant.messageSender.type === "livingToDead") &&
-                message.variant.messageSender.player === props.player.index
+                message.variant.messageSender.player === props.playerIndex
             ),
         ["addChatMessages", "gamePlayers"]
     ) as undefined | NonAnonymousBlockMessage;
@@ -137,11 +128,11 @@ function PlayerCard(props: Readonly<{
 
     return <><div 
         className={`player-card`}
-        key={props.player.index}
+        key={props.playerIndex}
     >
         {GAME_MANAGER.getMySpectator() || (() => {
-            const filter = props.player.index;
-            const isFilterSet = props.chatFilter === filter;
+            const filter = props.playerIndex;
+            const isFilterSet = chatFilter === filter;
             
             return <Button 
                 className={"filter"} 
@@ -157,31 +148,34 @@ function PlayerCard(props: Readonly<{
             </Button>
         })()}
 
-        <PlayerNamePlate playerIndex={props.player.index}/>
+        <PlayerNamePlate playerIndex={props.playerIndex}/>
         {mostRecentBlockMessage !== undefined ? 
             <Button onClick={()=>setAlibiOpen(!alibiOpen)}>
-                <StyledText noLinks={true}>{translateChatMessage(mostRecentBlockMessage.variant).split("\n")[1]}</StyledText>
+                <StyledText noLinks={true}>
+                    {
+                        translateChatMessage(mostRecentBlockMessage.variant)
+                            .split("\n")[1]
+                            .trim()
+                            .substring(0,30)
+                            .trim()
+                    }
+                </StyledText>
             </Button>
         : null}
         
         
-        {GAME_MANAGER.getMySpectator() || (!isPlayerSelf && props.player.alive && (props.chatGroups ?? []).includes("all") && 
+        {GAME_MANAGER.getMySpectator() || (!isPlayerSelf && playerAlive && canWhisper && 
             <Button 
-                onClick={()=>{GAME_MANAGER.prependWhisper(props.player.index); return true;}}
+                onClick={()=>{GAME_MANAGER.prependWhisper(props.playerIndex); return true;}}
                 pressedChildren={() => <Icon>done</Icon>}
             >
                 <Icon>chat</Icon>
             </Button>
         )}
-        <VoteButton player={props.player}/>
+        <VoteButton playerIndex={props.playerIndex} />
         {
-            props.phaseState.type === "nomination" && props.player.alive && 
-            <Counter 
-                max={GAME_MANAGER.getVotesRequired()!} 
-                current={props.player.numVoted}
-            >
-                <StyledText>{translate("menu.playerList.player.votes", props.player.numVoted)}</StyledText>
-            </Counter>
+            phaseState.type === "nomination" && playerAlive && 
+            <StyledText>{translate("menu.playerList.player.votes", numVoted)}</StyledText>
         }
 
     </div>
@@ -192,15 +186,22 @@ function PlayerCard(props: Readonly<{
 }
 
 function VoteButton(props: Readonly<{
-    player: Player
+    playerIndex: PlayerIndex
 }>): ReactElement | null {
     const playerVotedFor = usePlayerVotedFor();
 
-    if (props.player.buttons.vote) {
+    const canVote = usePlayerState(
+        (playerState, gameState) => gameState.players[props.playerIndex].buttons.vote,
+        ["yourButtons"],
+        false
+    )!;
+        
+
+    if (canVote) {
         return <Button 
-            onClick={()=>GAME_MANAGER.sendVotePacket(props.player.index)}
+            onClick={()=>GAME_MANAGER.sendVotePacket(props.playerIndex)}
         >{translate("menu.playerList.button.vote")}</Button>
-    } else if (playerVotedFor === props.player.index) {
+    } else if (playerVotedFor === props.playerIndex) {
         return <Button
             highlighted={true}
             onClick={() => GAME_MANAGER.sendVotePacket(null)}
