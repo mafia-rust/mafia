@@ -1,9 +1,9 @@
 import React, { ReactElement } from "react";
-import GAME_MANAGER from "..";
-import translate, { translateAny } from "../game/lang";
-import StyledText from "./StyledText";
+import GAME_MANAGER from "../../../..";
+import translate, { translateAny } from "../../../../game/lang";
+import StyledText from "../../../../components/StyledText";
 import "./roleSpecific.css";
-import { useGameState, usePlayerState } from "./useHooks";
+import { useGameState, usePlayerState } from "../../../../components/useHooks";
 
 export default function SelectionInformation(): ReactElement | null {
     const phaseType = useGameState(gameState => gameState.phaseState.type, ["phase"])!;

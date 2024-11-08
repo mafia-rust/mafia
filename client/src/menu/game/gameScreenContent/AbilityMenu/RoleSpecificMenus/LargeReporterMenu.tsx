@@ -1,9 +1,9 @@
 import React from "react"
-import GAME_MANAGER from "../../../.."
-import translate from "../../../../game/lang"
 import "./largeReporterMenu.css"
-import Icon from "../../../../components/Icon"
-import { TextDropdownArea } from "../../../../components/TextAreaDropdown"
+import GAME_MANAGER from "../../../../..";
+import Icon from "../../../../../components/Icon";
+import { TextDropdownArea } from "../../../../../components/TextAreaDropdown";
+import translate from "../../../../../game/lang";
 
 type LargeReporterMenuProps = {
 }

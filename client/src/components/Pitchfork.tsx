@@ -3,7 +3,7 @@ import { useGameState, usePlayerState } from "./useHooks";
 import GAME_MANAGER from "..";
 import translate from "../game/lang";
 import StyledText from "./StyledText";
-import PlayerDropdown from "./PlayerDropdown";
+import PlayerOptionDropdown from "./PlayerOptionDropdown";
 
 export default function Pitchfork(props: Readonly<{
     pitchforkVoteOpen: boolean,
@@ -44,7 +44,7 @@ export default function Pitchfork(props: Readonly<{
             <div>
                 <StyledText>{translate("pitchfork.description")}</StyledText>
                 <div>
-                <PlayerDropdown 
+                <PlayerOptionDropdown 
                     value={pitchforkVote===undefined?null:pitchforkVote}
                     onChange={(player)=>{GAME_MANAGER.sendPitchforkVotePacket(player)}}
                     choosablePlayers={players.filter((player)=>player.alive).map((player)=>player.index)}
