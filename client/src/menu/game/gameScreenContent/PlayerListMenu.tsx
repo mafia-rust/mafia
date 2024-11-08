@@ -54,13 +54,13 @@ export default function PlayerListMenu(): ReactElement {
         <div className="player-list">
             {players
                 .filter(player => player.alive)
-                .map(player => <PlayerCard playerIndex={player.index}/>)}
+                .map(player => <PlayerCard key={player.index} playerIndex={player.index}/>)}
             {players
                 .filter(player => !player.alive).length === 0 || <>
                 <div className="dead-players-separator">{translate("dead.icon")} {translate("dead")}</div>
                 {players
                     .filter(player => !player.alive)
-                    .map(player => <PlayerCard playerIndex={player.index}/>)}
+                    .map(player => <PlayerCard key={player.index} playerIndex={player.index}/>)}
             </>}
         </div>
     </div>
