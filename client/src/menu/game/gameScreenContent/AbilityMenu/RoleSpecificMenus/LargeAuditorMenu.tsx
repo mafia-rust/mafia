@@ -105,7 +105,12 @@ function ChooseButtons(props: {
                     className={"choose-button" + (button.chosen ? " highlighted" : "")}
                     key={index}
                     onClick={()=>{
-                        GAME_MANAGER.sendSetAuditorChosenOutline(index)
+                        const input: AbilityInput = {
+                            type: "auditor",
+                            input: [index, null]
+                        };
+                        GAME_MANAGER.sendAbilityInput(input);
+                        // GAME_MANAGER.sendSetAuditorChosenOutline(index)
                     }}
                 >
                     <StyledText>
