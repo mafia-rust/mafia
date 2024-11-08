@@ -19,9 +19,9 @@ import { useGameState } from "../../components/useHooks";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
-    PlayerListMenu = "PlayerListMenu",
     RoleSpecificMenu = "RoleSpecificMenu",
     WillMenu = "WillMenu",
+    PlayerListMenu = "PlayerListMenu",
     GraveyardMenu = "GraveyardMenu",
     WikiMenu = "WikiMenu",
 }
@@ -138,9 +138,9 @@ export default function GameScreen(): ReactElement {
         mobile ? 2 : Infinity, 
         {
             ChatMenu: true,
-            PlayerListMenu: true,
             RoleSpecificMenu: !mobile,
             WillMenu: !mobile,
+            PlayerListMenu: true,
             GraveyardMenu: !mobile,
             WikiMenu: false,
         },
@@ -190,9 +190,9 @@ export default function GameScreen(): ReactElement {
             </div>
             <div className="content">
                 {menuController.menuOpen(ContentMenu.ChatMenu) && <ChatMenu/>}
-                {menuController.menuOpen(ContentMenu.PlayerListMenu) && <PlayerListMenu/>}
-                {menuController.menuOpen(ContentMenu.WillMenu) && <WillMenu/>}
                 {menuController.menuOpen(ContentMenu.RoleSpecificMenu) && <AbilityMenu/>}
+                {menuController.menuOpen(ContentMenu.WillMenu) && <WillMenu/>}
+                {menuController.menuOpen(ContentMenu.PlayerListMenu) && <PlayerListMenu/>}
                 {menuController.menuOpen(ContentMenu.GraveyardMenu) && <GraveyardMenu/>}
                 {menuController.menuOpen(ContentMenu.WikiMenu) && <WikiMenu/>}
                 {allMenusClosed && <div className="no-content">

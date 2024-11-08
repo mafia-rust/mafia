@@ -1,6 +1,11 @@
 .game-screen .content > .will-menu {
     width: 10%;
 }
+@media only screen and (max-width: 600px) {
+    .game-screen .content > .will-menu {
+        width: 100%;
+    }
+}
 .will-menu details > div {
     padding: .13rem;
 }
