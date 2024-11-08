@@ -1,12 +1,13 @@
 import { ReactElement } from "react";
 import React from "react";
-import translate from "../../../../game/lang";
-import GAME_MANAGER from "../../../..";
-import { Role, roleJsonData } from "../../../../game/roleState.d";
-import { usePlayerState } from "../../../../components/useHooks";
-import Counter from "../../../../components/Counter";
-import { TextDropdownArea } from "../../../../components/TextAreaDropdown";
-import { defaultAlibi } from "../WillMenu";
+import { usePlayerState } from "../../../../../components/useHooks";
+import { Role } from "../../../../../game/roleState.d";
+import { getAllRoles } from "../../../../../game/roleListState.d";
+import translate from "../../../../../game/lang";
+import GAME_MANAGER from "../../../../..";
+import { TextDropdownArea } from "../../../../../components/TextAreaDropdown";
+import Counter from "../../../../../components/Counter";
+import { defaultAlibi } from "../../WillMenu";
 
 export default function ForgerMenu (props: {}): ReactElement {
     
@@ -24,7 +25,7 @@ export default function ForgerMenu (props: {}): ReactElement {
     )!;
 
     let forgerRoleOptions: JSX.Element[] = [];
-    for(let role of Object.keys(roleJsonData()) as Role[]){
+    for(let role of getAllRoles()){
         forgerRoleOptions.push(
             <option key={role} value={role}>{translate("role."+role+".name")}</option>
         );

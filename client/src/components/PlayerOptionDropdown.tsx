@@ -6,7 +6,9 @@ import { useGameState } from "./useHooks"
 import StyledText from "./StyledText"
 import Select, { SelectOptionsSearch } from "./Select"
 
-export default function PlayerDropdown(props: {
+/// A dropdown menu for selecting a player.
+/// canChooseNone defaults to false.
+export default function PlayerOptionDropdown(props: {
     value: PlayerIndex | null,
     onChange: (player: PlayerIndex | null) => void,
     choosablePlayers?: PlayerIndex[],
@@ -17,6 +19,7 @@ export default function PlayerDropdown(props: {
         gameState => gameState.players.map(player => [player.index, player.toString()] as [PlayerIndex, string]),
         ["gamePlayers"]
     )!;
+
 
     const optionMap: SelectOptionsSearch<PlayerIndex | "none"> = new Map();
 

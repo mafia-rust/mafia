@@ -81,6 +81,9 @@
     "menu.chat.placeHolder": "Enter message",
     "menu.chat.clearFilter": "Clear Filter",
     "menu.chat.playerFilter": "Only showing messages related to \\0",
+    
+    "menu.ability.icon": "🔎",
+    "menu.ability.title": "Abilities",
 
     "menu.will.title": "Alibi",
     "menu.will.icon": "📜",
@@ -113,7 +116,6 @@
     "menu.playerList.button.dayTarget":"Day Target",
     "menu.playerList.button.filter":"Filter",
     "menu.playerList.player.votes":"\\0 votes",
-    "menu.playerList.player.youAreVoting":"You nominate:",
 
     "youAreSelecting": "You are selecting \\0.",
     "youAreSelecting.null": "You haven't selected anyone",
@@ -379,6 +381,8 @@
     
     "role.impostor.name": "Impostor",
     "role.impostor.name:var.0": "Impostors",
+    "role.impostor.name:var.1": "Imposter",
+    "role.impostor.name:var.2": "Imposters",
     "role.impostor.target": "Attack",
     "role.impostor.dayTarget": "Backup",
     "role.impostor.youAreSelecting": "You are organizing an attack on \\0.",
@@ -496,7 +500,7 @@
     "role.chronokaiser.name:var.0": "Chronokaisers",
     
     "role.witch.name": "Witch",
-    "role.witch.name:var.0": "Witchs",
+    "role.witch.name:var.0": "Witches",
     "role.witch.youAreSelecting": "You are possessing \\0 into \\1.",
     "role.witch.youAreSelecting.null": "You aren't possessing anyone.",
     
@@ -1204,6 +1208,8 @@
     "wiki.article.standard.alibi.title":"Alibi",
     "wiki.article.standard.alibi.title:var.0":"Alibis",
     "wiki.article.standard.alibi.text":"In order to find out who the syndicate is, townies need to share information they have in order to deduce who is lying about their role. This is done with the use of alibis, which are records of the abilities you have used and information you have gathered. Alibis are posted in the chat and graveyard when the player dies. Here is an example of a typical alibi that a Detective would have.\n\n> Detective\nNight 1: Deodat Lawson - Innocent\nNight 2: Samuel Parris - Suspicious\n\nWhen the Detective posts this alibi in chat, they provide evidence to other players that on the second night, they found Samuel Parris as suspicious, implying that Samuel Parris is a syndicate member. If the town believes the Detective, they will likely vote the suspicious player out.\n\nFor a syndicate member to pretend to be a town role, they need to write a fake alibi to blend in with the town roles. _IF A PLAYER DOES NOT HAVE AN ALIBI, THEY ARE LIKELY A SYNDICATE MEMBER_ who doesn't know how to write a fake alibi, and they should be directed to this page. ",
+    "wiki.article.standard.abilityMenu.title":"Ability Menu",
+    "wiki.article.standard.abilityMenu.text":"The Ability menu is where the controls for most abilities is. Players should come here during night to decide how to use their abilities.",
     "wiki.article.standard.graveyard.title":"Graveyard",
     "wiki.article.standard.graveyard.title:var.0":"Grave yard",
     "wiki.article.standard.graveyard.text":"The graveyard can help keep track of what roles are in the game and who has them\n- The outline list on the left shows what roles can be in the game\n    - Click on an outline to cross it out to help keep track of what roles people are.\n- The graves on the right show who is dead\n   - If you click on a grave, you can see what their alibi and role was, as well as other related information",

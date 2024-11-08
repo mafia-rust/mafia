@@ -1,27 +1,26 @@
+import { useGameState, usePlayerState } from "../../../../components/useHooks";
 import React, { ReactElement, useMemo } from "react";
-import { Role, roleJsonData, RoleState } from "../game/roleState.d";
-import LargeAuditorMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
-import LargeHypnotistMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeHypnotistMenu";
-import LargeDoomsayerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
-import LargeForgerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeForgerMenu";
-import LargeReporterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeReporterMenu";
-import StyledText from "./StyledText";
-import translate from "../game/lang";
-import GAME_MANAGER from "..";
-import OjoMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/OjoMenu";
-import SmallPuppeteerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
-import RoleDropdown from "./RoleDropdown";
-import "../menu/game/gameScreenContent/RoleSpecificMenus/smallRoleSpecificMenu.css";
-import LargeKiraMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
-import Counter from "./Counter";
-import "./roleSpecific.css";
-import ErosMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/ErosMenu";
-import CounterfeiterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/CounterfeiterMenu";
-import RetrainerMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/RetrainerMenu";
-import { useGameState, usePlayerState } from "./useHooks";
-import RecruiterMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
-import StewardMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/StewardMenu";
-import ImpostorMenu from "../menu/game/gameScreenContent/RoleSpecificMenus/ImpostorMenu";
+import LargeAuditorMenu from "./RoleSpecificMenus/LargeAuditorMenu";
+import LargeReporterMenu from "./RoleSpecificMenus/LargeReporterMenu";
+import LargeHypnotistMenu from "./RoleSpecificMenus/LargeHypnotistMenu";
+import LargeForgerMenu from "./RoleSpecificMenus/LargeForgerMenu";
+import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
+import LargeKiraMenu from "./RoleSpecificMenus/LargeKiraMenu";
+import RetrainerMenu from "./RoleSpecificMenus/RetrainerMenu";
+import ImpostorMenu from "./RoleSpecificMenus/ImpostorMenu";
+import Counter from "../../../../components/Counter";
+import StyledText from "../../../../components/StyledText";
+import translate from "../../../../game/lang";
+import CounterfeiterMenu from "./RoleSpecificMenus/CounterfeiterMenu";
+import ErosMenu from "./RoleSpecificMenus/ErosMenu";
+import SmallPuppeteerMenu from "./RoleSpecificMenus/SmallPuppeteerMenu";
+import StewardMenu from "./RoleSpecificMenus/StewardMenu";
+import OjoMenu from "./RoleSpecificMenus/OjoMenu";
+import RecruiterMenu from "./RoleSpecificMenus/RecruiterMenu";
+import { Role, roleJsonData, RoleState } from "../../../../game/roleState.d";
+import RoleDropdown from "../../../../components/RoleDropdown";
+import GAME_MANAGER from "../../../..";
+
 
 export default function RoleSpecificSection(){
     const phaseState = useGameState(
@@ -183,14 +182,14 @@ export default function RoleSpecificSection(){
 }
 
 function MarksmanRoleSpecificMenu(props: Readonly<{
-    roleState: RoleState & { type: "marksman" }
+    roleState: (RoleState & { type: "marksman" })
 }>): ReactElement {
-    let stateText;
     const players = useGameState(
         gameState => gameState.players,
         ["gamePlayers"]
     )!;
-
+    
+    let stateText;
     switch(props.roleState.state.type){
         case "notLoaded":
         case "shotTownie":
@@ -323,14 +322,12 @@ function WildcardRoleSpecificMenu(props: Readonly<{
 
     return <div className="role-information">
         <StyledText>{translate(`role.${props.roleState.type}.smallRoleMenu`)}</StyledText>
-        <div>
-            <RoleDropdown 
-                value={props.roleState.role} 
-                enabledRoles={choosable}
-                onChange={(rle)=>{
-                    GAME_MANAGER.sendSetWildcardRoleOutline(rle);
-                }}
-            />
-        </div>
+        <RoleDropdown 
+            value={props.roleState.role} 
+            enabledRoles={choosable}
+            onChange={(rle)=>{
+                GAME_MANAGER.sendSetWildcardRoleOutline(rle);
+            }}
+        />
     </div>;
 }

@@ -1,10 +1,10 @@
 import React from "react"
-import GAME_MANAGER from "../../../.."
-import translate from "../../../../game/lang"
 import "./largeHypnotistMenu.css"
-import ChatElement from "../../../../components/ChatMessage"
-import StyledText from "../../../../components/StyledText"
-import CheckBox from "../../../../components/CheckBox"
+import ChatElement from "../../../../../components/ChatMessage"
+import CheckBox from "../../../../../components/CheckBox"
+import StyledText from "../../../../../components/StyledText"
+import GAME_MANAGER from "../../../../.."
+import translate from "../../../../../game/lang"
 
 export type Hypnotist = {
     roleblock: boolean,
