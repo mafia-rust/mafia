@@ -1660,7 +1660,7 @@
     "wiki.article.role.warper.extra": " - Some abilities are not affected by yours due to the priority system. _For example_ You can't stop a jester from haunting their target using a transport, this depends on priorities and whether or not an ability is indirect\n* Warpers act after transporters\n* Warpers do not warp the visits of a transporter",
 
     "wiki.article.role.politician.reminder": "If town is about to win, you win instead, and kill all non-politicians.",
-    "wiki.article.role.politician.guide":"* If the town would win, instead the game instantly goes to trial and if you survive until dusk, you win (killing all other players)\n* Try to help to the town to win while staying alive\n* You can enfranchise to gain more votes, but be careful because this sends a message to everyone.",
+    "wiki.article.role.politician.guide":"* If the town would win, instead the game instantly goes to trial and if you survive until dusk, you win (killing all other players)\n* During the day, enfranchise to gain 3x voting power\n    - Everyone is told you enfranchised\n    - From now on, you can't whisper or be whispered to",
     "wiki.article.role.politician.abilities": "* You may enfranchise during the day to gain 3x voting power\n* If the town would win while you are alive, instead the game instantly goes to nominations and all players are told the politician is about to win. If you survive this trial, you win and all non-politicians die\n* You can't whisper or be whispered to",
     "wiki.article.role.politician.attributes": "* You win with other politicians\n* If there are no town loyalists alive, you leave town.\n* You have armor",
     "wiki.article.role.politician.extra":"* If the only players left are politicians, you win",
