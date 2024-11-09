@@ -136,6 +136,6 @@ impl Psychic {
     }
 
     fn player_is_evil(game: &Game, player_ref: PlayerReference)-> bool {
-        !player_ref.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town)
+        !player_ref.win_condition(game).is_loyalist_for(GameConclusion::Town)
     }
 }

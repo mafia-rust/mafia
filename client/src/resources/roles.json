@@ -890,6 +890,9 @@
         "canWriteDeathNote": true,
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
+            {"type": "politicianCountdownStarted"},
+            {"type": "mayorRevealed","playerIndex": 1},
+            {"type": "mayorCantWhisper"},
             {"type": "youSurvivedAttack"}
         ]
     },

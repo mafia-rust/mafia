@@ -207,7 +207,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
 
     const value = optionsSearch.get(props.value);
     if(value === undefined) {
-        throw new Error("Select value not in options");
+        console.error(`Value not found in options ${props.value}`);
     }
 
     return <RawButton
@@ -231,7 +231,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
         {open === true ? 
             <Icon>keyboard_arrow_up</Icon> :
             <Icon>keyboard_arrow_down</Icon>}
-        {value[0]}
+        {value !== undefined?value[0]:props.value.toString()}
     </RawButton>
 }
 

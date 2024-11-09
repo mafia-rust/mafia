@@ -34,7 +34,7 @@ impl WinCondition{
             WinCondition::RoleStateWon => true,
         }
     }
-    pub fn requires_only_this_resolution_state(&self, resolution_state: GameConclusion)->bool{
+    pub fn is_loyalist_for(&self, resolution_state: GameConclusion)->bool{
         match self{
             WinCondition::GameConclusionReached{win_if_any} => win_if_any.len() == 1 && win_if_any.contains(&resolution_state),
             WinCondition::RoleStateWon => false,

@@ -111,6 +111,8 @@ pub enum ChatMessageVariant {
     MayorRevealed{player_index: PlayerIndex},
     MayorCantWhisper,
     #[serde(rename_all = "camelCase")]
+    PoliticianCountdownStarted,
+    #[serde(rename_all = "camelCase")]
     ReporterReport{report: String},
     #[serde(rename_all = "camelCase")]
     YouAreInterviewingPlayer{player_index: PlayerIndex},

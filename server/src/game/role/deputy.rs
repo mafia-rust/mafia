@@ -51,7 +51,7 @@ impl RoleStateImpl for Deputy {
             target_ref.die(game, grave);
             
 
-            if target_ref.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) {
+            if target_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) {
                 actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
             }
         }

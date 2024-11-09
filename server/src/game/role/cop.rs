@@ -52,7 +52,7 @@ impl RoleStateImpl for Cop {
                     .filter(|other_player_ref|
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref &&
-                        !other_player_ref.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) &&
+                        !other_player_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
                         other_player_ref.night_visits(game)
                             .iter()
                             .any(|v|v.target==target_ref)
