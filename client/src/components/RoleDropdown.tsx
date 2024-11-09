@@ -23,21 +23,28 @@ export default function RoleDropdown(props: RoleDropdownProps): ReactElement {
 
     const optionMap: SelectOptionsSearch<Role | "none"> = new Map();
 
-    if (props.canChooseNone)
-        optionMap.set("none", [<StyledText noLinks={true}>{translate("none")}</StyledText>, translate("none")]);
+    if (props.canChooseNone){
+        optionMap.set(
+            "none", 
+            [<StyledText noLinks={true}>{translate("none")}</StyledText>, translate("none")]
+        );
+    }
     
     for (const role of getAllRoles()) {
         if (props.enabledRoles === undefined || props.enabledRoles.includes(role)) {
-            optionMap.set(role, [<StyledText noLinks={true}>{translate("role."+role+".name")}</StyledText>, translate("role."+role+".name")]);
+            optionMap.set(
+                role, 
+                [<StyledText noLinks={true}>{translate("role."+role+".name")}</StyledText>, translate("role."+role+".name")]
+            );
         }
     }
 
 
     return <Select
-        value={(props.value??"none") as Role | "none"}
+        value={convertToLowerValue(props.value)}
         onChange={value => {
             if(props.canChooseNone){
-                const newRole: Role | null = (value==="none"?null:value) as Role | null;
+                const newRole: Role | null = convertToHigherValue(value);
                 props.onChange(newRole)
             }else{
                 props.onChange(value as Role)
@@ -45,4 +52,11 @@ export default function RoleDropdown(props: RoleDropdownProps): ReactElement {
         }}
         optionsSearch={optionMap}
     />
+}
+
+function convertToLowerValue(value: Role | null): Role | "none" {
+    return value === null ? "none" : value;
+}
+function convertToHigherValue(value: Role | "none"): Role | null {
+    return value === "none" ? null : value;
 }
