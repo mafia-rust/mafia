@@ -27,7 +27,7 @@ impl RoleStateImpl for Snoop {
             let townie = if Confused::is_confused(game, actor_ref) {
                 false
             }else{
-                visit.target.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) &&
+                visit.target.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
                     actor_ref.all_visitors(game).len() == 0 &&
                     !visit.target.has_suspicious_aura(game)
             };

@@ -680,6 +680,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "psychicFailed":
         case "phaseFastForwarded":
         case "mayorCantWhisper":
+        case "politicianCountdownStarted":
         case "youAttackedSomeone":
         case "youWereAttacked":
         case "armorsmithArmorBroke":
@@ -789,6 +790,8 @@ export type ChatMessageVariant = {
     playerIndex: PlayerIndex
 } | {
     type: "mayorCantWhisper"
+} | {
+    type: "politicianCountdownStarted"
 } | {
     type: "reporterReport",
     report: string

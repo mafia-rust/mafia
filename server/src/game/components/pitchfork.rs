@@ -83,7 +83,7 @@ impl Pitchfork{
             if 
                 !voter.alive(game) || 
                 !target.alive(game) || 
-                !voter.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) 
+                !voter.win_condition(game).is_loyalist_for(GameConclusion::Town) 
             {continue;}
 
             let count: u8 = if let Some(count) = votes.get(target){
@@ -136,7 +136,7 @@ impl Pitchfork{
     }
     pub fn number_of_votes_needed(game: &Game) -> u8 {
         let x = PlayerReference::all_players(game).filter(|p|
-            p.alive(game) && p.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town)
+            p.alive(game) && p.win_condition(game).is_loyalist_for(GameConclusion::Town)
         ).count().mul(2).div_ceil(3) as u8;
         if x == 0 {1} else {x}
     }
