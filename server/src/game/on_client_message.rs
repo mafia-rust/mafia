@@ -217,6 +217,8 @@ impl Game {
             ToServerPacket::SaveDeathNote { death_note } => {
                 sender_player_ref.set_death_note(self, death_note);
             },
+            ToServerPacket::AbilityInput { ability_input } => 
+                ability_input.on_client_message(self, sender_player_ref),
             ToServerPacket::SetDoomsayerGuess { guesses } => {
                 if let RoleState::Doomsayer(mut doomsayer) = sender_player_ref.role_state(self).clone(){
                     doomsayer.guesses = guesses;
@@ -336,19 +338,6 @@ impl Game {
                 let outline_ref = RoleOutlineReference::new(self, index);
 
                 match sender_player_ref.role_state(self).clone() {
-                    RoleState::Auditor(mut auditor)=>{
-                        if auditor.chosen_outline.is_some_and(|f|f.index() == index) {
-                            auditor.chosen_outline = None;
-                        }
-    
-                        if  self.roles_originally_generated.get(index as usize).is_some() && 
-                            !auditor.previously_given_results.iter().any(|(i, _)| i.index() == index)
-                        {
-                            auditor.chosen_outline = outline_ref;
-                        }
-    
-                        sender_player_ref.set_role_state(self, auditor);
-                    }
                     RoleState::Ojo(mut ojo) => {
                         if ojo.chosen_outline.is_some_and(|f|f.index() == index) {
                             ojo.chosen_outline = None;

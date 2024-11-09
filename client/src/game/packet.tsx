@@ -272,6 +272,9 @@ export type ToServerPacket = {
 } | {
     type: "leave",
 } | {
+    type: "abilityInput",
+    abilityInput: AbilityInput
+} | {
     type: "setForgerWill",
     role: Role,
     will: string

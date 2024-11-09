@@ -97,6 +97,7 @@ export type GameManager = {
     sendEnabledRolesPacket(roles: Role[]): void;
     sendEnabledModifiersPacket(modifiers: ModifierType[]): void;
 
+    sendAbilityInput(input: AbilityInput): void;
     sendSetDoomsayerGuess(guesses: [
         [number, DoomsayerGuess],
         [number, DoomsayerGuess],
