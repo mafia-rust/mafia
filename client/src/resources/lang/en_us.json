@@ -523,7 +523,6 @@
 
     "role.politician.name": "Politician",
     "role.politician.name:var.0": "Politicians",
-    "role.politician.name:politicianCountdownStarted":"The politician is about to seize control of the town! This is your last chance to execute them before they take over!",
     "role.politician.dayTarget": "Enfranchise",
 
     "role.drunk.name": "Drunk",
@@ -835,6 +834,7 @@
 
     "chatMessage.mayorRevealed":"\\0 has enfranchised!",
     "chatMessage.mayorCantWhisper":"You can not whisper with an enfranchised player.",
+    "chatMessage.politicianCountdownStarted":"The politician is about to seize control of the town! This is your last chance to execute them before they take over!",
     "chatMessage.martyrRevealed":"Praise the Martyr \\0, for they will lead us to harmony!",
     "chatMessage.reporterReport":"The town report states this: \\0",
     "chatMessage.youAreInterviewingPlayer":"You are interviewing \\0.",
