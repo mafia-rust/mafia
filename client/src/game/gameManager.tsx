@@ -464,6 +464,12 @@ export function createGameManager(): GameManager {
             });
         },
 
+        sendAbilityInput(input) {
+            this.server.sendPacket({
+                type: "abilityInput",
+                abilityInput: input
+            });
+        },
         sendSetDoomsayerGuess(guesses) {
             this.server.sendPacket({
                 type: "setDoomsayerGuess",

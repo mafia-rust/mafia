@@ -23,16 +23,12 @@ use vec1::Vec1;
 
 use crate::{
     game::{
-        available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage},
-        components::insider_group::InsiderGroupID,
-        grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType},
-        player::{PlayerIndex, PlayerReference}, role::{
+        available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, components::insider_group::InsiderGroupID, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
             counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess,
             eros::ErosAction, kira::KiraGuess, 
             puppeteer::PuppeteerAction, recruiter::RecruiterAction, 
             ClientRoleStateEnum, Role
-        }, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings,
-        tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
+        }, role_list::{RoleList, RoleOutline}, selection_type::AbilityInput, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
     }, 
     listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log, vec_set::VecSet
 };
@@ -247,6 +243,9 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SaveDeathNote{death_note: Option<String>},
 
+    // AbilityInput
+    #[serde(rename_all = "camelCase")]
+    AbilityInput{ability_input: AbilityInput},
     // Role-specific
     #[serde(rename_all = "camelCase")]
     SetDoomsayerGuess{ guesses: [(PlayerReference, DoomsayerGuess); 3] },

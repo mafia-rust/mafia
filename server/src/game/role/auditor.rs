@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::components::confused::Confused;
 use crate::game::role_outline_reference::RoleOutlineReference;
@@ -16,7 +16,7 @@ use super::{Priority, Role, RoleStateImpl};
 #[derive(Clone, Debug, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Auditor{
-    pub chosen_outline: Option<RoleOutlineReference>,
+    pub chosen_outline: AuditorAbilityInput,
     pub previously_given_results: Vec<(RoleOutlineReference, AuditorResult)>,
 }
 
@@ -27,6 +27,9 @@ pub enum AuditorResult{
     Two{roles: [Role; 2]},
     One{role: Role}
 }
+
+#[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct AuditorAbilityInput(pub Option<RoleOutlineReference>, pub Option<RoleOutlineReference>);
 
 
 
@@ -40,33 +43,50 @@ impl RoleStateImpl for Auditor {
         if priority != Priority::Investigative {return;}
         if actor_ref.night_blocked(game) {return;}
 
-        let Some(chosen_outline) = self.chosen_outline else {return;};
+        if let Some(chosen_outline) = self.chosen_outline.0{
+            let result = if Confused::is_confused(game, actor_ref){
+                Self::get_confused_result(game, chosen_outline)
+            }else{
+                Self::get_result(game, chosen_outline)
+            };
+            actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
+                role_outline: chosen_outline.deref(&game).clone(),
+                result: result.clone()
+            });
+            self.previously_given_results.push((chosen_outline, result));
+        }
 
-        let result = if Confused::is_confused(game, actor_ref){
-            Self::get_confused_result(game, chosen_outline)
-        }else{
-            Self::get_result(game, chosen_outline)
-        };
-        
-        actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-            role_outline: chosen_outline.deref(&game).clone(),
-            result: result.clone()
-        });
+        if let Some(chosen_outline) = self.chosen_outline.1{
+            let result = if Confused::is_confused(game, actor_ref){
+                Self::get_confused_result(game, chosen_outline)
+            }else{
+                Self::get_result(game, chosen_outline)
+            };
+            actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
+                role_outline: chosen_outline.deref(&game).clone(),
+                result: result.clone()
+            });
+            self.previously_given_results.push((chosen_outline, result));
+        }
 
-        self.previously_given_results.push((chosen_outline, result));
         actor_ref.set_role_state(game, self);
     }
     fn convert_selection_to_visits(self, game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        let Some(chosen_outline) = self.chosen_outline else {return vec![]};
-
-        let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-
-        vec![Visit{ target: player, attack: false }]
+        let mut out = vec![];
+        if let Some(chosen_outline) = self.chosen_outline.0{
+            let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
+            out.push(Visit{ target: player, attack: false });
+        }
+        if let Some(chosen_outline) = self.chosen_outline.1{
+            let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
+            out.push(Visit{ target: player, attack: false });
+        }
+        out
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Obituary => {
-                self.chosen_outline = None;
+                self.chosen_outline = AuditorAbilityInput(None, None);
                 actor_ref.set_role_state(game, self);
             },
             _ => {}
