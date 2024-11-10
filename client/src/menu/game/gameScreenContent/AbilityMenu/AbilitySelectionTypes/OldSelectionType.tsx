@@ -23,7 +23,7 @@ export default function OldSelectionType(): ReactElement {
     return <>
         <SelectionInformation />
         <div className="old-selection-type">
-            {useablePlayers.map(idx => <PlayerCard playerIndex={idx}/>)}
+            {useablePlayers.map(idx => <PlayerCard key={idx} playerIndex={idx}/>)}
             {useablePlayers.length === 0 && <StyledText>{translate("none")}</StyledText>}
         </div>
     </>

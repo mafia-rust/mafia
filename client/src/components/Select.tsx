@@ -109,6 +109,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
         return ReactDOM.createRoot(dropdownElement);
     }, [])
 
+    //set ref
     useEffect(() => {
         const initialDropdown = dropdownRef.current;
         return () => {
@@ -121,6 +122,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
         }
     }, [dropdownRoot])
 
+    //match css styles
     useEffect(() => {
         const buttonElement = buttonRef.current;
         const dropdownElement = dropdownRef.current;
@@ -135,11 +137,20 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
         }
     }, [])
 
+    const [buttonLocation, setButtonLocation] = React.useState({top: 0, left: 0});
+
+    //close on scroll
     useEffect(() => {
         const listener = (ev: Event) => {
-            if (!(ev.target instanceof Node) || !dropdownRef.current.contains(ev.target)) {
-                setOpen(false);
-            }
+            const bounds = buttonRef.current?.getBoundingClientRect();
+            if (
+                open &&
+                (
+                    buttonLocation.top !== bounds?.top || 
+                    buttonLocation.left !== bounds?.left
+                )
+            )
+                handleSetOpen(false);
         };
         
         window.addEventListener("scroll", listener, true);
@@ -150,6 +161,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
         }
     })
 
+    //open and set position
     useEffect(() => {
         const buttonElement = buttonRef.current;
         const dropdownElement = dropdownRef.current;
@@ -164,12 +176,14 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
                 }}
             />);
 
+
             dropdownElement.hidden = false;
 
             const buttonBounds = buttonElement.getBoundingClientRect();
             // Position
             dropdownElement.style.width = `${buttonBounds.width}px`;
             dropdownElement.style.left = `${buttonBounds.left}px`;
+            setButtonLocation({top: buttonBounds.top, left: buttonBounds.left});
 
             const spaceAbove = buttonBounds.top;
             const spaceBelow = window.innerHeight - buttonBounds.bottom;
@@ -192,6 +206,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
         }
     }, [handleOnChange, handleSetOpen, open, props.disabled, optionsNoSearch, dropdownRoot])
 
+    //close on click outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (!dropdownRef.current?.contains(event.target as Node) && open) {

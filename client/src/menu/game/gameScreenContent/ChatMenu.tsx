@@ -134,6 +134,7 @@ export function ChatMessageSection(props: Readonly<{
         alignToBottom={true}
         totalCount={allMessages.length}
         followOutput={'smooth'}
+        initialTopMostItemIndex={allMessages.length===0 ? 0 : allMessages.length-1}
         itemContent={(index) => allMessages[index]}
         atBottomThreshold={4}
     />
