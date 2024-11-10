@@ -118,7 +118,6 @@ export type GameManager = {
     ): void
     sendSetForgerWill(role: Role | null, will: string): void;
     sendSetCounterfeiterAction(action: "forge" | "noForge"): void;
-    sendSetAuditorChosenOutline(index: number): void;
     sendSetPuppeteerAction(action: PuppeteerAction): void;
     sendSetRecruiterAction(action: RecruiterAction): void;
     sendSetErosAction(action: "loveLink" | "kill"): void;

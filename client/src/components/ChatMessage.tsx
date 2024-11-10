@@ -12,7 +12,7 @@ import { RoleOutline, translateRoleOutline } from "../game/roleListState.d";
 import { CopyButton } from "./ClipboardButtons";
 import { useLobbyOrGameState, usePlayerState } from "./useHooks";
 import { KiraGuess, KiraGuessResult, kiraGuessTranslate } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeKiraMenu";
-import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeAuditorMenu";
+import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
 

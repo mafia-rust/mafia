@@ -1,13 +1,11 @@
-import { ReactElement, useEffect, useState } from "react"
+import { ReactElement } from "react"
 import React from "react"
 import { useGameState } from "../../../../../components/useHooks";
 import GAME_MANAGER from "../../../../..";
 import { Role, RoleState } from "../../../../../game/roleState.d";
-import { AuditorResult } from "./LargeAuditorMenu";
 import RoleDropdown from "../../../../../components/RoleDropdown";
 import translate from "../../../../../game/lang";
-import { RoleList, translateRoleOutline } from "../../../../../game/roleListState.d";
-import StyledText from "../../../../../components/StyledText";
+import TwoRoleOutlineOptionInputMenu, { TwoRoleOutlineOptionInput } from "../AbilitySelectionTypes/TwoRoleOutlineOptionInputMenu";
 
 
 export default function OjoMenu(
@@ -25,42 +23,20 @@ export default function OjoMenu(
         ["phase"]
     )!;
 
-    const roleList = useGameState(
-        state=>state.roleList,
-        ["roleList"]
-    )!;
-
-    const [buttons, setButtons] = useState<
-        ({type:"notUsed", chosen: boolean} | {type:"used", result: AuditorResult})[]
-    >([]);
-
-    useEffect(()=>{
-        setButtons(roleList.map((entry, index)=>{
-            let found = props.roleState.previouslyGivenResults.find(result=>result[0] === index);
-            if(found){
-                return {type:"used" as "used", result: found[1]};
-            }else{
-                return {type:"notUsed"  as "notUsed", chosen: props.roleState.chosenOutline === index};
-            }
-        }));
-    }, [props.roleState.previouslyGivenResults, props.roleState.chosenOutline, roleList]);
-
+    const onInput = (chosenOutlines: TwoRoleOutlineOptionInput) => {
+        const input = {
+            type: "ojoInvestigate" as const,
+            input: chosenOutlines
+        };
+        GAME_MANAGER.sendAbilityInput(input);
+    }
 
     return <>
-        <div className="large-auditor-menu">
-            {translate("role.ojo.audit")}
-            <div className="grid">
-                <RoleListDisplay
-                    roleList={roleList}
-                    strikenOutlineIndexs={
-                        props.roleState.previouslyGivenResults.map(result=>{return result[0] as number})
-                    }
-                />
-                <ChooseButtons
-                    buttons={buttons}
-                />
-            </div>
-        </div>
+        <TwoRoleOutlineOptionInputMenu
+            previouslyGivenResults={props.roleState.previouslyGivenResults}
+            chosenOutlines={props.roleState.chosenOutline}
+            onChoose={onInput}
+        />
         {(dayNumber > 1) && <div>
             {translate("role.ojo.attack")}
             <RoleDropdown
@@ -72,70 +48,4 @@ export default function OjoMenu(
             />
         </div>}
     </>
-}
-function RoleListDisplay(props: {
-    roleList: RoleList,
-    strikenOutlineIndexs: number[],
-}): ReactElement {
-    return <>
-        {props.roleList.map((entry, index)=>{
-            return <button 
-                className="role-list-button"
-                style={{ gridRow: index + 1 }} 
-                key={index}
-            >
-                {
-                    props.strikenOutlineIndexs.includes(index) ? 
-                    <s><StyledText>
-                        {translateRoleOutline(entry) ?? ""}
-                    </StyledText></s> : 
-                    <StyledText>
-                        {translateRoleOutline(entry) ?? ""}
-                    </StyledText>
-                }
-            </button>
-        })}
-    </>
-}
-function ChooseButtons(props: {
-    //true means its selected, false means its not selected
-    buttons: ({type:"notUsed", chosen:boolean} | {type:"used", result:AuditorResult})[]
-}): ReactElement {
-    return<> {
-        props.buttons.map((button, index)=>{
-            if(button.type === "notUsed"){
-                return <button 
-                    className={"choose-button" + (button.chosen ? " highlighted" : "")}
-                    key={index}
-                    onClick={()=>{
-                        GAME_MANAGER.sendSetAuditorChosenOutline(index)
-                    }}
-                >
-                    <StyledText>
-                        {translate("choose")}
-                    </StyledText>
-                </button>
-            }else{
-                if(button.result.type === "one"){
-                    return <label
-                        className="choose-button"
-                        key={index}
-                    >
-                        <StyledText>
-                            {translate("role."+button.result.role+".name")}
-                        </StyledText>
-                    </label>
-                }else{
-                    return <label
-                        className="choose-button"
-                        key={index}
-                    >
-                        <StyledText>
-                            {translate("role."+button.result.roles[0]+".name")} {translate("role."+button.result.roles[1]+".name")}
-                        </StyledText>
-                    </label>
-                }
-            }
-        })
-    }</>
 }

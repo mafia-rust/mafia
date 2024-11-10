@@ -1,13 +1,17 @@
 import { ReactElement } from "react"
 import React from "react"
-import "./largeAuditorMenu.css"
-import GAME_MANAGER from "../../../../.."
+import "./twoRoleOutlineOptionInput.css"
 import { Role } from "../../../../../game/roleState.d"
 import { RoleList, translateRoleOutline } from "../../../../../game/roleListState.d"
 import StyledText from "../../../../../components/StyledText"
 import translate from "../../../../../game/lang"
-import { useGameState, usePlayerState } from "../../../../../components/useHooks"
+import { useGameState } from "../../../../../components/useHooks"
 import { Button } from "../../../../../components/Button"
+
+
+
+export type TwoRoleOutlineOptionInput = [number | null, number | null];
+
 
 export type AuditorResult = {
     type: "two",
@@ -24,25 +28,11 @@ type AuditorButtons = ({
     result: AuditorResult
 })[]
 
-export default function LargeAuditorMenu(props: {}): ReactElement {
-    const previouslyGivenResults = usePlayerState(
-        (playerState, gameState)=>{
-            if(playerState.roleState?.type === "auditor"){
-                return playerState.roleState.previouslyGivenResults;
-            }
-            return [];
-        },
-        ["yourRoleState"]
-    )!;
-    const chosenOutlines = usePlayerState(
-        (playerState, gameState)=>{
-            if(playerState.roleState?.type === "auditor"){
-                return playerState.roleState.chosenOutline;
-            }
-            return null;
-        },
-        ["yourRoleState"]
-    )!;
+export default function TwoRoleOutlineOptionInputMenu(props: {
+    chosenOutlines?: TwoRoleOutlineOptionInput,
+    previouslyGivenResults?: [number, AuditorResult][],
+    onChoose: (chosenOutlines: TwoRoleOutlineOptionInput)=>void
+}): ReactElement {
     const roleList = useGameState(
         (gameState)=>{
             return gameState.roleList;
@@ -50,7 +40,8 @@ export default function LargeAuditorMenu(props: {}): ReactElement {
         ["roleList"]
     )!;
 
-
+    const previouslyGivenResults = props.previouslyGivenResults ?? [];
+    const chosenOutlines = props.chosenOutlines ?? [null, null];
     
     const buttons: AuditorButtons = [];
     for(let i = 0; i < roleList.length; i++){
@@ -62,8 +53,7 @@ export default function LargeAuditorMenu(props: {}): ReactElement {
         }
     }
     
-    
-    return <div className="large-auditor-menu">
+    return <div className="two-role-outline-option-input">
         <div className="grid">
             <RoleListDisplay
                 roleList={roleList}
@@ -74,6 +64,7 @@ export default function LargeAuditorMenu(props: {}): ReactElement {
             <ChooseButtons
                 buttons={buttons}
                 chosenOutlines={chosenOutlines}
+                onChoose={props.onChoose}
             />
         </div>
     </div>
@@ -105,7 +96,8 @@ function RoleListDisplay(props: {
 function ChooseButtons(props: Readonly<{
     //true means its selected, false means its not selected
     buttons: AuditorButtons,
-    chosenOutlines: [number | null, number | null]
+    chosenOutlines: [number | null, number | null],
+    onChoose: (chosenOutlines: [number | null, number | null])=>void
 }>): ReactElement {
     return<> {
         props.buttons.map((button, index)=>{
@@ -130,12 +122,7 @@ function ChooseButtons(props: Readonly<{
                         for(let i = 0; newChosenOutlines.length < 2 && i < 100; i++){
                             newChosenOutlines.push(null);
                         }
-
-                        const input: AbilityInput = {
-                            type: "auditor",
-                            input: newChosenOutlines as [number | null, number | null]
-                        };
-                        GAME_MANAGER.sendAbilityInput(input);
+                        props.onChoose(newChosenOutlines as [number | null, number | null]);
                     }}
                 >
                     <StyledText>

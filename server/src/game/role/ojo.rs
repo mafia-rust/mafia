@@ -4,6 +4,7 @@ use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::phase::PhaseType;
 use crate::game::role_outline_reference::RoleOutlineReference;
+use crate::game::selection_type::TwoRoleOutlineOptionInput;
 use crate::game::visit::Visit;
 use crate::game::{attack_power::AttackPower, grave::GraveKiller};
 use crate::game::player::PlayerReference;
@@ -17,7 +18,7 @@ use super::{Priority, RoleStateImpl, Role};
 #[serde(rename_all = "camelCase")]
 pub struct Ojo{
     pub role_chosen: Option<Role>,
-    pub chosen_outline: Option<RoleOutlineReference>,
+    pub chosen_outline: TwoRoleOutlineOptionInput,
     pub previously_given_results: Vec<(RoleOutlineReference, AuditorResult)>,
 }
 
@@ -54,54 +55,69 @@ impl RoleStateImpl for Ojo {
                     }
                 }
 
-                let Some(chosen_outline) = self.chosen_outline else {return;};
 
-                let (role, _) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-                
-                let outline = chosen_outline.deref(&game).clone();
-
-                let result =  AuditorResult::One{role};
-                
-                actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                    role_outline: outline,
-                    result: result.clone()
-                });
-                
-                self.previously_given_results.push((chosen_outline, result));
+                if let Some(chosen_outline) = self.chosen_outline.0{
+                    let result = Self::get_result(game, chosen_outline);
+                    actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
+                        role_outline: chosen_outline.deref(&game).clone(),
+                        result: result.clone()
+                    });
+                    self.previously_given_results.push((chosen_outline, result));
+                }
+        
+                if let Some(chosen_outline) = self.chosen_outline.1{
+                    let result = Self::get_result(game, chosen_outline);
+                    actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
+                        role_outline: chosen_outline.deref(&game).clone(),
+                        result: result.clone()
+                    });
+                    self.previously_given_results.push((chosen_outline, result));
+                }
+        
                 actor_ref.set_role_state(game, self);
             },
             _ => {}
         }
     }
     fn convert_selection_to_visits(self, game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        let mut all_visits = Vec::new();
-
-        if let Some(chosen_outline) = self.chosen_outline {
-            let (_, audited_player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-            all_visits.push(Visit{ target: audited_player, attack: false });
+        let mut out = vec![];
+        if let Some(chosen_outline) = self.chosen_outline.0{
+            let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
+            out.push(Visit{ target: player, attack: false });
         }
-
+        if let Some(chosen_outline) = self.chosen_outline.1{
+            let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
+            out.push(Visit{ target: player, attack: false });
+        }
 
         if game.day_number() > 1 {
             if let Some(role) = self.role_chosen {
                 for player in PlayerReference::all_players(game){
                     if player.alive(game) && player.role(game) == role {
-                        all_visits.push(Visit{ target: player, attack: true });
+                        out.push(Visit{ target: player, attack: true });
                     }
                 }
             }
         }
-        
-        all_visits
+
+        out
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Obituary => {
-                self.chosen_outline = None;
+                self.chosen_outline = TwoRoleOutlineOptionInput(None, None);
                 self.role_chosen = None;
                 actor_ref.set_role_state(game, self);
             },
             _ => {}
         }
+    }
+}
+
+impl Ojo{
+    //panics if chosen_outline is not found
+    pub fn get_result(game: &Game, chosen_outline: RoleOutlineReference) -> AuditorResult {
+        let (role, _) = chosen_outline.deref_as_role_and_player_originally_generated(game);
+        AuditorResult::One{role}
     }
 }

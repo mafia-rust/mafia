@@ -1,7 +1,8 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use crate::game::components::confused::Confused;
 use crate::game::role_outline_reference::RoleOutlineReference;
+use crate::game::selection_type::TwoRoleOutlineOptionInput;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -16,7 +17,7 @@ use super::{Priority, Role, RoleStateImpl};
 #[derive(Clone, Debug, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Auditor{
-    pub chosen_outline: AuditorAbilityInput,
+    pub chosen_outline: TwoRoleOutlineOptionInput,
     pub previously_given_results: Vec<(RoleOutlineReference, AuditorResult)>,
 }
 
@@ -27,9 +28,6 @@ pub enum AuditorResult{
     Two{roles: [Role; 2]},
     One{role: Role}
 }
-
-#[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
-pub struct AuditorAbilityInput(pub Option<RoleOutlineReference>, pub Option<RoleOutlineReference>);
 
 
 
@@ -86,7 +84,7 @@ impl RoleStateImpl for Auditor {
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Obituary => {
-                self.chosen_outline = AuditorAbilityInput(None, None);
+                self.chosen_outline = TwoRoleOutlineOptionInput(None, None);
                 actor_ref.set_role_state(game, self);
             },
             _ => {}

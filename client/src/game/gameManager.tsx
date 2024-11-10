@@ -540,12 +540,6 @@ export function createGameManager(): GameManager {
                 action: action
             });
         },
-        sendSetAuditorChosenOutline(index) {
-            this.server.sendPacket({
-                type: "setAuditorChosenOutline",
-                index: index
-            });
-        },
         sendSetPuppeteerAction(action) {
             this.server.sendPacket({
                 type: "setPuppeteerAction",

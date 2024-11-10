@@ -1,6 +1,6 @@
 import { useGameState, usePlayerState } from "../../../../components/useHooks";
 import React, { ReactElement, useMemo } from "react";
-import LargeAuditorMenu from "./RoleSpecificMenus/LargeAuditorMenu";
+import AuditorMenu from "./RoleSpecificMenus/AuditorMenu";
 import LargeReporterMenu from "./RoleSpecificMenus/LargeReporterMenu";
 import LargeHypnotistMenu from "./RoleSpecificMenus/LargeHypnotistMenu";
 import LargeForgerMenu from "./RoleSpecificMenus/LargeForgerMenu";
@@ -40,7 +40,7 @@ export default function RoleSpecificSection(){
     
     switch(roleState.type){
         case "auditor":
-            return <LargeAuditorMenu/>;
+            return <AuditorMenu/>;
         case "reporter":
             return <LargeReporterMenu/>;
         case "hypnotist":
