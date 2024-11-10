@@ -271,7 +271,6 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SetForgerWill{ role: Role, will: String },
     SetCounterfeiterAction{action: CounterfeiterAction},
-    SetAuditorChosenOutline{index: u8},
     SetPuppeteerAction{action: PuppeteerAction},
     SetRecruiterAction{action: RecruiterAction},
     SetErosAction{action: ErosAction},

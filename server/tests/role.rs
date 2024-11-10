@@ -3,7 +3,7 @@ use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::{components::{cult::CultAbility, insider_group::InsiderGroupID}, role::{armorsmith::Armorsmith, drunk::Drunk, ojo::Ojo, recruiter::Recruiter, scarecrow::Scarecrow, tally_clerk::TallyClerk, warper::Warper}, role_list::RoleSet};
+use mafia_server::game::{components::{cult::CultAbility, insider_group::InsiderGroupID}, role::{armorsmith::Armorsmith, drunk::Drunk, ojo::Ojo, recruiter::Recruiter, scarecrow::Scarecrow, tally_clerk::TallyClerk, warper::Warper}, role_list::RoleSet, selection_type::TwoRoleOutlineOptionInput};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*, 
@@ -1504,8 +1504,8 @@ fn bouncer_ojo_block() {
 
     ojo.set_role_state(RoleState::Ojo(Ojo{
         role_chosen: Some(Role::Detective),
-        chosen_outline: None,
         previously_given_results: Vec::new(),
+        chosen_outline: TwoRoleOutlineOptionInput(None, None),
     }));
     b.set_night_selection_single(det1);
 
@@ -2105,7 +2105,7 @@ fn ojo_transporter(){
     ojo.set_role_state(
         RoleState::Ojo(Ojo{
             role_chosen: Some(Role::Philosopher),
-            chosen_outline: None,
+            chosen_outline: TwoRoleOutlineOptionInput(None, None),
             previously_given_results: Vec::new(),
         })
     );

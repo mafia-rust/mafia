@@ -5,7 +5,7 @@ use crate::{packet::ToServerPacket, strings::TidyableString, log};
 use super::{
     chat::{ChatGroup, ChatMessageVariant, MessageSender}, components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, modifiers::mafia_hit_orders::MafiaHitOrders, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
         impostor::Impostor, kira::{Kira, KiraGuess}, mayor::Mayor, politician::Politician, puppeteer::PuppeteerAction, recruiter::RecruiterAction, retrainer::Retrainer, Role, RoleState
-    }, role_list::RoleSet, role_outline_reference::RoleOutlineReference, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    }, role_list::RoleSet, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
 
@@ -330,28 +330,6 @@ impl Game {
                 if let RoleState::Counterfeiter(mut counterfeiter) = sender_player_ref.role_state(self).clone(){
                     counterfeiter.action = action;
                     sender_player_ref.set_role_state(self, RoleState::Counterfeiter(counterfeiter));
-                }
-            },
-            ToServerPacket::SetAuditorChosenOutline { index } => {
-                if !sender_player_ref.alive(self) {break 'packet_match;}
-
-                let outline_ref = RoleOutlineReference::new(self, index);
-
-                match sender_player_ref.role_state(self).clone() {
-                    RoleState::Ojo(mut ojo) => {
-                        if ojo.chosen_outline.is_some_and(|f|f.index() == index) {
-                            ojo.chosen_outline = None;
-                        }
-
-                        if  self.roles_originally_generated.get(index as usize).is_some() && 
-                            !ojo.previously_given_results.iter().any(|(i, _)| i.index() == index)
-                        {
-                            ojo.chosen_outline = outline_ref;
-                        }
-
-                        sender_player_ref.set_role_state(self, ojo);
-                    }
-                    _ => {}
                 }
             },
             ToServerPacket::SetPuppeteerAction { action } => {
