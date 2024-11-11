@@ -54,6 +54,10 @@ impl<K, V> VecMap<K, V> where K: Eq {
         None
     }
 
+    pub fn contains_key(&self, key: &K) -> bool {
+        self.vec.iter().any(|(k, _)| k == key)
+    }
+
     pub fn remove(&mut self, key: &K) -> Option<(K, V)> {
         let mut index = None;
         for (i, (k, _)) in self.vec.iter().enumerate() {

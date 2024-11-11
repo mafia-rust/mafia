@@ -1,6 +1,4 @@
-use std::collections::HashMap;
-
-use crate::{packet::ToServerPacket, strings::TidyableString, log};
+use crate::{log, packet::ToServerPacket, strings::TidyableString, vec_map::VecMap};
 
 use super::{
     chat::{ChatGroup, ChatMessageVariant, MessageSender}, 
@@ -237,7 +235,7 @@ impl Game {
             ToServerPacket::SetKiraGuess{guesses} => {
                 if let RoleState::Kira(mut kira) = sender_player_ref.role_state(self).clone(){
 
-                    let mut new_guesses: HashMap<PlayerReference, KiraGuess> = HashMap::new();
+                    let mut new_guesses: VecMap<PlayerReference, KiraGuess> = VecMap::new();
 
                     for (player_ref, guess) in guesses {
                         if Kira::allowed_to_guess(sender_player_ref, player_ref, self){
@@ -246,7 +244,7 @@ impl Game {
                     }
 
                     kira.guesses = new_guesses;
-                    sender_player_ref.set_role_state(self, RoleState::Kira(kira));
+                    sender_player_ref.set_role_state(self, kira);
                     Kira::set_guesses(sender_player_ref, self);
                 }
             },
