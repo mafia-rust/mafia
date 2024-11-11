@@ -21,7 +21,6 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 impl RoleStateImpl for Framer {
     type ClientRoleState = Framer;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-
         match priority {
             Priority::Deception => {
                 let framer_visits = actor_ref.night_visits(game).clone();
@@ -71,9 +70,6 @@ impl RoleStateImpl for Framer {
             },
             _ => {}
         }
-        
-    
-        
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         
