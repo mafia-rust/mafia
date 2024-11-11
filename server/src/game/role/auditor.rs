@@ -1,8 +1,9 @@
 use serde::Serialize;
 
+use crate::game::ability_input::common_input::TwoRoleOutlineOptionInput;
 use crate::game::components::confused::Confused;
 use crate::game::role_outline_reference::RoleOutlineReference;
-use crate::game::ability_input::{AbilityInput, TwoRoleOutlineOptionInput};
+use crate::game::ability_input::AbilityInput;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;

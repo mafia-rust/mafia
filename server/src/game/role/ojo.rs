@@ -1,10 +1,11 @@
 use serde::Serialize;
 
+use crate::game::ability_input::common_input::TwoRoleOutlineOptionInput;
+use crate::game::ability_input::AbilityInput;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::phase::PhaseType;
 use crate::game::role_outline_reference::RoleOutlineReference;
-use crate::game::ability_input::{self, TwoRoleOutlineOptionInput};
 use crate::game::visit::Visit;
 use crate::game::{attack_power::AttackPower, grave::GraveKiller};
 use crate::game::player::PlayerReference;
@@ -82,7 +83,7 @@ impl RoleStateImpl for Ojo {
     fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: crate::game::ability_input::AbilityInput) {
         if actor_ref != input_player {return;}
         match ability_input {
-            ability_input::AbilityInput::OjoInvestigate { input } => {                   
+            AbilityInput::OjoInvestigate { input } => {                   
                 if let Some(outline) = input.0{
                     if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {
                         self.chosen_outline.0 = Some(outline);
