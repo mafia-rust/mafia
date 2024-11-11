@@ -13,8 +13,6 @@ use super::{InsiderGroupID, Priority, Role, RoleStateImpl};
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Framer;
 
-
-
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
@@ -78,8 +76,7 @@ impl RoleStateImpl for Framer {
         (
             actor_ref.selection(game).is_empty() &&
             actor_ref != target_ref &&
-            target_ref.alive(game) &&
-            !InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref)
+            target_ref.alive(game)
         ) || 
         (
             actor_ref.selection(game).len() == 1
