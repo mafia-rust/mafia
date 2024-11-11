@@ -653,8 +653,6 @@
     "chatMessage.seerResult.enemies": "Yr trgts r nms.",
     "chatMessage.spyMafiaVisit": "Th mf vstd \\0.",
     "chatMessage.spyMafiaVisit.nobody": "Th mf vstd nbdy.",
-    "chatMessage.spyCultistCount": "Thr r \\0 cltsts lv.",
-    "chatMessage.spyCultistCount.one": "Thr s 1 cltst lv.",
     "chatMessage.spyBug.silenced": "Yr trgt ws slncd.",
     "chatMessage.spyBug.roleblocked": "Smn ttmptd t rlblck yr trgt.",
     "chatMessage.spyBug.protected": "Yr trgt ws prtctd frm n ttck.",

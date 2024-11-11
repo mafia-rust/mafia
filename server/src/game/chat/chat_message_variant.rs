@@ -163,7 +163,6 @@ pub enum ChatMessageVariant {
     TrackerResult{players: Vec<PlayerIndex>},
     SeerResult{enemies: bool},
     SpyMafiaVisit{players: Vec<PlayerIndex>},
-    SpyCultistCount{count: u8},
     SpyBug{bug: SpyBug},
     PsychicGood{players: [PlayerIndex; 2]},
     PsychicEvil{players: [PlayerIndex; 3]},

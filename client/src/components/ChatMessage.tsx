@@ -530,12 +530,6 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             } else {
                 return translate("chatMessage.spyMafiaVisit", playerListToString(message.players, playerNames));
             }
-        case "spyCultistCount":
-            if(message.count === 1){
-                return translate("chatMessage.spyCultistCount.one");
-            }else{
-                return translate("chatMessage.spyCultistCount", message.count);
-            }
         case "spyBug":
             return translate("chatMessage.spyBug."+message.bug);
         case "trackerResult":
@@ -868,9 +862,6 @@ export type ChatMessageVariant = {
 } | {
     type: "spyMafiaVisit", 
     players: PlayerIndex[]
-} | {
-    type: "spyCultistCount",
-    count: number
 } | {
     type: "spyBug", 
     bug: "silenced" | "roleblocked" | "protected" | "transported" | "possessed"

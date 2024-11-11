@@ -3,7 +3,6 @@ use serde::Serialize;
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::player::PlayerReference;
 
@@ -64,26 +63,6 @@ impl RoleStateImpl for Spy {
                         actor_ref.push_night_message(game, message);
                     }
                 };
-            },
-            Priority::FinalPriority => {
-                if actor_ref.night_blocked(game) {return;}
-
-                let count = PlayerReference::all_players(game).filter(|p|
-                    p.alive(game) && InsiderGroupID::Cult.is_player_in_revealed_group(game, *p)
-                ).count() as u8;
-
-                if count > 0 {
-                    match Cult::next_ability(game) {
-                        CultAbility::Convert => {
-                            actor_ref.push_night_message(game, ChatMessageVariant::CultConvertsNext);
-                        }
-                        CultAbility::Kill => {
-                            actor_ref.push_night_message(game, ChatMessageVariant::CultKillsNext);
-                        }
-                    }
-
-                    actor_ref.push_night_message(game, ChatMessageVariant::SpyCultistCount { count });
-                }
             }
             _=>{}
         }
