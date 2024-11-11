@@ -1,7 +1,23 @@
-type AbilityInput = {
+export type BooleanInput = boolean | null;
+export type OnePlayerOptionInput = number | null;
+export type TwoRoleOutlineOptionInput = [number | null, number | null];
+
+
+export type AbilityInput = {
     type: "auditor",
-    input: [number | null, number | null]
+    input: TwoRoleOutlineOptionInput
 } | {
     type: "ojoInvestigate",
-    input: [number | null, number | null]
+    input: TwoRoleOutlineOptionInput
+} | {
+    type: "forfeitVote"
+    input: BooleanInput,
+} | {
+    type: "pitchforkVote"
+    input: OnePlayerOptionInput,
+} | {
+    type: "hitOrderVote"
+    input: OnePlayerOptionInput,
+} | {
+    type: "hitOrderMafioso",
 }

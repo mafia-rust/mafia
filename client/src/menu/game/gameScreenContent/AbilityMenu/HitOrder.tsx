@@ -1,15 +1,12 @@
 import React from "react";
-import { useGameState, usePlayerState } from "./useHooks";
-import GAME_MANAGER from "..";
-import translate from "../game/lang";
-import StyledText from "./StyledText";
-import PlayerOptionDropdown from "./PlayerOptionDropdown";
-import { Button } from "./Button";
+import { useGameState, usePlayerState } from "../../../../components/useHooks";
+import translate from "../../../../game/lang";
+import StyledText from "../../../../components/StyledText";
+import { Button } from "../../../../components/Button";
+import PlayerOptionDropdown from "../../../../components/PlayerOptionDropdown";
+import GAME_MANAGER from "../../../..";
 
-export default function HitOrder(props: Readonly<{
-    hitOrderOpen: boolean,
-    setHitOrderOpen: (open: boolean)=>void,
-}>) {
+export default function HitOrder(props: Readonly<{}>) {
     const enabledModifiers = useGameState(
         gameState => gameState.enabledModifiers,
         ["enabledModifiers"]
@@ -44,19 +41,17 @@ export default function HitOrder(props: Readonly<{
     )
         return null;
     else
-        return (<details className="role-specific-colors small-role-specific-menu" open={props.hitOrderOpen}>
-            <summary
-                onClick={(e)=>{
-                    e.preventDefault();
-                    props.setHitOrderOpen(!props.hitOrderOpen);
-                }}
-            >{translate("hitOrder")}</summary>
+        return (<details className="role-specific-colors small-role-specific-menu">
+            <summary>{translate("hitOrder")}</summary>
             <div>
                 <StyledText>{translate("hitOrder.description")}</StyledText>
                 <div>
                     <Button
                         onClick={()=>{
-                            GAME_MANAGER.sendHitOrderSwitchMafiosoPacket()
+                            const input = {
+                                type: "hitOrderMafioso" as const
+                            }
+                            GAME_MANAGER.sendAbilityInput(input)
                         }}
                     >
                         {translate("switchToMafioso")}
@@ -64,7 +59,11 @@ export default function HitOrder(props: Readonly<{
                     <PlayerOptionDropdown 
                         value={hitOrderVote===undefined?null:hitOrderVote}
                         onChange={(player)=>{
-                            GAME_MANAGER.sendHitOrderVotePacket(player)
+                            const input = {
+                                type: "hitOrderVote" as const,
+                                input: player
+                            }
+                            GAME_MANAGER.sendAbilityInput(input)
                         }}
                         choosablePlayers={
                             players.filter((player)=>player.alive).map((player)=>player.index)

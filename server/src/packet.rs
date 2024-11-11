@@ -280,9 +280,4 @@ pub enum ToServerPacket{
 
     #[serde(rename_all = "camelCase")]
     VoteFastForwardPhase{fast_forward: bool},
-    #[serde(rename_all = "camelCase")]
-    ForfeitVote{forfeit: bool},
-    PitchforkVote{player: Option<PlayerReference>},
-    HitOrderVote{player: Option<PlayerReference>},
-    HitOrderSwitchToMafioso,
 }

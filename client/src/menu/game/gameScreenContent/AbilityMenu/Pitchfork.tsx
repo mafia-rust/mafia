@@ -1,14 +1,11 @@
 import React from "react";
-import { useGameState, usePlayerState } from "./useHooks";
-import GAME_MANAGER from "..";
-import translate from "../game/lang";
-import StyledText from "./StyledText";
-import PlayerOptionDropdown from "./PlayerOptionDropdown";
+import { useGameState, usePlayerState } from "../../../../components/useHooks";
+import GAME_MANAGER from "../../../..";
+import translate from "../../../../game/lang";
+import StyledText from "../../../../components/StyledText";
+import PlayerOptionDropdown from "../../../../components/PlayerOptionDropdown";
 
 export default function Pitchfork(props: Readonly<{
-    pitchforkVoteOpen: boolean,
-    setPitchforkVoteOpen: (open: boolean)=>void,
-
 }>) {
     const enabledRoles = useGameState(
         gameState => gameState.enabledRoles,
@@ -34,19 +31,20 @@ export default function Pitchfork(props: Readonly<{
     )
         return null;
     else
-        return (<details className="role-specific-colors small-role-specific-menu" open={props.pitchforkVoteOpen}>
-            <summary
-                onClick={(e)=>{
-                    e.preventDefault();
-                    props.setPitchforkVoteOpen(!props.pitchforkVoteOpen);
-                }}
-            >{translate("pitchfork")}</summary>
+        return (<details className="role-specific-colors small-role-specific-menu">
+            <summary>{translate("pitchfork")}</summary>
             <div>
                 <StyledText>{translate("pitchfork.description")}</StyledText>
                 <div>
                 <PlayerOptionDropdown 
                     value={pitchforkVote===undefined?null:pitchforkVote}
-                    onChange={(player)=>{GAME_MANAGER.sendPitchforkVotePacket(player)}}
+                    onChange={(player)=>{
+                        const input = {
+                            type:"pitchforkVote" as const,
+                            input: player
+                        }
+                        GAME_MANAGER.sendAbilityInput(input)}
+                    }
                     choosablePlayers={players.filter((player)=>player.alive).map((player)=>player.index)}
                     canChooseNone={true}
                 /></div>

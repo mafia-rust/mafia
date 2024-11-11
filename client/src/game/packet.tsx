@@ -7,6 +7,7 @@ import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleS
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu"
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu"
 import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeKiraMenu"
+import { AbilityInput } from "./abilityInput"
 
 export type LobbyPreviewData = {
     name: string,
@@ -332,15 +333,4 @@ export type ToServerPacket = {
 } | {
     type: "voteFastForwardPhase",
     fastForward: boolean
-} | {
-    type: "forfeitVote",
-    forfeit: boolean
-} | {
-    type: "pitchforkVote",
-    player: PlayerIndex | null
-} | {
-    type: "hitOrderVote",
-    player: PlayerIndex | null
-} | {
-    type: "hitOrderSwitchToMafioso"
 }

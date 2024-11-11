@@ -2,8 +2,9 @@ import { ReactElement } from "react"
 import React from "react"
 import { Role } from "../../../../../game/roleState.d"
 import { usePlayerState } from "../../../../../components/useHooks"
-import TwoRoleOutlineOptionInputMenu, { TwoRoleOutlineOptionInput } from "../AbilitySelectionTypes/TwoRoleOutlineOptionInputMenu"
+import TwoRoleOutlineOptionInputMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionInputMenu"
 import GAME_MANAGER from "../../../../.."
+import { TwoRoleOutlineOptionInput } from "../../../../../game/abilityInput"
 
 export type AuditorResult = {
     type: "two",

@@ -3,6 +3,7 @@ import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleS
 import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeKiraMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
+import { AbilityInput } from "./abilityInput";
 import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player, ModifierType } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleList, RoleOutline } from "./roleListState.d";
@@ -125,10 +126,6 @@ export type GameManager = {
     sendSetRoleChosen(role: Role | null): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
-    sendForfeitVotePacket(forfeit: boolean): void;
-    sendPitchforkVotePacket(player: PlayerIndex | null): void;
-    sendHitOrderVotePacket(player: PlayerIndex | null): void;
-    sendHitOrderSwitchMafiosoPacket(): void;
 
     messageListener(serverMessage: ToClientPacket): void;
 

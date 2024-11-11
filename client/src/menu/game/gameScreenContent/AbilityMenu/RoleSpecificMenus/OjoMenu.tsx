@@ -5,7 +5,8 @@ import GAME_MANAGER from "../../../../..";
 import { Role, RoleState } from "../../../../../game/roleState.d";
 import RoleDropdown from "../../../../../components/RoleDropdown";
 import translate from "../../../../../game/lang";
-import TwoRoleOutlineOptionInputMenu, { TwoRoleOutlineOptionInput } from "../AbilitySelectionTypes/TwoRoleOutlineOptionInputMenu";
+import TwoRoleOutlineOptionInputMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionInputMenu";
+import { TwoRoleOutlineOptionInput } from "../../../../../game/abilityInput";
 
 
 export default function OjoMenu(

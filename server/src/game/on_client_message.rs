@@ -3,9 +3,18 @@ use std::collections::HashMap;
 use crate::{packet::ToServerPacket, strings::TidyableString, log};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender}, components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, modifiers::mafia_hit_orders::MafiaHitOrders, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
-        impostor::Impostor, kira::{Kira, KiraGuess}, mayor::Mayor, politician::Politician, puppeteer::PuppeteerAction, recruiter::RecruiterAction, retrainer::Retrainer, Role, RoleState
-    }, role_list::RoleSet, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, 
+    event::on_fast_forward::OnFastForward, 
+    phase::{PhaseState, PhaseType},
+    player::{PlayerIndex, PlayerReference},
+    role::{
+        impostor::Impostor, kira::{Kira, KiraGuess}, mayor::Mayor, politician::Politician,
+        puppeteer::PuppeteerAction, recruiter::RecruiterAction, retrainer::Retrainer,
+        Role, RoleState
+    },
+    role_list::RoleSet,
+    spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
+    Game
 };
 
 
@@ -397,23 +406,6 @@ impl Game {
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
                 sender_player_ref.set_fast_forward_vote(self, fast_forward);
             },
-            ToServerPacket::ForfeitVote { forfeit } => {
-                if 
-                    self.current_phase().phase() == PhaseType::Discussion &&
-                    sender_player_ref.alive(self)
-                {
-                    sender_player_ref.set_forfeit_vote(self, forfeit);
-                }
-            },
-            ToServerPacket::PitchforkVote { player } => {
-                Pitchfork::player_votes_for_angry_mob_action(self, sender_player_ref, player);
-            }
-            ToServerPacket::HitOrderVote { player } => {
-                MafiaHitOrders::mark_vote_action(self, sender_player_ref, player);
-            }
-            ToServerPacket::HitOrderSwitchToMafioso => {
-                MafiaHitOrders::switch_to_mafioso_action(self, sender_player_ref);
-            }
             _ => {
                 log!(fatal "Game"; "Unimplemented ToServerPacket: {incoming_packet:?}");
                 unreachable!();
