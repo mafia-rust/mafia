@@ -1,3 +1,5 @@
+import { KiraInput } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu";
+
 export type BooleanInput = boolean | null;
 export type OnePlayerOptionInput = number | null;
 export type TwoRoleOutlineOptionInput = [number | null, number | null];
@@ -9,6 +11,9 @@ export type AbilityInput = {
 } | {
     type: "ojoInvestigate",
     input: TwoRoleOutlineOptionInput
+} | {
+    type: "kira",
+    input: KiraInput
 } | {
     type: "forfeitVote"
     input: BooleanInput,

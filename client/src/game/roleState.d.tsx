@@ -7,7 +7,7 @@ import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/Role
 import { Hypnotist } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeHypnotistMenu";
 import { Doomsayer } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
-import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeKiraMenu";
+import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu";
 
 export type RoleState = {
     type: "jailor",
@@ -201,7 +201,7 @@ Doomsayer
     marionettesRemaining: number
 } | {
     type: "kira"
-    guesses: Record<PlayerIndex, KiraGuess>
+    guesses: Partial<Record<PlayerIndex, KiraGuess>>
 } | {
     type: "fiendsWildcard"
     role: Role

@@ -1,4 +1,4 @@
-use crate::{log, packet::ToServerPacket, strings::TidyableString, vec_map::VecMap};
+use crate::{log, packet::ToServerPacket, strings::TidyableString};
 
 use super::{
     chat::{ChatGroup, ChatMessageVariant, MessageSender}, 
@@ -6,7 +6,7 @@ use super::{
     phase::{PhaseState, PhaseType},
     player::{PlayerIndex, PlayerReference},
     role::{
-        impostor::Impostor, kira::{Kira, KiraGuess}, mayor::Mayor, politician::Politician,
+        impostor::Impostor, mayor::Mayor, politician::Politician,
         puppeteer::PuppeteerAction, recruiter::RecruiterAction, retrainer::Retrainer,
         Role, RoleState
     },
@@ -230,22 +230,6 @@ impl Game {
                 if let RoleState::Doomsayer(mut doomsayer) = sender_player_ref.role_state(self).clone(){
                     doomsayer.guesses = guesses;
                     sender_player_ref.set_role_state(self, RoleState::Doomsayer(doomsayer));
-                }
-            },
-            ToServerPacket::SetKiraGuess{guesses} => {
-                if let RoleState::Kira(mut kira) = sender_player_ref.role_state(self).clone(){
-
-                    let mut new_guesses: VecMap<PlayerReference, KiraGuess> = VecMap::new();
-
-                    for (player_ref, guess) in guesses {
-                        if Kira::allowed_to_guess(sender_player_ref, player_ref, self){
-                            new_guesses.insert(player_ref, guess);
-                        }
-                    }
-
-                    kira.guesses = new_guesses;
-                    sender_player_ref.set_role_state(self, kira);
-                    Kira::set_guesses(sender_player_ref, self);
                 }
             },
             ToServerPacket::SetWildcardRole { role } => {

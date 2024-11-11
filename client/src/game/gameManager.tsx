@@ -15,7 +15,6 @@ import { Role } from "./roleState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
 import AudioController from "../menu/AudioController";
-import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeKiraMenu";
 
 export function createGameManager(): GameManager {
 
@@ -473,18 +472,6 @@ export function createGameManager(): GameManager {
         sendSetDoomsayerGuess(guesses) {
             this.server.sendPacket({
                 type: "setDoomsayerGuess",
-                guesses: guesses
-            });
-        },
-        sendSetKiraGuess(guessesRecord) {
-
-            let guesses: [PlayerIndex, KiraGuess][] = [];
-            for(let [player, guess] of Object.entries(guessesRecord)){
-                guesses.push([Number.parseInt(player), guess]);
-            }
-
-            this.server.sendPacket({
-                type: "setKiraGuess",
                 guesses: guesses
             });
         },

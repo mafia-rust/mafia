@@ -1,9 +1,6 @@
 use serde::{Deserialize, Serialize};
 use super::{
-    event::on_ability_input_received::OnAbilityInputReceived, 
-    player::PlayerReference, 
-    role_outline_reference::RoleOutlineReference, 
-    Game
+    event::on_ability_input_received::OnAbilityInputReceived, player::PlayerReference, role::kira::KiraAbilityInput, role_outline_reference::RoleOutlineReference, Game
 };
 
 
@@ -29,13 +26,12 @@ pub struct OnePlayerOptionInput(pub Option<PlayerReference>);
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct TwoRoleOutlineOptionInput(pub Option<RoleOutlineReference>, pub Option<RoleOutlineReference>);
 
-
-
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Eq, Ord)]
 #[serde(rename_all = "camelCase", tag="type")]
 pub enum AbilityInput{
     Auditor{input: TwoRoleOutlineOptionInput},
     OjoInvestigate{input: TwoRoleOutlineOptionInput},
+    Kira{input: KiraAbilityInput},
     
 
     //Non role abilities
@@ -46,6 +42,7 @@ pub enum AbilityInput{
 
     HitOrderVote{input: OnePlayerOptionInput},
     HitOrderMafioso,
+    KiraGuess{input: OnePlayerOptionInput},
 }
 impl AbilityInput{
     pub fn on_client_message(self, game: &mut Game, actor_ref: PlayerReference){

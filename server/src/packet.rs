@@ -25,7 +25,7 @@ use crate::{
     game::{
         available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, components::insider_group::InsiderGroupID, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
             counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess,
-            eros::ErosAction, kira::KiraGuess, 
+            eros::ErosAction,
             puppeteer::PuppeteerAction, recruiter::RecruiterAction, 
             ClientRoleStateEnum, Role
         }, role_list::{RoleList, RoleOutline}, ability_input::AbilityInput, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
@@ -249,8 +249,6 @@ pub enum ToServerPacket{
     // Role-specific
     #[serde(rename_all = "camelCase")]
     SetDoomsayerGuess{ guesses: [(PlayerReference, DoomsayerGuess); 3] },
-    #[serde(rename_all = "camelCase")]
-    SetKiraGuess{ guesses: Vec<(PlayerReference, KiraGuess)> },
     #[serde(rename_all = "camelCase")]
     SetWildcardRole{ role: Role },
     #[serde(rename_all = "camelCase")]

@@ -1,10 +1,11 @@
 import React, { ReactElement, useEffect, useState } from "react"
-import "./largeKiraMenu.css";
+import "./kiraMenu.css";
 import GAME_MANAGER from "../../../../..";
 import translate, { translateChecked } from "../../../../../game/lang";
 import StyledText from "../../../../../components/StyledText";
 import Select, { SelectOptionsSearch } from "../../../../../components/Select";
 import { PlayerIndex } from "../../../../../game/gameState.d";
+import { RoleState } from "../../../../../game/roleState.d";
 
 export const KIRA_GUESSES = [
     "none",
@@ -15,6 +16,8 @@ export const KIRA_GUESSES = [
     "vigilante",  "veteran", "marksman", "deputy", "rabblerouser",
     "escort",  "medium",  "retributionist", "reporter", "mayor",  "transporter",
 ];
+type KiraGuessRecord = Partial<Record<PlayerIndex, KiraGuess>>;
+export type KiraInput = [PlayerIndex, KiraGuess][];
 
 export type KiraGuess = typeof KIRA_GUESSES[number];
 export function kiraGuessTranslate(kiraGuess: KiraGuess): string{
@@ -27,43 +30,37 @@ export function kiraGuessTranslate(kiraGuess: KiraGuess): string{
 
 export type KiraGuessResult = "correct" | "notInGame" | "wrongSpot";
 
-export default function LargeKiraMenu(props: {}): ReactElement {
-    
-    const [localKiraGuesses, setLocalKiraGuesses] = useState(() => {
-        if( GAME_MANAGER.state.stateType === "game" && 
-            GAME_MANAGER.state.clientState.type === "player" && 
-            GAME_MANAGER.state.clientState.roleState?.type === "kira"
-        )
-            return GAME_MANAGER.state.clientState.roleState.guesses;
-        return {};
-    });
+export default function KiraMenu(props: Readonly<{
+    roleState: RoleState & {type: "kira"},
+}>): ReactElement {
 
-    useEffect(()=>{
-        const listener = ()=> {
-            if( GAME_MANAGER.state.stateType === "game" && 
-                GAME_MANAGER.state.clientState.type === "player" && 
-                GAME_MANAGER.state.clientState.roleState?.type === "kira"
-            )
-                setLocalKiraGuesses(GAME_MANAGER.state.clientState.roleState.guesses);
-        };
 
-        listener();
-        GAME_MANAGER.addStateListener(listener);
-        return ()=>GAME_MANAGER.removeStateListener(listener);
-    }, [setLocalKiraGuesses]);
+    function sendSetKiraGuess(guesses: KiraGuessRecord){
+        let guessesOut: KiraInput = [];
+        for(let [player, guess] of Object.entries(guesses)){
+            guessesOut.push([Number.parseInt(player), guess?? "none"]);
+        }
+
+        GAME_MANAGER.sendAbilityInput({
+            type: "kira" as const,
+            input: guessesOut
+        });
+    }
+
+
 
     let guessPickers: ReactElement[] = [];
-    let keys = Object.keys(localKiraGuesses).map((k)=>{return Number.parseInt(k)}).sort();
+    let keys = Object.keys(props.roleState.guesses).map((k)=>{return Number.parseInt(k)}).sort();
     for(let playerIndex of keys){
         guessPickers.push(
             <KiraGuessPicker 
                 key={playerIndex} 
                 playerIndex={playerIndex} 
-                guess={localKiraGuesses[playerIndex]} 
-                onChange={(guess) => {
-                    let newGuesses = {...localKiraGuesses};
+                guess={props.roleState.guesses[playerIndex]?? "none"} 
+                onChange={(guess: KiraGuess) => {
+                    let newGuesses: KiraGuessRecord = {...props.roleState.guesses};
                     newGuesses[playerIndex] = guess;
-                    GAME_MANAGER.sendSetKiraGuess(newGuesses);
+                    sendSetKiraGuess(newGuesses);
                 }}
             />
         );
