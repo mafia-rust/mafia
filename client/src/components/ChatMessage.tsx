@@ -11,7 +11,7 @@ import GraveComponent from "./grave";
 import { RoleOutline, translateRoleOutline } from "../game/roleListState.d";
 import { CopyButton } from "./ClipboardButtons";
 import { useLobbyOrGameState, usePlayerState } from "./useHooks";
-import { KiraGuess, KiraGuessResult, kiraGuessTranslate } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeKiraMenu";
+import { KiraGuess, KiraGuessResult, kiraGuessTranslate } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu";
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
@@ -530,12 +530,6 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             } else {
                 return translate("chatMessage.spyMafiaVisit", playerListToString(message.players, playerNames));
             }
-        case "spyCultistCount":
-            if(message.count === 1){
-                return translate("chatMessage.spyCultistCount.one");
-            }else{
-                return translate("chatMessage.spyCultistCount", message.count);
-            }
         case "spyBug":
             return translate("chatMessage.spyBug."+message.bug);
         case "trackerResult":
@@ -868,9 +862,6 @@ export type ChatMessageVariant = {
 } | {
     type: "spyMafiaVisit", 
     players: PlayerIndex[]
-} | {
-    type: "spyCultistCount",
-    count: number
 } | {
     type: "spyBug", 
     bug: "silenced" | "roleblocked" | "protected" | "transported" | "possessed"

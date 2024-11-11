@@ -1,11 +1,18 @@
-use std::collections::HashMap;
-
-use crate::{packet::ToServerPacket, strings::TidyableString, log};
+use crate::{log, packet::ToServerPacket, strings::TidyableString};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender}, components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, modifiers::mafia_hit_orders::MafiaHitOrders, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
-        impostor::Impostor, kira::{Kira, KiraGuess}, mayor::Mayor, politician::Politician, puppeteer::PuppeteerAction, recruiter::RecruiterAction, retrainer::Retrainer, Role, RoleState
-    }, role_list::RoleSet, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, 
+    event::on_fast_forward::OnFastForward, 
+    phase::{PhaseState, PhaseType},
+    player::{PlayerIndex, PlayerReference},
+    role::{
+        impostor::Impostor, mayor::Mayor, politician::Politician,
+        puppeteer::PuppeteerAction, recruiter::RecruiterAction, retrainer::Retrainer,
+        Role, RoleState
+    },
+    role_list::RoleSet,
+    spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
+    Game
 };
 
 
@@ -225,22 +232,6 @@ impl Game {
                     sender_player_ref.set_role_state(self, RoleState::Doomsayer(doomsayer));
                 }
             },
-            ToServerPacket::SetKiraGuess{guesses} => {
-                if let RoleState::Kira(mut kira) = sender_player_ref.role_state(self).clone(){
-
-                    let mut new_guesses: HashMap<PlayerReference, KiraGuess> = HashMap::new();
-
-                    for (player_ref, guess) in guesses {
-                        if Kira::allowed_to_guess(sender_player_ref, player_ref, self){
-                            new_guesses.insert(player_ref, guess);
-                        }
-                    }
-
-                    kira.guesses = new_guesses;
-                    sender_player_ref.set_role_state(self, RoleState::Kira(kira));
-                    Kira::set_guesses(sender_player_ref, self);
-                }
-            },
             ToServerPacket::SetWildcardRole { role } => {
 
                 if !self.settings.enabled_roles.contains(&role) {
@@ -397,23 +388,6 @@ impl Game {
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
                 sender_player_ref.set_fast_forward_vote(self, fast_forward);
             },
-            ToServerPacket::ForfeitVote { forfeit } => {
-                if 
-                    self.current_phase().phase() == PhaseType::Discussion &&
-                    sender_player_ref.alive(self)
-                {
-                    sender_player_ref.set_forfeit_vote(self, forfeit);
-                }
-            },
-            ToServerPacket::PitchforkVote { player } => {
-                Pitchfork::player_votes_for_angry_mob_action(self, sender_player_ref, player);
-            }
-            ToServerPacket::HitOrderVote { player } => {
-                MafiaHitOrders::mark_vote_action(self, sender_player_ref, player);
-            }
-            ToServerPacket::HitOrderSwitchToMafioso => {
-                MafiaHitOrders::switch_to_mafioso_action(self, sender_player_ref);
-            }
             _ => {
                 log!(fatal "Game"; "Unimplemented ToServerPacket: {incoming_packet:?}");
                 unreachable!();

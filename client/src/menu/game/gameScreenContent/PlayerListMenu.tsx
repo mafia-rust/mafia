@@ -25,31 +25,9 @@ export default function PlayerListMenu(): ReactElement {
         ["gamePlayers", "yourButtons", "playerAlive", "yourPlayerTags", "yourRoleLabels", "playerVotes"]
     )!
 
-    const forfeitVote = usePlayerState(
-        playerState => playerState.forfeitVote,
-        ["yourForfeitVote"]
-    )
-    const phaseState = useGameState(
-        gameState => gameState.phaseState,
-        ["phase"]
-    )!
-    const myIndex = usePlayerState(
-        playerState => playerState.myIndex,
-        ["yourPlayerIndex"]
-    )
-
 
     return <div className="player-list-menu player-list-menu-colors">
         <ContentTab close={ContentMenu.PlayerListMenu} helpMenu={"standard/playerList"}>{translate("menu.playerList.title")}</ContentTab>
-
-        {(myIndex !== undefined && phaseState.type === "discussion" && players[myIndex!].alive) ? <Button
-            className={forfeitVote ? "highlighted" : ""}
-            onClick={()=>{
-                GAME_MANAGER.sendForfeitVotePacket(!forfeitVote);
-            }}
-        >
-            <StyledText noLinks={true}>{translate("forfeitVote")}</StyledText>
-        </Button> : null}
 
         <div className="player-list">
             {players

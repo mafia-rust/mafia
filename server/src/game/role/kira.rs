@@ -1,7 +1,6 @@
-use std::collections::HashMap;
-
 use serde::{Serialize, Deserialize};
 
+use crate::game::ability_input::AbilityInput;
 use crate::game::attack_power::AttackPower;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
@@ -9,15 +8,16 @@ use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::Game;
+use crate::vec_map::VecMap;
 
 use super::{Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Kira {
-    pub guesses: HashMap<PlayerReference, KiraGuess>,
+    pub guesses: VecMap<PlayerReference, KiraGuess>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum KiraGuess{
     None,
@@ -110,10 +110,10 @@ impl KiraGuess{
 
 #[derive(PartialEq, Eq, Clone, Debug, Serialize, Deserialize)]
 pub struct KiraResult {
-    pub guesses: HashMap<PlayerReference, (KiraGuess, KiraGuessResult)>,
+    pub guesses: VecMap<PlayerReference, (KiraGuess, KiraGuessResult)>,
 }
 impl KiraResult{
-    pub fn new(guesses: HashMap<PlayerReference, KiraGuess>, game: &Game)->Self{
+    pub fn new(guesses: VecMap<PlayerReference, KiraGuess>, game: &Game)->Self{
         Self{
             guesses: guesses.into_iter().map(|(player_ref, guess)|{
                 let result = if guess.guess_matches_role(player_ref.role(game)){
@@ -152,7 +152,8 @@ pub enum KiraGuessResult {
     WrongSpot,  //yellow
 }
 
-
+#[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct KiraAbilityInput(Vec<(PlayerReference, KiraGuess)>);
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
@@ -180,6 +181,22 @@ impl RoleStateImpl for Kira {
             },
             _ => return,
         }    
+    }
+    fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: crate::game::ability_input::AbilityInput) {
+        if actor_ref != input_player {return};
+        let AbilityInput::Kira{input: KiraAbilityInput(input)} = ability_input else {return};
+        
+        let mut new_guesses: VecMap<PlayerReference, KiraGuess> = VecMap::new();
+
+        for (player_ref, guess) in input {
+            if Kira::allowed_to_guess(actor_ref, player_ref, game){
+                new_guesses.insert(player_ref, guess);
+            }
+        }
+
+        self.guesses = new_guesses;
+        actor_ref.set_role_state(game, self);
+        Kira::set_guesses(actor_ref, game);
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType) {
         Kira::set_guesses(actor_ref, game);

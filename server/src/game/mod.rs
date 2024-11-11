@@ -19,7 +19,7 @@ pub mod attack_power;
 pub mod modifiers;
 pub mod win_condition;
 pub mod role_outline_reference;
-pub mod selection_type;
+pub mod ability_input;
 
 use std::collections::HashMap;
 use std::time::Duration;

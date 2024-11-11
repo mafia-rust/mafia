@@ -1,7 +1,6 @@
 use crate::{
     game::{
-        components::insider_group::InsiderGroupID, player::PlayerReference,
-        role::{mafioso::Mafioso, Priority}, role_list::{RoleOutline, RoleOutlineOption, RoleSet}, tag::Tag, Game
+        ability_input::AbilityInput, components::insider_group::InsiderGroupID, player::PlayerReference, role::{mafioso::Mafioso, Priority}, role_list::{RoleOutline, RoleOutlineOption, RoleSet}, tag::Tag, Game
     },
     packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet
 };
@@ -122,6 +121,18 @@ impl MafiaHitOrders{
 }
 
 impl ModifierTrait for MafiaHitOrders{
+    fn on_ability_input_received(self, game: &mut Game, actor_ref:crate::game::player::PlayerReference, input:crate::game::ability_input::AbilityInput) {
+        match input {
+            AbilityInput::HitOrderVote { input } => {
+                MafiaHitOrders::mark_vote_action(game, actor_ref, input.0);
+            },
+            AbilityInput::HitOrderMafioso => {
+                MafiaHitOrders::switch_to_mafioso_action(game, actor_ref);
+            }
+            _ => {}
+        }
+    }
+
     fn before_phase_end(self, game: &mut Game, phase:crate::game::phase::PhaseType) {
         if !self.active {return}
         if game.day_number() == 1 {return;}

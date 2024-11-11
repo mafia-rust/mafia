@@ -3,10 +3,15 @@ use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::{components::{cult::CultAbility, insider_group::InsiderGroupID}, role::{armorsmith::Armorsmith, drunk::Drunk, ojo::Ojo, recruiter::Recruiter, scarecrow::Scarecrow, tally_clerk::TallyClerk, warper::Warper}, role_list::RoleSet, selection_type::TwoRoleOutlineOptionInput};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
-    grave::*, 
+    grave::*,
+    ability_input::{
+        AbilityInput, TwoRoleOutlineOptionInput
+    }, 
+    components::{cult::CultAbility, insider_group::InsiderGroupID},  
+    role_list::RoleSet, 
+    role_outline_reference::RoleOutlineReference,
      
     player::PlayerReference,
     tag::Tag,
@@ -24,7 +29,8 @@ pub use mafia_server::game::{
         tracker::Tracker,
         philosopher::Philosopher,
         psychic::Psychic,
-        gossip::Gossip, 
+        gossip::Gossip,
+        auditor::Auditor,
         
         doctor::Doctor,
         bodyguard::Bodyguard,
@@ -72,7 +78,12 @@ pub use mafia_server::game::{
         arsonist::Arsonist,
         pyrolisk::Pyrolisk,
         puppeteer::{Puppeteer, PuppeteerAction},
-        fiends_wildcard::FiendsWildcard, 
+        fiends_wildcard::FiendsWildcard,
+
+        armorsmith::Armorsmith, auditor::AuditorResult,
+        drunk::Drunk, ojo::Ojo, recruiter::Recruiter,
+        scarecrow::Scarecrow, tally_clerk::TallyClerk,
+        warper::Warper
     }, 
     phase::{
         PhaseState, 
@@ -197,6 +208,41 @@ fn detective_neutrals(){
         ChatMessageVariant::SheriffResult { suspicious: true }
     );
 
+}
+
+#[test]
+fn auditor_standard_double_audit(){
+    kit::scenario!(game in Night 1 where
+        auditor: Auditor,
+        _townie: Auditor,
+        _mafioso: Mafioso
+    );
+
+    auditor.send_ability_input(AbilityInput::Auditor { 
+        input: TwoRoleOutlineOptionInput(
+            RoleOutlineReference::new(&game, 0), 
+            RoleOutlineReference::new(&game, 1)
+        )
+    });
+    game.next_phase();
+    
+    let messages = auditor.get_messages_after_night(1);
+
+    let mut results: u8 = 0;
+    let mut found_auditor = false;
+    for message in messages.iter() {
+        if let ChatMessageVariant::AuditorResult { role_outline: _, result } = message {
+            results += 1;
+            if match result {
+                AuditorResult::Two { roles } => roles.contains(&Role::Auditor),
+                AuditorResult::One { role } => *role == Role::Auditor,
+            } {
+                found_auditor = true;
+            }
+        }
+    }
+    assert!(results == 2);
+    assert!(found_auditor);
 }
 
 #[test]

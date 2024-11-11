@@ -4,7 +4,6 @@ use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
-use crate::game::event::before_role_switch::BeforeRoleSwitch;
 use crate::game::grave::{GraveInformation, GraveKiller, GraveReference};
 use crate::game::player::PlayerReference;
 
@@ -108,8 +107,8 @@ impl RoleStateImpl for Pyrolisk {
             grave_ref.deref_mut(game).information = GraveInformation::Obscured;
         }
     }
-    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, event: BeforeRoleSwitch) {
-        if event.player() == actor_ref && event.new_role().role() != Role::Mortician {
+    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _old: RoleState, new: RoleState){
+        if player == actor_ref && new.role() != Role::Mortician {
             actor_ref.remove_player_tag_on_all(game, Tag::MorticianTagged);
         }
     }

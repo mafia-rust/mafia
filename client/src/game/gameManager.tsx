@@ -15,7 +15,6 @@ import { Role } from "./roleState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
 import AudioController from "../menu/AudioController";
-import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeKiraMenu";
 
 export function createGameManager(): GameManager {
 
@@ -476,18 +475,6 @@ export function createGameManager(): GameManager {
                 guesses: guesses
             });
         },
-        sendSetKiraGuess(guessesRecord) {
-
-            let guesses: [PlayerIndex, KiraGuess][] = [];
-            for(let [player, guess] of Object.entries(guessesRecord)){
-                guesses.push([Number.parseInt(player), guess]);
-            }
-
-            this.server.sendPacket({
-                type: "setKiraGuess",
-                guesses: guesses
-            });
-        },
         sendSetWildcardRoleOutline(role) {
             this.server.sendPacket({
                 type: "setWildcardRole",
@@ -575,29 +562,6 @@ export function createGameManager(): GameManager {
             this.server.sendPacket({
                 type: "voteFastForwardPhase",
                 fastForward: fastForward
-            });
-        },
-        sendForfeitVotePacket(forfeit: boolean) {
-            this.server.sendPacket({
-                type: "forfeitVote",
-                forfeit
-            });
-        },
-        sendPitchforkVotePacket(player: PlayerIndex | null) {
-            this.server.sendPacket({
-                type: "pitchforkVote",
-                player: player
-            });
-        },
-        sendHitOrderVotePacket(player: PlayerIndex | null) {
-            this.server.sendPacket({
-                type: "hitOrderVote",
-                player: player
-            });
-        },
-        sendHitOrderSwitchMafiosoPacket() {
-            this.server.sendPacket({
-                type: "hitOrderSwitchToMafioso",
             });
         },
 

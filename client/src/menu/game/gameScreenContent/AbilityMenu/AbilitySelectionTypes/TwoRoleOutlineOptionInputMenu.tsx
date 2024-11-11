@@ -7,11 +7,7 @@ import StyledText from "../../../../../components/StyledText"
 import translate from "../../../../../game/lang"
 import { useGameState } from "../../../../../components/useHooks"
 import { Button } from "../../../../../components/Button"
-
-
-
-export type TwoRoleOutlineOptionInput = [number | null, number | null];
-
+import { TwoRoleOutlineOptionInput } from "../../../../../game/abilityInput"
 
 export type AuditorResult = {
     type: "two",

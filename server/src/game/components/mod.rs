@@ -11,3 +11,4 @@ pub mod insider_group;
 pub mod detained;
 pub mod confused;
 pub mod drunk_aura;
+pub mod forfeit_vote;

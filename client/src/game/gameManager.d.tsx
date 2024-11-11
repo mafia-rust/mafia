@@ -1,8 +1,9 @@
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
-import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeKiraMenu";
+import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
+import { AbilityInput } from "./abilityInput";
 import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player, ModifierType } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleList, RoleOutline } from "./roleListState.d";
@@ -103,7 +104,6 @@ export type GameManager = {
         [number, DoomsayerGuess],
         [number, DoomsayerGuess]
     ]): void;
-    sendSetKiraGuess(guesses: Record<PlayerIndex, KiraGuess>): void;
     sendSetWildcardRoleOutline(roleOutline: Role): void;
     sendSetReporterReport(report: string): void;
     sendSetReporterReportPublic(isPublic: boolean): void;
@@ -125,10 +125,6 @@ export type GameManager = {
     sendSetRoleChosen(role: Role | null): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
-    sendForfeitVotePacket(forfeit: boolean): void;
-    sendPitchforkVotePacket(player: PlayerIndex | null): void;
-    sendHitOrderVotePacket(player: PlayerIndex | null): void;
-    sendHitOrderSwitchMafiosoPacket(): void;
 
     messageListener(serverMessage: ToClientPacket): void;
 
