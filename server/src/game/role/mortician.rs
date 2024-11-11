@@ -5,7 +5,6 @@ use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
 use crate::game::components::insider_group::InsiderGroupID;
-use crate::game::event::before_role_switch::BeforeRoleSwitch;
 use crate::game::grave::GraveInformation;
 use crate::game::grave::GraveReference;
 use crate::game::player::PlayerReference;
@@ -72,8 +71,8 @@ impl RoleStateImpl for Mortician {
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
     }
-    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, event: BeforeRoleSwitch) {
-        if event.player() == actor_ref && event.new_role().role() != Role::Mortician {
+    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _old: RoleState, new: RoleState){
+        if player == actor_ref && new.role() != Role::Mortician {
             actor_ref.remove_player_tag_on_all(game, Tag::MorticianTagged);
         }
     }

@@ -3,6 +3,7 @@ mod player_reference;
 mod player_send_packet;
 mod player_reset;
 mod player_helper_functions;
+mod player_event_listeners;
 
 pub use player_reference::PlayerIndex;
 pub use player_reference::PlayerReference;

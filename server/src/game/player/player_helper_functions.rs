@@ -5,7 +5,13 @@ use rand::seq::SliceRandom;
 use crate::{game::{
     attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
         arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura, insider_group::InsiderGroupID, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette
-    }, event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, game_conclusion::GameConclusion, grave::{Grave, GraveKiller, GraveReference}, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, win_condition::WinCondition, Game
+    }, event::{
+        before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch
+    }, game_conclusion::GameConclusion, 
+    grave::{Grave, GraveKiller}, 
+    role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, 
+    win_condition::WinCondition,
+    Game
 }, packet::ToClientPacket, vec_set::VecSet};
 
 use super::PlayerReference;
@@ -330,9 +336,6 @@ impl PlayerReference{
     pub fn on_role_creation(&self, game: &mut Game) {
         self.role_state(game).clone().on_role_creation(game, *self)
     }
-    pub fn before_role_switch(&self, game: &mut Game, event: BeforeRoleSwitch){
-        self.role_state(game).clone().before_role_switch(game, *self, event);
-    }
     pub fn get_current_send_chat_groups(&self, game: &Game) -> HashSet<ChatGroup> {
         self.role_state(game).clone().get_current_send_chat_groups(game, *self)
     }
@@ -341,21 +344,6 @@ impl PlayerReference{
     }
     pub fn convert_selection_to_visits(&self, game: &Game, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         self.role_state(game).clone().convert_selection_to_visits(game, *self, target_refs)
-    }
-    pub fn on_any_death(&self, game: &mut Game, dead_player_ref: PlayerReference){
-        self.role_state(game).clone().on_any_death(game, *self, dead_player_ref)
-    }
-    pub fn on_grave_added(&self, game: &mut Game, grave: GraveReference){
-        self.role_state(game).clone().on_grave_added(game, *self, grave)
-    }
-    pub fn on_game_ending(&self, game: &mut Game){
-        self.role_state(game).clone().on_game_ending(game, *self)
-    }
-    pub fn on_game_start(&self, game: &mut Game){
-        self.role_state(game).clone().on_game_start(game, *self)
-    }
-    pub fn before_initial_role_creation(&self, game: &mut Game){
-        self.role_state(game).clone().before_initial_role_creation(game, *self)
     }
 }
 

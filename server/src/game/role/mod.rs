@@ -13,7 +13,7 @@ use crate::game::attack_power::DefensePower;
 
 use serde::{Serialize, Deserialize};
 
-use super::{components::insider_group::InsiderGroupID, event::before_role_switch::BeforeRoleSwitch, grave::GraveReference, win_condition::WinCondition};
+use super::{components::insider_group::InsiderGroupID, grave::GraveReference, ability_input::AbilityInput, win_condition::WinCondition};
 
 pub trait GetClientRoleState<CRS> {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> CRS;
@@ -29,6 +29,8 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     type ClientRoleState: Clone + std::fmt::Debug + Serialize;
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {}
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
+
+    fn on_ability_input_received(self, _game: &mut Game, _actor_ref: PlayerReference, _input_player: PlayerReference, _ability_input: AbilityInput) {}
 
     fn can_select(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
         false
@@ -57,7 +59,7 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
 
     fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType) {}
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
-    fn before_role_switch(self, _game: &mut Game, _actor_ref: PlayerReference, _event: BeforeRoleSwitch) {}
+    fn before_role_switch(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _new: RoleState, _old: RoleState) {}
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference) {}
     fn on_grave_added(self, _game: &mut Game, _actor_ref: PlayerReference, _grave: GraveReference) {}
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference) {}
@@ -254,6 +256,11 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.do_day_action(game, actor_ref, target_ref)),*
                     }
                 }
+                pub fn on_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: AbilityInput){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_ability_input_received(game, actor_ref, input_player, ability_input)),*
+                    }
+                }
                 pub fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
                     match self {
                         $(Self::$name(role_struct) => role_struct.can_select(game, actor_ref, target_ref)),*
@@ -299,9 +306,9 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.on_role_creation(game, actor_ref)),*
                     }
                 }
-                pub fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, event: BeforeRoleSwitch){
+                pub fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, old: RoleState, new: RoleState){
                     match self {
-                        $(Self::$name(role_struct) => role_struct.before_role_switch(game, actor_ref, event)),*
+                        $(Self::$name(role_struct) => role_struct.before_role_switch(game, actor_ref, player, old, new)),*
                     }
                 }
                 pub fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){

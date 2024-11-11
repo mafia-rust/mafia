@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use mafia_server::{game::{chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, Game}, packet::ToServerPacket};
+use mafia_server::{game::{ability_input::AbilityInput, chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, Game}, packet::ToServerPacket};
 use vec1::Vec1;
 
 #[derive(Clone, Copy, Debug)]
@@ -116,6 +116,13 @@ impl TestPlayer {
 
     pub fn set_role_state(&self, new_role_data: RoleState){
         self.0.set_role_state(game!(self), new_role_data);
+    }
+
+    pub fn send_ability_input(&self, input: AbilityInput){
+        game!(self).on_client_message(
+            self.0.index(), 
+            ToServerPacket::AbilityInput { ability_input: input }
+        );
     }
 
     pub fn get_player_tags(&self) -> &HashMap<PlayerReference, Vec1<Tag>> {

@@ -20,6 +20,7 @@ use super::{grave::GraveReference, Game};
 
 #[enum_delegate::register]
 pub trait ModifierTrait where Self: Clone + Sized{
+    fn on_ability_input_received(self, _game: &mut Game, _actor_ref: crate::game::player::PlayerReference, _input: crate::game::ability_input::AbilityInput) {}
     fn on_night_priority(self, _game: &mut Game, _priority: crate::game::role::Priority) {}
     fn before_phase_end(self, _game: &mut Game, _phase: super::phase::PhaseType) {}
     fn on_grave_added(self, _game: &mut Game, _event: GraveReference) {}
@@ -115,6 +116,11 @@ impl Modifiers{
     pub fn on_night_priority(game: &mut Game, priority: crate::game::role::Priority){
         for modifier in game.modifiers.modifiers.clone(){
             modifier.1.on_night_priority(game, priority);
+        }
+    }
+    pub fn on_ability_input_received(game: &mut Game, actor_ref: crate::game::player::PlayerReference, input: crate::game::ability_input::AbilityInput){
+        for modifier in game.modifiers.modifiers.clone(){
+            modifier.1.on_ability_input_received(game, actor_ref, input.clone());
         }
     }
     pub fn on_grave_added(game: &mut Game, event: GraveReference){

@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::components::confused::Confused;
 use crate::game::role_outline_reference::RoleOutlineReference;
-use crate::game::selection_type::TwoRoleOutlineOptionInput;
+use crate::game::ability_input::{AbilityInput, TwoRoleOutlineOptionInput};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -68,6 +68,32 @@ impl RoleStateImpl for Auditor {
         }
 
         actor_ref.set_role_state(game, self);
+    }
+    fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: crate::game::ability_input::AbilityInput) {
+        if actor_ref != input_player {return};
+        let AbilityInput::Auditor { input } = ability_input else {return};
+                    
+        if let Some(outline) = input.0{
+            if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {
+                self.chosen_outline.0 = Some(outline);
+            }
+        }else{
+            self.chosen_outline.0 = None;
+        }
+        if let Some(outline) = input.1{
+            if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {
+                self.chosen_outline.1 = Some(outline);
+            }
+        }else{
+            self.chosen_outline.1 = None;
+        }
+        
+        if self.chosen_outline.0.is_some() && self.chosen_outline.1 == self.chosen_outline.0{
+            self.chosen_outline.1 = None;
+        }
+
+        actor_ref.set_role_state(game, self);
+        
     }
     fn convert_selection_to_visits(self, game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         let mut out = vec![];

@@ -28,7 +28,7 @@ use crate::{
             eros::ErosAction, kira::KiraGuess, 
             puppeteer::PuppeteerAction, recruiter::RecruiterAction, 
             ClientRoleStateEnum, Role
-        }, role_list::{RoleList, RoleOutline}, selection_type::AbilityInput, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
+        }, role_list::{RoleList, RoleOutline}, ability_input::AbilityInput, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
     }, 
     listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log, vec_set::VecSet
 };
