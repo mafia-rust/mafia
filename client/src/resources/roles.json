@@ -1169,6 +1169,27 @@
             {"type": "youAttackedSomeone"}
         ]
     },
+    "spiral": {
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {
+                "type": "playerRoleAndAlibi",
+                "player": 32,
+                "role":"jailor",
+                "will":"Jailor\nN1: @31 keeps talking about pottery?\nD2: Not sure how @31 died while in jail.\nN2: @44 is claiming politician..."
+            },
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"},
+            {"type": "youAttackedSomeone"}
+        ]
+    },
     "kira": {
         "mainRoleSet": "fiends",
         "roleSets": ["fiends"],

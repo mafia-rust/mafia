@@ -1392,7 +1392,7 @@ fn gossip_basic_enemies_inverted() {
         gossip: Gossip,
         t1: Detective,
         _t2: Detective,
-        py: Pyrolisk
+        py: Spiral
     );
 
     assert!(gossip.set_night_selection_single(py));
@@ -1412,7 +1412,7 @@ fn gossip_basic_enemies() {
         gossip: Gossip,
         t1: Detective,
         _t2: Detective,
-        py: Pyrolisk
+        py: Spiral
     );
 
     assert!(gossip.set_night_selection_single(t1));
@@ -1942,7 +1942,7 @@ fn arsonist_ignites_and_aura(){
 #[test]
 fn pyrolisk_tags_day_one() {
     kit::scenario!(game in Night 1 where
-        pyro: Pyrolisk,
+        pyro: Spiral,
         townie: Detective,
         townie2: Detective,
         townie3: Detective,

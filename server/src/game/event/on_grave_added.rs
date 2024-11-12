@@ -1,5 +1,5 @@
 use crate::game::{
-    grave::GraveReference, modifiers::Modifiers, player::PlayerReference, Game
+    components::poison::Poison, grave::GraveReference, modifiers::Modifiers, player::PlayerReference, Game
 };
 
 
@@ -19,5 +19,7 @@ impl OnGraveAdded{
         Modifiers::on_grave_added(game, self.grave);
 
         game.on_grave_added(self.grave);
+
+        Poison::on_grave_added(game, self.grave);
     }
 }

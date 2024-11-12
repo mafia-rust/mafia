@@ -81,6 +81,11 @@
 .keyword-kira {
     font-family: var(--kira-font, Arial);
 }
+.keyword-spiral {
+    font-family: var(--spiral-font, Arial);
+    line-height: 1em;
+    letter-spacing: 0.1em;
+}
 .keyword-trans {
     background-image: linear-gradient(to left, cyan, pink, white, pink, cyan);
 }

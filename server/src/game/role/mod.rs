@@ -147,6 +147,7 @@ macros::roles! {
     Ojo : ojo,
     Puppeteer: puppeteer,
     Pyrolisk : pyrolisk,
+    Spiral : spiral,
     Kira : kira,
     FiendsWildcard : fiends_wildcard,
     SerialKiller : serial_killer,

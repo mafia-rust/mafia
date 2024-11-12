@@ -140,6 +140,8 @@ export default function RoleSpecificSection(){
             return <StewardMenu
                 roleState={roleState}
             />;
+        case "spiral": 
+            return <SpiralMenu />;
         case "puppeteer":
             return <SmallPuppeteerMenu 
                 action={roleState.action} 
@@ -330,4 +332,16 @@ function WildcardRoleSpecificMenu(props: Readonly<{
             }}
         />
     </div>;
+}
+
+function SpiralMenu(props: {}): ReactElement | null {
+    const spiralingPlayers = useGameState(
+        gameState => gameState.players.filter(p => p.playerTags.includes("spiraling"))
+    )!
+
+    if (spiralingPlayers.length !== 0) {
+        return <StyledText>{translate("role.spiral.roleDataText.cannotSelect")}</StyledText>
+    } else {
+        return null;
+    }
 }

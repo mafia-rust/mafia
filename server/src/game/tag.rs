@@ -13,4 +13,5 @@ pub enum Tag{
     PuppeteerMarionette,
     LoveLinked,
     ForfeitVote,
+    Spiraling
 }

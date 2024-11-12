@@ -29,6 +29,8 @@ export type RoleState = {
 } | {
     type: "pyrolisk"
 } | {
+    type: "spiral"
+} | {
     type: "tracker"
 } | {
     type: "philosopher"
