@@ -802,6 +802,9 @@
     "phase.night": "Night",
     "phase.night:var.0": "Nighttime",
     "phase.night.subtitle": "Use your abilities to help your team.",
+    
+    "night.icon": "🌙",
+    "day.icon": "☀️",
 
 
 

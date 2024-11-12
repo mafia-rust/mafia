@@ -51,12 +51,6 @@ export default function PlayerNamePlate(props: Readonly<{
                 return ("("+translate("role."+playerRoleLabel+".name")+")");
             }
 
-            if (!playerAlive && grave !== null && grave !== undefined){
-                return grave.information.type === "normal"? 
-                    "("+translate("role."+grave.information.role+".name")+")" : 
-                    "("+translate("obscured")+")";
-            }
-    
             return "";
         }, [props.playerIndex, myIndex, grave, myRoleState, playerAlive, playerRoleLabel]);
 
@@ -71,7 +65,6 @@ export default function PlayerNamePlate(props: Readonly<{
                     }
                 }
             })()}
-            <StyledText>{(playerAlive?"":translate("dead.icon"))} </StyledText>
             <StyledText>{playerName}</StyledText>
             {roleString !== null && <StyledText> {roleString}</StyledText>}
             <StyledText>{playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
