@@ -372,11 +372,6 @@ impl Game {
             },
             ToServerPacket::SetRoleChosen { role } => {
                 match sender_player_ref.role_state(self).clone() {
-                    RoleState::Steward(mut steward) => {
-                        steward.role_chosen = role;
-                        sender_player_ref.set_role_state(self, steward);
-                        sender_player_ref.add_private_chat_message(self, ChatMessageVariant::RoleChosen { role });
-                    },
                     RoleState::Ojo(mut ojo) => {
                         ojo.role_chosen = role;
                         sender_player_ref.set_role_state(self, ojo);

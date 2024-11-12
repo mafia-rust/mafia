@@ -1,6 +1,6 @@
 pub mod common_input;
 
-use common_input::{BooleanInput, OnePlayerOptionInput, TwoRoleOutlineOptionInput};
+use common_input::{BooleanInput, OnePlayerOptionInput, TwoRoleOptionInput, TwoRoleOutlineOptionInput};
 use serde::{Deserialize, Serialize};
 use super::{
     event::on_ability_input_received::OnAbilityInputReceived,
@@ -13,6 +13,7 @@ use super::{
 #[serde(rename_all = "camelCase", tag="type")]
 pub enum AbilityInput{
     Auditor{input: TwoRoleOutlineOptionInput},
+    Steward{input: TwoRoleOptionInput},
     OjoInvestigate{input: TwoRoleOutlineOptionInput},
     Kira{input: KiraAbilityInput},
 

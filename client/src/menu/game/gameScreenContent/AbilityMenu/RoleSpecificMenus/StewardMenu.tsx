@@ -1,13 +1,13 @@
 import { ReactElement } from "react";
 import GAME_MANAGER from "../../../../..";
 import { usePlayerState } from "../../../../../components/useHooks";
-import { Role, RoleState } from "../../../../../game/roleState.d";
+import { RoleState } from "../../../../../game/roleState.d";
 import Counter from "../../../../../components/Counter";
 import React from "react";
-import RoleDropdown from "../../../../../components/RoleDropdown";
 import { getAllRoles } from "../../../../../game/roleListState.d";
 import StyledText from "../../../../../components/StyledText";
 import translate from "../../../../../game/lang";
+import TwoRoleOptionInputMenu from "../AbilitySelectionTypes/TwoRoleOptionInputMenu";
 
 
 
@@ -16,10 +16,6 @@ export default function StewardMenu(
         roleState: RoleState & {type: "steward"}
     }
 ): ReactElement | null {
-
-    const sendAction = (roleChosen: Role | null) => {
-        GAME_MANAGER.sendSetRoleChosen(roleChosen);
-    }
 
     const shouldDisplay = usePlayerState(
         (playerState, gameState) => gameState.phaseState.type === "night" && gameState.players[playerState.myIndex]?.alive,
@@ -30,20 +26,24 @@ export default function StewardMenu(
         return null;
     }
 
+    const disabledRoles = getAllRoles()
+    .filter(role=>
+        (role === "steward" && props.roleState.stewardProtectsRemaining === 0) ||
+        (props.roleState.previousRoleChosen?.includes(role))
+    );
+
     return <>
         <Counter max={1} current={props.roleState.stewardProtectsRemaining}><StyledText>{translate("role.steward.roleDataText", props.roleState.stewardProtectsRemaining)}</StyledText></Counter>
-        <div>
-            <RoleDropdown
-                enabledRoles={getAllRoles()
-                    .filter(role=>role!=="steward"||props.roleState.stewardProtectsRemaining!==0)
-                    .filter(role=>role!==props.roleState.previousRoleChosen)
-                }
-                value={props.roleState.roleChosen}
-                onChange={(roleOption)=>{
-                    sendAction(roleOption)
-                }}
-                canChooseNone={true}
-            />
-        </div>
+        <TwoRoleOptionInputMenu 
+            input={props.roleState.roleChosen} 
+            disabledRoles={disabledRoles}
+            onChoose={(input)=>{
+                GAME_MANAGER.sendAbilityInput({
+                    type: "steward",
+                    input: input
+                });
+            }}
+        />
+
     </>
 }
