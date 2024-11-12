@@ -1,12 +1,9 @@
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement } from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import "./graveyardMenu.css";
 import StyledText from "../../../components/StyledText";
-import GraveComponent from "../../../components/grave";
-import { Grave } from "../../../game/graveState";
-import Icon from "../../../components/Icon";
 import { EnabledRolesDisplay } from "../../../components/gameModeSettings/EnabledRoleSelector";
 import { useGameState, usePlayerState } from "../../../components/useHooks";
 import { translateRoleOutline } from "../../../game/roleListState.d";
@@ -14,12 +11,6 @@ import { EnabledModifiersDisplay } from "../../../components/gameModeSettings/En
 import { Button } from "../../../components/Button";
 
 export default function GraveyardMenu(): ReactElement {
-    const graves = useGameState(
-        gameState => gameState.graves,
-        ["addGrave"]
-    )!
-    const [extendedGraveIndex, setExtendedGraveIndex] = useState<number | null>(null);
-    
     return <div className="graveyard-menu graveyard-menu-colors">
         <ContentTab close={ContentMenu.GraveyardMenu} helpMenu={"standard/gameMode"}>{translate("menu.gameMode.title")}</ContentTab>
             

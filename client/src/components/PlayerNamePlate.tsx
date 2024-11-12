@@ -13,10 +13,6 @@ export default function PlayerNamePlate(props: Readonly<{
             (gameState) => gameState.phaseState,
             ["phase"]
         )!;
-        const grave = useGameState(
-            (gameState) => gameState.graves.find((grave) => grave.player === props.playerIndex),
-            ["addGrave"]
-        );
         const myRoleState = usePlayerState(
             (playerState) => playerState.roleState,
             ["yourRoleState"]
@@ -52,7 +48,7 @@ export default function PlayerNamePlate(props: Readonly<{
             }
 
             return "";
-        }, [props.playerIndex, myIndex, grave, myRoleState, playerAlive, playerRoleLabel]);
+        }, [props.playerIndex, myIndex, myRoleState, playerAlive, playerRoleLabel]);
 
         return <div 
             className="player-name-plate"
