@@ -54,13 +54,14 @@ export default function GraveComponent(props: Readonly<{
     let graveRoleString = translate(`role.${props.grave.information.role}.name`);
 
     let diedPhaseString = props.grave.diedPhase === "day" ? translate("day") : translate("phase.night");
+    let diedPhaseIcon = props.grave.diedPhase === "day" ? translate("day.icon") : translate("night.icon");
 
     return <div className="grave" onClick={()=>{
         if(props.onClick!==undefined)
             props.onClick();
         }}
     >
-        <div><StyledText>{`${diedPhaseString+" "+props.grave.dayNumber}`}</StyledText></div>
+        <div><StyledText>{`${diedPhaseString+diedPhaseIcon+props.grave.dayNumber}`}</StyledText></div>
         <div><StyledText>{`${playerNames[props.grave.player]+" ("+graveRoleString+")"}`}</StyledText></div>
         <div><StyledText>{`${translate("killedBy")+" "+deathCauseString}`}</StyledText></div>
         {props.grave.information.will.length === 0 || <>
@@ -94,10 +95,11 @@ export default function GraveComponent(props: Readonly<{
 function ObscuredGrave(props: Readonly<{grave: Grave, playerNames: string[]}>): ReactElement {
 
     let diedPhaseString = props.grave.diedPhase === "day" ? translate("day") : translate("phase.night");
+    let diedPhaseIcon = props.grave.diedPhase === "day" ? translate("day.icon") : translate("night.icon");
     let graveRoleString = translate("obscured");
 
     return <div className="grave">
-        <div><StyledText>{`${diedPhaseString+" "+props.grave.dayNumber}`}</StyledText></div>
+        <div><StyledText>{`${diedPhaseString+diedPhaseIcon+props.grave.dayNumber}`}</StyledText></div>
         <div><StyledText>{`${props.playerNames[props.grave.player]+" ("+graveRoleString+")"}`}</StyledText></div>
     </div>;
 }
