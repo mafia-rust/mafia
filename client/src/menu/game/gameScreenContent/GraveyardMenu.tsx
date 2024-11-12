@@ -21,7 +21,7 @@ export default function GraveyardMenu(): ReactElement {
     const [extendedGraveIndex, setExtendedGraveIndex] = useState<number | null>(null);
     
     return <div className="graveyard-menu graveyard-menu-colors">
-        <ContentTab close={ContentMenu.GraveyardMenu} helpMenu={"standard/graveyard"}>{translate("menu.graveyard.title")}</ContentTab>
+        <ContentTab close={ContentMenu.GraveyardMenu} helpMenu={"standard/gameMode"}>{translate("menu.gameMode.title")}</ContentTab>
             
         <div className="graveyard-menu-role-list">
             <RoleListDisplay />

@@ -210,8 +210,8 @@ function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactE
             highlighted={menuController.menusOpen().includes(ContentMenu.GraveyardMenu)}
             onClick={()=>menuController.closeOrOpenMenu(ContentMenu.GraveyardMenu)}
         >
-            {translate("menu.graveyard.icon")}
-            <span className="mobile-hidden">{translate("menu.graveyard.title")}</span>
+            {translate("menu.gameMode.icon")}
+            <span className="mobile-hidden">{translate("menu.gameMode.title")}</span>
         </Button>
         {GAME_MANAGER.getMySpectator() || <Button className="wiki-menu-colors"
             highlighted={menuController.menusOpen().includes(ContentMenu.WikiMenu)} 

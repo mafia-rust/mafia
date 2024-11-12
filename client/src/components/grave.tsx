@@ -62,7 +62,7 @@ export default function GraveComponent(props: Readonly<{
     >
         <div><StyledText>{`${diedPhaseString+" "+props.grave.dayNumber}`}</StyledText></div>
         <div><StyledText>{`${playerNames[props.grave.player]+" ("+graveRoleString+")"}`}</StyledText></div>
-        <div><StyledText>{`${translate("menu.graveyard.killedBy")+" "+deathCauseString}`}</StyledText></div>
+        <div><StyledText>{`${translate("killedBy")+" "+deathCauseString}`}</StyledText></div>
         {props.grave.information.will.length === 0 || <>
             {translate("alibi")}
             <div className="note-area">
