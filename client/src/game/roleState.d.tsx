@@ -8,6 +8,7 @@ import { Hypnotist } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecif
 import { Doomsayer } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
 import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu";
+import { TwoRoleOptionInput } from "./abilityInput";
 
 export type RoleState = {
     type: "jailor",
@@ -62,8 +63,8 @@ export type RoleState = {
 } | {
     type: "steward",
     stewardProtectsRemaining: number,
-    roleChosen: Role | null,
-    previousRoleChosen: Role | null
+    roleChosen: TwoRoleOptionInput,
+    previousRoleChosen: TwoRoleOptionInput
 } | {
     type: "vigilante",
     state: {type:"notLoaded"} | {type:"willSuicide"} | {type:"loaded",bullets:number} | {type:"suicided"}

@@ -11,6 +11,7 @@ import { Button } from "../../../components/Button";
 import { useGameState, usePlayerState } from "../../../components/useHooks";
 import PlayerNamePlate from "../../../components/PlayerNamePlate";
 import ChatMessage, { translateChatMessage } from "../../../components/ChatMessage";
+import GraveComponent, { translateGraveRole } from "../../../components/grave";
 
 function usePlayerVotedFor(): PlayerIndex | null {
     return usePlayerState(
@@ -25,6 +26,11 @@ export default function PlayerListMenu(): ReactElement {
         ["gamePlayers", "yourButtons", "playerAlive", "yourPlayerTags", "yourRoleLabels", "playerVotes"]
     )!
 
+    const graves = useGameState(
+        gameState => gameState.graves,
+        ["addGrave"]
+    )!
+
 
     return <div className="player-list-menu player-list-menu-colors">
         <ContentTab close={ContentMenu.PlayerListMenu} helpMenu={"standard/playerList"}>{translate("menu.playerList.title")}</ContentTab>
@@ -33,9 +39,21 @@ export default function PlayerListMenu(): ReactElement {
             {players
                 .filter(player => player.alive)
                 .map(player => <PlayerCard key={player.index} playerIndex={player.index}/>)}
+
+            {graves.length === 0 || <>
+                <div className="dead-players-separator">
+                    <StyledText>{translate("grave.icon")} {translate("graveyard")}</StyledText>
+                </div>
+                {graves.map((grave, index) => <PlayerCard key={grave.player} graveIndex={index} playerIndex={grave.player}/>)}
+            </>}
             {players
-                .filter(player => !player.alive).length === 0 || <>
-                <div className="dead-players-separator">{translate("dead.icon")} {translate("dead")}</div>
+                .filter(
+                    player => !player.alive && 
+                    graves.find(grave => grave.player === player.index) === undefined
+                ).length === 0 || <>
+                <div className="dead-players-separator">
+                    <StyledText>{translate("grave.icon")} {translate("graveyard")}</StyledText>
+                </div>
                 {players
                     .filter(player => !player.alive)
                     .map(player => <PlayerCard key={player.index} playerIndex={player.index}/>)}
@@ -44,7 +62,8 @@ export default function PlayerListMenu(): ReactElement {
     </div>
 }
 
-function PlayerCard(props: Readonly<{ 
+function PlayerCard(props: Readonly<{
+    graveIndex?: number,
     playerIndex: number
 }>): ReactElement{
     const isPlayerSelf = usePlayerState(
@@ -102,6 +121,15 @@ function PlayerCard(props: Readonly<{
     ) as undefined | NonAnonymousBlockMessage;
 
     const [alibiOpen, setAlibiOpen] = React.useState(false);
+    const [graveOpen, setGraveOpen] = React.useState(false);
+
+    const grave = useGameState(
+        gameState => {
+            if(props.graveIndex === undefined) return undefined;
+            return gameState.graves[props.graveIndex]
+        },
+        ["addGrave"]
+    )!
 
     return <><div 
         className={`player-card`}
@@ -126,6 +154,7 @@ function PlayerCard(props: Readonly<{
         })()}
 
         <PlayerNamePlate playerIndex={props.playerIndex}/>
+        
         {mostRecentBlockMessage !== undefined ? 
             <Button onClick={()=>setAlibiOpen(!alibiOpen)}>
                 <StyledText noLinks={true}>
@@ -136,6 +165,13 @@ function PlayerCard(props: Readonly<{
                             .substring(0,30)
                             .trim()
                     }
+                </StyledText>
+            </Button>
+        : null}
+        {grave !== undefined ? 
+            <Button onClick={()=>setGraveOpen(!graveOpen)}>
+                <StyledText noLinks={true}>
+                    {translateGraveRole(grave)} {translate(grave.diedPhase+".icon")}{grave.dayNumber.toString()}
                 </StyledText>
             </Button>
         : null}
@@ -158,6 +194,9 @@ function PlayerCard(props: Readonly<{
     </div>
     {alibiOpen && mostRecentBlockMessage !== undefined ? <div onClick={()=>setAlibiOpen(false)}>
         <ChatMessage message={mostRecentBlockMessage}/>
+    </div> : null}
+    {graveOpen && grave !== undefined ? <div onClick={()=>setGraveOpen(false)}>
+        <GraveComponent grave={grave}/>
     </div> : null}
     </>
 }

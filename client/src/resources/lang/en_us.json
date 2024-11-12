@@ -127,9 +127,9 @@
     "dayTarget": "Special",
     "button.clear": "Clear",
 
-    "menu.graveyard.title": "Graveyard",
-    "menu.graveyard.icon": "🪦",
-    "menu.graveyard.killedBy": "Killed by",
+    "menu.gameMode.title": "Game Mode",
+    "menu.gameMode.icon": "⚙️",
+    "killedBy": "Killed by",
 
     "menu.gameScreen.noContent": "Click on one of the tabs above to open",
 
@@ -615,6 +615,8 @@
     "grave.killer.quit:var.1": "Quits",
     "grave.killer.suicide": "Suicide",
     "grave.deathNote": "A note was found with the body",
+    "graveyard": "Graveyard",
+    "grave.icon": "🪦",
 
     "alibi": "Alibi",
 
@@ -802,6 +804,9 @@
     "phase.night": "Night",
     "phase.night:var.0": "Nighttime",
     "phase.night.subtitle": "Use your abilities to help your team.",
+
+    "night.icon": "🌙",
+    "day.icon": "☀️",
 
 
 
@@ -1129,7 +1134,7 @@
     "wiki.article.standard.obscured.title:var.0": "Obscure",
     "wiki.article.standard.obscured.title:var.1": "Obscures",
     "wiki.article.standard.obscured.title:var.3": "Obscuring",
-    "wiki.article.standard.obscured.text": "A player who is obscured had their role and alibi erased from the graveyard. A Mortician can tag players for obscuring, then when they die, they are obscured.",
+    "wiki.article.standard.obscured.text": "A player who is obscured had their role and alibi erased from their grave. A Mortician can tag players for obscuring, then when they die, they are obscured.",
     "wiki.article.standard.evil.title": "Evil",
     "wiki.article.standard.evil.text": "If a role is evil, it means a role is non-town. A psychic can receive evil visions to learn who is not on town. A detective will see someone as suspicious if they are evil or have a suspicious aura.",
     "wiki.article.standard.roleLimit.title": "Role Limit",
@@ -1162,7 +1167,7 @@
     "wiki.article.standard.outlineList.title:var.0":"Role List",
     "wiki.article.standard.outlineList.title:var.1":"Rolelist",
     "wiki.article.standard.outlineList.title:var.2":"Outlines",
-    "wiki.article.standard.outlineList.text": "The outline list defines what roles are in the game. At the start of a game, each player gets assigned to a role outline. Then, their role is generated randomly from that role outline.",
+    "wiki.article.standard.outlineList.text": "The outline list defines what roles are in the game. When the game starts:\n- Each role outline generates a random role from the roles in the outline\n- Each player is assigned to a role outline, and therefore a role.",
     "wiki.article.standard.chatGroup.title": "Chat Group",
     "wiki.article.standard.chatGroup.title:var.0": "Chat Groups",
     "wiki.article.standard.chatGroup.title:var.1": "Chatgroup",
@@ -1206,15 +1211,15 @@
     "wiki.article.standard.playerList.title":"Players",
     "wiki.article.standard.playerList.title:var.0":"Playerlist",
     "wiki.article.standard.playerList.title:var.1":"Player list",
-    "wiki.article.standard.playerList.text":"The players menu shows a list of all players in the game.\n- This is where you go to select a player to use your ability or vote them. When it is possible to select or vote a player, a button appears.\n- Click on a players name to prepend a whisper command to the chat box.\n- Next to players names, you can see if they are dead, and potentially see their role label.\n- Press the filter button to only see messages that include that players name.\n- Some roles will display some information at the top of the player list",
+    "wiki.article.standard.playerList.text":"The player list menu displays all the players in the game. It allows you to do the following: \n - View living and dead players\n- View the graves of dead players\n- View the notes pages and alibis of players\n- Filter chat messages by players\n- Whisper to players\n- View player tags and revealed roles",
     "wiki.article.standard.alibi.title":"Alibi",
     "wiki.article.standard.alibi.title:var.0":"Alibis",
     "wiki.article.standard.alibi.text":"In order to find out who the syndicate is, townies need to share information they have in order to deduce who is lying about their role. This is done with the use of alibis, which are records of the abilities you have used and information you have gathered. Alibis are posted in the chat and graveyard when the player dies. Here is an example of a typical alibi that a Detective would have.\n\n> Detective\nNight 1: Deodat Lawson - Innocent\nNight 2: Samuel Parris - Suspicious\n\nWhen the Detective posts this alibi in chat, they provide evidence to other players that on the second night, they found Samuel Parris as suspicious, implying that Samuel Parris is a syndicate member. If the town believes the Detective, they will likely vote the suspicious player out.\n\nFor a syndicate member to pretend to be a town role, they need to write a fake alibi to blend in with the town roles. _IF A PLAYER DOES NOT HAVE AN ALIBI, THEY ARE LIKELY A SYNDICATE MEMBER_ who doesn't know how to write a fake alibi, and they should be directed to this page. ",
-    "wiki.article.standard.abilityMenu.title":"Ability Menu",
+    "wiki.article.standard.abilityMenu.title":"Ability",
     "wiki.article.standard.abilityMenu.text":"The Ability menu is where the controls for most abilities is. Players should come here during night to decide how to use their abilities.",
-    "wiki.article.standard.graveyard.title":"Graveyard",
-    "wiki.article.standard.graveyard.title:var.0":"Grave yard",
-    "wiki.article.standard.graveyard.text":"The graveyard can help keep track of what roles are in the game and who has them\n- The outline list on the left shows what roles can be in the game\n    - Click on an outline to cross it out to help keep track of what roles people are.\n- The graves on the right show who is dead\n   - If you click on a grave, you can see what their alibi and role was, as well as other related information",
+    "wiki.article.standard.gameMode.title":"Gamemode",
+    "wiki.article.standard.gameMode.title:var.0":"Game Mode",
+    "wiki.article.standard.gameMode.text":"The game mode menu lets you keep track of the game settings during the game.\n- Outline list\n- Enabled Roles\n- Enabled Modifiers",
     
 
     "wiki.article.standard.modifiers.title":"Modifiers",
@@ -1400,10 +1405,10 @@
     "wiki.article.role.armorsmith.attributes":"* You have only 2 uses of your ability\n* Players with temporary armor are told when their armor breaks, but not when they gain it\n* You are not told who has temporary armor\n* You open shop if you visit anyone, so possession can force you to open shop, but blocking can stop you from opening shop",
     "wiki.article.role.armorsmith.extra":"* Your target is told they are protected if they get attacked\n* You can't select anyone other than yourself",
 
-    "wiki.article.role.steward.reminder": "At night, select a role to protect everyone with that role.",
-    "wiki.article.role.steward.guide":"- At night, choose a role to protect\n    - Everyone with this role is protected from attacks\n    - You are told if anyone with this role is attacked\n    - You can't protect the same role twice in a row\n    - You can't protect Steward more than once per game", 
-    "wiki.article.role.steward.abilities":"* Choose a role to protect\n    * Everyone with this role is protected\n    * You are told if anyone with this role is attacked, and they are told they are protected",
-    "wiki.article.role.steward.attributes":"* You can't protect the same role two nights in a row\n* You can't protect your own role more than once\n* Your ability does nothing if you are blocked, or dead",
+    "wiki.article.role.steward.reminder": "At night, select up to 2 roles to protect everyone with those roles.",
+    "wiki.article.role.steward.guide":"- At night, choose up to 2 roles to protect\n    - Everyone with these roles are protected from attacks\n    - You are told if anyone with this role is attacked\n    - You can't protect the same role twice in a row\n    - You can't protect Steward more than once per game", 
+    "wiki.article.role.steward.abilities":"* Choose up to 2 roles to protect\n    * Everyone with either of the roles is protected\n    * You are told if anyone you protect is attacked, and they are told they are protected",
+    "wiki.article.role.steward.attributes":"* You can't protect the same role two nights in a row\n* You can't protect Steward more than once\n* Your ability does nothing if you are blocked, or dead",
     "wiki.article.role.steward.extra":"You do not visit the roles you protect",
 
     "wiki.article.role.escort.reminder": "At night, select a player to roleblock them, stopping them from visiting anyone.",

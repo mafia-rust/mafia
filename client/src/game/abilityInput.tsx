@@ -1,13 +1,18 @@
 import { KiraInput } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu";
+import { Role } from "./roleState.d";
 
 export type BooleanInput = boolean | null;
 export type OnePlayerOptionInput = number | null;
+export type TwoRoleOptionInput = [Role | null, Role | null];
 export type TwoRoleOutlineOptionInput = [number | null, number | null];
 
 
 export type AbilityInput = {
     type: "auditor",
     input: TwoRoleOutlineOptionInput
+} | {
+    type: "steward",
+    input: TwoRoleOptionInput
 } | {
     type: "ojoInvestigate",
     input: TwoRoleOutlineOptionInput

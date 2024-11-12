@@ -25,7 +25,7 @@
     border-left: .13rem solid transparent;
     border-right: .13rem solid transparent;
     background-color: var(--secondary-color);
-    margin: 1rem 0 0;
+    margin: 2rem 0 0;
 }
 
 .player-list-menu .player.highlighted {

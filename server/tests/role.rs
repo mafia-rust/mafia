@@ -7,7 +7,8 @@ pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*,
     ability_input::{
-        AbilityInput, TwoRoleOutlineOptionInput
+        AbilityInput,
+        common_input::TwoRoleOutlineOptionInput
     }, 
     components::{cult::CultAbility, insider_group::InsiderGroupID},  
     role_list::RoleSet, 
