@@ -336,11 +336,14 @@ function WildcardRoleSpecificMenu(props: Readonly<{
 
 function SpiralMenu(props: {}): ReactElement | null {
     const spiralingPlayers = useGameState(
-        gameState => gameState.players.filter(p => p.playerTags.includes("spiraling"))
+        gameState => gameState.players.filter(p => p.playerTags.includes("spiraling")),
+        ["yourPlayerTags"]
     )!
 
     if (spiralingPlayers.length !== 0) {
-        return <StyledText>{translate("role.spiral.roleDataText.cannotSelect")}</StyledText>
+        return <div className="role-information">
+            <StyledText>{translate("role.spiral.roleDataText.cannotSelect")}</StyledText>
+        </div>
     } else {
         return null;
     }

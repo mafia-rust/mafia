@@ -550,7 +550,7 @@
     "role.spiral.target": "Infatuate",
     "role.spiral.youAreSelecting": "You are infatuating \\0.",
     "role.spiral.youAreSelecting.null": "You aren't infatuating anyone.",
-    "role.spiral.roleDataText.cannotSelect": "You cannot infatuate anyone, players are still spiraling",
+    "role.spiral.roleDataText.cannotSelect": "You cannot infatuate anyone because players are still spiraling",
     
     "role.puppeteer.name": "Puppeteer",
     "role.puppeteer.name:var.0": "Puppeteers",
