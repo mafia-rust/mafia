@@ -22,6 +22,7 @@ pub use mafia_server::game::{
         RoleState,
 
         jailor::Jailor,
+        villager::Villager,
         
         detective::Detective,
         snoop::Snoop,
@@ -77,6 +78,7 @@ pub use mafia_server::game::{
         zealot::Zealot,
         
         arsonist::Arsonist,
+        spiral::Spiral,
         pyrolisk::Pyrolisk,
         puppeteer::{Puppeteer, PuppeteerAction},
         fiends_wildcard::FiendsWildcard,
@@ -2375,4 +2377,48 @@ fn fiends_wildcard_defense_upgrade(){
     assert!(mafia.alive());
 
     assert!(game.game_is_over());
+}
+
+#[test]
+fn spiraling_player_infects_visitors() {
+    kit::scenario!(game in Night 1 where
+        spiral: Spiral,
+        townie1: Villager,
+        townie2: Snoop
+    );
+    spiral.set_night_selection_single(townie1);
+
+    game.skip_to(Obituary, 2);
+    assert!(townie1.alive());
+
+    game.skip_to(Night, 2);
+    townie2.set_night_selection_single(townie1);
+
+    game.skip_to(Obituary, 3);
+    assert!(!townie1.alive());
+    assert!(townie2.alive());
+
+    game.skip_to(Obituary, 4);
+    assert!(!townie2.alive());
+}
+
+#[test]
+fn spiral_can_select_when_no_spiraling_players() {
+    kit::scenario!(game in Night 1 where
+        spiral: Spiral,
+        townie1: Villager,
+        townie2: Snoop,
+        townie3: Villager
+    );
+    spiral.set_night_selection_single(townie1);
+
+    game.skip_to(Night, 2);
+    townie2.set_night_selection_single(townie1);
+    assert!(!spiral.set_night_selection_single(townie2));
+
+    game.skip_to(Night, 3);
+    assert!(!spiral.set_night_selection_single(townie2));
+
+    game.skip_to(Night, 4);
+    assert!(spiral.set_night_selection_single(townie3));
 }
