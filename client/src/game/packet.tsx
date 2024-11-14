@@ -8,6 +8,7 @@ import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/Role
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu"
 import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu"
 import { AbilityInput } from "./abilityInput"
+import { AvailableGenericAbilitySelection, GenericAbilitySelection } from "../menu/game/gameScreenContent/AbilityMenu/GenericAbilityMenu"
 
 export type LobbyPreviewData = {
     name: string,
@@ -114,6 +115,14 @@ export type ToClientPacket = {
 } | {
     type: "yourInsiderGroups",
     insiderGroups: InsiderGroup[]
+} | {
+    type: "availableGenericAbilitySelection",
+    availableSelection: AvailableGenericAbilitySelection
+} | {
+    type: "genericAbilitySelection",
+    selection: GenericAbilitySelection
+} | {
+    type: "clearGenericAbilitySelection"
 } | {
     type: "yourButtons", 
     buttons: [{

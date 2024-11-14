@@ -1,6 +1,6 @@
 use serde::{ser::SerializeMap, Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug)]
 pub struct VecMap<K, V> where K: Eq {
     vec: Vec<(K, V)>,
 }
@@ -109,6 +109,16 @@ impl<K, V> VecMap<K, V> where K: Eq {
         self.vec.iter().any(|(k, _)| k == key)
     }
 }
+
+impl<K, V> PartialEq for VecMap<K, V> where K: Eq, V: Eq {
+    fn eq(&self, other: &Self) -> bool {
+        self.vec.iter().all(|(k, v)| other.get(k) == Some(v))
+            && other.vec.iter().all(|(k, v)| self.get(k) == Some(v))
+    }
+}
+impl<K, V> Eq for VecMap<K, V> where K: Eq, V: Eq {}
+
+
 impl<K, V> IntoIterator for VecMap<K, V> where K: Eq {
     type Item = (K, V);
     type IntoIter = std::vec::IntoIter<(K, V)>;

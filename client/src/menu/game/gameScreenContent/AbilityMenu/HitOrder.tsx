@@ -61,7 +61,7 @@ export default function HitOrder(props: Readonly<{}>) {
                         onChange={(player)=>{
                             const input = {
                                 type: "hitOrderVote" as const,
-                                input: player
+                                selection: player
                             }
                             GAME_MANAGER.sendAbilityInput(input)
                         }}

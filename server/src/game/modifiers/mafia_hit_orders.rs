@@ -123,8 +123,8 @@ impl MafiaHitOrders{
 impl ModifierTrait for MafiaHitOrders{
     fn on_ability_input_received(self, game: &mut Game, actor_ref:crate::game::player::PlayerReference, input:crate::game::ability_input::AbilityInput) {
         match input {
-            AbilityInput::HitOrderVote { input } => {
-                MafiaHitOrders::mark_vote_action(game, actor_ref, input.0);
+            AbilityInput::HitOrderVote { selection } => {
+                MafiaHitOrders::mark_vote_action(game, actor_ref, selection.0);
             },
             AbilityInput::HitOrderMafioso => {
                 MafiaHitOrders::switch_to_mafioso_action(game, actor_ref);

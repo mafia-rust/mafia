@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::ability_input::common_input::TwoRoleOutlineOptionInput;
+use crate::game::ability_input::common_selection::two_role_outline_option_selection::TwoRoleOutlineOptionSelection;
 use crate::game::components::confused::Confused;
 use crate::game::role_outline_reference::RoleOutlineReference;
 use crate::game::ability_input::AbilityInput;
@@ -18,7 +18,7 @@ use super::{Priority, Role, RoleStateImpl};
 #[derive(Clone, Debug, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Auditor{
-    pub chosen_outline: TwoRoleOutlineOptionInput,
+    pub chosen_outline: TwoRoleOutlineOptionSelection,
     pub previously_given_results: Vec<(RoleOutlineReference, AuditorResult)>,
 }
 
@@ -72,16 +72,16 @@ impl RoleStateImpl for Auditor {
     }
     fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: crate::game::ability_input::AbilityInput) {
         if actor_ref != input_player {return};
-        let AbilityInput::Auditor { input } = ability_input else {return};
+        let AbilityInput::Auditor { selection } = ability_input else {return};
                     
-        if let Some(outline) = input.0{
+        if let Some(outline) = selection.0{
             if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {
                 self.chosen_outline.0 = Some(outline);
             }
         }else{
             self.chosen_outline.0 = None;
         }
-        if let Some(outline) = input.1{
+        if let Some(outline) = selection.1{
             if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {
                 self.chosen_outline.1 = Some(outline);
             }
@@ -111,7 +111,7 @@ impl RoleStateImpl for Auditor {
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Obituary => {
-                self.chosen_outline = TwoRoleOutlineOptionInput(None, None);
+                self.chosen_outline = TwoRoleOutlineOptionSelection(None, None);
                 actor_ref.set_role_state(game, self);
             },
             _ => {}

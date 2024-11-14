@@ -7,8 +7,12 @@ pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*,
     ability_input::{
+        common_selection::{
+            one_player_option_selection::OnePlayerOptionSelection, 
+            two_role_option_selection::TwoRoleOptionSelection,
+            two_role_outline_option_selection::TwoRoleOutlineOptionSelection
+        },
         AbilityInput,
-        common_input::TwoRoleOutlineOptionInput
     }, 
     components::{cult::CultAbility, insider_group::InsiderGroupID},  
     role_list::RoleSet, 
@@ -220,7 +224,7 @@ fn auditor_standard_double_audit(){
     );
 
     auditor.send_ability_input(AbilityInput::Auditor { 
-        input: TwoRoleOutlineOptionInput(
+        selection: TwoRoleOutlineOptionSelection(
             RoleOutlineReference::new(&game, 0), 
             RoleOutlineReference::new(&game, 1)
         )
@@ -1552,7 +1556,7 @@ fn bouncer_ojo_block() {
     ojo.set_role_state(RoleState::Ojo(Ojo{
         role_chosen: Some(Role::Detective),
         previously_given_results: Vec::new(),
-        chosen_outline: TwoRoleOutlineOptionInput(None, None),
+        chosen_outline: TwoRoleOutlineOptionSelection(None, None),
     }));
     b.set_night_selection_single(det1);
 
@@ -2152,7 +2156,7 @@ fn ojo_transporter(){
     ojo.set_role_state(
         RoleState::Ojo(Ojo{
             role_chosen: Some(Role::Philosopher),
-            chosen_outline: TwoRoleOutlineOptionInput(None, None),
+            chosen_outline: TwoRoleOutlineOptionSelection(None, None),
             previously_given_results: Vec::new(),
         })
     );

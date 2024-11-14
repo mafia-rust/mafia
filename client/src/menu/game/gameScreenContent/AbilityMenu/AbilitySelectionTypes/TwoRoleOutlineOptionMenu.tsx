@@ -1,13 +1,13 @@
 import { ReactElement } from "react"
 import React from "react"
-import "./twoRoleOutlineOptionInput.css"
+import "./twoRoleOutlineOptionMenu.css"
 import { Role } from "../../../../../game/roleState.d"
 import { RoleList, translateRoleOutline } from "../../../../../game/roleListState.d"
 import StyledText from "../../../../../components/StyledText"
 import translate from "../../../../../game/lang"
 import { useGameState } from "../../../../../components/useHooks"
 import { Button } from "../../../../../components/Button"
-import { TwoRoleOutlineOptionInput } from "../../../../../game/abilityInput"
+import { TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput"
 
 export type AuditorResult = {
     type: "two",
@@ -25,9 +25,9 @@ type AuditorButtons = ({
 })[]
 
 export default function TwoRoleOutlineOptionInputMenu(props: {
-    chosenOutlines?: TwoRoleOutlineOptionInput,
+    chosenOutlines?: TwoRoleOutlineOptionSelection,
     previouslyGivenResults?: [number, AuditorResult][],
-    onChoose: (chosenOutlines: TwoRoleOutlineOptionInput)=>void
+    onChoose: (chosenOutlines: TwoRoleOutlineOptionSelection)=>void
 }): ReactElement {
     const roleList = useGameState(
         (gameState)=>{

@@ -1,18 +1,18 @@
 import { ReactElement } from "react";
-import { TwoRoleOptionInput } from "../../../../../game/abilityInput";
+import { TwoRoleOptionSelection } from "../../../../../game/abilityInput";
 import React from "react";
 import RoleDropdown from "../../../../../components/RoleDropdown";
 import { getAllRoles } from "../../../../../game/roleListState.d";
 import { Role } from "../../../../../game/roleState.d";
 
 export default function TwoRoleOptionInputMenu(props: Readonly<{
-    input: TwoRoleOptionInput,
+    input: TwoRoleOptionSelection,
     disabledRoles?: Role[], 
-    onChoose: (input: TwoRoleOptionInput)=>void
+    onChoose: (input: TwoRoleOptionSelection)=>void
 }>): ReactElement {
 
     const handleOnChange = (index: 0 | 1, roleOption: Role | null) => {
-        const newInput: TwoRoleOptionInput = [props.input[0], props.input[1]];
+        const newInput: TwoRoleOptionSelection = [props.input[0], props.input[1]];
         newInput[index] = roleOption;
         props.onChoose(newInput);
     }

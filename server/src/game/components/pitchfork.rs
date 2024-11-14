@@ -37,8 +37,8 @@ impl Default for Pitchfork{
 impl Pitchfork{
     pub fn on_ability_input_received(game: &mut Game, actor_ref: PlayerReference, input: AbilityInput){
         match input{
-            AbilityInput::PitchforkVote{input} => {
-                Pitchfork::player_votes_for_angry_mob_action(game, actor_ref, input.0);
+            AbilityInput::PitchforkVote{selection} => {
+                Pitchfork::player_votes_for_angry_mob_action(game, actor_ref, selection.0);
             },
             _ => {}
         }

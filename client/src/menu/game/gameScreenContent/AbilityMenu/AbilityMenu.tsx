@@ -3,10 +3,11 @@ import translate from "../../../../game/lang";
 import { ContentMenu, ContentTab } from "../../GameScreen";
 import RoleSpecificSection from "./RoleSpecific";
 import { useGameState, usePlayerState } from "../../../../components/useHooks";
-import OldSelectionType from "./AbilitySelectionTypes/OldSelectionType";
+import OldSelectionType from "./AbilitySelectionTypes/OldSelectionMenu";
 import ForfeitVote from "./ForfeitVote";
 import Pitchfork from "./Pitchfork";
 import HitOrder from "./HitOrder";
+import GenericAbilityMenu from "./GenericAbilityMenu";
 
 export default function AbilityMenu(): ReactElement {
     const roleState = usePlayerState(
@@ -37,6 +38,7 @@ export default function AbilityMenu(): ReactElement {
                         {translate("role."+roleState?.type+".name")}
                     </summary>
                     <RoleSpecificSection/>
+                    <GenericAbilityMenu/>
                     <OldSelectionType/>
                 </details>
                 <Pitchfork/>

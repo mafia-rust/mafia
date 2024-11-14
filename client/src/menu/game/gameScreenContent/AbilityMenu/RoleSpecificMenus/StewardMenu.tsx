@@ -40,7 +40,7 @@ export default function StewardMenu(
             onChoose={(input)=>{
                 GAME_MANAGER.sendAbilityInput({
                     type: "steward",
-                    input: input
+                    selection: input
                 });
             }}
         />

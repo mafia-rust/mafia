@@ -3,6 +3,7 @@ import { ChatMessage } from "../components/ChatMessage";
 import { Role, RoleState } from "./roleState.d";
 import { RoleList } from "./roleListState.d";
 import { LobbyPreviewData } from "./packet";
+import { AvailableGenericAbilitySelection, GenericAbilitySelection } from "../menu/game/gameScreenContent/AbilityMenu/GenericAbilityMenu";
 
 
 export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;
@@ -91,6 +92,9 @@ export type PlayerGameState = {
     targets: PlayerIndex[],
     voted: PlayerIndex | null,
     judgement: Verdict,
+
+    availableGenericAbilitySelection: AvailableGenericAbilitySelection,
+    genericAbilitySelection: GenericAbilitySelection,
     
     forfeitVote: boolean,
     pitchforkVote: PlayerIndex | null,

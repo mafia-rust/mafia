@@ -70,6 +70,10 @@ export function createPlayerGameState(): PlayerGameState {
         
         roleState: { type: "detective" },
 
+        availableGenericAbilitySelection: {
+            input: {}
+        },
+
         will: "",
         notes: [],
         crossedOutOutlines: [],

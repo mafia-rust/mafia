@@ -1,33 +1,50 @@
+import { GenericAbilitySelection } from "../menu/game/gameScreenContent/AbilityMenu/GenericAbilityMenu";
 import { KiraInput } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu";
 import { Role } from "./roleState.d";
 
-export type BooleanInput = boolean | null;
-export type OnePlayerOptionInput = number | null;
-export type TwoRoleOptionInput = [Role | null, Role | null];
-export type TwoRoleOutlineOptionInput = [number | null, number | null];
+export type BooleanSelection = boolean | null;
+
+export type OnePlayerOptionSelection = number | null;
+export type AvailableOnePlayerOptionSelection = (number | null)[];
+
+export type TwoRoleOptionSelection = [Role | null, Role | null];
+export type AvailableTwoRoleOptionSelection = {
+    availableRoles: (Role | null)[],
+    canChooseDuplicates: boolean
+};
+
+export type TwoRoleOutlineOptionSelection = [number | null, number | null];
+export type AvailableTwoRoleOutlineOptionSelection = (number | null)[];
+
+
+
+
 
 
 export type AbilityInput = {
+    type: "genericAbility",
+    selection: GenericAbilitySelection
+} | {
     type: "auditor",
-    input: TwoRoleOutlineOptionInput
+    selection: TwoRoleOutlineOptionSelection
 } | {
     type: "steward",
-    input: TwoRoleOptionInput
+    selection: TwoRoleOptionSelection
 } | {
     type: "ojoInvestigate",
-    input: TwoRoleOutlineOptionInput
+    selection: TwoRoleOutlineOptionSelection
 } | {
     type: "kira",
-    input: KiraInput
+    selection: KiraInput
 } | {
     type: "forfeitVote"
-    input: BooleanInput,
+    selection: BooleanSelection,
 } | {
     type: "pitchforkVote"
-    input: OnePlayerOptionInput,
+    selection: OnePlayerOptionSelection,
 } | {
     type: "hitOrderVote"
-    input: OnePlayerOptionInput,
+    selection: OnePlayerOptionSelection,
 } | {
     type: "hitOrderMafioso",
 }

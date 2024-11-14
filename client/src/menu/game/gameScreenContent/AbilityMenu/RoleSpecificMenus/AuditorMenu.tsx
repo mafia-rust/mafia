@@ -2,9 +2,9 @@ import { ReactElement } from "react"
 import React from "react"
 import { Role } from "../../../../../game/roleState.d"
 import { usePlayerState } from "../../../../../components/useHooks"
-import TwoRoleOutlineOptionInputMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionInputMenu"
+import TwoRoleOutlineOptionInputMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionMenu"
 import GAME_MANAGER from "../../../../.."
-import { TwoRoleOutlineOptionInput } from "../../../../../game/abilityInput"
+import { TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput"
 
 export type AuditorResult = {
     type: "two",
@@ -34,10 +34,10 @@ export default function AuditorMenu(props: {}): ReactElement {
         ["yourRoleState"]
     )!;
 
-    const onInput = (chosenOutlines: TwoRoleOutlineOptionInput) => {
+    const onInput = (chosenOutlines: TwoRoleOutlineOptionSelection) => {
         const input = {
             type: "auditor" as const,
-            input: chosenOutlines
+            selection: chosenOutlines
         };
         GAME_MANAGER.sendAbilityInput(input);
     }

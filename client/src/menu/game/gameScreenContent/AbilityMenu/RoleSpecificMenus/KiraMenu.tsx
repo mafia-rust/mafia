@@ -43,7 +43,7 @@ export default function KiraMenu(props: Readonly<{
 
         GAME_MANAGER.sendAbilityInput({
             type: "kira" as const,
-            input: guessesOut
+            selection: guessesOut
         });
     }
 

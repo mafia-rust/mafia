@@ -7,7 +7,7 @@ import { Button } from "../../../../../components/Button";
 import GAME_MANAGER from "../../../../..";
 import { RoleState } from "../../../../../game/roleState.d";
 import PlayerNamePlate from "../../../../../components/PlayerNamePlate";
-import "./oldSelectionType.css";
+import "./oldSelectionMenu.css";
 import StyledText from "../../../../../components/StyledText";
 import SelectionInformation from "../SelectionInformation";
 

@@ -33,7 +33,7 @@ export default function ForfeitVote(): ReactElement {
         onClick={()=>{
             const input = {
                 type: "forfeitVote" as const,
-                input: !forfeitVote
+                selection: !forfeitVote
             }
             GAME_MANAGER.sendAbilityInput(input);
         }}

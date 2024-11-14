@@ -41,7 +41,7 @@ export default function Pitchfork(props: Readonly<{
                     onChange={(player)=>{
                         const input = {
                             type:"pitchforkVote" as const,
-                            input: player
+                            selection: player
                         }
                         GAME_MANAGER.sendAbilityInput(input)}
                     }

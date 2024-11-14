@@ -1,29 +1,39 @@
-pub mod common_input;
+pub mod common_selection;
 
-use common_input::{BooleanInput, OnePlayerOptionInput, TwoRoleOptionInput, TwoRoleOutlineOptionInput};
+use common_selection::{
+    one_player_option_selection::OnePlayerOptionSelection,
+    two_role_option_selection::TwoRoleOptionSelection,
+    two_role_outline_option_selection::TwoRoleOutlineOptionSelection, 
+    BooleanSelection
+};
 use serde::{Deserialize, Serialize};
 use super::{
+    components::generic_ability::GenericAbilitySelection,
     event::on_ability_input_received::OnAbilityInputReceived,
-    player::PlayerReference, 
+    player::PlayerReference,
     role::kira::KiraAbilityInput,
     Game
 };
 
-#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Eq, Ord)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase", tag="type")]
 pub enum AbilityInput{
-    Auditor{input: TwoRoleOutlineOptionInput},
-    Steward{input: TwoRoleOptionInput},
-    OjoInvestigate{input: TwoRoleOutlineOptionInput},
-    Kira{input: KiraAbilityInput},
+    GenericAbility{selection: GenericAbilitySelection},
+
+    //role abilities
+
+    Auditor{selection: TwoRoleOutlineOptionSelection},
+    Steward{selection: TwoRoleOptionSelection},
+    OjoInvestigate{selection: TwoRoleOutlineOptionSelection},
+    Kira{selection: KiraAbilityInput},
 
     //Non role abilities
 
-    ForfeitVote{input: BooleanInput},
+    ForfeitVote{selection: BooleanSelection},
     
-    PitchforkVote{input: OnePlayerOptionInput},
+    PitchforkVote{selection: OnePlayerOptionSelection},
 
-    HitOrderVote{input: OnePlayerOptionInput},
+    HitOrderVote{selection: OnePlayerOptionSelection},
     HitOrderMafioso,
 }
 impl AbilityInput{

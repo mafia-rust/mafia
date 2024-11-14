@@ -1,7 +1,6 @@
 use crate::game::{
     components::{
-        cult::Cult, detained::Detained, mafia::Mafia,
-        pitchfork::Pitchfork, verdicts_today::VerdictsToday
+        cult::Cult, detained::Detained, generic_ability::GenericAbilitySaveComponent, mafia::Mafia, pitchfork::Pitchfork, verdicts_today::VerdictsToday
     },
     phase::PhaseType, player::PlayerReference, Game
 };
@@ -24,6 +23,7 @@ impl OnPhaseStart{
         Mafia::on_phase_start(game, self.phase);
         Cult::on_phase_start(game, self.phase);
         Pitchfork::on_phase_start(game, self.phase);
+        GenericAbilitySaveComponent::on_phase_start(game, self.phase);
 
         game.on_phase_start(self.phase);
     }
