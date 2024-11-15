@@ -23,14 +23,13 @@ use vec1::Vec1;
 
 use crate::{
     game::{
-        available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, components::insider_group::InsiderGroupID, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
+        ability_input::AbilityInput, available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, components::insider_group::InsiderGroupID, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
             counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess,
             eros::ErosAction,
             puppeteer::PuppeteerAction, recruiter::RecruiterAction, 
             ClientRoleStateEnum, Role
-        }, role_list::{RoleList, RoleOutline}, ability_input::AbilityInput, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
-    }, 
-    listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log, vec_set::VecSet
+        }, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
+    }, listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log, vec_map::VecMap, vec_set::VecSet
 };
 
 #[derive(Serialize, Debug, Clone)]
@@ -103,7 +102,7 @@ pub enum ToClientPacket{
 
     PlayerAlive{alive: Vec<bool>},
     #[serde(rename_all = "camelCase")]
-    PlayerVotes{votes_for_player: HashMap<PlayerIndex, u8>},
+    PlayerVotes{votes_for_player: VecMap<PlayerIndex, u8>},
 
     #[serde(rename_all = "camelCase")]
     YourSendChatGroups{send_chat_groups: Vec<ChatGroup>},
@@ -112,9 +111,9 @@ pub enum ToClientPacket{
 
     YourButtons{buttons: Vec<AvailableButtons>},
     #[serde(rename_all = "camelCase")]
-    YourRoleLabels{role_labels: HashMap<PlayerIndex, Role>},
+    YourRoleLabels{role_labels: VecMap<PlayerIndex, Role>},
     #[serde(rename_all = "camelCase")]
-    YourPlayerTags{player_tags: HashMap<PlayerIndex, Vec1<Tag>>},
+    YourPlayerTags{player_tags: VecMap<PlayerIndex, Vec1<Tag>>},
     YourWill{will: String},
     YourNotes{notes: Vec<String>},
     #[serde(rename_all = "camelCase")]
@@ -154,7 +153,7 @@ impl ToClientPacket {
         })
     }
     pub fn new_player_votes(game: &mut Game)->ToClientPacket{
-        let mut voted_for_player: HashMap<PlayerIndex, u8> = HashMap::new();
+        let mut voted_for_player: VecMap<PlayerIndex, u8> = VecMap::new();
 
 
         for player_ref in PlayerReference::all_players(game){

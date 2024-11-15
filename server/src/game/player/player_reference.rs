@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use serde::{Serialize, Deserialize};
 
-use crate::game::Game;
+use crate::{game::Game, vec_map::VecMap};
 
 use super::Player;
 
@@ -40,6 +40,11 @@ impl PlayerReference{
         ref_vec.iter().map(PlayerReference::index).collect()
     }
     pub fn ref_map_to_index<T>(ref_map: HashMap<PlayerReference, T>) -> HashMap<PlayerIndex, T> {
+        ref_map.into_iter().map(|(player_ref, value)| {
+            (player_ref.index(), value)
+        }).collect()
+    }
+    pub fn ref_vec_map_to_index<T>(ref_map: VecMap<PlayerReference, T>) -> VecMap<PlayerIndex, T> {
         ref_map.into_iter().map(|(player_ref, value)| {
             (player_ref.index(), value)
         }).collect()
