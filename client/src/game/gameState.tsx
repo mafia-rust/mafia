@@ -73,6 +73,9 @@ export function createPlayerGameState(): PlayerGameState {
         availableGenericAbilitySelection: {
             input: {}
         },
+        genericAbilitySelection: {
+            input: []
+        },
 
         will: "",
         notes: [],

@@ -20,7 +20,7 @@ use crate::{game::{
 #[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct GenericAbilitySelection{
-    selection_type: VecMap<GenericAbilityID, GenericAbilitySelectionType>,
+    input: VecMap<GenericAbilityID, GenericAbilitySelectionType>,
 }
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
 #[serde(tag = "type")]
@@ -55,10 +55,11 @@ impl AvailableSelection for AvailableGenericAbilitySelection{
     type Selection = GenericAbilitySelection;
 
     fn validate_selection(&self, selection: &Self::Selection)->bool {
-        self.input.get(&selection.id).map_or(false, 
-            |available_selection_type| 
-                available_selection_type.validate_selection(&selection.selection_type)
-        )
+        selection.input.iter().all(|(id, selection)|{
+            self.input.get(id).map_or(false, |available_selection_type|
+                available_selection_type.validate_selection(selection)
+            )
+        })
     }
 }
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
@@ -135,26 +136,26 @@ impl GenericAbilitySaveComponent{
         }
 
         //get the saved input, it was just created so it should exist
-        let Some(player_data) = game
+        let Some(saved_input_for_player) = game
             .generic_ability
             .players_saved_inputs
             .get_mut(&actor_ref) else {return};
 
         //validate selection
-        if !player_data.0.validate_selection(&selection){return;}
+        if !saved_input_for_player.0.validate_selection(&selection){return;}
 
-        
 
         //save selection, if the player has already saved a selection for this ability, update it
-        if let Some(ability_data) = player_data.1.get_mut(&selection.id) {
-            *ability_data = selection.clone().selection_type;
-        }else{
-            player_data.1.insert(selection.id, selection.clone().selection_type);
-        };
+        for selection in selection.input.clone(){
+            if let Some(ability_data) = saved_input_for_player.1.get_mut(&selection.0) {
+                *ability_data = selection.1;
+            }else{
+                saved_input_for_player.1.insert(selection.0, selection.1);
+            };
+        }
 
         actor_ref.send_packet(game, ToClientPacket::GenericAbilitySelection{
-            id: selection.id,
-            selection: selection
+            selection: selection.clone()
         });
     }
 
