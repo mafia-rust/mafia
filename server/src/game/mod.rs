@@ -21,7 +21,6 @@ pub mod win_condition;
 pub mod role_outline_reference;
 pub mod ability_input;
 
-use std::collections::HashMap;
 use std::time::Duration;
 use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
@@ -47,6 +46,7 @@ use crate::client_connection::ClientConnection;
 use crate::game::event::on_game_start::OnGameStart;
 use crate::game::player::PlayerIndex;
 use crate::packet::ToClientPacket;
+use crate::vec_map::VecMap;
 use chat::{ChatMessageVariant, ChatGroup, ChatMessage};
 use player::PlayerReference;
 use player::Player;
@@ -294,7 +294,7 @@ impl Game {
 
         let &PhaseState::Nomination { trials_left, .. } = self.current_phase() else {return};
 
-        let mut voted_player_votes: HashMap<PlayerReference, u8> = HashMap::new();
+        let mut voted_player_votes: VecMap<PlayerReference, u8> = VecMap::new();
 
         for player in PlayerReference::all_players(self){
             if !player.alive(self) { continue }
@@ -322,7 +322,7 @@ impl Game {
         
         self.send_packet_to_all(
             ToClientPacket::PlayerVotes { votes_for_player: 
-                PlayerReference::ref_map_to_index(voted_player_votes.clone())
+                PlayerReference::ref_vec_map_to_index(voted_player_votes.clone())
             }
         );
 

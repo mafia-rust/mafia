@@ -4,7 +4,7 @@ import { ANCHOR_CONTROLLER, chatMessageToAudio } from "./../menu/Anchor";
 import GAME_MANAGER from "./../index";
 import GameScreen from "./../menu/game/GameScreen";
 import { ToClientPacket } from "./packet";
-import { Tag } from "./gameState.d";
+import { PlayerIndex, Tag } from "./gameState.d";
 import { Role } from "./roleState.d";
 import translate from "./lang";
 import { computePlayerKeywordData, computePlayerKeywordDataForLobby } from "../components/StyledText";
@@ -20,6 +20,7 @@ import NightMessagePopup from "../components/NightMessagePopup";
 import PlayMenu from "../menu/main/PlayMenu";
 import StartMenu from "../menu/main/StartMenu";
 import { defaultAlibi } from "../menu/game/gameScreenContent/WillMenu";
+import ListMap from "../ListMap";
 
 
 function sendDefaultName() {
@@ -327,11 +328,14 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "playerVotes":
             if(GAME_MANAGER.state.stateType === "game"){
+
+                let listMapVotes = new ListMap<PlayerIndex, number>(packet.votesForPlayer);
+
                 for(let i = 0; i < GAME_MANAGER.state.players.length; i++){
                     GAME_MANAGER.state.players[i].numVoted = 0;
-
-                    let numVoted = packet.votesForPlayer[i];
-                    if(numVoted !== undefined){
+                    
+                    let numVoted = listMapVotes.get(i);
+                    if(numVoted !== null){
                         GAME_MANAGER.state.players[i].numVoted = numVoted;
                     }
                 }
@@ -381,12 +385,12 @@ export default function messageListener(packet: ToClientPacket){
                 for (const player of GAME_MANAGER.state.players) {
                     player.roleLabel = null;
                 }
-                for (const [key, value] of Object.entries(packet.roleLabels)) { 
+                for (const [key, value] of packet.roleLabels) { 
                     if(
                         GAME_MANAGER.state.players !== undefined && 
-                        GAME_MANAGER.state.players[Number.parseInt(key)] !== undefined
+                        GAME_MANAGER.state.players[key] !== undefined
                     )
-                        GAME_MANAGER.state.players[Number.parseInt(key)].roleLabel = value as Role;
+                        GAME_MANAGER.state.players[key].roleLabel = value as Role;
                 }
                 GAME_MANAGER.state.players = [...GAME_MANAGER.state.players];
             }
@@ -397,12 +401,12 @@ export default function messageListener(packet: ToClientPacket){
                     GAME_MANAGER.state.players[i].playerTags = [];
                 }
 
-                for(const [key, value] of Object.entries(packet.playerTags)){
+                for(const [key, value] of packet.playerTags){
                     if(
                         GAME_MANAGER.state.players !== undefined && 
-                        GAME_MANAGER.state.players[Number.parseInt(key)] !== undefined
+                        GAME_MANAGER.state.players[key] !== undefined
                     )
-                        GAME_MANAGER.state.players[Number.parseInt(key)].playerTags = value as Tag[];
+                        GAME_MANAGER.state.players[key].playerTags = value as Tag[];
                 }
                 GAME_MANAGER.state.players = [...GAME_MANAGER.state.players];
             }

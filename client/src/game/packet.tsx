@@ -9,6 +9,7 @@ import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/Role
 import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu"
 import { AbilityInput } from "./abilityInput"
 import { AvailableGenericAbilitySelection, GenericAbilitySelection } from "../menu/game/gameScreenContent/AbilityMenu/GenericAbilityMenu"
+import { ListMapData } from "../ListMap"
 
 export type LobbyPreviewData = {
     name: string,
@@ -108,7 +109,7 @@ export type ToClientPacket = {
     alive: [boolean]
 } | {
     type: "playerVotes",
-    votesForPlayer: Record<number, number> 
+    votesForPlayer: ListMapData<number, number> 
 } | {
     type: "yourSendChatGroups",
     sendChatGroups: ChatGroup[]
@@ -132,10 +133,10 @@ export type ToClientPacket = {
     }]
 } | {
     type: "yourRoleLabels",
-    roleLabels: Record<PlayerIndex, Role> 
+    roleLabels: ListMapData<PlayerIndex, Role> 
 } | {
     type: "yourPlayerTags",
-    playerTags: Record<PlayerIndex, Tag[]> 
+    playerTags: ListMapData<PlayerIndex, Tag[]> 
 } | {
     type: "yourWill",
     will: string

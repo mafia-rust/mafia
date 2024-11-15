@@ -1,4 +1,4 @@
-use serde::{ser::SerializeMap, Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug)]
 pub struct VecMap<K, V> where K: Eq {
@@ -139,35 +139,12 @@ impl<K,  V> FromIterator<(K, V)> for VecMap<K, V> where K: Eq {
 
 impl<K, V> Serialize for VecMap<K, V> where K: Eq, K: Serialize, V: Serialize {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
-        let mut map = serializer.serialize_map(Some(self.len()))?;
-        for (k, v) in self.iter() {
-            map.serialize_entry(k, v)?;
-        }
-        map.end()
+        self.vec.serialize(serializer)
     }
 }
 impl<'de, K, V> Deserialize<'de> for VecMap<K, V> where K: Eq, K: Deserialize<'de>, V: Deserialize<'de> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error> where D: serde::Deserializer<'de> {
-        struct MapVisitor<K, V> where K: Eq {
-            marker: std::marker::PhantomData<VecMap<K, V>>,
-        }
-
-        impl <'de, K, V> serde::de::Visitor<'de> for MapVisitor<K, V> where K: Eq, K: Deserialize<'de>, V: Deserialize<'de> {
-            type Value = VecMap<K, V>;
-
-            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-                formatter.write_str("a map")
-            }
-
-            fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error> where A: serde::de::MapAccess<'de> {
-                let mut vec = Vec::new();
-                while let Some((k, v)) = map.next_entry()? {
-                    vec.push((k, v));
-                }
-                Ok(VecMap { vec })
-            }
-        }
-
-        deserializer.deserialize_map(MapVisitor { marker: std::marker::PhantomData })
+        let vec = Vec::deserialize(deserializer)?;
+        Ok(VecMap { vec })
     }
 }
