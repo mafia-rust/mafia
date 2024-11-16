@@ -9,9 +9,10 @@ use crate::{game::{
             AvailableSelection
         },
         AbilityInput
-    }, 
-    phase::PhaseType, player::PlayerReference, Game
+    }, chat::{self, ChatGroup, ChatMessageVariant}, phase::PhaseType, player::PlayerReference, Game
 }, packet::ToClientPacket, vec_map::VecMap};
+
+use super::insider_group::{self, InsiderGroup, InsiderGroupID};
 
 
 
@@ -227,4 +228,41 @@ impl GenericAbilitySaveComponent{
             .get(&player_ref)
             .and_then(|data| data.1.get(&id).map(|x| x.clone()))
     }
+
+
+
+
+
+    // pub fn send_selection(game: &mut Game, player_ref: PlayerReference, id: GenericAbilityID){
+
+    //     let mut target_message_sent = false;
+    //     for insider_group in InsiderGroupID::all_insider_groups_with_player(game, player_ref){
+    //         game.add_message_to_chat_group( insider_group.get_insider_chat_group(),
+    //             ChatMessageVariant::Targeted { 
+    //                 targeter: player_ref.index(), 
+    //                 targets: PlayerReference::ref_vec_to_index(&target_ref_list)
+    //             }
+    //         );
+    //         target_message_sent = true;
+    //     }
+    //     if !target_message_sent{
+
+    //     }
+    // }
+    // fn get_selected_message(player_ref: PlayerReference, selection: GenericAbilitySelectionType){
+    //     match selection{
+    //         GenericAbilitySelectionType::UnitSelection => {
+    //         },
+    //         GenericAbilitySelectionType::OnePlayerOptionSelection{selection} => {
+
+    //         },
+    //         GenericAbilitySelectionType::TwoRoleOptionSelection{selection} => {
+
+    //         },
+    //         GenericAbilitySelectionType::TwoRoleOutlineOptionSelection{selection} => {
+
+    //         },
+    //     }
+    // }
 }
+
