@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::{
-    grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
+    components::generic_ability::{GenericAbilityID, GenericAbilitySelectionType}, grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
         auditor::AuditorResult, engineer::TrapState, eros::ErosAction, kira::KiraResult, puppeteer::PuppeteerAction, recruiter::RecruiterAction, spy::SpyBug, Role
     }, role_list::RoleOutline, tag::Tag, verdict::Verdict
 };
@@ -101,6 +101,13 @@ pub enum ChatMessageVariant {
     Targeted {
         targeter: PlayerIndex,
         targets: Vec<PlayerIndex>
+    },
+    #[serde(rename_all = "camelCase")]
+    GenericAbilityUsed{
+        player: PlayerIndex,
+        role: Option<Role>,
+        ability_id: GenericAbilityID,
+        selection: GenericAbilitySelectionType
     },
 
     #[serde(rename_all = "camelCase")]

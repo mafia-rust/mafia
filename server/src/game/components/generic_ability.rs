@@ -9,7 +9,7 @@ use crate::{game::{
             AvailableSelection
         },
         AbilityInput
-    }, chat::{self, ChatGroup, ChatMessageVariant}, phase::PhaseType, player::PlayerReference, Game
+    }, chat::{self, chat_message, ChatGroup, ChatMessageVariant}, phase::PhaseType, player::PlayerReference, Game
 }, packet::ToClientPacket, vec_map::VecMap};
 
 use super::insider_group::{self, InsiderGroup, InsiderGroupID};
@@ -23,7 +23,7 @@ use super::insider_group::{self, InsiderGroup, InsiderGroupID};
 pub struct GenericAbilitySelection{
     input: VecMap<GenericAbilityID, GenericAbilitySelectionType>,
 }
-#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(tag = "type")]
 #[serde(rename_all = "camelCase")]
 pub enum GenericAbilitySelectionType{
@@ -146,12 +146,25 @@ impl GenericAbilitySaveComponent{
         if !saved_input_for_player.0.validate_selection(&selection){return;}
 
 
-        //save selection, if the player has already saved a selection for this ability, update it
-        for selection in selection.input.clone(){
-            if let Some(ability_data) = saved_input_for_player.1.get_mut(&selection.0) {
-                *ability_data = selection.1;
+        //send selection message if the selection changed 
+        for (id, selection) in selection.input.clone(){
+            if let Some(ability_data) = saved_input_for_player.1.get_mut(&id) {
+                if ability_data != &selection{
+                    Self::send_selection_message(game, actor_ref, id, selection.clone());
+                }
             }else{
-                saved_input_for_player.1.insert(selection.0, selection.1);
+                Self::send_selection_message(game, actor_ref, id, selection.clone());
+            };
+        }
+
+        //save selection, if the player has already saved a selection for this ability, update it
+        for (id, selection) in selection.input.clone(){
+            if let Some(ability_data) = saved_input_for_player.1.get_mut(&id) {
+                if ability_data != &selection{
+                    *ability_data = selection;
+                }
+            }else{
+                saved_input_for_player.1.insert(id, selection);
             };
         }
 
@@ -233,36 +246,27 @@ impl GenericAbilitySaveComponent{
 
 
 
-    // pub fn send_selection(game: &mut Game, player_ref: PlayerReference, id: GenericAbilityID){
+    pub fn send_selection_message(
+        game: &mut Game,
+        player_ref: PlayerReference,
+        id: GenericAbilityID,
+        selection: GenericAbilitySelectionType
+    ){
+        let chat_message = ChatMessageVariant::GenericAbilityUsed{
+            player: player_ref.index(),
+            role: Some(player_ref.role(game)),
+            ability_id: id,
+            selection: selection.clone()
+        };
 
-    //     let mut target_message_sent = false;
-    //     for insider_group in InsiderGroupID::all_insider_groups_with_player(game, player_ref){
-    //         game.add_message_to_chat_group( insider_group.get_insider_chat_group(),
-    //             ChatMessageVariant::Targeted { 
-    //                 targeter: player_ref.index(), 
-    //                 targets: PlayerReference::ref_vec_to_index(&target_ref_list)
-    //             }
-    //         );
-    //         target_message_sent = true;
-    //     }
-    //     if !target_message_sent{
-
-    //     }
-    // }
-    // fn get_selected_message(player_ref: PlayerReference, selection: GenericAbilitySelectionType){
-    //     match selection{
-    //         GenericAbilitySelectionType::UnitSelection => {
-    //         },
-    //         GenericAbilitySelectionType::OnePlayerOptionSelection{selection} => {
-
-    //         },
-    //         GenericAbilitySelectionType::TwoRoleOptionSelection{selection} => {
-
-    //         },
-    //         GenericAbilitySelectionType::TwoRoleOutlineOptionSelection{selection} => {
-
-    //         },
-    //     }
-    // }
+        let mut target_message_sent = false;
+        for insider_group in InsiderGroupID::all_insider_groups_with_player(game, player_ref){
+            game.add_message_to_chat_group( insider_group.get_insider_chat_group(), chat_message.clone());
+            target_message_sent = true;
+        }
+        if !target_message_sent{
+            player_ref.add_private_chat_message(game, chat_message);
+        }
+    }
 }
 

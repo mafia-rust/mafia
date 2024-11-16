@@ -4,7 +4,7 @@ use crate::{game::player::PlayerReference, vec_set::VecSet};
 
 use super::AvailableSelection;
 
-#[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq)]
+#[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct OnePlayerOptionSelection(pub Option<PlayerReference>);
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq)]
 pub struct AvailableOnePlayerOptionSelection(pub VecSet<Option<PlayerReference>>);
