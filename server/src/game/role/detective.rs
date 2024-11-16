@@ -41,11 +41,13 @@ impl RoleStateImpl for Detective {
             actor_ref.push_night_message(game, message);
         }
     }
-    fn available_generic_ability_selection(self, game: &Game, _actor_ref: PlayerReference) -> AvailableGenericAbilitySelection {
+    fn available_generic_ability_selection(self, game: &Game, actor_ref: PlayerReference) -> AvailableGenericAbilitySelection {
         let mut all_allowed_inputs = VecSet::new();
         all_allowed_inputs.insert(None);
         for player in PlayerReference::all_players(game) {
-            all_allowed_inputs.insert(Some(player));
+            if crate::game::role::common_role::can_night_select(game, actor_ref, player){
+                all_allowed_inputs.insert(Some(player));
+            }
         }
         
         
@@ -58,11 +60,8 @@ impl RoleStateImpl for Detective {
         
         AvailableGenericAbilitySelection::new(map)
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
-    }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        crate::game::role::common_role::convert_generic_ability_to_visits(game, actor_ref, 0, false)
     }
 }
 

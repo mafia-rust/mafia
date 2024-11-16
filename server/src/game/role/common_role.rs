@@ -1,10 +1,11 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    chat::ChatGroup, components::{detained::Detained, puppeteer_marionette::PuppeteerMarionette}, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, game_conclusion::GameConclusion, role_list::RoleSet, visit::Visit, win_condition::WinCondition, Game
+    chat::ChatGroup, components::{detained::Detained, generic_ability::{GenericAbilityID, GenericAbilitySaveComponent, GenericAbilitySelectionType}, puppeteer_marionette::PuppeteerMarionette}, game_conclusion::GameConclusion, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, role_list::RoleSet, visit::Visit, win_condition::WinCondition, Game
 };
 
 use super::{reporter::Reporter, medium::Medium, InsiderGroupID, Role, RoleState};
+
 
 
 pub(super) fn can_night_select(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
@@ -23,6 +24,43 @@ pub(super) fn convert_selection_to_visits(_game: &Game, _actor_ref: PlayerRefere
     } else {
         Vec::new()
     }
+}
+
+pub(super) fn convert_generic_ability_to_visits(game: &Game, actor_ref: PlayerReference, ability_id: GenericAbilityID, attack: bool) -> Vec<Visit> {
+    GenericAbilitySaveComponent::get_saved_input(game, actor_ref, ability_id)
+        .map(|selection|
+            match selection {
+                GenericAbilitySelectionType::UnitSelection => vec![Visit{ target: actor_ref, attack }],
+                GenericAbilitySelectionType::OnePlayerOptionSelection { selection } => match selection.0 {
+                    Some(target_ref) => vec![Visit{ target: target_ref, attack }],
+                    None => Vec::new(),
+                },
+                GenericAbilitySelectionType::TwoRoleOptionSelection { selection } => {
+                    let mut out = Vec::new();
+                    for player in PlayerReference::all_players(game){
+                        if Some(player.role(game)) == selection.0 {
+                            out.push(Visit{ target: player, attack });
+                        }else if Some(player.role(game)) == selection.1 {
+                            out.push(Visit{ target: player, attack });
+                        }
+                    }
+                    out
+                }
+                GenericAbilitySelectionType::TwoRoleOutlineOptionSelection { selection } => {
+                    let mut out = vec![];
+                    if let Some(chosen_outline) = selection.0{
+                        let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
+                        out.push(Visit{ target: player, attack: false });
+                    }
+                    if let Some(chosen_outline) = selection.1{
+                        let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
+                        out.push(Visit{ target: player, attack: false });
+                    }
+                    out
+                },
+            }
+        )
+        .unwrap_or_default()
 }
 
 pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference, mut night_chat_groups: Vec<ChatGroup>) -> HashSet<ChatGroup> {

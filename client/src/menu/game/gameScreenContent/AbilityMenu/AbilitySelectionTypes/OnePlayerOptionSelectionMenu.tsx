@@ -1,19 +1,16 @@
 import React from "react";
 import { PlayerIndex } from "../../../../../game/gameState.d";
-import { useGameState, usePlayerState } from "../../../../../components/useHooks";
+import { useGameState } from "../../../../../components/useHooks";
 import PlayerOptionDropdown from "../../../../../components/PlayerOptionDropdown";
 import SelectionInformation from "../SelectionInformation";
+import { OnePlayerOptionSelection } from "../../../../../game/abilityInput";
 
 
 export default function OnePlayerOptionSelectionMenu(props: Readonly<{
     availablePlayers?: (PlayerIndex | null)[],
+    selectedPlayer: OnePlayerOptionSelection,
     onChoose: (player: PlayerIndex | null) => void
 }>){
-
-    const selection = usePlayerState(
-        playerState => playerState.targets,
-        ["yourSelection"]
-    )!;
 
     const handleSelection = (player: PlayerIndex | null) => {
         props.onChoose(player);
@@ -34,7 +31,7 @@ export default function OnePlayerOptionSelectionMenu(props: Readonly<{
     return <div>
         <SelectionInformation/>
         <PlayerOptionDropdown
-            value={selection[0]===undefined ? null : selection[0]}
+            value={props.selectedPlayer===undefined ? null : props.selectedPlayer}
             onChange={handleSelection}
             canChooseNone={canChooseNone}
             choosablePlayers={availablePlayers}

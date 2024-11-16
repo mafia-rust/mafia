@@ -215,4 +215,16 @@ impl GenericAbilitySaveComponent{
             .get(&player_ref)
             .map(|data| data.0.clone())
     }
+
+    pub fn get_all_saved_input(game: &Game, player_ref: PlayerReference)->Option<VecMap<GenericAbilityID, GenericAbilitySelectionType>>{
+        game.generic_ability.players_saved_inputs
+            .get(&player_ref)
+            .map(|data| data.1.clone())
+    }
+
+    pub fn get_saved_input(game: &Game, player_ref: PlayerReference, id: GenericAbilityID)->Option<GenericAbilitySelectionType>{
+        game.generic_ability.players_saved_inputs
+            .get(&player_ref)
+            .and_then(|data| data.1.get(&id).map(|x| x.clone()))
+    }
 }

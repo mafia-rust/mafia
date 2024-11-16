@@ -1,3 +1,5 @@
+import ListMap from "../ListMap"
+import { AvailableGenericAbilitySelectionType, GenericAbilityID, GenericAbilitySelectionType } from "../menu/game/gameScreenContent/AbilityMenu/GenericAbilityMenu"
 import GameState, { LobbyClient, LobbyState, PhaseTimes, Player, LobbyClientID, PlayerGameState } from "./gameState.d"
 
 
@@ -71,10 +73,10 @@ export function createPlayerGameState(): PlayerGameState {
         roleState: { type: "detective" },
 
         availableGenericAbilitySelection: {
-            input: {}
+            input: (new ListMap<GenericAbilityID, AvailableGenericAbilitySelectionType>()).entries()
         },
         genericAbilitySelection: {
-            input: []
+            input: (new ListMap<GenericAbilityID, GenericAbilitySelectionType>()).entries()
         },
 
         will: "",

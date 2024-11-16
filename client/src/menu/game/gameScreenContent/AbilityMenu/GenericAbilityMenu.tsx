@@ -7,11 +7,12 @@ import OnePlayerOptionSelectionMenu from "./AbilitySelectionTypes/OnePlayerOptio
 import TwoPlayerOptionSelectionType from "./AbilitySelectionTypes/TwoPlayerOptionSelectionMenu";
 import TwoRoleOutlineOptionInputMenu from "./AbilitySelectionTypes/TwoRoleOutlineOptionMenu";
 import GAME_MANAGER from "../../../..";
+import ListMap, { ListMapData } from "../../../../ListMap";
 
 
-type GenericAbilityID = number;
+export type GenericAbilityID = number;
 export type AvailableGenericAbilitySelection = {
-    input: Partial<Record<GenericAbilityID, AvailableGenericAbilitySelectionType>>,
+    input: ListMapData<GenericAbilityID, AvailableGenericAbilitySelectionType>,
 }
 export type AvailableGenericAbilitySelectionType = {
     type: "unitSelection",
@@ -28,7 +29,7 @@ export type AvailableGenericAbilitySelectionType = {
 
 
 export type GenericAbilitySelection = {
-    input: [GenericAbilityID, GenericAbilitySelectionType][],
+    input: ListMapData<GenericAbilityID, GenericAbilitySelectionType>
 }
 export type GenericAbilitySelectionType = {
     type: "unitSelection",
@@ -49,49 +50,42 @@ export default function GenericAbilityMenu(): ReactElement {
         playerState => playerState.availableGenericAbilitySelection,
         ["availableGenericAbilitySelection"]
     )!;
+    const selectedGenericAbilitySelection = usePlayerState(
+        playerState => playerState.genericAbilitySelection,
+        ["genericAbilitySelection", "clearGenericAbilitySelection"]
+    )!;
 
     return <>
-        Generic MENU
-        {JSON.stringify(availableGenericAbilitySelection)}
-        {Object.keys(availableGenericAbilitySelection.input).map((id: string) => {
-            let idNum = parseInt(id);
-            const selectionType = availableGenericAbilitySelection.input[idNum];
-            if(selectionType === undefined) {return null}
-
-            switch(selectionType.type) {
+        {availableGenericAbilitySelection.input.map(([id, availableSelectionType]) => {
+            switch(availableSelectionType.type) {
                 case "unitSelection":
                     return <Button>UNIT SELECT</Button>
                 case "onePlayerOptionSelection":
 
-                    
-                    /* 
-                        {
-                            "type":"abilityInput",
-                            "abilityInput":{
-                                "type":"genericAbility",
-                                "selection":{
-                                    "input":{
-                                        "0":{"type":"onePlayerOptionSelection","selection":0}
-                                    }
-                                }
-                            }
-                        }
-                    */
+                    const selectedGenericAbilitySelectionType = new ListMap(selectedGenericAbilitySelection.input);
+                    let x = selectedGenericAbilitySelectionType.get(id);
+                    let selectedPlayer;
+                    if(x === null || x.type !== "onePlayerOptionSelection"){
+                        selectedPlayer = null;
+                    }else{
+                        selectedPlayer = x.selection;
+                    }
 
                     return <OnePlayerOptionSelectionMenu
-                        availablePlayers={selectionType.selection}
+                        availablePlayers={availableSelectionType.selection}
+                        selectedPlayer={selectedPlayer}
                         onChoose={(player) => {
                             
-                            const mapInput: [GenericAbilityID, GenericAbilitySelectionType][] = [];
-                            mapInput.push([idNum, {
+                            const mapInput: ListMap<GenericAbilityID, GenericAbilitySelectionType> = new ListMap();
+                            mapInput.set(id, {
                                 type: "onePlayerOptionSelection",
                                 selection: player
-                            }]);
+                            });
 
                             GAME_MANAGER.sendAbilityInput({
                                 type: "genericAbility",
                                 selection: {
-                                    input: mapInput
+                                    input: mapInput.entries()
                                 }
                             });
                         }}
@@ -102,16 +96,16 @@ export default function GenericAbilityMenu(): ReactElement {
                     return <TwoRoleOutlineOptionInputMenu
                         onChoose={(selection) => {
 
-                            const mapInput: [GenericAbilityID, GenericAbilitySelectionType][] = [];
-                            mapInput.push([idNum, {
+                            const mapInput: ListMap<GenericAbilityID, GenericAbilitySelectionType> = new ListMap();
+                            mapInput.set(id, {
                                 type: "twoRoleOutlineOptionSelection",
                                 selection: selection
-                            }]);
+                            });
 
                             GAME_MANAGER.sendAbilityInput({
                                 type: "genericAbility",
                                 selection: {
-                                    input: mapInput
+                                    input: mapInput.entries()
                                 }
                             });
                         }}
