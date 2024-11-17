@@ -44,16 +44,12 @@ pub(super) fn available_generic_ability_selection_one_player_night(
             if !can_select_self {
                 all_allowed_inputs.remove(&Some(actor_ref));
             }
-            
-            
-            let mut map = VecMap::new();
-            map.insert(0, 
+
+            AvailableGenericAbilitySelection::new(crate::vec_map![(0, 
                 AvailableGenericAbilitySelectionType::OnePlayerOptionSelection{
                     selection: AvailableOnePlayerOptionSelection(all_allowed_inputs)
                 }
-            );
-            
-            AvailableGenericAbilitySelection::new(map)
+            )])
         },
         _ => AvailableGenericAbilitySelection::default()
     }

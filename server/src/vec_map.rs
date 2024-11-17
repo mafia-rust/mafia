@@ -148,3 +148,17 @@ impl<'de, K, V> Deserialize<'de> for VecMap<K, V> where K: Eq, K: Deserialize<'d
         Ok(VecMap { vec })
     }
 }
+
+pub use macros::vec_map;
+mod macros {
+    #[macro_export]
+    macro_rules! vec_map {
+        ($(($key:expr, $value:expr)),*) => {{
+            let mut map = VecMap::new();
+            $(map.insert($key, $value);)*
+            map
+        }};
+    }
+
+    pub use vec_map;
+}
