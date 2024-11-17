@@ -59,7 +59,9 @@ export default function GenericAbilityMenu(): ReactElement {
         {availableGenericAbilitySelection.input.map(([id, availableSelectionType]) => {
             switch(availableSelectionType.type) {
                 case "unitSelection":
-                    return <Button>UNIT SELECT</Button>
+                    return <Button
+                        key={id}
+                    >UNIT SELECT</Button>
                 case "onePlayerOptionSelection":
 
                     const selectedGenericAbilitySelectionType = new ListMap(selectedGenericAbilitySelection.input);
@@ -72,6 +74,7 @@ export default function GenericAbilityMenu(): ReactElement {
                     }
 
                     return <OnePlayerOptionSelectionMenu
+                        key={id}
                         availablePlayers={availableSelectionType.selection}
                         selectedPlayer={selectedPlayer}
                         onChoose={(player) => {
@@ -91,9 +94,12 @@ export default function GenericAbilityMenu(): ReactElement {
                         }}
                     />
                 case "twoRoleOptionSelection":
-                    return <TwoPlayerOptionSelectionType/>
+                    return <TwoPlayerOptionSelectionType
+                        key={id}
+                    />
                 case "twoRoleOutlineOptionSelection":
                     return <TwoRoleOutlineOptionInputMenu
+                        key={id}
                         onChoose={(selection) => {
 
                             const mapInput: ListMap<GenericAbilityID, GenericAbilitySelectionType> = new ListMap();

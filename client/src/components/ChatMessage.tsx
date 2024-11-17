@@ -15,6 +15,7 @@ import { KiraGuess, KiraGuessResult, kiraGuessTranslate } from "../menu/game/gam
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
+import { GenericAbilityID, GenericAbilitySelectionType } from "../menu/game/gameScreenContent/AbilityMenu/GenericAbilityMenu";
 
 const ChatElement = React.memo((
     props: {
@@ -453,6 +454,43 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     playerNames[message.targeter],
                 );
             }
+        case "genericAbilityUsed":
+            switch (message.selection.type) {
+                case "unitSelection":
+                    return translate("chatMessage.genericAbilityUsed.unitSelection",
+                        playerNames[message.player],
+                        translate("role."+message.role+".name"),
+                        translate("genericAbility.abilityId."+message.role+"."+message.abilityId+".name")
+                    );
+                case "onePlayerOptionSelection":
+                    return translate("chatMessage.genericAbilityUsed.onePlayerOptionSelection",
+                        playerNames[message.player],
+                        translate("role."+message.role+".name"),
+                        translate("genericAbility.abilityId."+message.role+"."+message.abilityId+".name"),
+                        message.selection.selection===null?translate("nobody"):playerNames[message.selection.selection],
+                    );
+                case "twoRoleOptionSelection":
+                    return translate("chatMessage.genericAbilityUsed.twoRoleOptionSelection",
+                        playerNames[message.player],
+                        translate("role."+message.role+".name"),
+                        translate("genericAbility.abilityId."+message.role+"."+message.abilityId+".name"),
+                        message.selection.selection[0]===null?translate("none"):translate("role."+message.selection.selection[0]+".name"),
+                        message.selection.selection[1]===null?translate("none"):translate("role."+message.selection.selection[1]+".name"),
+                    );
+                case "twoRoleOutlineOptionSelection":
+                    return translate("chatMessage.genericAbilityUsed.twoRoleOutlineOptionSelection",
+                        playerNames[message.player],
+                        translate("role."+message.role+".name"),
+                        translate("genericAbility.abilityId."+message.role+"."+message.abilityId+".name"),
+                        message.selection.selection[0] === null ? translate("none") : message.selection.selection[0].toString(),
+                        message.selection.selection[1] === null ? translate("none") : message.selection.selection[1].toString()
+                    );
+            }
+                // player: PlayerIndex,
+                // role: Role | null,
+                // abilityId: GenericAbilityID,
+                // selection: GenericAbilitySelectionType
+            break;
         case "mayorRevealed":
             return translate("chatMessage.mayorRevealed",
                 playerNames[message.playerIndex],
@@ -775,6 +813,13 @@ export type ChatMessageVariant = {
     type: "targeted", 
     targeter: PlayerIndex, 
     targets: PlayerIndex[]
+} | {
+    type: "genericAbilityUsed", 
+    player: PlayerIndex,
+    role: Role | null,
+    abilityId: GenericAbilityID,
+    selection: GenericAbilitySelectionType
+    
 } | {
     type: "phaseFastForwarded"
 } |

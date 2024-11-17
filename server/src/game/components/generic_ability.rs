@@ -9,10 +9,10 @@ use crate::{game::{
             AvailableSelection
         },
         AbilityInput
-    }, chat::{self, chat_message, ChatGroup, ChatMessageVariant}, phase::PhaseType, player::PlayerReference, Game
+    }, chat::ChatMessageVariant, phase::PhaseType, player::PlayerReference, Game
 }, packet::ToClientPacket, vec_map::VecMap};
 
-use super::insider_group::{self, InsiderGroup, InsiderGroupID};
+use super::insider_group::InsiderGroupID;
 
 
 
@@ -102,16 +102,10 @@ impl AvailableSelection for AvailableGenericAbilitySelectionType{
 
 
 pub type GenericAbilityID = u8;
+type PlayerSavedInput = (AvailableGenericAbilitySelection, VecMap<GenericAbilityID, GenericAbilitySelectionType>);
 #[derive(Default)]
 pub struct GenericAbilitySaveComponent{
-    players_saved_inputs: VecMap<
-        PlayerReference,
-        (
-            AvailableGenericAbilitySelection,
-            //Indexed by generic ability ID
-            VecMap<GenericAbilityID, GenericAbilitySelectionType>
-        )
-    >
+    players_saved_inputs: VecMap<PlayerReference, PlayerSavedInput>
 }
 impl GenericAbilitySaveComponent{
     pub fn on_ability_input_received(
@@ -145,25 +139,18 @@ impl GenericAbilitySaveComponent{
         //validate selection
         if !saved_input_for_player.0.validate_selection(&selection){return;}
 
-
-        //send selection message if the selection changed 
-        for (id, selection) in selection.input.clone(){
-            if let Some(ability_data) = saved_input_for_player.1.get_mut(&id) {
-                if ability_data != &selection{
-                    Self::send_selection_message(game, actor_ref, id, selection.clone());
-                }
-            }else{
-                Self::send_selection_message(game, actor_ref, id, selection.clone());
-            };
-        }
+        //messages to send saying who you selected, need this vec due to borrow checker stuff
+        let mut selection_message_queue = Vec::new();
 
         //save selection, if the player has already saved a selection for this ability, update it
         for (id, selection) in selection.input.clone(){
             if let Some(ability_data) = saved_input_for_player.1.get_mut(&id) {
                 if ability_data != &selection{
+                    selection_message_queue.push((actor_ref, id, selection.clone()));
                     *ability_data = selection;
                 }
             }else{
+                selection_message_queue.push((actor_ref, id, selection.clone()));
                 saved_input_for_player.1.insert(id, selection);
             };
         }
@@ -171,6 +158,10 @@ impl GenericAbilitySaveComponent{
         actor_ref.send_packet(game, ToClientPacket::GenericAbilitySelection{
             selection: selection.clone()
         });
+
+        for (actor_ref, id, selection) in selection_message_queue{
+            Self::send_selection_message(game, actor_ref, id, selection);
+        }
     }
 
 
@@ -189,12 +180,12 @@ impl GenericAbilitySaveComponent{
             
             let current = Self::current_available_generic_ability_selection(game, player);
 
-            // if 
-            //     current.is_none() ||
-            //     new_available_selection != current.unwrap_or_default()
-            // {
+            if
+                current.is_none() ||
+                current.is_some_and(|c| c != new_available_selection)
+            {
                 Self::set_available_generic_ability_selection(game, player, new_available_selection);
-            // }
+            }
         }
     }
 
@@ -241,9 +232,6 @@ impl GenericAbilitySaveComponent{
             .get(&player_ref)
             .and_then(|data| data.1.get(&id).map(|x| x.clone()))
     }
-
-
-
 
 
     pub fn send_selection_message(
