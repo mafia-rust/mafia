@@ -1,8 +1,8 @@
 use std::collections::HashSet;
 
-use crate::game::{
-    chat::ChatGroup, components::{detained::Detained, generic_ability::{GenericAbilityID, GenericAbilitySaveComponent, GenericAbilitySelectionType}, puppeteer_marionette::PuppeteerMarionette}, game_conclusion::GameConclusion, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, role_list::RoleSet, visit::Visit, win_condition::WinCondition, Game
-};
+use crate::{game::{
+    ability_input::common_selection::one_player_option_selection::AvailableOnePlayerOptionSelection, chat::ChatGroup, components::{detained::Detained, generic_ability::{AvailableGenericAbilitySelection, AvailableGenericAbilitySelectionType, GenericAbilityID, GenericAbilitySaveComponent, GenericAbilitySelectionType}, puppeteer_marionette::PuppeteerMarionette}, game_conclusion::GameConclusion, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, role_list::RoleSet, visit::Visit, win_condition::WinCondition, Game
+}, vec_map::VecMap, vec_set::VecSet};
 
 use super::{reporter::Reporter, medium::Medium, InsiderGroupID, Role, RoleState};
 
@@ -23,6 +23,39 @@ pub(super) fn convert_selection_to_visits(_game: &Game, _actor_ref: PlayerRefere
         vec![Visit{ target: target_refs[0], attack }]
     } else {
         Vec::new()
+    }
+}
+
+pub(super) fn available_generic_ability_selection_one_player_night(
+    game: &Game,
+    actor_ref: PlayerReference,
+    can_select_self: bool,
+) -> AvailableGenericAbilitySelection {
+    match game.current_phase().phase() {
+        PhaseType::Night => {
+            let mut all_allowed_inputs: VecSet<Option<PlayerReference>> = PlayerReference::all_players(game)
+                .into_iter()
+                .filter(|player| can_night_select(game, actor_ref, *player))
+                .map(|player| Some(player))
+                .collect();
+
+            all_allowed_inputs.insert(None);
+
+            if !can_select_self {
+                all_allowed_inputs.remove(&Some(actor_ref));
+            }
+            
+            
+            let mut map = VecMap::new();
+            map.insert(0, 
+                AvailableGenericAbilitySelectionType::OnePlayerOptionSelection{
+                    selection: AvailableOnePlayerOptionSelection(all_allowed_inputs)
+                }
+            );
+            
+            AvailableGenericAbilitySelection::new(map)
+        },
+        _ => AvailableGenericAbilitySelection::default()
     }
 }
 

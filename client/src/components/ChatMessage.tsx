@@ -485,12 +485,9 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                         message.selection.selection[0] === null ? translate("none") : message.selection.selection[0].toString(),
                         message.selection.selection[1] === null ? translate("none") : message.selection.selection[1].toString()
                     );
+                default:
+                    return "";
             }
-                // player: PlayerIndex,
-                // role: Role | null,
-                // abilityId: GenericAbilityID,
-                // selection: GenericAbilitySelectionType
-            break;
         case "mayorRevealed":
             return translate("chatMessage.mayorRevealed",
                 playerNames[message.playerIndex],
