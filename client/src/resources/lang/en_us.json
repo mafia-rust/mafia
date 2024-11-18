@@ -1431,10 +1431,11 @@
     "wiki.article.role.retributionist.attributes":"* The first player you visit is told that they were possessed or immune to possession\n* You are told all night information messages that your target gets told\n* You can't select a dead player who you have previously possessed more than once",
     "wiki.article.role.retributionist.extra":"* You are immune to getting roleblocked or possessed\n* You can force your target to visit any living player\n* If you don't successfully possess the player you select, you can select them again\n* All your visits except the first are cleared after you change your targets visits\n    * A tracker will only see you visit your first target",
 
-    "wiki.article.role.crossingGuard.guide": "",
-    "wiki.article.role.crossingGuard.abilities":"",
-    "wiki.article.role.crossingGuard.attributes":"",
-    "wiki.article.role.crossingGuard.extra":"",
+    "wiki.article.role.crossingGuard.reminder": "- At any time, select a dead player to take their town role until next discussion.",
+    "wiki.article.role.crossingGuard.guide": "- At any time, select a dead player to swap roles with them. At the start of next discussion, your roles switch back\n - You can only choose players who have town roles on their grave",
+    "wiki.article.role.crossingGuard.abilities":"- At any time, select a dead player to swap roles with them\n- At the start of next discussion, the crossing guard swaps roles with the player they previously swapped roles with\n - You can only choose players who have town roles on their grave",
+    "wiki.article.role.crossingGuard.attributes":"- If a players grave doesn't show the correct role, instead of swapping roles, you become the role on their grave, and the dead player becomes the crossing guard\n    - After this happens, at the start of discussion, you still swap back to crossing guard, and the dead player becomes the role you just had",
+    "wiki.article.role.crossingGuard.extra":"_For Example_ @2 is the imposter, when they die their grave shows mayor. @10 the crossing guard chooses @2, so @10 becomes mayor and @2 becomes crossing guard. At the start of next discussion @10 becomes crossing guard again and @2 becomes mayor.",
 
     "wiki.article.role.reporter.reminder": "Each day, choose a player to interview and speak with at night, when obituary starts, your report is posted to everyone." ,
     "wiki.article.role.reporter.guide": "- Each day, choose a player to interview that night\n    - You can speak with your interviewee at night, and they aren't told who you are\n- You make a report that is posted at the start of each day\n    - The report is anonymous, so if you don't write who you are, nobody would know who you are\n    - Your report won't be posted if you are silenced or blocked\n\n You should ask what peoples roles are during an interview, they should tell you because they know you're a reporter. If they don't tell you their role, they are likely evil. You should write who you think is evil in your report so it is posted and everyone knows.",

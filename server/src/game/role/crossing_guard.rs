@@ -9,7 +9,7 @@ use crate::game::player::PlayerReference;
 use super::{GetClientRoleState, RoleStateImpl};
 
 
-pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 #[derive(Clone, Debug, Default)]

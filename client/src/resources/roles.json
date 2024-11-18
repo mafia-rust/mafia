@@ -535,7 +535,7 @@
         "roleSets": ["town", "townCommon", "townSupport"],
         "armor": false,
         "aura": null,
-        "maxCount": null,
+        "maxCount": 1,
         "roleSpecificMenu": true,
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
