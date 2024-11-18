@@ -100,6 +100,7 @@ macros::roles! {
     Escort : escort,
     Medium : medium,
     Retributionist : retributionist,
+    CrossingGuard : crossing_guard,
     Reporter : reporter,
     Mayor : mayor,
     Transporter : transporter,

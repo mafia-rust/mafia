@@ -155,6 +155,9 @@ pub struct GraveReference{
     index: u8
 }
 impl GraveReference{
+    pub fn all(game: &Game)->Vec<GraveReference>{
+        (0..game.graves.len() as u8).map(|index| GraveReference{index}).collect()
+    }
     pub fn new(game: &Game, index: u8)->Option<GraveReference> {
         if (index as usize) < game.graves.len() {
             Some(GraveReference { index })

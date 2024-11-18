@@ -27,17 +27,18 @@ pub struct ClientRoleState {
 pub enum DoomsayerGuess{
     #[default] NonTown,
 
-    Jailor, Villager,
+    Jailor, Villager, Drunk,
     // No TI
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith, Steward,
     Vigilante, Veteran, Marksman, Deputy, Rabblerouser,
-    Escort, Medium, Retributionist, Reporter, Mayor, Transporter
+    Escort, Medium, Retributionist, CrossingGuard, Reporter, Mayor, Transporter
 }
 impl DoomsayerGuess{
     fn convert_to_guess(role: Role)->Option<DoomsayerGuess>{
         match role {
             Role::Jailor => Some(DoomsayerGuess::Jailor),
             Role::Villager => Some(DoomsayerGuess::Villager),
+            Role::Drunk => Some(DoomsayerGuess::Drunk),
 
             Role::Detective | Role::Lookout | Role::Spy | 
             Role::Tracker | Role::Philosopher | Role::Psychic | 
@@ -60,6 +61,7 @@ impl DoomsayerGuess{
             Role::Escort => Some(DoomsayerGuess::Escort),
             Role::Medium => Some(DoomsayerGuess::Medium),
             Role::Retributionist => Some(DoomsayerGuess::Retributionist),
+            Role::CrossingGuard => Some(DoomsayerGuess::CrossingGuard),
             Role::Reporter => Some(DoomsayerGuess::Reporter),
             Role::Mayor => Some(DoomsayerGuess::Mayor),
             Role::Transporter => Some(DoomsayerGuess::Transporter),
@@ -77,7 +79,7 @@ impl DoomsayerGuess{
             Role::Jester | Role::Revolutionary | Role::Politician |
             Role::Doomsayer | Role::Death | 
             Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | Role::Chronokaiser |
-            Role::Wildcard | Role::TrueWildcard | Role::Drunk => Some(DoomsayerGuess::NonTown),
+            Role::Wildcard | Role::TrueWildcard => Some(DoomsayerGuess::NonTown),
             Role::Martyr => None,
            
 

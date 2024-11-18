@@ -530,6 +530,17 @@
             {"type": "targetIsPossessionImmune"}
         ]
     },
+    "crossingGuard": {
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townSupport"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[]
+    },
     "godfather": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaKilling"],

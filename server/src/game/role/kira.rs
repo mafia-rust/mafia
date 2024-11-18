@@ -23,17 +23,18 @@ pub enum KiraGuess{
     None,
     #[default] NonTown,
 
-    Jailor, Villager,
+    Jailor, Villager, Drunk,
     Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy, TallyClerk,
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith, Steward,
     Vigilante, Veteran, Marksman, Deputy, Rabblerouser,
-    Escort, Medium, Retributionist, Reporter, Mayor, Transporter
+    Escort, Medium, Retributionist, CrossingGuard, Reporter, Mayor, Transporter
 }
 impl KiraGuess{
     fn convert_to_guess(role: Role)->Option<KiraGuess>{
         match role {
             Role::Jailor => Some(Self::Jailor),
             Role::Villager => Some(Self::Villager),
+            Role::Drunk => Some(Self::Drunk),
 
             Role::Detective => Some(Self::Detective),
             Role::Lookout => Some(Self::Lookout),
@@ -63,6 +64,7 @@ impl KiraGuess{
             Role::Escort => Some(Self::Escort),
             Role::Medium => Some(Self::Medium),
             Role::Retributionist => Some(Self::Retributionist),
+            Role::CrossingGuard => Some(Self::CrossingGuard),
             Role::Reporter => Some(Self::Reporter),
             Role::Mayor => Some(Self::Mayor),
             Role::Transporter => Some(Self::Transporter),
@@ -80,7 +82,7 @@ impl KiraGuess{
             Role::Jester | Role::Revolutionary | Role::Politician |
             Role::Doomsayer | Role::Death |
             Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | Role::Chronokaiser |
-            Role::Wildcard | Role::TrueWildcard | Role::Drunk => Some(Self::NonTown),
+            Role::Wildcard | Role::TrueWildcard => Some(Self::NonTown),
             Role::Martyr => None,
 
             //Fiends

@@ -87,6 +87,9 @@ export type RoleState = {
 } | {
     type: "retributionist"
 } | {
+    type: "crossingGuard",
+    playerToSwapWith: PlayerIndex | null
+} | {
     type: "reporter",
     public: boolean,
     report: string,

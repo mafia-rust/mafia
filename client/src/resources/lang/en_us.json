@@ -323,6 +323,9 @@
     "role.retributionist.youAreSelecting": "You are possessing \\0 into \\1.",
     "role.retributionist.youAreSelecting.null": "You aren't possessing anyone.",
 
+    "role.crossingGuard.name": "Crossing Guard",
+    "role.crossingGuard.name:var.0": "Crossing Guards",
+
     "role.reporter.name": "Reporter",
     "role.reporter.name:var.0": "Reporters",
     "role.reporter.dayTarget": "Interview",
@@ -1427,6 +1430,11 @@
     "wiki.article.role.retributionist.abilities":"- Visit 2 players\n    - The first player has their first visit changed to the second player you visit\n- You can only select certain players\n    - The first player you select must be a dead player with a town role on their grave\n    - The second player you select must be any living player",
     "wiki.article.role.retributionist.attributes":"* The first player you visit is told that they were possessed or immune to possession\n* You are told all night information messages that your target gets told\n* You can't select a dead player who you have previously possessed more than once",
     "wiki.article.role.retributionist.extra":"* You are immune to getting roleblocked or possessed\n* You can force your target to visit any living player\n* If you don't successfully possess the player you select, you can select them again\n* All your visits except the first are cleared after you change your targets visits\n    * A tracker will only see you visit your first target",
+
+    "wiki.article.role.crossingGuard.guide": "",
+    "wiki.article.role.crossingGuard.abilities":"",
+    "wiki.article.role.crossingGuard.attributes":"",
+    "wiki.article.role.crossingGuard.extra":"",
 
     "wiki.article.role.reporter.reminder": "Each day, choose a player to interview and speak with at night, when obituary starts, your report is posted to everyone." ,
     "wiki.article.role.reporter.guide": "- Each day, choose a player to interview that night\n    - You can speak with your interviewee at night, and they aren't told who you are\n- You make a report that is posted at the start of each day\n    - The report is anonymous, so if you don't write who you are, nobody would know who you are\n    - Your report won't be posted if you are silenced or blocked\n\n You should ask what peoples roles are during an interview, they should tell you because they know you're a reporter. If they don't tell you their role, they are likely evil. You should write who you think is evil in your report so it is posted and everyone knows.",
