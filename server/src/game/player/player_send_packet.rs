@@ -99,10 +99,10 @@ impl PlayerReference{
                 role_state: self.role_state(game).clone().get_client_role_state(game, *self)
             },
             ToClientPacket::YourRoleLabels { 
-                role_labels: PlayerReference::ref_map_to_index(self.role_label_map(game)) 
+                role_labels: PlayerReference::ref_vec_map_to_index(self.role_label_map(game)) 
             },
             ToClientPacket::YourPlayerTags { 
-                player_tags: PlayerReference::ref_map_to_index(self.player_tags(game).clone())
+                player_tags: PlayerReference::ref_vec_map_to_index(self.player_tags(game).clone())
             },
             ToClientPacket::YourSelection{
                 player_indices: PlayerReference::ref_vec_to_index(self.selection(game))
