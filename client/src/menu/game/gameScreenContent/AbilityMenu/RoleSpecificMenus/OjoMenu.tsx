@@ -5,7 +5,7 @@ import GAME_MANAGER from "../../../../..";
 import { Role, RoleState } from "../../../../../game/roleState.d";
 import RoleDropdown from "../../../../../components/RoleDropdown";
 import translate from "../../../../../game/lang";
-import TwoRoleOutlineOptionInputMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionMenu";
+import TwoRoleOutlineOptionSelectionMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionSelectionMenu";
 import { TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput";
 
 
@@ -33,7 +33,7 @@ export default function OjoMenu(
     }
 
     return <>
-        <TwoRoleOutlineOptionInputMenu
+        <TwoRoleOutlineOptionSelectionMenu
             previouslyGivenResults={props.roleState.previouslyGivenResults}
             chosenOutlines={props.roleState.chosenOutline}
             onChoose={onInput}

@@ -2,7 +2,7 @@ import { ReactElement } from "react"
 import React from "react"
 import { Role } from "../../../../../game/roleState.d"
 import { usePlayerState } from "../../../../../components/useHooks"
-import TwoRoleOutlineOptionInputMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionMenu"
+import TwoRoleOutlineOptionSelectionMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionSelectionMenu"
 import GAME_MANAGER from "../../../../.."
 import { TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput"
 
@@ -42,7 +42,7 @@ export default function AuditorMenu(props: {}): ReactElement {
         GAME_MANAGER.sendAbilityInput(input);
     }
     
-    return <TwoRoleOutlineOptionInputMenu
+    return <TwoRoleOutlineOptionSelectionMenu
         previouslyGivenResults={previouslyGivenResults}
         chosenOutlines={chosenOutlines}
         onChoose={onInput}

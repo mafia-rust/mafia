@@ -20,13 +20,13 @@ export default function OldSelectionType(): ReactElement {
     )!;
 
 
-    return <>
+    return <>{useablePlayers.length !== 0 ? <>
         <SelectionInformation />
         <div className="old-selection-type">
             {useablePlayers.map(idx => <PlayerCard key={idx} playerIndex={idx}/>)}
-            {useablePlayers.length === 0 && <StyledText>{translate("none")}</StyledText>}
+            && <StyledText>{translate("none")}</StyledText>
         </div>
-    </>
+    </> : null}</>
 }
 
 function useSelectedPlayers(): PlayerIndex[] {

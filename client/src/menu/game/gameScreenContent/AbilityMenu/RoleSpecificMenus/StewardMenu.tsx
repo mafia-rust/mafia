@@ -7,7 +7,7 @@ import React from "react";
 import { getAllRoles } from "../../../../../game/roleListState.d";
 import StyledText from "../../../../../components/StyledText";
 import translate from "../../../../../game/lang";
-import TwoRoleOptionInputMenu from "../AbilitySelectionTypes/TwoRoleOptionInputMenu";
+import TwoRoleOptionSelectionMenu from "../AbilitySelectionTypes/TwoRoleOptionSelectionMenu";
 
 
 
@@ -34,7 +34,7 @@ export default function StewardMenu(
 
     return <>
         <Counter max={1} current={props.roleState.stewardProtectsRemaining}><StyledText>{translate("role.steward.roleDataText", props.roleState.stewardProtectsRemaining)}</StyledText></Counter>
-        <TwoRoleOptionInputMenu 
+        <TwoRoleOptionSelectionMenu 
             input={props.roleState.roleChosen} 
             disabledRoles={disabledRoles}
             onChoose={(input)=>{

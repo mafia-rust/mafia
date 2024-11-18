@@ -1,13 +1,27 @@
 import { ReactElement } from "react";
-import { AvailableOnePlayerOptionSelection, AvailableTwoRoleOptionSelection, AvailableTwoRoleOutlineOptionSelection, OnePlayerOptionSelection, TwoRoleOptionSelection, TwoRoleOutlineOptionSelection } from "../../../../game/abilityInput";
+import { 
+    AvailableOnePlayerOptionSelection, 
+    OnePlayerOptionSelection, 
+    
+    AvailableTwoPlayerOptionSelection, 
+    TwoPlayerOptionSelection, 
+    
+    AvailableTwoRoleOptionSelection, 
+    TwoRoleOptionSelection, 
+    
+    AvailableTwoRoleOutlineOptionSelection, 
+    TwoRoleOutlineOptionSelection
+} from "../../../../game/abilityInput";
 import React from "react";
 import { usePlayerState } from "../../../../components/useHooks";
 import { Button } from "../../../../components/Button";
 import OnePlayerOptionSelectionMenu from "./AbilitySelectionTypes/OnePlayerOptionSelectionMenu";
-import TwoPlayerOptionSelectionType from "./AbilitySelectionTypes/TwoPlayerOptionSelectionMenu";
-import TwoRoleOutlineOptionInputMenu from "./AbilitySelectionTypes/TwoRoleOutlineOptionMenu";
+import TwoRoleOutlineOptionSelectionMenu from "./AbilitySelectionTypes/TwoRoleOutlineOptionSelectionMenu";
 import GAME_MANAGER from "../../../..";
 import ListMap, { ListMapData } from "../../../../ListMap";
+import translate from "../../../../game/lang";
+import TwoRoleOptionSelectionMenu from "./AbilitySelectionTypes/TwoRoleOptionSelectionMenu";
+import TwoPlayerOptionSelectionMenu from "./AbilitySelectionTypes/TwoPlayerOptionSelectionMenu";
 
 
 export type GenericAbilityID = number;
@@ -19,6 +33,9 @@ export type AvailableGenericAbilitySelectionType = {
 } | {
     type: "onePlayerOptionSelection",
     selection: AvailableOnePlayerOptionSelection,
+} | {
+    type: "twoPlayerOptionSelection",
+    selection: AvailableTwoPlayerOptionSelection,
 } | {
     type: "twoRoleOptionSelection",
     selection: AvailableTwoRoleOptionSelection,
@@ -36,6 +53,9 @@ export type GenericAbilitySelectionType = {
 } | {
     type: "onePlayerOptionSelection",
     selection: OnePlayerOptionSelection
+} | {
+    type: "twoPlayerOptionSelection",
+    selection: TwoPlayerOptionSelection
 } | {
     type: "twoRoleOptionSelection",
     selection: TwoRoleOptionSelection
@@ -55,34 +75,72 @@ export default function GenericAbilityMenu(): ReactElement {
         ["genericAbilitySelection", "clearGenericAbilitySelection"]
     )!;
 
+    const role = usePlayerState(
+        playerState => playerState.roleState.type,
+        ["yourRoleState"]
+    )!;
+
     return <>
         {availableGenericAbilitySelection.input.map(([id, availableSelectionType]) => {
+            
+            const selectedGenericAbilitySelectionTypeMap = new ListMap(selectedGenericAbilitySelection.input);
+            const selectedGenericAbilitySelectionType = selectedGenericAbilitySelectionTypeMap.get(id);
+
             switch(availableSelectionType.type) {
                 case "unitSelection":
-                    return <Button
-                        key={id}
-                    >UNIT SELECT</Button>
-                case "onePlayerOptionSelection":
-
-                    const selectedGenericAbilitySelectionType = new ListMap(selectedGenericAbilitySelection.input);
-                    let x = selectedGenericAbilitySelectionType.get(id);
+                    return <Button key={id}>
+                        {translate("genericAbility.abilityId."+translate("role."+role+".name")+"."+id+".name")}
+                    </Button>
+                case "onePlayerOptionSelection":{
+                    
                     let selectedPlayer;
-                    if(x === null || x.type !== "onePlayerOptionSelection"){
+                    if(selectedGenericAbilitySelectionType === null || selectedGenericAbilitySelectionType.type !== "onePlayerOptionSelection"){
                         selectedPlayer = null;
                     }else{
-                        selectedPlayer = x.selection;
+                        selectedPlayer = selectedGenericAbilitySelectionType.selection;
                     }
-
+                    
                     return <OnePlayerOptionSelectionMenu
                         key={id}
                         availablePlayers={availableSelectionType.selection}
                         selectedPlayer={selectedPlayer}
-                        onChoose={(player) => {
-                            
+                            onChoose={(player) => {
+                                
+                                const mapInput: ListMap<GenericAbilityID, GenericAbilitySelectionType> = new ListMap();
+                                mapInput.set(id, {
+                                    type: "onePlayerOptionSelection",
+                                    selection: player
+                                });
+                                
+                                GAME_MANAGER.sendAbilityInput({
+                                    type: "genericAbility",
+                                    selection: {
+                                        input: mapInput.entries()
+                                    }
+                                });
+                            }}
+                    />;
+                }
+                case "twoPlayerOptionSelection":{
+                    let input: TwoPlayerOptionSelection;
+                    if(
+                        selectedGenericAbilitySelectionType === null ||
+                        selectedGenericAbilitySelectionType.type !== "twoPlayerOptionSelection"
+                    ){
+                        input = [null, null];
+                    }else{
+                        input = selectedGenericAbilitySelectionType.selection;
+                    }
+
+                    return <TwoPlayerOptionSelectionMenu
+                        key={id}
+                        selection={input}
+                        availableSelection={availableSelectionType.selection}
+                        onChoose={(selection) => {
                             const mapInput: ListMap<GenericAbilityID, GenericAbilitySelectionType> = new ListMap();
                             mapInput.set(id, {
-                                type: "onePlayerOptionSelection",
-                                selection: player
+                                type: "twoPlayerOptionSelection",
+                                selection: selection
                             });
 
                             GAME_MANAGER.sendAbilityInput({
@@ -92,13 +150,42 @@ export default function GenericAbilityMenu(): ReactElement {
                                 }
                             });
                         }}
-                    />
-                case "twoRoleOptionSelection":
-                    return <TwoPlayerOptionSelectionType
+                    />;
+                }
+                case "twoRoleOptionSelection":{
+
+                    let input: TwoRoleOptionSelection;
+                    if(
+                        selectedGenericAbilitySelectionType === null ||
+                        selectedGenericAbilitySelectionType.type !== "twoRoleOptionSelection"
+                    ){
+                        input = [null, null];
+                    }else{
+                        input = selectedGenericAbilitySelectionType.selection;
+                    }
+
+                    return <TwoRoleOptionSelectionMenu
                         key={id}
-                    />
-                case "twoRoleOutlineOptionSelection":
-                    return <TwoRoleOutlineOptionInputMenu
+                        input={input}
+                        availableSelection={availableSelectionType.selection}
+                        onChoose={(selection) => {
+                            const mapInput: ListMap<GenericAbilityID, GenericAbilitySelectionType> = new ListMap();
+                            mapInput.set(id, {
+                                type: "twoRoleOptionSelection",
+                                selection: selection
+                            });
+
+                            GAME_MANAGER.sendAbilityInput({
+                                type: "genericAbility",
+                                selection: {
+                                    input: mapInput.entries()
+                                }
+                            });
+                        }}
+                    />;
+                }
+                case "twoRoleOutlineOptionSelection":{
+                    return <TwoRoleOutlineOptionSelectionMenu
                         key={id}
                         onChoose={(selection) => {
 
@@ -116,6 +203,7 @@ export default function GenericAbilityMenu(): ReactElement {
                             });
                         }}
                     />
+                }
                 default:
                     return null;
             }

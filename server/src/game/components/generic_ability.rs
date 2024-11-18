@@ -3,10 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::{game::{
     ability_input::{
         common_selection::{
-            one_player_option_selection::{AvailableOnePlayerOptionSelection, OnePlayerOptionSelection},
-            two_role_option_selection::{AvailableTwoRoleOptionSelection, TwoRoleOptionSelection},
-            two_role_outline_option_selection::{AvailableTwoRoleOutlineOptionSelection, TwoRoleOutlineOptionSelection},
-            AvailableSelection
+            one_player_option_selection::{AvailableOnePlayerOptionSelection, OnePlayerOptionSelection}, two_player_option_selection::{AvailableTwoPlayerOptionSelection, TwoPlayerOptionSelection}, two_role_option_selection::{AvailableTwoRoleOptionSelection, TwoRoleOptionSelection}, two_role_outline_option_selection::{AvailableTwoRoleOutlineOptionSelection, TwoRoleOutlineOptionSelection}, AvailableSelection
         },
         AbilityInput
     }, chat::ChatMessageVariant, phase::PhaseType, player::PlayerReference, Game
@@ -30,6 +27,9 @@ pub enum GenericAbilitySelectionType{
     UnitSelection,
     OnePlayerOptionSelection{
         selection: OnePlayerOptionSelection
+    },
+    TwoPlayerOptionSelection{
+        selection: TwoPlayerOptionSelection
     },
     TwoRoleOptionSelection{
         selection: TwoRoleOptionSelection
@@ -69,6 +69,7 @@ impl AvailableSelection for AvailableGenericAbilitySelection{
 pub enum AvailableGenericAbilitySelectionType{
     UnitSelection,
     OnePlayerOptionSelection{selection: AvailableOnePlayerOptionSelection},
+    TwoPlayerOptionSelection{selection: AvailableTwoPlayerOptionSelection},
     TwoRoleOptionSelection{selection: AvailableTwoRoleOptionSelection},
     TwoRoleOutlineOptionSelection{selection: AvailableTwoRoleOutlineOptionSelection},
 }
@@ -85,6 +86,10 @@ impl AvailableSelection for AvailableGenericAbilitySelectionType{
             (
                 AvailableGenericAbilitySelectionType::OnePlayerOptionSelection{selection: available},
                 GenericAbilitySelectionType::OnePlayerOptionSelection{selection}
+            ) => available.validate_selection(selection),
+            (
+                AvailableGenericAbilitySelectionType::TwoPlayerOptionSelection { selection: available },
+                GenericAbilitySelectionType::TwoPlayerOptionSelection{selection}
             ) => available.validate_selection(selection),
             (
                 AvailableGenericAbilitySelectionType::TwoRoleOptionSelection{selection: available},

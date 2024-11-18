@@ -7,6 +7,13 @@ export type BooleanSelection = boolean | null;
 export type OnePlayerOptionSelection = number | null;
 export type AvailableOnePlayerOptionSelection = (number | null)[];
 
+export type TwoPlayerOptionSelection = [number | null, number | null];
+export type AvailableTwoPlayerOptionSelection = {
+    availableFirstPlayers: (number | null)[],
+    availableSecondPlayers: (number | null)[],
+    canChooseDuplicates: boolean
+}
+
 export type TwoRoleOptionSelection = [Role | null, Role | null];
 export type AvailableTwoRoleOptionSelection = {
     availableRoles: (Role | null)[],
@@ -15,8 +22,6 @@ export type AvailableTwoRoleOptionSelection = {
 
 export type TwoRoleOutlineOptionSelection = [number | null, number | null];
 export type AvailableTwoRoleOutlineOptionSelection = (number | null)[];
-
-
 
 
 

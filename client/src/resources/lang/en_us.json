@@ -298,6 +298,7 @@
 
     "role.mayor.name": "Mayor",
     "role.mayor.name:var.0": "Mayors",
+    "genericAbility.abilityId.mayor.0.name": "Enfranchise",
     "role.mayor.dayTarget": "Enfranchise",
 
     "role.transporter.name": "Transporter",

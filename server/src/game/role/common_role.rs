@@ -64,6 +64,16 @@ pub(super) fn convert_generic_ability_to_visits(game: &Game, actor_ref: PlayerRe
                     Some(target_ref) => vec![Visit{ target: target_ref, attack }],
                     None => Vec::new(),
                 },
+                GenericAbilitySelectionType::TwoPlayerOptionSelection { selection } => {
+                    let mut out = Vec::new();
+                    if let Some(target_ref) = selection.0 {
+                        out.push(Visit{ target: target_ref, attack });
+                    }
+                    if let Some(target_ref) = selection.1 {
+                        out.push(Visit{ target: target_ref, attack });
+                    }
+                    out
+                },
                 GenericAbilitySelectionType::TwoRoleOptionSelection { selection } => {
                     let mut out = Vec::new();
                     for player in PlayerReference::all_players(game){

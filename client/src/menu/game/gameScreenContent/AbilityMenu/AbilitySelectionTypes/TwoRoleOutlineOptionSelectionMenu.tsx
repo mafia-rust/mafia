@@ -1,6 +1,6 @@
 import { ReactElement } from "react"
 import React from "react"
-import "./twoRoleOutlineOptionMenu.css"
+import "./twoRoleOutlineOptionSelectionMenu.css"
 import { Role } from "../../../../../game/roleState.d"
 import { RoleList, translateRoleOutline } from "../../../../../game/roleListState.d"
 import StyledText from "../../../../../components/StyledText"
@@ -24,7 +24,7 @@ type AuditorButtons = ({
     result: AuditorResult
 })[]
 
-export default function TwoRoleOutlineOptionInputMenu(props: {
+export default function TwoRoleOutlineOptionSelectionMenu(props: {
     chosenOutlines?: TwoRoleOutlineOptionSelection,
     previouslyGivenResults?: [number, AuditorResult][],
     onChoose: (chosenOutlines: TwoRoleOutlineOptionSelection)=>void

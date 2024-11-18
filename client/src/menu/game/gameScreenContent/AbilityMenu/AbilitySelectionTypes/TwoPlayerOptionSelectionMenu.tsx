@@ -1,50 +1,36 @@
 import React from "react";
 import { PlayerIndex } from "../../../../../game/gameState.d";
-import { usePlayerState } from "../../../../../components/useHooks";
 import PlayerOptionDropdown from "../../../../../components/PlayerOptionDropdown";
-import GAME_MANAGER from "../../../../..";
-import SelectionInformation from "../SelectionInformation";
+import { AvailableTwoPlayerOptionSelection, TwoPlayerOptionSelection } from "../../../../../game/abilityInput";
 
-export default function TwoPlayerOptionSelectionType(props: {}){
-
-    const selection = usePlayerState(
-        playerState => playerState.targets,
-        ["yourSelection"]
-    )!;
+export default function TwoPlayerOptionSelectionMenu(props: Readonly<{
+    availableSelection: AvailableTwoPlayerOptionSelection
+    selection: TwoPlayerOptionSelection,
+    onChoose: (player: TwoPlayerOptionSelection) => void
+}>){
 
     const handleSelectionFirst = (player: PlayerIndex | null) => {
-        if (selection.length === 0 || selection.length === 1){
-            GAME_MANAGER.sendTargetPacket(player===null ? [] : [player]);
-        }else if(player !== null){
-            GAME_MANAGER.sendTargetPacket([player, selection[1]]);
-        }else{
-            GAME_MANAGER.sendTargetPacket([selection[1]]);
-        }
+        const newSelection: TwoPlayerOptionSelection = [props.selection[0], props.selection[1]];
+        newSelection[0] = player;
+        props.onChoose(newSelection);
     }
+    
     const handleSelectionSecond = (player: PlayerIndex | null) => {
-        if ((selection.length === 1 || selection.length === 2) && player !== null){
-            GAME_MANAGER.sendTargetPacket([selection[0], player]);
-        }else if(selection.length === 1 && player === null){
-            GAME_MANAGER.sendTargetPacket([selection[0]]);
-        }else{
-            GAME_MANAGER.sendTargetPacket([]);
-        }
+        const newSelection: TwoPlayerOptionSelection = [props.selection[0], props.selection[1]];
+        newSelection[1] = player;
+        props.onChoose(newSelection);
     }
 
     return <div>
-        <SelectionInformation/>
         <PlayerOptionDropdown
-            value={selection[0]===undefined ? null : selection[0]}
+            value={props.selection[0]}
             onChange={handleSelectionFirst}
             canChooseNone={true}
         />
-        {
-            selection.length >= 1 && 
-            <PlayerOptionDropdown
-                value={selection[1]===undefined ? null : selection[1]}
-                onChange={handleSelectionSecond}
-                canChooseNone={true}
-            />
-        }
+        <PlayerOptionDropdown
+            value={props.selection[1]}
+            onChange={handleSelectionSecond}
+            canChooseNone={true}
+        />
     </div>
 }
