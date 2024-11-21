@@ -476,6 +476,10 @@
     "role.framer.youAreSelecting.2": "You are framing \\0 into visiting \\1.",
     "role.framer.youAreSelecting.null": "You aren't framing anyone.",
     
+    "role.disguiser.name": "Disguiser",
+    "role.disguiser.name:var.0": "Disguiser",
+    "role.disguiser.target": "Disguise",
+
     "role.cupid.name": "Cupid",
     "role.cupid.name:var.0": "Cupids",
     "role.cupid.target": "Link",
@@ -667,6 +671,8 @@
     "tag.loveLinked.name":"Love Linked",
     "tag.forfeitVote":"🫴",
     "tag.forfeitVote.name":"Forfeit Vote",
+    "tag.disguise":"🥸",
+    "tag.disguise.name":"Disguise",
 
     "dead.icon":"💀",
     "trial.icon": "⚖️",
@@ -1576,6 +1582,12 @@
     "wiki.article.role.framer.abilities":"* Visit a player to give them a suspicious aura for the night\n* Visit 2 players to\n  * Give both players you visit a suspicious aura for the night\n  * The first players appear to visit the second player you visit\n - If there is an alive framer who is not blocked then each syndicate insider is told the roles of all town loyalists that visited each syndicate member.",
     "wiki.article.role.framer.attributes":" - Your ability to see roles of townies may be messed with by appeared visits\n - Your ability to see roles of town loyalists doesn't work when you are blocked or dead\n- You may select any living player for your first visit and any player for the second visit",
     "wiki.article.role.framer.extra":"- Your second visit is cleared, so other roles like veteran and lookout wont interact with it.",
+
+    "wiki.article.role.disguiser.reminder": "At night, choose an insider to permanently disguise, giving them innocent aura, armor, and make their role appear wrong on their grave.",
+    "wiki.article.role.disguiser.guide": "",
+    "wiki.article.role.disguiser.abilities":"",
+    "wiki.article.role.disguiser.attributes":"",
+    "wiki.article.role.disguiser.extra":"",
 
     "wiki.article.role.cupid.guide": "- At night, select 2 players to love link\n* The players are told they are love linked, if one of them dies, the other dies of a broken heart",
     "wiki.article.role.cupid.abilities":"- Visit 2 players to love link them\n    - If one of them dies, the other dies of a broken heart immediately\n    - If one of the players you visit dies on the night you try to love link them, they don't link.",
