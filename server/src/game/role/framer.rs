@@ -1,7 +1,6 @@
 use serde::Serialize;
 
 use crate::game::chat::ChatMessageVariant;
-use crate::game::components::detained::Detained;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
 
 use crate::game::visit::Visit;
@@ -28,12 +27,12 @@ impl RoleStateImpl for Framer {
                 first_visit.target.set_night_framed(game, true);
 
                 let Some(second_visit) = framer_visits.get(1) else {return};
+                second_visit.target.set_night_framed(game, true);
             
-                if !Detained::is_detained(game, first_visit.target) {
-                    first_visit.target.set_night_appeared_visits(game, Some(vec![
-                        Visit{ target: second_visit.target, attack: false }
-                    ]));
-                }
+                first_visit.target.set_night_appeared_visits(game, Some(vec![
+                    Visit{ target: second_visit.target, attack: false }
+                ]));
+                
 
                 actor_ref.set_night_visits(game, vec![first_visit.clone()]);
             },
