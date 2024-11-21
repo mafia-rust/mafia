@@ -128,6 +128,7 @@ macros::roles! {
     Necromancer : necromancer,
     Mortician : mortician,
     Framer : framer,
+    Disguiser : disguiser,
     Forger : forger,
     Cupid : cupid,
     MafiaSupportWildcard: mafia_support_wildcard,

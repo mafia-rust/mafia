@@ -2,6 +2,7 @@ pub mod one_player_option_selection;
 pub mod two_player_option_selection;
 pub mod two_role_option_selection;
 pub mod two_role_outline_option_selection;
+pub mod role_option_selection;
 
 use serde::{Deserialize, Serialize};
 

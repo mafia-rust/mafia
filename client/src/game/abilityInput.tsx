@@ -14,6 +14,7 @@ export type AvailableTwoPlayerOptionSelection = {
     canChooseDuplicates: boolean
 }
 
+export type RoleOptionSelection = Role | null;
 export type TwoRoleOptionSelection = [Role | null, Role | null];
 export type AvailableTwoRoleOptionSelection = {
     availableRoles: (Role | null)[],
@@ -24,11 +25,12 @@ export type TwoRoleOutlineOptionSelection = [number | null, number | null];
 export type AvailableTwoRoleOutlineOptionSelection = (number | null)[];
 
 
-
-
 export type AbilityInput = {
     type: "genericAbility",
     selection: GenericAbilitySelection
+} | {
+    type: "disguiser",
+    input: RoleOptionSelection
 } | {
     type: "auditor",
     selection: TwoRoleOutlineOptionSelection

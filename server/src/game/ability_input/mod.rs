@@ -1,10 +1,7 @@
 pub mod common_selection;
 
 use common_selection::{
-    one_player_option_selection::OnePlayerOptionSelection,
-    two_role_option_selection::TwoRoleOptionSelection,
-    two_role_outline_option_selection::TwoRoleOutlineOptionSelection, 
-    BooleanSelection
+    one_player_option_selection::OnePlayerOptionSelection, role_option_selection::RoleOptionSelection, two_role_option_selection::TwoRoleOptionSelection, two_role_outline_option_selection::TwoRoleOutlineOptionSelection, BooleanSelection
 };
 use serde::{Deserialize, Serialize};
 use super::{
@@ -22,10 +19,11 @@ pub enum AbilityInput{
 
     //role abilities
 
-    Auditor{selection: TwoRoleOutlineOptionSelection},
-    Steward{selection: TwoRoleOptionSelection},
-    OjoInvestigate{selection: TwoRoleOutlineOptionSelection},
-    Kira{selection: KiraAbilityInput},
+    Disguiser{input: RoleOptionSelection},
+    Auditor{input: TwoRoleOutlineOptionSelection},
+    Steward{input: TwoRoleOptionSelection},
+    OjoInvestigate{input: TwoRoleOutlineOptionSelection},
+    Kira{input: KiraAbilityInput},
 
     //Non role abilities
 
