@@ -145,6 +145,10 @@ export type RoleState = {
     fakeWill: string,
     forgesRemaining: number,
 } | {
+    type: "disguiser",
+    currentTarget: PlayerIndex | null,
+    disguisedRole: Role,
+} | {
     type: "framer"
 } | {
     type: "mafiaWitch"

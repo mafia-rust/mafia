@@ -26,33 +26,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 impl RoleStateImpl for Godfather {
     type ClientRoleState = Godfather;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        
-        if priority != Priority::Kill {return}
-        if game.day_number() == 1 {return}
-        
-        if actor_ref.night_blocked(game) {
-            if let Some(backup) = self.backup {
-
-                let mut visits = backup.night_visits(game).clone();
-                if let Some(visit) = visits.first_mut(){
-                    visit.attack = true;
-                    let target_ref = visit.target;
-            
-                    game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackupKilled { backup: backup.index() });
-                    target_ref.try_night_kill_single_attacker(
-                        backup, game, GraveKiller::RoleSet(RoleSet::Mafia), AttackPower::Basic, false
-                    );
-                }
-                backup.set_night_visits(game, visits);
-            }
-            
-        } else if let Some(visit) = actor_ref.night_visits(game).first(){
-            let target_ref = visit.target;
-    
-            target_ref.try_night_kill_single_attacker(
-                actor_ref, game, GraveKiller::RoleSet(RoleSet::Mafia), AttackPower::Basic, false
-            );
-        }        
+        Self::night_ability(self.backup, game, actor_ref, priority);
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         crate::game::role::common_role::can_night_select(game, actor_ref, target_ref) &&
@@ -127,5 +101,49 @@ impl RoleStateImpl for Godfather {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
+    }
+}
+
+impl Godfather{
+    pub(super) fn night_ability(backup: Option<PlayerReference>, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+        if game.day_number() == 1 {return}
+
+        match priority {
+            //set backup to be attacking
+            Priority::Deception => {
+                if !actor_ref.night_blocked(game) {return}
+
+                let Some(backup) = backup else {return};
+                let mut visits = backup.night_visits(game).clone();
+
+                let Some(visit) = visits.first_mut() else {return};
+
+                visit.attack = true;
+        
+                game.add_message_to_chat_group(ChatGroup::Mafia, 
+                    ChatMessageVariant::GodfatherBackupKilled { backup: backup.index() }
+                );
+                
+                backup.set_night_visits(game, visits);
+            },
+            //kill the target
+            Priority::Kill => {
+                if actor_ref.night_blocked(game) {
+                    let Some(backup) = backup else {return};
+                    let Some(visit) = backup.night_visits(game).first() else {return};
+                    visit.target.clone().try_night_kill_single_attacker(
+                        backup, game, GraveKiller::RoleSet(RoleSet::Mafia), 
+                        AttackPower::Basic, false
+                    );
+                }else{
+                    let Some(visit) = actor_ref.night_visits(game).first() else {return};
+                    visit.target.clone().try_night_kill_single_attacker(
+                        actor_ref, game, GraveKiller::RoleSet(RoleSet::Mafia),
+                        AttackPower::Basic, false
+                    );
+                }
+            },
+            _ => return
+        }
     }
 }

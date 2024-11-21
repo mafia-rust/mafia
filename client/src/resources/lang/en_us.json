@@ -479,6 +479,10 @@
     "role.framer.youAreSelecting.2": "You are framing \\0 into visiting \\1.",
     "role.framer.youAreSelecting.null": "You aren't framing anyone.",
     
+    "role.disguiser.name": "Disguiser",
+    "role.disguiser.name:var.0": "Disguiser",
+    "role.disguiser.target": "Disguise",
+
     "role.cupid.name": "Cupid",
     "role.cupid.name:var.0": "Cupids",
     "role.cupid.target": "Link",
@@ -670,6 +674,8 @@
     "tag.loveLinked.name":"Love Linked",
     "tag.forfeitVote":"🫴",
     "tag.forfeitVote.name":"Forfeit Vote",
+    "tag.disguise":"🥸",
+    "tag.disguise.name":"Disguise",
 
     "dead.icon":"💀",
     "trial.icon": "⚖️",
@@ -1327,7 +1333,7 @@
     "wiki.article.role.spy.reminder": "At night, you are told who the syndicate visits, what happens to your bug target.",
     "wiki.article.role.spy.guide": "- At night, select a player to be told what seems to happen to them\n    - You are told if they are roleblocked, wardblocked, silenced, transported, possessed, or protected from an attack\n- Each night you will passively learn information:\n    - You always learn who the syndicate visited\n\n You should tell the town the information you get daily",
     "wiki.article.role.spy.abilities":"* You are told what players are visited by syndicate members, and are told their name multiple times if that player is visited multiple times\n* Visit a player to learn if they were told that they were transported, silenced, roleblocked, wardblocked, possessed, or protected",
-    "wiki.article.role.spy.attributes":"* Your bug tells you when your target receives a message saying they are silenced, roleblocked, wardblocked, protected, possessed, or transported",
+    "wiki.article.role.spy.attributes":"* Your bug tells you when your target receives a message saying they are silenced, roleblocked, wardblocked, protected, possessed, or transported\n* Appeared visits can change your syndicate visits information",
     "wiki.article.role.spy.extra": "* If you are blocked, you aren't told syndicate visits, or the bug information\n* Your bug can be messed with by a hypnotist, if a hypnotist sends the player you bug a message, your bug catches that message\n- The syndicate visits count players who are in the syndicate group, even if they don't have syndicate roles, this can happen due to a recruiter\n- The cult count accounts for all alive players in the cult group, even if they don't have a cult role",
 
     "wiki.article.role.tracker.reminder": "At night, select a player to find out who they visited.",
@@ -1581,10 +1587,16 @@
     "wiki.article.role.forger.extra":"* If you visit a player to attempt to forge them, it costs an ability use, even if they don't die\n* If you are blocked, it doesn't cost an ability use\n* You can't target other syndicate members",
 
     "wiki.article.role.framer.reminder": "Each night, select a player to give suspicious aura. If you select 2 players, the first player appears to visit the second player.",
-    "wiki.article.role.framer.guide": "- At night, select a player to frame\n    - The player you visit has a suspicious aura for the night\n- If you select 2 players\n    - The first one is given a suspicious aura\n    - The first player appears to visit the second player for that night\n- If there is an alive framer who is not blocked then each syndicate insider is told the roles of all town loyalist that visited them, and all other syndicate members.\n\n_For example_\n- You select @15 and @12. The godfather selects @12. A separate tracker selects @15 and sees that @15 visits @12. Since @12 dies, the tracker might think that @15 was the killer.",
-    "wiki.article.role.framer.abilities":"* Visit a player to give them a suspicious aura for the night\n* Visit 2 players to\n  * give the first player you visit a suspicious aura for the night\n  * make the first player appear to visit the second player you visit\n - If there is an alive framer who is not blocked then each syndicate insider is told the roles of all town loyalists that visited each syndicate member.",
-    "wiki.article.role.framer.attributes":" - Your ability to see roles of townies may be messed with by appeared visits\n - Your ability to see roles of town loyalists doesn't work when you are blocked or dead\n- You may select any living player for your first visit and any player for the second visit",
-    "wiki.article.role.framer.extra":"- Your second visit is cleared, so other roles like veteran and lookout wont interact with it.",
+    "wiki.article.role.framer.guide": "- At night, select a player to frame\n    - The player you visit has a suspicious aura for the night\n- If you select 2 players\n    - Both are given a suspicious aura for the night\n    - The first player appears to visit the second player for that night\n\n_For example_\n- You select @15 and @12. The godfather selects @12. A separate tracker selects @15 and sees that @15 visits @12. Since @12 dies, the tracker might think that @15 was the killer.",
+    "wiki.article.role.framer.abilities":"* Visit a player to give them a suspicious aura for the night\n* Visit 2 players to\n  * Give both players you visit a suspicious aura for the night\n  * The first players appear to visit the second player you visit",
+    "wiki.article.role.framer.attributes":"- You may select any living player for your first visit and any player for the second visit, both get suspicious aura, but the spy only sees the first visit",
+    "wiki.article.role.framer.extra":"- You only appear to visit the first play you chose, so lookout wont see your second visit.",
+
+    "wiki.article.role.disguiser.reminder": "At night, choose an insider to permanently disguise, giving them innocent aura, armor, and make their role appear wrong on their grave.",
+    "wiki.article.role.disguiser.guide": "- At night, select a player to disguise\n    - The player you visit becomes your disguised target until you select another player, or they die, or you die\n    - The disguised player has an innocent aura\n    - The disguised player has armor at night\n    - The disguised player has their role appear to be what you chose on their grave\n    - You can disguise any player in your insider group, including yourself\n- For each syndicate insider, you learn the roles of all town loyalists who visited them",
+    "wiki.article.role.disguiser.abilities":"- At night, select a player to disguise\n    - The player you visit becomes your disguised target until you select another player, or they die, or you die\n    - The disguised player has an innocent aura\n    - The disguised player has armor at night\n    - The disguised player has their role appear to be what you chose on their grave\n    - You can disguise any player in your insider group, including yourself\n- For each syndicate insider, you learn the roles of all town loyalists who visited them",
+    "wiki.article.role.disguiser.attributes":" - When the disguised player dies, you choose what role is on their grave, and can choose that role up until the moment they die\n- You and the player you give armor to are told when they are attacked and protected",
+    "wiki.article.role.disguiser.extra":"- You can typically only visit other living syndicate insiders, so be careful of enemy spies\n- You can change the role on your own grave assuming you have disguised yourself",
 
     "wiki.article.role.cupid.guide": "- At night, select 2 players to love link\n* The players are told they are love linked, if one of them dies, the other dies of a broken heart",
     "wiki.article.role.cupid.abilities":"- Visit 2 players to love link them\n    - If one of them dies, the other dies of a broken heart immediately\n    - If one of the players you visit dies on the night you try to love link them, they don't link.",

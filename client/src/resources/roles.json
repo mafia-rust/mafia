@@ -779,6 +779,24 @@
             
         ]
     },
+    "disguiser": {
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[
+            {
+                "type": "playerRoleAndAlibi",
+                "player":14,
+                "role":"hypnotist",
+                "will":"Philosopher\nN1: @1 and @2 are enemies"
+            }
+        ]
+    },
     "forger": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaSupport"],
