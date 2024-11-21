@@ -50,9 +50,6 @@ impl RoleStateImpl for Recruiter {
     type ClientRoleState = Recruiter;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
-        let mut ability_successful = false;
-        
-        if priority != Priority::Kill {return}
         match self.action {
             RecruiterAction::Recruit => {
                 if self.recruits_remaining == 0 {return}
@@ -61,29 +58,41 @@ impl RoleStateImpl for Recruiter {
                 if game.day_number() == 1 {return}
             },
         }
-        
-        if actor_ref.night_blocked(game) {
-            if let Some(backup) = self.backup {
 
-                let mut visits = backup.night_visits(game).clone();
-                if let Some(visit) = visits.first_mut(){
+        match priority {
+            Priority::Deception => {
+                if actor_ref.night_blocked(game) {
+                    let Some(backup) = self.backup else {return};
+                    let mut visits = backup.night_visits(game).clone();
+                    let Some(visit) = visits.first_mut() else {return};
+
                     visit.attack = self.action == RecruiterAction::Kill;
                     game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackupKilled { backup: backup.index() });
-                    ability_successful = Recruiter::night_ability(self.clone(), game, backup, visit.target);
-                    
+                    backup.set_night_visits(game, visits);
                 }
-                backup.set_night_visits(game, visits);
-            }
-            
-        } else if let Some(visit) = actor_ref.night_visits(game).first(){
-            ability_successful = Recruiter::night_ability(self.clone(), game, actor_ref, visit.target);
-        }
-
-        if ability_successful {
-            match self.action {
-                RecruiterAction::Recruit => actor_ref.set_role_state(game, RoleState::Recruiter(Recruiter{recruits_remaining: self.recruits_remaining-1, ..self})),
-                RecruiterAction::Kill => actor_ref.set_role_state(game, RoleState::Recruiter(Recruiter{recruits_remaining: self.recruits_remaining+1, ..self})),
-            }
+            },
+            Priority::Kill => {
+                let mut ability_successful = false;
+                
+                if actor_ref.night_blocked(game) {
+                    if let Some(backup) = self.backup {
+                        if let Some(visit) = backup.night_visits(game).first(){
+                            ability_successful = Recruiter::night_ability(self.clone(), game, backup, visit.target);
+                        }
+                    }
+                    
+                } else if let Some(visit) = actor_ref.night_visits(game).first(){
+                    ability_successful = Recruiter::night_ability(self.clone(), game, actor_ref, visit.target);
+                }
+        
+                if ability_successful {
+                    match self.action {
+                        RecruiterAction::Recruit => actor_ref.set_role_state(game, RoleState::Recruiter(Recruiter{recruits_remaining: self.recruits_remaining-1, ..self})),
+                        RecruiterAction::Kill => actor_ref.set_role_state(game, RoleState::Recruiter(Recruiter{recruits_remaining: self.recruits_remaining+1, ..self})),
+                    }
+                }
+            },
+            _ => {return}
         }
     }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {

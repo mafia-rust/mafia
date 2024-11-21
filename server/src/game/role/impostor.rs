@@ -1,9 +1,9 @@
 use serde::Serialize;
 
-use crate::game::attack_power::{AttackPower, DefensePower};
+use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::insider_group::InsiderGroupID;
-use crate::game::grave::{GraveInformation, GraveKiller};
+use crate::game::grave::GraveInformation;
 use crate::game::player::PlayerReference;
 
 use crate::game::role_list::RoleSet;
@@ -11,6 +11,7 @@ use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
+use super::godfather::Godfather;
 use super::{Priority, Role, RoleState, RoleStateImpl};
 
 
@@ -37,33 +38,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 impl RoleStateImpl for Impostor {
     type ClientRoleState = Impostor;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        
-        if priority != Priority::Kill {return}
-        if game.day_number() == 1 {return}
-        
-        if actor_ref.night_blocked(game) {
-            if let Some(backup) = self.backup {
-
-                let mut visits = backup.night_visits(game).clone();
-                if let Some(visit) = visits.first_mut(){
-                    visit.attack = true;
-                    let target_ref = visit.target;
-            
-                    game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackupKilled { backup: backup.index() });
-                    target_ref.try_night_kill_single_attacker(
-                        backup, game, GraveKiller::RoleSet(RoleSet::Mafia), AttackPower::Basic, false
-                    );
-                }
-                backup.set_night_visits(game, visits);
-            }
-            
-        } else if let Some(visit) = actor_ref.night_visits(game).first(){
-            let target_ref = visit.target;
-    
-            target_ref.try_night_kill_single_attacker(
-                actor_ref, game, GraveKiller::RoleSet(RoleSet::Mafia), AttackPower::Basic, false
-            );
-        }        
+        Godfather::night_ability(self.backup, game, actor_ref, priority);
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         crate::game::role::common_role::can_night_select(game, actor_ref, target_ref) &&
