@@ -42,19 +42,34 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
     match game.current_phase() {
         PhaseState::Briefing => HashSet::new(),
         PhaseState::Obituary => {
-            let mut evil_chat_groups = HashSet::new();
+            let mut out = HashSet::new();
 
+            //evil chat groups
             if InsiderGroupID::Puppeteer.is_player_in_revealed_group(game, actor_ref) {
-                evil_chat_groups.insert(ChatGroup::Puppeteer);
+                out.insert(ChatGroup::Puppeteer);
             }
             if InsiderGroupID::Cult.is_player_in_revealed_group(game, actor_ref) {
-                evil_chat_groups.insert(ChatGroup::Cult);
+                out.insert(ChatGroup::Cult);
             }
             if InsiderGroupID::Mafia.is_player_in_revealed_group(game, actor_ref) {
-                evil_chat_groups.insert(ChatGroup::Mafia);
+                out.insert(ChatGroup::Mafia);
             }
 
-            evil_chat_groups
+            //medium
+            if PlayerReference::all_players(game)
+                .any(|med|{
+                    match med.role_state(game) {
+                        RoleState::Medium(Medium{ seanced_target: Some(seanced_target), .. }) => {
+                            actor_ref == *seanced_target
+                        },
+                        _ => false
+                    }
+                })
+            {
+                out.insert(ChatGroup::Dead);
+            }
+
+            out
         },
         PhaseState::Discussion 
         | PhaseState::Nomination {..}
@@ -70,6 +85,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         },
         PhaseState::Night => {
             let mut out = vec![];
+            //medium seance
             if PlayerReference::all_players(game)
                 .any(|med|{
                     match med.role_state(game) {
@@ -82,6 +98,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
             {
                 out.push(ChatGroup::Dead);
             }
+            //reporter interview
             if PlayerReference::all_players(game)
                 .any(|p|
                     match p.role_state(game) {

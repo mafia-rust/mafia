@@ -1,6 +1,4 @@
-use std::collections::HashMap;
-
-use mafia_server::{game::{ability_input::AbilityInput, chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, Game}, packet::ToServerPacket};
+use mafia_server::{game::{ability_input::AbilityInput, chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, Game}, packet::ToServerPacket, vec_map::VecMap};
 use vec1::Vec1;
 
 #[derive(Clone, Copy, Debug)]
@@ -125,7 +123,7 @@ impl TestPlayer {
         );
     }
 
-    pub fn get_player_tags(&self) -> &HashMap<PlayerReference, Vec1<Tag>> {
+    pub fn get_player_tags(&self) -> &VecMap<PlayerReference, Vec1<Tag>> {
         self.0.player_tags(game!(self))
     }
 

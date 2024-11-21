@@ -70,7 +70,7 @@ impl DoomsayerGuess{
             Role::Goon |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::MafiaWitch | Role::Necromancer | Role::Consort |
-            Role::Mortician | Role::Framer | Role::Forger | 
+            Role::Mortician | Role::Framer | Role::Forger | Role::Disguiser |
             Role::Cupid | Role::MafiaSupportWildcard => Some(DoomsayerGuess::NonTown),
 
             //Neutral

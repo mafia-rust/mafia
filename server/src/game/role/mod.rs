@@ -71,6 +71,7 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
 macros::roles! {
     Jailor : jailor,
     Villager : villager,
+    Drunk : drunk,
 
     Detective : detective,
     Lookout : lookout,
@@ -124,6 +125,7 @@ macros::roles! {
     Necromancer : necromancer,
     Mortician : mortician,
     Framer : framer,
+    Disguiser : disguiser,
     Forger : forger,
     Cupid : cupid,
     MafiaSupportWildcard: mafia_support_wildcard,
@@ -134,7 +136,6 @@ macros::roles! {
     Politician : politician,
     Doomsayer : doomsayer,
     Death : death,
-    Drunk : drunk,
 
     Witch : witch,
     Scarecrow : scarecrow,

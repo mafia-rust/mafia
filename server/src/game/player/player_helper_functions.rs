@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 use rand::seq::SliceRandom;
 
@@ -12,7 +12,7 @@ use crate::{game::{
     role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, 
     win_condition::WinCondition,
     Game
-}, packet::ToClientPacket, vec_set::VecSet};
+}, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
 use super::PlayerReference;
 
@@ -262,9 +262,9 @@ impl PlayerReference{
         self.add_private_chat_messages(game, messages);
     }
 
-    pub fn role_label_map(&self, game: &Game) -> HashMap<PlayerReference, Role> {
-        let mut map = HashMap::new();
-        for player in self.role_labels(game) {
+    pub fn role_label_map(&self, game: &Game) -> VecMap<PlayerReference, Role> {
+        let mut map = VecMap::new();
+        for player in self.role_labels(game).iter() {
             map.insert(*player, player.role(game));
         }
         map
@@ -281,6 +281,13 @@ impl PlayerReference{
         self.role(game).possession_immune()
     }
     pub fn has_innocent_aura(&self, game: &Game) -> bool {
+        PlayerReference::all_players(game).into_iter().any(|player_ref| 
+            player_ref.alive(game) && match player_ref.role_state(game) {
+                RoleState::Disguiser(r) => 
+                    r.current_target.is_some_and(|player|player == *self),
+                _ => false
+            }
+        ) ||
         self.role(game).has_innocent_aura(game)
     }
     pub fn has_suspicious_aura(&self, game: &Game) -> bool {

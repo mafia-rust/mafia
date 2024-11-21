@@ -1,6 +1,6 @@
 pub mod common_input;
 
-use common_input::{BooleanInput, OnePlayerOptionInput, TwoRoleOptionInput, TwoRoleOutlineOptionInput};
+use common_input::{BooleanInput, OnePlayerOptionInput, RoleOptionSelection, TwoRoleOptionInput, TwoRoleOutlineOptionInput};
 use serde::{Deserialize, Serialize};
 use super::{
     event::on_ability_input_received::OnAbilityInputReceived,
@@ -12,6 +12,7 @@ use super::{
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Eq, Ord)]
 #[serde(rename_all = "camelCase", tag="type")]
 pub enum AbilityInput{
+    Disguiser{input: RoleOptionSelection},
     Auditor{input: TwoRoleOutlineOptionInput},
     Steward{input: TwoRoleOptionInput},
     OjoInvestigate{input: TwoRoleOutlineOptionInput},
