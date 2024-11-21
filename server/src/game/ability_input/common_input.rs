@@ -11,7 +11,7 @@ pub struct BooleanInput(pub bool);
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct OnePlayerOptionInput(pub Option<PlayerReference>);
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
-pub struct RoleOptionSelection(pub Option<PlayerReference>);
+pub struct RoleOptionSelection(pub Option<Role>);
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct TwoRoleOptionInput(pub Option<Role>, pub Option<Role>);

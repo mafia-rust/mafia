@@ -1,12 +1,11 @@
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
 
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{InsiderGroupID, Priority, Role, RoleStateImpl};
+use super::{Priority, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -33,38 +32,10 @@ impl RoleStateImpl for Framer {
                     Visit{ target: second_visit.target, attack: false }
                 ]));
                 
-
-                actor_ref.set_night_visits(game, vec![first_visit.clone()]);
-            },
-            Priority::Investigative => {
-
-                if actor_ref.alive(game) && actor_ref.night_blocked(game) {return;}
-
-                let mut chat_messages = Vec::new();
-
-                for player in PlayerReference::all_players(game){
-                    if !InsiderGroupID::in_same_revealed_group(game, actor_ref, player) {continue;}
-
-                    let visitors_roles: Vec<Role> = PlayerReference::all_appeared_visitors(player, game)
-                        .iter()
-                        .filter(|player|
-                            player.win_condition(game)
-                                .is_loyalist_for(crate::game::game_conclusion::GameConclusion::Town)
-                        )
-                        .map(|player| player.role(game))
-                        .collect();
-
-
-                    chat_messages.push(ChatMessageVariant::FramerResult{mafia_member: player.index(), visitors: visitors_roles});
-                }
-
-                for player in PlayerReference::all_players(game){
-                    if !InsiderGroupID::in_same_revealed_group(game, actor_ref, player) {continue;}
-                    for msg in chat_messages.iter(){
-                        player.push_night_message(game, msg.clone());
-                    }
-                }
-            },
+                actor_ref.set_night_appeared_visits(game, Some(vec![
+                    Visit{ target: first_visit.target, attack: false }
+                ]));
+            }
             _ => {}
         }
     }

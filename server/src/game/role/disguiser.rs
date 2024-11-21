@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::ability_input::AbilityInput;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
 use crate::game::grave::GraveInformation;
@@ -12,6 +13,7 @@ use super::{InsiderGroupID, Priority, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Disguiser{
     pub current_target: Option<PlayerReference>,
     pub disguised_role: Role,
@@ -44,7 +46,16 @@ impl RoleStateImpl for Disguiser {
                 target.set_night_upgraded_defense(game, Some(DefensePower::Armor));
             },
             Priority::Investigative => {
-                if actor_ref.alive(game) && actor_ref.night_blocked(game) {return;}
+
+                if let Some(target_healed_ref) = self.current_target {
+                    if target_healed_ref.night_attacked(game){
+                        
+                        actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
+                        target_healed_ref.push_night_message(game, ChatMessageVariant::YouWereProtected);
+                    }
+                }
+                
+                if actor_ref.alive(game) || actor_ref.night_blocked(game) {return;}
 
                 let mut chat_messages = Vec::new();
 
@@ -83,6 +94,18 @@ impl RoleStateImpl for Disguiser {
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    }
+    fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: AbilityInput) {
+        if actor_ref != input_player {return;}
+        match ability_input {
+            AbilityInput::Disguiser{input} => {
+                if let Some(target) = input.0 {
+                    self.disguised_role = target;
+                }
+                actor_ref.set_role_state(game, self);
+            },
+            _ => {}
+        }
     }
     fn on_any_death(mut self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference) {
         if

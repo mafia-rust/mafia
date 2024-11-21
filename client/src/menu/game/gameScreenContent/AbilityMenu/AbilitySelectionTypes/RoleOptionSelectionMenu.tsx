@@ -9,9 +9,11 @@ export default function RoleOptionSelectionMenu(props: Readonly<{
 }>): ReactElement {
     return <div>
         <RoleDropdown
-            value={props.selection}
+            value={
+                ((props.selection===undefined||props.selection===null)? "jester" : props.selection) as Role
+            }
             onChange={props.onChoose}
-            canChooseNone={true}
+            canChooseNone={false}
         />
     </div>;
 }
