@@ -21,10 +21,11 @@ export default function OldSelectionType(): ReactElement {
 
     return <>
         <SelectionInformation />
-        {
-            useablePlayers.length!==0 && <div className="old-selection-type">
-            {useablePlayers.map(idx => <PlayerCard key={idx} playerIndex={idx}/>)}
-        </div>}
+        {useablePlayers.length !== 0 && 
+            <div className="old-selection-type">
+                {useablePlayers.map(idx => <PlayerCard key={idx} playerIndex={idx}/>)}
+            </div>
+        }
     </>
 }
 
