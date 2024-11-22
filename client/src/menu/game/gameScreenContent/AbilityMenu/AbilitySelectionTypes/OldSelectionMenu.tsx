@@ -8,7 +8,6 @@ import GAME_MANAGER from "../../../../..";
 import { RoleState } from "../../../../../game/roleState.d";
 import PlayerNamePlate from "../../../../../components/PlayerNamePlate";
 import "./oldSelectionMenu.css";
-import StyledText from "../../../../../components/StyledText";
 import SelectionInformation from "../SelectionInformation";
 
 export default function OldSelectionType(): ReactElement {
@@ -20,13 +19,13 @@ export default function OldSelectionType(): ReactElement {
     )!;
 
 
-    return <>{useablePlayers.length !== 0 ? <>
+    return <>
         <SelectionInformation />
-        <div className="old-selection-type">
+        {
+            useablePlayers.length!==0 && <div className="old-selection-type">
             {useablePlayers.map(idx => <PlayerCard key={idx} playerIndex={idx}/>)}
-            && <StyledText>{translate("none")}</StyledText>
-        </div>
-    </> : null}</>
+        </div>}
+    </>
 }
 
 function useSelectedPlayers(): PlayerIndex[] {
