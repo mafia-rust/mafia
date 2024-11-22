@@ -26,17 +26,22 @@ export default function StewardMenu(
         return null;
     }
 
-    const disabledRoles = getAllRoles()
+    const availableRoles = getAllRoles()
     .filter(role=>
-        (role === "steward" && props.roleState.stewardProtectsRemaining === 0) ||
-        (props.roleState.previousRoleChosen?.includes(role))
+        !(role === "steward" && props.roleState.stewardProtectsRemaining === 0) &&
+        !(props.roleState.previousRoleChosen?.includes(role))
     );
+
+    const availableSelection = {
+        availableRoles: availableRoles,
+        canChooseDuplicates: false
+    };
 
     return <>
         <Counter max={1} current={props.roleState.stewardProtectsRemaining}><StyledText>{translate("role.steward.roleDataText", props.roleState.stewardProtectsRemaining)}</StyledText></Counter>
         <TwoRoleOptionSelectionMenu 
-            input={props.roleState.roleChosen} 
-            disabledRoles={disabledRoles}
+            input={props.roleState.roleChosen}
+            availableSelection={availableSelection}
             onChoose={(input)=>{
                 GAME_MANAGER.sendAbilityInput({
                     type: "steward",

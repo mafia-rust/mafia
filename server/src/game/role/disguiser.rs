@@ -98,8 +98,8 @@ impl RoleStateImpl for Disguiser {
     fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: AbilityInput) {
         if actor_ref != input_player {return;}
         match ability_input {
-            AbilityInput::Disguiser{input} => {
-                if let Some(target) = input.0 {
+            AbilityInput::Disguiser{selection} => {
+                if let Some(target) = selection.0 {
                     self.disguised_role = target;
                 }
                 actor_ref.set_role_state(game, self);

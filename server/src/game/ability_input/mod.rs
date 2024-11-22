@@ -19,11 +19,11 @@ pub enum AbilityInput{
 
     //role abilities
 
-    Disguiser{input: RoleOptionSelection},
-    Auditor{input: TwoRoleOutlineOptionSelection},
-    Steward{input: TwoRoleOptionSelection},
-    OjoInvestigate{input: TwoRoleOutlineOptionSelection},
-    Kira{input: KiraAbilityInput},
+    Disguiser{selection: RoleOptionSelection},
+    Auditor{selection: TwoRoleOutlineOptionSelection},
+    Steward{selection: TwoRoleOptionSelection},
+    OjoInvestigate{selection: TwoRoleOutlineOptionSelection},
+    Kira{selection: KiraAbilityInput},
 
     //Non role abilities
 
