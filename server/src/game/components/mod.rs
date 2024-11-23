@@ -12,3 +12,4 @@ pub mod detained;
 pub mod confused;
 pub mod drunk_aura;
 pub mod forfeit_vote;
+pub mod night_visits;

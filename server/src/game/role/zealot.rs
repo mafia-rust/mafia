@@ -24,7 +24,9 @@ impl RoleStateImpl for Zealot {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill || Cult::next_ability(game) != CultAbility::Kill {return}
 
-        let Some(visit) = actor_ref.night_visits(game).first() else {return};
+        
+                let actor_visits = actor_ref.night_visits_cloned(game);
+                let Some(visit) = actor_visits.first() else {return};
         let target_ref = visit.target;
         
         if target_ref.try_night_kill_single_attacker(

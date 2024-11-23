@@ -36,7 +36,7 @@ impl RoleStateImpl for Ojo {
         match priority {
             Priority::Kill => {
                 if game.day_number() == 1 {return;}
-                for visit in actor_ref.night_visits(game).clone() {
+                for visit in actor_ref.night_visits_cloned(game).clone() {
                     if visit.attack {
                         visit.target.try_night_kill_single_attacker(
                             actor_ref, game, 
@@ -109,22 +109,22 @@ impl RoleStateImpl for Ojo {
             _ => {}
         }
     }
-    fn convert_selection_to_visits(self, game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         let mut out = vec![];
         if let Some(chosen_outline) = self.chosen_outline.0{
             let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-            out.push(Visit{ target: player, attack: false });
+            out.push(Visit{ visitor: actor_ref, target: player, attack: false });
         }
         if let Some(chosen_outline) = self.chosen_outline.1{
             let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-            out.push(Visit{ target: player, attack: false });
+            out.push(Visit{ visitor: actor_ref, target: player, attack: false });
         }
 
         if game.day_number() > 1 {
             if let Some(role) = self.role_chosen {
                 for player in PlayerReference::all_players(game){
                     if player.alive(game) && player.role(game) == role {
-                        out.push(Visit{ target: player, attack: true });
+                        out.push(Visit{ visitor: actor_ref, target: player, attack: true });
                     }
                 }
             }

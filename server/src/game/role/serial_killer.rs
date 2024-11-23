@@ -21,7 +21,9 @@ impl RoleStateImpl for SerialKiller {
         if priority != Priority::Kill {return}
         if game.day_number() == 1 {return}
 
-        if let Some(visit) = actor_ref.night_visits(game).first(){
+
+        let actor_visits = actor_ref.night_visits_cloned(game);
+        if let Some(visit) = actor_visits.first(){
 
             let target_ref = visit.target;
             

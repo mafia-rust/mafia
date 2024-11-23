@@ -35,14 +35,18 @@ impl RoleStateImpl for Cop {
 
         match priority {
             Priority::Heal => {
-                let Some(visit) = actor_ref.night_visits(game).first() else {return};
+                
+                let actor_visits = actor_ref.night_visits_cloned(game);
+                let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 
                 target_ref.increase_defense_to(game, DefensePower::Protection);
                 actor_ref.set_role_state(game, Cop {target_protected_ref: Some(target_ref)});
             }
             Priority::Kill => {
-                let Some(visit) = actor_ref.night_visits(game).first() else {return};
+                
+                let actor_visits = actor_ref.night_visits_cloned(game);
+                let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 
                 let mut player_to_attack = None;
@@ -53,7 +57,7 @@ impl RoleStateImpl for Cop {
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref &&
                         !other_player_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
-                        other_player_ref.night_visits(game)
+                        other_player_ref.night_visits_cloned(game)
                             .iter()
                             .any(|v|v.target==target_ref)
                     ).collect::<Vec<PlayerReference>>()
@@ -64,7 +68,7 @@ impl RoleStateImpl for Cop {
                     .filter(|other_player_ref|
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref &&
-                        other_player_ref.night_visits(game)
+                        other_player_ref.night_visits_cloned(game)
                             .iter()
                             .any(|v|v.target==target_ref)
                     ).collect::<Vec<PlayerReference>>()

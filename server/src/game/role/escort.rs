@@ -20,8 +20,8 @@ impl RoleStateImpl for Escort {
     type ClientRoleState = Escort;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Roleblock {return;}
-        
-        if let Some(visit) = actor_ref.night_visits(game).first(){
+        let actor_visits = actor_ref.night_visits_cloned(game);
+        if let Some(visit) = actor_visits.first(){
             let target_ref = visit.target;
 
             target_ref.roleblock(game, true);

@@ -23,7 +23,9 @@ impl RoleStateImpl for Psychic {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return}
 
-        let Some(visit) = actor_ref.night_visits(game).first() else {return};
+        
+                let actor_visits = actor_ref.night_visits_cloned(game);
+                let Some(visit) = actor_visits.first() else {return};
 
         actor_ref.push_night_message(game, 
             if game.day_number() % 2 == 1 {

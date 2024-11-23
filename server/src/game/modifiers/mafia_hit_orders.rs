@@ -152,7 +152,7 @@ impl ModifierTrait for MafiaHitOrders{
                     if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player) {continue;}
                     if RoleSet::MafiaKilling.get_roles().contains(&player.role(game)) {continue;}
                     
-                    let visits = player.night_visits(game).clone().into_iter()
+                    let visits = player.night_visits_cloned(game).clone().into_iter()
                         .map(|mut v|
                             if self.hit_order_players.contains(&v.target) {
                                 v.attack = true;
@@ -173,7 +173,7 @@ impl ModifierTrait for MafiaHitOrders{
                     if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player) {continue;}
                     if RoleSet::MafiaKilling.get_roles().contains(&player.role(game)) {continue;}
         
-                    for visit in player.night_visits(game).clone(){
+                    for visit in player.night_visits_cloned(game).clone(){
                         if !self.hit_order_players.contains(&visit.target) {continue;}
         
                         players_to_remove_hit_order.insert(visit.target);

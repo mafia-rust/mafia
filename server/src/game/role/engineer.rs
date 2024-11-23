@@ -81,11 +81,12 @@ impl RoleStateImpl for Engineer {
                             actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}));
                         },
                         Trap::Ready => {
-                            if let Some(visit) = actor_ref.night_visits(game).first(){
+                            let actor_visits = actor_ref.night_visits_cloned(game);
+                            if let Some(visit) = actor_visits.first(){
                                 actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Set{target: visit.target}}));
                             }
                         },
-                        Trap::Set { .. } if actor_ref.night_visits(game).first().is_some() => {
+                        Trap::Set { .. } if actor_ref.night_visits_cloned(game).first().is_some() => {
                             actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}));
                         },
                         _ => {}
@@ -100,7 +101,7 @@ impl RoleStateImpl for Engineer {
                 if let Trap::Set { target, .. } = self.trap {
                     for attacker in PlayerReference::all_players(game) {
                         if 
-                            attacker.night_visits(game).iter().any(|visit| visit.target == target && visit.attack) &&
+                            attacker.night_visits_cloned(game).iter().any(|visit| visit.target == target && visit.attack) &&
                             attacker != actor_ref
                         {
                             attacker.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Engineer), AttackPower::ArmorPiercing, false);
@@ -120,7 +121,7 @@ impl RoleStateImpl for Engineer {
 
                     for visitor in PlayerReference::all_players(game) {
                         if 
-                            visitor.night_visits(game).iter().any(|visit|visit.target == target) &&
+                            visitor.night_visits_cloned(game).iter().any(|visit|visit.target == target) &&
                             visitor != actor_ref
                         {
                             actor_ref.push_night_message(game, ChatMessageVariant::EngineerVisitorsRole { role: visitor.role(game) });

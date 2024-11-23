@@ -52,7 +52,8 @@ impl RoleStateImpl for Forger {
 
         match priority {
             Priority::Deception=>{
-                let Some(visit) = actor_ref.night_visits(game).first() else{return};
+                                let actor_visits = actor_ref.night_visits_cloned(game);
+                let Some(visit) = actor_visits.first() else{return};
 
                 let target_ref = visit.target;
 
