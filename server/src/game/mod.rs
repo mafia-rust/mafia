@@ -33,6 +33,7 @@ use components::poison::Poison;
 use components::detained::Detained;
 use components::insider_group::InsiderGroupID;
 use components::insider_group::InsiderGroups;
+use components::syndicate_gun_item::SyndicateGunItem;
 use components::verdicts_today::VerdictsToday;
 use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
@@ -94,6 +95,7 @@ pub struct Game {
     
     //components with data
     night_visits: NightVisits,
+    syndicate_gun_item: SyndicateGunItem,
     pub cult: Cult,
     pub mafia: Mafia,
     pub arsonist_doused: ArsonistDoused,
@@ -189,6 +191,7 @@ impl Game {
                 settings,
 
                 night_visits: NightVisits::default(),
+                syndicate_gun_item: SyndicateGunItem::default(),
                 cult: Cult::default(),
                 mafia: Mafia,
                 arsonist_doused: ArsonistDoused::default(),
@@ -458,7 +461,7 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, verdicts_today::VerdictsToday},
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem, verdicts_today::VerdictsToday},
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -513,6 +516,7 @@ pub mod test {
             settings,
 
             night_visits: NightVisits::default(),
+            syndicate_gun_item: SyndicateGunItem::default(),
             cult: Cult::default(),
             mafia: Mafia,
             arsonist_doused: ArsonistDoused::default(),

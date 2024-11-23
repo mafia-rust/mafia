@@ -5,6 +5,7 @@ pub struct Visit {
     pub visitor: PlayerReference,
     pub target: PlayerReference,
 
+    pub tag: VisitTag,
     pub attack: bool,
 }
 impl Visit {
@@ -13,6 +14,14 @@ impl Visit {
             visitor,
             target,
             attack,
+            tag: VisitTag::None,
         }
     }
+}
+
+#[derive(Default, Clone, Copy, Debug, PartialEq, Eq)]
+pub enum VisitTag{
+    #[default]
+    None,
+    SyndicateGunItem,
 }
