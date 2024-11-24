@@ -91,6 +91,8 @@ export type PlayerGameState = {
     targets: PlayerIndex[],
     voted: PlayerIndex | null,
     judgement: Verdict,
+
+    fellowInsiders: PlayerIndex[],
     
     forfeitVote: boolean,
     pitchforkVote: PlayerIndex | null,

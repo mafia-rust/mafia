@@ -22,7 +22,7 @@ export default function SyndicateGunItemMenu(props: Readonly<{}>): ReactElement 
     )!;
     const players = useGameState(
         (state)=>state.players,
-        ["gamePlayers", "playerAlive", "yourRoleLabels", "yourPlayerTags"]
+        ["gamePlayers", "playerAlive"]
     )!;
 
     const enabledModifiers = useGameState(
@@ -41,6 +41,10 @@ export default function SyndicateGunItemMenu(props: Readonly<{}>): ReactElement 
         playerState => playerState.insiderGroups,
         ["yourInsiderGroups"]
     )!;
+    const fellowInsiders = usePlayerState(
+        playerState => playerState.fellowInsiders,
+        ["yourFellowInsiders"]
+    )!;
 
 
     const canShootPlayers = useMemo(
@@ -48,8 +52,9 @@ export default function SyndicateGunItemMenu(props: Readonly<{}>): ReactElement 
             .filter((player)=>player.alive)
             .filter((player)=>player.index !== shooter)
             .filter((player)=>player.index !== myIndex)
+            .filter((player)=>!fellowInsiders.includes(player.index))
             .map((player)=>player.index),
-        [players, shooter, myIndex]
+        [players, shooter, myIndex, fellowInsiders]
     );
     
 
@@ -57,10 +62,10 @@ export default function SyndicateGunItemMenu(props: Readonly<{}>): ReactElement 
         () => players
             .filter((player)=>myIndex === shooter)
             .filter((player)=>player.alive)
-            .filter((player)=>player.roleLabel !== null)
+            .filter((player)=>fellowInsiders.includes(player.index))
             .filter((player)=>player.index !== shooter)
             .map((player)=>player.index),
-        [players, shooter, myIndex]
+        [players, shooter, myIndex, fellowInsiders]
     );
 
 

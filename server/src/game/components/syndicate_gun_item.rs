@@ -13,9 +13,7 @@ pub struct SyndicateGunItem {
 impl SyndicateGunItem {
     pub fn give_gun(game: &mut Game, player: PlayerReference) {
         Self::take_gun(game);
-
         game.syndicate_gun_item.player_with_gun = Some(player);
-
 
         for insider in InsiderGroupID::Mafia.players(game).clone() {
             insider.push_player_tag(game, player, Tag::SyndicateGun);
@@ -40,6 +38,10 @@ impl SyndicateGunItem {
 
     pub fn target_gun(game: &mut Game, player: Option<PlayerReference>) {
         game.syndicate_gun_item.gun_target = player;
+        Self::send_gun_data(game);
+    }
+
+    pub fn send_gun_data(game: &Game) {
         for insider in InsiderGroupID::Mafia.players(game).clone() {
             insider.send_packet(game, ToClientPacket::YourSyndicateGunItemData{
                 shooter: game.syndicate_gun_item.player_with_gun,
@@ -72,11 +74,6 @@ impl SyndicateGunItem {
         }
     }
     pub fn on_night_priority(game: &mut Game, priority: Priority) {
-        println!("SyndicateGunItem on_night_priority");
-        println!("priority: {:?}", priority);
-        println!("game.syndicate_gun_item.player_with_gun: {:?}", game.syndicate_gun_item.player_with_gun);
-        println!("game.syndicate_gun_item.gun_target: {:?}", game.syndicate_gun_item.gun_target);
-        println!("Night visits: {:?}", NightVisits::all_visits(game));
         match priority {
             Priority::TopPriority => {
                 let Some(player_with_gun) = game.syndicate_gun_item.player_with_gun else {return}; 

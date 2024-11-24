@@ -51,6 +51,9 @@ export type ToClientPacket = {
     type: "yourPlayerIndex",
     playerIndex: PlayerIndex
 } | {
+    type: "yourFellowInsiders",
+    fellowInsiders: PlayerIndex[]
+} | {
     type: "rejectStart",
     reason: string
 } | {

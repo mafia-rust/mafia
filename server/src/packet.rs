@@ -94,6 +94,8 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourPlayerIndex{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
+    YourFellowInsiders{fellow_insiders: VecSet<PlayerIndex>},
+    #[serde(rename_all = "camelCase")]
     Phase{phase: PhaseState, day_number: u8},
     #[serde(rename_all = "camelCase")]
     PhaseTimeLeft{seconds_left: u64},

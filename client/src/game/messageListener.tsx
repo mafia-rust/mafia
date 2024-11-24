@@ -186,6 +186,10 @@ export default function messageListener(packet: ToClientPacket){
             //TODO jack Im sorry
             AudioController.clearQueue();
         break;
+        case "yourFellowInsiders":
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
+                GAME_MANAGER.state.clientState.fellowInsiders = packet.fellowInsiders;
+        break;
         case "lobbyClients":
             if(GAME_MANAGER.state.stateType === "lobby"){
 
