@@ -135,6 +135,7 @@ pub enum ToClientPacket{
     YourPitchforkVote{player: Option<PlayerReference>},
     #[serde(rename_all = "camelCase")]
     YourHitOrderVote{player: Option<PlayerReference>},
+    YourSyndicateGunItemData{shooter: Option<PlayerReference>, target: Option<PlayerReference>},
 
     #[serde(rename_all = "camelCase")]
     AddChatMessages{chat_messages: Vec<ChatMessage>},

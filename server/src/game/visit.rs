@@ -9,12 +9,20 @@ pub struct Visit {
     pub attack: bool,
 }
 impl Visit {
-    pub fn new(visitor: PlayerReference, target: PlayerReference, attack: bool) -> Self {
+    pub fn new_none(visitor: PlayerReference, target: PlayerReference, attack: bool) -> Self {
         Self {
             visitor,
             target,
             attack,
             tag: VisitTag::None,
+        }
+    }
+    pub fn new(visitor: PlayerReference, target: PlayerReference, attack: bool, tag: VisitTag) -> Self {
+        Self {
+            visitor,
+            target,
+            attack,
+            tag,
         }
     }
 }

@@ -82,6 +82,10 @@ export function createPlayerGameState(): PlayerGameState {
         forfeitVote: false,
         pitchforkVote: null,
         hitOrderVote: null,
+        syndicateGunItemData: {
+            shooter: null,
+            target: null,
+        },
 
         sendChatGroups: [],
         insiderGroups: [],

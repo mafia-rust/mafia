@@ -230,5 +230,7 @@ pub enum ChatMessageVariant {
     MartyrRevealed { martyr: PlayerIndex },
     MartyrWon,
     MartyrFailed,
-    WildcardConvertFailed{ role: Role }
+    WildcardConvertFailed{ role: Role },
+
+    SyndicateGunTarget{shooter: PlayerIndex, target: Option<PlayerIndex>},
 }

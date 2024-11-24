@@ -176,6 +176,10 @@ export type ToClientPacket = {
 } | {
     type: "yourHitOrderVote",
     player: PlayerIndex | null
+} | {
+    type: "yourSyndicateGunItemData",
+    shooter: PlayerIndex | null
+    target: PlayerIndex | null
 }
 
 export type ToServerPacket = {

@@ -34,4 +34,10 @@ export type AbilityInput = {
     input: OnePlayerOptionInput,
 } | {
     type: "hitOrderMafioso",
+} | {
+    type: "syndicateGunItemShoot",
+    input: OnePlayerOptionInput,
+} | {
+    type: "syndicateGunItemGive",
+    input: OnePlayerOptionInput,
 }

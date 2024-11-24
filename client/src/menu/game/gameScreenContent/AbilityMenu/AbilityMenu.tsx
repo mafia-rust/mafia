@@ -7,6 +7,7 @@ import OldSelectionType from "./AbilitySelectionTypes/OldSelectionType";
 import ForfeitVote from "./ForfeitVote";
 import Pitchfork from "./Pitchfork";
 import HitOrder from "./HitOrder";
+import SyndicateGunItemMenu from "./SyndicateGunItemMenu";
 
 export default function AbilityMenu(): ReactElement {
     const roleState = usePlayerState(
@@ -41,6 +42,7 @@ export default function AbilityMenu(): ReactElement {
                 </details>
                 <Pitchfork/>
                 <HitOrder/>
+                <SyndicateGunItemMenu/>
             </>
         }
     </div>

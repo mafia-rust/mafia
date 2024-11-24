@@ -673,6 +673,8 @@
     "tag.forfeitVote.name":"Forfeit Vote",
     "tag.disguise":"🥸",
     "tag.disguise.name":"Disguise",
+    "tag.syndicateGun":"🔫",
+    "tag.syndicateGun.name":"Gun",
 
     "dead.icon":"💀",
     "trial.icon": "⚖️",
@@ -755,6 +757,7 @@
     "noAbstaining": "No Abstaining",
     "noDeathCause": "No Death Cause",
     "mafiaHitOrders": "Syndicate Hit Orders",
+    "syndicateGunItem": "Syndicate Gun",
     "nightMessages": "Night Messages",
     
     "simplify":"Simplify",
@@ -964,6 +967,7 @@
     "chatMessage.martyrWon": "The messiah has been killed! May we all enter the kingdom of heaven.",
     "chatMessage.youAreLoveLinked": "You are now love linked to \\0.",
     "chatMessage.playerDiedOfBrokenHeart": "\\0 died of a broken heart, joining their lover \\1 in their next life.",
+    "chatMessage.syndicateGunTarget": "\\0 selects to shoot the syndicate gun at \\1",
 
     "kiraResult.correct": "Correct",
     "kiraResult.wrongSpot": "Somebody has this role, but not this player",
@@ -1244,6 +1248,10 @@
     "wiki.article.standard.noDeathCause.text":"No Death Cause is a game modifier that changes the game such that every grave says that the cause of death is execution.",
     "wiki.article.standard.mafiaHitOrders.title":"Syndicate Hit Orders",
     "wiki.article.standard.mafiaHitOrders.text":"Syndicate Hit Orders is a game modifier. Syndicate no longer has a syndicate killing role. Instead, each night, the syndicate votes to order a hit on a player. If any syndicate insider visits a player with a hit order that insider attacks that player.\n *Importantly* - If there are syndicate killing roles enabled, there is a random chance of this modifier being deactivated, meaning there could still be a syndicate killing role in play while this modifier is enabled. The modifier is always deactivated if the game starts with only 1 syndicate insider\n - On any night except the first, a syndicate insider can switch to a mafioso and deactivate this modifier\n - A hit order cannot be placed on night 1\n - If there is a tie in who to order a hit on, the syndicate insider with the highest player number gets their hit order placed, the others do not.\n - A player can only have one hit order placed on them at a time.\n- If a player is attacked using a hit order, the hit order is removed.\n- If a player is attacked using a hit order, the syndicate insider who visited the player with the hit order does the attack so they are told if the target had defense or not.",
+    "wiki.article.standard.syndicateGunItem.title":"Syndicate Gun",
+    "wiki.article.standard.syndicateGunItem.text":"Syndicate Gun is a game modifier\n- A syndicate member is given a gun they can use to kill a player with a basic attack at night\n- Syndicate is no longer guaranteed to have a syndicate killing role\n- The gun can't be used on the first night\n- The gun can be passed around between syndicate members, so a different syndicate member can shoot it every night\n- The gun still uses visits, so getting roleblocked still erases that visit, and transports still move it\n- The killer appears to be syndicate on the grave of the player who died to the gun",
+    "syndicateGunItem.description":"Choose a player to shoot with the syndicate gun. Or choose to give it to another syndicate insider.",
+    "syndicateGunItem.give":"Pass gun",
 
 
     "wiki.article.standard.nobody.title":"Nobody",

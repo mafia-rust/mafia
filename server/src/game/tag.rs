@@ -14,4 +14,5 @@ pub enum Tag{
     LoveLinked,
     ForfeitVote,
     Disguise,
+    SyndicateGun
 }
