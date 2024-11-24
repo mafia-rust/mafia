@@ -186,6 +186,7 @@ impl RoleStateImpl for Kira {
     }
     fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: crate::game::ability_input::AbilityInput) {
         if actor_ref != input_player {return};
+        if !actor_ref.alive(game) {return};
         let AbilityInput::Kira{input: KiraAbilityInput(input)} = ability_input else {return};
         
         let mut new_guesses: VecMap<PlayerReference, KiraGuess> = VecMap::new();
