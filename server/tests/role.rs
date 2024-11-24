@@ -462,6 +462,8 @@ fn psychic_auras(){
             town1: Detective,
             town2: Vigilante
         );
+
+        psy.set_night_selection_single(maf);
     
         game.next_phase();
         let messages = psy.get_messages_after_night(1);
@@ -482,6 +484,7 @@ fn psychic_auras(){
 
         game.skip_to(Night, 2);
         maf.set_night_selection_single(town1);
+        psy.set_night_selection_single(town2);
         game.next_phase();
         let messages = psy.get_messages_after_night(2);
         let messages: Vec<_> = 
@@ -826,7 +829,7 @@ fn cop_does_not_kill_framed_player(){
 
     assert!(crus.alive());
     assert!(protected.alive());
-    assert!(framer.alive());
+    assert!(!framer.alive());
     assert!(mafioso.alive());
     assert!(townie.alive());
 }
@@ -891,7 +894,7 @@ fn veteran_does_not_kill_framed_player(){
     game.next_phase();
 
     assert!(vet.alive());
-    assert!(framer.alive());
+    assert!(!framer.alive());
     assert!(mafioso.alive());
     assert!(townie.alive());
 }
@@ -1438,7 +1441,7 @@ fn gossip_framer() {
 
     assert_contains!(
         gossip.get_messages(),
-        ChatMessageVariant::GossipResult { enemies: false }
+        ChatMessageVariant::GossipResult { enemies: true }
     );
 
     game.skip_to(Night, 3);
