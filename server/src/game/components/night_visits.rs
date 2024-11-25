@@ -51,13 +51,27 @@ impl NightVisits{
 }
 
 impl PlayerReference{
-    pub fn night_visits<'a>(&self, game: &'a Game) -> Vec<&'a Visit>{
+    pub fn untagged_night_visits<'a>(&self, game: &'a Game) -> Vec<&'a Visit>{
         NightVisits::get_untagged_visits_from_visitor(game, *self)
     }
-    pub fn night_visits_cloned<'a>(&self, game: &Game) -> Vec<Visit>{
+    pub fn untagged_night_visits_cloned<'a>(&self, game: &Game) -> Vec<Visit>{
         NightVisits::get_untagged_visits_from_visitor(game, *self)
             .into_iter()
             .cloned()
+            .collect()
+    }
+    pub fn all_night_visits_cloned<'a>(&self, game: &Game) -> Vec<Visit>{
+        NightVisits::all_visits(game)
+            .into_iter()
+            .filter(|visit| visit.visitor == *self)
+            .cloned()
+            .collect()
+    }
+    pub fn all_night_visitors_cloned(self, game: &Game) -> Vec<PlayerReference> {
+        NightVisits::all_visits(game)
+            .into_iter()
+            .filter(|visit| visit.target == self)
+            .map(|visit| visit.visitor)
             .collect()
     }
     pub fn set_night_visits(&self, game: &mut Game, visits: Vec<Visit>){

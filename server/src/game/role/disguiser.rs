@@ -36,7 +36,7 @@ impl RoleStateImpl for Disguiser {
         match priority {
             Priority::Deception => {
                 actor_ref.remove_player_tag_on_all(game, crate::game::tag::Tag::Disguise);
-                let actor_visits = actor_ref.night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(first_visit) = actor_visits.first() else {return};
                 self.current_target = Some(first_visit.target);
                 actor_ref.push_player_tag(game, first_visit.target, crate::game::tag::Tag::Disguise);

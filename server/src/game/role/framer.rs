@@ -19,7 +19,7 @@ impl RoleStateImpl for Framer {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Deception => {
-                let framer_visits = actor_ref.night_visits_cloned(game).clone();
+                let framer_visits = actor_ref.untagged_night_visits_cloned(game).clone();
 
                 let Some(first_visit) = framer_visits.first() else {return};
 

@@ -36,7 +36,7 @@ impl RoleStateImpl for Ojo {
         match priority {
             Priority::Kill => {
                 if game.day_number() == 1 {return;}
-                for visit in actor_ref.night_visits_cloned(game).clone() {
+                for visit in actor_ref.untagged_night_visits_cloned(game).clone() {
                     if visit.attack {
                         visit.target.try_night_kill_single_attacker(
                             actor_ref, game, 
@@ -48,7 +48,7 @@ impl RoleStateImpl for Ojo {
                 }
             },
             Priority::Investigative => {
-                let visited_me = actor_ref.all_visitors(game);
+                let visited_me = actor_ref.all_night_visitors_cloned(game);
 
                 for player in PlayerReference::all_players(game) {
                     if visited_me.contains(&player) {

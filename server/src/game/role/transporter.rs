@@ -21,7 +21,7 @@ impl RoleStateImpl for Transporter {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Transporter {return;}
     
-        let transporter_visits = actor_ref.night_visits_cloned(game).clone();
+        let transporter_visits = actor_ref.untagged_night_visits_cloned(game).clone();
         let Some(first_visit) = transporter_visits.get(0) else {return};
         let Some(second_visit) = transporter_visits.get(1) else {return};
         
@@ -34,7 +34,7 @@ impl RoleStateImpl for Transporter {
             if player_ref.role(game) == Role::Transporter {continue;}
 
 
-            let new_visits = player_ref.night_visits_cloned(game).clone().into_iter().map(|mut v|{
+            let new_visits = player_ref.untagged_night_visits_cloned(game).clone().into_iter().map(|mut v|{
                 if v.target == first_visit.target {
                     v.target = second_visit.target;
                 } else if v.target == second_visit.target{

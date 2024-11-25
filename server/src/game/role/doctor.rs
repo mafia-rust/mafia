@@ -41,7 +41,7 @@ impl RoleStateImpl for Doctor {
         match priority {
             Priority::Heal => {
                 
-                let actor_visits = actor_ref.night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 

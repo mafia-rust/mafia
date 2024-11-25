@@ -44,7 +44,7 @@ impl RoleStateImpl for Mortician {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Deception=>{
-                                let actor_visits = actor_ref.night_visits_cloned(game);
+                                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else{return};
 
                 let target_ref = visit.target;

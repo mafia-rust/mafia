@@ -28,7 +28,7 @@ impl RoleStateImpl for Scarecrow {
         if priority != Priority::Ward {return;}
         
 
-        let actor_visits = actor_ref.night_visits_cloned(game);
+        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
             let target_ref = visit.target;
 

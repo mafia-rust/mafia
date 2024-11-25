@@ -70,9 +70,9 @@ impl RoleStateImpl for Marksman {
         match priority {
             Priority::Kill => {
                 let visiting_players: Vec<_> = actor_ref
-                    .night_visits_cloned(game)
+                    .untagged_night_visits_cloned(game)
                     .into_iter()
-                    .flat_map(|p|p.target.all_visitors(game))
+                    .flat_map(|p|p.target.all_night_visitors_cloned(game))
                     .collect();
 
                 for mark in self.state.marks().into_iter() {
