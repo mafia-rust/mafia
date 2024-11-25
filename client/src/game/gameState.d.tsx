@@ -144,6 +144,7 @@ export type Tag =
     "morticianTagged" |
     "puppeteerMarionette" |
     "loveLinked" |
+    "frame" |
     "forfeitVote";
 
 export const MODIFIERS = [

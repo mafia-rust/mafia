@@ -825,7 +825,7 @@ fn cop_does_not_kill_framed_player(){
 
     assert!(crus.alive());
     assert!(protected.alive());
-    assert!(!framer.alive());
+    assert!(framer.alive());
     assert!(mafioso.alive());
     assert!(townie.alive());
 }
@@ -890,7 +890,7 @@ fn veteran_does_not_kill_framed_player(){
     game.next_phase();
 
     assert!(vet.alive());
-    assert!(!framer.alive());
+    assert!(framer.alive());
     assert!(mafioso.alive());
     assert!(townie.alive());
 }
