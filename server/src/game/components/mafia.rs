@@ -53,6 +53,7 @@ impl Mafia{
                 return;
             }
         }
+        if Modifiers::modifier_is_enabled(game, ModifierType::SyndicateGunItem) {return;}
 
         let living_players_to_convert = PlayerReference::all_players(game).into_iter().filter(
             |p|

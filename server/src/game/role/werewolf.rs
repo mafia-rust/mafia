@@ -39,7 +39,7 @@ impl RoleStateImpl for Werewolf {
                     return;
                 }
 
-                match actor_ref.night_visits(game).first() {
+                match actor_ref.night_visits_cloned(game).first() {
                     //rampage at target
                     Some(first_visit) => {
                         let target_ref = first_visit.target;                        
@@ -77,7 +77,7 @@ impl RoleStateImpl for Werewolf {
 
                     let mut newly_tracked_players: Vec<PlayerReference> = actor_ref.all_visitors(game).into_iter().filter(|p|actor_ref!=*p).collect();
                 
-                    if let Some(first_visit) = actor_ref.night_visits(game).first() {
+                    if let Some(first_visit) = actor_ref.night_visits_cloned(game).first() {
                         let target_ref = first_visit.target;
                         
                         newly_tracked_players.push(target_ref);

@@ -21,8 +21,8 @@ impl RoleStateImpl for Lookout {
     type ClientRoleState = Lookout;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
-
-        if let Some(visit) = actor_ref.night_visits(game).first(){
+        let actor_visits = actor_ref.night_visits_cloned(game);
+        if let Some(visit) = actor_visits.first(){
             
             let mut seen_players: Vec<PlayerReference> = visit.target.all_appeared_visitors(game).into_iter().filter(|p|actor_ref!=*p).collect();
             seen_players.shuffle(&mut thread_rng());

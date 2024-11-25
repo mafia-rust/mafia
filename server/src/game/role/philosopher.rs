@@ -22,8 +22,9 @@ impl RoleStateImpl for Philosopher {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 
-        let Some(first_visit) = actor_ref.night_visits(game).get(0) else {return;};
-        let Some(second_visit) = actor_ref.night_visits(game).get(1) else {return;};
+        let actor_visits = actor_ref.night_visits_cloned(game);
+        let Some(first_visit) = actor_visits.get(0) else {return;};
+        let Some(second_visit) = actor_visits.get(1) else {return;};
 
         let enemies = if Confused::is_confused(game, actor_ref) {
             false
@@ -45,11 +46,11 @@ impl RoleStateImpl for Philosopher {
             actor_ref.selection(game).len() == 1 && *actor_ref.selection(game).get(0).unwrap() != target_ref
         )
     }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, _game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
             vec![
-                Visit{ target: target_refs[0], attack:false },
-                Visit{ target: target_refs[1], attack:false }
+                Visit::new_none(actor_ref, target_refs[0], false),
+                Visit::new_none(actor_ref, target_refs[1], false)
             ]
         } else {
             Vec::new()

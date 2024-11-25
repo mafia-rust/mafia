@@ -22,7 +22,9 @@ impl RoleStateImpl for Tracker {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 
-        if let Some(visit) = actor_ref.night_visits(game).first(){
+
+        let actor_visits = actor_ref.night_visits_cloned(game);
+        if let Some(visit) = actor_visits.first(){
             
             let mut seen_players: Vec<PlayerReference> = visit.target.tracker_seen_visits(game).into_iter().map(|v|v.target).collect();
             seen_players.shuffle(&mut thread_rng());

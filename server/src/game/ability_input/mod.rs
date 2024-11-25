@@ -24,6 +24,9 @@ pub enum AbilityInput{
     
     PitchforkVote{input: OnePlayerOptionInput},
 
+    SyndicateGunItemShoot{input: OnePlayerOptionInput},
+    SyndicateGunItemGive{input: OnePlayerOptionInput},
+
     HitOrderVote{input: OnePlayerOptionInput},
     HitOrderMafioso,
 }

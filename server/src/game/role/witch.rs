@@ -42,11 +42,11 @@ impl RoleStateImpl for Witch {
             actor_ref.selection(game).len() == 1
         ))
     }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, _game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
             vec![
-                Visit{target: target_refs[0], attack: false}, 
-                Visit{target: target_refs[1], attack: false},
+                Visit::new_none(actor_ref, target_refs[0], false),
+                Visit::new_none(actor_ref, target_refs[1], false),
             ]
         }else{
             Vec::new()

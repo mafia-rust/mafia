@@ -19,7 +19,7 @@ impl RoleStateImpl for Framer {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Deception => {
-                let framer_visits = actor_ref.night_visits(game).clone();
+                let framer_visits = actor_ref.night_visits_cloned(game).clone();
 
                 let Some(first_visit) = framer_visits.first() else {return};
 
@@ -29,11 +29,11 @@ impl RoleStateImpl for Framer {
                 second_visit.target.set_night_framed(game, true);
             
                 first_visit.target.set_night_appeared_visits(game, Some(vec![
-                    Visit{ target: second_visit.target, attack: false }
+                    Visit::new_none(first_visit.target, second_visit.target, false)
                 ]));
                 
                 actor_ref.set_night_appeared_visits(game, Some(vec![
-                    Visit{ target: first_visit.target, attack: false }
+                    Visit::new_none(actor_ref, first_visit.target, false)
                 ]));
             }
             _ => {}
@@ -53,15 +53,15 @@ impl RoleStateImpl for Framer {
         )
         
     }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, _game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
             vec![
-                Visit{ target: target_refs[0], attack: false }, 
-                Visit{ target: target_refs[1], attack: false }
+                Visit::new_none(actor_ref, target_refs[0], false), 
+                Visit::new_none(actor_ref, target_refs[1], false)
             ]
         } else if target_refs.len() == 1 {
             vec![
-                Visit{ target: target_refs[0], attack: false }
+                Visit::new_none(actor_ref, target_refs[0], false)
             ]
         } else {
             Vec::new()

@@ -21,7 +21,7 @@ impl RoleStateImpl for Transporter {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Transporter {return;}
     
-        let transporter_visits = actor_ref.night_visits(game).clone();
+        let transporter_visits = actor_ref.night_visits_cloned(game).clone();
         let Some(first_visit) = transporter_visits.get(0) else {return};
         let Some(second_visit) = transporter_visits.get(1) else {return};
         
@@ -34,7 +34,7 @@ impl RoleStateImpl for Transporter {
             if player_ref.role(game) == Role::Transporter {continue;}
 
 
-            let new_visits = player_ref.night_visits(game).clone().into_iter().map(|mut v|{
+            let new_visits = player_ref.night_visits_cloned(game).clone().into_iter().map(|mut v|{
                 if v.target == first_visit.target {
                     v.target = second_visit.target;
                 } else if v.target == second_visit.target{
@@ -58,11 +58,11 @@ impl RoleStateImpl for Transporter {
             Some(target_ref) != chosen_targets.first().copied()
         ))
     }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, _game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
             vec![
-                Visit{ target: target_refs[0], attack: false },
-                Visit{ target: target_refs[1], attack: false }
+                Visit::new_none(actor_ref, target_refs[0], false),
+                Visit::new_none(actor_ref, target_refs[1], false)
             ]
         } else {
             Vec::new()
