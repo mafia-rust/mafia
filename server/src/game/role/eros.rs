@@ -81,8 +81,8 @@ impl RoleStateImpl for Eros {
             ErosAction::LoveLink => {
                 if target_refs.len() == 2 {
                     vec![
-                        Visit{visitor: actor_ref, target: target_refs[0], attack: false},
-                        Visit{visitor: actor_ref, target: target_refs[1], attack: false}
+                        Visit::new_none(actor_ref, target_refs[0], false),
+                        Visit::new_none(actor_ref, target_refs[1], false),
                     ]
                 } else {
                     Vec::new()
@@ -91,7 +91,7 @@ impl RoleStateImpl for Eros {
             ErosAction::Kill => {
                 if !target_refs.is_empty() {
                     vec![
-                        Visit{ visitor: actor_ref, target: target_refs[0], attack: true }
+                        Visit::new_none(actor_ref, target_refs[0], true)
                     ]
                 } else {
                     Vec::new()

@@ -1,13 +1,13 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    chat::ChatGroup, components::{detained::Detained, puppeteer_marionette::PuppeteerMarionette}, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, game_conclusion::GameConclusion, role_list::RoleSet, visit::Visit, win_condition::WinCondition, Game
+    chat::ChatGroup, components::{detained::Detained, puppeteer_marionette::PuppeteerMarionette}, game_conclusion::GameConclusion, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, role_list::RoleSet, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
 };
 
 use super::{reporter::Reporter, medium::Medium, InsiderGroupID, Role, RoleState};
 
 
-pub(super) fn can_night_select(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+pub fn can_night_select(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     
     actor_ref != target_ref &&
     !Detained::is_detained(game, actor_ref) &&
@@ -19,7 +19,7 @@ pub(super) fn can_night_select(game: &Game, actor_ref: PlayerReference, target_r
 
 pub(super) fn convert_selection_to_visits(_game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, attack: bool) -> Vec<Visit> {
     if !target_refs.is_empty() {
-        vec![Visit{ visitor: actor_ref, target: target_refs[0], attack }]
+        vec![Visit::new(actor_ref, target_refs[0], attack, VisitTag::None)]
     } else {
         Vec::new()
     }

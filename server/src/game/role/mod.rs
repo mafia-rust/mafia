@@ -192,7 +192,7 @@ macros::priorities! {
     FinalPriority
 }
 
-mod common_role;
+pub(crate) mod common_role;
 
 mod macros {
     macro_rules! roles {

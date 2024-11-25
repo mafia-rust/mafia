@@ -45,8 +45,8 @@ impl RoleStateImpl for MafiaWitch {
     fn convert_selection_to_visits(self, _game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
             vec![
-                Visit{visitor: actor_ref, target: target_refs[0], attack: false},
-                Visit{visitor: actor_ref, target: target_refs[1], attack: false},
+                Visit::new_none(actor_ref, target_refs[0], false),
+                Visit::new_none(actor_ref, target_refs[1], false),
             ]
         }else{
             Vec::new()

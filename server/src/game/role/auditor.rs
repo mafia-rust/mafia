@@ -101,11 +101,11 @@ impl RoleStateImpl for Auditor {
         let mut out = vec![];
         if let Some(chosen_outline) = self.chosen_outline.0{
             let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-            out.push(Visit{ visitor: actor_ref, target: player, attack: false });
+            out.push(Visit::new_none(actor_ref, player, false));
         }
         if let Some(chosen_outline) = self.chosen_outline.1{
             let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-            out.push(Visit{ visitor: actor_ref, target: player, attack: false });
+            out.push(Visit::new_none(actor_ref, player, false));
         }
         out
     }

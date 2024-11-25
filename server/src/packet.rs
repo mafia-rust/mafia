@@ -94,6 +94,8 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourPlayerIndex{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
+    YourFellowInsiders{fellow_insiders: VecSet<PlayerIndex>},
+    #[serde(rename_all = "camelCase")]
     Phase{phase: PhaseState, day_number: u8},
     #[serde(rename_all = "camelCase")]
     PhaseTimeLeft{seconds_left: u64},
@@ -135,6 +137,7 @@ pub enum ToClientPacket{
     YourPitchforkVote{player: Option<PlayerReference>},
     #[serde(rename_all = "camelCase")]
     YourHitOrderVote{player: Option<PlayerReference>},
+    YourSyndicateGunItemData{shooter: Option<PlayerReference>, target: Option<PlayerReference>},
 
     #[serde(rename_all = "camelCase")]
     AddChatMessages{chat_messages: Vec<ChatMessage>},
