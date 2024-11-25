@@ -10,11 +10,11 @@ import { RoleState } from "../../../../../game/roleState.d";
 export const KIRA_GUESSES = [
     "none",
     "nonTown",
-    "jailor", "villager",  
+    "jailor", "villager", "drunk",
     "detective", "lookout", "spy", "tracker", "philosopher", "psychic", "auditor", "snoop", "gossip", "tallyClerk",
     "doctor",  "bodyguard",  "cop", "bouncer", "engineer", "armorsmith", "steward",
     "vigilante",  "veteran", "marksman", "deputy", "rabblerouser",
-    "escort",  "medium",  "retributionist", "reporter", "mayor",  "transporter",
+    "escort",  "medium",  "retributionist", "crossingGuard", "reporter", "mayor",  "transporter",
 ];
 type KiraGuessRecord = Partial<Record<PlayerIndex, KiraGuess>>;
 export type KiraInput = [PlayerIndex, KiraGuess][];

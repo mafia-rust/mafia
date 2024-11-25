@@ -80,13 +80,13 @@ export default function WikiArticle(props: {
                     <div>
                         <WikiStyledText>
                             {"### "+translate("wiki.article.role.abilities")+"\n"}
-                            {(translateChecked("wiki.article.role."+role+".abilities") ?? translate("wiki.article.role.noAbilities"))+"\n"}
+                            {replaceMentions((translateChecked("wiki.article.role."+role+".abilities") ?? translate("wiki.article.role.noAbilities"))+"\n")}
 
                             {"### "+translate("wiki.article.role.attributes")+"\n"}
-                            {(translateChecked("wiki.article.role."+role+".attributes") ?? translate("wiki.article.role.noAttributes"))+"\n"}
+                            {replaceMentions((translateChecked("wiki.article.role."+role+".attributes") ?? translate("wiki.article.role.noAttributes"))+"\n")}
 
                             {"### "+translate("wiki.article.role.extra")+"\n"}
-                            {(translateChecked("wiki.article.role."+role+".extra") ?? translate("wiki.article.role.noExtra"))+"\n"}
+                            {replaceMentions((translateChecked("wiki.article.role."+role+".extra") ?? translate("wiki.article.role.noExtra"))+"\n")}
 
                             {"### "+translate("wiki.article.standard.roleLimit.title")+": "+(roleData.maxCount === null ? translate("none") : roleData.maxCount)+"\n"}
                             {"### "+translate("defense")+": "+translate("defense."+(roleData.armor ? "1" : "0"))+"\n"}

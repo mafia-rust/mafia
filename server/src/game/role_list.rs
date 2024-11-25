@@ -179,7 +179,10 @@ impl RoleSet{
                     Role::Vigilante, Role::Veteran, Role::Deputy, Role::Marksman, Role::Rabblerouser
                 ],
             RoleSet::TownSupport => 
-                vec![Role::Medium, Role::Retributionist, Role::Transporter, Role::Escort, Role::Mayor, Role::Reporter],
+                vec![
+                    Role::Medium, Role::Retributionist, Role::CrossingGuard, Role::Transporter,
+                    Role::Escort, Role::Mayor, Role::Reporter
+                ],
             RoleSet::Mafia =>
                 vec![
                     Role::Goon, Role::MafiaSupportWildcard, Role::MafiaKillingWildcard
