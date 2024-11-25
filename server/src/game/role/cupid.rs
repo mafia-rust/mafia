@@ -21,7 +21,7 @@ impl RoleStateImpl for Cupid {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Cupid => {
-                let visits = actor_ref.night_visits(game);
+                let visits = actor_ref.night_visits_cloned(game);
 
                 let Some(first_visit) = visits.get(0) else {return};
                 let Some(second_visit) = visits.get(1) else {return};
@@ -49,11 +49,11 @@ impl RoleStateImpl for Cupid {
         target_ref.alive(game) &&
         !InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref)
     }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, _game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         if target_refs.len() == 2 {
             vec![
-                Visit{ target: target_refs[0], attack: false },
-                Visit{ target: target_refs[1], attack: false }
+                Visit{visitor: actor_ref, target: target_refs[0], attack: false},
+                Visit{visitor: actor_ref, target: target_refs[1], attack: false}
             ]
         } else {
             Vec::new()

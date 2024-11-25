@@ -26,6 +26,7 @@ use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
 use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
+use components::night_visits::NightVisits;
 use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
 use components::poison::Poison;
@@ -86,11 +87,13 @@ pub struct Game {
 
     phase_machine : PhaseStateMachine,
 
+    
     /// Whether the game is still updating phase times
     pub ticking: bool,
-
-
+    
+    
     //components with data
+    night_visits: NightVisits,
     pub cult: Cult,
     pub mafia: Mafia,
     pub arsonist_doused: ArsonistDoused,
@@ -185,6 +188,7 @@ impl Game {
                 modifiers: Modifiers::default_from_settings(settings.enabled_modifiers.clone()),
                 settings,
 
+                night_visits: NightVisits::default(),
                 cult: Cult::default(),
                 mafia: Mafia,
                 arsonist_doused: ArsonistDoused::default(),
@@ -454,7 +458,7 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, insider_group::InsiderGroupID, verdicts_today::VerdictsToday},
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, verdicts_today::VerdictsToday},
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -508,6 +512,7 @@ pub mod test {
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
 
+            night_visits: NightVisits::default(),
             cult: Cult::default(),
             mafia: Mafia,
             arsonist_doused: ArsonistDoused::default(),

@@ -23,8 +23,8 @@ impl RoleStateImpl for Mafioso {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return}
         if game.day_number() == 1 {return}
-        
-        if let Some(visit) = actor_ref.night_visits(game).first(){
+        let actor_visits = actor_ref.night_visits_cloned(game);
+        if let Some(visit) = actor_visits.first(){
             let target_ref = visit.target;
     
             target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::RoleSet(RoleSet::Mafia), AttackPower::Basic, false);

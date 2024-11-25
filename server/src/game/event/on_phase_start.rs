@@ -1,7 +1,6 @@
 use crate::game::{
     components::{
-        cult::Cult, detained::Detained, mafia::Mafia,
-        pitchfork::Pitchfork, verdicts_today::VerdictsToday
+        cult::Cult, detained::Detained, mafia::Mafia, night_visits::NightVisits, pitchfork::Pitchfork, verdicts_today::VerdictsToday
     },
     phase::PhaseType, player::PlayerReference, Game
 };
@@ -19,6 +18,7 @@ impl OnPhaseStart{
             player_ref.on_phase_start(game, self.phase);
         }
 
+        NightVisits::on_phase_start(game, self.phase);
         Detained::on_phase_start(game, self.phase);
         VerdictsToday::on_phase_start(game, self.phase);
         Mafia::on_phase_start(game, self.phase);

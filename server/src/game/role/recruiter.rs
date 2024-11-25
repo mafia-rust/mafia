@@ -63,7 +63,7 @@ impl RoleStateImpl for Recruiter {
             Priority::Deception => {
                 if actor_ref.night_blocked(game) {
                     let Some(backup) = self.backup else {return};
-                    let mut visits = backup.night_visits(game).clone();
+                    let mut visits = backup.night_visits_cloned(game).clone();
                     let Some(visit) = visits.first_mut() else {return};
 
                     visit.attack = self.action == RecruiterAction::Kill;
@@ -73,15 +73,15 @@ impl RoleStateImpl for Recruiter {
             },
             Priority::Kill => {
                 let mut ability_successful = false;
-                
+                let actor_visits = actor_ref.night_visits_cloned(game);
                 if actor_ref.night_blocked(game) {
                     if let Some(backup) = self.backup {
-                        if let Some(visit) = backup.night_visits(game).first(){
+                        if let Some(visit) = backup.night_visits_cloned(game).first(){
                             ability_successful = Recruiter::night_ability(self.clone(), game, backup, visit.target);
                         }
                     }
                     
-                } else if let Some(visit) = actor_ref.night_visits(game).first(){
+                } else if let Some(visit) = actor_visits.first(){
                     ability_successful = Recruiter::night_ability(self.clone(), game, actor_ref, visit.target);
                 }
         

@@ -76,7 +76,7 @@ impl RoleStateImpl for Counterfeiter {
             if let Some(backup) = self.backup {
                 match priority {
                     Priority::Deception => {
-                        let mut visits = backup.night_visits(game).clone();
+                        let mut visits = backup.night_visits_cloned(game).clone();
                         if let Some(visit) = visits.first_mut() {
                             visit.attack = true;
                             game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackupKilled { backup: backup.index() });
@@ -84,7 +84,7 @@ impl RoleStateImpl for Counterfeiter {
                         backup.set_night_visits(game, visits);
                     },
                     Priority::Kill => {
-                        if let Some(visit) = backup.night_visits(game).first(){
+                        if let Some(visit) = backup.night_visits_cloned(game).first(){
                             let target_ref = visit.target;
                             target_ref.try_night_kill_single_attacker(
                                 backup, game, GraveKiller::RoleSet(RoleSet::Mafia), AttackPower::Basic, false
@@ -99,7 +99,8 @@ impl RoleStateImpl for Counterfeiter {
                 Priority::Deception => {
                     if self.forges_remaining == 0 || self.action == CounterfeiterAction::NoForge {return}
 
-                    let Some(visit) = actor_ref.night_visits(game).first() else{return};
+                                    let actor_visits = actor_ref.night_visits_cloned(game);
+                let Some(visit) = actor_visits.first() else{return};
                     let target_ref = visit.target;
     
                     target_ref.set_night_grave_role(game, Some(self.fake_role));
@@ -111,7 +112,9 @@ impl RoleStateImpl for Counterfeiter {
                     }));
                 },
                 Priority::Kill => {
-                    if let Some(visit) = actor_ref.night_visits(game).first(){
+            
+        let actor_visits = actor_ref.night_visits_cloned(game);
+        if let Some(visit) = actor_visits.first(){
                         let target_ref = visit.target;
                 
                         target_ref.try_night_kill_single_attacker(

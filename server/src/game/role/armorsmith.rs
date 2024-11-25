@@ -45,7 +45,7 @@ impl RoleStateImpl for Armorsmith {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::TopPriority => {
-                if let Some(_) = actor_ref.night_visits(game).first(){
+                if let Some(_) = actor_ref.night_visits_cloned(game).first(){
                     if self.open_shops_remaining > 0 {
                         actor_ref.set_role_state(game, 
                             Armorsmith {

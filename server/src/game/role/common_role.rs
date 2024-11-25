@@ -17,9 +17,9 @@ pub(super) fn can_night_select(game: &Game, actor_ref: PlayerReference, target_r
     !InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref)
 }
 
-pub(super) fn convert_selection_to_visits(_game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, attack: bool) -> Vec<Visit> {
+pub(super) fn convert_selection_to_visits(_game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, attack: bool) -> Vec<Visit> {
     if !target_refs.is_empty() {
-        vec![Visit{ target: target_refs[0], attack }]
+        vec![Visit{ visitor: actor_ref, target: target_refs[0], attack }]
     } else {
         Vec::new()
     }
