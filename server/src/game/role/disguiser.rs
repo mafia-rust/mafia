@@ -35,53 +35,15 @@ impl RoleStateImpl for Disguiser {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Deception => {
-                actor_ref.remove_player_tag_on_all(game, crate::game::tag::Tag::Disguise);
+                
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(first_visit) = actor_visits.first() else {return};
+                
+                actor_ref.remove_player_tag_on_all(game, crate::game::tag::Tag::Disguise);
                 self.current_target = Some(first_visit.target);
                 actor_ref.push_player_tag(game, first_visit.target, crate::game::tag::Tag::Disguise);
+
                 actor_ref.set_role_state(game, self);
-            },
-            Priority::Heal => {
-                let Some(target) = self.current_target else {return};
-                target.set_night_upgraded_defense(game, Some(DefensePower::Armor));
-            },
-            Priority::Investigative => {
-
-                if let Some(target_healed_ref) = self.current_target {
-                    if target_healed_ref.night_attacked(game){
-                        
-                        actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
-                        target_healed_ref.push_night_message(game, ChatMessageVariant::YouWereProtected);
-                    }
-                }
-                
-                if actor_ref.alive(game) || actor_ref.night_blocked(game) {return;}
-
-                let mut chat_messages = Vec::new();
-
-                for player in PlayerReference::all_players(game){
-                    if !InsiderGroupID::in_same_revealed_group(game, actor_ref, player) {continue;}
-
-                    let visitors_roles: Vec<Role> = PlayerReference::all_appeared_visitors(player, game)
-                        .iter()
-                        .filter(|player|
-                            player.win_condition(game)
-                                .is_loyalist_for(crate::game::game_conclusion::GameConclusion::Town)
-                        )
-                        .map(|player| player.role(game))
-                        .collect();
-
-
-                    chat_messages.push(ChatMessageVariant::FramerResult{mafia_member: player.index(), visitors: visitors_roles});
-                }
-
-                for player in PlayerReference::all_players(game){
-                    if !InsiderGroupID::in_same_revealed_group(game, actor_ref, player) {continue;}
-                    for msg in chat_messages.iter(){
-                        player.push_night_message(game, msg.clone());
-                    }
-                }
             },
             _ => {}
         }
@@ -112,7 +74,7 @@ impl RoleStateImpl for Disguiser {
     fn on_any_death(mut self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference) {
         if
             self.current_target.is_some_and(|p|p == dead_player_ref) || 
-            self.current_target.is_some_and(|p|p == actor_ref)
+            actor_ref == dead_player_ref
         {
             actor_ref.remove_player_tag_on_all(game, crate::game::tag::Tag::Disguise);
             self.current_target = None;
@@ -155,3 +117,36 @@ impl RoleStateImpl for Disguiser {
         ].into_iter().collect()
     }
 }
+
+
+/*
+
+            Priority::Investigative => {
+                if actor_ref.alive(game) || actor_ref.night_blocked(game) {return;}
+
+                let mut chat_messages = Vec::new();
+
+                for player in PlayerReference::all_players(game){
+                    if !InsiderGroupID::in_same_revealed_group(game, actor_ref, player) {continue;}
+
+                    let visitors_roles: Vec<Role> = PlayerReference::all_appeared_visitors(player, game)
+                        .iter()
+                        .filter(|player|
+                            player.win_condition(game)
+                                .is_loyalist_for(crate::game::game_conclusion::GameConclusion::Town)
+                        )
+                        .map(|player| player.role(game))
+                        .collect();
+
+
+                    chat_messages.push(ChatMessageVariant::FramerResult{mafia_member: player.index(), visitors: visitors_roles});
+                }
+
+                for player in PlayerReference::all_players(game){
+                    if !InsiderGroupID::in_same_revealed_group(game, actor_ref, player) {continue;}
+                    for msg in chat_messages.iter(){
+                        player.push_night_message(game, msg.clone());
+                    }
+                }
+            },
+ */
