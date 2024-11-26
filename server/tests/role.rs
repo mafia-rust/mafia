@@ -2437,7 +2437,7 @@ fn godfather_dies_to_veteran_after_possessed(){
 fn fiends_wildcard_defense_upgrade(){
     kit::scenario!(game in Dusk 2 where
         fiend: FiendsWildcard,
-        mafia: MafiaSupportWildcard
+        mafia: Godfather
     );
     
     fiend.set_role_state(RoleState::FiendsWildcard(FiendsWildcard{

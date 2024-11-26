@@ -26,9 +26,6 @@ pub enum AbilityInput{
 
     SyndicateGunItemShoot{input: OnePlayerOptionInput},
     SyndicateGunItemGive{input: OnePlayerOptionInput},
-
-    HitOrderVote{input: OnePlayerOptionInput},
-    HitOrderMafioso,
 }
 impl AbilityInput{
     pub fn on_client_message(self, game: &mut Game, actor_ref: PlayerReference){
