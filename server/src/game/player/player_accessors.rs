@@ -314,6 +314,13 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.framed = framed;
     }
 
+    pub fn night_convert_role_to<'a>(&self, game: &'a Game) -> &'a Option<RoleState> {
+        &self.deref(game).night_variables.convert_role_to
+    }
+    pub fn set_night_convert_role_to(&self, game: &mut Game, convert_role_to: Option<RoleState>){
+        self.deref_mut(game).night_variables.convert_role_to = convert_role_to;
+    }
+
     pub fn night_appeared_visits<'a>(&self, game: &'a Game) -> &'a Option<Vec<Visit>>{
         &self.deref(game).night_variables.appeared_visits
     }

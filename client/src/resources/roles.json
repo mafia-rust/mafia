@@ -753,6 +753,17 @@
             }
         ]
     },
+    "professor": {
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[]
+    },
     "forger": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaSupport"],

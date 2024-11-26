@@ -19,6 +19,7 @@ import { Role, roleJsonData, RoleState } from "../../../../game/roleState.d";
 import RoleDropdown from "../../../../components/RoleDropdown";
 import GAME_MANAGER from "../../../..";
 import DisguiserMenu from "./RoleSpecificMenus/DisguiserMenu";
+import ProfessorMenu from "./RoleSpecificMenus/ProfessorMenu";
 
 
 export default function RoleSpecificSection(){
@@ -53,7 +54,9 @@ export default function RoleSpecificSection(){
         case "impostor":
             return <ImpostorMenu roleState={roleState}/>
         case "disguiser":
-            return <DisguiserMenu roleState={roleState}/>
+            return <DisguiserMenu roleState={roleState}/>;
+        case "professor":
+            return <ProfessorMenu roleState={roleState}/>;
         case "jailor": 
             return <JailorRoleSpecificMenu roleState={roleState}/>;
         case "kidnapper": 
