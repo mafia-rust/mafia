@@ -126,8 +126,8 @@ impl RoleStateImpl for Impostor {
         if actor_ref != input_player {return;}
         if !actor_ref.alive(game) {return};
         match ability_input {
-            AbilityInput::Disguiser{input} => {
-                if let Some(target) = input.0 {
+            AbilityInput::Disguiser{selection } => {
+                if let Some(target) = selection.0 {
                     self.fake_role = target;
                 }
                 actor_ref.set_role_state(game, self);

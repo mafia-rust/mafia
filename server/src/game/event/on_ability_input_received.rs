@@ -24,7 +24,7 @@ impl OnAbilityInputReceived{
         Pitchfork::on_ability_input_received(game, self.actor_ref, self.input.clone());
         Modifiers::on_ability_input_received(game, self.actor_ref, self.input.clone());
         ForfeitVote::on_ability_input_received(game, self.actor_ref, self.input.clone());
-        GenericAbilitySaveComponent::on_ability_input_received(game, self.actor_ref, self.input);
+        GenericAbilitySaveComponent::on_ability_input_received(game, self.actor_ref, self.input.clone());
         SyndicateGunItem::on_ability_input_received(game, self.actor_ref, self.input);
     }
 }
