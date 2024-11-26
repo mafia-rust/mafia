@@ -545,12 +545,6 @@ export function createGameManager(): GameManager {
                 action: action
             });
         },
-        sendRetrainerRetrain(role) {
-            this.server.sendPacket({
-                type: "retrainerRetrain",
-                role: role
-            });
-        },
         sendSetRoleChosen(role: Role | null) {
             this.server.sendPacket({
                 type: "setRoleChosen",

@@ -370,15 +370,6 @@
     "role.godfather.youAreSelecting": "You are organizing an attack on \\0.",
     "role.godfather.youAreSelecting.null": "You aren't attacking anyone.",
 
-    "role.retrainer.name": "Retrainer",
-    "role.retrainer.name:var.0": "Retrainers",
-    "role.retrainer.target": "Attack",
-    "role.retrainer.dayTarget": "Backup",
-    "role.retrainer.youAreSelecting": "You are organizing an attack on \\0.",
-    "role.retrainer.youAreSelecting.null": "You aren't attacking anyone.",
-    "role.retrainer.retrainsRemaining": "\\0 retrains remaining",
-    "role.retrainer.cannotRetrain": "You can't retrain during night, while dead, if you have no backup, or if you have no retrains left.",
-    
     "role.impostor.name": "Impostor",
     "role.impostor.name:var.0": "Impostors",
     "role.impostor.name:var.1": "Imposter",
@@ -1484,12 +1475,6 @@
     "wiki.article.role.godfather.attributes":"* When you are blocked, the syndicate is told that the backup attacks for you\n- Neither you or the backup can select or attack night 1",
     "wiki.article.role.godfather.extra":"* You only have a basic attack\n* When the Godfather dies, their current backup becomes the Godfather\n* You can not select other syndicate members",
     
-    "wiki.article.role.retrainer.reminder": "Each night, select a player to attack. Up to 2 times per game, retrain the backup, changing their role to a different mafia support role.",
-    "wiki.article.role.retrainer.guide": "- At night, select a player to attack\n- You can't attack night 1\n- Choose a backup to attack for you if you are blocked\n- 2 times per game, retrain the backup, changing their role to a different syndicate support role\n\n You should try to kill townies who are likely to stop you from winning or have powerful abilities, but be careful about town protective roles.",
-    "wiki.article.role.retrainer.abilities":"* Visit a player to attack\n* Choose another living syndicate member to be your backup at any time\n* While you are blocked, the backup will attack the first player they visit\n- 2 times per game, you can choose to retrain, changing the role of the backup player to a different syndicate support role",
-    "wiki.article.role.retrainer.attributes":"* When you are blocked, the syndicate is told that the backup attacks for you\n- Neither you or the backup can select or attack night 1\n- You can only retrain a syndicate member when it is not night\n- If you try to retrain the backup to the role that they already are, it doesn't work, and doesn't cost an ability\n- You can only retrain while it is not night",
-    "wiki.article.role.retrainer.extra":"* You only have a basic attack\n* When the Retrainer dies, their current backup becomes the Retrainer\n* You can not select other syndicate members",
-  
     "wiki.article.role.impostor.reminder": "Each night, select a player to attack. If you die, your grave shows whatever role you chose to disguise as.",
     "wiki.article.role.impostor.guide": "- At night, select a player to attack\n- You can't attack night 1\n- Choose a backup to attack for you if you are blocked\n- You can choose what role appears on your grave, giving false information to the town when you die\n\n You should try to kill townies who are likely to stop you from winning or have powerful abilities, but be careful about town protective roles.",
     "wiki.article.role.impostor.abilities":"* Visit a player to attack\n* Choose another living syndicate member to be your backup at any time\n* While you are blocked, the backup will attack the first player they visit\n- At any time while you are alive, choose a role, that role appears on your grave when you die instead of impostor",

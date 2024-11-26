@@ -1,23 +1,16 @@
 import { ReactElement } from "react"
 import { usePlayerState } from "../../../../../components/useHooks";
-import { Role, roleJsonData } from "../../../../../game/roleState.d";
+import { Role, roleJsonData, RoleState } from "../../../../../game/roleState.d";
 import GAME_MANAGER from "../../../../..";
 import translate from "../../../../../game/lang";
-import RoleDropdown from "../../../../../components/RoleDropdown";
 import React from "react";
 import StyledText from "../../../../../components/StyledText";
+import RoleOptionSelectionMenu from "../AbilitySelectionTypes/RoleOptionSelectionMenu";
 
-export default function ImpostorMenu(): ReactElement {
+export default function ImpostorMenu(props: Readonly<{
+    roleState: RoleState & {type: "impostor"},
+}>): ReactElement {
 
-    const savedFakeRole = usePlayerState<Role | null>(
-        (playerState, gameState) => {
-            if(playerState.roleState.type === "impostor"){
-                return playerState.roleState.fakeRole;
-            }
-            return null
-        },
-        ["yourRoleState"]
-    )
     const alive = usePlayerState<boolean>(
         (playerState, gameState) => {
             return gameState.players[playerState.myIndex].alive
@@ -35,11 +28,14 @@ export default function ImpostorMenu(): ReactElement {
     return <>
         {alive && <>
             <StyledText>{translate("role.impostor.roleMenu")}</StyledText>
-            <RoleDropdown
-                value={savedFakeRole??"jester"} 
+            <RoleOptionSelectionMenu
+                selection={props.roleState.fakeRole??"jester"}
                 enabledRoles={allChoosableRoles}
-                onChange={(role)=>{
-                    GAME_MANAGER.sendRetrainerRetrain(role);
+                onChoose={(role)=>{
+                    GAME_MANAGER.sendAbilityInput({
+                        type: "disguiser",
+                        input: role
+                    });
                 }}
             />
         </>}

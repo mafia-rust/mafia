@@ -95,10 +95,6 @@ export type RoleState = {
     type: "godfather"
     backup: PlayerIndex | null
 } | {
-    type: "retrainer"
-    backup: PlayerIndex | null,
-    retrainsRemaining: number
-} | {
     type: "impostor"
     backup: PlayerIndex | null,
     fakeRole: Role

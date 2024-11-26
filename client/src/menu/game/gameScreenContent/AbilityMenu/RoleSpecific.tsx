@@ -6,7 +6,6 @@ import LargeHypnotistMenu from "./RoleSpecificMenus/LargeHypnotistMenu";
 import LargeForgerMenu from "./RoleSpecificMenus/LargeForgerMenu";
 import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
 import KiraMenu from "./RoleSpecificMenus/KiraMenu";
-import RetrainerMenu from "./RoleSpecificMenus/RetrainerMenu";
 import ImpostorMenu from "./RoleSpecificMenus/ImpostorMenu";
 import Counter from "../../../../components/Counter";
 import StyledText from "../../../../components/StyledText";
@@ -52,10 +51,8 @@ export default function RoleSpecificSection(){
             return <LargeDoomsayerMenu/>;
         case "kira":
             return <KiraMenu roleState={roleState}/>;
-        case "retrainer":
-            return <RetrainerMenu/>
         case "impostor":
-            return <ImpostorMenu/>
+            return <ImpostorMenu roleState={roleState}/>
         case "disguiser":
             return <DisguiserMenu roleState={roleState}/>
         case "jailor": 

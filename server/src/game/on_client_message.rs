@@ -6,8 +6,8 @@ use super::{
     phase::{PhaseState, PhaseType},
     player::{PlayerIndex, PlayerReference},
     role::{
-        impostor::Impostor, mayor::Mayor, politician::Politician,
-        puppeteer::PuppeteerAction, recruiter::RecruiterAction, retrainer::Retrainer,
+        mayor::Mayor, politician::Politician,
+        puppeteer::PuppeteerAction, recruiter::RecruiterAction,
         Role, RoleState
     },
     role_list::RoleSet,
@@ -357,17 +357,6 @@ impl Game {
 
                     //Updates selection if it was invalid
                     sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
-                }
-            },
-            ToServerPacket::RetrainerRetrain { role } => {
-                match sender_player_ref.role_state(self) {
-                    RoleState::Retrainer(..) => {
-                        Retrainer::retrain(self, sender_player_ref, role);
-                    },
-                    RoleState::Impostor(..) => {
-                        Impostor::set_role(self, sender_player_ref, role);
-                    },
-                    _ => {}
                 }
             },
             ToServerPacket::SetRoleChosen { role } => {

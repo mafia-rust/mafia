@@ -110,7 +110,6 @@ macros::roles! {
     Eros: eros,
     Counterfeiter : counterfeiter,
     Impostor : impostor,
-    Retrainer : retrainer,
     Recruiter : recruiter,
     Mafioso : mafioso,
     MafiaKillingWildcard : mafia_killing_wildcard,

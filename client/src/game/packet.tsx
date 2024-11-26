@@ -333,9 +333,6 @@ export type ToServerPacket = {
     type: "setErosAction",
     action: "loveLink" | "kill"
 } | {
-    type: "retrainerRetrain",
-    role: Role
-} | {
     type: "setRoleChosen",
     role: Role | null
 } | {

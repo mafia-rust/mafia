@@ -69,7 +69,7 @@ impl KiraGuess{
 
             //Mafia
             Role::Godfather | Role::Mafioso | Role::Eros |
-            Role::Counterfeiter | Role::Retrainer | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
+            Role::Counterfeiter | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
             Role::Goon |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::MafiaWitch | Role::Necromancer | Role::Consort |

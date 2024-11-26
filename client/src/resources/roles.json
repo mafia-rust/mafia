@@ -547,23 +547,6 @@
             {"type": "youSurvivedAttack"}
         ]
     },
-    "retrainer": {
-        "mainRoleSet": "mafia",
-        "roleSets": ["mafia", "mafiaKilling"],
-        "armor": false,
-        "aura": null,
-        "maxCount": 1,
-        "roleSpecificMenu": true,
-        "canWriteDeathNote": false,
-        "canBeConvertedTo": [],
-        "chatMessages":[
-            {"type": "godfatherBackup", "backup": null},
-            {"type": "godfatherBackup", "backup": 26},
-            {"type": "godfatherBackupKilled", "backup": 26},
-            {"type": "someoneSurvivedYourAttack"},
-            {"type": "youSurvivedAttack"}
-        ]
-    },
     "impostor": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaKilling"],

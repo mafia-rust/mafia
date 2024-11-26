@@ -54,7 +54,6 @@ pub use mafia_server::game::{
         godfather::Godfather,
         impostor::Impostor,
         recruiter::Recruiter,
-        retrainer::Retrainer,
         counterfeiter::Counterfeiter,
         mafioso::Mafioso,
         
@@ -1599,7 +1598,7 @@ fn godfather_backup_sets_off_engineer_trap() {
             backup: Framer,
             eng: Engineer,
             esc: Escort,
-            gf: Retrainer
+            gf: Godfather
         );
 
         assert!(gf.day_target(backup));
@@ -1637,7 +1636,7 @@ fn godfather_backup_sets_off_engineer_trap() {
     {
         kit::scenario!(game in Night 2 where
             backup: Framer,
-            gf: Retrainer,
+            gf: Godfather,
             eng: Engineer,
             esc: Escort
         );
