@@ -1179,12 +1179,6 @@
         "canWriteDeathNote": true,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {
-                "type": "playerRoleAndAlibi",
-                "player": 32,
-                "role":"jailor",
-                "will":"Jailor\nN1: Forgot to jail someone\nD2: @31 seems sus, I'm jailing him tonight\nN2: @31 keeps talking about pottery?\nD3: Not sure how @31 died while in jail.\nN3: @44 is claiming politician..."
-            },
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"},
             {"type": "youAttackedSomeone"}
