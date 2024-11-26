@@ -13,7 +13,7 @@ pub enum Tag{
     PuppeteerMarionette,
     LoveLinked,
     ForfeitVote,
-    Spiraling
+    Spiraling,
     Disguise,
     SyndicateGun,
     Frame

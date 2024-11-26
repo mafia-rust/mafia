@@ -2,10 +2,9 @@ use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::components::poison::{Poison, PoisonAlert};
-use crate::game::grave::{GraveKiller, GraveReference};
+use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 
-use crate::game::role_list::RoleSet;
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 use crate::game::Game;
@@ -33,7 +32,7 @@ impl RoleStateImpl for Spiral {
         if priority != Priority::Poison { return };
         
         if self.spiraling.is_empty() {
-            if let Some(visit) = actor_ref.night_visits(game).first(){
+            if let Some(visit) = actor_ref.untagged_night_visits_cloned(game).first(){
                 let target_ref = visit.target;
                 
                 Spiral::start_player_spiraling(game, &mut new_spiraling, actor_ref, target_ref);
@@ -42,7 +41,7 @@ impl RoleStateImpl for Spiral {
             for spiraling_player in self.spiraling.clone() {
                 Spiral::remove_player_spiraling(game, &mut new_spiraling, actor_ref, spiraling_player);
 
-                for other_player_ref in spiraling_player.all_visitors(game)
+                for other_player_ref in spiraling_player.all_night_visitors_cloned(game)
                     .into_iter().filter(|other_player_ref|
                         other_player_ref.alive(game) &&
                         *other_player_ref != spiraling_player // Let doctor self-heal
