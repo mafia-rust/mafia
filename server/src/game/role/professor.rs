@@ -18,15 +18,15 @@ use super::{common_role, Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Professor{
+pub struct Reeducator{
     convert_charges_remaining: bool,
     convert_role: Role,
 }
-impl Default for Professor{
+impl Default for Reeducator{
     fn default() -> Self {
         Self {
             convert_charges_remaining: true,
-            convert_role: Role::Professor,
+            convert_role: Role::Reeducator,
         }
     }
 }
@@ -34,8 +34,8 @@ impl Default for Professor{
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Professor {
-    type ClientRoleState = Professor;
+impl RoleStateImpl for Reeducator {
+    type ClientRoleState = Reeducator;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Deception => {
@@ -59,10 +59,10 @@ impl RoleStateImpl for Professor {
                 let visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(target_ref) = visits.first().map(|v| v.target) else {return};
 
-                let new_state = if self.convert_role == Role::Professor {
-                    RoleState::Professor(Professor {
+                let new_state = if self.convert_role == Role::Reeducator {
+                    RoleState::Reeducator(Reeducator {
                         convert_charges_remaining: false,
-                        ..Professor::default()
+                        ..Reeducator::default()
                     })
                 }else{
                     self.convert_role.default_state()
@@ -125,7 +125,7 @@ impl RoleStateImpl for Professor {
     }
     fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
 
-        if game.settings.role_list.0.contains(&RoleOutline::new_exact(Role::Professor)) {
+        if game.settings.role_list.0.contains(&RoleOutline::new_exact(Role::Reeducator)) {
             return;
         }
 
@@ -134,7 +134,7 @@ impl RoleStateImpl for Professor {
         let random_mafia_player = PlayerReference::all_players(game)
             .filter(|p|RoleSet::Mafia.get_roles().contains(&p.role(game)))
             .filter(|p|*p!=actor_ref)
-            .filter(|p|p.role(game)!=Role::Professor)
+            .filter(|p|p.role(game)!=Role::Reeducator)
             .choose(&mut rand::thread_rng());
 
         if let Some(random_mafia_player) = random_mafia_player {

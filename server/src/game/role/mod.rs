@@ -125,7 +125,7 @@ macros::roles! {
     Framer : framer,
     Disguiser : disguiser,
     Forger : forger,
-    Professor : professor,
+    Reeducator : reeducator,
     Cupid : cupid,
     MafiaSupportWildcard: mafia_support_wildcard,
 
