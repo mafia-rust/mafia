@@ -3,6 +3,8 @@ use serde::Serialize;
 use vec1::vec1;
 
 use crate::game::ability_input::AbilityInput;
+use crate::game::attack_power::AttackPower;
+use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::game_conclusion::GameConclusion;
@@ -72,12 +74,17 @@ impl RoleStateImpl for Reeducator {
 
                     target_ref.set_night_convert_role_to(game, Some(new_state));
 
-                }else if self.convert_charges_remaining {
+                }else if self.convert_charges_remaining && game.day_number() > 1{
+
+                    if target_ref.night_defense(game).can_block(AttackPower::Basic) {
+                        actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                        return
+                    }
 
                     InsiderGroupID::Mafia.add_player_to_revealed_group(game, target_ref);
                     target_ref.set_win_condition(
                         game,
-                        WinCondition::new_single_resolution_state(crate::game::game_conclusion::GameConclusion::Mafia)
+                        WinCondition::new_loyalist(crate::game::game_conclusion::GameConclusion::Mafia)
                     );
                     target_ref.set_night_convert_role_to(game, Some(new_state));
 
@@ -97,7 +104,8 @@ impl RoleStateImpl for Reeducator {
         (
             (
                 !InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref) &&
-                self.convert_charges_remaining
+                self.convert_charges_remaining &&
+                game.day_number() > 1
             ) || 
             InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref)
         )
