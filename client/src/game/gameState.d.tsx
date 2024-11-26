@@ -95,10 +95,17 @@ export type PlayerGameState = {
 
     availableGenericAbilitySelection: AvailableGenericAbilitySelection,
     genericAbilitySelection: GenericAbilitySelection,
+
+    fellowInsiders: PlayerIndex[],
     
     forfeitVote: boolean,
     pitchforkVote: PlayerIndex | null,
     hitOrderVote: PlayerIndex | null,
+    syndicateGunItemData: {
+        shooter: PlayerIndex | null,
+        target: PlayerIndex | null,
+    },
+
 
     sendChatGroups: ChatGroup[],
     insiderGroups: InsiderGroup[],
@@ -131,9 +138,25 @@ export type InsiderGroup = (typeof INSIDER_GROUPS)[number];
 export const INSIDER_GROUPS = ["mafia", "cult", "puppeteer"] as const;
 export type PhaseTimes = Record<PhaseType, number>;
 
-export type Tag = "disguise" | "godfatherBackup" | "werewolfTracked" | "doused" | "revolutionaryTarget" | "morticianTagged" | "puppeteerMarionette" | "loveLinked" | "forfeitVote";
+export type Tag = 
+    "disguise" |
+    "syndicateGun" |
+    "godfatherBackup" |
+    "werewolfTracked" |
+    "doused" |
+    "revolutionaryTarget" |
+    "morticianTagged" |
+    "puppeteerMarionette" |
+    "loveLinked" |
+    "frame" |
+    "forfeitVote";
 
-export const MODIFIERS = ["obscuredGraves", "randomLoveLinks", "deadCanChat", "noAbstaining", "noDeathCause", "mafiaHitOrders"] as const;
+export const MODIFIERS = [
+    "obscuredGraves", "randomLoveLinks",
+    "deadCanChat", "noAbstaining",
+    "noDeathCause", "mafiaHitOrders",
+    "syndicateGunItem"
+] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 
 export type Player = {

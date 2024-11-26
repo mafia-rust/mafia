@@ -45,7 +45,6 @@ function useDayTargetedPlayers(): PlayerIndex[] {
 
     switch (roleState?.type){
         case "godfather":
-        case "retrainer":
         case "counterfeiter":
             if (roleState.backup !== null) return [roleState.backup]
             break;

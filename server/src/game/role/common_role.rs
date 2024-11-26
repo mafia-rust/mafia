@@ -1,15 +1,28 @@
 use std::collections::HashSet;
 
 use crate::{game::{
-    ability_input::common_selection::one_player_option_selection::AvailableOnePlayerOptionSelection, chat::ChatGroup, components::{detained::Detained, generic_ability::{AvailableGenericAbilitySelection, AvailableGenericAbilitySelectionType, GenericAbilityID, GenericAbilitySaveComponent, GenericAbilitySelectionType}, puppeteer_marionette::PuppeteerMarionette}, game_conclusion::GameConclusion, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, role_list::RoleSet, visit::Visit, win_condition::WinCondition, Game
+    ability_input::common_selection::one_player_option_selection::AvailableOnePlayerOptionSelection,
+    chat::ChatGroup,
+    components::{
+        detained::Detained,
+        generic_ability::{
+            AvailableGenericAbilitySelection,
+            AvailableGenericAbilitySelectionType, GenericAbilityID,
+            GenericAbilitySaveComponent, GenericAbilitySelectionType
+        },
+        puppeteer_marionette::PuppeteerMarionette
+    },
+    game_conclusion::GameConclusion,
+    modifiers::{ModifierType, Modifiers},
+    phase::{PhaseState, PhaseType}, player::PlayerReference,
+    role_list::RoleSet, visit::{Visit, VisitTag}, win_condition::WinCondition,
+    Game
 }, vec_map::VecMap, vec_set::VecSet};
 
 use super::{reporter::Reporter, medium::Medium, InsiderGroupID, Role, RoleState};
 
 
-
-pub(super) fn can_night_select(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    
+pub fn can_night_select(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
     actor_ref != target_ref &&
     !Detained::is_detained(game, actor_ref) &&
     actor_ref.selection(game).is_empty() &&
@@ -18,9 +31,9 @@ pub(super) fn can_night_select(game: &Game, actor_ref: PlayerReference, target_r
     !InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref)
 }
 
-pub(super) fn convert_selection_to_visits(_game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, attack: bool) -> Vec<Visit> {
+pub(super) fn convert_selection_to_visits(_game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, attack: bool) -> Vec<Visit> {
     if !target_refs.is_empty() {
-        vec![Visit{ target: target_refs[0], attack }]
+        vec![Visit::new(actor_ref, target_refs[0], attack, VisitTag::None)]
     } else {
         Vec::new()
     }
@@ -59,18 +72,18 @@ pub(super) fn convert_generic_ability_to_visits(game: &Game, actor_ref: PlayerRe
     GenericAbilitySaveComponent::get_saved_input(game, actor_ref, ability_id)
         .map(|selection|
             match selection {
-                GenericAbilitySelectionType::UnitSelection => vec![Visit{ target: actor_ref, attack }],
+                GenericAbilitySelectionType::UnitSelection => vec![Visit::new_none(actor_ref, actor_ref, attack)],
                 GenericAbilitySelectionType::OnePlayerOptionSelection { selection } => match selection.0 {
-                    Some(target_ref) => vec![Visit{ target: target_ref, attack }],
+                    Some(target_ref) => vec![Visit::new_none(actor_ref, target_ref, attack)],
                     None => Vec::new(),
                 },
                 GenericAbilitySelectionType::TwoPlayerOptionSelection { selection } => {
                     let mut out = Vec::new();
                     if let Some(target_ref) = selection.0 {
-                        out.push(Visit{ target: target_ref, attack });
+                        out.push(Visit::new_none(actor_ref, target_ref, attack));
                     }
                     if let Some(target_ref) = selection.1 {
-                        out.push(Visit{ target: target_ref, attack });
+                        out.push(Visit::new_none(actor_ref, target_ref, attack));
                     }
                     out
                 },
@@ -78,9 +91,9 @@ pub(super) fn convert_generic_ability_to_visits(game: &Game, actor_ref: PlayerRe
                     let mut out = Vec::new();
                     for player in PlayerReference::all_players(game){
                         if Some(player.role(game)) == selection.0 {
-                            out.push(Visit{ target: player, attack });
+                            out.push(Visit::new_none(actor_ref, player, attack));
                         }else if Some(player.role(game)) == selection.1 {
-                            out.push(Visit{ target: player, attack });
+                            out.push(Visit::new_none(actor_ref, player, attack));
                         }
                     }
                     out
@@ -89,11 +102,11 @@ pub(super) fn convert_generic_ability_to_visits(game: &Game, actor_ref: PlayerRe
                     let mut out = vec![];
                     if let Some(chosen_outline) = selection.0{
                         let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-                        out.push(Visit{ target: player, attack: false });
+                        out.push(Visit::new_none(actor_ref, player, false));
                     }
                     if let Some(chosen_outline) = selection.1{
                         let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-                        out.push(Visit{ target: player, attack: false });
+                        out.push(Visit::new_none(actor_ref, player, false));
                     }
                     out
                 },

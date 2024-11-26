@@ -96,6 +96,7 @@
     "doomsayerWon": "result",
     "martyrFailed": "result",
     "martyrWon": "result",
+    "syndicateGunTarget": "target",
     "playersRoleRevealed": "special",
     "playersRoleConcealed": "special",
     "tagAdded": "special",

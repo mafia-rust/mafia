@@ -52,6 +52,9 @@ export type ToClientPacket = {
     type: "yourPlayerIndex",
     playerIndex: PlayerIndex
 } | {
+    type: "yourFellowInsiders",
+    fellowInsiders: PlayerIndex[]
+} | {
     type: "rejectStart",
     reason: string
 } | {
@@ -185,6 +188,10 @@ export type ToClientPacket = {
 } | {
     type: "yourHitOrderVote",
     player: PlayerIndex | null
+} | {
+    type: "yourSyndicateGunItemData",
+    shooter: PlayerIndex | null
+    target: PlayerIndex | null
 }
 
 export type ToServerPacket = {
@@ -334,9 +341,6 @@ export type ToServerPacket = {
 } | {
     type: "setErosAction",
     action: "loveLink" | "kill"
-} | {
-    type: "retrainerRetrain",
-    role: Role
 } | {
     type: "setRoleChosen",
     role: Role | null

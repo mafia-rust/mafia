@@ -39,16 +39,21 @@ impl RoleStateImpl for Spy {
 
                 let mut mafia_visits = vec![];
                 for other_player in PlayerReference::all_players(game){
-                    if InsiderGroupID::Mafia.is_player_in_revealed_group(game, other_player) {
-                        mafia_visits.append(&mut other_player.tracker_seen_visits(game).iter().map(|v|v.target.index()).collect());
-                    }
+                    if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, other_player) {continue}
+                    mafia_visits.append(
+                        &mut other_player.tracker_seen_visits(game)
+                            .iter()
+                            .map(|v|v.target.index())
+                            .collect()
+                    );
                 }
                 mafia_visits.shuffle(&mut rand::thread_rng());
                 
                 actor_ref.push_night_message(game, ChatMessageVariant::SpyMafiaVisit { players: mafia_visits });               
             },
             Priority::SpyBug => {
-                let Some(visit) = actor_ref.night_visits(game).first()else{return};
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let Some(visit) = actor_visits.first() else {return};
 
                 for message in visit.target.night_messages(game).clone(){
                     if let Some(message) = match message{

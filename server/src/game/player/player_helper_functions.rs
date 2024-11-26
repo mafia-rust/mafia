@@ -33,7 +33,7 @@ impl PlayerReference{
     }
     pub fn ward(&self, game: &mut Game) -> Vec<PlayerReference> {
         let mut wardblocked = vec![];
-        for visitor in self.all_visitors(game){
+        for visitor in self.all_night_visitors_cloned(game){
             if !visitor.role(game).wardblock_immune() {
                 visitor.set_night_wardblocked(game, true);
                 visitor.set_night_visits(game, vec![]);
@@ -46,6 +46,8 @@ impl PlayerReference{
     pub fn night_blocked(&self, game: &Game)->bool{
         self.night_roleblocked(game) || self.night_wardblocked(game)
     }
+
+
 
     /// Returns true if attack overpowered defense
     pub fn try_night_kill_single_attacker(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
@@ -114,7 +116,7 @@ impl PlayerReference{
     pub fn possess_night_action(&self, game: &mut Game, priority: Priority, currently_used_player: Option<PlayerReference>)->Option<PlayerReference>{
         match priority {
             Priority::Possess => {
-                let possessor_visits = self.night_visits(game).clone();
+                let possessor_visits = self.untagged_night_visits_cloned(game);
                 let Some(possessed_visit) = possessor_visits.get(0) else {return None};
                 let Some(possessed_into_visit) = possessor_visits.get(1) else {return None};
                 
@@ -129,7 +131,7 @@ impl PlayerReference{
                 }
 
                 let mut new_selection = possessed_visit.target
-                    .night_visits(game)
+                    .untagged_night_visits_cloned(game)
                     .iter()
                     .map(|v|v.target)
                     .collect::<Vec<PlayerReference>>();
@@ -234,19 +236,12 @@ impl PlayerReference{
         if let Some(v) = self.night_appeared_visits(game) {
             v.clone()
         } else {
-            self.night_visits(game).clone()
+            self.all_night_visits_cloned(game)
         }
     }
     pub fn all_appeared_visitors(self, game: &Game) -> Vec<PlayerReference> {
         PlayerReference::all_players(game).filter(|player_ref|{
             player_ref.tracker_seen_visits(game).iter().any(|other_visit| 
-                other_visit.target == self
-            )
-        }).collect()
-    }
-    pub fn all_visitors(self, game: &Game) -> Vec<PlayerReference> {
-        PlayerReference::all_players(game).filter(|player_ref|{
-            player_ref.night_visits(game).iter().any(|other_visit| 
                 other_visit.target == self
             )
         }).collect()

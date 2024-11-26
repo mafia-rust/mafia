@@ -679,6 +679,11 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.youAreLoveLinked", playerNames[message.player]);
         case "playerDiedOfABrokenHeart":
             return translate("chatMessage.playerDiedOfBrokenHeart", playerNames[message.player], playerNames[message.lover]);
+        case "syndicateGunTarget":
+            return translate("chatMessage.syndicateGunTarget",
+                playerNames[message.shooter],
+                message.target===null?translate("nobody"):playerNames[message.target]
+            );
         case "chronokaiserSpeedUp":
             return translate("chatMessage.chronokaiserSpeedUp", message.percent);
         case "deputyShotYou":
@@ -955,6 +960,10 @@ export type ChatMessageVariant = {
     type: "playerDiedOfABrokenHeart",
     player: PlayerIndex
     lover: PlayerIndex
+} | {
+    type: "syndicateGunTarget",
+    shooter: PlayerIndex
+    target: PlayerIndex | null
 } | {
     type: "youWereProtected"
 } | {

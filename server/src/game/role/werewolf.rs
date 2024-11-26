@@ -39,13 +39,13 @@ impl RoleStateImpl for Werewolf {
                     return;
                 }
 
-                match actor_ref.night_visits(game).first() {
+                match actor_ref.untagged_night_visits_cloned(game).first() {
                     //rampage at target
                     Some(first_visit) => {
                         let target_ref = first_visit.target;                        
 
                         for other_player_ref in 
-                            target_ref.all_visitors(game).into_iter().filter(|p|actor_ref!=*p)
+                            target_ref.all_night_visitors_cloned(game).into_iter().filter(|p|actor_ref!=*p)
                             .collect::<Vec<PlayerReference>>()
                         {
                             other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
@@ -58,7 +58,7 @@ impl RoleStateImpl for Werewolf {
                     //rampage at home
                     None => {
                         for other_player_ref in 
-                            actor_ref.all_visitors(game).into_iter().filter(|p|actor_ref!=*p)
+                            actor_ref.all_night_visitors_cloned(game).into_iter().filter(|p|actor_ref!=*p)
                             .collect::<Vec<PlayerReference>>()
                         {
                             other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
@@ -75,9 +75,9 @@ impl RoleStateImpl for Werewolf {
                 if game.day_number() == 1 || game.day_number() == 3 {
                     
 
-                    let mut newly_tracked_players: Vec<PlayerReference> = actor_ref.all_visitors(game).into_iter().filter(|p|actor_ref!=*p).collect();
+                    let mut newly_tracked_players: Vec<PlayerReference> = actor_ref.all_night_visitors_cloned(game).into_iter().filter(|p|actor_ref!=*p).collect();
                 
-                    if let Some(first_visit) = actor_ref.night_visits(game).first() {
+                    if let Some(first_visit) = actor_ref.untagged_night_visits_cloned(game).first() {
                         let target_ref = first_visit.target;
                         
                         newly_tracked_players.push(target_ref);

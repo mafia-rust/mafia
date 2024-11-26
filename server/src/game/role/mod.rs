@@ -113,7 +113,6 @@ macros::roles! {
     Eros: eros,
     Counterfeiter : counterfeiter,
     Impostor : impostor,
-    Retrainer : retrainer,
     Recruiter : recruiter,
     Mafioso : mafioso,
     MafiaKillingWildcard : mafia_killing_wildcard,
@@ -195,7 +194,7 @@ macros::priorities! {
     FinalPriority
 }
 
-mod common_role;
+pub(crate) mod common_role;
 
 mod macros {
     macro_rules! roles {

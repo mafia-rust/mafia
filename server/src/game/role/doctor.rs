@@ -40,7 +40,9 @@ impl RoleStateImpl for Doctor {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Heal => {
-                let Some(visit) = actor_ref.night_visits(game).first() else {return};
+                
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 
                 target_ref.increase_defense_to(game, DefensePower::Protection);

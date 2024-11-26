@@ -27,12 +27,14 @@ use components::drunk_aura::DrunkAura;
 use components::generic_ability::GenericAbilitySaveComponent;
 use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
+use components::night_visits::NightVisits;
 use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
 use components::poison::Poison;
 use components::detained::Detained;
 use components::insider_group::InsiderGroupID;
 use components::insider_group::InsiderGroups;
+use components::syndicate_gun_item::SyndicateGunItem;
 use components::verdicts_today::VerdictsToday;
 use event::on_tick::OnTick;
 use modifiers::Modifiers;
@@ -88,12 +90,15 @@ pub struct Game {
 
     phase_machine : PhaseStateMachine,
 
+    
     /// Whether the game is still updating phase times
     pub ticking: bool,
-
-
+    
+    
     //components with data
     pub generic_ability: GenericAbilitySaveComponent,
+    night_visits: NightVisits,
+    syndicate_gun_item: SyndicateGunItem,
     pub cult: Cult,
     pub mafia: Mafia,
     pub arsonist_doused: ArsonistDoused,
@@ -189,6 +194,8 @@ impl Game {
                 settings,
 
                 generic_ability: GenericAbilitySaveComponent::default(),
+                night_visits: NightVisits::default(),
+                syndicate_gun_item: SyndicateGunItem::default(),
                 cult: Cult::default(),
                 mafia: Mafia,
                 arsonist_doused: ArsonistDoused::default(),
@@ -460,7 +467,7 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, generic_ability::GenericAbilitySaveComponent, insider_group::InsiderGroupID, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, verdicts_today::VerdictsToday},
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, generic_ability::GenericAbilitySaveComponent, insider_group::InsiderGroupID, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem, verdicts_today::VerdictsToday},
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -515,6 +522,8 @@ pub mod test {
             settings,
 
             generic_ability: GenericAbilitySaveComponent::default(),
+            night_visits: NightVisits::default(),
+            syndicate_gun_item: SyndicateGunItem::default(),
             cult: Cult::default(),
             mafia: Mafia,
             arsonist_doused: ArsonistDoused::default(),

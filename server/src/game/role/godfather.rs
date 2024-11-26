@@ -114,7 +114,7 @@ impl Godfather{
                 if !actor_ref.night_blocked(game) {return}
 
                 let Some(backup) = backup else {return};
-                let mut visits = backup.night_visits(game).clone();
+                let mut visits = backup.untagged_night_visits_cloned(game).clone();
 
                 let Some(visit) = visits.first_mut() else {return};
 
@@ -130,13 +130,16 @@ impl Godfather{
             Priority::Kill => {
                 if actor_ref.night_blocked(game) {
                     let Some(backup) = backup else {return};
-                    let Some(visit) = backup.night_visits(game).first() else {return};
+                    let backups_visits = backup.untagged_night_visits_cloned(game);
+                    let Some(visit) = backups_visits.first() else {return};
                     visit.target.clone().try_night_kill_single_attacker(
                         backup, game, GraveKiller::RoleSet(RoleSet::Mafia), 
                         AttackPower::Basic, false
                     );
                 }else{
-                    let Some(visit) = actor_ref.night_visits(game).first() else {return};
+                    
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let Some(visit) = actor_visits.first() else {return};
                     visit.target.clone().try_night_kill_single_attacker(
                         actor_ref, game, GraveKiller::RoleSet(RoleSet::Mafia),
                         AttackPower::Basic, false

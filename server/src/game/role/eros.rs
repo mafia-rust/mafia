@@ -34,7 +34,8 @@ impl RoleStateImpl for Eros {
         match (priority, self.action) {
             (Priority::Kill, ErosAction::Kill) => {
                 if game.day_number() == 1 {return}
-                if let Some(visit) = actor_ref.night_visits(game).first(){
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                if let Some(visit) = actor_visits.first(){
                     let target_ref = visit.target;
             
                     target_ref.try_night_kill_single_attacker(
@@ -43,7 +44,7 @@ impl RoleStateImpl for Eros {
                 }
             }
             (Priority::Cupid, ErosAction::LoveLink) => {
-                let visits = actor_ref.night_visits(game);
+                let visits = actor_ref.untagged_night_visits_cloned(game);
 
                 let Some(first_visit) = visits.get(0) else {return};
                 let Some(second_visit) = visits.get(1) else {return};
@@ -75,13 +76,13 @@ impl RoleStateImpl for Eros {
             },
         }
     }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, _game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         match self.action {
             ErosAction::LoveLink => {
                 if target_refs.len() == 2 {
                     vec![
-                        Visit{ target: target_refs[0], attack: false },
-                        Visit{ target: target_refs[1], attack: false }
+                        Visit::new_none(actor_ref, target_refs[0], false),
+                        Visit::new_none(actor_ref, target_refs[1], false),
                     ]
                 } else {
                     Vec::new()
@@ -90,7 +91,7 @@ impl RoleStateImpl for Eros {
             ErosAction::Kill => {
                 if !target_refs.is_empty() {
                     vec![
-                        Visit{ target: target_refs[0], attack: true }
+                        Visit::new_none(actor_ref, target_refs[0], true)
                     ]
                 } else {
                     Vec::new()

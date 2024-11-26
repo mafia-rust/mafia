@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::ability_input::AbilityInput;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::insider_group::InsiderGroupID;
@@ -119,6 +120,19 @@ impl RoleStateImpl for Impostor {
         }
         else if self.backup.is_some_and(|p|p == dead_player_ref) {
             actor_ref.set_role_state(game, RoleState::Impostor(Impostor{backup: None, ..self}));
+        }
+    }
+    fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: crate::game::ability_input::AbilityInput) {
+        if actor_ref != input_player {return;}
+        if !actor_ref.alive(game) {return};
+        match ability_input {
+            AbilityInput::Disguiser{input} => {
+                if let Some(target) = input.0 {
+                    self.fake_role = target;
+                }
+                actor_ref.set_role_state(game, self);
+            },
+            _ => {}
         }
     }
      fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {

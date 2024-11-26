@@ -1,7 +1,7 @@
 import React, { useMemo } from "react"
 import { ReactElement } from "react"
 import translate from "../game/lang"
-import StyledText from "./StyledText"
+import StyledText, { KeywordDataMap, PLAYER_KEYWORD_DATA } from "./StyledText"
 import { useGameState, usePlayerState } from "./useHooks"
 import "./playerNamePlate.css"
 
@@ -33,8 +33,12 @@ export default function PlayerNamePlate(props: Readonly<{
             (gameState) => gameState.players[props.playerIndex].alive,
             ["gamePlayers", "playerAlive"]
         )!;
-        const playerName = useGameState(
+        const playerNameToString = useGameState(
             (gameState) => gameState.players[props.playerIndex].toString(),
+            ["gamePlayers"]
+        )!;
+        const playerName = useGameState(
+            (gameState) => gameState.players[props.playerIndex].name,
             ["gamePlayers"]
         )!;
 
@@ -50,6 +54,20 @@ export default function PlayerNamePlate(props: Readonly<{
             return "";
         }, [props.playerIndex, myIndex, myRoleState, playerAlive, playerRoleLabel]);
 
+
+
+        const newKeywordData: KeywordDataMap = {...PLAYER_KEYWORD_DATA};
+        if(myIndex === props.playerIndex){
+            newKeywordData[playerNameToString] = [
+                { style: "keyword-player-important keyword-player-number", replacement: (myIndex + 1).toString() },
+                { replacement: " " },
+                { style: "keyword-player-important keyword-player-sender", replacement: playerName }
+            ];
+        }
+
+
+
+
         return <div 
             className="player-name-plate"
             key={props.playerIndex}
@@ -61,7 +79,7 @@ export default function PlayerNamePlate(props: Readonly<{
                     }
                 }
             })()}
-            <StyledText>{playerName}</StyledText>
+            <StyledText playerKeywordData={newKeywordData}>{playerNameToString}</StyledText>
             {roleString !== null && <StyledText> {roleString}</StyledText>}
             <StyledText>{playerTags.map((tag)=>{return translate("tag."+tag)})}</StyledText>
         </div>

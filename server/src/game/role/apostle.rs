@@ -29,7 +29,8 @@ impl RoleStateImpl for Apostle {
         match (priority, Cult::next_ability(game)) {
             (Priority::Kill, CultAbility::Kill) if game.cult().ordered_cultists.len() == 1 => {
 
-                let Some(visit) = actor_ref.night_visits(game).first() else {return};
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
                 
                 if target_ref.try_night_kill_single_attacker(
@@ -39,7 +40,9 @@ impl RoleStateImpl for Apostle {
                 }
             }
             (Priority::Convert, CultAbility::Convert) => {
-                let Some(visit) = actor_ref.night_visits(game).first() else {return};
+                
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 
                 if target_ref.night_defense(game).can_block(AttackPower::Basic) {

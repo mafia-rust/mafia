@@ -58,7 +58,6 @@ pub use mafia_server::game::{
         godfather::Godfather,
         impostor::Impostor,
         recruiter::Recruiter,
-        retrainer::Retrainer,
         counterfeiter::Counterfeiter,
         mafioso::Mafioso,
         
@@ -829,7 +828,7 @@ fn cop_does_not_kill_framed_player(){
 
     assert!(crus.alive());
     assert!(protected.alive());
-    assert!(!framer.alive());
+    assert!(framer.alive());
     assert!(mafioso.alive());
     assert!(townie.alive());
 }
@@ -894,7 +893,7 @@ fn veteran_does_not_kill_framed_player(){
     game.next_phase();
 
     assert!(vet.alive());
-    assert!(!framer.alive());
+    assert!(framer.alive());
     assert!(mafioso.alive());
     assert!(townie.alive());
 }
@@ -1603,7 +1602,7 @@ fn godfather_backup_sets_off_engineer_trap() {
             backup: Framer,
             eng: Engineer,
             esc: Escort,
-            gf: Retrainer
+            gf: Godfather
         );
 
         assert!(gf.day_target(backup));
@@ -1641,7 +1640,7 @@ fn godfather_backup_sets_off_engineer_trap() {
     {
         kit::scenario!(game in Night 2 where
             backup: Framer,
-            gf: Retrainer,
+            gf: Godfather,
             eng: Engineer,
             esc: Escort
         );

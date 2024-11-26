@@ -88,9 +88,15 @@ export function createPlayerGameState(): PlayerGameState {
         voted: null,
         judgement: "abstain",
 
+        fellowInsiders: [],
+
         forfeitVote: false,
         pitchforkVote: null,
         hitOrderVote: null,
+        syndicateGunItemData: {
+            shooter: null,
+            target: null,
+        },
 
         sendChatGroups: [],
         insiderGroups: [],

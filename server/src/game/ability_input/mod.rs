@@ -32,6 +32,10 @@ pub enum AbilityInput{
     PitchforkVote{selection: OnePlayerOptionSelection},
 
     HitOrderVote{selection: OnePlayerOptionSelection},
+
+    SyndicateGunItemShoot{input: OnePlayerOptionSelection},
+    SyndicateGunItemGive{input: OnePlayerOptionSelection},
+
     HitOrderMafioso,
 }
 impl AbilityInput{

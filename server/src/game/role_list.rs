@@ -191,7 +191,7 @@ impl RoleSet{
             RoleSet::MafiaKilling => 
                 vec![
                     Role::Godfather, Role::Eros, Role::Counterfeiter,
-                    Role::Retrainer, Role::Impostor, Role::Recruiter,
+                    Role::Impostor, Role::Recruiter,
                     Role::Mafioso
                 ],
             RoleSet::MafiaSupport => 

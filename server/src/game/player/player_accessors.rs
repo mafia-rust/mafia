@@ -348,13 +348,6 @@ impl PlayerReference{
         all_selections_valid
     }
 
-    pub fn night_visits<'a>(&self, game: &'a Game) -> &'a Vec<Visit>{
-        &self.deref(game).night_variables.visits
-    }
-    pub fn set_night_visits(&self, game: &mut Game, visits: Vec<Visit>){
-        self.deref_mut(game).night_variables.visits = visits;
-    }
-
     pub fn night_messages<'a>(&self, game: &'a Game) -> &'a Vec<ChatMessageVariant> {
         &self.deref(game).night_variables.messages
     }
