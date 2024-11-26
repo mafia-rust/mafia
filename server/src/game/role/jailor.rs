@@ -43,7 +43,7 @@ impl RoleStateImpl for Jailor {
 
         match priority {
             Priority::Kill => {
-                let actor_visits = actor_ref.night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 if let Some(visit) = actor_visits.first() {
     
                     let target_ref = visit.target;

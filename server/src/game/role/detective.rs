@@ -21,7 +21,7 @@ impl RoleStateImpl for Detective {
     type ClientRoleState = Detective;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
-        let actor_visits = actor_ref.night_visits_cloned(game);
+        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
             let suspicious = if Confused::is_confused(game, actor_ref) {
                 false

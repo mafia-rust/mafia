@@ -68,19 +68,20 @@ impl KiraGuess{
             Role::Transporter => Some(Self::Transporter),
 
             //Mafia
-            Role::Godfather | Role::Mafioso | Role::Eros |
-            Role::Counterfeiter | Role::Retrainer | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
+            Role::Godfather | Role::Mafioso |
+            Role::Counterfeiter | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
             Role::Goon |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::MafiaWitch | Role::Necromancer | Role::Consort |
-            Role::Mortician | Role::Framer | Role::Forger | Role::Disguiser |
+            Role::Mortician | Role::Framer | Role::Forger | 
+            Role::Disguiser | Role::Professor |
             Role::Cupid | Role::MafiaSupportWildcard => Some(Self::NonTown),
 
             //Neutral
             Role::Jester | Role::Revolutionary | Role::Politician |
             Role::Doomsayer | Role::Death |
             Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | Role::Chronokaiser |
-            Role::Wildcard | Role::TrueWildcard | Role::Drunk => Some(Self::NonTown),
+            Role::Wildcard | Role::TrueWildcard | Role::Drunk | Role::Spiral => Some(Self::NonTown),
             Role::Martyr => None,
 
             //Fiends

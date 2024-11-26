@@ -41,7 +41,7 @@ impl RoleStateImpl for Death {
         let mut souls_to_gain = 1;
 
         if !crate::game::components::detained::Detained::is_detained(game, actor_ref) {
-            let actor_visits = actor_ref.night_visits_cloned(game);
+            let actor_visits = actor_ref.untagged_night_visits_cloned(game);
             if let Some(visit) = actor_visits.first(){
                 let target_ref = visit.target;
                 if target_ref.night_died(game) {

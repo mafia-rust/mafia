@@ -25,7 +25,6 @@ use crate::{
     game::{
         ability_input::AbilityInput, available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, components::insider_group::InsiderGroupID, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
             counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess,
-            eros::ErosAction,
             puppeteer::PuppeteerAction, recruiter::RecruiterAction, 
             ClientRoleStateEnum, Role
         }, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
@@ -135,8 +134,6 @@ pub enum ToClientPacket{
     YourForfeitVote{forfeit: bool},
     #[serde(rename_all = "camelCase")]
     YourPitchforkVote{player: Option<PlayerReference>},
-    #[serde(rename_all = "camelCase")]
-    YourHitOrderVote{player: Option<PlayerReference>},
     YourSyndicateGunItemData{shooter: Option<PlayerReference>, target: Option<PlayerReference>},
 
     #[serde(rename_all = "camelCase")]
@@ -273,8 +270,6 @@ pub enum ToServerPacket{
     SetCounterfeiterAction{action: CounterfeiterAction},
     SetPuppeteerAction{action: PuppeteerAction},
     SetRecruiterAction{action: RecruiterAction},
-    SetErosAction{action: ErosAction},
-    RetrainerRetrain{role: Role},
     SetRoleChosen{role: Option<Role>},
 
 

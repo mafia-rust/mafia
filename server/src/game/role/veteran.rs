@@ -57,7 +57,7 @@ impl RoleStateImpl for Veteran {
             Priority::Kill => {
                 if !self.alerting_tonight {return}
 
-                for other_player_ref in actor_ref.all_visitors(game)
+                for other_player_ref in actor_ref.all_night_visitors_cloned(game)
                     .into_iter().filter(|other_player_ref|
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref

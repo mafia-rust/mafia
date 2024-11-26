@@ -1,4 +1,4 @@
-import { ReactElement, useMemo } from "react";
+import { ReactElement, useMemo, useState } from "react";
 import StyledText from "../../../../components/StyledText";
 import PlayerOptionDropdown from "../../../../components/PlayerOptionDropdown";
 import React from "react";
@@ -25,10 +25,6 @@ export default function SyndicateGunItemMenu(props: Readonly<{}>): ReactElement 
         ["gamePlayers", "playerAlive"]
     )!;
 
-    const enabledModifiers = useGameState(
-        gameState => gameState.enabledModifiers,
-        ["enabledModifiers"]
-    )!;
     const phaseState = useGameState(
         gameState => gameState.phaseState,
         ["phase", "playerOnTrial"]
@@ -70,17 +66,22 @@ export default function SyndicateGunItemMenu(props: Readonly<{}>): ReactElement 
 
 
     const [giveToPlayer, setGiveToPlayer] = React.useState<number | null>(null);
+    const [open, setOpen] = useState<boolean>(true);
 
     if(
-        !enabledModifiers.includes("syndicateGunItem") ||
         phaseState.type !== "night" ||
         dayNumber === 1 ||
         !insiderGroups.includes("mafia")
     )
         return <></>;
     else
-        return (<details className="role-specific-colors small-role-specific-menu">
-            <summary>{translate("syndicateGunItem")}</summary>
+        return (<details className="role-specific-colors small-role-specific-menu" open={open}>
+            <summary
+                onClick={(e)=>{
+                    e.preventDefault();
+                    setOpen(!open);
+                }}
+            >{translate("syndicateGunItem")}</summary>
             <div>
                 <StyledText>{translate("syndicateGunItem.description")}</StyledText>
                 <div style={{

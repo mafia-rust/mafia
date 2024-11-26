@@ -49,7 +49,7 @@ impl RoleStateImpl for Martyr {
         if priority != Priority::Kill {return}
         let MartyrState::StillPlaying { bullets } = self.state else {return};
         if bullets == 0 {return}
-        let actor_visits = actor_ref.night_visits_cloned(game);
+        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first() {
             let target_ref = visit.target;
 

@@ -107,10 +107,8 @@ macros::roles! {
 
     // Mafia
     Godfather : godfather,
-    Eros: eros,
     Counterfeiter : counterfeiter,
     Impostor : impostor,
-    Retrainer : retrainer,
     Recruiter : recruiter,
     Mafioso : mafioso,
     MafiaKillingWildcard : mafia_killing_wildcard,
@@ -127,6 +125,7 @@ macros::roles! {
     Framer : framer,
     Disguiser : disguiser,
     Forger : forger,
+    Professor : professor,
     Cupid : cupid,
     MafiaSupportWildcard: mafia_support_wildcard,
 
@@ -148,6 +147,7 @@ macros::roles! {
     Ojo : ojo,
     Puppeteer: puppeteer,
     Pyrolisk : pyrolisk,
+    Spiral : spiral,
     Kira : kira,
     FiendsWildcard : fiends_wildcard,
     SerialKiller : serial_killer,
@@ -405,7 +405,7 @@ impl Role{
     }
     pub fn has_innocent_aura(&self, game: &Game)->bool{
         match self {
-            Role::Godfather | Role::Eros => true,
+            Role::Godfather => true,
             Role::Werewolf => {
                 game.day_number() == 1 || game.day_number() == 3
             },

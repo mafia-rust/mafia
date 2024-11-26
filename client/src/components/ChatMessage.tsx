@@ -611,8 +611,6 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.puppeteerActionChosen."+message.action);
         case "recruiterActionChosen":
             return translate("chatMessage.recruiterActionChosen."+message.action);
-        case "erosActionChosen":
-            return translate("chatMessage.erosActionChosen."+message.action);
         case "marksmanChosenMarks":
             if(message.marks.length === 0){
                 return translate("chatMessage.marksmanChosenMarks.none");
@@ -962,9 +960,6 @@ export type ChatMessageVariant = {
 } | {
     type: "recruiterActionChosen",
     action: RecruiterAction,
-} | {
-    type: "erosActionChosen",
-    action: "loveLink" | "kill",
 } | {
     type: "marksmanChosenMarks",
     marks: PlayerIndex[],

@@ -3,6 +3,7 @@ use serde::Serialize;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::cult::{Cult, CultAbility};
+use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 use crate::game::game_conclusion::GameConclusion;
@@ -11,8 +12,7 @@ use crate::game::role_list::RoleSet;
 use crate::game::visit::Visit;
 use crate::game::win_condition::WinCondition;
 use crate::game::Game;
-use super::zealot::Zealot;
-use super::{Priority, RoleStateImpl};
+use super::{Priority, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -29,7 +29,7 @@ impl RoleStateImpl for Apostle {
         match (priority, Cult::next_ability(game)) {
             (Priority::Kill, CultAbility::Kill) if game.cult().ordered_cultists.len() == 1 => {
 
-                let actor_visits = actor_ref.night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
                 
@@ -41,7 +41,7 @@ impl RoleStateImpl for Apostle {
             }
             (Priority::Convert, CultAbility::Convert) => {
                 
-                let actor_visits = actor_ref.night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 
@@ -50,8 +50,10 @@ impl RoleStateImpl for Apostle {
                     return
                 }
 
-                target_ref.set_role_and_win_condition_and_revealed_group(game, Zealot);
+                target_ref.set_night_convert_role_to(game, Some(Role::Zealot.default_state()));
+                InsiderGroupID::Cult.add_player_to_revealed_group(game, target_ref);
                 target_ref.set_win_condition(game, WinCondition::new_single_resolution_state(GameConclusion::Cult));
+                
                 Cult::set_ability_used_last_night(game, Some(CultAbility::Convert));
             }
             _ => {}

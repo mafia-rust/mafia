@@ -21,7 +21,7 @@ impl RoleStateImpl for Cupid {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Cupid => {
-                let visits = actor_ref.night_visits_cloned(game);
+                let visits = actor_ref.untagged_night_visits_cloned(game);
 
                 let Some(first_visit) = visits.get(0) else {return};
                 let Some(second_visit) = visits.get(1) else {return};

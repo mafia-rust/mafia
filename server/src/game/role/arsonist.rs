@@ -24,7 +24,7 @@ impl RoleStateImpl for Arsonist {
         match priority {
             Priority::Deception => {
                 //douse target
-                let actor_visits = actor_ref.night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 if let Some(visit) = actor_visits.first(){
                     let target_ref = visit.target;
                     ArsonistDoused::douse(game, target_ref);
@@ -34,7 +34,7 @@ impl RoleStateImpl for Arsonist {
                 for other_player_ref in PlayerReference::all_players(game)
                     .filter(|other_player_ref|
                         *other_player_ref != actor_ref &&
-                        other_player_ref.night_visits_cloned(game)
+                        other_player_ref.untagged_night_visits_cloned(game)
                             .iter()
                             .any(|v|v.target==actor_ref)
                     ).collect::<Vec<PlayerReference>>()
@@ -43,7 +43,7 @@ impl RoleStateImpl for Arsonist {
                 }
             },
             Priority::Kill => {
-                let actor_visits = actor_ref.night_visits_cloned(game);             
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);             
                 if let Some(visit) = actor_visits.first(){
                     if actor_ref == visit.target{
                         ArsonistDoused::ignite(game, actor_ref);
