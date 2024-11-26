@@ -25,10 +25,6 @@ export default function SyndicateGunItemMenu(props: Readonly<{}>): ReactElement 
         ["gamePlayers", "playerAlive"]
     )!;
 
-    const enabledModifiers = useGameState(
-        gameState => gameState.enabledModifiers,
-        ["enabledModifiers"]
-    )!;
     const phaseState = useGameState(
         gameState => gameState.phaseState,
         ["phase", "playerOnTrial"]
@@ -73,7 +69,6 @@ export default function SyndicateGunItemMenu(props: Readonly<{}>): ReactElement 
     const [open, setOpen] = useState<boolean>(true);
 
     if(
-        !enabledModifiers.includes("syndicateGunItem") ||
         phaseState.type !== "night" ||
         dayNumber === 1 ||
         !insiderGroups.includes("mafia")

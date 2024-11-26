@@ -177,9 +177,6 @@ export type ToClientPacket = {
     type: "yourPitchforkVote",
     player: PlayerIndex | null
 } | {
-    type: "yourHitOrderVote",
-    player: PlayerIndex | null
-} | {
     type: "yourSyndicateGunItemData",
     shooter: PlayerIndex | null
     target: PlayerIndex | null

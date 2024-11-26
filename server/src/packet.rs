@@ -134,8 +134,6 @@ pub enum ToClientPacket{
     YourForfeitVote{forfeit: bool},
     #[serde(rename_all = "camelCase")]
     YourPitchforkVote{player: Option<PlayerReference>},
-    #[serde(rename_all = "camelCase")]
-    YourHitOrderVote{player: Option<PlayerReference>},
     YourSyndicateGunItemData{shooter: Option<PlayerReference>, target: Option<PlayerReference>},
 
     #[serde(rename_all = "camelCase")]

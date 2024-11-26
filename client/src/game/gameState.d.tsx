@@ -96,7 +96,6 @@ export type PlayerGameState = {
     
     forfeitVote: boolean,
     pitchforkVote: PlayerIndex | null,
-    hitOrderVote: PlayerIndex | null,
     syndicateGunItemData: {
         shooter: PlayerIndex | null,
         target: PlayerIndex | null,
@@ -151,8 +150,8 @@ export type Tag =
 export const MODIFIERS = [
     "obscuredGraves", "randomLoveLinks",
     "deadCanChat", "noAbstaining",
-    "noDeathCause", "mafiaHitOrders",
-    "syndicateGunItem", "roleSetGraveKillers"
+    "noDeathCause",
+    "roleSetGraveKillers"
 ] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 

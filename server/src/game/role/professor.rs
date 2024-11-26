@@ -108,7 +108,10 @@ impl RoleStateImpl for Professor {
         match ability_input {
             AbilityInput::Disguiser{input} => {
                 if let Some(target) = input.0 {
-                    if RoleSet::MafiaSupport.get_roles().contains(&target) {
+                    if 
+                        RoleSet::MafiaSupport.get_roles().contains(&target) && 
+                        game.settings.enabled_roles.contains(&target)
+                    {
                         self.convert_role = target;
                     }
                 }

@@ -460,10 +460,6 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
                 GAME_MANAGER.state.clientState.pitchforkVote = packet.player;
         break;
-        case "yourHitOrderVote":
-            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
-                GAME_MANAGER.state.clientState.hitOrderVote = packet.player;
-        break;
         case "yourSyndicateGunItemData":
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 GAME_MANAGER.state.clientState.syndicateGunItemData.shooter = packet.shooter;
