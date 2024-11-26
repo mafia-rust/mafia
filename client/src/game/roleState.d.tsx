@@ -139,6 +139,10 @@ export type RoleState = {
     currentTarget: PlayerIndex | null,
     disguisedRole: Role,
 } | {
+    type: "professor",
+    convertChargesRemaining: boolean,
+    convertRole: Role,
+} | {
     type: "framer"
 } | {
     type: "mafiaWitch"

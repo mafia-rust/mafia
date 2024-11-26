@@ -72,6 +72,8 @@ struct PlayerNightVariables{
     roleblocked: bool,
     upgraded_defense: Option<DefensePower>,
 
+    convert_role_to: Option<RoleState>,
+
     appeared_visits: Option<Vec<Visit>>,
     framed: bool,
 
@@ -117,18 +119,20 @@ impl Player {
                 verdict : Verdict::Abstain,
             },
             night_variables: PlayerNightVariables{
-                died:               false,
-                attacked:           false,
-                roleblocked:        false,
-                upgraded_defense:   None,
-                appeared_visits:    None,
+                died: false,
+                attacked: false,
+                roleblocked: false,
+                upgraded_defense: None,
+                appeared_visits: None,
                 framed: false,
 
-                silenced:           false,
+                convert_role_to: None,
 
-                selection:     vec![],
+                silenced: false,
 
-                messages:           vec![],
+                selection: vec![],
+
+                messages: vec![],
 
                 grave_role: None,
                 grave_killers: vec![],
@@ -177,18 +181,20 @@ pub mod test {
                 verdict : Verdict::Abstain,
             },
             night_variables: PlayerNightVariables{
-                died:               false,
-                attacked:           false,
-                roleblocked:        false,
-                upgraded_defense:   None,
-                appeared_visits:    None,
-                framed:      false,
+                died: false,
+                attacked: false,
+                roleblocked: false,
+                upgraded_defense: None,
+                appeared_visits: None,
+                framed: false,
 
-                silenced:           false,
+                convert_role_to: None,
 
-                selection:     vec![],
+                silenced: false,
 
-                messages:           vec![],
+                selection: vec![],
+
+                messages: vec![],
 
                 grave_role: None,
                 grave_killers: vec![],
