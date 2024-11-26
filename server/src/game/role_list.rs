@@ -190,7 +190,7 @@ impl RoleSet{
                 ).collect(),
             RoleSet::MafiaKilling => 
                 vec![
-                    Role::Godfather, Role::Eros, Role::Counterfeiter,
+                    Role::Godfather, Role::Counterfeiter,
                     Role::Impostor, Role::Recruiter,
                     Role::Mafioso
                 ],

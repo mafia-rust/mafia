@@ -11,7 +11,6 @@ import Counter from "../../../../components/Counter";
 import StyledText from "../../../../components/StyledText";
 import translate from "../../../../game/lang";
 import CounterfeiterMenu from "./RoleSpecificMenus/CounterfeiterMenu";
-import ErosMenu from "./RoleSpecificMenus/ErosMenu";
 import SmallPuppeteerMenu from "./RoleSpecificMenus/SmallPuppeteerMenu";
 import StewardMenu from "./RoleSpecificMenus/StewardMenu";
 import OjoMenu from "./RoleSpecificMenus/OjoMenu";
@@ -115,9 +114,7 @@ export default function RoleSpecificSection(){
                 <StyledText>{translate("role.armorsmith.roleDataText", roleState.openShopsRemaining)}</StyledText>
             </Counter>
         case "marksman": 
-            return <MarksmanRoleSpecificMenu roleState={roleState} />
-        case "eros":
-            return <ErosMenu/>;
+            return <MarksmanRoleSpecificMenu roleState={roleState} />;
         case "counterfeiter":
             return <CounterfeiterMenu/>;
         case "mortician":

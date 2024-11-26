@@ -107,7 +107,6 @@ macros::roles! {
 
     // Mafia
     Godfather : godfather,
-    Eros: eros,
     Counterfeiter : counterfeiter,
     Impostor : impostor,
     Recruiter : recruiter,
@@ -404,7 +403,7 @@ impl Role{
     }
     pub fn has_innocent_aura(&self, game: &Game)->bool{
         match self {
-            Role::Godfather | Role::Eros => true,
+            Role::Godfather => true,
             Role::Werewolf => {
                 game.day_number() == 1 || game.day_number() == 3
             },

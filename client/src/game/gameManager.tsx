@@ -539,12 +539,6 @@ export function createGameManager(): GameManager {
                 action: action
             });
         },
-        sendSetErosAction(action) {
-            this.server.sendPacket({
-                type: "setErosAction",
-                action: action
-            });
-        },
         sendSetRoleChosen(role: Role | null) {
             this.server.sendPacket({
                 type: "setRoleChosen",

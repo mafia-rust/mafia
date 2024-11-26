@@ -99,9 +99,6 @@ export type RoleState = {
     backup: PlayerIndex | null,
     fakeRole: Role
 } | {
-    type: "eros"
-    action: "loveLink" | "kill"
-} | {
     type: "counterfeiter",
     action: "forge" | "noForge",
     fakeRole: Role,

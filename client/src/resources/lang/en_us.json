@@ -379,12 +379,6 @@
     "role.impostor.youAreSelecting": "You are organizing an attack on \\0.",
     "role.impostor.youAreSelecting.null": "You aren't attacking anyone.",
     "role.impostor.roleMenu": "Choose what role you want to appear on your grave.",
-
-    "role.eros.name": "Eros",
-    "role.eros.name:var.0": "Eroses",
-    "role.eros.target": "Visit",
-    "role.eros.dayTarget": "Special",
-    "role.eros.roleDataText": "You have chosen to \\0 tonight",
     
     "role.counterfeiter.name": "Counterfeiter",
     "role.counterfeiter.name:var.0": "Counterfeiters",
@@ -947,8 +941,6 @@
     "chatMessage.puppeteerActionChosen.poison": "You choose to poison.",
     "chatMessage.recruiterActionChosen.recruit": "You choose to recruit a new member.",
     "chatMessage.recruiterActionChosen.kill": "You choose to kill.",
-    "chatMessage.erosActionChosen.loveLink": "You choose to love link.",
-    "chatMessage.erosActionChosen.kill": "You choose to kill.",
     "chatMessage.marksmanChosenMarks": "The marksman chose their marks to be these players: \\0.",
     "chatMessage.marksmanChosenMarks.none": "The marksman chose to mark nobody.",
     "chatMessage.cultConvertsNext": "The cult will attempt to indoctrinate and convert someone tonight.",
@@ -1194,7 +1186,7 @@
     "wiki.article.standard.loveLinked.title:var.2": "Love Links",
     "wiki.article.standard.loveLinked.title:var.3": "Broken Hearts",
     "wiki.article.standard.loveLinked.title:var.4": "Love Linking",
-    "wiki.article.standard.loveLinked.text": "2 players who are love linked are told who each other are. If one dies, the other dies of a broken heart. Cupid and Eros can love link players. So can the love link game modifier.",
+    "wiki.article.standard.loveLinked.text": "2 players who are love linked are told who each other are. If one dies, the other dies of a broken heart. Cupid can love link players. So can the love link game modifier.",
 
     "wiki.article.standard.howToPlay.title":"How To Play",
     "wiki.article.standard.howToPlay.title:var.0":"Phase",
@@ -1481,12 +1473,6 @@
     "wiki.article.role.impostor.attributes":"* When you are blocked, the syndicate is told that the backup attacks for you\n- Neither you or the backup can select or attack night 1\n- You have armor defense at all times by default",
     "wiki.article.role.impostor.extra":"* You only have a basic attack\n* When the Impostor dies, their current backup becomes the Impostor\n* You can not select other syndicate members",
     
-    "wiki.article.role.eros.reminder": "Each night, either attack a player, or love link 2 players. If a player who is love linked to another player dies, the other love linked player dies as well.",
-    "wiki.article.role.eros.guide": "- At night, either kill a player, or love link 2 players\n    - You can't attack night 1\n    - Whenever a player who is love linked to another player dies, the other love linked player dies as well\n- You have an innocent aura and armor\n\nIf you are roleblocked by an escort, it might be a good idea to claim that you were love linked to another syndicate member that night. Doing that hides the fact that the eros was roleblocked, and might hide that your eros from that escort.",
-    "wiki.article.role.eros.abilities": "- If you chose to kill\n    - Visit a player attack\n- If you chose to love link\n    - Visit 2 players to love link them, if one dies tonight, they do not love link",
-    "wiki.article.role.eros.attributes": "- You have a basic attack\n- You have armor\n- You have an innocent aura",
-    "wiki.article.role.eros.extra": "- You can't select syndicate members to kill\n- You can select syndicate members to love link, but not yourself",
-
     "wiki.article.role.counterfeiter.reminder": "Each night, select a player to attack. You can forge the grave of the player you attack up to 3 times.",
     "wiki.article.role.counterfeiter.guide": "- Each night except the first, kill a player\n- 3 times per game, you can forge the player you kill, changing their role and albi in their grave",
     "wiki.article.role.counterfeiter.abilities": "- Visit a player to basic attack them\n- If you chose to forge and you have uses left, you forge the player you visit, changing their role and alibi in their grave",
