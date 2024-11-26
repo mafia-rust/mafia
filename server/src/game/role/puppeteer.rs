@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::AttackPower;
-use crate::game::components::poison::Poison;
+use crate::game::components::poison::{Poison, PoisonAlert};
 use crate::game::{attack_power::DefensePower, components::puppeteer_marionette::PuppeteerMarionette};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -58,7 +58,8 @@ impl RoleStateImpl for Puppeteer {
                         Poison::poison_player(game, 
                             target, AttackPower::ArmorPiercing, 
                             crate::game::grave::GraveKiller::Role(Role::Puppeteer), 
-                            vec![actor_ref].into_iter().collect(), true
+                            vec![actor_ref].into_iter().collect(), true,
+                            PoisonAlert::Alert,
                         );
                     }
                 }
@@ -66,7 +67,8 @@ impl RoleStateImpl for Puppeteer {
                     Poison::poison_player(game, 
                         target, AttackPower::ArmorPiercing, 
                         crate::game::grave::GraveKiller::Role(Role::Puppeteer), 
-                        vec![actor_ref].into_iter().collect(), true
+                        vec![actor_ref].into_iter().collect(), true,
+                        PoisonAlert::Alert,
                     );
                 },
             }

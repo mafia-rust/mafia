@@ -44,6 +44,12 @@ impl PlayerPoison{
     }
 }
 
+#[derive(PartialEq)]
+pub enum PoisonAlert {
+    NoAlert,
+    Alert
+}
+
 impl Poison{
     /// run this at night
     pub fn poison_player(
@@ -53,14 +59,17 @@ impl Poison{
         grave_killer: GraveKiller,
         attackers: VecSet<PlayerReference>,
         death_note: bool,
+        alert: PoisonAlert,
     ){
         let mut poison = game.poison().clone();
         poison.poisons.push(PlayerPoison::new(
             player, attack_power, grave_killer, attackers, death_note
         ));
 
-        for poison in poison.poisons.iter(){
-            poison.player.push_night_message(game, ChatMessageVariant::YouArePoisoned);
+        if alert == PoisonAlert::Alert {
+            for poison in poison.poisons.iter(){
+                poison.player.push_night_message(game, ChatMessageVariant::YouArePoisoned);
+            }
         }
 
         game.set_poison(poison);

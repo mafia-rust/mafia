@@ -145,13 +145,14 @@ export type Tag =
     "puppeteerMarionette" |
     "loveLinked" |
     "frame" |
-    "forfeitVote";
+    "forfeitVote" |
+    "spiraling";
 
 export const MODIFIERS = [
     "obscuredGraves", "randomLoveLinks",
     "deadCanChat", "noAbstaining",
     "noDeathCause", "mafiaHitOrders",
-    "syndicateGunItem"
+    "syndicateGunItem", "roleSetGraveKillers"
 ] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 

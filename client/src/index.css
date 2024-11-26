@@ -58,6 +58,12 @@
     size-adjust: 120%;
 }
 
+@font-face {
+    font-family: game-spiral;
+    src: url(resources/fonts/oswald/Oswald-Regular.ttf) format('truetype');
+    size-adjust: 90%;
+}
+
 
 :root{
     --background-color: #0E1026;
@@ -80,6 +86,7 @@
     
     --game-font: game-base;
     --kira-font: game-kira;
+    --spiral-font: game-spiral;
 }
 
 s {
