@@ -19,7 +19,7 @@ impl WinCondition{
             WinCondition::RoleStateWon => None,
         }
     }
-    pub fn can_win_together(a: &WinCondition, b: &WinCondition)->bool{
+    pub fn are_friends(a: &WinCondition, b: &WinCondition)->bool{
         let a_conditions = a.required_resolution_states_for_win();
         let b_conditions = b.required_resolution_states_for_win();
 
@@ -28,7 +28,7 @@ impl WinCondition{
             _ => true
         }
     }
-    pub fn can_win_when_resolution_state_reached(&self, resolution_state: GameConclusion)->bool{
+    pub fn friends_with_resolution_state(&self, resolution_state: GameConclusion)->bool{
         match self{
             WinCondition::GameConclusionReached{win_if_any} => win_if_any.contains(&resolution_state),
             WinCondition::RoleStateWon => true,
@@ -41,7 +41,7 @@ impl WinCondition{
         }
     }
     
-    pub fn new_single_resolution_state(resolution_state: GameConclusion) -> WinCondition {
+    pub fn new_loyalist(resolution_state: GameConclusion) -> WinCondition {
         let mut win_if_any = HashSet::new();
         win_if_any.insert(resolution_state);
         WinCondition::GameConclusionReached { win_if_any }

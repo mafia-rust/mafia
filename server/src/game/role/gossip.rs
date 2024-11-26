@@ -59,7 +59,7 @@ impl Gossip {
                 }else if visited_player.has_innocent_aura(game){
                     false
                 }else{
-                    !WinCondition::can_win_together(player_ref.win_condition(game), visited_player.win_condition(game))
+                    !WinCondition::are_friends(player_ref.win_condition(game), visited_player.win_condition(game))
                 }
             )
     }
