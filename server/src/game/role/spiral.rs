@@ -1,11 +1,11 @@
 use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
-use crate::game::chat::ChatMessageVariant;
-use crate::game::components::poison::{Poison, PoisonAlert, PoisonObscure};
-use crate::game::grave::{GraveInformation, GraveKiller, GraveReference};
+use crate::game::components::poison::{Poison, PoisonAlert};
+use crate::game::grave::{GraveKiller, GraveReference};
 use crate::game::player::PlayerReference;
 
+use crate::game::role_list::RoleSet;
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 use crate::game::Game;
@@ -28,7 +28,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 impl RoleStateImpl for Spiral {
     type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        let mut new_spiraling = self.spiraling.clone();
+        let mut new_spiraling = VecSet::new();
 
         if priority != Priority::Poison { return };
         
@@ -40,10 +40,12 @@ impl RoleStateImpl for Spiral {
             }
         } else {
             for spiraling_player in self.spiraling.clone() {
+                Spiral::remove_player_spiraling(game, &mut new_spiraling, actor_ref, spiraling_player);
+
                 for other_player_ref in spiraling_player.all_visitors(game)
                     .into_iter().filter(|other_player_ref|
                         other_player_ref.alive(game) &&
-                        *other_player_ref != actor_ref // Let doctor self-heal
+                        *other_player_ref != spiraling_player // Let doctor self-heal
                     ).collect::<Vec<PlayerReference>>()
                 {
                     Spiral::start_player_spiraling(game, &mut new_spiraling, actor_ref, other_player_ref);
@@ -55,29 +57,10 @@ impl RoleStateImpl for Spiral {
     }
     
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref) && self.spiraling.is_empty()
+        self.spiraling.is_empty() && crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
-    }
-    fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave_ref: GraveReference){
-        let mut new_spiraling = self.spiraling.clone();
-        let dead_ref = grave_ref.deref(game).player;
-
-        if self.spiraling.contains(&dead_ref) {
-            actor_ref.add_private_chat_message(game, ChatMessageVariant::PlayerRoleAndAlibi{
-                player: grave_ref.deref(game).player,
-                role: grave_ref.deref(game).player.role(game),
-                will: grave_ref.deref(game).player.will(game).to_string(),
-            });
-
-            grave_ref.deref_mut(game).information = GraveInformation::Obscured;
-
-            actor_ref.remove_player_tag(game, dead_ref, Tag::Spiraling);
-            new_spiraling.remove(&dead_ref);
-
-            actor_ref.set_role_state(game, RoleState::Spiral(Spiral{spiraling: new_spiraling}));
-        }
     }
     fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _old: RoleState, _new: RoleState) {
         if player == actor_ref {
@@ -95,13 +78,17 @@ impl Spiral {
             AttackPower::ArmorPiercing, 
             GraveKiller::Role(Role::Spiral), 
             attackers, 
-            false, 
+            true, 
             PoisonAlert::NoAlert,
-            PoisonObscure::Obscured
         );
 
         new_spiraling.insert(target_ref);
         actor_ref.push_player_tag(game, target_ref, Tag::Spiraling);
+    }
+
+    fn remove_player_spiraling(game: &mut Game, new_spiraling: &mut VecSet<PlayerReference>, actor_ref: PlayerReference, target_ref: PlayerReference) {
+        new_spiraling.remove(&target_ref);
+        actor_ref.remove_player_tag(game, target_ref, Tag::Spiraling);
     }
 }
 

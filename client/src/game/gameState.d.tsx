@@ -131,7 +131,7 @@ export type Tag = | "godfatherBackup" | "werewolfTracked" | "doused"
 | "revolutionaryTarget" | "morticianTagged" | "puppeteerMarionette" 
 | "loveLinked" | "forfeitVote" | "spiraling";
 
-export const MODIFIERS = ["obscuredGraves", "randomLoveLinks", "deadCanChat", "noAbstaining", "noDeathCause", "mafiaHitOrders"] as const;
+export const MODIFIERS = ["obscuredGraves", "randomLoveLinks", "deadCanChat", "noAbstaining", "noDeathCause", "mafiaHitOrders", "roleSetGraveKillers"] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 
 export type Player = {

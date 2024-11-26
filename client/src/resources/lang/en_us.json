@@ -758,6 +758,7 @@
     "noAbstaining": "No Abstaining",
     "noDeathCause": "No Death Cause",
     "mafiaHitOrders": "Syndicate Hit Orders",
+    "roleSetGraveKillers": "Role Set Grave Killers",
     "nightMessages": "Night Messages",
     
     "simplify":"Simplify",
@@ -1253,9 +1254,11 @@
     "wiki.article.standard.noAbstaining.title":"No Abstaining",
     "wiki.article.standard.noAbstaining.text":"No Abstaining is a game modifier that changes the game such that no players can abstain during judgement. It will default to voting innocent instead of defaulting to abstaining.",
     "wiki.article.standard.noDeathCause.title":"No Death Cause",
-    "wiki.article.standard.noDeathCause.text":"No Death Cause is a game modifier that changes the game such that every grave says that the cause of death is execution.",
+    "wiki.article.standard.noDeathCause.text":"No Death Cause is a game modifier that changes the game such that every grave does not have a death cause listed.",
     "wiki.article.standard.mafiaHitOrders.title":"Syndicate Hit Orders",
     "wiki.article.standard.mafiaHitOrders.text":"Syndicate Hit Orders is a game modifier. Syndicate no longer has a syndicate killing role. Instead, each night, the syndicate votes to order a hit on a player. If any syndicate insider visits a player with a hit order that insider attacks that player.\n *Importantly* - If there are syndicate killing roles enabled, there is a random chance of this modifier being deactivated, meaning there could still be a syndicate killing role in play while this modifier is enabled. The modifier is always deactivated if the game starts with only 1 syndicate insider\n - On any night except the first, a syndicate insider can switch to a mafioso and deactivate this modifier\n - A hit order cannot be placed on night 1\n - If there is a tie in who to order a hit on, the syndicate insider with the highest player number gets their hit order placed, the others do not.\n - A player can only have one hit order placed on them at a time.\n- If a player is attacked using a hit order, the hit order is removed.\n- If a player is attacked using a hit order, the syndicate insider who visited the player with the hit order does the attack so they are told if the target had defense or not.",
+    "wiki.article.standard.roleSetGraveKillers.title":"Role Set Grave Killers",
+    "wiki.article.standard.roleSetGraveKillers.text":"Role Set Grave Killers is a game modifier that changes the game such that every grave killer which is a role is replaced with one of:\n* Syndicate;\n* Town;\n* Minions;\n* Neutral;\n* Fiends; or\n* Cult.\n\nOr, if the killer's role is not in one of these role sets, it is not changed.",
 
 
     "wiki.article.standard.nobody.title":"Nobody",

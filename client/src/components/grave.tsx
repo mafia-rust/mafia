@@ -1,10 +1,10 @@
 
 import { replaceMentions } from "..";
-import { Grave } from "../game/graveState";
+import { Grave, GraveInformation } from "../game/graveState";
 import translate from "../game/lang";
 import { sanitizePlayerMessage } from "./ChatMessage";
 import StyledText from "./StyledText";
-import React, { ReactElement } from "react";
+import React, { ReactElement, useMemo } from "react";
 import "./grave.css";
 import { useGameState } from "./useHooks";
 
@@ -21,35 +21,44 @@ export default function GraveComponent(props: Readonly<{
     playerNames?: string[]
     onClick?: () => void
 }>): ReactElement {
-
-
     const gamePlayerNames = useGameState(
         gameState => gameState.players.map(player => player.toString()),
         ["gamePlayers"]
     )!
 
-    const playerNames = props.playerNames===undefined ? gamePlayerNames: props.playerNames;
+    const playerNames = props.playerNames ?? gamePlayerNames;
 
 
     if(props.grave.information.type === "obscured") {
         return <ObscuredGrave grave={props.grave} playerNames={playerNames}/>
+    } else {
+        return <UnobscuredGrave grave={props.grave as any} playerNames={playerNames}/>;
     }
+}
 
-    let deathCauseString: string;
-    if(props.grave.information.deathCause.type === "killers") {
-        deathCauseString = props.grave.information.deathCause.killers.map((killer)=>{
-            switch(killer.type){
-                case "role":
-                    return translate("role."+killer.value+".name");
-                case "roleSet":
-                    return translate(killer.value);
-                default:
-                    return translate("grave.killer."+killer.type);
-            }
-        }).join(", ") + ".";
-    }else{
-        deathCauseString = translate("grave.deathCause."+props.grave.information.deathCause.type);
-    }
+function UnobscuredGrave(props: Readonly<{
+    grave: Grave & { information: GraveInformation & { type: "normal" } },
+    playerNames: string[]
+    onClick?: () => void
+}>): ReactElement {
+    const graveDeathCause = useMemo(() => {
+        if(props.grave.information.deathCause.type === "killers") {
+            return props.grave.information.deathCause.killers.map((killer)=>{
+                switch(killer.type){
+                    case "role":
+                        return translate("role."+killer.value+".name");
+                    case "roleSet":
+                        return translate(killer.value);
+                    default:
+                        return translate("grave.killer."+killer.type);
+                }
+            }).join(", ") + ".";
+        } else if (props.grave.information.deathCause.type === "none") {
+            return null;
+        } else {
+            return translate("grave.deathCause."+props.grave.information.deathCause.type);
+        }
+    }, [props.grave.information.deathCause]);
 
     let graveRoleString = translate(`role.${props.grave.information.role}.name`);
 
@@ -62,15 +71,15 @@ export default function GraveComponent(props: Readonly<{
         }}
     >
         <div><StyledText>{`${diedPhaseString+diedPhaseIcon+props.grave.dayNumber}`}</StyledText></div>
-        <div><StyledText>{`${playerNames[props.grave.player]+" ("+graveRoleString+")"}`}</StyledText></div>
-        <div><StyledText>{`${translate("killedBy")+" "+deathCauseString}`}</StyledText></div>
+        <div><StyledText>{`${props.playerNames[props.grave.player]+" ("+graveRoleString+")"}`}</StyledText></div>
+        {graveDeathCause && <div><StyledText>{`${translate("killedBy")+" "+graveDeathCause}`}</StyledText></div>}
         {props.grave.information.will.length === 0 || <>
             {translate("alibi")}
             <div className="note-area">
                 <StyledText>
                     {sanitizePlayerMessage(replaceMentions(
                         props.grave.information.will,
-                        playerNames
+                        props.playerNames
                     ))}
                 </StyledText>
             </div>
@@ -82,7 +91,7 @@ export default function GraveComponent(props: Readonly<{
                     <StyledText>
                         {sanitizePlayerMessage(replaceMentions(
                             note,
-                            playerNames
+                            props.playerNames
                         ))}
                     </StyledText>
                 </div>

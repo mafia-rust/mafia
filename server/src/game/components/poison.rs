@@ -1,6 +1,6 @@
 use crate::{game::{
     attack_power::AttackPower, chat::ChatMessageVariant,
-    grave::{GraveInformation, GraveKiller, GraveReference}, player::PlayerReference,
+    grave::GraveKiller, player::PlayerReference,
     role::Priority, Game
 }, vec_set::VecSet};
 
@@ -25,7 +25,6 @@ struct PlayerPoison{
     grave_killer: GraveKiller,
     attackers: VecSet<PlayerReference>,
     leave_death_note: bool,
-    obscure: PoisonObscure,
 }
 impl PlayerPoison{
     pub fn new(
@@ -34,7 +33,6 @@ impl PlayerPoison{
         grave_killer: GraveKiller,
         attackers: VecSet<PlayerReference>,
         leave_death_note: bool,
-        obscure: PoisonObscure,
     )->Self{
         Self{
             player,
@@ -42,7 +40,6 @@ impl PlayerPoison{
             grave_killer,
             attackers,
             leave_death_note,
-            obscure
         }
     }
 }
@@ -51,12 +48,6 @@ impl PlayerPoison{
 pub enum PoisonAlert {
     NoAlert,
     Alert
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum PoisonObscure {
-    NotObscured,
-    Obscured
 }
 
 impl Poison{
@@ -69,11 +60,10 @@ impl Poison{
         attackers: VecSet<PlayerReference>,
         death_note: bool,
         alert: PoisonAlert,
-        obscure: PoisonObscure,
     ){
         let mut poison = game.poison().clone();
         poison.poisons.push(PlayerPoison::new(
-            player, attack_power, grave_killer, attackers, death_note, obscure
+            player, attack_power, grave_killer, attackers, death_note
         ));
 
         if alert == PoisonAlert::Alert {
@@ -104,12 +94,5 @@ impl Poison{
             poison.attack_power,
             poison.leave_death_note
         );
-    }
-    pub fn on_grave_added(game: &mut Game, grave_ref: GraveReference) {
-        for poison in game.poison().clone().poisons {
-            if poison.obscure == PoisonObscure::Obscured && poison.player == grave_ref.deref(game).player {
-                grave_ref.deref_mut(game).information = GraveInformation::Obscured;
-            }
-        }
     }
 }

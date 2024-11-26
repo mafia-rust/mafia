@@ -2422,3 +2422,32 @@ fn spiral_can_select_when_no_spiraling_players() {
     game.skip_to(Night, 4);
     assert!(spiral.set_night_selection_single(townie3));
 }
+
+#[test]
+fn spiral_does_not_kill_protected_player() {
+    kit::scenario!(game in Night 1 where
+        spiral: Spiral,
+        doctor: Doctor
+    );
+    spiral.set_night_selection_single(doctor);
+
+    game.skip_to(Night, 2);
+    doctor.set_night_selection_single(doctor);
+
+    game.skip_to(Obituary, 3);
+    assert!(doctor.alive());
+    assert!(spiral.get_player_tags().get(&doctor.player_ref()).is_none())
+}
+
+#[test]
+fn killed_player_is_not_spiraling() {
+    kit::scenario!(game in Night 1 where
+        spiral: Spiral,
+        townie: Villager
+    );
+    spiral.set_night_selection_single(townie);
+
+    game.skip_to(Obituary, 3);
+    assert!(!townie.alive());
+    assert!(spiral.get_player_tags().get(&townie.player_ref()).is_none())
+}
