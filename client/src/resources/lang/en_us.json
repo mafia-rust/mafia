@@ -465,9 +465,9 @@
     "role.disguiser.name:var.0": "Disguiser",
     "role.disguiser.target": "Disguise",
 
-    "role.professor.name": "Professor",
-    "role.professor.name:var.0": "Professors",
-    "role.professor.target": "Teach",
+    "role.reeducator.name": "Reeducator",
+    "role.reeducator.name:var.0": "Reeducators",
+    "role.reeducator.target": "Teach",
 
     "role.cupid.name": "Cupid",
     "role.cupid.name:var.0": "Cupids",
@@ -1589,11 +1589,11 @@
     "wiki.article.role.disguiser.attributes":" - When the disguised player dies, you choose what role is on their grave, and can choose that role up until the moment they die",
     "wiki.article.role.disguiser.extra":"- You can typically only visit other living syndicate insiders, so be careful of enemy spies\n- You can change the role on your own grave assuming you have disguised yourself",
 
-    "wiki.article.role.professor.reminder": "At night, choose a fellow insider to become a syndicate support role that you choose. Once per game, convert a player to join the syndicate.",
-    "wiki.article.role.professor.guide": "- At night, either select a player and syndicate support role\n    - If you select a syndicate insider\n        - Their role switches to the role you choose\n    - If you select someone who isn't a syndicate insider\n        - Their role switches to the role you choose\n        - They become a syndicate insider\n        - They become a syndicate loyalist\n        - You can only convert somebody once, if you visit a non syndicate insider again, your ability does nothing\n- If the professor is randomly generated, a non professor syndicate insider has their role switched to a random town role before the game starts, they never know of this",
-    "wiki.article.role.professor.abilities": "- At night, either select a player and syndicate support role\n    - If you select a syndicate insider\n        - Their role switches to the role you choose\n    - If you select someone who isn't a syndicate insider\n        - Their role switches to the role you choose\n        - They become a syndicate insider\n        - They become a syndicate loyalist\n        - You can only convert somebody once, if you visit a non syndicate insider again, your ability does nothing\n- If the professor is randomly generated, a non professor syndicate insider has their role switched to a random town role before the game starts, they never know of this",
-    "wiki.article.role.professor.attributes": "- After you convert somebody, you can't select non-insiders anymore",
-    "wiki.article.role.professor.extra": "- Players roles switch after night ends, so their ability still happens for tonight\n- You can't select roles that aren't enabled",
+    "wiki.article.role.reeducator.reminder": "At night, choose a fellow insider to become a syndicate support role that you choose. Once per game, convert a player to join the syndicate.",
+    "wiki.article.role.reeducator.guide": "- At night, either select a player and syndicate support role\n    - If you select a syndicate insider\n        - Their role switches to the role you choose\n    - If you select someone who isn't a syndicate insider\n        - Their role switches to the role you choose\n        - They become a syndicate insider\n        - They become a syndicate loyalist\n        - You can only convert somebody once, if you visit a non syndicate insider again, your ability does nothing\n- If the reeducator is randomly generated, a non reeducator syndicate insider has their role switched to a random town role before the game starts, they never know of this",
+    "wiki.article.role.reeducator.abilities": "- At night, either select a player and syndicate support role\n    - If you select a syndicate insider\n        - Their role switches to the role you choose\n    - If you select someone who isn't a syndicate insider\n        - Their role switches to the role you choose\n        - They become a syndicate insider\n        - They become a syndicate loyalist\n        - You can only convert somebody once, if you visit a non syndicate insider again, your ability does nothing\n- If the reeducator is randomly generated, a non reeducator syndicate insider has their role switched to a random town role before the game starts, they never know of this",
+    "wiki.article.role.reeducator.attributes": "- After you convert somebody, you can't select non-insiders anymore",
+    "wiki.article.role.reeducator.extra": "- Players roles switch after night ends, so their ability still happens for tonight\n- You can't select roles that aren't enabled",
 
     "wiki.article.role.cupid.guide": "- At night, select 2 players to love link\n* The players are told they are love linked, if one of them dies, the other dies of a broken heart",
     "wiki.article.role.cupid.abilities":"- Visit 2 players to love link them\n    - If one of them dies, the other dies of a broken heart immediately\n    - If one of the players you visit dies on the night you try to love link them, they don't link.",

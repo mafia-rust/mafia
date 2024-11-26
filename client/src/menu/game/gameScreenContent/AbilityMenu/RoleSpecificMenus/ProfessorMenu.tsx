@@ -5,8 +5,8 @@ import GAME_MANAGER from "../../../../..";
 import React from "react";
 import RoleOptionSelectionMenu from "../AbilitySelectionTypes/RoleOptionSelectionMenu";
 
-export default function ProfessorMenu(props: Readonly<{
-    roleState: RoleState & {type: "professor"},
+export default function ReeducatorMenu(props: Readonly<{
+    roleState: RoleState & {type: "reeducator"},
 }>): ReactElement {
 
     const alive = usePlayerState<boolean>(

@@ -141,7 +141,7 @@ export type RoleState = {
     currentTarget: PlayerIndex | null,
     disguisedRole: Role,
 } | {
-    type: "professor",
+    type: "reeducator",
     convertChargesRemaining: boolean,
     convertRole: Role,
 } | {

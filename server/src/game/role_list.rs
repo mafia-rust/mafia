@@ -198,7 +198,7 @@ impl RoleSet{
                 vec![
                     Role::Blackmailer, Role::Informant, Role::Hypnotist, Role::Consort,
                     Role::Forger, Role::Framer, Role::Mortician, Role::Disguiser,
-                    Role::MafiaWitch, Role::Necromancer, Role::Cupid, Role::Professor,
+                    Role::MafiaWitch, Role::Necromancer, Role::Cupid, Role::Reeducator,
                 ],
             RoleSet::Minions => 
                 vec![
