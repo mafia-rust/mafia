@@ -97,16 +97,9 @@ export type RoleState = {
     type: "godfather"
     backup: PlayerIndex | null
 } | {
-    type: "retrainer"
-    backup: PlayerIndex | null,
-    retrainsRemaining: number
-} | {
     type: "impostor"
     backup: PlayerIndex | null,
     fakeRole: Role
-} | {
-    type: "eros"
-    action: "loveLink" | "kill"
 } | {
     type: "counterfeiter",
     action: "forge" | "noForge",
@@ -143,6 +136,10 @@ export type RoleState = {
     fakeRole: Role,
     fakeWill: string,
     forgesRemaining: number,
+} | {
+    type: "disguiser",
+    currentTarget: PlayerIndex | null,
+    disguisedRole: Role,
 } | {
     type: "framer"
 } | {

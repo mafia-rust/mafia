@@ -104,6 +104,7 @@ impl RoleStateImpl for Steward {
     }
     fn on_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: AbilityInput) {
         if actor_ref != input_player {return}
+        if !actor_ref.alive(game) {return}
         let AbilityInput::Steward { input } = ability_input else {return};
         
         if input.any_in_common(&self.previous_input) || input.same_role(){

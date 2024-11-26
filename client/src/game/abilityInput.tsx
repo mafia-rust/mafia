@@ -5,9 +5,13 @@ export type BooleanInput = boolean | null;
 export type OnePlayerOptionInput = number | null;
 export type TwoRoleOptionInput = [Role | null, Role | null];
 export type TwoRoleOutlineOptionInput = [number | null, number | null];
+export type RoleOptionSelection = Role | null;
 
 
 export type AbilityInput = {
+    type: "disguiser",
+    input: RoleOptionSelection
+} | {
     type: "auditor",
     input: TwoRoleOutlineOptionInput
 } | {
@@ -30,4 +34,10 @@ export type AbilityInput = {
     input: OnePlayerOptionInput,
 } | {
     type: "hitOrderMafioso",
+} | {
+    type: "syndicateGunItemShoot",
+    input: OnePlayerOptionInput,
+} | {
+    type: "syndicateGunItemGive",
+    input: OnePlayerOptionInput,
 }

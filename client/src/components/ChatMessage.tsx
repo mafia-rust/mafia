@@ -611,8 +611,6 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.puppeteerActionChosen."+message.action);
         case "recruiterActionChosen":
             return translate("chatMessage.recruiterActionChosen."+message.action);
-        case "erosActionChosen":
-            return translate("chatMessage.erosActionChosen."+message.action);
         case "marksmanChosenMarks":
             if(message.marks.length === 0){
                 return translate("chatMessage.marksmanChosenMarks.none");
@@ -644,6 +642,11 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.youAreLoveLinked", playerNames[message.player]);
         case "playerDiedOfABrokenHeart":
             return translate("chatMessage.playerDiedOfBrokenHeart", playerNames[message.player], playerNames[message.lover]);
+        case "syndicateGunTarget":
+            return translate("chatMessage.syndicateGunTarget",
+                playerNames[message.shooter],
+                message.target===null?translate("nobody"):playerNames[message.target]
+            );
         case "chronokaiserSpeedUp":
             return translate("chatMessage.chronokaiserSpeedUp", message.percent);
         case "deputyShotYou":
@@ -914,6 +917,10 @@ export type ChatMessageVariant = {
     player: PlayerIndex
     lover: PlayerIndex
 } | {
+    type: "syndicateGunTarget",
+    shooter: PlayerIndex
+    target: PlayerIndex | null
+} | {
     type: "youWereProtected"
 } | {
     type: "youDied"
@@ -953,9 +960,6 @@ export type ChatMessageVariant = {
 } | {
     type: "recruiterActionChosen",
     action: RecruiterAction,
-} | {
-    type: "erosActionChosen",
-    action: "loveLink" | "kill",
 } | {
     type: "marksmanChosenMarks",
     marks: PlayerIndex[],

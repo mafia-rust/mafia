@@ -9,10 +9,9 @@ pub use player_reference::PlayerIndex;
 pub use player_reference::PlayerReference;
 use vec1::Vec1;
 
-use std::collections::HashMap;
-use std::collections::HashSet;
-
 use crate::client_connection::ClientConnection;
+use crate::vec_map::VecMap;
+use crate::vec_set::VecSet;
 use crate::{
     game::{
         role::{Role, RoleState}, 
@@ -45,8 +44,8 @@ pub struct Player {
     crossed_out_outlines: Vec<u8>,
     death_note: Option<String>,
 
-    role_labels: HashSet<PlayerReference>,
-    player_tags: HashMap<PlayerReference, Vec1<Tag>>,
+    role_labels: VecSet<PlayerReference>,
+    player_tags: VecMap<PlayerReference, Vec1<Tag>>,
 
 
     chat_messages: Vec<ChatMessage>,
@@ -79,7 +78,6 @@ struct PlayerNightVariables{
     silenced: bool,
 
     selection: Vec<PlayerReference>,
-    visits: Vec<Visit>,
 
     messages: Vec<ChatMessageVariant>,
 
@@ -101,8 +99,8 @@ impl Player {
             crossed_out_outlines: vec![],
             death_note: None,
 
-            role_labels: HashSet::new(),
-            player_tags: HashMap::new(),
+            role_labels: VecSet::new(),
+            player_tags: VecMap::new(),
 
             win_condition: role.default_state().default_win_condition(),
 
@@ -129,7 +127,6 @@ impl Player {
                 silenced:           false,
 
                 selection:     vec![],
-                visits:             vec![],
 
                 messages:           vec![],
 
@@ -143,9 +140,9 @@ impl Player {
 }
 
 pub mod test {
-    use std::{collections::{HashMap, HashSet}, time::Duration};
+    use std::time::Duration;
 
-    use crate::{client_connection::ClientConnection, game::{role::Role, verdict::Verdict}};
+    use crate::{client_connection::ClientConnection, game::{role::Role, verdict::Verdict}, vec_map::VecMap, vec_set::VecSet};
 
     use super::{Player, PlayerVotingVariables, PlayerNightVariables};
 
@@ -162,8 +159,8 @@ pub mod test {
             crossed_out_outlines: vec![],
             death_note: None,
 
-            role_labels: HashSet::new(),
-            player_tags: HashMap::new(),
+            role_labels: VecSet::new(),
+            player_tags: VecMap::new(),
 
             win_condition: role.default_state().default_win_condition(),
 
@@ -190,7 +187,6 @@ pub mod test {
                 silenced:           false,
 
                 selection:     vec![],
-                visits:             vec![],
 
                 messages:           vec![],
 

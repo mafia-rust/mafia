@@ -79,7 +79,7 @@ function PlayerCard(props: Readonly<{
         gameState => gameState.players[props.playerIndex].alive,
         ["gamePlayers", "playerAlive"]
     )!;
-    const canWhisper = usePlayerState(
+    const hasAllChat = usePlayerState(
         gameState => gameState.sendChatGroups.includes("all"),
         ["yourSendChatGroups"],
         false
@@ -135,23 +135,7 @@ function PlayerCard(props: Readonly<{
         className={`player-card`}
         key={props.playerIndex}
     >
-        {GAME_MANAGER.getMySpectator() || (() => {
-            const filter = props.playerIndex;
-            const isFilterSet = chatFilter === filter;
-            
-            return <Button 
-                className={"filter"} 
-                highlighted={isFilterSet}
-                onClick={() => {
-                    GAME_MANAGER.updateChatFilter(isFilterSet ? null : filter);
-                    return true;
-                }}
-                pressedChildren={result => <Icon>{result ? "done" : "warning"}</Icon>}
-                aria-label={translate("menu.playerList.button.filter")}
-            >
-                <Icon>filter_alt</Icon>
-            </Button>
-        })()}
+        
 
         <PlayerNamePlate playerIndex={props.playerIndex}/>
         
@@ -176,19 +160,36 @@ function PlayerCard(props: Readonly<{
             </Button>
         : null}
         
-        
-        {GAME_MANAGER.getMySpectator() || (!isPlayerSelf && playerAlive && canWhisper && 
+        {
+            phaseState.type === "nomination" && playerAlive && 
+            <StyledText>{translate("menu.playerList.player.votes", numVoted)}</StyledText>
+        }
+        <VoteButton playerIndex={props.playerIndex} />
+        {GAME_MANAGER.getMySpectator() || (() => {
+            const filter = props.playerIndex;
+            const isFilterSet = chatFilter === filter;
+            
+            return <Button 
+                className={"filter"} 
+                highlighted={isFilterSet}
+                onClick={() => {
+                    GAME_MANAGER.updateChatFilter(isFilterSet ? null : filter);
+                    return true;
+                }}
+                pressedChildren={result => <Icon>{result ? "done" : "warning"}</Icon>}
+                aria-label={translate("menu.playerList.button.filter")}
+            >
+                <Icon>filter_alt</Icon>
+            </Button>
+        })()}
+        {GAME_MANAGER.getMySpectator() ||
             <Button 
+                disabled={isPlayerSelf || !playerAlive || !hasAllChat}
                 onClick={()=>{GAME_MANAGER.prependWhisper(props.playerIndex); return true;}}
                 pressedChildren={() => <Icon>done</Icon>}
             >
                 <Icon>chat</Icon>
             </Button>
-        )}
-        <VoteButton playerIndex={props.playerIndex} />
-        {
-            phaseState.type === "nomination" && playerAlive && 
-            <StyledText>{translate("menu.playerList.player.votes", numVoted)}</StyledText>
         }
 
     </div>

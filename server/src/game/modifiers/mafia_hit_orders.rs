@@ -144,42 +144,54 @@ impl ModifierTrait for MafiaHitOrders{
     fn on_night_priority(self, game: &mut Game, priority: Priority){
         if !self.active {return}
         if game.day_number() == 1 {return;}
-        if priority != Priority::Kill {return;}
-        let mut players_to_remove_hit_order = VecSet::new();
 
-        for player in PlayerReference::all_players(game){
-            if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player) {continue;}
-            if RoleSet::MafiaKilling.get_roles().contains(&player.role(game)) {continue;}
-
-            for visit in player.night_visits(game).clone(){
-                if !self.hit_order_players.contains(&visit.target) {continue;}
-
-                players_to_remove_hit_order.insert(visit.target);
-                
-                visit.target.try_night_kill_single_attacker(
-                    player,
-                    game,
-                    crate::game::grave::GraveKiller::RoleSet(RoleSet::Mafia),
-                    crate::game::attack_power::AttackPower::Basic,
-                    false
-                );
-            }
-            
+        match priority {
             //set visits to attacking visits
-            let visits = player.night_visits(game).clone().into_iter()
-                .map(|mut v|
-                    if self.hit_order_players.contains(&v.target) {
-                        v.attack = true;
-                        v
-                    }else{
-                        v
+            Priority::Deception => {
+                for player in PlayerReference::all_players(game){
+                    if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player) {continue;}
+                    if RoleSet::MafiaKilling.get_roles().contains(&player.role(game)) {continue;}
+                    
+                    let visits = player.untagged_night_visits_cloned(game).clone().into_iter()
+                        .map(|mut v|
+                            if self.hit_order_players.contains(&v.target) {
+                                v.attack = true;
+                                v
+                            }else{
+                                v
+                            }
+                        )
+                        .collect();
+                    player.set_night_visits(game, visits);
+                }
+            }
+            //kill hit order players & remove hit
+            Priority::Kill => {
+                let mut players_to_remove_hit_order = VecSet::new();
+
+                for player in PlayerReference::all_players(game){
+                    if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player) {continue;}
+                    if RoleSet::MafiaKilling.get_roles().contains(&player.role(game)) {continue;}
+        
+                    for visit in player.untagged_night_visits_cloned(game).clone(){
+                        if !self.hit_order_players.contains(&visit.target) {continue;}
+        
+                        players_to_remove_hit_order.insert(visit.target);
+                        
+                        visit.target.try_night_kill_single_attacker(
+                            player,
+                            game,
+                            crate::game::grave::GraveKiller::RoleSet(RoleSet::Mafia),
+                            crate::game::attack_power::AttackPower::Basic,
+                            false
+                        );
                     }
-                )
-                .collect();
-            player.set_night_visits(game, visits);
-        }
-        for player in players_to_remove_hit_order.clone(){
-            MafiaHitOrders::remove_hit_order_player(game, player);
+                }
+                for player in players_to_remove_hit_order.clone(){
+                    MafiaHitOrders::remove_hit_order_player(game, player);
+                }
+            },
+            _ => {}
         }
     }
     fn before_initial_role_creation(mut self, game: &mut Game) {

@@ -5,6 +5,7 @@ pub mod no_abstaining;
 pub mod no_death_cause;
 pub mod mafia_hit_orders;
 pub mod role_set_grave_killers;
+pub mod syndicate_gun_item;
 
 use dead_can_chat::DeadCanChat;
 use no_abstaining::NoAbstaining;
@@ -13,6 +14,8 @@ use random_love_links::RandomLoveLinks;
 use no_death_cause::NoDeathCause;
 use mafia_hit_orders::MafiaHitOrders;
 use role_set_grave_killers::RoleSetGraveKillers;
+use syndicate_gun_item::SyndicateGunItem;
+
 use serde::{Deserialize, Serialize};
 
 use crate::{vec_map::VecMap, vec_set::VecSet};
@@ -41,6 +44,7 @@ pub enum ModifierState{
     NoDeathCause(NoDeathCause),
     MafiaHitOrders(MafiaHitOrders),
     RoleSetGraveKillers(RoleSetGraveKillers),
+    SyndicateGunItem(SyndicateGunItem),
 }
 #[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Debug, Hash)]
 #[serde(rename_all = "camelCase")]
@@ -52,6 +56,7 @@ pub enum ModifierType{
     NoDeathCause,
     MafiaHitOrders,
     RoleSetGraveKillers,
+    SyndicateGunItem,
 }
 impl ModifierType{
     pub fn default_state(&self)->ModifierState{
@@ -63,6 +68,7 @@ impl ModifierType{
             Self::NoDeathCause => ModifierState::NoDeathCause(NoDeathCause::default()),
             Self::MafiaHitOrders => ModifierState::MafiaHitOrders(MafiaHitOrders::default()),
             Self::RoleSetGraveKillers => ModifierState::RoleSetGraveKillers(RoleSetGraveKillers::default()),
+            Self::SyndicateGunItem => ModifierState::SyndicateGunItem(SyndicateGunItem::default()),
         }
     }
 }
@@ -76,6 +82,7 @@ impl From<&ModifierState> for ModifierType{
             ModifierState::NoDeathCause(_) => Self::NoDeathCause,
             ModifierState::MafiaHitOrders(_) => Self::MafiaHitOrders,
             ModifierState::RoleSetGraveKillers(_) => Self::RoleSetGraveKillers,
+            ModifierState::SyndicateGunItem(_) => Self::SyndicateGunItem,
         }
     }
 }

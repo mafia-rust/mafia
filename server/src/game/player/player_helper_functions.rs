@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 use rand::seq::SliceRandom;
 
@@ -12,7 +12,7 @@ use crate::{game::{
     role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, 
     win_condition::WinCondition,
     Game
-}, packet::ToClientPacket, vec_set::VecSet};
+}, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
 use super::PlayerReference;
 
@@ -33,7 +33,7 @@ impl PlayerReference{
     }
     pub fn ward(&self, game: &mut Game) -> Vec<PlayerReference> {
         let mut wardblocked = vec![];
-        for visitor in self.all_visitors(game){
+        for visitor in self.all_night_visitors_cloned(game){
             if !visitor.role(game).wardblock_immune() {
                 visitor.set_night_wardblocked(game, true);
                 visitor.set_night_visits(game, vec![]);
@@ -46,6 +46,8 @@ impl PlayerReference{
     pub fn night_blocked(&self, game: &Game)->bool{
         self.night_roleblocked(game) || self.night_wardblocked(game)
     }
+
+
 
     /// Returns true if attack overpowered defense
     pub fn try_night_kill_single_attacker(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
@@ -114,7 +116,7 @@ impl PlayerReference{
     pub fn possess_night_action(&self, game: &mut Game, priority: Priority, currently_used_player: Option<PlayerReference>)->Option<PlayerReference>{
         match priority {
             Priority::Possess => {
-                let possessor_visits = self.night_visits(game).clone();
+                let possessor_visits = self.untagged_night_visits_cloned(game);
                 let Some(possessed_visit) = possessor_visits.get(0) else {return None};
                 let Some(possessed_into_visit) = possessor_visits.get(1) else {return None};
                 
@@ -129,7 +131,7 @@ impl PlayerReference{
                 }
 
                 let mut new_selection = possessed_visit.target
-                    .night_visits(game)
+                    .untagged_night_visits_cloned(game)
                     .iter()
                     .map(|v|v.target)
                     .collect::<Vec<PlayerReference>>();
@@ -234,19 +236,12 @@ impl PlayerReference{
         if let Some(v) = self.night_appeared_visits(game) {
             v.clone()
         } else {
-            self.night_visits(game).clone()
+            self.all_night_visits_cloned(game)
         }
     }
     pub fn all_appeared_visitors(self, game: &Game) -> Vec<PlayerReference> {
         PlayerReference::all_players(game).filter(|player_ref|{
             player_ref.tracker_seen_visits(game).iter().any(|other_visit| 
-                other_visit.target == self
-            )
-        }).collect()
-    }
-    pub fn all_visitors(self, game: &Game) -> Vec<PlayerReference> {
-        PlayerReference::all_players(game).filter(|player_ref|{
-            player_ref.night_visits(game).iter().any(|other_visit| 
                 other_visit.target == self
             )
         }).collect()
@@ -262,9 +257,9 @@ impl PlayerReference{
         self.add_private_chat_messages(game, messages);
     }
 
-    pub fn role_label_map(&self, game: &Game) -> HashMap<PlayerReference, Role> {
-        let mut map = HashMap::new();
-        for player in self.role_labels(game) {
+    pub fn role_label_map(&self, game: &Game) -> VecMap<PlayerReference, Role> {
+        let mut map = VecMap::new();
+        for player in self.role_labels(game).iter() {
             map.insert(*player, player.role(game));
         }
         map
@@ -281,6 +276,13 @@ impl PlayerReference{
         self.role(game).possession_immune()
     }
     pub fn has_innocent_aura(&self, game: &Game) -> bool {
+        PlayerReference::all_players(game).into_iter().any(|player_ref| 
+            player_ref.alive(game) && match player_ref.role_state(game) {
+                RoleState::Disguiser(r) => 
+                    r.current_target.is_some_and(|player|player == *self),
+                _ => false
+            }
+        ) ||
         self.role(game).has_innocent_aura(game)
     }
     pub fn has_suspicious_aura(&self, game: &Game) -> bool {

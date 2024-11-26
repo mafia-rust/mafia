@@ -71,6 +71,7 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
 macros::roles! {
     Jailor : jailor,
     Villager : villager,
+    Drunk : drunk,
 
     Detective : detective,
     Lookout : lookout,
@@ -106,10 +107,8 @@ macros::roles! {
 
     // Mafia
     Godfather : godfather,
-    Eros: eros,
     Counterfeiter : counterfeiter,
     Impostor : impostor,
-    Retrainer : retrainer,
     Recruiter : recruiter,
     Mafioso : mafioso,
     MafiaKillingWildcard : mafia_killing_wildcard,
@@ -124,6 +123,7 @@ macros::roles! {
     Necromancer : necromancer,
     Mortician : mortician,
     Framer : framer,
+    Disguiser : disguiser,
     Forger : forger,
     Cupid : cupid,
     MafiaSupportWildcard: mafia_support_wildcard,
@@ -134,7 +134,6 @@ macros::roles! {
     Politician : politician,
     Doomsayer : doomsayer,
     Death : death,
-    Drunk : drunk,
 
     Witch : witch,
     Scarecrow : scarecrow,
@@ -192,7 +191,7 @@ macros::priorities! {
     FinalPriority
 }
 
-mod common_role;
+pub(crate) mod common_role;
 
 mod macros {
     macro_rules! roles {
@@ -405,7 +404,7 @@ impl Role{
     }
     pub fn has_innocent_aura(&self, game: &Game)->bool{
         match self {
-            Role::Godfather | Role::Eros => true,
+            Role::Godfather => true,
             Role::Werewolf => {
                 game.day_number() == 1 || game.day_number() == 3
             },

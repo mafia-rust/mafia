@@ -8,6 +8,7 @@ import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/Role
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu"
 import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu"
 import { AbilityInput } from "./abilityInput"
+import { ListMapData } from "../ListMap"
 
 export type LobbyPreviewData = {
     name: string,
@@ -49,6 +50,9 @@ export type ToClientPacket = {
 } | {
     type: "yourPlayerIndex",
     playerIndex: PlayerIndex
+} | {
+    type: "yourFellowInsiders",
+    fellowInsiders: PlayerIndex[]
 } | {
     type: "rejectStart",
     reason: string
@@ -107,7 +111,7 @@ export type ToClientPacket = {
     alive: [boolean]
 } | {
     type: "playerVotes",
-    votesForPlayer: Record<number, number> 
+    votesForPlayer: ListMapData<number, number> 
 } | {
     type: "yourSendChatGroups",
     sendChatGroups: ChatGroup[]
@@ -123,10 +127,10 @@ export type ToClientPacket = {
     }]
 } | {
     type: "yourRoleLabels",
-    roleLabels: Record<PlayerIndex, Role> 
+    roleLabels: ListMapData<PlayerIndex, Role> 
 } | {
     type: "yourPlayerTags",
-    playerTags: Record<PlayerIndex, Tag[]> 
+    playerTags: ListMapData<PlayerIndex, Tag[]> 
 } | {
     type: "yourWill",
     will: string
@@ -175,6 +179,10 @@ export type ToClientPacket = {
 } | {
     type: "yourHitOrderVote",
     player: PlayerIndex | null
+} | {
+    type: "yourSyndicateGunItemData",
+    shooter: PlayerIndex | null
+    target: PlayerIndex | null
 }
 
 export type ToServerPacket = {
@@ -321,12 +329,6 @@ export type ToServerPacket = {
 } | {
     type: "setRecruiterAction",
     action: RecruiterAction
-} | {
-    type: "setErosAction",
-    action: "loveLink" | "kill"
-} | {
-    type: "retrainerRetrain",
-    role: Role
 } | {
     type: "setRoleChosen",
     role: Role | null

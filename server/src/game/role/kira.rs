@@ -68,12 +68,12 @@ impl KiraGuess{
             Role::Transporter => Some(Self::Transporter),
 
             //Mafia
-            Role::Godfather | Role::Mafioso | Role::Eros |
-            Role::Counterfeiter | Role::Retrainer | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
+            Role::Godfather | Role::Mafioso |
+            Role::Counterfeiter | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
             Role::Goon |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::MafiaWitch | Role::Necromancer | Role::Consort |
-            Role::Mortician | Role::Framer | Role::Forger | 
+            Role::Mortician | Role::Framer | Role::Forger | Role::Disguiser |
             Role::Cupid | Role::MafiaSupportWildcard => Some(Self::NonTown),
 
             //Neutral
@@ -184,6 +184,7 @@ impl RoleStateImpl for Kira {
     }
     fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: crate::game::ability_input::AbilityInput) {
         if actor_ref != input_player {return};
+        if !actor_ref.alive(game) {return};
         let AbilityInput::Kira{input: KiraAbilityInput(input)} = ability_input else {return};
         
         let mut new_guesses: VecMap<PlayerReference, KiraGuess> = VecMap::new();

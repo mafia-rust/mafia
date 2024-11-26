@@ -4,6 +4,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::components::detained::Detained;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
@@ -49,21 +50,38 @@ impl RoleStateImpl for Medium {
         game.current_phase().phase() != PhaseType::Night
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
-        crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Dead])
+        let mut out = crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Dead]);
+
+        if 
+            (game.current_phase().phase() == PhaseType::Obituary) &&
+            actor_ref.alive(game)
+        {
+            out.insert(ChatGroup::Dead);
+        }
+        out
     }
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         let mut out = crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref);
 
-        if game.current_phase().is_night() && actor_ref.alive(game) {
+        if 
+            (
+                (
+                    !Detained::is_detained(game, actor_ref) &&
+                    game.current_phase().phase() == PhaseType::Night
+                ) || 
+                game.current_phase().phase() == PhaseType::Obituary
+            ) &&
+            actor_ref.alive(game)
+        {
             out.insert(ChatGroup::Dead);
         }
         out
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
-            PhaseType::Obituary => {
+            PhaseType::Discussion => {
                 self.seanced_target = None;
-                actor_ref.set_role_state(game, RoleState::Medium(self));
+                actor_ref.set_role_state(game, self);
             },
             PhaseType::Night => {
                 if let Some(seanced) = self.seanced_target {
@@ -76,7 +94,7 @@ impl RoleStateImpl for Medium {
                         self.seances_remaining = self.seances_remaining.saturating_sub(1);
                     }
                 }
-                actor_ref.set_role_state(game, RoleState::Medium(self));
+                actor_ref.set_role_state(game, self);
             },
             _=>{}
         }

@@ -14,4 +14,7 @@ pub enum Tag{
     LoveLinked,
     ForfeitVote,
     Spiraling
+    Disguise,
+    SyndicateGun,
+    Frame
 }

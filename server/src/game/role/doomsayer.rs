@@ -65,12 +65,12 @@ impl DoomsayerGuess{
             Role::Transporter => Some(DoomsayerGuess::Transporter),
 
             //Mafia
-            Role::Godfather | Role::Mafioso | Role::Eros |
-            Role::Counterfeiter | Role::Retrainer | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
+            Role::Godfather | Role::Mafioso | 
+            Role::Counterfeiter | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
             Role::Goon |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::MafiaWitch | Role::Necromancer | Role::Consort |
-            Role::Mortician | Role::Framer | Role::Forger | 
+            Role::Mortician | Role::Framer | Role::Forger | Role::Disguiser |
             Role::Cupid | Role::MafiaSupportWildcard => Some(DoomsayerGuess::NonTown),
 
             //Neutral

@@ -21,18 +21,19 @@ pub mod win_condition;
 pub mod role_outline_reference;
 pub mod ability_input;
 
-use std::collections::HashMap;
 use std::time::Duration;
 use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
 use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
+use components::night_visits::NightVisits;
 use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
 use components::poison::Poison;
 use components::detained::Detained;
 use components::insider_group::InsiderGroupID;
 use components::insider_group::InsiderGroups;
+use components::syndicate_gun_item::SyndicateGunItem;
 use components::verdicts_today::VerdictsToday;
 use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
@@ -45,6 +46,7 @@ use crate::client_connection::ClientConnection;
 use crate::game::event::on_game_start::OnGameStart;
 use crate::game::player::PlayerIndex;
 use crate::packet::ToClientPacket;
+use crate::vec_map::VecMap;
 use chat::{ChatMessageVariant, ChatGroup, ChatMessage};
 use player::PlayerReference;
 use player::Player;
@@ -86,11 +88,14 @@ pub struct Game {
 
     phase_machine : PhaseStateMachine,
 
+    
     /// Whether the game is still updating phase times
     pub ticking: bool,
-
-
+    
+    
     //components with data
+    night_visits: NightVisits,
+    syndicate_gun_item: SyndicateGunItem,
     pub cult: Cult,
     pub mafia: Mafia,
     pub arsonist_doused: ArsonistDoused,
@@ -185,6 +190,8 @@ impl Game {
                 modifiers: Modifiers::default_from_settings(settings.enabled_modifiers.clone()),
                 settings,
 
+                night_visits: NightVisits::default(),
+                syndicate_gun_item: SyndicateGunItem::default(),
                 cult: Cult::default(),
                 mafia: Mafia,
                 arsonist_doused: ArsonistDoused::default(),
@@ -290,7 +297,7 @@ impl Game {
 
         let &PhaseState::Nomination { trials_left, .. } = self.current_phase() else {return};
 
-        let mut voted_player_votes: HashMap<PlayerReference, u8> = HashMap::new();
+        let mut voted_player_votes: VecMap<PlayerReference, u8> = VecMap::new();
 
         for player in PlayerReference::all_players(self){
             if !player.alive(self) { continue }
@@ -318,7 +325,7 @@ impl Game {
         
         self.send_packet_to_all(
             ToClientPacket::PlayerVotes { votes_for_player: 
-                PlayerReference::ref_map_to_index(voted_player_votes.clone())
+                PlayerReference::ref_vec_map_to_index(voted_player_votes.clone())
             }
         );
 
@@ -454,7 +461,7 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, insider_group::InsiderGroupID, verdicts_today::VerdictsToday},
+        components::{arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem, verdicts_today::VerdictsToday},
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine,
         player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -508,6 +515,8 @@ pub mod test {
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
 
+            night_visits: NightVisits::default(),
+            syndicate_gun_item: SyndicateGunItem::default(),
             cult: Cult::default(),
             mafia: Mafia,
             arsonist_doused: ArsonistDoused::default(),
