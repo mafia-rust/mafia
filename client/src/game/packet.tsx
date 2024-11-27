@@ -186,9 +186,6 @@ export type ToClientPacket = {
     type: "yourPitchforkVote",
     player: PlayerIndex | null
 } | {
-    type: "yourHitOrderVote",
-    player: PlayerIndex | null
-} | {
     type: "yourSyndicateGunItemData",
     shooter: PlayerIndex | null
     target: PlayerIndex | null
@@ -338,9 +335,6 @@ export type ToServerPacket = {
 } | {
     type: "setRecruiterAction",
     action: RecruiterAction
-} | {
-    type: "setErosAction",
-    action: "loveLink" | "kill"
 } | {
     type: "setRoleChosen",
     role: Role | null

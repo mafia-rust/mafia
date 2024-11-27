@@ -6,7 +6,6 @@ import { useGameState, usePlayerState } from "../../../../components/useHooks";
 import OldSelectionType from "./AbilitySelectionTypes/OldSelectionMenu";
 import ForfeitVote from "./ForfeitVote";
 import Pitchfork from "./Pitchfork";
-import HitOrder from "./HitOrder";
 import GenericAbilityMenu from "./GenericAbilityMenu";
 import SyndicateGunItemMenu from "./SyndicateGunItemMenu";
 
@@ -43,7 +42,6 @@ export default function AbilityMenu(): ReactElement {
                     <OldSelectionType/>
                 </details>
                 <Pitchfork/>
-                <HitOrder/>
                 <SyndicateGunItemMenu/>
             </>
         }

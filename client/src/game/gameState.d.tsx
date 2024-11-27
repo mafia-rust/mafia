@@ -100,7 +100,6 @@ export type PlayerGameState = {
     
     forfeitVote: boolean,
     pitchforkVote: PlayerIndex | null,
-    hitOrderVote: PlayerIndex | null,
     syndicateGunItemData: {
         shooter: PlayerIndex | null,
         target: PlayerIndex | null,
@@ -149,13 +148,14 @@ export type Tag =
     "puppeteerMarionette" |
     "loveLinked" |
     "frame" |
-    "forfeitVote";
+    "forfeitVote" |
+    "spiraling";
 
 export const MODIFIERS = [
     "obscuredGraves", "randomLoveLinks",
     "deadCanChat", "noAbstaining",
-    "noDeathCause", "mafiaHitOrders",
-    "syndicateGunItem"
+    "noDeathCause",
+    "roleSetGraveKillers"
 ] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 

@@ -50,11 +50,6 @@ export type AbilityInput = {
     type: "pitchforkVote"
     selection: OnePlayerOptionSelection,
 } | {
-    type: "hitOrderVote"
-    selection: OnePlayerOptionSelection,
-} | {
-    type: "hitOrderMafioso",
-} | {
     type: "syndicateGunItemShoot",
     input: OnePlayerOptionSelection,
 } | {

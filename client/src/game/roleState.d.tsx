@@ -29,6 +29,8 @@ export type RoleState = {
 } | {
     type: "pyrolisk"
 } | {
+    type: "spiral"
+} | {
     type: "tracker"
 } | {
     type: "philosopher"
@@ -99,9 +101,6 @@ export type RoleState = {
     backup: PlayerIndex | null,
     fakeRole: Role
 } | {
-    type: "eros"
-    action: "loveLink" | "kill"
-} | {
     type: "counterfeiter",
     action: "forge" | "noForge",
     fakeRole: Role,
@@ -141,6 +140,10 @@ export type RoleState = {
     type: "disguiser",
     currentTarget: PlayerIndex | null,
     disguisedRole: Role,
+} | {
+    type: "reeducator",
+    convertChargesRemaining: boolean,
+    convertRole: Role,
 } | {
     type: "framer"
 } | {

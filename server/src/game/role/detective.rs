@@ -52,7 +52,7 @@ impl Detective {
         }else if player_ref.has_innocent_aura(game){
             false
         }else{
-            !player_ref.win_condition(game).can_win_when_resolution_state_reached(GameConclusion::Town)
+            !player_ref.win_condition(game).friends_with_resolution_state(GameConclusion::Town)
         }
     }
 }

@@ -27,6 +27,7 @@ impl RoleStateImpl for Warper {
         
         
         first_visit.target.push_night_message(game, ChatMessageVariant::Transported);
+        actor_ref.push_night_message(game, ChatMessageVariant::TargetHasRole { role: first_visit.target.role(game) });
     
         for player_ref in PlayerReference::all_players(game){
             if player_ref == actor_ref {continue;}
@@ -60,7 +61,7 @@ impl RoleStateImpl for Warper {
                 .filter(|p|p.alive(game))
                 .filter(|p|p.keeps_game_running(game))
                 .all(|p|
-                    WinCondition::can_win_together(&p.win_condition(game), actor_ref.win_condition(game))
+                    WinCondition::are_friends(&p.win_condition(game), actor_ref.win_condition(game))
                 )
 
         {

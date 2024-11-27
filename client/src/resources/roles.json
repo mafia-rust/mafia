@@ -564,22 +564,6 @@
             {"type": "youSurvivedAttack"}
         ]
     },
-    "eros": {
-        "mainRoleSet": "mafia",
-        "roleSets": ["mafia", "mafiaKilling"],
-        "armor": true,
-        "aura": "innocent",
-        "maxCount": 1,
-        "roleSpecificMenu": true,
-        "canWriteDeathNote": false,
-        "canBeConvertedTo": ["godfather"],
-        "chatMessages":[
-            {"type": "youAreLoveLinked", "player": 20},
-            {"type": "playerDiedOfABrokenHeart", "player": 20, "lover": 25},
-            {"type": "someoneSurvivedYourAttack"},
-            {"type": "youSurvivedAttack"}
-        ]
-    },
     "counterfeiter": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaKilling"],
@@ -769,6 +753,17 @@
             }
         ]
     },
+    "reeducator": {
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[]
+    },
     "forger": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaSupport"],
@@ -800,7 +795,7 @@
             {"type": "targetsMessage", "message": 
                 {"type": "sheriffResult","suspicious":true}
             },
-            {"type": "possessionTargetsRole", "role":"detective"},
+            {"type": "targetHasRole", "role":"detective"},
             {"type": "targetIsPossessionImmune"},
             {"type": "youWerePossessed", "immune": false},
             {"type": "youWerePossessed", "immune": true}
@@ -995,7 +990,7 @@
             {"type": "targetsMessage", "message": 
                 {"type": "sheriffResult","suspicious":true}
             },
-            {"type": "possessionTargetsRole", "role":"detective"},
+            {"type": "targetHasRole", "role":"detective"},
             {"type": "targetIsPossessionImmune"},
             {"type": "youWerePossessed", "immune": false},
             {"type": "youWerePossessed", "immune": true}
@@ -1025,7 +1020,8 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "transported"}
+            {"type": "transported"},
+            {"type": "targetHasRole", "role":"detective"}
         ]
     },
     "kidnapper":{
@@ -1165,6 +1161,21 @@
                 "role":"medium",
                 "will":"I always get medium and every game I get obscured by a pyrolisk, im calling it right now."
             },
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"},
+            {"type": "youAttackedSomeone"}
+        ]
+    },
+    "spiral": {
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"},
             {"type": "youAttackedSomeone"}

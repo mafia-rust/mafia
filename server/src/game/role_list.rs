@@ -190,7 +190,7 @@ impl RoleSet{
                 ).collect(),
             RoleSet::MafiaKilling => 
                 vec![
-                    Role::Godfather, Role::Eros, Role::Counterfeiter,
+                    Role::Godfather, Role::Counterfeiter,
                     Role::Impostor, Role::Recruiter,
                     Role::Mafioso
                 ],
@@ -198,7 +198,7 @@ impl RoleSet{
                 vec![
                     Role::Blackmailer, Role::Informant, Role::Hypnotist, Role::Consort,
                     Role::Forger, Role::Framer, Role::Mortician, Role::Disguiser,
-                    Role::MafiaWitch, Role::Necromancer, Role::Cupid
+                    Role::MafiaWitch, Role::Necromancer, Role::Cupid, Role::Reeducator,
                 ],
             RoleSet::Minions => 
                 vec![
@@ -213,7 +213,8 @@ impl RoleSet{
                 vec![
                     Role::Arsonist, Role::Werewolf, Role::Ojo,
                     Role::Puppeteer, Role::Pyrolisk, Role::Kira,
-                    Role::SerialKiller, Role::FiendsWildcard
+                    Role::SerialKiller, Role::FiendsWildcard,
+                    Role::Spiral
                 ],
             RoleSet::Cult =>
                 vec![

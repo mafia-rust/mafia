@@ -349,16 +349,6 @@ impl Game {
                     sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
                 }
             },
-            ToServerPacket::SetErosAction { action } => {
-                if let RoleState::Eros(mut eros) = sender_player_ref.role_state(self).clone(){
-                    eros.action = action.clone();
-                    sender_player_ref.set_role_state(self, RoleState::Eros(eros));
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::ErosActionChosen{ action });
-
-                    //Updates selection if it was invalid
-                    sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
-                }
-            },
             ToServerPacket::SetRoleChosen { role } => {
                 match sender_player_ref.role_state(self).clone() {
                     RoleState::Ojo(mut ojo) => {

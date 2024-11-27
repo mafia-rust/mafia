@@ -83,13 +83,11 @@ pub trait ValidateAvailableSelection{
     
 //     PitchforkVote{selection: OnePlayerOptionSelection},
 
-//     HitOrderVote{selection: OnePlayerOptionSelection},
-
 //     SyndicateGunItemShoot{input: OnePlayerOptionSelection},
 //     SyndicateGunItemGive{input: OnePlayerOptionSelection},
 
-//     HitOrderMafioso,
 // }
+
 impl AbilityInput{
     pub fn on_client_message(self, game: &mut Game, actor_ref: PlayerReference){
         OnAbilityInputReceived::new(actor_ref, self.clone()).invoke(game);

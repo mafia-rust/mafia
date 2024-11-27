@@ -64,7 +64,7 @@ impl Philosopher{
         }else if a.has_innocent_aura(game) || b.has_innocent_aura(game){
             false
         }else{
-            !WinCondition::can_win_together(a.win_condition(game), b.win_condition(game))
+            !WinCondition::are_friends(a.win_condition(game), b.win_condition(game))
         }
     }
 }

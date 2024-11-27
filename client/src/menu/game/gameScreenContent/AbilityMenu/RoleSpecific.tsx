@@ -11,7 +11,6 @@ import Counter from "../../../../components/Counter";
 import StyledText from "../../../../components/StyledText";
 import translate from "../../../../game/lang";
 import CounterfeiterMenu from "./RoleSpecificMenus/CounterfeiterMenu";
-import ErosMenu from "./RoleSpecificMenus/ErosMenu";
 import SmallPuppeteerMenu from "./RoleSpecificMenus/SmallPuppeteerMenu";
 import StewardMenu from "./RoleSpecificMenus/StewardMenu";
 import OjoMenu from "./RoleSpecificMenus/OjoMenu";
@@ -20,6 +19,7 @@ import { Role, roleJsonData, RoleState } from "../../../../game/roleState.d";
 import RoleDropdown from "../../../../components/RoleDropdown";
 import GAME_MANAGER from "../../../..";
 import DisguiserMenu from "./RoleSpecificMenus/DisguiserMenu";
+import ReeducatorMenu from "./RoleSpecificMenus/ReeducatorMenu";
 
 
 export default function RoleSpecificSection(){
@@ -54,7 +54,9 @@ export default function RoleSpecificSection(){
         case "impostor":
             return <ImpostorMenu roleState={roleState}/>
         case "disguiser":
-            return <DisguiserMenu roleState={roleState}/>
+            return <DisguiserMenu roleState={roleState}/>;
+        case "reeducator":
+            return <ReeducatorMenu roleState={roleState}/>;
         case "jailor": 
             return <JailorRoleSpecificMenu roleState={roleState}/>;
         case "kidnapper": 
@@ -115,9 +117,7 @@ export default function RoleSpecificSection(){
                 <StyledText>{translate("role.armorsmith.roleDataText", roleState.openShopsRemaining)}</StyledText>
             </Counter>
         case "marksman": 
-            return <MarksmanRoleSpecificMenu roleState={roleState} />
-        case "eros":
-            return <ErosMenu/>;
+            return <MarksmanRoleSpecificMenu roleState={roleState} />;
         case "counterfeiter":
             return <CounterfeiterMenu/>;
         case "mortician":
@@ -140,6 +140,8 @@ export default function RoleSpecificSection(){
             return <StewardMenu
                 roleState={roleState}
             />;
+        case "spiral": 
+            return <SpiralMenu />;
         case "puppeteer":
             return <SmallPuppeteerMenu 
                 action={roleState.action} 
@@ -330,4 +332,19 @@ function WildcardRoleSpecificMenu(props: Readonly<{
             }}
         />
     </div>;
+}
+
+function SpiralMenu(props: {}): ReactElement | null {
+    const spiralingPlayers = useGameState(
+        gameState => gameState.players.filter(p => p.playerTags.includes("spiraling")),
+        ["yourPlayerTags"]
+    )!
+
+    if (spiralingPlayers.length !== 0) {
+        return <div className="role-information">
+            <StyledText>{translate("role.spiral.roleDataText.cannotSelect")}</StyledText>
+        </div>
+    } else {
+        return null;
+    }
 }

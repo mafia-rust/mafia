@@ -5,11 +5,12 @@ use crate::game::{
     grave::Grave, phase::PhaseState,
     player::{PlayerIndex, PlayerReference},
     role::{
-        auditor::AuditorResult, engineer::TrapState, eros::ErosAction, kira::KiraResult, puppeteer::PuppeteerAction, recruiter::RecruiterAction, spy::SpyBug, Role
+        auditor::AuditorResult, engineer::TrapState, kira::KiraResult,
+        puppeteer::PuppeteerAction, recruiter::RecruiterAction, spy::SpyBug, Role
     },
     role_list::RoleOutline,
     tag::Tag,
-    verdict::Verdict
+    verdict::Verdict,
 };
 
 
@@ -218,14 +219,12 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     RecruiterActionChosen{action: RecruiterAction},
     #[serde(rename_all = "camelCase")]
-    ErosActionChosen{action: ErosAction},
-    #[serde(rename_all = "camelCase")]
     MarksmanChosenMarks{marks: Vec<PlayerIndex>},
 
     TargetIsPossessionImmune,
     YouWerePossessed { immune: bool },
     TargetsMessage{message: Box<ChatMessageVariant>},
-    PossessionTargetsRole { role: Role },
+    TargetHasRole { role: Role },
 
     #[serde(rename_all = "camelCase")]
     WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},

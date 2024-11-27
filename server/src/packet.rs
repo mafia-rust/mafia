@@ -29,7 +29,6 @@ use crate::{
         player::{PlayerIndex, PlayerReference}, 
         role::{
             counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess,
-            eros::ErosAction,
             puppeteer::PuppeteerAction, recruiter::RecruiterAction, 
             ClientRoleStateEnum, Role
         },
@@ -147,8 +146,6 @@ pub enum ToClientPacket{
     YourForfeitVote{forfeit: bool},
     #[serde(rename_all = "camelCase")]
     YourPitchforkVote{player: Option<PlayerReference>},
-    #[serde(rename_all = "camelCase")]
-    YourHitOrderVote{player: Option<PlayerReference>},
     YourSyndicateGunItemData{shooter: Option<PlayerReference>, target: Option<PlayerReference>},
 
     #[serde(rename_all = "camelCase")]
@@ -285,7 +282,6 @@ pub enum ToServerPacket{
     SetCounterfeiterAction{action: CounterfeiterAction},
     SetPuppeteerAction{action: PuppeteerAction},
     SetRecruiterAction{action: RecruiterAction},
-    SetErosAction{action: ErosAction},
     SetRoleChosen{role: Option<Role>},
 
 
