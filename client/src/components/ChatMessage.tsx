@@ -574,7 +574,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             const visitedByNobody = message.visitedBy.length === 0;
 
             return translate("chatMessage.informantResult",
-                translate("chatMessage.informantResult.role", translate("role."+message.role+".name")),
+                translate("chatMessage.targetHasRole", translate("role."+message.role+".name")),
                 visitedNobody 
                     ? translate("chatMessage.informantResult.visited.nobody") 
                     : translate("chatMessage.informantResult.visited", playerListToString(message.visited, playerNames)),
@@ -622,8 +622,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.mediumHauntStarted", playerNames[message.medium], playerNames[message.player]);
         case "youWerePossessed":
             return translate("chatMessage.youWerePossessed" + (message.immune ? ".immune" : ""));
-        case "possessionTargetsRole":
-            return translate("chatMessage.possessionTargetsRole", translate("role."+message.role+".name"));
+        case "targetHasRole":
+            return translate("chatMessage.targetHasRole", translate("role."+message.role+".name"));
         case "werewolfTrackingResult":
             if(message.players.length === 0){
                 return translate(
@@ -969,7 +969,7 @@ export type ChatMessageVariant = {
     type: "youWerePossessed",
     immune: boolean
 } | {
-    type: "possessionTargetsRole",
+    type: "targetHasRole",
     role: Role
 } | {
     type: "targetsMessage",

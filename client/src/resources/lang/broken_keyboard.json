@@ -658,7 +658,7 @@
     "chatMessage.targetsMessage": "Yr trgt gt th fllwng mssg:",
     "chatMessage.youWerePossessed": "Y wr pssssd.",
     "chatMessage.youWerePossessed.immune": "Smn trd t pssss y bt y r mmn.",
-    "chatMessage.possessionTargetsRole": "Yr trgt hs th rl \\0.",
+    "chatMessage.targetHasRole": "Yr trgt hs th rl \\0.",
     "chatMessage.targetIsPossessionImmune": "Yr trgt ws mmn t pssssn.",
     "chatMessage.werewolfTrackingResult": "\\0 vstd \\1.",
     "chatMessage.werewolfTrackingResult.nobody": "\\0 vstd nbdy.",

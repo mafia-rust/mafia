@@ -27,6 +27,7 @@ impl RoleStateImpl for Warper {
         
         
         first_visit.target.push_night_message(game, ChatMessageVariant::Transported);
+        actor_ref.push_night_message(game, ChatMessageVariant::TargetHasRole { role: first_visit.target.role(game) });
     
         for player_ref in PlayerReference::all_players(game){
             if player_ref == actor_ref {continue;}

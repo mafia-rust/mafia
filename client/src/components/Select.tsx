@@ -69,7 +69,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
                 handleSetOpen(false);
                 break;
             case "Enter": {
-                const found = [...optionsSearch.keys()].find((key) => {
+                const allSearchResults = [...optionsSearch.keys()].filter((key) => {
                     for(const search of searchString.split(" ")) {
                         
                         const val = optionsSearch.get(key);
@@ -80,9 +80,12 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
                     }
                     return true;
                 });
-        
-                if(found !== undefined) {
-                    handleOnChange(found);
+
+                //sort by length and take the first. If you type "witch" we don't want "syndicate witch"
+                allSearchResults.sort((a, b) => a.toString().length - b.toString().length);
+
+                if(allSearchResults[0] !== undefined) {
+                    handleOnChange(allSearchResults[0]);
                 }
                 handleSetOpen(false);
 

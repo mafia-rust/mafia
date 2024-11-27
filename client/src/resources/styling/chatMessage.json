@@ -87,7 +87,7 @@
     "targetsMessage": "result",
     "targetIsPossessionImmune": "result",
     "youWerePossessed": "result",
-    "possessionTargetsRole": "result",
+    "targetHasRole": "result",
     "werewolfTrackingResult": "result",
     "youSurvivedAttack": "result",
     "doomsayerFailed": "result",

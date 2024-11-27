@@ -658,7 +658,7 @@
     "chatMessage.targetsMessage": "Oury grteta tgo hte longlowfi agsemse:",
     "chatMessage.youWerePossessed": "Yuo rwee sspeodsse.",
     "chatMessage.youWerePossessed.immune": "Sonomee idetr to ssoesps yuo utb yuo rea mneumi.",
-    "chatMessage.possessionTargetsRole": "Oury grteta hsa hte elro \\0.",
+    "chatMessage.targetHasRole": "Oury grteta hsa hte elro \\0.",
     "chatMessage.targetIsPossessionImmune": "Oury grteta swa mneumi to osnseoipss.",
     "chatMessage.werewolfTrackingResult": "\\0 iitedvs \\1.",
     "chatMessage.werewolfTrackingResult.nobody": "\\0 iitedvs bnyood.",

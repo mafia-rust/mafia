@@ -152,7 +152,7 @@ impl PlayerReference{
             Priority::Investigative => {
                 if let Some(currently_used_player) = currently_used_player {
                     self.push_night_message(game,
-                        ChatMessageVariant::PossessionTargetsRole { role: currently_used_player.role(game) }
+                        ChatMessageVariant::TargetHasRole { role: currently_used_player.role(game) }
                     );
                 }
                 return None;
