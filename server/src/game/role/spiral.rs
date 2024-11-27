@@ -35,20 +35,20 @@ impl RoleStateImpl for Spiral {
             if let Some(visit) = actor_ref.untagged_night_visits_cloned(game).first(){
                 let target_ref = visit.target;
                 
-                Spiral::start_player_spiraling(game, &mut new_spiraling, actor_ref, target_ref);
+                target_ref.try_night_kill_single_attacker(
+                    actor_ref,
+                    game,
+                    GraveKiller::Role(Role::Spiral),
+                    AttackPower::ArmorPiercing,
+                    true
+                );
+                Spiral::spiral_visitors(game, &mut new_spiraling, actor_ref, target_ref);
             }
         } else {
             for spiraling_player in self.spiraling.clone() {
                 Spiral::remove_player_spiraling(game, &mut new_spiraling, actor_ref, spiraling_player);
 
-                for other_player_ref in spiraling_player.all_night_visitors_cloned(game)
-                    .into_iter().filter(|other_player_ref|
-                        other_player_ref.alive(game) &&
-                        *other_player_ref != spiraling_player // Let doctor self-heal
-                    ).collect::<Vec<PlayerReference>>()
-                {
-                    Spiral::start_player_spiraling(game, &mut new_spiraling, actor_ref, other_player_ref);
-                }
+                Spiral::spiral_visitors(game, &mut new_spiraling, actor_ref, spiraling_player);
             }
         }
 
@@ -70,8 +70,7 @@ impl RoleStateImpl for Spiral {
 
 impl Spiral {
     fn start_player_spiraling(game: &mut Game, new_spiraling: &mut VecSet<PlayerReference>, actor_ref: PlayerReference, target_ref: PlayerReference) {
-        let mut attackers = VecSet::new();
-        attackers.insert(actor_ref);
+        let attackers = vec![actor_ref].into_iter().collect();
 
         Poison::poison_player(game, target_ref, 
             AttackPower::ArmorPiercing, 
@@ -88,6 +87,17 @@ impl Spiral {
     fn remove_player_spiraling(game: &mut Game, new_spiraling: &mut VecSet<PlayerReference>, actor_ref: PlayerReference, target_ref: PlayerReference) {
         new_spiraling.remove(&target_ref);
         actor_ref.remove_player_tag(game, target_ref, Tag::Spiraling);
+    }
+
+    fn spiral_visitors(game: &mut Game, new_spiraling: &mut VecSet<PlayerReference>, actor_ref: PlayerReference, target: PlayerReference) {
+        for visitor_to_spiraling in target.all_night_visitors_cloned(game)
+            .into_iter().filter(|other_player_ref|
+                other_player_ref.alive(game) &&
+                *other_player_ref != target // Let doctor self-heal
+            ).collect::<Vec<PlayerReference>>()
+        {
+            Spiral::start_player_spiraling(game, new_spiraling, actor_ref, visitor_to_spiraling);
+        }
     }
 }
 
