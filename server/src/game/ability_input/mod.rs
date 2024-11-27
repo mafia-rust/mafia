@@ -20,6 +20,7 @@ pub type RoleAbilityID = u8;
 #[serde(rename_all = "camelCase")]
 #[serde(tag="type")]
 pub enum AbilityID{
+    #[serde(rename_all = "camelCase")]
     Role{role_ability_id: RoleAbilityID},
     ForfeitVote,
     PitchforkVote,

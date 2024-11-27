@@ -188,7 +188,7 @@ impl SavedAbilityInputs{
         let chat_message = ChatMessageVariant::AbilityUsed{
             player: player_ref.index(),
             role: Some(player_ref.role(game)),
-            id,
+            ability_id: id,
             selection: selection.clone()
         };
 

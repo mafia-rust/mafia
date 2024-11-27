@@ -15,7 +15,6 @@ import { KiraGuess, KiraGuessResult, kiraGuessTranslate } from "../menu/game/gam
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
-import { GenericAbilityID, GenericAbilitySelectionType } from "../menu/game/gameScreenContent/AbilityMenu/GenericAbilityMenu";
 import { AbilityID, AbilitySelection } from "../game/abilityInput";
 
 const ChatElement = React.memo((
@@ -456,25 +455,36 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                 );
             }
         case "abilityUsed":
+
+            let abilityIdString;
+            switch (message.abilityId.type) {
+                case "role":
+                    abilityIdString = translate("ability.abilityId."+message.role+"."+message.abilityId.roleAbilityId+".name");
+                    break;
+                default:
+                    abilityIdString = "LANG TODO";
+            }
+
+
             switch (message.selection.type) {
                 case "unit":
                     return translate("chatMessage.abilityUsed.unit",
                         playerNames[message.player],
                         translate("role."+message.role+".name"),
-                        translate("ability.abilityId."+message.role+"."+message.abilityId+".name")
+                        abilityIdString
                     );
                 case "onePlayerOption":
                     return translate("chatMessage.abilityUsed.onePlayerOption",
                         playerNames[message.player],
                         translate("role."+message.role+".name"),
-                        translate("ability.abilityId."+message.role+"."+message.abilityId+".name"),
+                        abilityIdString,
                         message.selection.selection===null?translate("nobody"):playerNames[message.selection.selection],
                     );
                 case "twoRoleOption":
                     return translate("chatMessage.abilityUsed.twoRoleOption",
                         playerNames[message.player],
                         translate("role."+message.role+".name"),
-                        translate("ability.abilityId."+message.role+"."+message.abilityId+".name"),
+                        abilityIdString,
                         message.selection.selection[0]===null?translate("none"):translate("role."+message.selection.selection[0]+".name"),
                         message.selection.selection[1]===null?translate("none"):translate("role."+message.selection.selection[1]+".name"),
                     );
@@ -482,7 +492,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     return translate("chatMessage.abilityUsed.twoRoleOutlineOption",
                         playerNames[message.player],
                         translate("role."+message.role+".name"),
-                        translate("ability.abilityId."+message.role+"."+message.abilityId+".name"),
+                        abilityIdString,
                         message.selection.selection[0] === null ? translate("none") : message.selection.selection[0].toString(),
                         message.selection.selection[1] === null ? translate("none") : message.selection.selection[1].toString()
                     );

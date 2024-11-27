@@ -17,7 +17,7 @@
     "phaseFastForwarded": "important",
     "playerWonOrLost": "trial",
     "targeted": "target",
-    "genericAbilityUsed": "target",
+    "abilityUsed": "target",
     "mayorRevealed": "special",
     "mayorCantWhisper": "special",
     "politicianCountdownStarted": "special", 

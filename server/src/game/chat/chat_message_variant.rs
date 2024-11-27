@@ -113,7 +113,7 @@ pub enum ChatMessageVariant {
     AbilityUsed{
         player: PlayerIndex,
         role: Option<Role>,
-        id: AbilityID,
+        ability_id: AbilityID,
         selection: AbilitySelection
     },
 
