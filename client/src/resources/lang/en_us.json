@@ -1721,11 +1721,11 @@
     "wiki.article.role.pyrolisk.attributes":"* If you are roleblocked, you still attack or tag visitors, but don't attack or tag the person you visit\n* Your attack is armor piercing",
     "wiki.article.role.pyrolisk.extra":"* When you first become a pyrolisk, you tag yourself for obscuring\n* As long as a pyrolisk exists, dead or alive, players marked for obscuring by pyrolisks are obscured when they die",
 
-    "wiki.article.role.spiral.reminder": "Each night, select a player to attack, all visitors to them spiral, dying the next night.",
-    "wiki.article.role.spiral.guide":"- Each night, select a player to attack and spiral all visitors to them\n    - Players die the night after they begin to spiral\n    - The night a player dies to spiraling, all visitors to them begin to spiral, causing a potential chain reaction\n- You can't spiral a player if any player is still spiraling",
-    "wiki.article.role.spiral.abilities":"- Each night, select a player to attack and spiral all visitors to them\n    - Players die the night after they begin to spiral\n    - The night a player dies to spiraling, all visitors to them begin to spiral, causing a potential chain reaction\n- You can't spiral a player if any player is still spiraling",
+    "wiki.article.role.spiral.reminder": "Each night*, select a player to attack, all visitors to them spiral, dying the next night.",
+    "wiki.article.role.spiral.guide":"- Each night except the first, select a player to attack and spiral all visitors to them\n    - Players die the night after they begin to spiral\n    - The night a player dies to spiraling, all visitors to them begin to spiral, causing a potential chain reaction\n- You can't spiral a player if any player is still spiraling",
+    "wiki.article.role.spiral.abilities":"- Each night except the first, select a player to attack and spiral all visitors to them\n    - Players die the night after they begin to spiral\n    - The night a player dies to spiraling, all visitors to them begin to spiral, causing a potential chain reaction\n- You can't spiral a player if any player is still spiraling",
     "wiki.article.role.spiral.attributes":"- Players are not told when they start to spiral\n* If you are blocked, spiraling players still die\n* Your attack is armor piercing",
-    "wiki.article.role.spiral.extra":"- If a dead player is spiraling, they stay spiraling, and you attack them again, even while they are dead. Although they cannot die after already dead.",
+    "wiki.article.role.spiral.extra":"- You can't cause yourself to spiral\n- If a dead player is spiraling, they stay spiraling, and you attack them again, even while they are dead. Although they cannot die after already dead.",
 
     "wiki.article.role.fiendsWildcard.reminder": "Choose a fiends role to become at start of night.",
     "wiki.article.role.fiendsWildcard.guide": "* Choose a fiends role to become that role\n    * You become that role when night starts\n* You can't become a role that has exceeded its role limit",

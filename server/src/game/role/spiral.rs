@@ -31,7 +31,7 @@ impl RoleStateImpl for Spiral {
 
         if priority != Priority::Poison { return };
         
-        if self.spiraling.is_empty() {
+        if self.spiraling.is_empty() && game.day_number() > 1 {
             if let Some(visit) = actor_ref.untagged_night_visits_cloned(game).first(){
                 let target_ref = visit.target;
                 
@@ -56,7 +56,9 @@ impl RoleStateImpl for Spiral {
     }
     
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        self.spiraling.is_empty() && crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
+        self.spiraling.is_empty() &&
+        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref) &&
+        game.day_number() > 1
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
@@ -71,7 +73,9 @@ impl RoleStateImpl for Spiral {
 impl Spiral {
     fn start_player_spiraling(game: &mut Game, new_spiraling: &mut VecSet<PlayerReference>, actor_ref: PlayerReference, target_ref: PlayerReference) {
         let attackers = vec![actor_ref].into_iter().collect();
-
+        if target_ref == actor_ref {
+            return;
+        }
         Poison::poison_player(game, target_ref, 
             AttackPower::ArmorPiercing, 
             GraveKiller::Role(Role::Spiral), 
