@@ -22,9 +22,9 @@ pub mod role_outline_reference;
 pub mod ability_input;
 
 use std::time::Duration;
+use ability_input::saved_ability_inputs::SavedAbilityInputs;
 use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
-use components::generic_ability::GenericAbilitySaveComponent;
 use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
 use components::night_visits::NightVisits;
@@ -96,7 +96,7 @@ pub struct Game {
     
     
     //components with data
-    pub generic_ability: GenericAbilitySaveComponent,
+    pub saved_ability_inputs: SavedAbilityInputs,
     night_visits: NightVisits,
     syndicate_gun_item: SyndicateGunItem,
     pub cult: Cult,
@@ -193,7 +193,7 @@ impl Game {
                 modifiers: Modifiers::default_from_settings(settings.enabled_modifiers.clone()),
                 settings,
 
-                generic_ability: GenericAbilitySaveComponent::default(),
+                saved_ability_inputs: SavedAbilityInputs::default(),
                 night_visits: NightVisits::default(),
                 syndicate_gun_item: SyndicateGunItem::default(),
                 cult: Cult::default(),
@@ -467,14 +467,17 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, generic_ability::GenericAbilitySaveComponent, insider_group::InsiderGroupID, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem, verdicts_today::VerdictsToday},
+        ability_input::saved_ability_inputs::SavedAbilityInputs,
+        components::{
+            arsonist_doused::ArsonistDoused, cult::Cult,
+            insider_group::InsiderGroupID, love_linked::LoveLinked,
+            mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits,
+            pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette,
+            syndicate_gun_item::SyndicateGunItem, verdicts_today::VerdictsToday
+        }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
-        phase::PhaseStateMachine,
-        player::{test::mock_player, PlayerIndex, PlayerReference},
-        role::Role,
-        settings::Settings, 
-        Game,
-        RejectStartReason
+        phase::PhaseStateMachine, player::{test::mock_player, PlayerIndex, PlayerReference},
+        role::Role, settings::Settings, Game, RejectStartReason
     };
 
 
@@ -521,7 +524,7 @@ pub mod test {
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
 
-            generic_ability: GenericAbilitySaveComponent::default(),
+            saved_ability_inputs: SavedAbilityInputs::default(),
             night_visits: NightVisits::default(),
             syndicate_gun_item: SyndicateGunItem::default(),
             cult: Cult::default(),

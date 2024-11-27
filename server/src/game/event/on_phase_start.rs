@@ -1,8 +1,11 @@
 use crate::game::{
+    ability_input::saved_ability_inputs::SavedAbilityInputs,
     components::{
-        cult::Cult, detained::Detained, generic_ability::GenericAbilitySaveComponent, mafia::Mafia, night_visits::NightVisits, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem, verdicts_today::VerdictsToday
-    },
-    phase::PhaseType, player::PlayerReference, Game
+        cult::Cult, detained::Detained,
+        mafia::Mafia, night_visits::NightVisits,
+        pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem,
+        verdicts_today::VerdictsToday
+    }, phase::PhaseType, player::PlayerReference, Game
 };
 
 #[must_use = "Event must be invoked"]
@@ -24,7 +27,7 @@ impl OnPhaseStart{
         Mafia::on_phase_start(game, self.phase);
         Cult::on_phase_start(game, self.phase);
         Pitchfork::on_phase_start(game, self.phase);
-        GenericAbilitySaveComponent::on_phase_start(game, self.phase);
+        SavedAbilityInputs::on_phase_start(game, self.phase);
         SyndicateGunItem::on_phase_start(game, self.phase);
 
         game.on_phase_start(self.phase);

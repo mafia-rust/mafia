@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::ability_input::common_selection::two_role_outline_option_selection::TwoRoleOutlineOptionSelection;
+use crate::game::ability_input::selection_type::two_role_outline_option_selection::TwoRoleOutlineOptionSelection;
 use crate::game::components::confused::Confused;
 use crate::game::role_outline_reference::RoleOutlineReference;
 use crate::game::ability_input::AbilityInput;

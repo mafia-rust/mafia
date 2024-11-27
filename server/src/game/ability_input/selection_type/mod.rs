@@ -14,12 +14,4 @@ pub struct BooleanSelection(pub bool);
 
 
 
-pub trait AvailableSelection{
-    type Selection;
-    fn validate_selection(&self, selection: &Self::Selection)->bool;
-}
-
-
-
-
 

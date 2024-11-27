@@ -7,7 +7,7 @@ pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*,
     ability_input::{
-        common_selection::{
+        selection_type::{
             one_player_option_selection::OnePlayerOptionSelection, 
             two_role_option_selection::TwoRoleOptionSelection,
             two_role_outline_option_selection::TwoRoleOutlineOptionSelection

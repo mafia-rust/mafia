@@ -1,4 +1,7 @@
-use crate::game::{components::generic_ability::GenericAbilitySaveComponent, Game};
+use crate::game::{
+    ability_input::saved_ability_inputs::SavedAbilityInputs, 
+    Game
+};
 
 pub struct OnTick;
 
@@ -7,6 +10,6 @@ impl OnTick{
         Self{}
     }
     pub fn invoke(&self, game: &mut Game){
-        GenericAbilitySaveComponent::on_tick(game);
+        SavedAbilityInputs::on_tick(game);
     }
 }

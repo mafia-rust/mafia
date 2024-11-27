@@ -23,11 +23,8 @@ use vec1::Vec1;
 
 use crate::{
     game::{
-        ability_input::AbilityInput, available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage},
-        components::{
-            generic_ability::{AvailableGenericAbilitySelection, GenericAbilitySelection},
-            insider_group::InsiderGroupID
-        },
+        ability_input::{ability_selection::{AbilitySelection, AvailableAbilitySelection}, AbilityID, AbilityInput}, available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage},
+        components::insider_group::InsiderGroupID,
         grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType},
         player::{PlayerIndex, PlayerReference}, 
         role::{
@@ -122,11 +119,9 @@ pub enum ToClientPacket{
 
     
     #[serde(rename_all = "camelCase")]
-    AvailableGenericAbilitySelection{available_selection: AvailableGenericAbilitySelection},
+    YourAvailableAbilityInput{selection: VecMap<AbilityID, AvailableAbilitySelection>},
     #[serde(rename_all = "camelCase")]
-    GenericAbilitySelection{selection: GenericAbilitySelection},
-    #[serde(rename_all = "camelCase")]
-    ClearGenericAbilitySelection,
+    YourSavedAbilityInput{selection: VecMap<AbilityID, AbilitySelection>},
 
     YourButtons{buttons: Vec<AvailableButtons>},
     #[serde(rename_all = "camelCase")]

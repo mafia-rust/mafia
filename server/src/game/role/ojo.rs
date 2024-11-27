@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::ability_input::common_selection::two_role_outline_option_selection::TwoRoleOutlineOptionSelection;
+use crate::game::ability_input::selection_type::two_role_outline_option_selection::TwoRoleOutlineOptionSelection;
 use crate::game::ability_input::AbilityInput;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;

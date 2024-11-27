@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use crate::{game::{
-    ability_input::common_selection::one_player_option_selection::AvailableOnePlayerOptionSelection,
+    ability_input::selection_type::one_player_option_selection::AvailableOnePlayerOptionSelection,
     chat::ChatGroup,
     components::{
         detained::Detained,

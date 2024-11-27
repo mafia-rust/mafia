@@ -1,7 +1,7 @@
 use crate::game::{
-    ability_input::AbilityInput,
+    ability_input::{saved_ability_inputs::SavedAbilityInputs, AbilityInput},
     components::{
-        forfeit_vote::ForfeitVote, generic_ability::GenericAbilitySaveComponent, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem
+        forfeit_vote::ForfeitVote, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem
     }, 
     modifiers::Modifiers, 
     player::PlayerReference,
@@ -24,7 +24,7 @@ impl OnAbilityInputReceived{
         Pitchfork::on_ability_input_received(game, self.actor_ref, self.input.clone());
         Modifiers::on_ability_input_received(game, self.actor_ref, self.input.clone());
         ForfeitVote::on_ability_input_received(game, self.actor_ref, self.input.clone());
-        GenericAbilitySaveComponent::on_ability_input_received(game, self.actor_ref, self.input.clone());
+        SavedAbilityInputs::on_ability_input_received(game, self.actor_ref, self.input.clone());
         SyndicateGunItem::on_ability_input_received(game, self.actor_ref, self.input);
     }
 }

@@ -149,6 +149,35 @@ impl<'de, K, V> Deserialize<'de> for VecMap<K, V> where K: Eq, K: Deserialize<'d
     }
 }
 
+
+
+
+
+
+enum Entry<'a, K, V> where K: Eq {
+    Vacant(VacantEntry<'a, K, V>),
+    Occupied(OccupiedEntry<'a, K, V>),
+}
+
+
+impl VecMap<K, V>{
+    pub fn entry(&mut self, key: K) -> Entry<K, V> {
+        if let Some((_, v)) = self.vec.iter_mut().find(|(k, _)| *k == key) {
+            Entry::Occupied(OccupiedEntry { vec: &mut self.vec, key, value: v })
+        } else {
+            Entry::Vacant(VacantEntry { vec: &mut self.vec, key })
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
 pub use macros::vec_map;
 mod macros {
     #[macro_export]

@@ -1,30 +1,26 @@
-pub mod common_selection;
+pub mod selection_type;
+pub mod ability_selection;
+pub mod saved_ability_inputs;
 
-use common_selection::{
-    one_player_option_selection::OnePlayerOptionSelection,
-    role_option_selection::RoleOptionSelection,
-    two_player_option_selection::TwoPlayerOptionSelection,
-    two_role_option_selection::TwoRoleOptionSelection,
-    two_role_outline_option_selection::TwoRoleOutlineOptionSelection,
-    BooleanSelection
-};
+use ability_selection::{AbilitySelection, AvailableAbilitySelection};
+
 use serde::{Deserialize, Serialize};
+use crate::vec_map::VecMap;
+
 use super::{
     event::on_ability_input_received::OnAbilityInputReceived,
     player::PlayerReference,
     Game
 };
 
-#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Eq, Ord)]
-pub struct AbilityInput(AbilityID, AbilitySelection);
 
 
 pub type RoleAbilityID = u8;
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Eq, Ord)]
+#[serde(rename_all = "camelCase")]
+#[serde(tag="type")]
 pub enum AbilityID{
-    Role{
-        role_ability_id: RoleAbilityID,
-    },
+    Role{role_ability_id: RoleAbilityID},
     ForfeitVote,
     PitchforkVote,
     SyndicateGunItemShoot,
@@ -32,16 +28,41 @@ pub enum AbilityID{
 }
 
 
-#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Eq, Ord)]
-pub enum AbilitySelection{
-    Unit,
-    BooleanSelection{selection: BooleanSelection},
-    OnePlayerOption{selection: OnePlayerOptionSelection},
-    TwoPlayerOption{selection: TwoPlayerOptionSelection},
-    RoleOption{selection: RoleOptionSelection,},
-    TwoRoleOption{selection: TwoRoleOptionSelection},
-    TwoRoleOutlineOption{selection: TwoRoleOutlineOptionSelection},
+
+
+
+
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
+pub struct AbilityInput{
+    abilities: VecMap<AbilityID, AbilitySelection>
 }
+
+
+#[derive(Default, Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct AvailableAbilityInput{
+    abilities: VecMap<AbilityID, AvailableAbilitySelection>
+}
+impl AvailableAbilityInput{
+    pub fn new(abilities: VecMap<AbilityID, AvailableAbilitySelection>)->Self{
+        Self{abilities}
+    }
+}
+
+
+
+
+
+pub trait ValidateAvailableSelection{
+    type Selection;
+    fn validate_selection(&self, selection: &Self::Selection)->bool;
+}
+
+
+
+
+
+
 
 // #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Eq, Ord)]
 // #[serde(rename_all = "camelCase", tag="type")]
