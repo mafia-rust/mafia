@@ -1,6 +1,71 @@
-import { GenericAbilitySelection } from "../menu/game/gameScreenContent/AbilityMenu/GenericAbilityMenu";
-import { KiraInput } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu";
 import { Role } from "./roleState.d";
+
+
+export type AbilityInput = {
+    id: AbilityID, 
+    selection: AbilitySelection
+}
+
+
+export type AbilityID = {
+    type: "role"
+    roleAbilityId: RoleAbilityID
+} | {
+    type: "forfeitVote",
+} | {
+    type: "pitchforkVote",
+} | {
+    type: "syndicateGunItemShoot",
+} | {
+    type: "syndicateGunItemGive",
+}
+
+export type RoleAbilityID = number;
+
+export type AbilitySelection = {
+    type: "unit",
+} | {
+    type: "boolean"
+    selection: BooleanSelection
+} | {
+    type: "onePlayerOption"
+    selection: OnePlayerOptionSelection
+} | {
+    type: "twoPlayerOption"
+    selection: TwoPlayerOptionSelection
+} | {
+    type: "roleOption"
+    selection: RoleOptionSelection
+} | {
+    type: "twoRoleOption"
+    selection: TwoRoleOptionSelection
+} | {
+    type: "twoRoleOutlineOption"
+    selection: TwoRoleOutlineOptionSelection
+};
+
+
+export type AvailableAbilitySelection = {
+    type: "unit",
+} | {
+    type: "booleanSelection",
+} | {
+    type: "onePlayerOption"
+    selection: AvailableOnePlayerOptionSelection,
+} | {
+    type: "twoPlayerOption"
+    selection: AvailableTwoPlayerOptionSelection,
+} | {
+    type: "roleOption"
+    selection: AvailableRoleOptionSelection,
+} | {
+    type: "twoRoleOption"
+    selection: AvailableTwoRoleOptionSelection,
+} | {
+    type: "twoRoleOutlineOption"
+    selection: AvailableTwoRoleOutlineOptionSelection,
+}
+
 
 export type BooleanSelection = boolean | null;
 
@@ -15,6 +80,9 @@ export type AvailableTwoPlayerOptionSelection = {
 }
 
 export type RoleOptionSelection = Role | null;
+export type AvailableRoleOptionSelection = (Role | null)[];
+
+
 export type TwoRoleOptionSelection = [Role | null, Role | null];
 export type AvailableTwoRoleOptionSelection = {
     availableRoles: (Role | null)[],
@@ -23,36 +91,3 @@ export type AvailableTwoRoleOptionSelection = {
 
 export type TwoRoleOutlineOptionSelection = [number | null, number | null];
 export type AvailableTwoRoleOutlineOptionSelection = (number | null)[];
-
-
-export type AbilityInput = {
-    type: "genericAbility",
-    selection: GenericAbilitySelection
-} | {
-    type: "disguiser",
-    input: RoleOptionSelection
-} | {
-    type: "auditor",
-    selection: TwoRoleOutlineOptionSelection
-} | {
-    type: "steward",
-    selection: TwoRoleOptionSelection
-} | {
-    type: "ojoInvestigate",
-    selection: TwoRoleOutlineOptionSelection
-} | {
-    type: "kira",
-    selection: KiraInput
-} | {
-    type: "forfeitVote"
-    selection: BooleanSelection,
-} | {
-    type: "pitchforkVote"
-    selection: OnePlayerOptionSelection,
-} | {
-    type: "syndicateGunItemShoot",
-    input: OnePlayerOptionSelection,
-} | {
-    type: "syndicateGunItemGive",
-    input: OnePlayerOptionSelection,
-}

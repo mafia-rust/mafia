@@ -10,7 +10,7 @@ use super::{selection_type::{
 #[serde(tag="type")]
 pub enum AbilitySelection{
     Unit,
-    BooleanSelection{selection: BooleanSelection},
+    Boolean{selection: BooleanSelection},
     OnePlayerOption{selection: OnePlayerOptionSelection},
     TwoPlayerOption{selection: TwoPlayerOptionSelection},
     RoleOption{selection: RoleOptionSelection,},

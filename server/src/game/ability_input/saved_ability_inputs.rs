@@ -43,42 +43,40 @@ impl SavedAbilityInputs{
         actor: PlayerReference,
         ability_input: AbilityInput
     ){
+        let (id, incoming_selection) = (ability_input.id, ability_input.selection);
 
-        for (id, incoming_selection) in ability_input.abilities{
+        let Some(saved_ability_input) = 
+            game.saved_ability_inputs.players_saved_inputs.get_mut(&actor) else {return};
 
-            let Some(saved_ability_input) = 
-                game.saved_ability_inputs.players_saved_inputs.get_mut(&actor) else {return};
-
-            let Some((saved_selection, available_selection)) = 
-                saved_ability_input.save.get_mut(&id) else {continue};
-
+        let Some((saved_selection, available_selection)) = 
+            saved_ability_input.save.get_mut(&id) else {return;};
 
 
-            if 
-                !available_selection.validate_selection(&incoming_selection) ||
-                saved_selection.as_ref().is_some_and(|s| *s == incoming_selection)
-            {
-                continue;
-            }
 
-            *saved_selection = Some(incoming_selection.clone());
-
-            let out_packet = ToClientPacket::YourSavedAbilityInput{selection:
-                saved_ability_input.save
-                    .iter()
-                    .filter_map(|(id, (selection, _))|{
-                        if let Some(selection) = selection{
-                            Some((id.clone(), selection.clone()))
-                        }else{
-                            None
-                        }
-                    })
-                    .collect()
-            };
-
-            actor.send_packet(game, out_packet);
-            Self::send_selection_message(game, actor, id, incoming_selection);
+        if 
+            !available_selection.validate_selection(&incoming_selection) ||
+            saved_selection.as_ref().is_some_and(|s| *s == incoming_selection)
+        {
+            return;
         }
+
+        *saved_selection = Some(incoming_selection.clone());
+
+        let out_packet = ToClientPacket::YourSavedAbilityInput{selection:
+            saved_ability_input.save
+                .iter()
+                .filter_map(|(id, (selection, _))|{
+                    if let Some(selection) = selection{
+                        Some((id.clone(), selection.clone()))
+                    }else{
+                        None
+                    }
+                })
+                .collect()
+        };
+
+        actor.send_packet(game, out_packet);
+        Self::send_selection_message(game, actor, id, incoming_selection);
     }
 
 
@@ -203,5 +201,21 @@ impl SavedAbilityInputs{
             player_ref.add_private_chat_message(game, chat_message);
         }
     }
+
+
+
+    //Query
+    pub fn get_saved_ability_selection(
+        game: &Game,
+        player_ref: PlayerReference,
+        id: AbilityID
+    )->Option<AbilitySelection>{
+        game.saved_ability_inputs.players_saved_inputs
+            .get(&player_ref)
+            .and_then(|data| data.save.get(&id))
+            .map(|(selection, _)| selection.clone())
+            .flatten()
+    }
+
 }
 

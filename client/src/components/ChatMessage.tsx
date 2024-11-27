@@ -16,6 +16,7 @@ import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSp
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
 import { GenericAbilityID, GenericAbilitySelectionType } from "../menu/game/gameScreenContent/AbilityMenu/GenericAbilityMenu";
+import { AbilityID, AbilitySelection } from "../game/abilityInput";
 
 const ChatElement = React.memo((
     props: {
@@ -454,34 +455,34 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     playerNames[message.targeter],
                 );
             }
-        case "genericAbilityUsed":
+        case "abilityUsed":
             switch (message.selection.type) {
-                case "unitSelection":
-                    return translate("chatMessage.genericAbilityUsed.unitSelection",
+                case "unit":
+                    return translate("chatMessage.abilityUsed.unit",
                         playerNames[message.player],
                         translate("role."+message.role+".name"),
-                        translate("genericAbility.abilityId."+message.role+"."+message.abilityId+".name")
+                        translate("ability.abilityId."+message.role+"."+message.abilityId+".name")
                     );
-                case "onePlayerOptionSelection":
-                    return translate("chatMessage.genericAbilityUsed.onePlayerOptionSelection",
+                case "onePlayerOption":
+                    return translate("chatMessage.abilityUsed.onePlayerOption",
                         playerNames[message.player],
                         translate("role."+message.role+".name"),
-                        translate("genericAbility.abilityId."+message.role+"."+message.abilityId+".name"),
+                        translate("ability.abilityId."+message.role+"."+message.abilityId+".name"),
                         message.selection.selection===null?translate("nobody"):playerNames[message.selection.selection],
                     );
-                case "twoRoleOptionSelection":
-                    return translate("chatMessage.genericAbilityUsed.twoRoleOptionSelection",
+                case "twoRoleOption":
+                    return translate("chatMessage.abilityUsed.twoRoleOption",
                         playerNames[message.player],
                         translate("role."+message.role+".name"),
-                        translate("genericAbility.abilityId."+message.role+"."+message.abilityId+".name"),
+                        translate("ability.abilityId."+message.role+"."+message.abilityId+".name"),
                         message.selection.selection[0]===null?translate("none"):translate("role."+message.selection.selection[0]+".name"),
                         message.selection.selection[1]===null?translate("none"):translate("role."+message.selection.selection[1]+".name"),
                     );
-                case "twoRoleOutlineOptionSelection":
-                    return translate("chatMessage.genericAbilityUsed.twoRoleOutlineOptionSelection",
+                case "twoRoleOutlineOption":
+                    return translate("chatMessage.abilityUsed.twoRoleOutlineOption",
                         playerNames[message.player],
                         translate("role."+message.role+".name"),
-                        translate("genericAbility.abilityId."+message.role+"."+message.abilityId+".name"),
+                        translate("ability.abilityId."+message.role+"."+message.abilityId+".name"),
                         message.selection.selection[0] === null ? translate("none") : message.selection.selection[0].toString(),
                         message.selection.selection[1] === null ? translate("none") : message.selection.selection[1].toString()
                     );
@@ -814,11 +815,11 @@ export type ChatMessageVariant = {
     targeter: PlayerIndex, 
     targets: PlayerIndex[]
 } | {
-    type: "genericAbilityUsed", 
+    type: "abilityUsed", 
     player: PlayerIndex,
     role: Role | null,
-    abilityId: GenericAbilityID,
-    selection: GenericAbilitySelectionType
+    abilityId: AbilityID,
+    selection: AbilitySelection
     
 } | {
     type: "phaseFastForwarded"

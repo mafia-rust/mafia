@@ -7,7 +7,7 @@ import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleS
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu"
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu"
 import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu"
-import { AbilityInput } from "./abilityInput"
+import { AbilityID, AbilityInput, AbilitySelection, AvailableAbilitySelection } from "./abilityInput"
 import { AvailableGenericAbilitySelection, GenericAbilitySelection } from "../menu/game/gameScreenContent/AbilityMenu/GenericAbilityMenu"
 import { ListMapData } from "../ListMap"
 
@@ -120,13 +120,11 @@ export type ToClientPacket = {
     type: "yourInsiderGroups",
     insiderGroups: InsiderGroup[]
 } | {
-    type: "availableGenericAbilitySelection",
-    availableSelection: AvailableGenericAbilitySelection
+    type: "yourAvailableAbilityInput",
+    selection: ListMapData<AbilityID, AvailableAbilitySelection>
 } | {
-    type: "genericAbilitySelection",
-    selection: GenericAbilitySelection
-} | {
-    type: "clearGenericAbilitySelection"
+    type: "yourSavedAbilityInput",
+    selection: ListMapData<AbilityID, AbilitySelection>
 } | {
     type: "yourButtons", 
     buttons: [{

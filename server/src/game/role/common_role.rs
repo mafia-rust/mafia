@@ -1,15 +1,10 @@
 use std::collections::HashSet;
 
 use crate::{game::{
-    ability_input::selection_type::one_player_option_selection::AvailableOnePlayerOptionSelection,
+    ability_input::{ability_selection::{AbilitySelection, AvailableAbilitySelection}, saved_ability_inputs::SavedAbilityInputs, selection_type::one_player_option_selection::AvailableOnePlayerOptionSelection, AbilityID, AvailableAbilityInput},
     chat::ChatGroup,
     components::{
         detained::Detained,
-        generic_ability::{
-            AvailableGenericAbilitySelection,
-            AvailableGenericAbilitySelectionType, GenericAbilityID,
-            GenericAbilitySaveComponent, GenericAbilitySelectionType
-        },
         puppeteer_marionette::PuppeteerMarionette
     },
     game_conclusion::GameConclusion,
@@ -39,11 +34,12 @@ pub(super) fn convert_selection_to_visits(_game: &Game, actor_ref: PlayerReferen
     }
 }
 
-pub(super) fn available_generic_ability_selection_one_player_night(
+pub(super) fn available_ability_input_one_player_night(
     game: &Game,
     actor_ref: PlayerReference,
     can_select_self: bool,
-) -> AvailableGenericAbilitySelection {
+    ability_id: AbilityID
+) -> AvailableAbilityInput {
     match game.current_phase().phase() {
         PhaseType::Night => {
             let mut all_allowed_inputs: VecSet<Option<PlayerReference>> = PlayerReference::all_players(game)
@@ -58,61 +54,63 @@ pub(super) fn available_generic_ability_selection_one_player_night(
                 all_allowed_inputs.remove(&Some(actor_ref));
             }
 
-            AvailableGenericAbilitySelection::new(crate::vec_map![(0, 
-                AvailableGenericAbilitySelectionType::OnePlayerOptionSelection{
+            AvailableAbilityInput::new(crate::vec_map![(ability_id, 
+                AvailableAbilitySelection::OnePlayerOption {
                     selection: AvailableOnePlayerOptionSelection(all_allowed_inputs)
                 }
             )])
         },
-        _ => AvailableGenericAbilitySelection::default()
+        _ => AvailableAbilityInput::default()
     }
 }
 
-pub(super) fn convert_generic_ability_to_visits(game: &Game, actor_ref: PlayerReference, ability_id: GenericAbilityID, attack: bool) -> Vec<Visit> {
-    GenericAbilitySaveComponent::get_saved_input(game, actor_ref, ability_id)
-        .map(|selection|
-            match selection {
-                GenericAbilitySelectionType::UnitSelection => vec![Visit::new_none(actor_ref, actor_ref, attack)],
-                GenericAbilitySelectionType::OnePlayerOptionSelection { selection } => match selection.0 {
-                    Some(target_ref) => vec![Visit::new_none(actor_ref, target_ref, attack)],
-                    None => Vec::new(),
-                },
-                GenericAbilitySelectionType::TwoPlayerOptionSelection { selection } => {
-                    let mut out = Vec::new();
-                    if let Some(target_ref) = selection.0 {
-                        out.push(Visit::new_none(actor_ref, target_ref, attack));
-                    }
-                    if let Some(target_ref) = selection.1 {
-                        out.push(Visit::new_none(actor_ref, target_ref, attack));
-                    }
-                    out
-                },
-                GenericAbilitySelectionType::TwoRoleOptionSelection { selection } => {
-                    let mut out = Vec::new();
-                    for player in PlayerReference::all_players(game){
-                        if Some(player.role(game)) == selection.0 {
-                            out.push(Visit::new_none(actor_ref, player, attack));
-                        }else if Some(player.role(game)) == selection.1 {
-                            out.push(Visit::new_none(actor_ref, player, attack));
-                        }
-                    }
-                    out
-                }
-                GenericAbilitySelectionType::TwoRoleOutlineOptionSelection { selection } => {
-                    let mut out = vec![];
-                    if let Some(chosen_outline) = selection.0{
-                        let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-                        out.push(Visit::new_none(actor_ref, player, false));
-                    }
-                    if let Some(chosen_outline) = selection.1{
-                        let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-                        out.push(Visit::new_none(actor_ref, player, false));
-                    }
-                    out
-                },
+/// This function uses defaults. When using this function, consider if you need to override the defaults.
+pub(super) fn convert_saved_ability_to_visits(game: &Game, actor_ref: PlayerReference, ability_id: AbilityID, attack: bool) -> Vec<Visit> {
+    
+    let Some(selection) = 
+        SavedAbilityInputs::get_saved_ability_selection(game, actor_ref, ability_id) else {return Vec::new()};
+    
+    match selection {
+        AbilitySelection::Unit => vec![Visit::new_none(actor_ref, actor_ref, attack)],
+        AbilitySelection::OnePlayerOption { selection } => match selection.0 {
+            Some(target_ref) => vec![Visit::new_none(actor_ref, target_ref, attack)],
+            None => Vec::new(),
+        },
+        AbilitySelection::TwoPlayerOption { selection } => {
+            let mut out = Vec::new();
+            if let Some(target_ref) = selection.0 {
+                out.push(Visit::new_none(actor_ref, target_ref, attack));
             }
-        )
-        .unwrap_or_default()
+            if let Some(target_ref) = selection.1 {
+                out.push(Visit::new_none(actor_ref, target_ref, attack));
+            }
+            out
+        },
+        AbilitySelection::TwoRoleOption { selection } => {
+            let mut out = Vec::new();
+            for player in PlayerReference::all_players(game){
+                if Some(player.role(game)) == selection.0 {
+                    out.push(Visit::new_none(actor_ref, player, attack));
+                }else if Some(player.role(game)) == selection.1 {
+                    out.push(Visit::new_none(actor_ref, player, attack));
+                }
+            }
+            out
+        }
+        AbilitySelection::TwoRoleOutlineOption { selection } => {
+            let mut out = vec![];
+            if let Some(chosen_outline) = selection.0{
+                let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
+                out.push(Visit::new_none(actor_ref, player, false));
+            }
+            if let Some(chosen_outline) = selection.1{
+                let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
+                out.push(Visit::new_none(actor_ref, player, false));
+            }
+            out
+        },
+        _ => Vec::new()
+    }
 }
 
 pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference, mut night_chat_groups: Vec<ChatGroup>) -> HashSet<ChatGroup> {

@@ -3,6 +3,7 @@ use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
+use mafia_server::game::ability_input::{ability_selection::AbilitySelection, AbilityID};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*,
@@ -202,12 +203,15 @@ fn auditor_standard_double_audit(){
         _mafioso: Mafioso
     );
 
-    auditor.send_ability_input(AbilityInput::Auditor { 
-        selection: TwoRoleOutlineOptionSelection(
+    let input = AbilityInput::new(
+        AbilityID::role(0), 
+        AbilitySelection::TwoRoleOutlineOption { selection: TwoRoleOutlineOptionSelection(
             RoleOutlineReference::new(&game, 0), 
             RoleOutlineReference::new(&game, 1)
-        )
-    });
+        ) }
+    );
+
+    auditor.send_ability_input(input);
     game.next_phase();
     
     let messages = auditor.get_messages_after_night(1);

@@ -1,7 +1,7 @@
 use std::ops::Mul;
 
 use crate::{game::{
-    ability_input::AbilityInput, attack_power::AttackPower, game_conclusion::GameConclusion, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::Priority, role_list::RoleSet, Game
+    ability_input::{AbilityID, AbilityInput}, attack_power::AttackPower, game_conclusion::GameConclusion, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::Priority, role_list::RoleSet, Game
 }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
 #[derive(Clone)]
@@ -36,12 +36,8 @@ impl Default for Pitchfork{
 
 impl Pitchfork{
     pub fn on_ability_input_received(game: &mut Game, actor_ref: PlayerReference, input: AbilityInput){
-        match input{
-            AbilityInput::PitchforkVote{selection} => {
-                Pitchfork::player_votes_for_angry_mob_action(game, actor_ref, selection.0);
-            },
-            _ => {}
-        }
+        let Some(selection) = input.get_player_option_selection_if_id(AbilityID::pitchfork_vote()) else {return};
+        Pitchfork::player_votes_for_angry_mob_action(game, actor_ref, selection.0);
     }
     pub fn on_phase_start(game: &mut Game, phase: PhaseType){
         match phase{

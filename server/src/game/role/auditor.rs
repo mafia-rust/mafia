@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::game::ability_input::selection_type::two_role_outline_option_selection::TwoRoleOutlineOptionSelection;
 use crate::game::components::confused::Confused;
 use crate::game::role_outline_reference::RoleOutlineReference;
-use crate::game::ability_input::AbilityInput;
+use crate::game::ability_input::AbilityID;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -73,8 +73,10 @@ impl RoleStateImpl for Auditor {
     fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: crate::game::ability_input::AbilityInput) {
         if actor_ref != input_player {return};
         if !actor_ref.alive(game) {return};
-        let AbilityInput::Auditor { selection } = ability_input else {return};
-                    
+
+        let Some(selection) = ability_input
+            .get_two_role_outline_option_selection_if_id(AbilityID::role(0)) else {return};
+             
         if let Some(outline) = selection.0{
             if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {
                 self.chosen_outline.0 = Some(outline);

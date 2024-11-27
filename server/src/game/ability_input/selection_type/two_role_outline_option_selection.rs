@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::game::{ability_input::ValidateAvailableSelection, role_outline_reference::RoleOutlineReference};
+use crate::game::{ability_input::{ability_selection::AbilitySelection, AbilityID, AbilityInput, ValidateAvailableSelection}, role_outline_reference::RoleOutlineReference};
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct TwoRoleOutlineOptionSelection(
@@ -14,5 +14,14 @@ impl ValidateAvailableSelection for AvailableTwoRoleOutlineOptionSelection{
     type Selection = TwoRoleOutlineOptionSelection;
     fn validate_selection(&self, selection: &TwoRoleOutlineOptionSelection)->bool{
         self.0.contains(&selection.0) && self.0.contains(&selection.1)
+    }
+}
+
+
+impl AbilityInput{
+    pub fn get_two_role_outline_option_selection_if_id(&self, id: AbilityID)->Option<TwoRoleOutlineOptionSelection>{
+        if id != self.id() {return None};
+        let AbilitySelection::TwoRoleOutlineOption { selection } = self.selection() else {return None};
+        Some(selection)
     }
 }

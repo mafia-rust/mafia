@@ -1,6 +1,5 @@
 use serde::{Serialize, Deserialize};
 
-use crate::game::ability_input::AbilityInput;
 use crate::game::attack_power::AttackPower;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
@@ -184,21 +183,21 @@ impl RoleStateImpl for Kira {
         }    
     }
     fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: crate::game::ability_input::AbilityInput) {
-        if actor_ref != input_player {return};
-        if !actor_ref.alive(game) {return};
-        let AbilityInput::Kira{selection: KiraAbilityInput(input)} = ability_input else {return};
+        // if actor_ref != input_player {return};
+        // if !actor_ref.alive(game) {return};
+        // let AbilityInput::Kira{selection: KiraAbilityInput(input)} = ability_input else {return};
         
-        let mut new_guesses: VecMap<PlayerReference, KiraGuess> = VecMap::new();
+        // let mut new_guesses: VecMap<PlayerReference, KiraGuess> = VecMap::new();
 
-        for (player_ref, guess) in input {
-            if Kira::allowed_to_guess(actor_ref, player_ref, game){
-                new_guesses.insert(player_ref, guess);
-            }
-        }
+        // for (player_ref, guess) in input {
+        //     if Kira::allowed_to_guess(actor_ref, player_ref, game){
+        //         new_guesses.insert(player_ref, guess);
+        //     }
+        // }
 
-        self.guesses = new_guesses;
-        actor_ref.set_role_state(game, self);
-        Kira::set_guesses(actor_ref, game);
+        // self.guesses = new_guesses;
+        // actor_ref.set_role_state(game, self);
+        // Kira::set_guesses(actor_ref, game);
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType) {
         Kira::set_guesses(actor_ref, game);

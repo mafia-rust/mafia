@@ -111,47 +111,47 @@ impl SyndicateGunItem {
         }else{
             return;
         }
-        
 
-        match ability_input {
-            AbilityInput::SyndicateGunItemShoot{input} => {
-                if let Some(target) = input.0 {
-                    if 
-                        actor_ref != target &&
-                        !Detained::is_detained(game, actor_ref) &&
-                        actor_ref.alive(game) &&
-                        target.alive(game) &&
-                        !InsiderGroupID::in_same_revealed_group(game, actor_ref, target) &&
-                        game.day_number() > 1
-                    {
-                        SyndicateGunItem::target_gun(game, input.0);
-                    }else{
-                        return;
-                    }
+        if let Some(selection) = ability_input
+            .get_player_option_selection_if_id(crate::game::ability_input::AbilityID::SyndicateGunItemGive)
+        {
+            if let Some(target) = selection.0 {
+                if 
+                    actor_ref != target &&
+                    target.alive(game) &&
+                    InsiderGroupID::Mafia.is_player_in_revealed_group(game, target) 
+                {
+                    SyndicateGunItem::give_gun(game, target);
+                }
+            }
+        }else if let Some(selection) = ability_input
+            .get_player_option_selection_if_id(crate::game::ability_input::AbilityID::SyndicateGunItemShoot) 
+        {
+
+            if let Some(target) = selection.0 {
+                if 
+                    actor_ref != target &&
+                    !Detained::is_detained(game, actor_ref) &&
+                    actor_ref.alive(game) &&
+                    target.alive(game) &&
+                    !InsiderGroupID::in_same_revealed_group(game, actor_ref, target) &&
+                    game.day_number() > 1
+                {
+                    SyndicateGunItem::target_gun(game, selection.0);
                 }else{
-                    SyndicateGunItem::target_gun(game, None);
+                    return;
                 }
+            }else{
+                SyndicateGunItem::target_gun(game, None);
+            }
 
-                game.add_message_to_chat_group(
-                    crate::game::chat::ChatGroup::Mafia, 
-                    crate::game::chat::ChatMessageVariant::SyndicateGunTarget {
-                        shooter: actor_ref.index(),
-                        target: input.0.map(|f|f.index()),
-                    }
-                );
-            }
-            AbilityInput::SyndicateGunItemGive{input} => {
-                if let Some(target) = input.0 {
-                    if 
-                        actor_ref != target &&
-                        target.alive(game) &&
-                        InsiderGroupID::Mafia.is_player_in_revealed_group(game, target) 
-                    {
-                        SyndicateGunItem::give_gun(game, target);
-                    }
+            game.add_message_to_chat_group(
+                crate::game::chat::ChatGroup::Mafia, 
+                crate::game::chat::ChatMessageVariant::SyndicateGunTarget {
+                    shooter: actor_ref.index(),
+                    target: selection.0.map(|f|f.index()),
                 }
-            }
-            _ => {}
+            );
         }
     }
 }

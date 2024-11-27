@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::ability_input::AbilityInput;
+use crate::game::ability_input::{AbilityID, AbilityInput};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
 use crate::game::grave::GraveInformation;
@@ -61,15 +61,15 @@ impl RoleStateImpl for Disguiser {
     fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: AbilityInput) {
         if actor_ref != input_player {return;}
         if !actor_ref.alive(game) {return};
-        match ability_input {
-            AbilityInput::Disguiser{selection} => {
-                if let Some(target) = selection.0 {
-                    self.disguised_role = target;
-                }
-                actor_ref.set_role_state(game, self);
-            },
-            _ => {}
-        }
+
+        if let Some(selection) = ability_input.get_role_option_selection_if_id(AbilityID::role(0)) {
+            if let Some(target) = selection.0 {
+                self.disguised_role = target;
+            }
+        };
+        
+
+        actor_ref.set_role_state(game, self);
     }
     fn on_any_death(mut self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference) {
         if

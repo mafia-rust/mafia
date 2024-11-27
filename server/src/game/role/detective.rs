@@ -1,7 +1,7 @@
 use serde::Serialize;
 
+use crate::game::ability_input::AbilityID;
 use crate::game::components::confused::Confused;
-use crate::game::components::generic_ability::AvailableGenericAbilitySelection;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::player::PlayerReference;
@@ -36,11 +36,11 @@ impl RoleStateImpl for Detective {
             actor_ref.push_night_message(game, message);
         }
     }
-    fn available_generic_ability_selection(self, game: &Game, actor_ref: PlayerReference) -> AvailableGenericAbilitySelection {
-        crate::game::role::common_role::available_generic_ability_selection_one_player_night(game, actor_ref, false)
+    fn available_ability_input(self, game: &Game, actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilityInput {
+        crate::game::role::common_role::available_ability_input_one_player_night(game, actor_ref, false, AbilityID::role(0))
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_generic_ability_to_visits(game, actor_ref, 0, false)
+        crate::game::role::common_role::convert_saved_ability_to_visits(game, actor_ref, AbilityID::role(0), false)
     }
 }
 

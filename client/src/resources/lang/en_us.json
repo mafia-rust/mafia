@@ -196,7 +196,7 @@
     "role.detective.name":"Detective",
     "role.detective.name:var.0":"Detectives",
     "role.detective.target": "Interrogate",
-    "genericAbility.abilityId.detective.0.name": "Investigate",
+    "ability.abilityId.detective.0.name": "Investigate",
     "role.detective.youAreSelecting": "You are interrogating \\0.",
     "role.detective.youAreSelecting.null": "You aren't to interrogating anybody",
 
@@ -298,7 +298,7 @@
 
     "role.mayor.name": "Mayor",
     "role.mayor.name:var.0": "Mayors",
-    "genericAbility.abilityId.mayor.0.name": "Enfranchise",
+    "ability.abilityId.mayor.0.name": "Enfranchise",
     "role.mayor.dayTarget": "Enfranchise",
 
     "role.transporter.name": "Transporter",
@@ -846,10 +846,10 @@
     "chatMessage.targeted":"\\0 selected \\1.",
     "chatMessage.targeted.cleared":"\\0 cleared their selection.",
 
-    "chatMessage.genericAbilityUsed.unitSelection":"\\0 uses \\1 \\2.",
-    "chatMessage.genericAbilityUsed.onePlayerOptionSelection":"\\0 uses \\1 \\2 selecting \\3.",
-    "chatMessage.genericAbilityUsed.twoRoleOptionSelection":"\\0 uses \\1 \\2 selecting \\3 and \\4.",
-    "chatMessage.genericAbilityUsed.twoRoleOutlineOptionSelection":"\\0 uses \\1 \\2 selecting \\3 \\4.",
+    "chatMessage.abilityUsed.unit":"\\0 uses \\1 \\2.",
+    "chatMessage.abilityUsed.onePlayerOption":"\\0 uses \\1 \\2 selecting \\3.",
+    "chatMessage.abilityUsed.twoRoleOption":"\\0 uses \\1 \\2 selecting \\3 and \\4.",
+    "chatMessage.abilityUsed.twoRoleOutlineOption":"\\0 uses \\1 \\2 selecting \\3 \\4.",
 
     "chatMessage.mayorRevealed":"\\0 has enfranchised!",
     "chatMessage.mayorCantWhisper":"You can not whisper with an enfranchised player.",

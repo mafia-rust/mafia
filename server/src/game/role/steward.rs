@@ -2,7 +2,7 @@
 use serde::Serialize;
 
 use crate::game::ability_input::selection_type::two_role_option_selection::TwoRoleOptionSelection;
-use crate::game::ability_input::AbilityInput;
+use crate::game::ability_input::{AbilityID, AbilityInput};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -105,8 +105,9 @@ impl RoleStateImpl for Steward {
     fn on_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: AbilityInput) {
         if actor_ref != input_player {return}
         if !actor_ref.alive(game) {return}
-        let AbilityInput::Steward { selection } = ability_input else {return};
-
+        
+        let Some(selection) = ability_input
+            .get_two_role_option_selection_if_id(AbilityID::role(0)) else {return};
         
         if selection.any_in_common(&self.previous_input) || selection.same_role(){
             return;

@@ -26,6 +26,23 @@ pub enum AbilityID{
     SyndicateGunItemShoot,
     SyndicateGunItemGive,
 }
+impl AbilityID{
+    pub fn role(role_ability_id: RoleAbilityID)->Self{
+        Self::Role{role_ability_id}
+    }
+    pub fn forfeit_vote()->Self{
+        Self::ForfeitVote
+    }
+    pub fn pitchfork_vote()->Self{
+        Self::PitchforkVote
+    }
+    pub fn syndicate_gun_item_shoot()->Self{
+        Self::SyndicateGunItemShoot
+    }
+    pub fn syndicate_gun_item_give()->Self{
+        Self::SyndicateGunItemGive
+    }
+}
 
 
 
@@ -34,8 +51,21 @@ pub enum AbilityID{
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
 pub struct AbilityInput{
-    abilities: VecMap<AbilityID, AbilitySelection>
+    id: AbilityID, 
+    selection: AbilitySelection
 }
+impl AbilityInput{
+    pub fn new(id: AbilityID, selection: AbilitySelection)->Self{
+        Self{id, selection}
+    }
+    pub fn id(&self)->AbilityID{
+        self.id.clone()
+    }
+    pub fn selection(&self)->AbilitySelection{
+        self.selection.clone()
+    }
+}
+
 
 
 #[derive(Default, Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::game::{ability_input::ValidateAvailableSelection, role::Role};
+use crate::game::{ability_input::{ability_selection::AbilitySelection, AbilityID, AbilityInput, ValidateAvailableSelection}, role::Role};
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct TwoRoleOptionSelection(pub Option<Role>, pub Option<Role>);
@@ -33,5 +33,16 @@ impl ValidateAvailableSelection for AvailableTwoRoleOptionSelection{
             return false
         }
         self.available_roles.contains(&selection.0) && self.available_roles.contains(&selection.1)
+    }
+}
+
+
+
+
+impl AbilityInput{
+    pub fn get_two_role_option_selection_if_id(&self, id: AbilityID)->Option<TwoRoleOptionSelection>{
+        if id != self.id() {return None};
+        let AbilitySelection::TwoRoleOption { selection } = self.selection() else {return None};
+        Some(selection)
     }
 }
