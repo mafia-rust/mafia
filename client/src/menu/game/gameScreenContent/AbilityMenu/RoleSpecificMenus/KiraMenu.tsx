@@ -6,6 +6,7 @@ import StyledText from "../../../../../components/StyledText";
 import Select, { SelectOptionsSearch } from "../../../../../components/Select";
 import { PlayerIndex } from "../../../../../game/gameState.d";
 import { RoleState } from "../../../../../game/roleState.d";
+import { AbilityInput } from "../../../../../game/abilityInput";
 
 export const KIRA_GUESSES = [
     "none",
@@ -40,6 +41,7 @@ export default function KiraMenu(props: Readonly<{
         for(let [player, guess] of Object.entries(guesses)){
             guessesOut.push([Number.parseInt(player), guess?? "none"]);
         }
+
 
         GAME_MANAGER.sendAbilityInput({
             type: "kira" as const,

@@ -6,7 +6,6 @@ import LargeHypnotistMenu from "./RoleSpecificMenus/LargeHypnotistMenu";
 import LargeForgerMenu from "./RoleSpecificMenus/LargeForgerMenu";
 import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
 import KiraMenu from "./RoleSpecificMenus/KiraMenu";
-import ImpostorMenu from "./RoleSpecificMenus/ImpostorMenu";
 import Counter from "../../../../components/Counter";
 import StyledText from "../../../../components/StyledText";
 import translate from "../../../../game/lang";
@@ -18,8 +17,6 @@ import RecruiterMenu from "./RoleSpecificMenus/RecruiterMenu";
 import { Role, roleJsonData, RoleState } from "../../../../game/roleState.d";
 import RoleDropdown from "../../../../components/RoleDropdown";
 import GAME_MANAGER from "../../../..";
-import DisguiserMenu from "./RoleSpecificMenus/DisguiserMenu";
-import ReeducatorMenu from "./RoleSpecificMenus/ReeducatorMenu";
 
 
 export default function RoleSpecificSection(){
@@ -40,7 +37,7 @@ export default function RoleSpecificSection(){
     
     switch(roleState.type){
         case "auditor":
-            return <AuditorMenu/>;
+            return <AuditorMenu roleState={roleState}/>;
         case "reporter":
             return <LargeReporterMenu/>;
         case "hypnotist":
@@ -51,12 +48,6 @@ export default function RoleSpecificSection(){
             return <LargeDoomsayerMenu/>;
         case "kira":
             return <KiraMenu roleState={roleState}/>;
-        case "impostor":
-            return <ImpostorMenu roleState={roleState}/>
-        case "disguiser":
-            return <DisguiserMenu roleState={roleState}/>;
-        case "reeducator":
-            return <ReeducatorMenu roleState={roleState}/>;
         case "jailor": 
             return <JailorRoleSpecificMenu roleState={roleState}/>;
         case "kidnapper": 
@@ -137,9 +128,7 @@ export default function RoleSpecificSection(){
         case "ojo":
             return <OjoMenu roleState={roleState}/>
         case "steward":
-            return <StewardMenu
-                roleState={roleState}
-            />;
+            return <StewardMenu roleState={roleState}/>;
         case "spiral": 
             return <SpiralMenu />;
         case "puppeteer":

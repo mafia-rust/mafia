@@ -1,7 +1,7 @@
 use std::ops::Mul;
 
 use crate::{game::{
-    ability_input::{AbilityID, AbilityInput}, attack_power::AttackPower, game_conclusion::GameConclusion, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::Priority, role_list::RoleSet, Game
+    ability_input::{ability_selection::AvailableAbilitySelection, selection_type::one_player_option_selection::AvailableOnePlayerOptionSelection, AbilityID, AbilityInput, AvailableAbilityInput}, attack_power::AttackPower, game_conclusion::GameConclusion, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::{Priority, Role}, role_list::RoleSet, Game
 }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
 #[derive(Clone)]
@@ -35,6 +35,27 @@ impl Default for Pitchfork{
 }
 
 impl Pitchfork{
+    pub fn available_ability_input(game: &Game, actor: PlayerReference)->AvailableAbilityInput{
+        if
+            game.settings.enabled_roles.contains(&Role::Rabblerouser) &&
+            game.day_number() > 1 &&
+            actor.alive(game) &&
+            actor.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
+            !game.current_phase().is_night()
+        {
+            let selection = PlayerReference::all_players(game)
+                .into_iter()
+                .filter(|p|p.alive(game))
+                .map(|p|Some(p))
+                .chain(std::iter::once(None))
+                .collect();
+            let selection = AvailableOnePlayerOptionSelection(selection);
+            let selection = AvailableAbilitySelection::OnePlayerOption { selection };
+            AvailableAbilityInput::new_ability(AbilityID::PitchforkVote, selection)
+        }else{
+            AvailableAbilityInput::default()
+        }
+    }
     pub fn on_ability_input_received(game: &mut Game, actor_ref: PlayerReference, input: AbilityInput){
         let Some(selection) = input.get_player_option_selection_if_id(AbilityID::pitchfork_vote()) else {return};
         Pitchfork::player_votes_for_angry_mob_action(game, actor_ref, selection.0);

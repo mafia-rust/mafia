@@ -1,4 +1,3 @@
-import { ReactElement } from "react";
 import translate from "./lang";
 import { Role } from "./roleState.d";
 
@@ -7,6 +6,7 @@ export type AbilityInput = {
     id: AbilityID, 
     selection: AbilitySelection
 }
+
 
 
 export type AbilityID = {

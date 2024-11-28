@@ -23,7 +23,7 @@ pub enum AbilitySelection{
 #[serde(tag="type")]
 pub enum AvailableAbilitySelection{
     Unit,
-    BooleanSelection,
+    Boolean,
     OnePlayerOption{selection: AvailableOnePlayerOptionSelection},
     TwoPlayerOption{selection: AvailableTwoPlayerOptionSelection},
     RoleOption{selection: AvailableRoleOptionSelection},
@@ -36,7 +36,7 @@ impl ValidateAvailableSelection for AvailableAbilitySelection{
     fn validate_selection(&self, selection: &Self::Selection)->bool {
         match self {
             Self::Unit => {true},
-            Self::BooleanSelection => {true},
+            Self::Boolean => {true},
             Self::OnePlayerOption{ selection: available } => {
                 let AbilitySelection::OnePlayerOption{selection} = selection else {return false};
                 return available.validate_selection(selection);

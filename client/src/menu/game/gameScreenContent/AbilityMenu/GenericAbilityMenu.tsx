@@ -29,6 +29,7 @@ import TwoRoleOptionSelectionMenu from "./AbilitySelectionTypes/TwoRoleOptionSel
 import TwoPlayerOptionSelectionMenu from "./AbilitySelectionTypes/TwoPlayerOptionSelectionMenu";
 import ChatMessage from "../../../../components/ChatMessage";
 import StyledText from "../../../../components/StyledText";
+import CheckBox from "../../../../components/CheckBox";
 
 
 
@@ -128,6 +129,23 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
             return <Button key={key}>
                 {translateAbilityId(props.id)}
             </Button>
+        case "boolean":{
+            let bool;
+            if(selected === null || selected.type !== "boolean"){
+                bool = false;
+            }else{
+                bool = selected.selection;
+            }
+            return <div><CheckBox key={key} checked={bool} onChange={(x)=>{
+                GAME_MANAGER.sendAbilityInput({
+                    id, 
+                    selection: {
+                        type: "boolean",
+                        selection: x
+                    }
+                });
+            }}/></div>;
+        }
         case "onePlayerOption":{
             
             let selectedPlayer;

@@ -694,6 +694,12 @@
 
     "messageSender.livingToDead.icon": "🔮",
 
+    "ability.abilityId.syndicateGunItemShoot.name": "Shoot Gun",
+    "ability.abilityId.syndicateGunItemGive.name": "Give Gun",
+    "ability.abilityId.pitchforkVote.name": "Pitchfork",
+    "ability.abilityId.forfeitVote.name": "Forfeit Vote",
+
+
     "standard":"Standard",
 
     "union": "∪",
@@ -727,6 +733,8 @@
     "other": "Other",
     "see": "See",
     "kill": "Kill",
+    "on": "On",
+    "off": "Off",
     "recruit": "Recruit",
     "forge": "Forge",
     "noForge": "No Forge",

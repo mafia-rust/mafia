@@ -1,10 +1,9 @@
 import { ReactElement } from "react"
 import React from "react"
-import { Role } from "../../../../../game/roleState.d"
-import { usePlayerState } from "../../../../../components/useHooks"
+import { Role, RoleState } from "../../../../../game/roleState.d"
 import TwoRoleOutlineOptionSelectionMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionSelectionMenu"
 import GAME_MANAGER from "../../../../.."
-import { TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput"
+import { AbilityInput, AbilitySelection, TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput"
 
 export type AuditorResult = {
     type: "two",
@@ -14,37 +13,29 @@ export type AuditorResult = {
     role: Role
 }
 
-export default function AuditorMenu(props: {}): ReactElement {
-    const previouslyGivenResults = usePlayerState(
-        (playerState, gameState)=>{
-            if(playerState.roleState?.type === "auditor"){
-                return playerState.roleState.previouslyGivenResults;
-            }
-            return [];
-        },
-        ["yourRoleState"]
-    )!;
-    const chosenOutlines = usePlayerState(
-        (playerState, gameState)=>{
-            if(playerState.roleState?.type === "auditor"){
-                return playerState.roleState.chosenOutline;
-            }
-            return null;
-        },
-        ["yourRoleState"]
-    )!;
-
+export default function AuditorMenu(props: Readonly<{
+    roleState: RoleState & {type: "auditor"}
+}>): ReactElement {
     const onInput = (chosenOutlines: TwoRoleOutlineOptionSelection) => {
-        const input = {
-            type: "auditor" as const,
+        const selection: AbilitySelection = {
+            type: "twoRoleOutlineOption" as const,
             selection: chosenOutlines
-        };
+        }
+
+        const input: AbilityInput = {
+            id: {
+                type: "role",
+                role: "ojo",
+                id: 0
+            },
+            selection: selection
+        }
         GAME_MANAGER.sendAbilityInput(input);
     }
     
     return <TwoRoleOutlineOptionSelectionMenu
-        previouslyGivenResults={previouslyGivenResults}
-        chosenOutlines={chosenOutlines}
+        previouslyGivenResults={props.roleState.previouslyGivenResults}
+        chosenOutlines={props.roleState.chosenOutline}
         onChoose={onInput}
     />
 }

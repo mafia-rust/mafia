@@ -462,6 +462,13 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                 case "unit":
                     out = translate("chatMessage.abilityUsed.selection.unit");
                     break;
+                case "boolean":
+                    if(message.selection.selection){
+                        out = " "+translate("on");
+                    }else{
+                        out = " "+translate("off");
+                    }
+                    break;
                 case "onePlayerOption":
                     out = translate("chatMessage.abilityUsed.selection.onePlayerOption",
                         message.selection.selection===null?translate("nobody"):playerNames[message.selection.selection],

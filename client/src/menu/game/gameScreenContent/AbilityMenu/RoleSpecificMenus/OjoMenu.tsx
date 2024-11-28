@@ -6,7 +6,7 @@ import { Role, RoleState } from "../../../../../game/roleState.d";
 import RoleDropdown from "../../../../../components/RoleDropdown";
 import translate from "../../../../../game/lang";
 import TwoRoleOutlineOptionSelectionMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionSelectionMenu";
-import { TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput";
+import { AbilityInput, AbilitySelection, TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput";
 
 
 export default function OjoMenu(
@@ -25,10 +25,19 @@ export default function OjoMenu(
     )!;
 
     const onInput = (chosenOutlines: TwoRoleOutlineOptionSelection) => {
-        const input = {
-            type: "ojoInvestigate" as const,
+        const selection: AbilitySelection = {
+            type: "twoRoleOutlineOption" as const,
             selection: chosenOutlines
-        };
+        }
+
+        const input: AbilityInput = {
+            id: {
+                type: "role",
+                role: "ojo",
+                id: 0
+            },
+            selection: selection
+        }
         GAME_MANAGER.sendAbilityInput(input);
     }
 

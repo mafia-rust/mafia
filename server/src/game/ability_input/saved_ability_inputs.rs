@@ -1,4 +1,4 @@
-use crate::{game::{chat::ChatMessageVariant, components::{insider_group::InsiderGroupID, syndicate_gun_item::SyndicateGunItem}, phase::PhaseType, player::PlayerReference, Game}, packet::ToClientPacket, vec_map::VecMap};
+use crate::{game::{chat::ChatMessageVariant, components::{forfeit_vote::ForfeitVote, insider_group::InsiderGroupID, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem}, phase::PhaseType, player::PlayerReference, Game}, packet::ToClientPacket, vec_map::VecMap};
 
 use super::{ability_selection::{AbilitySelection, AvailableAbilitySelection}, AbilityID, AbilityInput, AvailableAbilityInput, ValidateAvailableSelection};
 
@@ -96,6 +96,12 @@ impl SavedAbilityInputs{
 
             new_available_selection.combine_overwrite(
                 SyndicateGunItem::available_ability_input(game, player)
+            );
+            new_available_selection.combine_overwrite(
+                ForfeitVote::available_ability_input(game, player)
+            );
+            new_available_selection.combine_overwrite(
+                Pitchfork::available_ability_input(game, player)
             );
             
             let current = Self::current_available_ability_input(game, player);
