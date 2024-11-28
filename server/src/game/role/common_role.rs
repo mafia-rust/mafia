@@ -38,7 +38,7 @@ pub(super) fn available_ability_input_one_player_night(
     game: &Game,
     actor_ref: PlayerReference,
     can_select_self: bool,
-    ability_id: AbilityID
+    ability_id: AbilityID,
 ) -> AvailableAbilityInput {
     match game.current_phase().phase() {
         PhaseType::Night => {

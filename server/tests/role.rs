@@ -204,7 +204,7 @@ fn auditor_standard_double_audit(){
     );
 
     let input = AbilityInput::new(
-        AbilityID::role(0), 
+        AbilityID::role(Role::Auditor, 0), 
         AbilitySelection::TwoRoleOutlineOption { selection: TwoRoleOutlineOptionSelection(
             RoleOutlineReference::new(&game, 0), 
             RoleOutlineReference::new(&game, 1)

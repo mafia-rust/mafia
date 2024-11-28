@@ -85,7 +85,7 @@ impl RoleStateImpl for Ojo {
         if !actor_ref.alive(game) {return};
 
         let Some(selection) = ability_input
-            .get_two_role_outline_option_selection_if_id(AbilityID::role(0)) else {return};
+            .get_two_role_outline_option_selection_if_id(AbilityID::role(actor_ref.role(game), 0)) else {return};
               
         if let Some(outline) = selection.0{
             if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {

@@ -37,10 +37,11 @@ impl RoleStateImpl for Detective {
         }
     }
     fn available_ability_input(self, game: &Game, actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilityInput {
-        crate::game::role::common_role::available_ability_input_one_player_night(game, actor_ref, false, AbilityID::role(0))
+        crate::game::role::common_role::available_ability_input_one_player_night(game, actor_ref, false, AbilityID::role(actor_ref.role(game), 0))
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_saved_ability_to_visits(game, actor_ref, AbilityID::role(0), false)
+        
+        crate::game::role::common_role::convert_saved_ability_to_visits(game, actor_ref, AbilityID::role(actor_ref.role(game), 0), false)
     }
 }
 

@@ -15,7 +15,7 @@ import { KiraGuess, KiraGuessResult, kiraGuessTranslate } from "../menu/game/gam
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
-import { AbilityID, AbilitySelection } from "../game/abilityInput";
+import { AbilityID, AbilitySelection, translateAbilityId } from "../game/abilityInput";
 
 const ChatElement = React.memo((
     props: {
@@ -456,49 +456,36 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             }
         case "abilityUsed":
 
-            let abilityIdString;
-            switch (message.abilityId.type) {
-                case "role":
-                    abilityIdString = translate("ability.abilityId."+message.role+"."+message.abilityId.roleAbilityId+".name");
-                    break;
-                default:
-                    abilityIdString = "LANG TODO";
-            }
-
+            let out;
 
             switch (message.selection.type) {
                 case "unit":
-                    return translate("chatMessage.abilityUsed.unit",
-                        playerNames[message.player],
-                        translate("role."+message.role+".name"),
-                        abilityIdString
-                    );
+                    out = translate("chatMessage.abilityUsed.selection.unit");
+                    break;
                 case "onePlayerOption":
-                    return translate("chatMessage.abilityUsed.onePlayerOption",
-                        playerNames[message.player],
-                        translate("role."+message.role+".name"),
-                        abilityIdString,
+                    out = translate("chatMessage.abilityUsed.selection.onePlayerOption",
                         message.selection.selection===null?translate("nobody"):playerNames[message.selection.selection],
                     );
+                    break;
                 case "twoRoleOption":
-                    return translate("chatMessage.abilityUsed.twoRoleOption",
-                        playerNames[message.player],
-                        translate("role."+message.role+".name"),
-                        abilityIdString,
+                    out = translate("chatMessage.abilityUsed.selection.twoRoleOption",
                         message.selection.selection[0]===null?translate("none"):translate("role."+message.selection.selection[0]+".name"),
                         message.selection.selection[1]===null?translate("none"):translate("role."+message.selection.selection[1]+".name"),
                     );
+                    break;
                 case "twoRoleOutlineOption":
-                    return translate("chatMessage.abilityUsed.twoRoleOutlineOption",
-                        playerNames[message.player],
-                        translate("role."+message.role+".name"),
-                        abilityIdString,
+                    out = translate("chatMessage.abilityUsed.selection.twoRoleOutlineOption",
                         message.selection.selection[0] === null ? translate("none") : message.selection.selection[0].toString(),
                         message.selection.selection[1] === null ? translate("none") : message.selection.selection[1].toString()
                     );
+                    break;
                 default:
-                    return "";
+                    out = "";
             }
+            
+            let abilityIdString = translateAbilityId(message.abilityId);
+                
+            return translate("chatMessage.abilityUsed", playerNames[message.player], abilityIdString, out);
         case "mayorRevealed":
             return translate("chatMessage.mayorRevealed",
                 playerNames[message.playerIndex],
@@ -827,7 +814,6 @@ export type ChatMessageVariant = {
 } | {
     type: "abilityUsed", 
     player: PlayerIndex,
-    role: Role | null,
     abilityId: AbilityID,
     selection: AbilitySelection
     

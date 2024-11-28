@@ -1,4 +1,4 @@
-use crate::{game::{chat::ChatMessageVariant, components::insider_group::InsiderGroupID, phase::PhaseType, player::PlayerReference, Game}, packet::ToClientPacket, vec_map::VecMap};
+use crate::{game::{chat::ChatMessageVariant, components::{insider_group::InsiderGroupID, syndicate_gun_item::SyndicateGunItem}, phase::PhaseType, player::PlayerReference, Game}, packet::ToClientPacket, vec_map::VecMap};
 
 use super::{ability_selection::{AbilitySelection, AvailableAbilitySelection}, AbilityID, AbilityInput, AvailableAbilityInput, ValidateAvailableSelection};
 
@@ -91,8 +91,12 @@ impl SavedAbilityInputs{
 
     pub fn on_tick(game: &mut Game){
         for player in PlayerReference::all_players(game){
-            let new_available_selection = 
+            let mut new_available_selection = 
                 player.role_state(game).clone().available_ability_input(game, player);
+
+            new_available_selection.combine_overwrite(
+                SyndicateGunItem::available_ability_input(game, player)
+            );
             
             let current = Self::current_available_ability_input(game, player);
 
@@ -187,7 +191,6 @@ impl SavedAbilityInputs{
     ){
         let chat_message = ChatMessageVariant::AbilityUsed{
             player: player_ref.index(),
-            role: Some(player_ref.role(game)),
             ability_id: id,
             selection: selection.clone()
         };

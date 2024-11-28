@@ -5,12 +5,10 @@ pub mod saved_ability_inputs;
 use ability_selection::{AbilitySelection, AvailableAbilitySelection};
 
 use serde::{Deserialize, Serialize};
-use crate::vec_map::VecMap;
+use crate::vec_map::{vec_map, VecMap};
 
 use super::{
-    event::on_ability_input_received::OnAbilityInputReceived,
-    player::PlayerReference,
-    Game
+    event::on_ability_input_received::OnAbilityInputReceived, player::PlayerReference, role::Role, Game
 };
 
 
@@ -21,15 +19,15 @@ pub type RoleAbilityID = u8;
 #[serde(tag="type")]
 pub enum AbilityID{
     #[serde(rename_all = "camelCase")]
-    Role{role_ability_id: RoleAbilityID},
+    Role{role: Role, id: RoleAbilityID},
     ForfeitVote,
     PitchforkVote,
     SyndicateGunItemShoot,
     SyndicateGunItemGive,
 }
 impl AbilityID{
-    pub fn role(role_ability_id: RoleAbilityID)->Self{
-        Self::Role{role_ability_id}
+    pub fn role(role: Role, role_ability_id: RoleAbilityID)->Self{
+        Self::Role{role, id: role_ability_id}
     }
     pub fn forfeit_vote()->Self{
         Self::ForfeitVote
@@ -77,6 +75,19 @@ pub struct AvailableAbilityInput{
 impl AvailableAbilityInput{
     pub fn new(abilities: VecMap<AbilityID, AvailableAbilitySelection>)->Self{
         Self{abilities}
+    }
+    pub fn new_ability(id: AbilityID, selection: AvailableAbilitySelection)->Self{
+        Self{
+            abilities: vec_map!((id, selection))
+        }
+    }
+    pub fn insert_ability(&mut self, id: AbilityID, selection: AvailableAbilitySelection){
+        self.abilities.insert(id, selection);
+    }
+    pub fn combine_overwrite(&mut self, other: Self){
+        for (ability_id, ability_selection) in other.abilities.into_iter(){
+            self.abilities.insert(ability_id, ability_selection);
+        }
     }
 }
 

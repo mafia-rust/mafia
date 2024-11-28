@@ -38,9 +38,9 @@ export default function AbilityMenu(): ReactElement {
                         {translate("role."+roleState?.type+".name")}
                     </summary>
                     <RoleSpecificSection/>
-                    <GenericAbilityMenu/>
                     <OldSelectionType/>
                 </details>
+                <GenericAbilityMenu/>
                 <Pitchfork/>
                 <SyndicateGunItemMenu/>
             </>

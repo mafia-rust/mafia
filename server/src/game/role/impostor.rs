@@ -126,7 +126,7 @@ impl RoleStateImpl for Impostor {
         if actor_ref != input_player {return;}
         if !actor_ref.alive(game) {return};
 
-        if let Some(selection) = ability_input.get_role_option_selection_if_id(AbilityID::role(0)) {
+        if let Some(selection) = ability_input.get_role_option_selection_if_id(AbilityID::role(actor_ref.role(game), 0)) {
             if let Some(target) = selection.0 {
                 self.fake_role = target;
             }
