@@ -28,6 +28,7 @@ import ListMap from "../../../../ListMap";
 import TwoRoleOptionSelectionMenu from "./AbilitySelectionTypes/TwoRoleOptionSelectionMenu";
 import TwoPlayerOptionSelectionMenu from "./AbilitySelectionTypes/TwoPlayerOptionSelectionMenu";
 import ChatMessage from "../../../../components/ChatMessage";
+import StyledText from "../../../../components/StyledText";
 
 
 
@@ -80,10 +81,9 @@ function SingleAbilityMenu(props: Readonly<{
             onClick={(e)=>{
                 e.preventDefault();
                 setOpen(!open);
-                console.log(props.selected);
             }}
         >
-            {translateAbilityId(props.abilityId)}
+            <StyledText>{translateAbilityId(props.abilityId)}</StyledText>
         </summary>
 
         {props.selected!==null?
