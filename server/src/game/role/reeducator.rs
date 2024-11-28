@@ -141,6 +141,7 @@ impl RoleStateImpl for Reeducator {
 
         let random_mafia_player = PlayerReference::all_players(game)
             .filter(|p|RoleSet::Mafia.get_roles().contains(&p.role(game)))
+            .filter(|p|!RoleSet::MafiaKilling.get_roles().contains(&p.role(game)))
             .filter(|p|*p!=actor_ref)
             .filter(|p|p.role(game)!=Role::Reeducator)
             .choose(&mut rand::thread_rng());
