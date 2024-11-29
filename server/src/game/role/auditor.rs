@@ -1,25 +1,30 @@
+use std::iter::once;
+
 use serde::Serialize;
 
-use crate::game::ability_input::selection_type::two_role_outline_option_selection::TwoRoleOutlineOptionSelection;
+use crate::game::ability_input::ability_selection::AvailableAbilitySelection;
+use crate::game::ability_input::saved_ability_inputs::SavedAbilityInputs;
+use crate::game::ability_input::selection_type::two_role_outline_option_selection::AvailableTwoRoleOutlineOptionSelection;
 use crate::game::components::confused::Confused;
+use crate::game::components::detained::Detained;
 use crate::game::role_outline_reference::RoleOutlineReference;
-use crate::game::ability_input::AbilityID;
+use crate::game::ability_input::{AbilityID, AvailableAbilityInput};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
+use crate::vec_map::VecMap;
 
 use rand::prelude::SliceRandom;
-use super::{Priority, Role, RoleStateImpl};
+use super::{common_role, Priority, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Auditor{
-    pub chosen_outline: TwoRoleOutlineOptionSelection,
-    pub previously_given_results: Vec<(RoleOutlineReference, AuditorResult)>,
+    pub previously_given_results: VecMap<RoleOutlineReference, AuditorResult>,
 }
 
 #[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
@@ -41,8 +46,12 @@ impl RoleStateImpl for Auditor {
 
         if priority != Priority::Investigative {return;}
         if actor_ref.night_blocked(game) {return;}
+        
+        let Some(selection) = 
+            SavedAbilityInputs::get_two_role_outline_option_selection_if_id(game, actor_ref, AbilityID::Role { role: Role::Auditor, id: 0 })
+            else{return};
 
-        if let Some(chosen_outline) = self.chosen_outline.0{
+        if let Some(chosen_outline) = selection.0{
             let result = if Confused::is_confused(game, actor_ref){
                 Self::get_confused_result(game, chosen_outline)
             }else{
@@ -52,10 +61,11 @@ impl RoleStateImpl for Auditor {
                 role_outline: chosen_outline.deref(&game).clone(),
                 result: result.clone()
             });
-            self.previously_given_results.push((chosen_outline, result));
+
+            self.previously_given_results.insert(chosen_outline, result);
         }
 
-        if let Some(chosen_outline) = self.chosen_outline.1{
+        if let Some(chosen_outline) = selection.1{
             let result = if Confused::is_confused(game, actor_ref){
                 Self::get_confused_result(game, chosen_outline)
             }else{
@@ -65,60 +75,36 @@ impl RoleStateImpl for Auditor {
                 role_outline: chosen_outline.deref(&game).clone(),
                 result: result.clone()
             });
-            self.previously_given_results.push((chosen_outline, result));
+
+            self.previously_given_results.insert(chosen_outline, result);
         }
 
         actor_ref.set_role_state(game, self);
     }
-    fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: crate::game::ability_input::AbilityInput) {
-        if actor_ref != input_player {return};
-        if !actor_ref.alive(game) {return};
-
-        let Some(selection) = ability_input
-            .get_two_role_outline_option_selection_if_id(AbilityID::role(actor_ref.role(game), 0)) else {return};
-             
-        if let Some(outline) = selection.0{
-            if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {
-                self.chosen_outline.0 = Some(outline);
-            }
+    fn available_ability_input(self, game: &Game, actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilityInput {
+        if 
+            actor_ref.alive(game) && 
+            game.current_phase().phase() == PhaseType::Night &&
+            !Detained::is_detained(game, actor_ref)
+        {    
+            AvailableAbilityInput::new_ability(
+                AbilityID::Role { role: Role::Auditor, id: 0 },
+                AvailableAbilitySelection::TwoRoleOutlineOption {
+                    selection: AvailableTwoRoleOutlineOptionSelection(
+                        RoleOutlineReference::all_outlines(game)
+                            .filter(|o|!self.previously_given_results.contains(o))
+                            .map(|o|Some(o))
+                            .chain(once(None))
+                            .collect()
+                    )
+                }
+            )
         }else{
-            self.chosen_outline.0 = None;
+            AvailableAbilityInput::default()
         }
-        if let Some(outline) = selection.1{
-            if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {
-                self.chosen_outline.1 = Some(outline);
-            }
-        }else{
-            self.chosen_outline.1 = None;
-        }
-        
-        if self.chosen_outline.0.is_some() && self.chosen_outline.1 == self.chosen_outline.0{
-            self.chosen_outline.1 = None;
-        }
-
-        actor_ref.set_role_state(game, self);
-        
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        let mut out = vec![];
-        if let Some(chosen_outline) = self.chosen_outline.0{
-            let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-            out.push(Visit::new_none(actor_ref, player, false));
-        }
-        if let Some(chosen_outline) = self.chosen_outline.1{
-            let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-            out.push(Visit::new_none(actor_ref, player, false));
-        }
-        out
-    }
-    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
-        match phase {
-            PhaseType::Obituary => {
-                self.chosen_outline = TwoRoleOutlineOptionSelection(None, None);
-                actor_ref.set_role_state(game, self);
-            },
-            _ => {}
-        }
+        common_role::convert_saved_ability_to_visits(game, actor_ref, AbilityID::Role { role: Role::Auditor, id: 0 }, false)
     }
 }
 

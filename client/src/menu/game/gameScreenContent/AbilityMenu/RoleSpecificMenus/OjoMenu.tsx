@@ -44,7 +44,7 @@ export default function OjoMenu(
     return <>
         <TwoRoleOutlineOptionSelectionMenu
             previouslyGivenResults={props.roleState.previouslyGivenResults}
-            chosenOutlines={props.roleState.chosenOutline}
+            selection={props.roleState.chosenOutline}
             onChoose={onInput}
         />
         {(dayNumber > 1) && <div>

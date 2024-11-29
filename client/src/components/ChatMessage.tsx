@@ -10,7 +10,7 @@ import DOMPurify from "dompurify";
 import GraveComponent from "./grave";
 import { RoleOutline, translateRoleOutline } from "../game/roleListState.d";
 import { CopyButton } from "./ClipboardButtons";
-import { useLobbyOrGameState, usePlayerState } from "./useHooks";
+import { useGameState, useLobbyOrGameState, usePlayerState } from "./useHooks";
 import { KiraResult, KiraResultDisplay } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
@@ -28,6 +28,11 @@ const ChatElement = React.memo((
     const roleState = usePlayerState(
         playerState => playerState.roleState,
         ["yourRoleState"]
+    );
+    
+    const roleList = useGameState(
+        state => state.roleList,
+        ["roleList"]
     );
 
     const [mouseHovering, setMouseHovering] = React.useState(false); 
@@ -80,7 +85,7 @@ const ChatElement = React.memo((
                 <StyledText className={"chat-message " + style}
                     playerKeywordData={props.playerKeywordData}
                 >
-                    {(chatGroupIcon??"")} {translateChatMessage(message.variant, playerNames)}
+                    {(chatGroupIcon??"")} {translateChatMessage(message.variant, playerNames, roleList)}
                 </StyledText>
                 <ChatElement {...props} message={{
                     variant: message.variant.message,
@@ -157,13 +162,13 @@ const ChatElement = React.memo((
         onMouseOut={() => setMouseHovering(false)}
     >
         <StyledText className={"chat-message " + style} playerKeywordData={props.playerKeywordData}>
-            {(chatGroupIcon??"")} {translateChatMessage(message.variant, playerNames)}
+            {(chatGroupIcon??"")} {translateChatMessage(message.variant, playerNames, roleList)}
         </StyledText>
         {
             mouseHovering && ( roleState?.type === "forger" || roleState?.type === "counterfeiter")
             && <CopyButton
                 className="chat-message-div-copy-button"
-                text={translateChatMessage(message.variant, playerNames)}
+                text={translateChatMessage(message.variant, playerNames, roleList)}
             />
         }
     </div>;
@@ -249,7 +254,7 @@ function NormalChatMessage(props: Readonly<{
             <StyledText
                 playerKeywordData={props.playerKeywordData}
             >
-                {translateChatMessage(props.message.variant, props.playerNames)}
+                {translateChatMessage(props.message.variant, props.playerNames, undefined)}
             </StyledText>
         </span>
         {
@@ -312,7 +317,11 @@ export function sanitizePlayerMessage(text: string): string {
     });
 }
 
-export function translateChatMessage(message: ChatMessageVariant, playerNames?: string[]): string {
+export function translateChatMessage(
+    message: ChatMessageVariant,
+    playerNames?: string[],
+    roleList?: RoleOutline[]
+): string {
 
     if (playerNames === undefined) {
         playerNames = GAME_MANAGER.getPlayerNames();
@@ -478,11 +487,22 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                         message.selection.selection[1]===null?translate("none"):translate("role."+message.selection.selection[1]+".name"),
                     );
                     break;
-                case "twoRoleOutlineOption":
-                    out = translate("chatMessage.abilityUsed.selection.twoRoleOutlineOption",
-                        message.selection.selection[0] === null ? translate("none") : message.selection.selection[0].toString(),
-                        message.selection.selection[1] === null ? translate("none") : message.selection.selection[1].toString()
-                    );
+                case "twoRoleOutlineOption":                    
+                    let first = message.selection.selection[0] === null ? 
+                        translate("none") :
+                        roleList === undefined ?
+                            message.selection.selection[0].toString() :
+                            translateRoleOutline(roleList[message.selection.selection[0]]);
+
+                    let second = message.selection.selection[1] === null ? 
+                        translate("none") :
+                        roleList === undefined ?
+                            message.selection.selection[1].toString() :
+                            translateRoleOutline(roleList[message.selection.selection[1]]);
+
+                    
+
+                    out = translate("chatMessage.abilityUsed.selection.twoRoleOutlineOption", first, second);
                     break;
                 default:
                     out = "";

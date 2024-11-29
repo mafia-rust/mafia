@@ -7,7 +7,8 @@ import {
     translateAbilityId,
     AvailableAbilitySelection,
     defaultAbilitySelection,
-    abilityIdToString
+    abilityIdToString,
+    TwoRoleOutlineOptionSelection
 } from "../../../../game/abilityInput";
 import React from "react";
 import { usePlayerState } from "../../../../components/useHooks";
@@ -216,7 +217,19 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
             />;
         }
         case "twoRoleOutlineOption":{
+            let input: TwoRoleOutlineOptionSelection;
+            if(
+                props.selected === null ||
+                props.selected.type !== "twoRoleOutlineOption"
+            ){
+                input = [null, null];
+            }else{
+                input = props.selected.selection;
+            }
+
             return <TwoRoleOutlineOptionSelectionMenu
+                selection={input}
+                available={available.selection}
                 key={props.key}
                 onChoose={(selection) => {
                     GAME_MANAGER.sendAbilityInput({

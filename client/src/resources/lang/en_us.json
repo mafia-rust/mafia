@@ -228,6 +228,7 @@
 
     "role.auditor.name": "Auditor",
     "role.auditor.name:var.0": "Auditors",
+    "ability.abilityId.auditor.0.name": "Auditor Audit",
 
     "role.snoop.name": "Snoop",
     "role.snoop.name:var.0": "Snoops",

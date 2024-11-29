@@ -7,7 +7,6 @@ import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/Role
 import { Hypnotist } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeHypnotistMenu";
 import { Doomsayer } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
-import { KiraGuess, KiraSelection } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
 import { TwoRoleOptionSelection } from "./abilityInput";
 
 export type RoleState = {
@@ -38,7 +37,6 @@ export type RoleState = {
     type: "psychic"
 } | {
     type: "auditor",
-    chosenOutline: [number | null, number | null],
     previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "snoop",

@@ -13,7 +13,9 @@ pub struct AvailableTwoRoleOutlineOptionSelection(pub Vec<Option<RoleOutlineRefe
 impl ValidateAvailableSelection for AvailableTwoRoleOutlineOptionSelection{
     type Selection = TwoRoleOutlineOptionSelection;
     fn validate_selection(&self, _game: &Game, selection: &TwoRoleOutlineOptionSelection)->bool{
-        self.0.contains(&selection.0) && self.0.contains(&selection.1)
+        self.0.contains(&selection.0) && 
+        self.0.contains(&selection.1) && 
+        (selection.0.is_none() || selection.0 != selection.1)
     }
 }
 

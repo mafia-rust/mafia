@@ -10,7 +10,7 @@ use crate::{
     packet::ToClientPacket,
     vec_map::VecMap};
 
-use super::{ability_selection::{AbilitySelection, AvailableAbilitySelection}, AbilityID, AbilityInput, AvailableAbilityInput, ValidateAvailableSelection};
+use super::{ability_selection::{AbilitySelection, AvailableAbilitySelection}, selection_type::two_role_outline_option_selection::TwoRoleOutlineOptionSelection, AbilityID, AbilityInput, AvailableAbilityInput, ValidateAvailableSelection};
 
 
 
@@ -239,5 +239,19 @@ impl SavedAbilityInputs{
             .flatten()
     }
 
+    pub fn get_two_role_outline_option_selection_if_id(
+        game: &Game,
+        player_ref: PlayerReference,
+        id: AbilityID
+    )->Option<TwoRoleOutlineOptionSelection>{
+        Self::get_saved_ability_selection(game, player_ref, id)
+            .and_then(|selection| 
+                if let AbilitySelection::TwoRoleOutlineOption { selection } = selection {
+                    Some(selection)
+                }else{
+                    None
+                }
+            )
+    }
 }
 
