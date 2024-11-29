@@ -1,9 +1,15 @@
+use std::iter::once;
+
 use serde::Serialize;
 
-use crate::game::ability_input::{AbilityID, AbilityInput};
+use crate::game::ability_input::ability_selection::AvailableAbilitySelection;
+use crate::game::ability_input::selection_type::one_player_option_selection::AvailableOnePlayerOptionSelection;
+use crate::game::ability_input::selection_type::role_option_selection::AvailableRoleOptionSelection;
+use crate::game::ability_input::{AbilityID, AbilityInput, AvailableAbilityInput};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
 use crate::game::grave::GraveInformation;
+use crate::game::phase::PhaseType;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
 
 use crate::game::visit::Visit;
@@ -48,27 +54,59 @@ impl RoleStateImpl for Disguiser {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        !Detained::is_detained(game, actor_ref) &&
-        actor_ref.selection(game).is_empty() &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game) &&
-        InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref)
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        crate::game::role::common_role::convert_saved_ability_to_visits(game, actor_ref, AbilityID::role(Role::Disguiser, 0), false)
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn available_ability_input(self, game: &Game, actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilityInput {
+        if !actor_ref.alive(game) {return AvailableAbilityInput::default()};
+
+        let mut out = if game.current_phase().phase() == PhaseType::Night {
+            AvailableAbilityInput::new_ability(
+                AbilityID::Role { role: Role::Disguiser, id: 0 }, 
+                AvailableAbilitySelection::OnePlayerOption {
+                    selection: AvailableOnePlayerOptionSelection(
+                        PlayerReference::all_players(game)
+                            .filter(|p|
+                                !Detained::is_detained(game, actor_ref) &&
+                                actor_ref.alive(game) &&
+                                p.alive(game) &&
+                                InsiderGroupID::in_same_revealed_group(game, actor_ref, *p)
+                            )
+                            .map(|p| Some(p))
+                            .chain(once(None))
+                            .collect()
+                    )
+                }
+            )
+        }else{
+            AvailableAbilityInput::default()
+        };
+        
+        out.combine_overwrite(
+            AvailableAbilityInput::new_ability(
+                AbilityID::Role { role: Role::Disguiser, id: 1 },
+                AvailableAbilitySelection::RoleOption {
+                    selection: AvailableRoleOptionSelection(
+                        Role::values().into_iter()
+                            .map(|role| Some(role))
+                            .collect()
+                    )
+                }
+            )
+        );
+        out
     }
     fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: AbilityInput) {
         if actor_ref != input_player {return;}
-        if !actor_ref.alive(game) {return};
 
-        if let Some(selection) = ability_input.get_role_option_selection_if_id(AbilityID::role(actor_ref.role(game), 0)) {
+        if let Some(selection) = ability_input.get_role_option_selection_if_id(
+            AbilityID::role(Role::Disguiser, 1)
+        ) {
             if let Some(target) = selection.0 {
                 self.disguised_role = target;
             }
         };
         
-
         actor_ref.set_role_state(game, self);
     }
     fn on_any_death(mut self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference) {

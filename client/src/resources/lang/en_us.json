@@ -467,6 +467,8 @@
     "role.disguiser.name": "Disguiser",
     "role.disguiser.name:var.0": "Disguiser",
     "role.disguiser.target": "Disguise",
+    "ability.abilityId.disguiser.0.name": "Disguiser Target",
+    "ability.abilityId.disguiser.1.name": "Disguiser Role",
 
     "role.reeducator.name": "Reeducator",
     "role.reeducator.name:var.0": "Reeducators",

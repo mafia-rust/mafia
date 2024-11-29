@@ -8,7 +8,8 @@ import {
     AvailableAbilitySelection,
     defaultAbilitySelection,
     abilityIdToString,
-    TwoRoleOutlineOptionSelection
+    TwoRoleOutlineOptionSelection,
+    RoleOptionSelection
 } from "../../../../game/abilityInput";
 import React from "react";
 import { usePlayerState } from "../../../../components/useHooks";
@@ -23,8 +24,7 @@ import ChatMessage from "../../../../components/ChatMessage";
 import StyledText from "../../../../components/StyledText";
 import CheckBox from "../../../../components/CheckBox";
 import KiraSelectionMenu, { KiraSelection } from "./AbilitySelectionTypes/KiraSelectionMenu";
-
-
+import RoleOptionSelectionMenu from "./AbilitySelectionTypes/RoleOptionSelectionMenu";
 
 
 export default function GenericAbilityMenu(): ReactElement {
@@ -188,6 +188,31 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
                     });
                 }}
             />;
+        }
+        case "roleOption":{
+            let input: RoleOptionSelection;
+            if(
+                props.selected === null ||
+                props.selected.type !== "roleOption"
+            ){
+                input = null;
+            }else{
+                input = props.selected.selection;
+            }
+
+            return <RoleOptionSelectionMenu
+                selection={input}
+                enabledRoles={available.selection}
+                onChoose={(selection) => {
+                    GAME_MANAGER.sendAbilityInput({
+                        id, 
+                        selection: {
+                            type: "roleOption",
+                            selection
+                        }
+                    });
+                }}
+            />
         }
         case "twoRoleOption":{
 
