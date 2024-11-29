@@ -92,43 +92,10 @@ impl AvailableAbilityInput{
 }
 
 
-
-
-
 pub trait ValidateAvailableSelection{
     type Selection;
     fn validate_selection(&self, game: &Game, selection: &Self::Selection)->bool;
 }
-
-
-
-
-
-
-
-// #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Eq, Ord)]
-// #[serde(rename_all = "camelCase", tag="type")]
-// pub enum AbilityInput{
-//     GenericAbility{selection: GenericAbilitySelection},
-
-//     //role abilities
-
-//     Disguiser{selection: RoleOptionSelection},
-//     Auditor{selection: TwoRoleOutlineOptionSelection},
-//     Steward{selection: TwoRoleOptionSelection},
-//     OjoInvestigate{selection: TwoRoleOutlineOptionSelection},
-//     Kira{selection: KiraAbilityInput},
-
-//     //Non role abilities
-
-//     ForfeitVote{selection: BooleanSelection},
-    
-//     PitchforkVote{selection: OnePlayerOptionSelection},
-
-//     SyndicateGunItemShoot{input: OnePlayerOptionSelection},
-//     SyndicateGunItemGive{input: OnePlayerOptionSelection},
-
-// }
 
 impl AbilityInput{
     pub fn on_client_message(self, game: &mut Game, actor_ref: PlayerReference){
