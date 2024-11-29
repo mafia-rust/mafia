@@ -97,7 +97,7 @@ impl AvailableAbilityInput{
 
 pub trait ValidateAvailableSelection{
     type Selection;
-    fn validate_selection(&self, selection: &Self::Selection)->bool;
+    fn validate_selection(&self, game: &Game, selection: &Self::Selection)->bool;
 }
 
 

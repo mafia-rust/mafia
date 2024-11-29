@@ -1,18 +1,21 @@
 use std::collections::HashSet;
 
-use crate::{game::{
-    ability_input::{ability_selection::{AbilitySelection, AvailableAbilitySelection}, saved_ability_inputs::SavedAbilityInputs, selection_type::one_player_option_selection::AvailableOnePlayerOptionSelection, AbilityID, AvailableAbilityInput},
-    chat::ChatGroup,
-    components::{
-        detained::Detained,
-        puppeteer_marionette::PuppeteerMarionette
-    },
-    game_conclusion::GameConclusion,
-    modifiers::{ModifierType, Modifiers},
-    phase::{PhaseState, PhaseType}, player::PlayerReference,
-    role_list::RoleSet, visit::{Visit, VisitTag}, win_condition::WinCondition,
-    Game
-}, vec_map::VecMap, vec_set::VecSet};
+use crate::{
+    game::{
+        ability_input::{ability_selection::{AbilitySelection, AvailableAbilitySelection}, saved_ability_inputs::SavedAbilityInputs, selection_type::one_player_option_selection::AvailableOnePlayerOptionSelection, AbilityID, AvailableAbilityInput},
+        chat::ChatGroup,
+        components::{
+            detained::Detained,
+            puppeteer_marionette::PuppeteerMarionette
+        },
+        game_conclusion::GameConclusion,
+        modifiers::{ModifierType, Modifiers},
+        phase::{PhaseState, PhaseType}, player::PlayerReference,
+        role_list::RoleSet, visit::{Visit, VisitTag}, win_condition::WinCondition,
+        Game
+    }, 
+    vec_set::VecSet
+};
 
 use super::{reporter::Reporter, medium::Medium, InsiderGroupID, Role, RoleState};
 
@@ -54,11 +57,11 @@ pub(super) fn available_ability_input_one_player_night(
                 all_allowed_inputs.remove(&Some(actor_ref));
             }
 
-            AvailableAbilityInput::new(crate::vec_map![(ability_id, 
+            AvailableAbilityInput::new_ability(ability_id, 
                 AvailableAbilitySelection::OnePlayerOption {
                     selection: AvailableOnePlayerOptionSelection(all_allowed_inputs)
                 }
-            )])
+            )
         },
         _ => AvailableAbilityInput::default()
     }

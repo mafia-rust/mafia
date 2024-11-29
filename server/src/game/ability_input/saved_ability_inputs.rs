@@ -1,4 +1,14 @@
-use crate::{game::{chat::ChatMessageVariant, components::{forfeit_vote::ForfeitVote, insider_group::InsiderGroupID, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem}, phase::PhaseType, player::PlayerReference, Game}, packet::ToClientPacket, vec_map::VecMap};
+use crate::{
+    game::{
+        chat::ChatMessageVariant, 
+        components::{
+            forfeit_vote::ForfeitVote, insider_group::InsiderGroupID,
+            pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem
+        },
+        phase::PhaseType, player::PlayerReference, Game
+    },
+    packet::ToClientPacket,
+    vec_map::VecMap};
 
 use super::{ability_selection::{AbilitySelection, AvailableAbilitySelection}, AbilityID, AbilityInput, AvailableAbilityInput, ValidateAvailableSelection};
 
@@ -12,19 +22,6 @@ struct SavedAbilityInput{
 impl SavedAbilityInput{
     fn new(save: VecMap<AbilityID, (Option<AbilitySelection>, AvailableAbilitySelection)>)->Self{
         Self{save}
-    }
-    fn set_ability_save(&mut self, id: AbilityID, selection: Option<AbilitySelection>, available: AvailableAbilitySelection){
-        let Some(selection) = selection else {
-            self.save.insert(id, (None, available));
-            return;
-        };
-
-        if available.validate_selection(&selection) {
-            self.save.insert(id, (Some(selection), available));
-        }else{
-            
-            self.save.insert(id, (None, available));
-        }
     }
 }
 
@@ -45,20 +42,27 @@ impl SavedAbilityInputs{
     ){
         let (id, incoming_selection) = (ability_input.id, ability_input.selection);
 
+        // validate input using available selection
+        {
+            let Some(saved_ability_input) = 
+            game.saved_ability_inputs.players_saved_inputs.get(&actor) else {return};
+
+            let Some((saved_selection, available_selection)) = 
+                saved_ability_input.save.get(&id).clone() else {return;};
+            if 
+                !available_selection.validate_selection(game, &incoming_selection) ||
+                saved_selection.as_ref().is_some_and(|s| *s == incoming_selection)
+            {
+                return;
+            }
+        }
+        
+
         let Some(saved_ability_input) = 
             game.saved_ability_inputs.players_saved_inputs.get_mut(&actor) else {return};
 
-        let Some((saved_selection, available_selection)) = 
+        let Some((saved_selection, _)) = 
             saved_ability_input.save.get_mut(&id) else {return;};
-
-
-
-        if 
-            !available_selection.validate_selection(&incoming_selection) ||
-            saved_selection.as_ref().is_some_and(|s| *s == incoming_selection)
-        {
-            return;
-        }
 
         *saved_selection = Some(incoming_selection.clone());
 
@@ -119,32 +123,41 @@ impl SavedAbilityInputs{
     fn set_available_ability_input(
         game: &mut Game,
         player: PlayerReference,
-        available_selection: AvailableAbilityInput
+        new_available: AvailableAbilityInput
     ){
+        //set new available, try to keep old selection if possible
+        
+        game.saved_ability_inputs.players_saved_inputs.insert(player, SavedAbilityInput::new(
+            if let Some(current_saved_input) = game.saved_ability_inputs.players_saved_inputs.get(&player){
 
-        if let Some(player_saved_input) = game.saved_ability_inputs.players_saved_inputs.get_mut(&player){
+                let mut new_saved_input_map: VecMap<AbilityID, (Option<AbilitySelection>, AvailableAbilitySelection)> = VecMap::new();
 
-            for (id, available_selection) in available_selection.abilities{
-                
-                let selection = player_saved_input.save
-                    .get(&id)
-                    .map(|x| x.0.clone())
-                    .flatten();
+                for (ability_id, new_available) in new_available.abilities {
+                    //set new available, throwing out old_selection
+                    new_saved_input_map.insert(ability_id.clone(), (None, new_available.clone()));
 
-                player_saved_input.set_ability_save(id, selection, available_selection);
-            }
-        }else{
-            game.saved_ability_inputs.players_saved_inputs.insert(player, SavedAbilityInput::new(
-                available_selection.abilities
+                    //then, if old selection is valid, keep it
+                    if let Some((old_selection, _)) = current_saved_input.save.get(&ability_id) {
+                        if let Some(old_selection) = old_selection{ 
+                            if new_available.validate_selection(game, old_selection){
+                                new_saved_input_map.insert(ability_id, (Some(old_selection.clone()), new_available));
+                            }
+                        }
+                    }
+                }
+
+                new_saved_input_map
+            }else{
+                new_available.abilities
                     .iter()
                     .map(|(id, available_selection)| (id.clone(), (None, available_selection.clone())))
                     .collect()
-            ));
-        }
+            }
+        ));
 
 
 
-
+        //inform client
         let Some(player_saved_input) = game.saved_ability_inputs.players_saved_inputs.get(&player) else {return};
 
         player.send_packet(game, ToClientPacket::YourSavedAbilityInput{selection:

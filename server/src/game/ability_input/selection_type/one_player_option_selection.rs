@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{game::{ability_input::{ability_selection::AbilitySelection, AbilityID, AbilityInput, ValidateAvailableSelection}, player::PlayerReference}, vec_set::VecSet};
+use crate::{game::{ability_input::{ability_selection::AbilitySelection, AbilityID, AbilityInput, ValidateAvailableSelection}, player::PlayerReference, Game}, vec_set::VecSet};
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct OnePlayerOptionSelection(pub Option<PlayerReference>);
@@ -10,7 +10,7 @@ pub struct OnePlayerOptionSelection(pub Option<PlayerReference>);
 pub struct AvailableOnePlayerOptionSelection(pub VecSet<Option<PlayerReference>>);
 impl ValidateAvailableSelection for AvailableOnePlayerOptionSelection{
     type Selection = OnePlayerOptionSelection;
-    fn validate_selection(&self, selection: &OnePlayerOptionSelection)->bool{
+    fn validate_selection(&self, _game: &Game, selection: &OnePlayerOptionSelection)->bool{
         self.0.contains(&selection.0)
     }
 }

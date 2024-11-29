@@ -1,20 +1,21 @@
 use serde::{Serialize, Deserialize};
 
+use crate::game::ability_input::ability_selection::{AbilitySelection, AvailableAbilitySelection};
+use crate::game::ability_input::saved_ability_inputs::SavedAbilityInputs;
+use crate::game::ability_input::selection_type::kira_selection::AvailableKiraSelection;
+use crate::game::ability_input::{AbilityID, AvailableAbilityInput};
 use crate::game::attack_power::AttackPower;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
-use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::Game;
 use crate::vec_map::VecMap;
 
-use super::{Priority, Role, RoleState, RoleStateImpl};
+use super::{Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
-pub struct Kira {
-    pub guesses: VecMap<PlayerReference, KiraGuess>,
-}
+pub struct Kira;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
@@ -164,7 +165,14 @@ impl RoleStateImpl for Kira {
         if actor_ref.night_blocked(game) {return;}
         if !actor_ref.alive(game) {return;}
 
-        let result = KiraResult::new(self.guesses.clone(), game);
+        let Some(AbilitySelection::Kira { selection }) = 
+            SavedAbilityInputs::get_saved_ability_selection(game, actor_ref, 
+                AbilityID::Role { role: Role::Kira, id: 0 }
+            )
+            else {return};
+        let selection = selection.0;
+
+        let result = KiraResult::new(selection.clone(), game);
 
         match priority {
             Priority::Kill if result.all_correct() => {
@@ -182,56 +190,19 @@ impl RoleStateImpl for Kira {
             _ => return,
         }    
     }
-    fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: crate::game::ability_input::AbilityInput) {
-        // if actor_ref != input_player {return};
-        // if !actor_ref.alive(game) {return};
-        // let AbilityInput::Kira{selection: KiraAbilityInput(input)} = ability_input else {return};
-        
-        // let mut new_guesses: VecMap<PlayerReference, KiraGuess> = VecMap::new();
-
-        // for (player_ref, guess) in input {
-        //     if Kira::allowed_to_guess(actor_ref, player_ref, game){
-        //         new_guesses.insert(player_ref, guess);
-        //     }
-        // }
-
-        // self.guesses = new_guesses;
-        // actor_ref.set_role_state(game, self);
-        // Kira::set_guesses(actor_ref, game);
-    }
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType) {
-        Kira::set_guesses(actor_ref, game);
-    }
-    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
-        Kira::set_guesses(actor_ref, game);
-    }
-    fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
-        Kira::set_guesses(actor_ref, game);
-    }
-}
-
-impl Kira{
-    pub fn set_guesses(kira_player_ref: PlayerReference, game: &mut Game){
-        
-        let RoleState::Kira(mut kira) = kira_player_ref.role_state(game).clone() else {return};
-
-        kira.guesses.retain(|player_ref, _|
-            Kira::allowed_to_guess(kira_player_ref, *player_ref, game)
-        );
-
-        for player_ref in PlayerReference::all_players(game){
-            if
-                !kira.guesses.contains_key(&player_ref) &&
-                Kira::allowed_to_guess(kira_player_ref, player_ref, game)
-            {
-                kira.guesses.insert(player_ref, KiraGuess::None);
+    fn available_ability_input(self, game: &Game, _actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilityInput {
+        match PlayerReference::all_players(game).filter(|p|p.alive(game)).count().saturating_sub(1).try_into() {
+            Ok(count) => {
+                AvailableAbilityInput::new_ability(
+                    AbilityID::Role { role: Role::Kira, id: 0 },
+                    AvailableAbilitySelection::Kira { 
+                        selection: AvailableKiraSelection::new(count)
+                    }
+                )
             }
-        }
-
-        kira_player_ref.set_role_state(game, RoleState::Kira(kira));
-    }
-    pub fn allowed_to_guess(kira_player_ref: PlayerReference, player_ref: PlayerReference, game: &mut Game)->bool{
-        player_ref.alive(game) &&
-        player_ref != kira_player_ref
+            Err(_) => {
+                AvailableAbilityInput::default()
+            }
+        }        
     }
 }

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::game::{ability_input::ValidateAvailableSelection, player::PlayerReference};
+use crate::game::{ability_input::ValidateAvailableSelection, player::PlayerReference, Game};
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct TwoPlayerOptionSelection(pub Option<PlayerReference>, pub Option<PlayerReference>);
@@ -29,7 +29,7 @@ pub struct AvailableTwoPlayerOptionSelection{
 }
 impl ValidateAvailableSelection for AvailableTwoPlayerOptionSelection{
     type Selection = TwoPlayerOptionSelection;
-    fn validate_selection(&self, selection: &TwoPlayerOptionSelection)->bool{
+    fn validate_selection(&self, _game: &Game, selection: &TwoPlayerOptionSelection)->bool{
         if !self.can_choose_duplicates && selection.same_role(){
             return false
         }

@@ -1,16 +1,7 @@
 import { ReactElement, useState } from "react";
 import { 
-    AvailableOnePlayerOptionSelection, 
-    OnePlayerOptionSelection, 
-    
-    AvailableTwoPlayerOptionSelection, 
     TwoPlayerOptionSelection, 
-    
-    AvailableTwoRoleOptionSelection, 
     TwoRoleOptionSelection, 
-    
-    AvailableTwoRoleOutlineOptionSelection, 
-    TwoRoleOutlineOptionSelection,
     AbilityID,
     AbilitySelection,
     translateAbilityId,
@@ -30,6 +21,7 @@ import TwoPlayerOptionSelectionMenu from "./AbilitySelectionTypes/TwoPlayerOptio
 import ChatMessage from "../../../../components/ChatMessage";
 import StyledText from "../../../../components/StyledText";
 import CheckBox from "../../../../components/CheckBox";
+import KiraSelectionMenu, { KiraSelection } from "./AbilitySelectionTypes/KiraSelectionMenu";
 
 
 
@@ -38,11 +30,11 @@ export default function GenericAbilityMenu(): ReactElement {
 
     const availableAbilitySelection = usePlayerState(
         playerState => playerState.availableAbilitySelection,
-        ["yourAvailableAbilityInput"]
+        ["yourSavedAbilityInput", "yourAvailableAbilityInput"]
     )!;
     const selectedAbilitySelection = usePlayerState(
         playerState => playerState.abilitySelection,
-        ["yourSavedAbilityInput"]
+        ["yourSavedAbilityInput", "yourAvailableAbilityInput"]
     )!;
 
     const selectedAbilitySelectionTypeMap = new ListMap(
@@ -231,6 +223,32 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
                         id,
                         selection: {
                             type: "twoRoleOutlineOption",
+                            selection: selection
+                        }
+                    });
+                }}
+            />
+        }
+        case "kira":{
+            let input: KiraSelection;
+            if(
+                props.selected === null ||
+                props.selected.type !== "kira"
+            ){
+                input = [];
+            }else{
+                input = props.selected.selection;
+            }
+
+            return <KiraSelectionMenu
+                key={props.key}
+                selection={input}
+                available={available.selection}
+                onChange={(selection)=>{
+                    GAME_MANAGER.sendAbilityInput({
+                        id,
+                        selection: {
+                            type: "kira",
                             selection: selection
                         }
                     });

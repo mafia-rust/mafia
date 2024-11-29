@@ -11,7 +11,7 @@ import GraveComponent from "./grave";
 import { RoleOutline, translateRoleOutline } from "../game/roleListState.d";
 import { CopyButton } from "./ClipboardButtons";
 import { useLobbyOrGameState, usePlayerState } from "./useHooks";
-import { KiraGuess, KiraGuessResult, kiraGuessTranslate } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu";
+import { KiraResult, KiraResultDisplay } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
@@ -88,51 +88,38 @@ const ChatElement = React.memo((
                 }}/>
             </span>
         </div>
-        case "kiraResult":
-            let out = [];
-
-            let sortedPlayerIndexes = Object.keys(message.variant.result.guesses).map((k)=>{return Number.parseInt(k)}).sort();
-
-            for(let playerIndex of sortedPlayerIndexes){
-                let resultStyle = "";
-                let resultIcon = "";
-                let resultString = "";
-
-                if(message.variant.result.guesses[playerIndex][1] === "correct"){
-                    resultStyle = "correct";
-                    resultIcon = "🟩";
-                    resultString = translate("kiraResult.correct");
-                }else if(message.variant.result.guesses[playerIndex][1] === "wrongSpot"){
-                    resultStyle = "wrongSpot";
-                    resultIcon = "🟨";
-                    resultString = translate("kiraResult.wrongSpot");
-                }else if(message.variant.result.guesses[playerIndex][1] === "notInGame"){
-                    resultStyle = "notInGame";
-                    resultIcon = "🟥";
-                    resultString = translate("kiraResult.notInGame");
-                }
-
-                if(message.variant.result.guesses[playerIndex][0] === "none"){
-                    resultStyle = "";
-                    resultIcon = "";
-                    resultString = "";
-                }
-
-                out.push(<div key={playerIndex} className={"kira-guess-result "+resultStyle}>
+        case "abilityUsed":
+            if(message.variant.selection.type === "kira"){
+                return <div className={"chat-message-div chat-message kira-guess-results " + style}>
                     <StyledText
+                        className="chat-message result"
                         playerKeywordData={props.playerKeywordData}
-                    >
-                        {playerNames[playerIndex]} {kiraGuessTranslate(message.variant.result.guesses[playerIndex][0])} {resultIcon} {resultString}
-                    </StyledText>
-                </div>)
+                    >{chatGroupIcon ?? ""} {translate("chatMessage.kiraResult")}</StyledText>
+                    <KiraResultDisplay 
+                        map={{
+                            type: "selection",
+                            map: message.variant.selection.selection
+                        }}
+                        playerKeywordData={props.playerKeywordData}
+                        playerNames={playerNames}
+                    />
+                </div>
             }
-
+        break;
+        case "kiraResult":
             return <div className={"chat-message-div chat-message kira-guess-results " + style}>
                 <StyledText
                     className="chat-message result"
                     playerKeywordData={props.playerKeywordData}
                 >{chatGroupIcon ?? ""} {translate("chatMessage.kiraResult")}</StyledText>
-                {out}
+                <KiraResultDisplay 
+                    map={{
+                        type: "reuslt",
+                        map: message.variant.result.guesses
+                    }}
+                    playerKeywordData={props.playerKeywordData}
+                    playerNames={playerNames}
+                />
             </div>
         case "playerDied":
 
@@ -472,6 +459,17 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                 case "onePlayerOption":
                     out = translate("chatMessage.abilityUsed.selection.onePlayerOption",
                         message.selection.selection===null?translate("nobody"):playerNames[message.selection.selection],
+                    );
+                    break;
+                case "twoPlayerOption":
+                    out = translate("chatMessage.abilityUsed.selection.twoPlayerOption",
+                        message.selection.selection[0]===null?translate("nobody"):playerNames[message.selection.selection[0]],
+                        message.selection.selection[1]===null?translate("nobody"):playerNames[message.selection.selection[1]],
+                    );
+                    break;
+                case "roleOption":
+                    out = translate("chatMessage.abilityUsed.selection.roleOption",
+                        message.selection.selection===null?translate("none"):translate("role."+message.selection.selection+".name")
                     );
                     break;
                 case "twoRoleOption":
@@ -1043,7 +1041,7 @@ export type ChatMessageVariant = {
 } | {
     type: "kiraResult",
     result: {
-        guesses: Record<PlayerIndex, [KiraGuess, KiraGuessResult]>
+        guesses: KiraResult
     }
 } | {
     type: "martyrFailed"

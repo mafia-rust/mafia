@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::game::{ability_input::{ability_selection::AbilitySelection, AbilityID, AbilityInput, ValidateAvailableSelection}, role::Role};
+use crate::game::{ability_input::{ability_selection::AbilitySelection, AbilityID, AbilityInput, ValidateAvailableSelection}, role::Role, Game};
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct TwoRoleOptionSelection(pub Option<Role>, pub Option<Role>);
@@ -28,7 +28,7 @@ pub struct AvailableTwoRoleOptionSelection{
 }
 impl ValidateAvailableSelection for AvailableTwoRoleOptionSelection{
     type Selection = TwoRoleOptionSelection;
-    fn validate_selection(&self, selection: &TwoRoleOptionSelection)->bool{
+    fn validate_selection(&self, _game: &Game, selection: &TwoRoleOptionSelection)->bool{
         if !self.can_choose_duplicates && selection.same_role(){
             return false
         }

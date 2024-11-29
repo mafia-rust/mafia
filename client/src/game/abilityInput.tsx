@@ -1,3 +1,6 @@
+import { ListMapData } from "../ListMap";
+import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
+import { PlayerIndex } from "./gameState.d";
 import translate from "./lang";
 import { Role } from "./roleState.d";
 
@@ -66,7 +69,10 @@ export type AbilitySelection = {
 } | {
     type: "twoRoleOutlineOption"
     selection: TwoRoleOutlineOptionSelection
-};
+} | {
+    type: "kira",
+    selection: KiraSelection
+}
 
 export function defaultAbilitySelection(available: AvailableAbilitySelection): AbilitySelection {
     switch (available.type) {
@@ -84,6 +90,8 @@ export function defaultAbilitySelection(available: AvailableAbilitySelection): A
             return {type: "twoRoleOption", selection: [null, null]};
         case "twoRoleOutlineOption":
             return {type: "twoRoleOutlineOption", selection: [null, null]};
+        case "kira":
+            return {type: "kira", selection: []};
     }
 }
 
@@ -107,6 +115,9 @@ export type AvailableAbilitySelection = {
 } | {
     type: "twoRoleOutlineOption"
     selection: AvailableTwoRoleOutlineOptionSelection,
+} | {
+    type: "kira",
+    selection: AvailableKiraSelection
 }
 
 
@@ -132,5 +143,10 @@ export type AvailableTwoRoleOptionSelection = {
     canChooseDuplicates: boolean
 };
 
-export type TwoRoleOutlineOptionSelection = [number | null, number | null];
+export type TwoRoleOutlineOptionSelection = [PlayerIndex | null, PlayerIndex | null];
 export type AvailableTwoRoleOutlineOptionSelection = (number | null)[];
+
+export type KiraSelection = ListMapData<PlayerIndex, KiraGuess>
+export type AvailableKiraSelection = {
+    countMustGuess: number
+};

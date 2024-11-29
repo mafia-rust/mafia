@@ -1194,12 +1194,12 @@
             {
                 "type": "kiraResult",
                 "result": {
-                    "guesses": {
-                        "0": ["veteran","correct"],
-                        "1": ["auditor","notInGame"],
-                        "2": ["nonTown","wrongSpot"],
-                        "3": ["nonTown","correct"]
-                    }
+                    "guesses": [
+                        [0, ["veteran","correct"]],
+                        [1, ["auditor","notInGame"]],
+                        [2, ["nonTown","wrongSpot"]],
+                        [3, ["nonTown","correct"]]
+                    ]
                 }
             },
             {"type": "youAttackedSomeone"},
