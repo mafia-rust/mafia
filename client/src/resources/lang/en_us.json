@@ -554,6 +554,7 @@
     
     "role.kira.name": "Kira",
     "role.kira.name:var.0": "Kiras",
+    "ability.abilityId.kira.0.name": "Kira Guess",
 
     "role.serialKiller.name": "Serial Killer",
     "role.serialKiller.name:var.0": "Serial Killers",
