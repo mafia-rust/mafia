@@ -62,7 +62,7 @@ impl Pitchfork{
                     .collect()
             ),
             AbilitySelection::new_one_player_option(None),
-            game.day_number() == 0 ||
+            game.day_number() == 1 ||
                 !actor.alive(game) ||
                 game.current_phase().is_night(),
             Some(PhaseType::Obituary),

@@ -6,8 +6,6 @@ import {
     AbilitySelection,
     translateAbilityId,
     AvailableAbilitySelection,
-    defaultAbilitySelection,
-    abilityIdToString,
     TwoRoleOutlineOptionSelection,
     RoleOptionSelection
 } from "../../../../game/abilityInput";
@@ -17,7 +15,6 @@ import { Button } from "../../../../components/Button";
 import OnePlayerOptionSelectionMenu from "./AbilitySelectionTypes/OnePlayerOptionSelectionMenu";
 import TwoRoleOutlineOptionSelectionMenu from "./AbilitySelectionTypes/TwoRoleOutlineOptionSelectionMenu";
 import GAME_MANAGER from "../../../..";
-import ListMap from "../../../../ListMap";
 import TwoRoleOptionSelectionMenu from "./AbilitySelectionTypes/TwoRoleOptionSelectionMenu";
 import TwoPlayerOptionSelectionMenu from "./AbilitySelectionTypes/TwoPlayerOptionSelectionMenu";
 import ChatMessage from "../../../../components/ChatMessage";
@@ -28,28 +25,18 @@ import RoleOptionSelectionMenu from "./AbilitySelectionTypes/RoleOptionSelection
 
 
 export default function GenericAbilityMenu(): ReactElement {
-
-    const availableAbilitySelection = usePlayerState(
-        playerState => playerState.availableAbilitySelection,
-        ["yourSavedAbilityInput", "yourAvailableAbilityInput"]
+    const savedAbilities = usePlayerState(
+        playerState => playerState.savedAbilities,
+        ["yourSavedAbilities"]
     )!;
-    const selectedAbilitySelection = usePlayerState(
-        playerState => playerState.abilitySelection,
-        ["yourSavedAbilityInput", "yourAvailableAbilityInput"]
-    )!;
-
-    const selectedAbilitySelectionTypeMap = new ListMap(
-        selectedAbilitySelection,
-        (k1, k2)=>abilityIdToString(k1) === abilityIdToString(k2)
-    );
 
     return <>
-        {availableAbilitySelection.map(([id, availableSelectionType], i) => {
+        {savedAbilities.map(([id, saveData], i) => {
             return <SingleAbilityMenu
                 key={i}
                 abilityId={id}
-                available={availableSelectionType}
-                selected={selectedAbilitySelectionTypeMap.get(id)}
+                available={saveData.availableAbilityData.available}
+                selected={saveData.selection}
             />
         })
     }</>
@@ -60,7 +47,7 @@ function SingleAbilityMenu(props: Readonly<{
     abilityId: AbilityID,
     key: number,
     available: AvailableAbilitySelection,
-    selected: AbilitySelection | null
+    selected: AbilitySelection
 }>): ReactElement {
 
     const [open, setOpen] = useState<boolean>(true);
@@ -80,17 +67,15 @@ function SingleAbilityMenu(props: Readonly<{
             <StyledText>{translateAbilityId(props.abilityId)}</StyledText>
         </summary>
 
-        {props.selected!==null?
-            <ChatMessage message={{
-                variant: {
-                    type: "abilityUsed",
-                    player: myIndex,
-                    abilityId: props.abilityId,
-                    selection: props.selected
-                },
-                chatGroup: "all"
-            }}/>
-        :null}
+        <ChatMessage message={{
+            variant: {
+                type: "abilityUsed",
+                player: myIndex,
+                abilityId: props.abilityId,
+                selection: props.selected
+            },
+            chatGroup: "all"
+        }}/>
         <SwitchSingleAbilityMenuType
             key={props.key}
             id={props.abilityId}
@@ -105,17 +90,11 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
     key: number,
     id: AbilityID,
     available: AvailableAbilitySelection,
-    selected: AbilitySelection | null
+    selected: AbilitySelection
 }>): ReactElement {
 
     const {key, id, available} = props;
-    let selected: AbilitySelection;
-
-    if (props.selected === null || props.selected.type !== props.available.type) {
-        selected = defaultAbilitySelection(props.available);    
-    }else{
-        selected = props.selected;
-    }
+    let selected: AbilitySelection = props.selected;
 
     switch(available.type) {
         case "unit":

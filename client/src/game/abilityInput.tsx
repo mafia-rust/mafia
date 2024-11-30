@@ -17,11 +17,12 @@ export type PlayerSavedAbilities = {
 
 export type SavedSingleAbility = {
     selection: AbilitySelection,
-    AvailableAbilitiesData: {
+    availableAbilityData: {
         available: AvailableAbilitySelection,
-        grayed_out: boolean,
-        reset_on_phase_start: PhaseType | null,
-        default_selection: AbilitySelection
+        grayedOut: boolean,
+        resetOnPhaseStart: PhaseType | null,
+        dontSave: boolean
+        defaultSelection: AbilitySelection
     }
 }
 

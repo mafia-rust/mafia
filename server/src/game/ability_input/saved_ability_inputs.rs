@@ -240,6 +240,7 @@ impl AllPlayersSavedAbilityInputs{
 
 //actual component
 #[derive(Default, Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct PlayerSavedAbilities{
     save: VecMap<AbilityID, SavedSingleAbility>
 }

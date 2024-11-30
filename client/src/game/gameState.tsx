@@ -1,5 +1,3 @@
-import ListMap from "../ListMap"
-import { AbilityID, AbilitySelection, AvailableAbilitySelection } from "./abilityInput"
 import GameState, { LobbyClient, LobbyState, PhaseTimes, Player, LobbyClientID, PlayerGameState } from "./gameState.d"
 
 
@@ -72,8 +70,7 @@ export function createPlayerGameState(): PlayerGameState {
         
         roleState: { type: "detective" },
 
-        availableAbilitySelection: (new ListMap<AbilityID, AvailableAbilitySelection>()).entries(),
-        abilitySelection: (new ListMap<AbilityID, AbilitySelection>()).entries(),
+        savedAbilities: [],
 
         will: "",
         notes: [],

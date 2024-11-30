@@ -356,14 +356,9 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.clientState.insiderGroups = [...packet.insiderGroups];
             }
         break;
-        case "yourAvailableAbilityInput":
+        case "yourSavedAbilities":
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
-                GAME_MANAGER.state.clientState.availableAbilitySelection = packet.selection;
-            }
-        break;
-        case "yourSavedAbilityInput":
-            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
-                GAME_MANAGER.state.clientState.abilitySelection = packet.selection;
+                GAME_MANAGER.state.clientState.savedAbilities = packet.save.save;
             }
         break;
         case "yourButtons":

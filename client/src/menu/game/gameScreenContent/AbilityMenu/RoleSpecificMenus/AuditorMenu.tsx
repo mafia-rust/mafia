@@ -32,32 +32,25 @@ export default function AuditorMenu(props: Readonly<{
         });
     }
 
-    const availableAbilitySelection = usePlayerState(
-        playerState => playerState.availableAbilitySelection,
-        ["yourSavedAbilityInput", "yourAvailableAbilityInput"]
+    const savedAbilities = usePlayerState(
+        playerState => playerState.savedAbilities,
+        ["yourSavedAbilities"]
     )!;
-    const selectedAbilitySelection = usePlayerState(
-        playerState => playerState.abilitySelection,
-        ["yourSavedAbilityInput", "yourAvailableAbilityInput"]
-    )!;
+    const savedAbilitiesMap = new ListMap(savedAbilities, (k1, k2) => abilityIdToString(k1) === abilityIdToString(k2));
 
-    const selectedAbilitySelectionMap = new ListMap(selectedAbilitySelection, (k1, k2) => abilityIdToString(k1) === abilityIdToString(k2));
-    let selection = selectedAbilitySelectionMap.get({type: "role", role: "auditor", id: 0});
-
-    const availableAbilitySelectionMap = new ListMap(availableAbilitySelection, (k1, k2) => abilityIdToString(k1) === abilityIdToString(k2));
-    let available = availableAbilitySelectionMap.get({type: "role", role: "auditor", id: 0});
+    let singleAbilitySave = savedAbilitiesMap.get({type: "role", role: "auditor", id: 0});
 
     let newSelection;
-    if(selection !== undefined && selection?.type === "twoRoleOutlineOption") {
-        newSelection = selection.selection;
+    let newAvailable;
+    if(
+        singleAbilitySave !== null &&
+        singleAbilitySave.selection.type === "twoRoleOutlineOption" &&
+        singleAbilitySave.availableAbilityData.available.type === "twoRoleOutlineOption"
+    ){
+        newSelection = singleAbilitySave.selection.selection;
+        newAvailable = singleAbilitySave.availableAbilityData.available.selection;
     } else {
         newSelection = undefined;
-    }
-
-    let newAvailable;
-    if(available !== undefined && available?.type === "twoRoleOutlineOption") {
-        newAvailable = available.selection;
-    } else {
         newAvailable = undefined;
     }
 
