@@ -2,13 +2,10 @@ use std::iter::once;
 
 use serde::Serialize;
 
-use crate::game::ability_input::ability_selection::AvailableAbilitySelection;
-use crate::game::ability_input::saved_ability_inputs::AllPlayersSavedAbilityInputs;
-use crate::game::ability_input::selection_type::two_role_outline_option_selection::AvailableTwoRoleOutlineOptionSelection;
 use crate::game::components::confused::Confused;
 use crate::game::components::detained::Detained;
 use crate::game::role_outline_reference::RoleOutlineReference;
-use crate::game::ability_input::{AbilityID, AvailableAbilityData};
+use crate::game::ability_input::{AbilityID, AvailableAbilitiesData};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -18,7 +15,7 @@ use crate::game::Game;
 use crate::vec_map::VecMap;
 
 use rand::prelude::SliceRandom;
-use super::{common_role, Priority, Role, RoleStateImpl};
+use super::{common_role, AbilitySelection, AllPlayersSavedAbilityInputs, AvailableAbilitySelection, Priority, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -47,9 +44,12 @@ impl RoleStateImpl for Auditor {
         if priority != Priority::Investigative {return;}
         if actor_ref.night_blocked(game) {return;}
         
-        let Some(selection) = 
-            AllPlayersSavedAbilityInputs::get_two_role_outline_option_selection_if_id(game, actor_ref, AbilityID::Role { role: Role::Auditor, id: 0 })
-            else{return};
+        let Some(selection) = AllPlayersSavedAbilityInputs::get_two_role_outline_option_selection_if_id(
+            game,
+            actor_ref,
+            AbilityID::role(Role::Auditor, 0)
+        )
+        else{return};
 
         if let Some(chosen_outline) = selection.0{
             let result = if Confused::is_confused(game, actor_ref){
@@ -81,27 +81,24 @@ impl RoleStateImpl for Auditor {
 
         actor_ref.set_role_state(game, self);
     }
-    fn available_ability_input(self, game: &Game, actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilityData {
-        if 
-            actor_ref.alive(game) && 
-            game.current_phase().phase() == PhaseType::Night &&
-            !Detained::is_detained(game, actor_ref)
-        {    
-            AvailableAbilityData::new_ability(
-                AbilityID::Role { role: Role::Auditor, id: 0 },
-                AvailableAbilitySelection::TwoRoleOutlineOption {
-                    selection: AvailableTwoRoleOutlineOptionSelection(
-                        RoleOutlineReference::all_outlines(game)
-                            .filter(|o|!self.previously_given_results.contains(o))
-                            .map(|o|Some(o))
-                            .chain(once(None))
-                            .collect()
-                    )
-                }
-            )
-        }else{
-            AvailableAbilityData::default()
-        }
+    fn available_ability_input(self, game: &Game, actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilitiesData {
+        AvailableAbilitiesData::new_ability_fast(
+            game,
+            AbilityID::role(Role::Auditor, 0),
+            AvailableAbilitySelection::new_two_role_outline_option(
+                RoleOutlineReference::all_outlines(game)
+                    .filter(|o|!self.previously_given_results.contains(o))
+                    .map(|o|Some(o))
+                    .chain(once(None))
+                    .collect()
+            ),
+            AbilitySelection::new_two_role_outline_option(None, None),
+            !actor_ref.alive(game) || 
+            game.current_phase().phase() != PhaseType::Night ||
+            Detained::is_detained(game, actor_ref),
+            Some(PhaseType::Obituary),
+            false
+        )
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         common_role::convert_saved_ability_to_visits(game, actor_ref, AbilityID::Role { role: Role::Auditor, id: 0 }, false)

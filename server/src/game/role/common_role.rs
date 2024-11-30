@@ -44,6 +44,7 @@ pub fn available_ability_input_one_player_night(
     can_select_self: bool,
     ability_id: AbilityID,
 ) -> AvailableAbilitiesData {
+    
     let grayed_out = 
         !actor_ref.alive(game) || 
         Detained::is_detained(game, actor_ref) ||
@@ -63,7 +64,8 @@ pub fn available_ability_input_one_player_night(
                 .collect(),
         None,
         grayed_out,
-        Some(PhaseType::Obituary)
+        Some(PhaseType::Obituary),
+        false
     )
 }
 

@@ -1,7 +1,5 @@
 use crate::game::{
-    ability_input::{ability_id::AbilityID, ability_selection::{AbilitySelection, AvailableAbilitySelection},
-    available_abilities_data::{available_single_ability_data::AvailableSingleAbilityData, AvailableAbilitiesData},
-    selection_type::BooleanSelection, AbilityInput},
+    ability_input::*,
     phase::PhaseType, player::PlayerReference, role::Role, Game
 };
 
@@ -11,22 +9,16 @@ impl ForfeitVote{
         if !game.settings.enabled_roles.contains(&Role::Blackmailer) {
             return AvailableAbilitiesData::default();
         }
-        
-        if let Some(mut ability) = AvailableSingleAbilityData::new_obituary_resetting_default_and_available(
+
+        AvailableAbilitiesData::new_ability_fast(
             game,
-            AbilitySelection::Boolean{selection: BooleanSelection(false)},
-            AvailableAbilitySelection::Boolean
-        ){
-            if !(
-                actor_ref.alive(game) &&
-                game.current_phase().phase() == PhaseType::Discussion
-            ) {
-                ability.set_grayed_out(true); 
-            }
-            AvailableAbilitiesData::new_ability(AbilityID::ForfeitVote, ability)
-        }else{
-            AvailableAbilitiesData::default()
-        }
+            AbilityID::forfeit_vote(),
+            AvailableAbilitySelection::new_boolean(),
+            AbilitySelection::new_boolean(false),
+            !actor_ref.alive(game) || game.current_phase().phase() != PhaseType::Discussion,
+            Some(PhaseType::Obituary),
+            false
+        )
     }
 
     pub fn on_ability_input_received(game: &mut Game, actor_ref: PlayerReference, input: AbilityInput){

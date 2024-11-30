@@ -37,6 +37,7 @@ impl AllPlayersSavedAbilityInputs{
         {
             let Some(saved_ability_input) = 
             game.saved_ability_inputs.players_saved_inputs.get(&actor) else {return};
+            
 
             let Some(SavedSingleAbility{
                 selection: saved_selection,
@@ -45,6 +46,7 @@ impl AllPlayersSavedAbilityInputs{
                 saved_ability_input.save.get(&id).clone() else {return;};
             if 
                 !available_ability_data.validate_selection(game, &incoming_selection) ||
+                available_ability_data.grayed_out() ||
                 *saved_selection == incoming_selection
             {
                 return;
@@ -55,10 +57,15 @@ impl AllPlayersSavedAbilityInputs{
         let Some(player_saved_ability_inputs) = 
             game.saved_ability_inputs.players_saved_inputs.get_mut(&actor) else {return};
 
-        let Some(SavedSingleAbility { selection: saved_selection, .. }) = 
+        let Some(SavedSingleAbility {
+            selection: saved_selection,
+            available_ability_data, 
+        }) = 
             player_saved_ability_inputs.save.get_mut(&id) else {return;};
 
-        *saved_selection = incoming_selection.clone();
+        if !available_ability_data.dont_save() {
+            *saved_selection = incoming_selection.clone();
+        }
 
         Self::send_selection_message(game, actor, id, incoming_selection);
         Self::send_saved_abilities(game, actor);
@@ -240,22 +247,22 @@ impl PlayerSavedAbilities{
     fn new(save: VecMap<AbilityID, SavedSingleAbility>)->Self{
         Self{save}
     }
-    fn combine_mut(&mut self, other: Self){
+    // fn combine_mut(&mut self, other: Self){
         
-        let mut new_map = VecMap::new();
+    //     let mut new_map = VecMap::new();
 
-        for (id, mut other_save) in other.save{
+    //     for (id, mut other_save) in other.save{
             
-            other_save.selection = self.save.get(&id).map_or_else(
-                || other_save.selection.clone(),
-                |old_save| old_save.selection.clone()
-            );
+    //         other_save.selection = self.save.get(&id).map_or_else(
+    //             || other_save.selection.clone(),
+    //             |old_save| old_save.selection.clone()
+    //         );
 
-            new_map.insert(id, other_save);
-        }
+    //         new_map.insert(id, other_save);
+    //     }
 
-        self.save = new_map;
-    }
+    //     self.save = new_map;
+    // }
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]

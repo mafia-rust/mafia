@@ -1,11 +1,6 @@
 use crate::{
     game::{
-        ability_input::{
-            ability_id::AbilityID, ability_selection::{AbilitySelection, AvailableAbilitySelection},
-            available_abilities_data::{available_single_ability_data::AvailableSingleAbilityData, AvailableAbilitiesData},
-            selection_type::one_player_option_selection::{AvailableOnePlayerOptionSelection, OnePlayerOptionSelection},
-            AbilityInput
-        },
+        ability_input::*,
         attack_power::AttackPower, grave::GraveKiller, phase::PhaseType, player::PlayerReference,
         role::{common_role, Priority}, role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, Game
     }, 
@@ -62,50 +57,42 @@ impl SyndicateGunItem {
 
     //available ability
     pub fn available_ability_input(game: &Game, actor: PlayerReference) -> AvailableAbilitiesData {
-        let mut out = AvailableAbilitiesData::default();
-
         if let Some(player_with_gun) = game.syndicate_gun_item.player_with_gun {
             if actor != player_with_gun {
-                return out;
-            }
-
-            out.combine_overwrite(
-                common_role::available_ability_input_one_player_night(game, actor, false, AbilityID::SyndicateGunItemShoot)
-            );
-        
-
-            if let Some(mut ability) = AvailableSingleAbilityData::new_obituary_resetting_default_and_available(
-                game,
-                AbilitySelection::OnePlayerOption {
-                    selection: OnePlayerOptionSelection(None)
-                },
-                AvailableAbilitySelection::OnePlayerOption{
-                    selection: AvailableOnePlayerOptionSelection(
-                        PlayerReference::all_players(game)
-                            .into_iter()
-                        .filter(|target|
-                                actor != *target &&
-                                target.alive(game) &&
-                                InsiderGroupID::Mafia.is_player_in_revealed_group(game, *target))
-                            .map(|p|Some(p))
-                            .chain(std::iter::once(None))
-                            .collect()
+                AvailableAbilitiesData::default()
+            }else{            
+                common_role::available_ability_input_one_player_night(
+                    game,
+                    actor,
+                    false,
+                    AbilityID::syndicate_gun_item_shoot()
+                ).combine_build(
+                    AvailableAbilitiesData::new_ability_fast(
+                        game,
+                        AbilityID::syndicate_gun_item_give(),
+                        AvailableAbilitySelection::new_one_player_option(
+                            PlayerReference::all_players(game)
+                                .into_iter()
+                                .filter(|target|
+                                    actor != *target &&
+                                    target.alive(game) &&
+                                    InsiderGroupID::Mafia.is_player_in_revealed_group(game, *target))
+                                .map(|p|Some(p))
+                                .chain(std::iter::once(None))
+                                .collect()
+                        ),
+                        AbilitySelection::new_one_player_option(None),
+                        game.current_phase().phase() != PhaseType::Night ||
+                        Detained::is_detained(game, actor) ||
+                        !actor.alive(game),
+                        Some(PhaseType::Obituary),
+                        true,
                     )
-                }
-            )
-            {
-                if
-                    game.current_phase().phase() != PhaseType::Night ||
-                    Detained::is_detained(game, actor) ||
-                    !actor.alive(game)
-                {
-                    ability.set_grayed_out(true);
-                }
-
-                out.insert_ability(AbilityID::SyndicateGunItemGive, ability);
+                )
             }
+        }else{
+            AvailableAbilitiesData::default()
         }
-        out
     }
 
 

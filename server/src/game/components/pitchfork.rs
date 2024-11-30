@@ -2,15 +2,7 @@ use std::ops::Mul;
 
 use crate::{
     game::{
-        ability_input::{
-            ability_id::AbilityID, ability_selection::{AbilitySelection, AvailableAbilitySelection},
-            available_abilities_data::{
-                available_single_ability_data::AvailableSingleAbilityData,
-                AvailableAbilitiesData
-            },
-            selection_type::one_player_option_selection::{AvailableOnePlayerOptionSelection, OnePlayerOptionSelection},
-            AbilityInput
-        },
+        ability_input::*,
         attack_power::AttackPower, game_conclusion::GameConclusion,
         grave::GraveKiller, phase::PhaseType, player::PlayerReference,
         role::{Priority, Role}, role_list::RoleSet, Game
@@ -51,35 +43,31 @@ impl Default for Pitchfork{
 impl Pitchfork{
     pub fn available_ability_input(game: &Game, actor: PlayerReference)->AvailableAbilitiesData{
 
-        if !game.settings.enabled_roles.contains(&Role::Rabblerouser) {
+        if
+            !game.settings.enabled_roles.contains(&Role::Rabblerouser) ||
+            !actor.win_condition(game).is_loyalist_for(GameConclusion::Town)
+        {
             return AvailableAbilitiesData::default();
         }
 
-
-        if let Some(mut available) = AvailableSingleAbilityData::new_obituary_resetting_default_and_available(game, 
-            AbilitySelection::OnePlayerOption { selection: OnePlayerOptionSelection(None) },
-            AvailableAbilitySelection::OnePlayerOption {
-                selection: AvailableOnePlayerOptionSelection(PlayerReference::all_players(game)
+        AvailableAbilitiesData::new_ability_fast(
+            game,
+            AbilityID::pitchfork_vote(),
+            AvailableAbilitySelection::new_one_player_option(
+                PlayerReference::all_players(game)
                     .into_iter()
                     .filter(|p|p.alive(game))
                     .map(|p|Some(p))
                     .chain(std::iter::once(None))
                     .collect()
-                )    
-            })
-        {
-            if !(
-                game.day_number() > 1 &&
-                actor.alive(game) &&
-                actor.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
-                !game.current_phase().is_night()
-            ){
-                available.set_grayed_out(true);
-            }
-            AvailableAbilitiesData::new_ability(AbilityID::PitchforkVote, available)
-        }else{
-            AvailableAbilitiesData::default()
-        }
+            ),
+            AbilitySelection::new_one_player_option(None),
+            game.day_number() == 0 ||
+                !actor.alive(game) ||
+                game.current_phase().is_night(),
+            Some(PhaseType::Obituary),
+            false
+        )
     }
     pub fn on_ability_input_received(game: &mut Game, actor_ref: PlayerReference, input: AbilityInput){
         let Some(selection) = input.get_player_option_selection_if_id(AbilityID::pitchfork_vote()) else {return};

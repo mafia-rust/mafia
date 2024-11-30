@@ -1,6 +1,8 @@
+use std::cmp::Ordering;
+
 use serde::{Deserialize, Serialize};
 
-use crate::game::{ability_input::ValidateAvailableSelection, player::PlayerReference, Game};
+use crate::{game::{ability_input::ValidateAvailableSelection, player::PlayerReference, Game}, vec_set::VecSet};
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct TwoPlayerOptionSelection(pub Option<PlayerReference>, pub Option<PlayerReference>);
@@ -19,13 +21,23 @@ impl TwoPlayerOptionSelection{
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct AvailableTwoPlayerOptionSelection{
-    pub available_first_player: Vec<Option<PlayerReference>>,
-    pub available_second_player: Vec<Option<PlayerReference>>,
+    pub available_first_player: VecSet<Option<PlayerReference>>,
+    pub available_second_player: VecSet<Option<PlayerReference>>,
     
     pub can_choose_duplicates: bool
+}
+impl PartialOrd for AvailableTwoPlayerOptionSelection{
+    fn partial_cmp(&self, _other: &Self) -> Option<std::cmp::Ordering>{
+        Some(Ordering::Equal)
+    }
+}
+impl Ord for AvailableTwoPlayerOptionSelection{
+    fn cmp(&self, _other: &Self) -> std::cmp::Ordering{
+        Ordering::Equal
+    }
 }
 impl ValidateAvailableSelection for AvailableTwoPlayerOptionSelection{
     type Selection = TwoPlayerOptionSelection;

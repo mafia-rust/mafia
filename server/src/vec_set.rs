@@ -69,6 +69,7 @@ impl <K> VecSet<K> where K: Eq {
         self.vec.keys().cloned().chain(other.vec.keys().cloned()).collect()
     }
 }
+
 impl<K> IntoIterator for VecSet<K> where K: Eq {
     type Item = K;
     type IntoIter = std::iter::Map<std::vec::IntoIter<(K, ())>, fn((K, ())) -> K>;

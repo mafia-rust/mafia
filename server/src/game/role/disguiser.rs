@@ -2,10 +2,7 @@ use std::iter::once;
 
 use serde::Serialize;
 
-use crate::game::ability_input::ability_selection::AvailableAbilitySelection;
-use crate::game::ability_input::selection_type::one_player_option_selection::AvailableOnePlayerOptionSelection;
-use crate::game::ability_input::selection_type::role_option_selection::AvailableRoleOptionSelection;
-use crate::game::ability_input::{AbilityID, AbilityInput, AvailableAbilityData};
+use crate::game::ability_input::*;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
 use crate::game::grave::GraveInformation;
@@ -57,44 +54,40 @@ impl RoleStateImpl for Disguiser {
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_saved_ability_to_visits(game, actor_ref, AbilityID::role(Role::Disguiser, 0), false)
     }
-    fn available_ability_input(self, game: &Game, actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilityData {
-        if !actor_ref.alive(game) {return AvailableAbilityData::default()};
-
-        let mut out = if game.current_phase().phase() == PhaseType::Night {
-            AvailableAbilityData::new_ability(
-                AbilityID::Role { role: Role::Disguiser, id: 0 }, 
-                AvailableAbilitySelection::OnePlayerOption {
-                    selection: AvailableOnePlayerOptionSelection(
-                        PlayerReference::all_players(game)
-                            .filter(|p|
-                                !Detained::is_detained(game, actor_ref) &&
-                                actor_ref.alive(game) &&
-                                p.alive(game) &&
-                                InsiderGroupID::in_same_revealed_group(game, actor_ref, *p)
-                            )
-                            .map(|p| Some(p))
-                            .chain(once(None))
-                            .collect()
+    fn available_ability_input(self, game: &Game, actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilitiesData {
+        AvailableAbilitiesData::new_ability_fast(
+            game,
+            AbilityID::role(Role::Disguiser, 0),
+            AvailableAbilitySelection::new_one_player_option(PlayerReference::all_players(game)
+                    .filter(|p|
+                        p.alive(game) &&
+                        InsiderGroupID::in_same_revealed_group(game, actor_ref, *p)
                     )
-                }
+                    .map(|p| Some(p))
+                    .chain(once(None))
+                    .collect()
+                ),
+            AbilitySelection::new_one_player_option(None),
+            game.current_phase().phase() == PhaseType::Night || 
+            !actor_ref.alive(game) ||
+            Detained::is_detained(game, actor_ref),
+            Some(PhaseType::Obituary),
+            false
+        ).combine_build(
+            AvailableAbilitiesData::new_ability_fast(
+                game,
+                AbilityID::role(Role::Disguiser, 1),
+                AvailableAbilitySelection::new_role_option(
+                    Role::values().into_iter()
+                        .map(|role| Some(role))
+                        .collect()
+                ),
+                AbilitySelection::new_role_option(Some(Role::Disguiser)),
+                !actor_ref.alive(game),
+                None,
+                false
             )
-        }else{
-            AvailableAbilityData::default()
-        };
-        
-        out.combine_overwrite(
-            AvailableAbilityData::new_ability(
-                AbilityID::Role { role: Role::Disguiser, id: 1 },
-                AvailableAbilitySelection::RoleOption {
-                    selection: AvailableRoleOptionSelection(
-                        Role::values().into_iter()
-                            .map(|role| Some(role))
-                            .collect()
-                    )
-                }
-            )
-        );
-        out
+        )
     }
     fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: AbilityInput) {
         if actor_ref != input_player {return;}

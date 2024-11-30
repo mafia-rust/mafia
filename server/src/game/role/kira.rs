@@ -1,9 +1,6 @@
+use kira_selection::{AvailableKiraSelection, KiraSelection};
 use serde::{Serialize, Deserialize};
 
-use crate::game::ability_input::ability_selection::{AbilitySelection, AvailableAbilitySelection};
-use crate::game::ability_input::saved_ability_inputs::AllPlayersSavedAbilityInputs;
-use crate::game::ability_input::selection_type::kira_selection::AvailableKiraSelection;
-use crate::game::ability_input::{AbilityID, AvailableAbilityData};
 use crate::game::attack_power::AttackPower;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
@@ -11,7 +8,7 @@ use crate::game::player::PlayerReference;
 
 use crate::game::Game;
 use crate::vec_map::VecMap;
-
+use crate::game::ability_input::*;
 use super::{Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -190,18 +187,21 @@ impl RoleStateImpl for Kira {
             _ => return,
         }    
     }
-    fn available_ability_input(self, game: &Game, _actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilityData {
+    fn available_ability_input(self, game: &Game, _actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilitiesData {
         match PlayerReference::all_players(game).filter(|p|p.alive(game)).count().saturating_sub(1).try_into() {
             Ok(count) => {
-                AvailableAbilityData::new_ability(
-                    AbilityID::Role { role: Role::Kira, id: 0 },
-                    AvailableAbilitySelection::Kira { 
-                        selection: AvailableKiraSelection::new(count)
-                    }
+                AvailableAbilitiesData::new_ability_fast(
+                    game,
+                    AbilityID::role(Role::Kira, 0),
+                    AvailableAbilitySelection::new_kira(AvailableKiraSelection::new(count)),
+                    AbilitySelection::new_kira(KiraSelection::default()),
+                    false,
+                    None,
+                    false
                 )
             }
             Err(_) => {
-                AvailableAbilityData::default()
+                AvailableAbilitiesData::default()
             }
         }        
     }

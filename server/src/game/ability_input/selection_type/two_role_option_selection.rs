@@ -1,6 +1,17 @@
+use std::cmp::Ordering;
+
 use serde::{Deserialize, Serialize};
 
-use crate::game::{ability_input::{ability_selection::AbilitySelection, AbilityID, AbilityInput, ValidateAvailableSelection}, role::Role, Game};
+use crate::{
+    game::{
+        ability_input::{
+            ability_selection::AbilitySelection, AbilityID,
+            AbilityInput, ValidateAvailableSelection
+        },
+        role::Role, Game
+    },
+    vec_set::VecSet
+};
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct TwoRoleOptionSelection(pub Option<Role>, pub Option<Role>);
@@ -19,10 +30,10 @@ impl TwoRoleOptionSelection{
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct AvailableTwoRoleOptionSelection{
-    pub available_roles: Vec<Option<Role>>,
+    pub available_roles: VecSet<Option<Role>>,
     
     pub can_choose_duplicates: bool
 }
@@ -33,6 +44,16 @@ impl ValidateAvailableSelection for AvailableTwoRoleOptionSelection{
             return false
         }
         self.available_roles.contains(&selection.0) && self.available_roles.contains(&selection.1)
+    }
+}
+impl PartialOrd for AvailableTwoRoleOptionSelection{
+    fn partial_cmp(&self, _other: &Self)->Option<std::cmp::Ordering>{
+        Some(Ordering::Equal)
+    }
+}
+impl Ord for AvailableTwoRoleOptionSelection{
+    fn cmp(&self, _other: &Self)->Ordering{
+        Ordering::Equal
     }
 }
 

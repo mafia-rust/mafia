@@ -123,7 +123,7 @@ export type ToClientPacket = {
     save: {
         save: ListMapData<AbilityID, {
             selection: AbilitySelection,
-            availableAbilityData: {
+            AvailableAbilitiesData: {
                 available: AvailableAbilitySelection,
                 grayed_out: boolean,
                 reset_on_phase_start: PhaseType | null,
