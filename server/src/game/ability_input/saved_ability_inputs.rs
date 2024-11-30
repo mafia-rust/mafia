@@ -13,67 +13,16 @@ use crate::{
     vec_map::VecMap};
 
 use super::{
-    ability_selection::AbilitySelection, available_abilities_data::{AvailableAbilitiesData, AvailableSingleAbilityData},
+    ability_selection::AbilitySelection,
+    available_abilities_data::{available_single_ability_data::AvailableSingleAbilityData, AvailableAbilitiesData},
     selection_type::two_role_outline_option_selection::TwoRoleOutlineOptionSelection, AbilityID,
     AbilityInput
 };
 
-
-#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
-#[serde(rename_all = "camelCase")]
-struct SavedSingleAbility{
-    selection: AbilitySelection,
-
-    available_ability_data: AvailableSingleAbilityData
-}
-impl SavedSingleAbility{
-    fn new(selection: AbilitySelection, available_ability_data: AvailableSingleAbilityData)->Self{
-        Self{selection, available_ability_data}
-    }
-    pub fn reset_on_phase_start(&mut self, phase: PhaseType){
-        if let Some(reset_phase) = self.available_ability_data.reset_on_phase_start(){
-            if phase == reset_phase{
-                self.selection = self.available_ability_data.default_selection().clone();
-            }
-        }
-    }
-}
-
-//actual component
-#[derive(Default, Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
-pub struct PlayerSavedAbilities{
-    save: VecMap<AbilityID, SavedSingleAbility>
-}
-impl PlayerSavedAbilities{
-    fn new(save: VecMap<AbilityID, SavedSingleAbility>)->Self{
-        Self{save}
-    }
-    fn combine_mut(&mut self, other: Self){
-        
-        let mut new_map = VecMap::new();
-
-        for (id, mut other_save) in other.save{
-            
-            other_save.selection = self.save.get(&id).map_or_else(
-                || other_save.selection.clone(),
-                |old_save| old_save.selection.clone()
-            );
-
-            new_map.insert(id, other_save);
-        }
-
-        self.save = new_map;
-    }
-}
-
-
-//all players components
 #[derive(Default)]
 pub struct AllPlayersSavedAbilityInputs{
     players_saved_inputs: VecMap<PlayerReference, PlayerSavedAbilities>
 }
-
-
 
 impl AllPlayersSavedAbilityInputs{
     //event listeners
@@ -282,3 +231,49 @@ impl AllPlayersSavedAbilityInputs{
     }
 }
 
+//actual component
+#[derive(Default, Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct PlayerSavedAbilities{
+    save: VecMap<AbilityID, SavedSingleAbility>
+}
+impl PlayerSavedAbilities{
+    fn new(save: VecMap<AbilityID, SavedSingleAbility>)->Self{
+        Self{save}
+    }
+    fn combine_mut(&mut self, other: Self){
+        
+        let mut new_map = VecMap::new();
+
+        for (id, mut other_save) in other.save{
+            
+            other_save.selection = self.save.get(&id).map_or_else(
+                || other_save.selection.clone(),
+                |old_save| old_save.selection.clone()
+            );
+
+            new_map.insert(id, other_save);
+        }
+
+        self.save = new_map;
+    }
+}
+
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+struct SavedSingleAbility{
+    selection: AbilitySelection,
+
+    available_ability_data: AvailableSingleAbilityData
+}
+impl SavedSingleAbility{
+    fn new(selection: AbilitySelection, available_ability_data: AvailableSingleAbilityData)->Self{
+        Self{selection, available_ability_data}
+    }
+    pub fn reset_on_phase_start(&mut self, phase: PhaseType){
+        if let Some(reset_phase) = self.available_ability_data.reset_on_phase_start(){
+            if phase == reset_phase{
+                self.selection = self.available_ability_data.default_selection().clone();
+            }
+        }
+    }
+}

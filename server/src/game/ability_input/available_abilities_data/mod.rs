@@ -1,4 +1,6 @@
 
+use std::iter::once;
+
 use serde::{Deserialize, Serialize};
 
 use crate::{game::{phase::PhaseType, player::PlayerReference, Game}, vec_map::{vec_map, VecMap}, vec_set::VecSet};
@@ -50,12 +52,13 @@ impl AvailableAbilitiesData{
         grayed_out: bool,
         reset_on_phase_start: Option<PhaseType>
     )->Self{
-
-
         Self{abilities: vec_map![(id, AvailableSingleAbilityData::new(
                 game,
                 AvailableAbilitySelection::OnePlayerOption { selection: AvailableOnePlayerOptionSelection(
-                    available_players.into_iter().map(|p|Some(p)).collect()
+                    available_players.into_iter()
+                        .map(|p|Some(p))
+                        .chain(once(None))
+                        .collect()
                 ) },
                 grayed_out,
                 reset_on_phase_start,

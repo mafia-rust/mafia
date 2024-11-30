@@ -4,7 +4,10 @@ use crate::{
     game::{
         ability_input::{
             ability_id::AbilityID, ability_selection::{AbilitySelection, AvailableAbilitySelection},
-            available_abilities_data::{AvailableAbilitiesData, AvailableSingleAbilityData},
+            available_abilities_data::{
+                available_single_ability_data::AvailableSingleAbilityData,
+                AvailableAbilitiesData
+            },
             selection_type::one_player_option_selection::{AvailableOnePlayerOptionSelection, OnePlayerOptionSelection},
             AbilityInput
         },
@@ -47,6 +50,12 @@ impl Default for Pitchfork{
 
 impl Pitchfork{
     pub fn available_ability_input(game: &Game, actor: PlayerReference)->AvailableAbilitiesData{
+
+        if !game.settings.enabled_roles.contains(&Role::Rabblerouser) {
+            return AvailableAbilitiesData::default();
+        }
+
+
         if let Some(mut available) = AvailableSingleAbilityData::new_obituary_resetting_default_and_available(game, 
             AbilitySelection::OnePlayerOption { selection: OnePlayerOptionSelection(None) },
             AvailableAbilitySelection::OnePlayerOption {
@@ -60,7 +69,6 @@ impl Pitchfork{
             })
         {
             if !(
-                game.settings.enabled_roles.contains(&Role::Rabblerouser) &&
                 game.day_number() > 1 &&
                 actor.alive(game) &&
                 actor.win_condition(game).is_loyalist_for(GameConclusion::Town) &&

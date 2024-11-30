@@ -1,22 +1,21 @@
 use std::collections::HashSet;
 
-use crate::{
-    game::{
-        ability_input::{
-            ability_id::AbilityID, ability_selection::{AbilitySelection, AvailableAbilitySelection}, available_abilities_data::AvailableAbilitiesData, saved_ability_inputs::AllPlayersSavedAbilityInputs, selection_type::one_player_option_selection::AvailableOnePlayerOptionSelection
-        },
-        chat::ChatGroup,
-        components::{
-            detained::Detained,
-            puppeteer_marionette::PuppeteerMarionette
-        },
-        game_conclusion::GameConclusion,
-        modifiers::{ModifierType, Modifiers},
-        phase::{PhaseState, PhaseType}, player::PlayerReference,
-        role_list::RoleSet, visit::{Visit, VisitTag}, win_condition::WinCondition,
-        Game
-    }, 
-    vec_set::VecSet
+use crate::game::{
+    ability_input::{
+        ability_id::AbilityID, ability_selection::AbilitySelection,
+        available_abilities_data::AvailableAbilitiesData,
+        saved_ability_inputs::AllPlayersSavedAbilityInputs,
+    },
+    chat::ChatGroup,
+    components::{
+        detained::Detained,
+        puppeteer_marionette::PuppeteerMarionette
+    },
+    game_conclusion::GameConclusion,
+    modifiers::{ModifierType, Modifiers},
+    phase::{PhaseState, PhaseType}, player::PlayerReference,
+    role_list::RoleSet, visit::{Visit, VisitTag}, win_condition::WinCondition,
+    Game
 };
 
 use super::{reporter::Reporter, medium::Medium, InsiderGroupID, Role, RoleState};
@@ -39,34 +38,33 @@ pub(super) fn convert_selection_to_visits(_game: &Game, actor_ref: PlayerReferen
     }
 }
 
-pub(super) fn available_ability_input_one_player_night(
+pub fn available_ability_input_one_player_night(
     game: &Game,
     actor_ref: PlayerReference,
     can_select_self: bool,
     ability_id: AbilityID,
 ) -> AvailableAbilitiesData {
-    match game.current_phase().phase() {
-        PhaseType::Night => {
-            let mut all_allowed_inputs: VecSet<Option<PlayerReference>> = PlayerReference::all_players(game)
+    let grayed_out = 
+        !actor_ref.alive(game) || 
+        Detained::is_detained(game, actor_ref) ||
+        game.current_phase().phase() != PhaseType::Night;
+
+    AvailableAbilitiesData::new_one_player_ability_fast(
+        game,
+        ability_id,
+        PlayerReference::all_players(game)
                 .into_iter()
-                .filter(|player| can_night_select(game, actor_ref, *player))
-                .map(|player| Some(player))
-                .collect();
-
-            all_allowed_inputs.insert(None);
-
-            if !can_select_self {
-                all_allowed_inputs.remove(&Some(actor_ref));
-            }
-
-            AvailableAbilitiesData::new_ability(ability_id, 
-                AvailableAbilitySelection::OnePlayerOption {
-                    selection: AvailableOnePlayerOptionSelection(all_allowed_inputs)
-                }
-            )
-        },
-        _ => AvailableAbilitiesData::default()
-    }
+                .filter(|p| can_select_self || *p != actor_ref)
+                .filter(|player| 
+                    actor_ref != *player &&
+                    player.alive(game) &&
+                    !InsiderGroupID::in_same_revealed_group(game, actor_ref, *player)
+                )
+                .collect(),
+        None,
+        grayed_out,
+        Some(PhaseType::Obituary)
+    )
 }
 
 /// This function uses defaults. When using this function, consider if you need to override the defaults.

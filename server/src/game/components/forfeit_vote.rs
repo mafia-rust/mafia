@@ -1,5 +1,7 @@
 use crate::game::{
-    ability_input::{ability_id::AbilityID, ability_selection::{AbilitySelection, AvailableAbilitySelection}, available_abilities_data::{AvailableAbilitiesData, AvailableSingleAbilityData}, selection_type::BooleanSelection, AbilityInput},
+    ability_input::{ability_id::AbilityID, ability_selection::{AbilitySelection, AvailableAbilitySelection},
+    available_abilities_data::{available_single_ability_data::AvailableSingleAbilityData, AvailableAbilitiesData},
+    selection_type::BooleanSelection, AbilityInput},
     phase::PhaseType, player::PlayerReference, role::Role, Game
 };
 
