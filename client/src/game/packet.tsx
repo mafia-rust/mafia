@@ -119,11 +119,18 @@ export type ToClientPacket = {
     type: "yourInsiderGroups",
     insiderGroups: InsiderGroup[]
 } | {
-    type: "yourAvailableAbilityInput",
-    selection: ListMapData<AbilityID, AvailableAbilitySelection>
-} | {
-    type: "yourSavedAbilityInput",
-    selection: ListMapData<AbilityID, AbilitySelection>
+    type: "yourSavedAbilities",
+    save: {
+        save: ListMapData<AbilityID, {
+            selection: AbilitySelection,
+            availableAbilityData: {
+                available: AvailableAbilitySelection,
+                grayed_out: boolean,
+                reset_on_phase_start: PhaseType | null,
+                default_selection: AbilitySelection
+            }
+        }>
+    }
 } | {
     type: "yourButtons", 
     buttons: [{

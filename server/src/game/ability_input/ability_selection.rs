@@ -2,9 +2,18 @@ use serde::{Deserialize, Serialize};
 
 use crate::game::Game;
 
-use super::{selection_type::{
-    kira_selection::{AvailableKiraSelection, KiraSelection}, one_player_option_selection::{AvailableOnePlayerOptionSelection, OnePlayerOptionSelection}, role_option_selection::{AvailableRoleOptionSelection, RoleOptionSelection}, two_player_option_selection::{AvailableTwoPlayerOptionSelection, TwoPlayerOptionSelection}, two_role_option_selection::{AvailableTwoRoleOptionSelection, TwoRoleOptionSelection}, two_role_outline_option_selection::{AvailableTwoRoleOutlineOptionSelection, TwoRoleOutlineOptionSelection}, BooleanSelection
-}, ValidateAvailableSelection};
+use super::{
+    selection_type::{
+        BooleanSelection,
+        one_player_option_selection::{AvailableOnePlayerOptionSelection, OnePlayerOptionSelection},
+        role_option_selection::{AvailableRoleOptionSelection, RoleOptionSelection},
+        two_player_option_selection::{AvailableTwoPlayerOptionSelection, TwoPlayerOptionSelection},
+        two_role_option_selection::{AvailableTwoRoleOptionSelection, TwoRoleOptionSelection},
+        two_role_outline_option_selection::{AvailableTwoRoleOutlineOptionSelection, TwoRoleOutlineOptionSelection},
+        kira_selection::{AvailableKiraSelection, KiraSelection},
+    }, 
+    ValidateAvailableSelection
+};
 
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Ord, Eq)]

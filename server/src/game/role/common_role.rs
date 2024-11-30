@@ -2,7 +2,9 @@ use std::collections::HashSet;
 
 use crate::{
     game::{
-        ability_input::{ability_selection::{AbilitySelection, AvailableAbilitySelection}, saved_ability_inputs::SavedAbilityInputs, selection_type::one_player_option_selection::AvailableOnePlayerOptionSelection, AbilityID, AvailableAbilityInput},
+        ability_input::{
+            ability_id::AbilityID, ability_selection::{AbilitySelection, AvailableAbilitySelection}, available_abilities_data::AvailableAbilitiesData, saved_ability_inputs::AllPlayersSavedAbilityInputs, selection_type::one_player_option_selection::AvailableOnePlayerOptionSelection
+        },
         chat::ChatGroup,
         components::{
             detained::Detained,
@@ -42,7 +44,7 @@ pub(super) fn available_ability_input_one_player_night(
     actor_ref: PlayerReference,
     can_select_self: bool,
     ability_id: AbilityID,
-) -> AvailableAbilityInput {
+) -> AvailableAbilitiesData {
     match game.current_phase().phase() {
         PhaseType::Night => {
             let mut all_allowed_inputs: VecSet<Option<PlayerReference>> = PlayerReference::all_players(game)
@@ -57,13 +59,13 @@ pub(super) fn available_ability_input_one_player_night(
                 all_allowed_inputs.remove(&Some(actor_ref));
             }
 
-            AvailableAbilityInput::new_ability(ability_id, 
+            AvailableAbilitiesData::new_ability(ability_id, 
                 AvailableAbilitySelection::OnePlayerOption {
                     selection: AvailableOnePlayerOptionSelection(all_allowed_inputs)
                 }
             )
         },
-        _ => AvailableAbilityInput::default()
+        _ => AvailableAbilitiesData::default()
     }
 }
 
@@ -71,7 +73,7 @@ pub(super) fn available_ability_input_one_player_night(
 pub(super) fn convert_saved_ability_to_visits(game: &Game, actor_ref: PlayerReference, ability_id: AbilityID, attack: bool) -> Vec<Visit> {
     
     let Some(selection) = 
-        SavedAbilityInputs::get_saved_ability_selection(game, actor_ref, ability_id) else {return Vec::new()};
+        AllPlayersSavedAbilityInputs::get_saved_ability_selection(game, actor_ref, ability_id) else {return Vec::new()};
     
     match selection {
         AbilitySelection::Unit => vec![Visit::new_none(actor_ref, actor_ref, attack)],

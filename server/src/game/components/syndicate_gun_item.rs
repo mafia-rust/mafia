@@ -1,9 +1,7 @@
 use crate::{
     game::{
         ability_input::{
-            ability_selection::AvailableAbilitySelection,
-            selection_type::one_player_option_selection::AvailableOnePlayerOptionSelection,
-            AbilityID, AbilityInput, AvailableAbilityInput
+            ability_id::AbilityID, ability_selection::{AbilitySelection, AvailableAbilitySelection}, available_abilities_data::{AvailableAbilitiesData, AvailableSingleAbilityData}, selection_type::one_player_option_selection::{AvailableOnePlayerOptionSelection, OnePlayerOptionSelection}, AbilityInput
         },
         attack_power::AttackPower, grave::GraveKiller, phase::PhaseType, player::PlayerReference,
         role::Priority, role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, Game
@@ -60,21 +58,26 @@ impl SyndicateGunItem {
     }
 
     //available ability
-    pub fn available_ability_input(game: &Game, actor: PlayerReference) -> AvailableAbilityInput {
-        let mut out = AvailableAbilityInput::default();
+    pub fn available_ability_input(game: &Game, actor: PlayerReference) -> AvailableAbilitiesData {
+        let mut out = AvailableAbilitiesData::default();
 
         if let Some(player_with_gun) = game.syndicate_gun_item.player_with_gun {
-            if actor == player_with_gun {
-                out.insert_ability(
-                    AbilityID::SyndicateGunItemShoot, 
+            if actor != player_with_gun {
+                return out;
+            }
+
+            if let Some(mut ability) = 
+                AvailableSingleAbilityData::new_obituary_resetting_default_and_available(
+                    game,
+                    AbilitySelection::OnePlayerOption {
+                        selection: OnePlayerOptionSelection(None)
+                    },
                     AvailableAbilitySelection::OnePlayerOption{
                         selection: AvailableOnePlayerOptionSelection(
                             PlayerReference::all_players(game)
                                 .into_iter()
-                               .filter(|target|
+                                .filter(|target|
                                     actor != *target &&
-                                    !Detained::is_detained(game, actor) &&
-                                    actor.alive(game) &&
                                     target.alive(game) &&
                                     !InsiderGroupID::in_same_revealed_group(game, actor, *target))
                                 .map(|p|Some(p))
@@ -82,27 +85,50 @@ impl SyndicateGunItem {
                                 .collect()
                         )
                     }
-                );
+                )
+            {
+                if
+                    Detained::is_detained(game, actor) ||
+                    !actor.alive(game)
+                {
+                    ability.set_grayed_out(true);
+                }
 
-
-                out.insert_ability(
-                    AbilityID::SyndicateGunItemGive, 
-                    AvailableAbilitySelection::OnePlayerOption{
-                        selection: AvailableOnePlayerOptionSelection(
-                            PlayerReference::all_players(game)
-                                .into_iter()
-                               .filter(|target|
-                                    actor != *target &&
-                                    actor.alive(game) &&
-                                    target.alive(game) &&
-                                    InsiderGroupID::Mafia.is_player_in_revealed_group(game, *target))
-                                .map(|p|Some(p))
-                                .chain(std::iter::once(None))
-                                .collect()
-                        )
-                    }
-                );
+                out.insert_ability(AbilityID::SyndicateGunItemShoot, ability);
             }
+
+            if let Some(mut ability) = AvailableSingleAbilityData::new_obituary_resetting_default_and_available(
+                game,
+                AbilitySelection::OnePlayerOption {
+                    selection: OnePlayerOptionSelection(None)
+                },
+                AvailableAbilitySelection::OnePlayerOption{
+                    selection: AvailableOnePlayerOptionSelection(
+                        PlayerReference::all_players(game)
+                            .into_iter()
+                        .filter(|target|
+                                actor != *target &&
+                                actor.alive(game) &&
+                                target.alive(game) &&
+                                InsiderGroupID::Mafia.is_player_in_revealed_group(game, *target))
+                            .map(|p|Some(p))
+                            .chain(std::iter::once(None))
+                            .collect()
+                    )
+                }
+            )
+            {
+                if
+                    Detained::is_detained(game, actor) ||
+                    !actor.alive(game)
+                {
+                    ability.set_grayed_out(true);
+                }
+
+                out.insert_ability(AbilityID::SyndicateGunItemGive, ability);
+            }
+
+
         }
 
         out

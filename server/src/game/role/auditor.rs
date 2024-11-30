@@ -3,12 +3,12 @@ use std::iter::once;
 use serde::Serialize;
 
 use crate::game::ability_input::ability_selection::AvailableAbilitySelection;
-use crate::game::ability_input::saved_ability_inputs::SavedAbilityInputs;
+use crate::game::ability_input::saved_ability_inputs::AllPlayersSavedAbilityInputs;
 use crate::game::ability_input::selection_type::two_role_outline_option_selection::AvailableTwoRoleOutlineOptionSelection;
 use crate::game::components::confused::Confused;
 use crate::game::components::detained::Detained;
 use crate::game::role_outline_reference::RoleOutlineReference;
-use crate::game::ability_input::{AbilityID, AvailableAbilityInput};
+use crate::game::ability_input::{AbilityID, AvailableAbilityData};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -48,7 +48,7 @@ impl RoleStateImpl for Auditor {
         if actor_ref.night_blocked(game) {return;}
         
         let Some(selection) = 
-            SavedAbilityInputs::get_two_role_outline_option_selection_if_id(game, actor_ref, AbilityID::Role { role: Role::Auditor, id: 0 })
+            AllPlayersSavedAbilityInputs::get_two_role_outline_option_selection_if_id(game, actor_ref, AbilityID::Role { role: Role::Auditor, id: 0 })
             else{return};
 
         if let Some(chosen_outline) = selection.0{
@@ -81,13 +81,13 @@ impl RoleStateImpl for Auditor {
 
         actor_ref.set_role_state(game, self);
     }
-    fn available_ability_input(self, game: &Game, actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilityInput {
+    fn available_ability_input(self, game: &Game, actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilityData {
         if 
             actor_ref.alive(game) && 
             game.current_phase().phase() == PhaseType::Night &&
             !Detained::is_detained(game, actor_ref)
         {    
-            AvailableAbilityInput::new_ability(
+            AvailableAbilityData::new_ability(
                 AbilityID::Role { role: Role::Auditor, id: 0 },
                 AvailableAbilitySelection::TwoRoleOutlineOption {
                     selection: AvailableTwoRoleOutlineOptionSelection(
@@ -100,7 +100,7 @@ impl RoleStateImpl for Auditor {
                 }
             )
         }else{
-            AvailableAbilityInput::default()
+            AvailableAbilityData::default()
         }
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {

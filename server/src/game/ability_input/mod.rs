@@ -1,47 +1,18 @@
 pub mod selection_type;
 pub mod ability_selection;
 pub mod saved_ability_inputs;
+pub mod ability_id;
+pub mod available_abilities_data;
 
-use ability_selection::{AbilitySelection, AvailableAbilitySelection};
+use ability_id::AbilityID;
+use ability_selection::AbilitySelection;
 
 use serde::{Deserialize, Serialize};
-use crate::vec_map::{vec_map, VecMap};
 
 use super::{
-    event::on_ability_input_received::OnAbilityInputReceived, player::PlayerReference, role::Role, Game
+    event::on_ability_input_received::OnAbilityInputReceived,
+    player::PlayerReference, Game
 };
-
-
-
-pub type RoleAbilityID = u8;
-#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Eq, Ord)]
-#[serde(rename_all = "camelCase")]
-#[serde(tag="type")]
-pub enum AbilityID{
-    #[serde(rename_all = "camelCase")]
-    Role{role: Role, id: RoleAbilityID},
-    ForfeitVote,
-    PitchforkVote,
-    SyndicateGunItemShoot,
-    SyndicateGunItemGive,
-}
-impl AbilityID{
-    pub fn role(role: Role, role_ability_id: RoleAbilityID)->Self{
-        Self::Role{role, id: role_ability_id}
-    }
-    pub fn forfeit_vote()->Self{
-        Self::ForfeitVote
-    }
-    pub fn pitchfork_vote()->Self{
-        Self::PitchforkVote
-    }
-    pub fn syndicate_gun_item_shoot()->Self{
-        Self::SyndicateGunItemShoot
-    }
-    pub fn syndicate_gun_item_give()->Self{
-        Self::SyndicateGunItemGive
-    }
-}
 
 
 
@@ -67,29 +38,6 @@ impl AbilityInput{
 
 
 
-#[derive(Default, Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
-#[serde(rename_all = "camelCase")]
-pub struct AvailableAbilityInput{
-    abilities: VecMap<AbilityID, AvailableAbilitySelection>
-}
-impl AvailableAbilityInput{
-    pub fn new(abilities: VecMap<AbilityID, AvailableAbilitySelection>)->Self{
-        Self{abilities}
-    }
-    pub fn new_ability(id: AbilityID, selection: AvailableAbilitySelection)->Self{
-        Self{
-            abilities: vec_map!((id, selection))
-        }
-    }
-    pub fn insert_ability(&mut self, id: AbilityID, selection: AvailableAbilitySelection){
-        self.abilities.insert(id, selection);
-    }
-    pub fn combine_overwrite(&mut self, other: Self){
-        for (ability_id, ability_selection) in other.abilities.into_iter(){
-            self.abilities.insert(ability_id, ability_selection);
-        }
-    }
-}
 
 
 pub trait ValidateAvailableSelection{

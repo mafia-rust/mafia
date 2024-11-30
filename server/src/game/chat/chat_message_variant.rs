@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::{
-    ability_input::{ability_selection::AbilitySelection, AbilityID},
+    ability_input::{ability_id::AbilityID, ability_selection::AbilitySelection},
     grave::Grave, phase::PhaseState,
     player::{PlayerIndex, PlayerReference},
     role::{

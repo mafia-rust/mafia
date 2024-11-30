@@ -1,5 +1,5 @@
 use crate::game::{
-    ability_input::saved_ability_inputs::SavedAbilityInputs, 
+    ability_input::saved_ability_inputs::AllPlayersSavedAbilityInputs, 
     Game
 };
 
@@ -10,6 +10,6 @@ impl OnTick{
         Self{}
     }
     pub fn invoke(&self, game: &mut Game){
-        SavedAbilityInputs::on_tick(game);
+        AllPlayersSavedAbilityInputs::on_tick(game);
     }
 }

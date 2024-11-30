@@ -1,6 +1,6 @@
 import { ListMapData } from "../ListMap";
 import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
-import { PlayerIndex } from "./gameState.d";
+import { PhaseType, PlayerIndex } from "./gameState.d";
 import translate from "./lang";
 import { Role } from "./roleState.d";
 
@@ -11,6 +11,19 @@ export type AbilityInput = {
 }
 
 
+export type PlayerSavedAbilities = {
+    save: ListMapData<AbilityID, SavedSingleAbility>
+}
+
+export type SavedSingleAbility = {
+    selection: AbilitySelection,
+    availableAbilityData: {
+        available: AvailableAbilitySelection,
+        grayed_out: boolean,
+        reset_on_phase_start: PhaseType | null,
+        default_selection: AbilitySelection
+    }
+}
 
 export type AbilityID = {
     type: "role",

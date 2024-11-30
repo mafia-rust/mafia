@@ -14,7 +14,7 @@ use crate::game::attack_power::DefensePower;
 use serde::{Serialize, Deserialize};
 
 use super::{
-    ability_input::{AbilityInput, AvailableAbilityInput}, 
+    ability_input::{AbilityInput, AvailableAbilityData}, 
     components::insider_group::InsiderGroupID, 
     grave::GraveReference, 
     win_condition::WinCondition
@@ -35,8 +35,8 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {}
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
 
-    fn available_ability_input(self, _game: &Game, _actor_ref: PlayerReference) -> AvailableAbilityInput {
-        AvailableAbilityInput::default()
+    fn available_ability_input(self, _game: &Game, _actor_ref: PlayerReference) -> AvailableAbilityData {
+        AvailableAbilityData::default()
     }
     fn on_ability_input_received(self, _game: &mut Game, _actor_ref: PlayerReference, _input_player: PlayerReference, _ability_input: AbilityInput) {}
 

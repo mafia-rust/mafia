@@ -1,9 +1,9 @@
 use serde::{Serialize, Deserialize};
 
 use crate::game::ability_input::ability_selection::{AbilitySelection, AvailableAbilitySelection};
-use crate::game::ability_input::saved_ability_inputs::SavedAbilityInputs;
+use crate::game::ability_input::saved_ability_inputs::AllPlayersSavedAbilityInputs;
 use crate::game::ability_input::selection_type::kira_selection::AvailableKiraSelection;
-use crate::game::ability_input::{AbilityID, AvailableAbilityInput};
+use crate::game::ability_input::{AbilityID, AvailableAbilityData};
 use crate::game::attack_power::AttackPower;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
@@ -166,7 +166,7 @@ impl RoleStateImpl for Kira {
         if !actor_ref.alive(game) {return;}
 
         let Some(AbilitySelection::Kira { selection }) = 
-            SavedAbilityInputs::get_saved_ability_selection(game, actor_ref, 
+            AllPlayersSavedAbilityInputs::get_saved_ability_selection(game, actor_ref, 
                 AbilityID::Role { role: Role::Kira, id: 0 }
             )
             else {return};
@@ -190,10 +190,10 @@ impl RoleStateImpl for Kira {
             _ => return,
         }    
     }
-    fn available_ability_input(self, game: &Game, _actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilityInput {
+    fn available_ability_input(self, game: &Game, _actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilityData {
         match PlayerReference::all_players(game).filter(|p|p.alive(game)).count().saturating_sub(1).try_into() {
             Ok(count) => {
-                AvailableAbilityInput::new_ability(
+                AvailableAbilityData::new_ability(
                     AbilityID::Role { role: Role::Kira, id: 0 },
                     AvailableAbilitySelection::Kira { 
                         selection: AvailableKiraSelection::new(count)
@@ -201,7 +201,7 @@ impl RoleStateImpl for Kira {
                 )
             }
             Err(_) => {
-                AvailableAbilityInput::default()
+                AvailableAbilityData::default()
             }
         }        
     }

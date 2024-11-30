@@ -5,7 +5,7 @@ use serde::Serialize;
 use crate::game::ability_input::ability_selection::AvailableAbilitySelection;
 use crate::game::ability_input::selection_type::one_player_option_selection::AvailableOnePlayerOptionSelection;
 use crate::game::ability_input::selection_type::role_option_selection::AvailableRoleOptionSelection;
-use crate::game::ability_input::{AbilityID, AbilityInput, AvailableAbilityInput};
+use crate::game::ability_input::{AbilityID, AbilityInput, AvailableAbilityData};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
 use crate::game::grave::GraveInformation;
@@ -57,11 +57,11 @@ impl RoleStateImpl for Disguiser {
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_saved_ability_to_visits(game, actor_ref, AbilityID::role(Role::Disguiser, 0), false)
     }
-    fn available_ability_input(self, game: &Game, actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilityInput {
-        if !actor_ref.alive(game) {return AvailableAbilityInput::default()};
+    fn available_ability_input(self, game: &Game, actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilityData {
+        if !actor_ref.alive(game) {return AvailableAbilityData::default()};
 
         let mut out = if game.current_phase().phase() == PhaseType::Night {
-            AvailableAbilityInput::new_ability(
+            AvailableAbilityData::new_ability(
                 AbilityID::Role { role: Role::Disguiser, id: 0 }, 
                 AvailableAbilitySelection::OnePlayerOption {
                     selection: AvailableOnePlayerOptionSelection(
@@ -79,11 +79,11 @@ impl RoleStateImpl for Disguiser {
                 }
             )
         }else{
-            AvailableAbilityInput::default()
+            AvailableAbilityData::default()
         };
         
         out.combine_overwrite(
-            AvailableAbilityInput::new_ability(
+            AvailableAbilityData::new_ability(
                 AbilityID::Role { role: Role::Disguiser, id: 1 },
                 AvailableAbilitySelection::RoleOption {
                     selection: AvailableRoleOptionSelection(

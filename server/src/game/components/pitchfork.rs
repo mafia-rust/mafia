@@ -1,8 +1,19 @@
 use std::ops::Mul;
 
-use crate::{game::{
-    ability_input::{ability_selection::AvailableAbilitySelection, selection_type::one_player_option_selection::AvailableOnePlayerOptionSelection, AbilityID, AbilityInput, AvailableAbilityInput}, attack_power::AttackPower, game_conclusion::GameConclusion, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::{Priority, Role}, role_list::RoleSet, Game
-}, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
+use crate::{
+    game::{
+        ability_input::{
+            ability_id::AbilityID, ability_selection::{AbilitySelection, AvailableAbilitySelection},
+            available_abilities_data::{AvailableAbilitiesData, AvailableSingleAbilityData},
+            selection_type::one_player_option_selection::{AvailableOnePlayerOptionSelection, OnePlayerOptionSelection},
+            AbilityInput
+        },
+        attack_power::AttackPower, game_conclusion::GameConclusion,
+        grave::GraveKiller, phase::PhaseType, player::PlayerReference,
+        role::{Priority, Role}, role_list::RoleSet, Game
+    },
+    packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet
+};
 
 #[derive(Clone)]
 pub struct Pitchfork{
@@ -35,25 +46,31 @@ impl Default for Pitchfork{
 }
 
 impl Pitchfork{
-    pub fn available_ability_input(game: &Game, actor: PlayerReference)->AvailableAbilityInput{
-        if
-            game.settings.enabled_roles.contains(&Role::Rabblerouser) &&
-            game.day_number() > 1 &&
-            actor.alive(game) &&
-            actor.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
-            !game.current_phase().is_night()
+    pub fn available_ability_input(game: &Game, actor: PlayerReference)->AvailableAbilitiesData{
+        if let Some(mut available) = AvailableSingleAbilityData::new_obituary_resetting_default_and_available(game, 
+            AbilitySelection::OnePlayerOption { selection: OnePlayerOptionSelection(None) },
+            AvailableAbilitySelection::OnePlayerOption {
+                selection: AvailableOnePlayerOptionSelection(PlayerReference::all_players(game)
+                    .into_iter()
+                    .filter(|p|p.alive(game))
+                    .map(|p|Some(p))
+                    .chain(std::iter::once(None))
+                    .collect()
+                )    
+            })
         {
-            let selection = PlayerReference::all_players(game)
-                .into_iter()
-                .filter(|p|p.alive(game))
-                .map(|p|Some(p))
-                .chain(std::iter::once(None))
-                .collect();
-            let selection = AvailableOnePlayerOptionSelection(selection);
-            let selection = AvailableAbilitySelection::OnePlayerOption { selection };
-            AvailableAbilityInput::new_ability(AbilityID::PitchforkVote, selection)
+            if !(
+                game.settings.enabled_roles.contains(&Role::Rabblerouser) &&
+                game.day_number() > 1 &&
+                actor.alive(game) &&
+                actor.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
+                !game.current_phase().is_night()
+            ){
+                available.set_grayed_out(true);
+            }
+            AvailableAbilitiesData::new_ability(AbilityID::PitchforkVote, available)
         }else{
-            AvailableAbilityInput::default()
+            AvailableAbilitiesData::default()
         }
     }
     pub fn on_ability_input_received(game: &mut Game, actor_ref: PlayerReference, input: AbilityInput){
