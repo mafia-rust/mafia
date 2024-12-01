@@ -15,10 +15,8 @@ import { WikiArticleLink } from "../../components/WikiArticleLink";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import translate from "../../game/lang";
-import { roleSpecificMenuType } from "../Settings";
-import { useGameState, usePlayerState } from "../../components/useHooks";
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { useGameState } from "../../components/useHooks";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
@@ -29,7 +27,7 @@ export enum ContentMenu {
     WikiMenu = "WikiMenu",
 }
 
-const MENU_ELEMENTS = {
+export const MENU_ELEMENTS = {
     [ContentMenu.ChatMenu]: ChatMenu,
     [ContentMenu.PlayerListMenu]: PlayerListMenu,
     [ContentMenu.RoleSpecificMenu]: AbilityMenu,

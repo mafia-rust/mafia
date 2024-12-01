@@ -7,8 +7,10 @@ import ChatMenu from "../game/gameScreenContent/ChatMenu";
 import PlayerListMenu from "../game/gameScreenContent/PlayerListMenu";
 import GraveyardMenu from "../game/gameScreenContent/GraveyardMenu";
 import HeaderMenu from "../game/HeaderMenu";
-import { MenuController, ContentMenu, useMenuController, MenuControllerContext } from "../game/GameScreen";
+import { MenuController, ContentMenu, useMenuController, MenuControllerContext, MENU_ELEMENTS } from "../game/GameScreen";
 import { MobileContext } from "../Anchor";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import translate from "../../game/lang";
 
 
 const DEFAULT_START_PHASE_SCREEN_TIME = 3;
@@ -63,11 +65,20 @@ export default function SpectatorGameScreen(): ReactElement {
                 </div>
                 {showStartedScreen 
                     ? <PhaseStartedScreen/>
-                    : <div className="content">
-                        {contentController.menuOpen(ContentMenu.ChatMenu) && <ChatMenu/>}
-                        {contentController.menuOpen(ContentMenu.PlayerListMenu) && <PlayerListMenu/>}
-                        {contentController.menuOpen(ContentMenu.GraveyardMenu) && <GraveyardMenu/>}
-                    </div>}
+                    : <PanelGroup direction="horizontal" className="content">
+                        {contentController.menusOpen().map((menu, index, menusOpen) => {
+                            const MenuElement = MENU_ELEMENTS[menu];
+                            return <>
+                                <Panel minSize={10}>
+                                    <MenuElement />
+                                </Panel>
+                                {menusOpen.some((_, i) => i > index) && <PanelResizeHandle />}
+                            </>
+                        })}
+                        {contentController.menusOpen().length === 0 && <Panel><div className="no-content">
+                            {translate("menu.gameScreen.noContent")}
+                        </div></Panel>}
+                    </PanelGroup>}
             </div>
         </MenuControllerContext.Provider>
     );
