@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode } from "react";
+import { ReactElement, ReactNode, useMemo } from "react";
 import React from "react";
 import "./detailsSummary.css";
 import Icon from "./Icon";
@@ -8,20 +8,33 @@ export default function DetailsSummary(props: Readonly<{
     dropdownArrow?: boolean,
     children?: ReactNode,
     defaultOpen?: boolean,
+    open?: boolean,
+    disabled?: boolean,
     onClick?: () => void
 }>): ReactElement {
 
-    const [open, setOpen] = React.useState(props.defaultOpen??false);
+    const [openState, setOpen] = React.useState(props.defaultOpen??false);
+
+    const open = useMemo(() => {
+        if(props.disabled) return false;
+        if(props.open !== undefined) return props.open;
+        return openState;
+    }, [props.open, openState, props.disabled]);
 
     return <div className="details-summary-container">
         <div className="details-summary-summary-container"
             onClick={() => {
+                if(props.disabled) return;
                 setOpen(!open);
                 if(props.onClick) props.onClick();
             }}
         >
-            {props.dropdownArrow === undefined || props.dropdownArrow === true ? 
-                <Icon>{open ? "expand_more" : "expand_less"}</Icon> : 
+            {(props.dropdownArrow === undefined || props.dropdownArrow === true) ? 
+                ((props.disabled === undefined || props.disabled===false) ? 
+                    <Icon>{open ? "expand_more" : "expand_less"}</Icon>
+                 : 
+                    <Icon>close</Icon>
+                ) : 
                 null
             }
             {props.summary}
