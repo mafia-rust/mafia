@@ -9,6 +9,7 @@ import { useGameState, usePlayerState } from "../../../components/useHooks";
 import { translateRoleOutline } from "../../../game/roleListState.d";
 import { EnabledModifiersDisplay } from "../../../components/gameModeSettings/EnabledModifiersDisplay";
 import { Button } from "../../../components/Button";
+import DetailsSummary from "../../../components/DetailsSummary";
 
 export default function GraveyardMenu(): ReactElement {
     return <div className="graveyard-menu graveyard-menu-colors">
@@ -78,12 +79,13 @@ function EnabledRoles(): ReactElement {
         ["enabledRoles"]
     )!
 
-    return <details className="graveyard-menu-excludedRoles">
-        <summary>
-            {translate("menu.enabledRoles.enabledRoles")}
-        </summary>
-        <EnabledRolesDisplay enabledRoles={enabledRoles}/>
-    </details>
+    return <div className="graveyard-menu-excludedRoles">
+        <DetailsSummary
+            summary={translate("menu.enabledRoles.enabledRoles")}
+        >
+            <EnabledRolesDisplay enabledRoles={enabledRoles}/>
+        </DetailsSummary>
+    </div>
 }
 
 function EnabledModifiers(): ReactElement {
