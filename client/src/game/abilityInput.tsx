@@ -1,8 +1,22 @@
 import { ListMapData } from "../ListMap";
 import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
 import { PhaseType, PlayerIndex } from "./gameState.d";
-import translate from "./lang";
+import { translateChecked } from "./lang";
 import { Role } from "./roleState.d";
+import abilitiesJson from "../resources/abilityId.json";
+
+
+export type AbilityJsonData = Partial<Record<AbilityIdLink, SingleAbilityJsonData>>;
+export type SingleAbilityJsonData = {
+    midnight: boolean,
+}
+
+export function allAbilitiesJsonData(): AbilityJsonData {
+    return abilitiesJson;
+}
+export function singleAbilityJsonData(link: AbilityIdLink): SingleAbilityJsonData | null {
+    return allAbilitiesJsonData()[link]??null;
+}
 
 
 export type AbilityInput = {
@@ -42,24 +56,30 @@ export type AbilityID = {
 
 export type RoleAbilityID = number;
 
-export function abilityIdToString(id: AbilityID): string{
-    let out = "abilityId/";
-    out += id.type+"/";
-    switch(id.type){
-        case "role":
-            out += id.id;
+/// create a type that represnts all strings that look like "abilityId/role/1"
+
+export type AbilityIdLink = (
+    `role/${Role}/${RoleAbilityID}` | 
+    `${AbilityID["type"]}`
+);
+
+export function abilityIdToLink(id: AbilityID): AbilityIdLink {
+    let out: AbilityIdLink = `${id.type}`;
+    if (id.type === "role") {
+        out += `/${id.role}/${id.id}`;
     }
-    return out;
+    return out as AbilityIdLink;
 }
 
+/// if it doesnt exist then returns ""
 export function translateAbilityId(
     abilityId: AbilityID
 ): string {
     switch (abilityId.type) {
         case "role":
-            return translate("ability.abilityId."+abilityId.role+"."+abilityId.id+".name");
+            return translateChecked("ability.abilityId."+abilityId.role+"."+abilityId.id+".name")??"";
         default:
-            return translate("ability.abilityId."+abilityId.type+".name");
+            return translateChecked("ability.abilityId."+abilityId.type+".name")??"";
     }
 }
 

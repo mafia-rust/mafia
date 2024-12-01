@@ -3,7 +3,7 @@ import React from "react"
 import { Role, RoleState } from "../../../../../game/roleState.d"
 import TwoRoleOutlineOptionSelectionMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionSelectionMenu"
 import GAME_MANAGER from "../../../../.."
-import { abilityIdToString, TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput"
+import { abilityIdToLink, TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput"
 import { usePlayerState } from "../../../../../components/useHooks"
 import ListMap from "../../../../../ListMap"
 
@@ -36,7 +36,7 @@ export default function AuditorMenu(props: Readonly<{
         playerState => playerState.savedAbilities,
         ["yourSavedAbilities"]
     )!;
-    const savedAbilitiesMap = new ListMap(savedAbilities, (k1, k2) => abilityIdToString(k1) === abilityIdToString(k2));
+    const savedAbilitiesMap = new ListMap(savedAbilities, (k1, k2) => abilityIdToLink(k1) === abilityIdToLink(k2));
 
     let singleAbilitySave = savedAbilitiesMap.get({type: "role", role: "auditor", id: 0});
 

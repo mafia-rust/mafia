@@ -7,7 +7,8 @@ import {
     translateAbilityId,
     AvailableAbilitySelection,
     TwoRoleOutlineOptionSelection,
-    RoleOptionSelection
+    RoleOptionSelection,
+    SavedSingleAbility
 } from "../../../../game/abilityInput";
 import React from "react";
 import { usePlayerState } from "../../../../components/useHooks";
@@ -22,7 +23,7 @@ import StyledText from "../../../../components/StyledText";
 import CheckBox from "../../../../components/CheckBox";
 import KiraSelectionMenu, { KiraSelection } from "./AbilitySelectionTypes/KiraSelectionMenu";
 import RoleOptionSelectionMenu from "./AbilitySelectionTypes/RoleOptionSelectionMenu";
-
+import "./genericAbilityMenu.css";
 
 export default function GenericAbilityMenu(): ReactElement {
     const savedAbilities = usePlayerState(
@@ -35,8 +36,7 @@ export default function GenericAbilityMenu(): ReactElement {
             return <SingleAbilityMenu
                 key={i}
                 abilityId={id}
-                available={saveData.availableAbilityData.available}
-                selected={saveData.selection}
+                saveData={saveData}
             />
         })
     }</>
@@ -46,8 +46,7 @@ export default function GenericAbilityMenu(): ReactElement {
 function SingleAbilityMenu(props: Readonly<{
     abilityId: AbilityID,
     key: number,
-    available: AvailableAbilitySelection,
-    selected: AbilitySelection
+    saveData: SavedSingleAbility,
 }>): ReactElement {
 
     const [open, setOpen] = useState<boolean>(true);
@@ -56,32 +55,38 @@ function SingleAbilityMenu(props: Readonly<{
         (playerState, gameState)=>playerState.myIndex
     )!;
 
-    
-    return <details key={props.key} className="role-specific-colors small-role-specific-menu" open={open}>
+
+    return <details key={props.key} className="role-specific-colors small-role-specific-menu generic-ability-menu-tab" open={open}>
         <summary
             onClick={(e)=>{
                 e.preventDefault();
                 setOpen(!open);
             }}
         >
-            <StyledText>{translateAbilityId(props.abilityId)}</StyledText>
+            🌙<StyledText>{translateAbilityId(props.abilityId)}</StyledText>
         </summary>
-
-        <ChatMessage message={{
-            variant: {
-                type: "abilityUsed",
-                player: myIndex,
-                abilityId: props.abilityId,
-                selection: props.selected
-            },
-            chatGroup: "all"
-        }}/>
-        <SwitchSingleAbilityMenuType
-            key={props.key}
-            id={props.abilityId}
-            available={props.available}
-            selected={props.selected}
-        />
+        {
+            props.saveData.availableAbilityData.grayedOut ? null : <>
+                {
+                    props.saveData.availableAbilityData.dontSave ? null : 
+                    <ChatMessage message={{
+                        variant: {
+                            type: "abilityUsed",
+                            player: myIndex,
+                            abilityId: props.abilityId,
+                            selection: props.saveData.selection
+                        },
+                        chatGroup: "all"
+                    }}/>
+                }
+                <SwitchSingleAbilityMenuType
+                    key={props.key}
+                    id={props.abilityId}
+                    available={props.saveData.availableAbilityData.available}
+                    selected={props.saveData.selection}
+                />
+            </>
+        }
     </details>
 }
 
