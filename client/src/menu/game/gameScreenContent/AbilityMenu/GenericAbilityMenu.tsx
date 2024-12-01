@@ -24,6 +24,7 @@ import CheckBox from "../../../../components/CheckBox";
 import KiraSelectionMenu, { KiraSelection } from "./AbilitySelectionTypes/KiraSelectionMenu";
 import RoleOptionSelectionMenu from "./AbilitySelectionTypes/RoleOptionSelectionMenu";
 import "./genericAbilityMenu.css";
+import DetailsSummary from "../../../../components/DetailsSummary";
 
 export default function GenericAbilityMenu(): ReactElement {
     const savedAbilities = usePlayerState(
@@ -48,23 +49,21 @@ function SingleAbilityMenu(props: Readonly<{
     key: number,
     saveData: SavedSingleAbility,
 }>): ReactElement {
-
-    const [open, setOpen] = useState<boolean>(true);
-
     const myIndex = usePlayerState(
         (playerState, gameState)=>playerState.myIndex
     )!;
 
 
-    return <details key={props.key} className="role-specific-colors small-role-specific-menu generic-ability-menu-tab" open={open}>
-        <summary
-            onClick={(e)=>{
-                e.preventDefault();
-                setOpen(!open);
-            }}
+    return <div
+        key={props.key}
+        className="role-specific-colors small-role-specific-menu generic-ability-menu-tab"
+    >
+        <DetailsSummary
+            summary={
+                <StyledText>🌙{translateAbilityId(props.abilityId)}</StyledText>
+            }
+            defaultOpen={true}
         >
-            🌙<StyledText>{translateAbilityId(props.abilityId)}</StyledText>
-        </summary>
         {
             props.saveData.availableAbilityData.grayedOut ? null : <>
                 {
@@ -87,7 +86,8 @@ function SingleAbilityMenu(props: Readonly<{
                 />
             </>
         }
-    </details>
+        </DetailsSummary>
+    </div>
 }
 
 
