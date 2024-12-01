@@ -1,7 +1,9 @@
 use serde::Serialize;
 
+use crate::game::ability_input::common_input::TwoRoleOutlineOptionInput;
 use crate::game::components::confused::Confused;
 use crate::game::role_outline_reference::RoleOutlineReference;
+use crate::game::ability_input::AbilityInput;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -16,7 +18,7 @@ use super::{Priority, Role, RoleStateImpl};
 #[derive(Clone, Debug, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Auditor{
-    pub chosen_outline: Option<RoleOutlineReference>,
+    pub chosen_outline: TwoRoleOutlineOptionInput,
     pub previously_given_results: Vec<(RoleOutlineReference, AuditorResult)>,
 }
 
@@ -40,33 +42,77 @@ impl RoleStateImpl for Auditor {
         if priority != Priority::Investigative {return;}
         if actor_ref.night_blocked(game) {return;}
 
-        let Some(chosen_outline) = self.chosen_outline else {return;};
+        if let Some(chosen_outline) = self.chosen_outline.0{
+            let result = if Confused::is_confused(game, actor_ref){
+                Self::get_confused_result(game, chosen_outline)
+            }else{
+                Self::get_result(game, chosen_outline)
+            };
+            actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
+                role_outline: chosen_outline.deref(&game).clone(),
+                result: result.clone()
+            });
+            self.previously_given_results.push((chosen_outline, result));
+        }
 
-        let result = if Confused::is_confused(game, actor_ref){
-            Self::get_confused_result(game, chosen_outline)
-        }else{
-            Self::get_result(game, chosen_outline)
-        };
-        
-        actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-            role_outline: chosen_outline.deref(&game).clone(),
-            result: result.clone()
-        });
+        if let Some(chosen_outline) = self.chosen_outline.1{
+            let result = if Confused::is_confused(game, actor_ref){
+                Self::get_confused_result(game, chosen_outline)
+            }else{
+                Self::get_result(game, chosen_outline)
+            };
+            actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
+                role_outline: chosen_outline.deref(&game).clone(),
+                result: result.clone()
+            });
+            self.previously_given_results.push((chosen_outline, result));
+        }
 
-        self.previously_given_results.push((chosen_outline, result));
         actor_ref.set_role_state(game, self);
     }
-    fn convert_selection_to_visits(self, game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        let Some(chosen_outline) = self.chosen_outline else {return vec![]};
+    fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: crate::game::ability_input::AbilityInput) {
+        if actor_ref != input_player {return};
+        if !actor_ref.alive(game) {return};
+        let AbilityInput::Auditor { input } = ability_input else {return};
+                    
+        if let Some(outline) = input.0{
+            if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {
+                self.chosen_outline.0 = Some(outline);
+            }
+        }else{
+            self.chosen_outline.0 = None;
+        }
+        if let Some(outline) = input.1{
+            if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {
+                self.chosen_outline.1 = Some(outline);
+            }
+        }else{
+            self.chosen_outline.1 = None;
+        }
+        
+        if self.chosen_outline.0.is_some() && self.chosen_outline.1 == self.chosen_outline.0{
+            self.chosen_outline.1 = None;
+        }
 
-        let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-
-        vec![Visit{ target: player, attack: false }]
+        actor_ref.set_role_state(game, self);
+        
+    }
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        let mut out = vec![];
+        if let Some(chosen_outline) = self.chosen_outline.0{
+            let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
+            out.push(Visit::new_none(actor_ref, player, false));
+        }
+        if let Some(chosen_outline) = self.chosen_outline.1{
+            let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
+            out.push(Visit::new_none(actor_ref, player, false));
+        }
+        out
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Obituary => {
-                self.chosen_outline = None;
+                self.chosen_outline = TwoRoleOutlineOptionInput(None, None);
                 actor_ref.set_role_state(game, self);
             },
             _ => {}

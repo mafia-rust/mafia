@@ -1,12 +1,18 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 use rand::seq::SliceRandom;
 
 use crate::{game::{
     attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
-        arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette, insider_group::InsiderGroupID
-    }, event::{before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch}, game_conclusion::GameConclusion, grave::{Grave, GraveKiller, GraveReference}, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, win_condition::WinCondition, Game
-}, packet::ToClientPacket};
+        arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura, insider_group::InsiderGroupID, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette
+    }, event::{
+        before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch
+    }, game_conclusion::GameConclusion, 
+    grave::{Grave, GraveKiller}, 
+    role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, 
+    win_condition::WinCondition,
+    Game
+}, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
 use super::PlayerReference;
 
@@ -27,7 +33,7 @@ impl PlayerReference{
     }
     pub fn ward(&self, game: &mut Game) -> Vec<PlayerReference> {
         let mut wardblocked = vec![];
-        for visitor in self.all_visitors(game){
+        for visitor in self.all_night_visitors_cloned(game){
             if !visitor.role(game).wardblock_immune() {
                 visitor.set_night_wardblocked(game, true);
                 visitor.set_night_visits(game, vec![]);
@@ -37,9 +43,11 @@ impl PlayerReference{
         }
         wardblocked
     }
-    pub fn night_blocked(&self, game: &mut Game)->bool{
+    pub fn night_blocked(&self, game: &Game)->bool{
         self.night_roleblocked(game) || self.night_wardblocked(game)
     }
+
+
 
     /// Returns true if attack overpowered defense
     pub fn try_night_kill_single_attacker(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
@@ -51,7 +59,7 @@ impl PlayerReference{
             should_leave_death_note
         )
     }
-    pub fn try_night_kill(&self, attacker_refs: &HashSet<PlayerReference>, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
+    pub fn try_night_kill(&self, attacker_refs: &VecSet<PlayerReference>, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
         self.set_night_attacked(game, true);
 
         if self.night_defense(game).can_block(attack){
@@ -70,7 +78,7 @@ impl PlayerReference{
         self.push_night_grave_killers(game, grave_killer);
             
         if should_leave_death_note {
-            for attacker in attacker_refs {
+            for attacker in attacker_refs.iter() {
                 if let Some(note) = attacker.death_note(game) {
                     self.push_night_grave_death_notes(game, note.clone());
                 }
@@ -86,7 +94,7 @@ impl PlayerReference{
     }
     pub fn try_night_kill_no_attacker(&self, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower) -> bool {
         self.try_night_kill(
-            &HashSet::new(),
+            &VecSet::new(),
             game,
             grave_killer,
             attack,
@@ -108,7 +116,7 @@ impl PlayerReference{
     pub fn possess_night_action(&self, game: &mut Game, priority: Priority, currently_used_player: Option<PlayerReference>)->Option<PlayerReference>{
         match priority {
             Priority::Possess => {
-                let possessor_visits = self.night_visits(game).clone();
+                let possessor_visits = self.untagged_night_visits_cloned(game);
                 let Some(possessed_visit) = possessor_visits.get(0) else {return None};
                 let Some(possessed_into_visit) = possessor_visits.get(1) else {return None};
                 
@@ -123,7 +131,7 @@ impl PlayerReference{
                 }
 
                 let mut new_selection = possessed_visit.target
-                    .night_visits(game)
+                    .untagged_night_visits_cloned(game)
                     .iter()
                     .map(|v|v.target)
                     .collect::<Vec<PlayerReference>>();
@@ -144,7 +152,7 @@ impl PlayerReference{
             Priority::Investigative => {
                 if let Some(currently_used_player) = currently_used_player {
                     self.push_night_message(game,
-                        ChatMessageVariant::PossessionTargetsRole { role: currently_used_player.role(game) }
+                        ChatMessageVariant::TargetHasRole { role: currently_used_player.role(game) }
                     );
                 }
                 return None;
@@ -228,19 +236,12 @@ impl PlayerReference{
         if let Some(v) = self.night_appeared_visits(game) {
             v.clone()
         } else {
-            self.night_visits(game).clone()
+            self.all_night_visits_cloned(game)
         }
     }
     pub fn all_appeared_visitors(self, game: &Game) -> Vec<PlayerReference> {
         PlayerReference::all_players(game).filter(|player_ref|{
             player_ref.tracker_seen_visits(game).iter().any(|other_visit| 
-                other_visit.target == self
-            )
-        }).collect()
-    }
-    pub fn all_visitors(self, game: &Game) -> Vec<PlayerReference> {
-        PlayerReference::all_players(game).filter(|player_ref|{
-            player_ref.night_visits(game).iter().any(|other_visit| 
                 other_visit.target == self
             )
         }).collect()
@@ -256,9 +257,9 @@ impl PlayerReference{
         self.add_private_chat_messages(game, messages);
     }
 
-    pub fn role_label_map(&self, game: &Game) -> HashMap<PlayerReference, Role> {
-        let mut map = HashMap::new();
-        for player in self.role_labels(game) {
+    pub fn role_label_map(&self, game: &Game) -> VecMap<PlayerReference, Role> {
+        let mut map = VecMap::new();
+        for player in self.role_labels(game).iter() {
             map.insert(*player, player.role(game));
         }
         map
@@ -275,6 +276,13 @@ impl PlayerReference{
         self.role(game).possession_immune()
     }
     pub fn has_innocent_aura(&self, game: &Game) -> bool {
+        PlayerReference::all_players(game).into_iter().any(|player_ref| 
+            player_ref.alive(game) && match player_ref.role_state(game) {
+                RoleState::Disguiser(r) => 
+                    r.current_target.is_some_and(|player|player == *self),
+                _ => false
+            }
+        ) ||
         self.role(game).has_innocent_aura(game)
     }
     pub fn has_suspicious_aura(&self, game: &Game) -> bool {
@@ -297,7 +305,6 @@ impl PlayerReference{
                     RoleState::Jester(r) => r.won(),
                     RoleState::Doomsayer(r) => r.won(),
                     RoleState::Revolutionary(r) => r.won(),
-                    RoleState::Politician(r) => r.won(),
                     RoleState::Chronokaiser(_) => Chronokaiser::won(game, *self),
                     RoleState::Martyr(r) => r.won(),
                     RoleState::Death(r) => r.won(),
@@ -331,9 +338,6 @@ impl PlayerReference{
     pub fn on_role_creation(&self, game: &mut Game) {
         self.role_state(game).clone().on_role_creation(game, *self)
     }
-    pub fn before_role_switch(&self, game: &mut Game, event: BeforeRoleSwitch){
-        self.role_state(game).clone().before_role_switch(game, *self, event);
-    }
     pub fn get_current_send_chat_groups(&self, game: &Game) -> HashSet<ChatGroup> {
         self.role_state(game).clone().get_current_send_chat_groups(game, *self)
     }
@@ -342,21 +346,6 @@ impl PlayerReference{
     }
     pub fn convert_selection_to_visits(&self, game: &Game, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         self.role_state(game).clone().convert_selection_to_visits(game, *self, target_refs)
-    }
-    pub fn on_any_death(&self, game: &mut Game, dead_player_ref: PlayerReference){
-        self.role_state(game).clone().on_any_death(game, *self, dead_player_ref)
-    }
-    pub fn on_grave_added(&self, game: &mut Game, grave: GraveReference){
-        self.role_state(game).clone().on_grave_added(game, *self, grave)
-    }
-    pub fn on_game_ending(&self, game: &mut Game){
-        self.role_state(game).clone().on_game_ending(game, *self)
-    }
-    pub fn on_game_start(&self, game: &mut Game){
-        self.role_state(game).clone().on_game_start(game, *self)
-    }
-    pub fn before_initial_role_creation(&self, game: &mut Game){
-        self.role_state(game).clone().before_initial_role_creation(game, *self)
     }
 }
 

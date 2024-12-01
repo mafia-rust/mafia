@@ -17,7 +17,7 @@ impl BeforeRoleSwitch{
     }
     pub fn invoke(self, game: &mut Game){
         for player in PlayerReference::all_players(game){
-            player.before_role_switch(game, self.clone());
+            player.before_role_switch(game, self.player, self.old.clone(), self.new.clone());
         }
     }
     pub fn player(&self) -> PlayerReference{

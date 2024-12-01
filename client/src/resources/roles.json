@@ -146,8 +146,6 @@
             {"type": "spyBug", "bug": "wardblocked"},
             {"type": "spyMafiaVisit", "players": [16,17,18,16]},
             {"type": "spyMafiaVisit", "players": []},
-            {"type": "spyCultistCount", "count": 1},
-            {"type": "spyCultistCount", "count": 2},
             {"type": "cultConvertsNext"},
             {"type": "cultKillsNext"}
         ]
@@ -549,23 +547,6 @@
             {"type": "youSurvivedAttack"}
         ]
     },
-    "retrainer": {
-        "mainRoleSet": "mafia",
-        "roleSets": ["mafia", "mafiaKilling"],
-        "armor": false,
-        "aura": null,
-        "maxCount": 1,
-        "roleSpecificMenu": true,
-        "canWriteDeathNote": false,
-        "canBeConvertedTo": [],
-        "chatMessages":[
-            {"type": "godfatherBackup", "backup": null},
-            {"type": "godfatherBackup", "backup": 26},
-            {"type": "godfatherBackupKilled", "backup": 26},
-            {"type": "someoneSurvivedYourAttack"},
-            {"type": "youSurvivedAttack"}
-        ]
-    },
     "impostor": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaKilling"],
@@ -579,22 +560,6 @@
             {"type": "godfatherBackup", "backup": null},
             {"type": "godfatherBackup", "backup": 26},
             {"type": "godfatherBackupKilled", "backup": 26},
-            {"type": "someoneSurvivedYourAttack"},
-            {"type": "youSurvivedAttack"}
-        ]
-    },
-    "eros": {
-        "mainRoleSet": "mafia",
-        "roleSets": ["mafia", "mafiaKilling"],
-        "armor": true,
-        "aura": "innocent",
-        "maxCount": 1,
-        "roleSpecificMenu": true,
-        "canWriteDeathNote": false,
-        "canBeConvertedTo": ["godfather"],
-        "chatMessages":[
-            {"type": "youAreLoveLinked", "player": 20},
-            {"type": "playerDiedOfABrokenHeart", "player": 20, "lover": 25},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
@@ -770,6 +735,35 @@
             
         ]
     },
+    "disguiser": {
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[
+            {
+                "type": "playerRoleAndAlibi",
+                "player":14,
+                "role":"hypnotist",
+                "will":"Philosopher\nN1: @1 and @2 are enemies"
+            }
+        ]
+    },
+    "reeducator": {
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[]
+    },
     "forger": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaSupport"],
@@ -801,7 +795,7 @@
             {"type": "targetsMessage", "message": 
                 {"type": "sheriffResult","suspicious":true}
             },
-            {"type": "possessionTargetsRole", "role":"detective"},
+            {"type": "targetHasRole", "role":"detective"},
             {"type": "targetIsPossessionImmune"},
             {"type": "youWerePossessed", "immune": false},
             {"type": "youWerePossessed", "immune": true}
@@ -890,6 +884,9 @@
         "canWriteDeathNote": true,
         "canBeConvertedTo": ["jester"],
         "chatMessages":[
+            {"type": "politicianCountdownStarted"},
+            {"type": "mayorRevealed","playerIndex": 1},
+            {"type": "mayorCantWhisper"},
             {"type": "youSurvivedAttack"}
         ]
     },
@@ -993,7 +990,7 @@
             {"type": "targetsMessage", "message": 
                 {"type": "sheriffResult","suspicious":true}
             },
-            {"type": "possessionTargetsRole", "role":"detective"},
+            {"type": "targetHasRole", "role":"detective"},
             {"type": "targetIsPossessionImmune"},
             {"type": "youWerePossessed", "immune": false},
             {"type": "youWerePossessed", "immune": true}
@@ -1023,7 +1020,8 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "transported"}
+            {"type": "transported"},
+            {"type": "targetHasRole", "role":"detective"}
         ]
     },
     "kidnapper":{
@@ -1168,6 +1166,21 @@
             {"type": "youAttackedSomeone"}
         ]
     },
+    "spiral": {
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youSurvivedAttack"},
+            {"type": "youAttackedSomeone"}
+        ]
+    },
     "kira": {
         "mainRoleSet": "fiends",
         "roleSets": ["fiends"],
@@ -1192,6 +1205,19 @@
             {"type": "youAttackedSomeone"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
+        ]
+    },
+    "serialKiller": {
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "roleSpecificMenu": true,
+        "canWriteDeathNote": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "someoneSurvivedYourAttack"}
         ]
     },
     "fiendsWildcard": {

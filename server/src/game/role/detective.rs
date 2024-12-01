@@ -21,9 +21,8 @@ impl RoleStateImpl for Detective {
     type ClientRoleState = Detective;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
-
-        if let Some(visit) = actor_ref.night_visits(game).first(){
-            
+        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        if let Some(visit) = actor_visits.first(){
             let suspicious = if Confused::is_confused(game, actor_ref) {
                 false
             }else{
@@ -53,7 +52,7 @@ impl Detective {
         }else if player_ref.has_innocent_aura(game){
             false
         }else{
-            !player_ref.win_condition(game).can_win_when_resolution_state_reached(GameConclusion::Town)
+            !player_ref.win_condition(game).friends_with_resolution_state(GameConclusion::Town)
         }
     }
 }

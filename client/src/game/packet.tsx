@@ -3,9 +3,12 @@ import { Grave } from "./graveState"
 import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
 import { Role, RoleState } from "./roleState.d"
-import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu"
-import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu"
-import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu"
+import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu"
+import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu"
+import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu"
+import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu"
+import { AbilityInput } from "./abilityInput"
+import { ListMapData } from "../ListMap"
 
 export type LobbyPreviewData = {
     name: string,
@@ -47,6 +50,9 @@ export type ToClientPacket = {
 } | {
     type: "yourPlayerIndex",
     playerIndex: PlayerIndex
+} | {
+    type: "yourFellowInsiders",
+    fellowInsiders: PlayerIndex[]
 } | {
     type: "rejectStart",
     reason: string
@@ -105,7 +111,7 @@ export type ToClientPacket = {
     alive: [boolean]
 } | {
     type: "playerVotes",
-    votesForPlayer: Record<number, number> 
+    votesForPlayer: ListMapData<number, number> 
 } | {
     type: "yourSendChatGroups",
     sendChatGroups: ChatGroup[]
@@ -121,10 +127,10 @@ export type ToClientPacket = {
     }]
 } | {
     type: "yourRoleLabels",
-    roleLabels: Record<PlayerIndex, Role> 
+    roleLabels: ListMapData<PlayerIndex, Role> 
 } | {
     type: "yourPlayerTags",
-    playerTags: Record<PlayerIndex, Tag[]> 
+    playerTags: ListMapData<PlayerIndex, Tag[]> 
 } | {
     type: "yourWill",
     will: string
@@ -171,8 +177,9 @@ export type ToClientPacket = {
     type: "yourPitchforkVote",
     player: PlayerIndex | null
 } | {
-    type: "yourHitOrderVote",
-    player: PlayerIndex | null
+    type: "yourSyndicateGunItemData",
+    shooter: PlayerIndex | null
+    target: PlayerIndex | null
 }
 
 export type ToServerPacket = {
@@ -271,6 +278,9 @@ export type ToServerPacket = {
 } | {
     type: "leave",
 } | {
+    type: "abilityInput",
+    abilityInput: AbilityInput
+} | {
     type: "setForgerWill",
     role: Role,
     will: string
@@ -279,7 +289,7 @@ export type ToServerPacket = {
     action: "forge" | "noForge"
 } | {
     type: "setKiraGuess",
-    guesses: [PlayerIndex, DoomsayerGuess][]
+    guesses: [PlayerIndex, KiraGuess][]
 } | {
     type: "setDoomsayerGuess",
     guesses: [
@@ -311,35 +321,15 @@ export type ToServerPacket = {
     role: Role | null,
     will: string
 } | {
-    type: "setAuditorChosenOutline",
-    index: number
-} | {
     type: "setPuppeteerAction",
     action: PuppeteerAction
 } | {
     type: "setRecruiterAction",
     action: RecruiterAction
 } | {
-    type: "setErosAction",
-    action: "loveLink" | "kill"
-} | {
-    type: "retrainerRetrain",
-    role: Role
-} | {
     type: "setRoleChosen",
     role: Role | null
 } | {
     type: "voteFastForwardPhase",
     fastForward: boolean
-} | {
-    type: "forfeitVote",
-    forfeit: boolean
-} | {
-    type: "pitchforkVote",
-    player: PlayerIndex | null
-} | {
-    type: "hitOrderVote",
-    player: PlayerIndex | null
-} | {
-    type: "hitOrderSwitchToMafioso"
 }

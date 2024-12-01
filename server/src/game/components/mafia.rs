@@ -1,11 +1,11 @@
 use rand::seq::SliceRandom;
 
-use crate::game::{modifiers::{mafia_hit_orders::MafiaHitOrders, ModifierType, Modifiers}, phase::PhaseType, player::PlayerReference, role::{Role, RoleState}, role_list::RoleSet, visit::Visit, Game};
+use crate::game::{ 
+    phase::PhaseType, player::PlayerReference, role::RoleState, 
+    role_list::RoleSet, Game
+};
 
-use super::insider_group::InsiderGroupID;
-
-
-const DEFAULT_MAFIA_KILLING_ROLE: Role = Role::Godfather;
+use super::{insider_group::InsiderGroupID, syndicate_gun_item::SyndicateGunItem};
 
 #[derive(Clone)]
 pub struct Mafia;
@@ -21,7 +21,23 @@ impl Mafia{
     pub fn on_phase_start(_game: &mut Game, _phase: PhaseType){
     }
     pub fn on_game_start(game: &mut Game) {
-        Mafia::give_mafia_killing_role(game, DEFAULT_MAFIA_KILLING_ROLE.default_state());
+
+        let killing_role_exists = PlayerReference::all_players(game).any(
+            |p|
+                InsiderGroupID::Mafia.is_player_in_revealed_group(game, p) &&
+                RoleSet::MafiaKilling.get_roles().contains(&p.role(game))
+        );
+
+        if !killing_role_exists{
+            //give random syndicate insider the gun
+            let insiders = PlayerReference::all_players(game)
+                .filter(|p| InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p))
+                .collect::<Vec<_>>();
+
+            let Some(insider) = insiders.choose(&mut rand::thread_rng()) else {return};
+
+            SyndicateGunItem::give_gun(game, *insider);
+        }
     }
 
 
@@ -43,13 +59,6 @@ impl Mafia{
         game: &mut Game,
         role: RoleState
     ){
-
-        if let Some(modifier) = Modifiers::get_modifier_inner::<MafiaHitOrders>(game, ModifierType::MafiaHitOrders) {
-            if modifier.active() {
-                return;
-            }
-        }
-
         let living_players_to_convert = PlayerReference::all_players(game).into_iter().filter(
             |p|
             InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p) &&
@@ -67,17 +76,6 @@ impl Mafia{
         
         if let Some(random_mafia) = random_mafia {
             random_mafia.set_role_and_win_condition_and_revealed_group(game, role);
-        }
-    }
-
-    pub fn mafia_killing_visits(game: &Game) -> Vec<Visit> {
-        if let Some(mafia_killing_player) = 
-            PlayerReference::all_players(game).into_iter()
-            .find(|p| RoleSet::MafiaKilling.get_roles().contains(&p.role(game)))
-        {
-            mafia_killing_player.night_visits(game).clone()
-        }else{
-            vec![]
         }
     }
 }

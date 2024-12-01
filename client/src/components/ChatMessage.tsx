@@ -9,12 +9,13 @@ import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
 import GraveComponent from "./grave";
 import { RoleOutline, translateRoleOutline } from "../game/roleListState.d";
-import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
-import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
-import { KiraGuess, KiraGuessResult, kiraGuessTranslate } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import { CopyButton } from "./ClipboardButtons";
 import { useLobbyOrGameState, usePlayerState } from "./useHooks";
-import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
+import { KiraGuess, KiraGuessResult, kiraGuessTranslate } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu";
+import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
+import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
+import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
+import DetailsSummary from "./DetailsSummary";
 
 const ChatElement = React.memo((
     props: {
@@ -146,8 +147,8 @@ const ChatElement = React.memo((
             }
 
             return <div className={"chat-message-div"}>
-                <details open={GAME_MANAGER.getMySpectator()}>
-                    <summary>
+                <DetailsSummary
+                    summary={
                         <StyledText className={"chat-message " + style}
                             playerKeywordData={props.playerKeywordData}
                         >
@@ -155,11 +156,13 @@ const ChatElement = React.memo((
                                 playerNames[message.variant.grave.player], graveRoleString
                             )}
                         </StyledText>
-                    </summary>
+                    }
+                    defaultOpen={GAME_MANAGER.getMySpectator()}
+                >
                     <div className="grave-message">
                         <GraveComponent grave={message.variant.grave} playerNames={playerNames}/>
                     </div>
-                </details>
+                </DetailsSummary>
             </div>;
     }
 
@@ -530,12 +533,6 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             } else {
                 return translate("chatMessage.spyMafiaVisit", playerListToString(message.players, playerNames));
             }
-        case "spyCultistCount":
-            if(message.count === 1){
-                return translate("chatMessage.spyCultistCount.one");
-            }else{
-                return translate("chatMessage.spyCultistCount", message.count);
-            }
         case "spyBug":
             return translate("chatMessage.spyBug."+message.bug);
         case "trackerResult":
@@ -580,7 +577,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             const visitedByNobody = message.visitedBy.length === 0;
 
             return translate("chatMessage.informantResult",
-                translate("chatMessage.informantResult.role", translate("role."+message.role+".name")),
+                translate("chatMessage.targetHasRole", translate("role."+message.role+".name")),
                 visitedNobody 
                     ? translate("chatMessage.informantResult.visited.nobody") 
                     : translate("chatMessage.informantResult.visited", playerListToString(message.visited, playerNames)),
@@ -609,7 +606,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             );
         case "roleChosen":
             if(message.role === null){
-                return translate("chatMessage.rRoleChosen.none");
+                return translate("chatMessage.roleChosen.none");
             }else{
                 return translate("chatMessage.roleChosen.role", translate("role."+message.role+".name"));
             }
@@ -617,8 +614,6 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.puppeteerActionChosen."+message.action);
         case "recruiterActionChosen":
             return translate("chatMessage.recruiterActionChosen."+message.action);
-        case "erosActionChosen":
-            return translate("chatMessage.erosActionChosen."+message.action);
         case "marksmanChosenMarks":
             if(message.marks.length === 0){
                 return translate("chatMessage.marksmanChosenMarks.none");
@@ -630,8 +625,8 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.mediumHauntStarted", playerNames[message.medium], playerNames[message.player]);
         case "youWerePossessed":
             return translate("chatMessage.youWerePossessed" + (message.immune ? ".immune" : ""));
-        case "possessionTargetsRole":
-            return translate("chatMessage.possessionTargetsRole", translate("role."+message.role+".name"));
+        case "targetHasRole":
+            return translate("chatMessage.targetHasRole", translate("role."+message.role+".name"));
         case "werewolfTrackingResult":
             if(message.players.length === 0){
                 return translate(
@@ -650,6 +645,11 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.youAreLoveLinked", playerNames[message.player]);
         case "playerDiedOfABrokenHeart":
             return translate("chatMessage.playerDiedOfBrokenHeart", playerNames[message.player], playerNames[message.lover]);
+        case "syndicateGunTarget":
+            return translate("chatMessage.syndicateGunTarget",
+                playerNames[message.shooter],
+                message.target===null?translate("nobody"):playerNames[message.target]
+            );
         case "chronokaiserSpeedUp":
             return translate("chatMessage.chronokaiserSpeedUp", message.percent);
         case "deputyShotYou":
@@ -680,6 +680,7 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
         case "psychicFailed":
         case "phaseFastForwarded":
         case "mayorCantWhisper":
+        case "politicianCountdownStarted":
         case "youAttackedSomeone":
         case "youWereAttacked":
         case "armorsmithArmorBroke":
@@ -790,6 +791,8 @@ export type ChatMessageVariant = {
 } | {
     type: "mayorCantWhisper"
 } | {
+    type: "politicianCountdownStarted"
+} | {
     type: "reporterReport",
     report: string
 } | {
@@ -866,9 +869,6 @@ export type ChatMessageVariant = {
     type: "spyMafiaVisit", 
     players: PlayerIndex[]
 } | {
-    type: "spyCultistCount",
-    count: number
-} | {
     type: "spyBug", 
     bug: "silenced" | "roleblocked" | "protected" | "transported" | "possessed"
 } | {
@@ -920,6 +920,10 @@ export type ChatMessageVariant = {
     player: PlayerIndex
     lover: PlayerIndex
 } | {
+    type: "syndicateGunTarget",
+    shooter: PlayerIndex
+    target: PlayerIndex | null
+} | {
     type: "youWereProtected"
 } | {
     type: "youDied"
@@ -960,9 +964,6 @@ export type ChatMessageVariant = {
     type: "recruiterActionChosen",
     action: RecruiterAction,
 } | {
-    type: "erosActionChosen",
-    action: "loveLink" | "kill",
-} | {
     type: "marksmanChosenMarks",
     marks: PlayerIndex[],
 } | {
@@ -971,7 +972,7 @@ export type ChatMessageVariant = {
     type: "youWerePossessed",
     immune: boolean
 } | {
-    type: "possessionTargetsRole",
+    type: "targetHasRole",
     role: Role
 } | {
     type: "targetsMessage",

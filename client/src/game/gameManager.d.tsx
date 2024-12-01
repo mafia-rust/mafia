@@ -1,8 +1,9 @@
 import { WikiArticleLink } from "../components/WikiArticleLink";
-import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
-import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
-import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
-import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
+import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
+import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu";
+import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
+import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
+import { AbilityInput } from "./abilityInput";
 import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player, ModifierType } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleList, RoleOutline } from "./roleListState.d";
@@ -97,12 +98,12 @@ export type GameManager = {
     sendEnabledRolesPacket(roles: Role[]): void;
     sendEnabledModifiersPacket(modifiers: ModifierType[]): void;
 
+    sendAbilityInput(input: AbilityInput): void;
     sendSetDoomsayerGuess(guesses: [
         [number, DoomsayerGuess],
         [number, DoomsayerGuess],
         [number, DoomsayerGuess]
     ]): void;
-    sendSetKiraGuess(guesses: Record<PlayerIndex, KiraGuess>): void;
     sendSetWildcardRoleOutline(roleOutline: Role): void;
     sendSetReporterReport(report: string): void;
     sendSetReporterReportPublic(isPublic: boolean): void;
@@ -117,18 +118,11 @@ export type GameManager = {
     ): void
     sendSetForgerWill(role: Role | null, will: string): void;
     sendSetCounterfeiterAction(action: "forge" | "noForge"): void;
-    sendSetAuditorChosenOutline(index: number): void;
     sendSetPuppeteerAction(action: PuppeteerAction): void;
     sendSetRecruiterAction(action: RecruiterAction): void;
-    sendSetErosAction(action: "loveLink" | "kill"): void;
-    sendRetrainerRetrain(role: Role): void;
     sendSetRoleChosen(role: Role | null): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
-    sendForfeitVotePacket(forfeit: boolean): void;
-    sendPitchforkVotePacket(player: PlayerIndex | null): void;
-    sendHitOrderVotePacket(player: PlayerIndex | null): void;
-    sendHitOrderSwitchMafiosoPacket(): void;
 
     messageListener(serverMessage: ToClientPacket): void;
 

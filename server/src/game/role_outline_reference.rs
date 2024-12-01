@@ -5,7 +5,6 @@ use super::{role_list::RoleOutline, Game};
 
 pub type OutlineIndex = u8;
 #[derive(Debug, PartialEq, Eq, Hash, Copy, Clone, Default, PartialOrd, Ord)]
-
 pub struct RoleOutlineReference{
     index: OutlineIndex
 }

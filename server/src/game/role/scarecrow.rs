@@ -27,7 +27,9 @@ impl RoleStateImpl for Scarecrow {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Ward {return;}
         
-        if let Some(visit) = actor_ref.night_visits(game).first(){
+
+        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        if let Some(visit) = actor_visits.first(){
             let target_ref = visit.target;
 
             let mut blocked_players = target_ref.ward(game);
@@ -57,7 +59,7 @@ impl RoleStateImpl for Scarecrow {
                 .filter(|p|p.alive(game))
                 .filter(|p|p.keeps_game_running(game))
                 .all(|p|
-                    WinCondition::can_win_together(&p.win_condition(game), actor_ref.win_condition(game))
+                    WinCondition::are_friends(&p.win_condition(game), actor_ref.win_condition(game))
                 )
 
         {

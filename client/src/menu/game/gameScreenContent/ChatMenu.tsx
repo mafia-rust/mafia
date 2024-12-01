@@ -13,6 +13,7 @@ import StyledText, { KeywordDataMap, PLAYER_KEYWORD_DATA, PLAYER_SENDER_KEYWORD_
 import { useGameState, useLobbyOrGameState, usePlayerState } from "../../../components/useHooks";
 import { Virtuoso } from 'react-virtuoso';
 
+
 export default function ChatMenu(): ReactElement {
     const filter = usePlayerState(
         playerState => playerState.chatFilter,
@@ -60,80 +61,82 @@ export function ChatMessageSection(props: Readonly<{
         ["addChatMessages"]
     )!;
 
-    const allMessages = messages.filter((msg)=>{
-        if(filter === null)
-            return true;
-        
-        let msgTxt = "";
-        //special case messages, where translate chat message doesnt work properly, or it should be let through anyway
-        switch (msg.variant.type) {
-            //translateChatMessage errors for playerDied type.
-            case "playerDied":
-            case "phaseChange":
-                return true
-            case "normal":
-                switch(msg.variant.messageSender.type) {
-                    case "player":
-                    case "livingToDead":
-                        if(msg.variant.messageSender.player === filter)
-                            return true;
-                        break;
-                }
-                break;
-            case "targetsMessage":
-                msgTxt = translateChatMessage(msg.variant.message, GAME_MANAGER.getPlayerNames());
-                break;
-        }
+    const allMessages = messages
+        .filter((msg)=>{
+            if(filter === null)
+                return true;
+            
+            let msgTxt = "";
+            //special case messages, where translate chat message doesnt work properly, or it should be let through anyway
+            switch (msg.variant.type) {
+                //translateChatMessage errors for playerDied type.
+                case "playerDied":
+                case "phaseChange":
+                    return true
+                case "normal":
+                    switch(msg.variant.messageSender.type) {
+                        case "player":
+                        case "livingToDead":
+                            if(msg.variant.messageSender.player === filter)
+                                return true;
+                            break;
+                    }
+                    break;
+                case "targetsMessage":
+                    msgTxt = translateChatMessage(msg.variant.message, GAME_MANAGER.getPlayerNames());
+                    break;
+            }
 
-        msgTxt += translateChatMessage(msg.variant, GAME_MANAGER.getPlayerNames());
-        
-        return msgTxt.includes(GAME_MANAGER.getPlayerNames()[filter]);
-    }).filter((msg, index, array)=>{
-        //if there is a filter, remove repeat phaseChange message
-        if(filter === null){return true}
-        if(msg.variant.type !== "phaseChange"){return true}
-        if(index+1===array.length){return true}
-        if(array[index+1].variant.type !== "phaseChange"){return true}
-        return false;
-    }).map((msg, index) => {
-        return <ChatElement
-            key={index}
-            message={msg}
-            playerKeywordData={(() => {
-                if (filter===null) {return undefined}
+            msgTxt += translateChatMessage(msg.variant, GAME_MANAGER.getPlayerNames());
+            
+            return msgTxt.includes(GAME_MANAGER.getPlayerNames()[filter]);
+        }).filter((msg, index, array)=>{
+            //if there is a filter, remove repeat phaseChange message
+            if(filter === null){return true}
+            if(msg.variant.type !== "phaseChange"){return true}
+            if(index+1===array.length){return true}
+            if(array[index+1].variant.type !== "phaseChange"){return true}
+            return false;
+        }).map((msg, index) => {
+            return <ChatElement
+                key={index}
+                message={msg}
+                playerKeywordData={(() => {
+                    if (filter===null) {return undefined}
 
-                const newKeywordData: KeywordDataMap = {...PLAYER_KEYWORD_DATA};
+                    const newKeywordData: KeywordDataMap = {...PLAYER_KEYWORD_DATA};
 
-                newKeywordData[players[filter].toString()] = [
-                    { style: "keyword-player-important keyword-player-number", replacement: (filter + 1).toString() },
-                    { replacement: " " },
-                    { style: "keyword-player-important keyword-player-sender", replacement: players[filter].name }
-                ];
-                
-                return newKeywordData;
-            })()}
-            playerSenderKeywordData={(() => {
-                if (filter===null) {return undefined}
+                    newKeywordData[players[filter].toString()] = [
+                        { style: "keyword-player-important keyword-player-number", replacement: (filter + 1).toString() },
+                        { replacement: " " },
+                        { style: "keyword-player-important keyword-player-sender", replacement: players[filter].name }
+                    ];
+                    
+                    return newKeywordData;
+                })()}
+                playerSenderKeywordData={(() => {
+                    if (filter===null) {return undefined}
 
-                const newKeywordData: KeywordDataMap = {...PLAYER_SENDER_KEYWORD_DATA};
+                    const newKeywordData: KeywordDataMap = {...PLAYER_SENDER_KEYWORD_DATA};
 
-                newKeywordData[players[filter].toString()] = [
-                    { style: "keyword-player-important keyword-player-number", replacement: (filter + 1).toString() },
-                    { replacement: " " },
-                    { style: "keyword-player-important keyword-player-sender", replacement: players[filter].name }
-                ];
-                
-                return newKeywordData;
-            })()}
-        />;
-    });
+                    newKeywordData[players[filter].toString()] = [
+                        { style: "keyword-player-important keyword-player-number", replacement: (filter + 1).toString() },
+                        { replacement: " " },
+                        { style: "keyword-player-important keyword-player-sender", replacement: players[filter].name }
+                    ];
+                    
+                    return newKeywordData;
+                })()}
+            />;
+        })
 
     return  <Virtuoso
         alignToBottom={true}
         totalCount={allMessages.length}
         followOutput={'smooth'}
+        initialTopMostItemIndex={allMessages.length===0 ? 0 : allMessages.length-1}
         itemContent={(index) => allMessages[index]}
-        atBottomThreshold={15}
+        atBottomThreshold={4}
     />
 }
 

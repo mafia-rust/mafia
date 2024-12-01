@@ -1,13 +1,14 @@
 import { PlayerIndex } from "./gameState.d"
 import { RoleSet } from "./roleListState.d"
 import ROLES from "./../resources/roles.json";
-import { Doomsayer } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
-import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
-import { Hypnotist } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeHypnotistMenu";
-import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
-import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
-import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
 import { ChatMessageVariant } from "../components/ChatMessage";
+import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
+import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
+import { Hypnotist } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeHypnotistMenu";
+import { Doomsayer } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
+import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
+import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu";
+import { TwoRoleOptionInput } from "./abilityInput";
 
 export type RoleState = {
     type: "jailor",
@@ -28,6 +29,8 @@ export type RoleState = {
 } | {
     type: "pyrolisk"
 } | {
+    type: "spiral"
+} | {
     type: "tracker"
 } | {
     type: "philosopher"
@@ -35,7 +38,7 @@ export type RoleState = {
     type: "psychic"
 } | {
     type: "auditor",
-    chosenOutline: number | null,
+    chosenOutline: [number | null, number | null],
     previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "snoop",
@@ -62,8 +65,8 @@ export type RoleState = {
 } | {
     type: "steward",
     stewardProtectsRemaining: number,
-    roleChosen: Role | null,
-    previousRoleChosen: Role | null
+    roleChosen: TwoRoleOptionInput,
+    previousRoleChosen: TwoRoleOptionInput
 } | {
     type: "vigilante",
     state: {type:"notLoaded"} | {type:"willSuicide"} | {type:"loaded",bullets:number} | {type:"suicided"}
@@ -94,16 +97,9 @@ export type RoleState = {
     type: "godfather"
     backup: PlayerIndex | null
 } | {
-    type: "retrainer"
-    backup: PlayerIndex | null,
-    retrainsRemaining: number
-} | {
     type: "impostor"
     backup: PlayerIndex | null,
     fakeRole: Role
-} | {
-    type: "eros"
-    action: "loveLink" | "kill"
 } | {
     type: "counterfeiter",
     action: "forge" | "noForge",
@@ -140,6 +136,14 @@ export type RoleState = {
     fakeRole: Role,
     fakeWill: string,
     forgesRemaining: number,
+} | {
+    type: "disguiser",
+    currentTarget: PlayerIndex | null,
+    disguisedRole: Role,
+} | {
+    type: "reeducator",
+    convertChargesRemaining: boolean,
+    convertRole: Role,
 } | {
     type: "framer"
 } | {
@@ -193,7 +197,7 @@ Doomsayer
 } | {
     type: "ojo"
     roleChosen: Role | null,
-    chosenOutline: number | null,
+    chosenOutline: [number | null, number | null],
     previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "puppeteer"
@@ -201,7 +205,7 @@ Doomsayer
     marionettesRemaining: number
 } | {
     type: "kira"
-    guesses: Record<PlayerIndex, KiraGuess>
+    guesses: Partial<Record<PlayerIndex, KiraGuess>>
 } | {
     type: "fiendsWildcard"
     role: Role
@@ -211,6 +215,8 @@ Doomsayer
     type: "disciple"
 } | {
     type: "zealot"
+} | {
+    type: "serialKiller"
 }
 
 

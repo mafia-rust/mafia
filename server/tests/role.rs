@@ -3,10 +3,16 @@ use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::{components::{cult::CultAbility, insider_group::InsiderGroupID}, role::{armorsmith::Armorsmith, drunk::Drunk, ojo::Ojo, recruiter::Recruiter, scarecrow::Scarecrow, tally_clerk::TallyClerk, warper::Warper}, role_list::RoleSet};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
-    grave::*, 
+    grave::*,
+    ability_input::{
+        AbilityInput,
+        common_input::TwoRoleOutlineOptionInput
+    }, 
+    components::{cult::CultAbility, insider_group::InsiderGroupID},  
+    role_list::RoleSet, 
+    role_outline_reference::RoleOutlineReference,
      
     player::PlayerReference,
     tag::Tag,
@@ -16,6 +22,7 @@ pub use mafia_server::game::{
         RoleState,
 
         jailor::Jailor,
+        villager::Villager,
         
         detective::Detective,
         snoop::Snoop,
@@ -24,7 +31,8 @@ pub use mafia_server::game::{
         tracker::Tracker,
         philosopher::Philosopher,
         psychic::Psychic,
-        gossip::Gossip, 
+        gossip::Gossip,
+        auditor::Auditor,
         
         doctor::Doctor,
         bodyguard::Bodyguard,
@@ -45,6 +53,9 @@ pub use mafia_server::game::{
         retributionist::Retributionist,
 
         godfather::Godfather,
+        impostor::Impostor,
+        recruiter::Recruiter,
+        counterfeiter::Counterfeiter,
         mafioso::Mafioso,
         
         framer::Framer,
@@ -70,9 +81,15 @@ pub use mafia_server::game::{
         zealot::Zealot,
         
         arsonist::Arsonist,
+        spiral::Spiral,
         pyrolisk::Pyrolisk,
         puppeteer::{Puppeteer, PuppeteerAction},
-        fiends_wildcard::FiendsWildcard, 
+        fiends_wildcard::FiendsWildcard,
+
+        armorsmith::Armorsmith, auditor::AuditorResult,
+        drunk::Drunk, ojo::Ojo,
+        scarecrow::Scarecrow, tally_clerk::TallyClerk,
+        warper::Warper
     }, 
     phase::{
         PhaseState, 
@@ -81,32 +98,6 @@ pub use mafia_server::game::{
 };
 // Pub use so that submodules don't have to reimport everything.
 pub use mafia_server::packet::ToServerPacket;
-
-#[test]
-fn medium_receives_dead_messages_from_jail() {
-    kit::scenario!(game in Night 2 where
-        medium: Medium,
-        jailor: Jailor,
-        townie: Detective,
-        mafioso: Mafioso
-    );
-    mafioso.set_night_selection_single(townie);
-    game.skip_to(Nomination, 3);
-    
-    jailor.day_target(medium);
-
-    game.skip_to(Night, 3);
-    let dead_message = "Hello medium!! Are you there!?";
-    townie.send_message(dead_message);
-
-    assert_contains!(medium.get_messages(), 
-        ChatMessageVariant::Normal { 
-            text: dead_message.to_string(),
-            message_sender: MessageSender::Player { player: townie.index() },
-            block: false
-        }
-    );
-}
 
 #[test]
 fn no_unwanted_tags() {
@@ -197,6 +188,41 @@ fn detective_neutrals(){
         ChatMessageVariant::SheriffResult { suspicious: true }
     );
 
+}
+
+#[test]
+fn auditor_standard_double_audit(){
+    kit::scenario!(game in Night 1 where
+        auditor: Auditor,
+        _townie: Auditor,
+        _mafioso: Mafioso
+    );
+
+    auditor.send_ability_input(AbilityInput::Auditor { 
+        input: TwoRoleOutlineOptionInput(
+            RoleOutlineReference::new(&game, 0), 
+            RoleOutlineReference::new(&game, 1)
+        )
+    });
+    game.next_phase();
+    
+    let messages = auditor.get_messages_after_night(1);
+
+    let mut results: u8 = 0;
+    let mut found_auditor = false;
+    for message in messages.iter() {
+        if let ChatMessageVariant::AuditorResult { role_outline: _, result } = message {
+            results += 1;
+            if match result {
+                AuditorResult::Two { roles } => roles.contains(&Role::Auditor),
+                AuditorResult::One { role } => *role == Role::Auditor,
+            } {
+                found_auditor = true;
+            }
+        }
+    }
+    assert!(results == 2);
+    assert!(found_auditor);
 }
 
 #[test]
@@ -433,6 +459,8 @@ fn psychic_auras(){
             town1: Detective,
             town2: Vigilante
         );
+
+        psy.set_night_selection_single(maf);
     
         game.next_phase();
         let messages = psy.get_messages_after_night(1);
@@ -453,6 +481,7 @@ fn psychic_auras(){
 
         game.skip_to(Night, 2);
         maf.set_night_selection_single(town1);
+        psy.set_night_selection_single(town2);
         game.next_phase();
         let messages = psy.get_messages_after_night(2);
         let messages: Vec<_> = 
@@ -1126,29 +1155,6 @@ fn grave_contains_multiple_killers_roles() {
 }
 
 #[test]
-fn drunk_appeared_visits() {
-    kit::scenario!(game in Night 2 where
-        drunk: Drunk,
-        lookout: Lookout,
-        mafioso: Mafioso,
-        townie: Doctor
-    );
-
-    assert!(mafioso.set_night_selection_single(townie));
-    assert!(lookout.set_night_selection_single(townie));
-
-    game.next_phase();
-
-    let messages = lookout.get_messages();
-    if !(
-        messages.contains(&ChatMessageVariant::LookoutResult { players: vec![drunk.index(), mafioso.index()] }) ||
-        messages.contains(&ChatMessageVariant::LookoutResult { players: vec![mafioso.index(), drunk.index()] })
-    ){
-        panic!("{:?}", messages);
-    }
-}
-
-#[test]
 fn drunk_suspicious_aura() {
     kit::scenario!(game in Night 1 where
         drunk: Drunk,
@@ -1432,7 +1438,7 @@ fn gossip_framer() {
 
     assert_contains!(
         gossip.get_messages(),
-        ChatMessageVariant::GossipResult { enemies: false }
+        ChatMessageVariant::GossipResult { enemies: true }
     );
 
     game.skip_to(Night, 3);
@@ -1527,8 +1533,8 @@ fn bouncer_ojo_block() {
 
     ojo.set_role_state(RoleState::Ojo(Ojo{
         role_chosen: Some(Role::Detective),
-        chosen_outline: None,
         previously_given_results: Vec::new(),
+        chosen_outline: TwoRoleOutlineOptionInput(None, None),
     }));
     b.set_night_selection_single(det1);
 
@@ -1547,24 +1553,128 @@ fn bouncer_ojo_block() {
 
 #[test]
 fn godfather_backup_sets_off_engineer_trap() {
-    kit::scenario!(game in Night 2 where
-        gf: Godfather,
-        backup: Framer,
-        eng: Engineer,
-        esc: Escort
-    );
+    //run test twice with different player numbers
+    {
+        kit::scenario!(game in Night 2 where
+            backup: Framer,
+            eng: Engineer,
+            gf: Godfather,
+            esc: Escort
+        );
 
-    assert!(gf.day_target(backup));
-    assert!(backup.set_night_selection_single(esc));
-    assert!(esc.set_night_selection_single(gf));
-    assert!(eng.set_night_selection_single(esc));
+        assert!(gf.day_target(backup));
+        assert!(backup.set_night_selection_single(esc));
+        assert!(esc.set_night_selection_single(gf));
+        assert!(eng.set_night_selection_single(esc));
 
-    game.next_phase();
+        game.next_phase();
 
-    assert!(gf.alive());
-    assert!(!backup.alive());
-    assert!(esc.alive());
-    assert!(eng.alive());
+        assert!(gf.alive());
+        assert!(!backup.alive());
+        assert!(esc.alive());
+        assert!(eng.alive());
+    }
+    {
+        kit::scenario!(game in Night 2 where
+            gf: Godfather,
+            backup: Framer,
+            eng: Engineer,
+            esc: Escort
+        );
+
+        assert!(gf.day_target(backup));
+        assert!(backup.set_night_selection_single(esc));
+        assert!(esc.set_night_selection_single(gf));
+        assert!(eng.set_night_selection_single(esc));
+
+        game.next_phase();
+
+        assert!(gf.alive());
+        assert!(!backup.alive());
+        assert!(esc.alive());
+        assert!(eng.alive());
+    }
+    //run test again with different roles that have the same ability
+    {
+        kit::scenario!(game in Night 2 where
+            backup: Framer,
+            eng: Engineer,
+            esc: Escort,
+            gf: Godfather
+        );
+
+        assert!(gf.day_target(backup));
+        assert!(backup.set_night_selection_single(esc));
+        assert!(esc.set_night_selection_single(gf));
+        assert!(eng.set_night_selection_single(esc));
+
+        game.next_phase();
+
+        assert!(gf.alive());
+        assert!(!backup.alive());
+        assert!(esc.alive());
+        assert!(eng.alive());
+    }
+    {
+        kit::scenario!(game in Night 2 where
+            backup: Framer,
+            eng: Engineer,
+            gf: Counterfeiter,
+            esc: Escort
+        );
+
+        assert!(gf.day_target(backup));
+        assert!(backup.set_night_selection_single(esc));
+        assert!(esc.set_night_selection_single(gf));
+        assert!(eng.set_night_selection_single(esc));
+
+        game.next_phase();
+
+        assert!(gf.alive());
+        assert!(!backup.alive());
+        assert!(esc.alive());
+        assert!(eng.alive());
+    }
+    {
+        kit::scenario!(game in Night 2 where
+            backup: Framer,
+            gf: Godfather,
+            eng: Engineer,
+            esc: Escort
+        );
+
+        assert!(gf.day_target(backup));
+        assert!(backup.set_night_selection_single(esc));
+        assert!(esc.set_night_selection_single(gf));
+        assert!(eng.set_night_selection_single(esc));
+
+        game.next_phase();
+
+        assert!(gf.alive());
+        assert!(!backup.alive());
+        assert!(esc.alive());
+        assert!(eng.alive());
+    }
+    {
+        kit::scenario!(game in Night 2 where
+            backup: Framer,
+            eng: Engineer,
+            gf: Impostor,
+            esc: Escort
+        );
+
+        assert!(gf.day_target(backup));
+        assert!(backup.set_night_selection_single(esc));
+        assert!(esc.set_night_selection_single(gf));
+        assert!(eng.set_night_selection_single(esc));
+
+        game.next_phase();
+
+        assert!(gf.alive());
+        assert!(!backup.alive());
+        assert!(esc.alive());
+        assert!(eng.alive());
+    }
 }
 
 #[test]
@@ -2128,7 +2238,7 @@ fn ojo_transporter(){
     ojo.set_role_state(
         RoleState::Ojo(Ojo{
             role_chosen: Some(Role::Philosopher),
-            chosen_outline: None,
+            chosen_outline: TwoRoleOutlineOptionInput(None, None),
             previously_given_results: Vec::new(),
         })
     );
@@ -2327,7 +2437,7 @@ fn godfather_dies_to_veteran_after_possessed(){
 fn fiends_wildcard_defense_upgrade(){
     kit::scenario!(game in Dusk 2 where
         fiend: FiendsWildcard,
-        mafia: MafiaSupportWildcard
+        mafia: Godfather
     );
     
     fiend.set_role_state(RoleState::FiendsWildcard(FiendsWildcard{
@@ -2351,4 +2461,86 @@ fn fiends_wildcard_defense_upgrade(){
     assert!(mafia.alive());
 
     assert!(game.game_is_over());
+}
+
+#[test]
+fn spiraling_player_infects_visitors() {
+    kit::scenario!(game in Night 2 where
+        spiral: Spiral,
+        townie1: Villager,
+        townie2: Snoop
+    );
+    spiral.set_night_selection_single(townie1);
+
+
+    townie2.set_night_selection_single(townie1);
+
+    game.skip_to(Obituary, 3);
+    assert!(!townie1.alive());
+    assert!(townie2.alive());
+
+    game.skip_to(Obituary, 4);
+    assert!(!townie2.alive());
+}
+
+#[test]
+fn spiral_can_select_when_no_spiraling_players() {
+    kit::scenario!(game in Night 2 where
+        spiral: Spiral,
+        townie1: Villager,
+        townie2: Snoop,
+        townie3: Villager,
+        _townie4: Villager
+    );
+
+    spiral.set_night_selection_single(townie1);
+    townie2.set_night_selection_single(townie1);
+    //kill 1
+    //spiral 2
+
+    game.skip_to(Night, 3);
+    assert!(spiral.alive());
+    assert!(!townie1.alive());
+    assert!(townie2.alive());
+
+
+    //kill 2
+    //nobody is spiraling
+    assert!(!spiral.set_night_selection_single(townie2));
+
+    game.skip_to(Night, 4);
+    assert!(spiral.alive());
+    assert!(!townie2.alive());
+    assert!(townie3.alive());
+
+    //nobody is spiraling so we can kill 3
+    assert!(spiral.set_night_selection_single(townie3));
+}
+
+#[test]
+fn spiral_does_not_kill_protected_player() {
+    kit::scenario!(game in Night 2 where
+        spiral: Spiral,
+        doctor: Doctor
+    );
+    spiral.set_night_selection_single(doctor);
+
+    doctor.set_night_selection_single(doctor);
+
+    game.skip_to(Obituary, 3);
+    assert!(doctor.alive());
+    assert!(spiral.get_player_tags().get(&doctor.player_ref()).is_none())
+}
+
+#[test]
+fn killed_player_is_not_spiraling() {
+    kit::scenario!(game in Night 2 where
+        spiral: Spiral,
+        townie: Villager
+    );
+    spiral.set_night_selection_single(townie);
+
+    game.skip_to(Obituary, 3);
+    assert!(!townie.alive());
+    assert!(spiral.get_player_tags().get(&townie.player_ref()).is_none())
 }

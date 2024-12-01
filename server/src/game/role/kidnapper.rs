@@ -41,7 +41,8 @@ impl RoleStateImpl for Kidnapper {
 
         match priority {
             Priority::Kill => {
-                if let Some(visit) = actor_ref.night_visits(game).first() {
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                if let Some(visit) = actor_visits.first() {
     
                     let target_ref = visit.target;
                     if Detained::is_detained(game, target_ref){
@@ -157,7 +158,7 @@ impl RoleStateImpl for Kidnapper {
                 .filter(|p|p.alive(game))
                 .filter(|p|p.keeps_game_running(game))
                 .all(|p|
-                    WinCondition::can_win_together(&p.win_condition(game), actor_ref.win_condition(game))
+                    WinCondition::are_friends(&p.win_condition(game), actor_ref.win_condition(game))
                 )
 
         {

@@ -14,7 +14,6 @@ import { createGameState, createLobbyState } from "./gameState";
 import { Role } from "./roleState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
-import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import AudioController from "../menu/AudioController";
 
 export function createGameManager(): GameManager {
@@ -464,21 +463,15 @@ export function createGameManager(): GameManager {
             });
         },
 
+        sendAbilityInput(input) {
+            this.server.sendPacket({
+                type: "abilityInput",
+                abilityInput: input
+            });
+        },
         sendSetDoomsayerGuess(guesses) {
             this.server.sendPacket({
                 type: "setDoomsayerGuess",
-                guesses: guesses
-            });
-        },
-        sendSetKiraGuess(guessesRecord) {
-
-            let guesses: [PlayerIndex, KiraGuess][] = [];
-            for(let [player, guess] of Object.entries(guessesRecord)){
-                guesses.push([Number.parseInt(player), guess]);
-            }
-
-            this.server.sendPacket({
-                type: "setKiraGuess",
                 guesses: guesses
             });
         },
@@ -534,12 +527,6 @@ export function createGameManager(): GameManager {
                 action: action
             });
         },
-        sendSetAuditorChosenOutline(index) {
-            this.server.sendPacket({
-                type: "setAuditorChosenOutline",
-                index: index
-            });
-        },
         sendSetPuppeteerAction(action) {
             this.server.sendPacket({
                 type: "setPuppeteerAction",
@@ -550,18 +537,6 @@ export function createGameManager(): GameManager {
             this.server.sendPacket({
                 type: "setRecruiterAction",
                 action: action
-            });
-        },
-        sendSetErosAction(action) {
-            this.server.sendPacket({
-                type: "setErosAction",
-                action: action
-            });
-        },
-        sendRetrainerRetrain(role) {
-            this.server.sendPacket({
-                type: "retrainerRetrain",
-                role: role
             });
         },
         sendSetRoleChosen(role: Role | null) {
@@ -575,29 +550,6 @@ export function createGameManager(): GameManager {
             this.server.sendPacket({
                 type: "voteFastForwardPhase",
                 fastForward: fastForward
-            });
-        },
-        sendForfeitVotePacket(forfeit: boolean) {
-            this.server.sendPacket({
-                type: "forfeitVote",
-                forfeit
-            });
-        },
-        sendPitchforkVotePacket(player: PlayerIndex | null) {
-            this.server.sendPacket({
-                type: "pitchforkVote",
-                player: player
-            });
-        },
-        sendHitOrderVotePacket(player: PlayerIndex | null) {
-            this.server.sendPacket({
-                type: "hitOrderVote",
-                player: player
-            });
-        },
-        sendHitOrderSwitchMafiosoPacket() {
-            this.server.sendPacket({
-                type: "hitOrderSwitchToMafioso",
             });
         },
 

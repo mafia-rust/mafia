@@ -45,8 +45,8 @@ impl RoleStateImpl for Bodyguard {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Bodyguard => {
-    
-                let Some(visit) = actor_ref.night_visits(game).first() else {return};
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
                 if actor_ref == target_ref {return}
 
@@ -54,7 +54,7 @@ impl RoleStateImpl for Bodyguard {
                 let mut target_protected_ref = None;
                 for attacker_ref in PlayerReference::all_players(game){
                     let mut new_visits = vec![];
-                    for mut attacking_visit in attacker_ref.night_visits(game).clone(){
+                    for mut attacking_visit in attacker_ref.untagged_night_visits_cloned(game).clone(){
                         if attacking_visit.target == target_ref && attacking_visit.attack {
                             attacking_visit.target = actor_ref;
                             redirected_player_refs.push(attacker_ref);
@@ -73,7 +73,8 @@ impl RoleStateImpl for Bodyguard {
                 
             },
             Priority::Heal => {
-                let Some(visit) = actor_ref.night_visits(game).first() else {return};
+                let actors_visits = actor_ref.untagged_night_visits_cloned(game);
+                let Some(visit) = actors_visits.first() else {return};
                 let target_ref = visit.target;
     
                 if actor_ref == target_ref {

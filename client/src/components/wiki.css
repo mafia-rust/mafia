@@ -45,19 +45,12 @@
 .wiki-article * {
     text-align: left;
 }
-.wiki-article summary {
-    padding: 0.5rem;
-    margin: .25rem;
+.wiki-article .details-summary-container {
+    padding: 0.12rem;
+    margin: .25rem 0;
     border: .13rem solid var(--primary-border-color);
     border-radius: 0.5rem;
     text-align: center;
-}
-.wiki-article details > div{
-    margin-top: 0;
-    padding: 0.5rem;
-    border: .13rem solid var(--primary-border-color);
-    border-radius: 0.5rem;
-    
 }
 .wiki-article blockquote {
     width: 100%;

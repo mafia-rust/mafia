@@ -1,10 +1,9 @@
 use crate::game::{
     components::{
         detained::Detained,
-        drunk_aura::DrunkAura,
         mafia_recruits::MafiaRecruits,
         pitchfork::Pitchfork, poison::Poison,
-        puppeteer_marionette::PuppeteerMarionette
+        puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem
     }, modifiers::Modifiers, role::Priority, Game
 };
 
@@ -23,7 +22,7 @@ impl OnNightPriority{
         PuppeteerMarionette::on_night_priority(game, self.priority);
         MafiaRecruits::on_night_priority(game, self.priority);
         Pitchfork::on_night_priority(game, self.priority);
-        DrunkAura::on_night_priority(game, self.priority);
         Modifiers::on_night_priority(game, self.priority);
+        SyndicateGunItem::on_night_priority(game, self.priority);
     }
 }

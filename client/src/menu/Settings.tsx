@@ -8,25 +8,23 @@ import { MobileContext, AnchorControllerContext, ANCHOR_CONTROLLER } from "./Anc
 import { Role, roleJsonData } from "../game/roleState.d";
 import AudioController from "./AudioController";
 import { getAllRoles } from "../game/roleListState.d";
-
-export function roleSpecificMenuType(role: Role): RoleSpecificMenuType | null {
-    return roleJsonData()[role].roleSpecificMenu === false ? null :
-        loadSettingsParsed().roleSpecificMenus.includes(role) ? "standalone" : "playerList";
-}
+import CheckBox from "../components/CheckBox";
 
 export default function SettingsMenu(): ReactElement {
     const [volume, setVolume] = useState<number>(loadSettingsParsed().volume);
     const [fontSizeState, setFontSize] = useState<number>(loadSettingsParsed().fontSize);
     const [defaultName, setDefaultName] = useState<string | null>(loadSettingsParsed().defaultName);
     const [roleSpecificMenuSettings, setRoleSpecificMenuSettings] = useState(loadSettingsParsed().roleSpecificMenus);
+    const [accessibilityFontEnabled, setAccessibilityFontEnabled] = useState(loadSettingsParsed().accessibilityFont);
     const mobile = useContext(MobileContext)!;
     const anchorController = useContext(AnchorControllerContext)!;
 
     useEffect(() => {
         AudioController.setVolume(volume);
         ANCHOR_CONTROLLER?.setFontSize(fontSizeState);
-    }, [volume, fontSizeState]);
-    
+        ANCHOR_CONTROLLER?.setAccessibilityFontEnabled(accessibilityFontEnabled);
+    }, [volume, fontSizeState, accessibilityFontEnabled]);
+
     return <div className="settings-menu-card">
         <header>
             <h1>{translate("menu.settings.title")}</h1>
@@ -97,6 +95,16 @@ export default function SettingsMenu(): ReactElement {
                             setDefaultName(defaultName);
                         }
                     }/>
+                </section>
+                <section className="standout">
+                    <h2>{translate("menu.settings.accessibility")}</h2>
+                    <label>
+                        {translate("menu.settings.font")}
+                        <CheckBox checked={accessibilityFontEnabled} onChange={(checked: boolean) => {
+                            setAccessibilityFontEnabled(checked);
+                            saveSettings({accessibilityFont: checked});
+                        }}></CheckBox>
+                    </label>
                 </section>
                 <section>
                     {mobile && <h2>{translate("menu.settings.advanced")}</h2>}

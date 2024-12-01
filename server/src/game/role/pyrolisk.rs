@@ -4,7 +4,6 @@ use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
-use crate::game::event::before_role_switch::BeforeRoleSwitch;
 use crate::game::grave::{GraveInformation, GraveKiller, GraveReference};
 use crate::game::player::PlayerReference;
 
@@ -34,7 +33,9 @@ impl RoleStateImpl for Pyrolisk {
         match priority {
             Priority::Kill => {
                 if game.day_number() != 1 {
-                    if let Some(visit) = actor_ref.night_visits(game).first(){
+            
+        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        if let Some(visit) = actor_visits.first(){
                         let target_ref = visit.target;
                         target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Pyrolisk), AttackPower::ArmorPiercing, true);
                         
@@ -42,7 +43,7 @@ impl RoleStateImpl for Pyrolisk {
                         actor_ref.push_player_tag(game, target_ref, Tag::MorticianTagged);
                     }
 
-                    for other_player_ref in actor_ref.all_visitors(game)
+                    for other_player_ref in actor_ref.all_night_visitors_cloned(game)
                         .into_iter().filter(|other_player_ref|
                             other_player_ref.alive(game) &&
                             *other_player_ref != actor_ref
@@ -54,14 +55,16 @@ impl RoleStateImpl for Pyrolisk {
                         actor_ref.push_player_tag(game, other_player_ref, Tag::MorticianTagged);
                     }
                 }else{
-                    if let Some(visit) = actor_ref.night_visits(game).first(){
+            
+        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        if let Some(visit) = actor_visits.first(){
                         let target_ref = visit.target;
 
                         tagged_for_obscure.insert(target_ref);
                         actor_ref.push_player_tag(game, target_ref, Tag::MorticianTagged);
                     }
 
-                    for other_player_ref in actor_ref.all_visitors(game)
+                    for other_player_ref in actor_ref.all_night_visitors_cloned(game)
                         .into_iter().filter(|other_player_ref|
                             other_player_ref.alive(game) &&
                             *other_player_ref != actor_ref
@@ -108,8 +111,8 @@ impl RoleStateImpl for Pyrolisk {
             grave_ref.deref_mut(game).information = GraveInformation::Obscured;
         }
     }
-    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, event: BeforeRoleSwitch) {
-        if event.player() == actor_ref && event.new_role().role() != Role::Mortician {
+    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _old: RoleState, new: RoleState){
+        if player == actor_ref && new.role() != Role::Mortician {
             actor_ref.remove_player_tag_on_all(game, Tag::MorticianTagged);
         }
     }

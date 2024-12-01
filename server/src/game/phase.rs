@@ -119,6 +119,12 @@ impl PhaseState {
         
         match game.current_phase().clone() {
             PhaseState::Obituary => {
+
+                for player in PlayerReference::all_players(game){
+                    let Some(role_state) = player.night_convert_role_to(game).clone() else {continue};
+                    player.set_role(game, role_state);
+                }
+
                 let mut events = Vec::<OnAnyDeath>::new();
 
                 for player_ref in PlayerReference::all_players(game) {

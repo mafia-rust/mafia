@@ -3,14 +3,15 @@ pub mod random_love_links;
 pub mod dead_can_chat;
 pub mod no_abstaining;
 pub mod no_death_cause;
-pub mod mafia_hit_orders;
+pub mod role_set_grave_killers;
 
 use dead_can_chat::DeadCanChat;
 use no_abstaining::NoAbstaining;
 use obscured_graves::ObscuredGraves;
 use random_love_links::RandomLoveLinks;
 use no_death_cause::NoDeathCause;
-use mafia_hit_orders::MafiaHitOrders;
+use role_set_grave_killers::RoleSetGraveKillers;
+
 use serde::{Deserialize, Serialize};
 
 use crate::{vec_map::VecMap, vec_set::VecSet};
@@ -20,6 +21,7 @@ use super::{grave::GraveReference, Game};
 
 #[enum_delegate::register]
 pub trait ModifierTrait where Self: Clone + Sized{
+    fn on_ability_input_received(self, _game: &mut Game, _actor_ref: crate::game::player::PlayerReference, _input: crate::game::ability_input::AbilityInput) {}
     fn on_night_priority(self, _game: &mut Game, _priority: crate::game::role::Priority) {}
     fn before_phase_end(self, _game: &mut Game, _phase: super::phase::PhaseType) {}
     fn on_grave_added(self, _game: &mut Game, _event: GraveReference) {}
@@ -36,7 +38,7 @@ pub enum ModifierState{
     DeadCanChat(DeadCanChat),
     NoAbstaining(NoAbstaining),
     NoDeathCause(NoDeathCause),
-    MafiaHitOrders(MafiaHitOrders),
+    RoleSetGraveKillers(RoleSetGraveKillers),
 }
 #[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Debug, Hash)]
 #[serde(rename_all = "camelCase")]
@@ -46,7 +48,7 @@ pub enum ModifierType{
     DeadCanChat,
     NoAbstaining,
     NoDeathCause,
-    MafiaHitOrders,
+    RoleSetGraveKillers,
 }
 impl ModifierType{
     pub fn default_state(&self)->ModifierState{
@@ -56,7 +58,7 @@ impl ModifierType{
             Self::DeadCanChat => ModifierState::DeadCanChat(DeadCanChat::default()),
             Self::NoAbstaining => ModifierState::NoAbstaining(NoAbstaining::default()),
             Self::NoDeathCause => ModifierState::NoDeathCause(NoDeathCause::default()),
-            Self::MafiaHitOrders => ModifierState::MafiaHitOrders(MafiaHitOrders::default()),
+            Self::RoleSetGraveKillers => ModifierState::RoleSetGraveKillers(RoleSetGraveKillers::default()),
         }
     }
 }
@@ -68,7 +70,7 @@ impl From<&ModifierState> for ModifierType{
             ModifierState::DeadCanChat(_) => Self::DeadCanChat,
             ModifierState::NoAbstaining(_) => Self::NoAbstaining,
             ModifierState::NoDeathCause(_) => Self::NoDeathCause,
-            ModifierState::MafiaHitOrders(_) => Self::MafiaHitOrders,
+            ModifierState::RoleSetGraveKillers(_) => Self::RoleSetGraveKillers,
         }
     }
 }
@@ -115,6 +117,11 @@ impl Modifiers{
     pub fn on_night_priority(game: &mut Game, priority: crate::game::role::Priority){
         for modifier in game.modifiers.modifiers.clone(){
             modifier.1.on_night_priority(game, priority);
+        }
+    }
+    pub fn on_ability_input_received(game: &mut Game, actor_ref: crate::game::player::PlayerReference, input: crate::game::ability_input::AbilityInput){
+        for modifier in game.modifiers.modifiers.clone(){
+            modifier.1.on_ability_input_received(game, actor_ref, input.clone());
         }
     }
     pub fn on_grave_added(game: &mut Game, event: GraveReference){

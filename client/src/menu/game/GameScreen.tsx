@@ -8,7 +8,7 @@ import GAME_MANAGER, { modulus } from "../..";
 import WikiMenu from "./gameScreenContent/WikiMenu";
 import "../../index.css";
 import "./gameScreen.css";
-import RoleSpecificMenu from "./gameScreenContent/RoleSpecificMenu";
+import AbilityMenu from "./gameScreenContent/AbilityMenu/AbilityMenu";
 import { addSwipeEventListener, MobileContext, removeSwipeEventListener } from "../Anchor";
 import StyledText from "../../components/StyledText";
 import { WikiArticleLink } from "../../components/WikiArticleLink";
@@ -18,12 +18,13 @@ import translate from "../../game/lang";
 import { roleSpecificMenuType } from "../Settings";
 import { useGameState, usePlayerState } from "../../components/useHooks";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { useGameState } from "../../components/useHooks";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
-    PlayerListMenu = "PlayerListMenu",
     RoleSpecificMenu = "RoleSpecificMenu",
     WillMenu = "WillMenu",
+    PlayerListMenu = "PlayerListMenu",
     GraveyardMenu = "GraveyardMenu",
     WikiMenu = "WikiMenu",
 }
@@ -31,7 +32,7 @@ export enum ContentMenu {
 const MENU_ELEMENTS = {
     [ContentMenu.ChatMenu]: ChatMenu,
     [ContentMenu.PlayerListMenu]: PlayerListMenu,
-    [ContentMenu.RoleSpecificMenu]: RoleSpecificMenu,
+    [ContentMenu.RoleSpecificMenu]: AbilityMenu,
     [ContentMenu.WillMenu]: WillMenu,
     [ContentMenu.GraveyardMenu]: GraveyardMenu,
     [ContentMenu.WikiMenu]: WikiMenu
@@ -144,36 +145,20 @@ const MenuControllerContext = createContext<MenuController | undefined>(undefine
 export { MenuControllerContext }
 
 export default function GameScreen(): ReactElement {
-    const roleState = usePlayerState(
-        playerState => playerState.roleState,
-        ["yourRoleState"]
-    )!;
     const mobile = useContext(MobileContext)!;
 
     const menuController = useMenuController(
         mobile ? 2 : Infinity, 
         {
             ChatMenu: true,
-            PlayerListMenu: true,
-            RoleSpecificMenu: !mobile && roleSpecificMenuType(roleState.type) === "standalone",
+            RoleSpecificMenu: !mobile,
             WillMenu: !mobile,
+            PlayerListMenu: true,
             GraveyardMenu: !mobile,
             WikiMenu: false,
         },
         () => MENU_CONTROLLER_HOLDER.controller!,
         menuController => MENU_CONTROLLER_HOLDER.controller = menuController
-    );
-    
-    usePlayerState(
-        playerState => {
-            if (
-                roleSpecificMenuType(playerState.roleState.type) !== "standalone" 
-                && menuController.menuOpen(ContentMenu.RoleSpecificMenu)
-            ) {
-                menuController.closeMenu(ContentMenu.RoleSpecificMenu)
-            }
-        },
-        ["yourRoleState"]
     );
 
     const chatMenuNotification = useGameState(
@@ -190,11 +175,8 @@ export default function GameScreen(): ReactElement {
                 return;
             }
 
-            const allowedMenus = ALL_CONTENT_MENUS.filter(menu => {
-                //not open and 
-                return !menusOpen.includes(menu) && (menu === ContentMenu.RoleSpecificMenu ?
-                    roleSpecificMenuType(roleState.type) === "standalone"
-                    : true);
+            const allowedMenus = ALL_CONTENT_MENUS.filter(menu => { 
+                return !menusOpen.includes(menu)
             });
 
             const rightMostMenu = menusOpen[menusOpen.length - 1];

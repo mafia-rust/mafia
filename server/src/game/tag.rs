@@ -4,6 +4,7 @@ use serde::Serialize;
 #[derive(PartialOrd, Ord, Debug, Clone, PartialEq, Eq, Serialize, Copy)]
 #[serde(rename_all = "camelCase")]
 pub enum Tag{
+    Enfranchised,
     GodfatherBackup,
     Doused,
     WerewolfTracked,
@@ -12,4 +13,8 @@ pub enum Tag{
     PuppeteerMarionette,
     LoveLinked,
     ForfeitVote,
+    Spiraling,
+    Disguise,
+    SyndicateGun,
+    Frame
 }

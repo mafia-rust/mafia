@@ -20,7 +20,9 @@ impl RoleStateImpl for Bouncer {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Ward {return;}
         
-        if let Some(visit) = actor_ref.night_visits(game).first(){
+
+        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        if let Some(visit) = actor_visits.first(){
             let target_ref = visit.target;
             target_ref.ward(game);
         }

@@ -39,6 +39,7 @@ pub enum GraveInformation {
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type", content = "killers")]
 pub enum GraveDeathCause {
+    None,
     Execution,
     LeftTown,
     BrokenHeart,

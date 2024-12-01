@@ -9,7 +9,6 @@ import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import { useGameState, usePlayerState } from "../../components/useHooks";
 import { MobileContext } from "../Anchor";
-import { roleSpecificMenuType } from "../Settings";
 
 
 export default function HeaderMenu(props: Readonly<{
@@ -172,11 +171,6 @@ function VerdictButton(props: Readonly<{ verdict: Verdict }>) {
 }
 
 function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactElement | null {
-    const roleState = usePlayerState(
-        clientState => clientState.roleState,
-        ["yourRoleState"]
-    )
-
     const menuController = useContext(MenuControllerContext)!;
 
     return <div className="menu-buttons">
@@ -188,13 +182,16 @@ function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactE
             {translate("menu.chat.icon")}
             <span className="mobile-hidden">{translate("menu.chat.title")}</span>
         </Button>
-        <Button className="player-list-menu-colors"
-            highlighted={menuController.menusOpen().includes(ContentMenu.PlayerListMenu)}
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.PlayerListMenu)}
-        >
-            {translate("menu.playerList.icon")}
-            <span className="mobile-hidden">{translate("menu.playerList.title")}</span>
-        </Button>
+        {!GAME_MANAGER.getMySpectator() && <Button className="role-specific-colors" 
+                highlighted={menuController.menusOpen().includes(ContentMenu.RoleSpecificMenu)}
+                onClick={()=>menuController.closeOrOpenMenu(ContentMenu.RoleSpecificMenu)}
+            >
+                {translate("menu.ability.icon")}
+                <span className="mobile-hidden">
+                    {translate("menu.ability.title")}
+                </span>
+            </Button>
+        }
         {GAME_MANAGER.getMySpectator() || <Button className="will-menu-colors" 
             highlighted={menuController.menusOpen().includes(ContentMenu.WillMenu)}
             onClick={()=>menuController.closeOrOpenMenu(ContentMenu.WillMenu)}
@@ -202,21 +199,19 @@ function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactE
             {translate("menu.will.icon")}
             <span className="mobile-hidden">{translate("menu.will.title")}</span>
         </Button>}
-        {!GAME_MANAGER.getMySpectator() && roleSpecificMenuType(roleState!.type) === "standalone"
-            && <Button className="role-specific-colors" 
-                highlighted={menuController.menusOpen().includes(ContentMenu.RoleSpecificMenu)}
-                onClick={()=>menuController.closeOrOpenMenu(ContentMenu.RoleSpecificMenu)}
-            >
-                <StyledText noLinks={true}>
-                    {translate("role."+roleState?.type+".name")}
-                </StyledText>
-            </Button>}
+        <Button className="player-list-menu-colors"
+            highlighted={menuController.menusOpen().includes(ContentMenu.PlayerListMenu)}
+            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.PlayerListMenu)}
+        >
+            {translate("menu.playerList.icon")}
+            <span className="mobile-hidden">{translate("menu.playerList.title")}</span>
+        </Button>
         <Button className="graveyard-menu-colors" 
             highlighted={menuController.menusOpen().includes(ContentMenu.GraveyardMenu)}
             onClick={()=>menuController.closeOrOpenMenu(ContentMenu.GraveyardMenu)}
         >
-            {translate("menu.graveyard.icon")}
-            <span className="mobile-hidden">{translate("menu.graveyard.title")}</span>
+            {translate("menu.gameMode.icon")}
+            <span className="mobile-hidden">{translate("menu.gameMode.title")}</span>
         </Button>
         {GAME_MANAGER.getMySpectator() || <Button className="wiki-menu-colors"
             highlighted={menuController.menusOpen().includes(ContentMenu.WikiMenu)} 

@@ -40,7 +40,9 @@ impl RoleStateImpl for Doctor {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Heal => {
-                let Some(visit) = actor_ref.night_visits(game).first() else {return};
+                
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 
                 target_ref.increase_defense_to(game, DefensePower::Protection);
@@ -71,7 +73,6 @@ impl RoleStateImpl for Doctor {
         }
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        game.day_number() > 1 &&
         (actor_ref != target_ref || self.self_heals_remaining > 0) &&
         !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
         actor_ref.selection(game).is_empty() &&

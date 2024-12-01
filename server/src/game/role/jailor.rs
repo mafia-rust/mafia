@@ -43,14 +43,15 @@ impl RoleStateImpl for Jailor {
 
         match priority {
             Priority::Kill => {
-                if let Some(visit) = actor_ref.night_visits(game).first() {
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                if let Some(visit) = actor_visits.first() {
     
                     let target_ref = visit.target;
                     if Detained::is_detained(game, target_ref){
                         target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Jailor), AttackPower::ProtectionPiercing, false);
         
                         self.executions_remaining = 
-                            if target_ref.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) {0} else {self.executions_remaining - 1};
+                            if target_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) {0} else {self.executions_remaining - 1};
                         actor_ref.set_role_state(game, self);
                     }
                 }

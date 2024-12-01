@@ -1,14 +1,18 @@
-use std::collections::HashMap;
-
-use crate::{packet::ToServerPacket, strings::TidyableString, log};
+use crate::{log, packet::ToServerPacket, strings::TidyableString};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender}, components::pitchfork::Pitchfork, event::on_fast_forward::OnFastForward, modifiers::mafia_hit_orders::MafiaHitOrders, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
-        impostor::Impostor, kira::{Kira, KiraGuess},
-        mayor::Mayor, puppeteer::PuppeteerAction, recruiter::RecruiterAction,
-        retrainer::Retrainer,
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, 
+    event::on_fast_forward::OnFastForward, 
+    phase::{PhaseState, PhaseType},
+    player::{PlayerIndex, PlayerReference},
+    role::{
+        mayor::Mayor, politician::Politician,
+        puppeteer::PuppeteerAction, recruiter::RecruiterAction,
         Role, RoleState
-    }, role_list::RoleSet, role_outline_reference::RoleOutlineReference, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    },
+    role_list::RoleSet,
+    spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
+    Game
 };
 
 
@@ -67,6 +71,7 @@ impl Game {
                     },
                 };
                 sender_player_ref.set_selection(self, target_ref_list.clone());
+                let target_ref_list = sender_player_ref.selection(self).clone();
                 
                 let mut target_message_sent = false;
                 for chat_group in sender_player_ref.get_current_send_chat_groups(self){
@@ -179,6 +184,15 @@ impl Game {
                     sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
                     break 'packet_match;
                 }
+                if let RoleState::Politician(Politician{revealed: true, ..}) = whisperee_ref.role_state(self) {
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
+                    break 'packet_match;
+                }
+                if let RoleState::Politician(Politician{revealed: true, ..}) = sender_player_ref.role_state(self) {
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
+                    break 'packet_match;
+                }
+
 
                 self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::BroadcastWhisper { whisperer: sender_player_index, whisperee: whispered_to_player_index });
                 let message = ChatMessageVariant::Whisper { 
@@ -210,26 +224,12 @@ impl Game {
             ToServerPacket::SaveDeathNote { death_note } => {
                 sender_player_ref.set_death_note(self, death_note);
             },
+            ToServerPacket::AbilityInput { ability_input } => 
+                ability_input.on_client_message(self, sender_player_ref),
             ToServerPacket::SetDoomsayerGuess { guesses } => {
                 if let RoleState::Doomsayer(mut doomsayer) = sender_player_ref.role_state(self).clone(){
                     doomsayer.guesses = guesses;
                     sender_player_ref.set_role_state(self, RoleState::Doomsayer(doomsayer));
-                }
-            },
-            ToServerPacket::SetKiraGuess{guesses} => {
-                if let RoleState::Kira(mut kira) = sender_player_ref.role_state(self).clone(){
-
-                    let mut new_guesses: HashMap<PlayerReference, KiraGuess> = HashMap::new();
-
-                    for (player_ref, guess) in guesses {
-                        if Kira::allowed_to_guess(sender_player_ref, player_ref, self){
-                            new_guesses.insert(player_ref, guess);
-                        }
-                    }
-
-                    kira.guesses = new_guesses;
-                    sender_player_ref.set_role_state(self, RoleState::Kira(kira));
-                    Kira::set_guesses(sender_player_ref, self);
                 }
             },
             ToServerPacket::SetWildcardRole { role } => {
@@ -323,41 +323,6 @@ impl Game {
                     sender_player_ref.set_role_state(self, RoleState::Counterfeiter(counterfeiter));
                 }
             },
-            ToServerPacket::SetAuditorChosenOutline { index } => {
-                if !sender_player_ref.alive(self) {break 'packet_match;}
-
-                let outline_ref = RoleOutlineReference::new(self, index);
-
-                match sender_player_ref.role_state(self).clone() {
-                    RoleState::Auditor(mut auditor)=>{
-                        if auditor.chosen_outline.is_some_and(|f|f.index() == index) {
-                            auditor.chosen_outline = None;
-                        }
-    
-                        if  self.roles_originally_generated.get(index as usize).is_some() && 
-                            !auditor.previously_given_results.iter().any(|(i, _)| i.index() == index)
-                        {
-                            auditor.chosen_outline = outline_ref;
-                        }
-    
-                        sender_player_ref.set_role_state(self, auditor);
-                    }
-                    RoleState::Ojo(mut ojo) => {
-                        if ojo.chosen_outline.is_some_and(|f|f.index() == index) {
-                            ojo.chosen_outline = None;
-                        }
-
-                        if  self.roles_originally_generated.get(index as usize).is_some() && 
-                            !ojo.previously_given_results.iter().any(|(i, _)| i.index() == index)
-                        {
-                            ojo.chosen_outline = outline_ref;
-                        }
-
-                        sender_player_ref.set_role_state(self, ojo);
-                    }
-                    _ => {}
-                }
-            },
             ToServerPacket::SetPuppeteerAction { action } => {
                 if let RoleState::Puppeteer(mut pup) = sender_player_ref.role_state(self).clone(){
                     pup.action = action.clone();
@@ -384,34 +349,8 @@ impl Game {
                     sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
                 }
             },
-            ToServerPacket::SetErosAction { action } => {
-                if let RoleState::Eros(mut eros) = sender_player_ref.role_state(self).clone(){
-                    eros.action = action.clone();
-                    sender_player_ref.set_role_state(self, RoleState::Eros(eros));
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::ErosActionChosen{ action });
-
-                    //Updates selection if it was invalid
-                    sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
-                }
-            },
-            ToServerPacket::RetrainerRetrain { role } => {
-                match sender_player_ref.role_state(self) {
-                    RoleState::Retrainer(..) => {
-                        Retrainer::retrain(self, sender_player_ref, role);
-                    },
-                    RoleState::Impostor(..) => {
-                        Impostor::set_role(self, sender_player_ref, role);
-                    },
-                    _ => {}
-                }
-            },
             ToServerPacket::SetRoleChosen { role } => {
                 match sender_player_ref.role_state(self).clone() {
-                    RoleState::Steward(mut steward) => {
-                        steward.role_chosen = role;
-                        sender_player_ref.set_role_state(self, steward);
-                        sender_player_ref.add_private_chat_message(self, ChatMessageVariant::RoleChosen { role });
-                    },
                     RoleState::Ojo(mut ojo) => {
                         ojo.role_chosen = role;
                         sender_player_ref.set_role_state(self, ojo);
@@ -423,23 +362,6 @@ impl Game {
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
                 sender_player_ref.set_fast_forward_vote(self, fast_forward);
             },
-            ToServerPacket::ForfeitVote { forfeit } => {
-                if 
-                    self.current_phase().phase() == PhaseType::Discussion &&
-                    sender_player_ref.alive(self)
-                {
-                    sender_player_ref.set_forfeit_vote(self, forfeit);
-                }
-            },
-            ToServerPacket::PitchforkVote { player } => {
-                Pitchfork::player_votes_for_angry_mob_action(self, sender_player_ref, player);
-            }
-            ToServerPacket::HitOrderVote { player } => {
-                MafiaHitOrders::mark_vote_action(self, sender_player_ref, player);
-            }
-            ToServerPacket::HitOrderSwitchToMafioso => {
-                MafiaHitOrders::switch_to_mafioso_action(self, sender_player_ref);
-            }
             _ => {
                 log!(fatal "Game"; "Unimplemented ToServerPacket: {incoming_packet:?}");
                 unreachable!();

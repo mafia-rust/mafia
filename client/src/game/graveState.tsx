@@ -21,7 +21,7 @@ export type GraveInformation ={
 }
 
 export type GraveDeathCause = {
-    type: "execution" | "leftTown" | "brokenHeart"
+    type: "execution" | "leftTown" | "brokenHeart" | "none"
 } | {
     type: "killers"
     killers: GraveKiller[]
