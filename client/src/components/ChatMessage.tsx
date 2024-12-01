@@ -16,6 +16,7 @@ import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSp
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
 import { AbilityID, AbilitySelection, translateAbilityId } from "../game/abilityInput";
+import DetailsSummary from "./DetailsSummary";
 
 const ChatElement = React.memo((
     props: {
@@ -139,8 +140,8 @@ const ChatElement = React.memo((
             }
 
             return <div className={"chat-message-div"}>
-                <details open={GAME_MANAGER.getMySpectator()}>
-                    <summary>
+                <DetailsSummary
+                    summary={
                         <StyledText className={"chat-message " + style}
                             playerKeywordData={props.playerKeywordData}
                         >
@@ -148,11 +149,13 @@ const ChatElement = React.memo((
                                 playerNames[message.variant.grave.player], graveRoleString
                             )}
                         </StyledText>
-                    </summary>
+                    }
+                    defaultOpen={GAME_MANAGER.getMySpectator()}
+                >
                     <div className="grave-message">
                         <GraveComponent grave={message.variant.grave} playerNames={playerNames}/>
                     </div>
-                </details>
+                </DetailsSummary>
             </div>;
     }
 
