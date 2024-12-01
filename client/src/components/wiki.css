@@ -23,6 +23,21 @@
     flex: 1 1;
     padding-bottom: 1rem;
 }
+.wiki-results > .alphabetized-articles {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    column-gap: 1rem;
+}
+.wiki-results > .alphabetized-articles > div > .letter {
+    padding: .13rem .25rem;
+    margin: .13rem;
+    background-color: var(--secondary-color);
+    border: .13rem solid var(--primary-border-color);
+    border-radius: .5rem;
+    font-weight: bold;
+}
 .wiki-message-section {
     display: flex;
     flex-direction: column;
