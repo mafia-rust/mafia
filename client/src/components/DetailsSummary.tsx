@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode } from "react";
+import { ReactElement, ReactNode, useMemo } from "react";
 import React from "react";
 import "./detailsSummary.css";
 import Icon from "./Icon";
@@ -8,10 +8,16 @@ export default function DetailsSummary(props: Readonly<{
     dropdownArrow?: boolean,
     children?: ReactNode,
     defaultOpen?: boolean,
+    open?: boolean,
     onClick?: () => void
 }>): ReactElement {
 
-    const [open, setOpen] = React.useState(props.defaultOpen??false);
+    const [openState, setOpen] = React.useState(props.defaultOpen??false);
+
+    const open = useMemo(() => {
+        if(props.open !== undefined) return props.open;
+        return openState;
+    }, [props.open, openState]);
 
     return <div className="details-summary-container">
         <div className="details-summary-summary-container"
