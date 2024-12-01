@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react";
+import { ReactElement } from "react";
 import { 
     TwoPlayerOptionSelection, 
     TwoRoleOptionSelection, 
@@ -8,7 +8,9 @@ import {
     AvailableAbilitySelection,
     TwoRoleOutlineOptionSelection,
     RoleOptionSelection,
-    SavedSingleAbility
+    SavedSingleAbility,
+    abilityIdToLink,
+    singleAbilityJsonData
 } from "../../../../game/abilityInput";
 import React from "react";
 import { usePlayerState } from "../../../../components/useHooks";
@@ -25,6 +27,7 @@ import KiraSelectionMenu, { KiraSelection } from "./AbilitySelectionTypes/KiraSe
 import RoleOptionSelectionMenu from "./AbilitySelectionTypes/RoleOptionSelectionMenu";
 import "./genericAbilityMenu.css";
 import DetailsSummary from "../../../../components/DetailsSummary";
+import translate from "../../../../game/lang";
 
 export default function GenericAbilityMenu(): ReactElement {
     const savedAbilities = usePlayerState(
@@ -53,14 +56,19 @@ function SingleAbilityMenu(props: Readonly<{
         (playerState, gameState)=>playerState.myIndex
     )!;
 
+    const nightIcon = singleAbilityJsonData(abilityIdToLink(props.abilityId))?.midnight;
+
 
     return <div
         key={props.key}
-        className="role-specific-colors small-role-specific-menu generic-ability-menu-tab"
+        className="role-specific-colors small-role-specific-menu"
     >
         <DetailsSummary
             summary={
-                <StyledText>🌙{translateAbilityId(props.abilityId)}</StyledText>
+                <div className="generic-ability-menu-tab">
+                    <span><StyledText>{translateAbilityId(props.abilityId)}</StyledText></span>
+                    {nightIcon?<span>{translate("night.icon")}</span>:null}
+                </div>
             }
             defaultOpen={true}
         >

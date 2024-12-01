@@ -1,4 +1,7 @@
 {
+    "syndicateGunItemShoot": {
+        "midnight": true
+    },
     "role/disguiser/0": {
         "midnight": true
     }
