@@ -27,6 +27,16 @@ export enum ContentMenu {
     GraveyardMenu = "GraveyardMenu",
     WikiMenu = "WikiMenu",
 }
+
+const MENU_ELEMENTS = {
+    [ContentMenu.ChatMenu]: ChatMenu,
+    [ContentMenu.PlayerListMenu]: PlayerListMenu,
+    [ContentMenu.RoleSpecificMenu]: RoleSpecificMenu,
+    [ContentMenu.WillMenu]: WillMenu,
+    [ContentMenu.GraveyardMenu]: GraveyardMenu,
+    [ContentMenu.WikiMenu]: WikiMenu
+}
+
 const ALL_CONTENT_MENUS = Object.values(ContentMenu);
 
 export interface MenuController {
@@ -203,7 +213,7 @@ export default function GameScreen(): ReactElement {
     })
 
     const allMenusClosed = menuController.menusOpen().length === 0;
-    const minSize = 5;
+    const minSize = 10;
 
     return <MenuControllerContext.Provider value={menuController}>
         <div className="game-screen">
@@ -211,67 +221,15 @@ export default function GameScreen(): ReactElement {
                 <HeaderMenu chatMenuNotification={chatMenuNotification}/>
             </div>
             <PanelGroup direction="horizontal" className="content">
-                {menuController.menuOpen(ContentMenu.ChatMenu) &&
-                    <Panel minSize={minSize}>
-                        <ChatMenu/>
-                    </Panel>
-                }
-                {
-                    menuController.menuOpen(ContentMenu.ChatMenu) && (
-                        menuController.menuOpen(ContentMenu.PlayerListMenu) ||
-                        menuController.menuOpen(ContentMenu.WillMenu) ||
-                        menuController.menuOpen(ContentMenu.RoleSpecificMenu) ||
-                        menuController.menuOpen(ContentMenu.GraveyardMenu) ||
-                        menuController.menuOpen(ContentMenu.WikiMenu)
-                    ) && <PanelResizeHandle/>
-                }
-                {menuController.menuOpen(ContentMenu.PlayerListMenu) &&
-                    <Panel minSize={minSize}>
-                        <PlayerListMenu/>
-                    </Panel>
-                }
-                {
-                    menuController.menuOpen(ContentMenu.PlayerListMenu) &&
-                    (menuController.menuOpen(ContentMenu.WillMenu) ||
-                    menuController.menuOpen(ContentMenu.RoleSpecificMenu) ||
-                    menuController.menuOpen(ContentMenu.GraveyardMenu) ||
-                    menuController.menuOpen(ContentMenu.WikiMenu)) && <PanelResizeHandle/>
-                }
-                {menuController.menuOpen(ContentMenu.WillMenu) &&
-                    <Panel minSize={minSize}>
-                        <WillMenu/>
-                    </Panel>
-                }
-                {
-                    menuController.menuOpen(ContentMenu.WillMenu) &&
-                    (menuController.menuOpen(ContentMenu.RoleSpecificMenu) ||
-                    menuController.menuOpen(ContentMenu.GraveyardMenu) ||
-                    menuController.menuOpen(ContentMenu.WikiMenu)) && <PanelResizeHandle/>
-                }
-                {menuController.menuOpen(ContentMenu.RoleSpecificMenu) &&
-                    <Panel minSize={minSize}>
-                        <RoleSpecificMenu/>
-                    </Panel>
-                }
-                {
-                    menuController.menuOpen(ContentMenu.RoleSpecificMenu) &&
-                    (menuController.menuOpen(ContentMenu.GraveyardMenu) ||
-                    menuController.menuOpen(ContentMenu.WikiMenu)) && <PanelResizeHandle/>
-                }
-                {menuController.menuOpen(ContentMenu.GraveyardMenu) &&
-                    <Panel minSize={minSize}>
-                        <GraveyardMenu/>
-                    </Panel>
-                }
-                {
-                    menuController.menuOpen(ContentMenu.GraveyardMenu) &&
-                    menuController.menuOpen(ContentMenu.WikiMenu) && <PanelResizeHandle/>
-                }
-                {menuController.menuOpen(ContentMenu.WikiMenu) &&
-                    <Panel minSize={minSize}>
-                        <WikiMenu/>
-                    </Panel>
-                }
+                {menuController.menusOpen().map((menu, index, menusOpen) => {
+                    const MenuElement = MENU_ELEMENTS[menu];
+                    return <>
+                        <Panel minSize={minSize}>
+                            <MenuElement />
+                        </Panel>
+                        {menusOpen.some((_, i) => i > index) && <PanelResizeHandle />}
+                    </>
+                })}
                 {allMenusClosed && <Panel><div className="no-content">
                     {translate("menu.gameScreen.noContent")}
                 </div></Panel>}

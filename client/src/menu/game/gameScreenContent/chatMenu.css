@@ -1,5 +1,5 @@
 
-.game-screen .content > .chat-menu {
+.game-screen .content .chat-menu {
     display: flex;
     flex-direction: column;
 }
