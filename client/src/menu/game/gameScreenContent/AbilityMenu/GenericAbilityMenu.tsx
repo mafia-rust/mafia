@@ -71,29 +71,26 @@ function SingleAbilityMenu(props: Readonly<{
                 </div>
             }
             defaultOpen={true}
+            disabled={props.saveData.availableAbilityData.grayedOut}
         >
-        {
-            props.saveData.availableAbilityData.grayedOut ? null : <>
-                {
-                    props.saveData.availableAbilityData.dontSave ? null : 
-                    <ChatMessage message={{
-                        variant: {
-                            type: "abilityUsed",
-                            player: myIndex,
-                            abilityId: props.abilityId,
-                            selection: props.saveData.selection
-                        },
-                        chatGroup: "all"
-                    }}/>
-                }
-                <SwitchSingleAbilityMenuType
-                    key={props.key}
-                    id={props.abilityId}
-                    available={props.saveData.availableAbilityData.available}
-                    selected={props.saveData.selection}
-                />
-            </>
-        }
+            {
+                props.saveData.availableAbilityData.dontSave ? null : 
+                <ChatMessage message={{
+                    variant: {
+                        type: "abilityUsed",
+                        player: myIndex,
+                        abilityId: props.abilityId,
+                        selection: props.saveData.selection
+                    },
+                    chatGroup: "all"
+                }}/>
+            }
+            <SwitchSingleAbilityMenuType
+                key={props.key}
+                id={props.abilityId}
+                available={props.saveData.availableAbilityData.available}
+                selected={props.saveData.selection}
+            />        
         </DetailsSummary>
     </div>
 }
