@@ -1,6 +1,3 @@
-.game-screen .content > .player-list-menu {
-    width: 25%;
-}
 @media only screen and (max-width: 600px) {
     .game-screen .content > .player-list-menu {
         width: 100%;
