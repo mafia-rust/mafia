@@ -16,6 +16,7 @@ import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import translate from "../../game/lang";
 import { useGameState } from "../../components/useHooks";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
@@ -25,6 +26,16 @@ export enum ContentMenu {
     GraveyardMenu = "GraveyardMenu",
     WikiMenu = "WikiMenu",
 }
+
+export const MENU_ELEMENTS = {
+    [ContentMenu.ChatMenu]: ChatMenu,
+    [ContentMenu.PlayerListMenu]: PlayerListMenu,
+    [ContentMenu.RoleSpecificMenu]: AbilityMenu,
+    [ContentMenu.WillMenu]: WillMenu,
+    [ContentMenu.GraveyardMenu]: GraveyardMenu,
+    [ContentMenu.WikiMenu]: WikiMenu
+}
+
 const ALL_CONTENT_MENUS = Object.values(ContentMenu);
 
 export interface MenuController {
@@ -182,23 +193,27 @@ export default function GameScreen(): ReactElement {
     })
 
     const allMenusClosed = menuController.menusOpen().length === 0;
+    const minSize = 10;
 
     return <MenuControllerContext.Provider value={menuController}>
         <div className="game-screen">
             <div className="header">
                 <HeaderMenu chatMenuNotification={chatMenuNotification}/>
             </div>
-            <div className="content">
-                {menuController.menuOpen(ContentMenu.ChatMenu) && <ChatMenu/>}
-                {menuController.menuOpen(ContentMenu.RoleSpecificMenu) && <AbilityMenu/>}
-                {menuController.menuOpen(ContentMenu.WillMenu) && <WillMenu/>}
-                {menuController.menuOpen(ContentMenu.PlayerListMenu) && <PlayerListMenu/>}
-                {menuController.menuOpen(ContentMenu.GraveyardMenu) && <GraveyardMenu/>}
-                {menuController.menuOpen(ContentMenu.WikiMenu) && <WikiMenu/>}
-                {allMenusClosed && <div className="no-content">
+            <PanelGroup direction="horizontal" className="content">
+                {menuController.menusOpen().map((menu, index, menusOpen) => {
+                    const MenuElement = MENU_ELEMENTS[menu];
+                    return <>
+                        <Panel minSize={minSize}>
+                            <MenuElement />
+                        </Panel>
+                        {menusOpen.some((_, i) => i > index) && <PanelResizeHandle />}
+                    </>
+                })}
+                {allMenusClosed && <Panel><div className="no-content">
                     {translate("menu.gameScreen.noContent")}
-                </div>}
-            </div>
+                </div></Panel>}
+            </PanelGroup>
         </div>
     </MenuControllerContext.Provider>
 }
