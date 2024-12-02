@@ -53,7 +53,7 @@ impl RoleStateImpl for Disguiser {
         crate::game::role::common_role::convert_saved_ability_to_visits(game, actor_ref, AbilityID::role(Role::Disguiser, 0), false)
     }
     fn available_abilities(self, game: &Game, actor_ref: PlayerReference) -> AllPlayersAvailableAbilities {
-        let mut out = AllPlayersAvailableAbilities::new_ability_fast(
+        AllPlayersAvailableAbilities::new_ability_fast(
             game,
             actor_ref,
             AbilityID::role(Role::Disguiser, 0),
@@ -72,27 +72,22 @@ impl RoleStateImpl for Disguiser {
             Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),
             false
-        );
-        
-        if let Some(disguised) = self.current_target{
-            out.combine_overwrite(
-                AllPlayersAvailableAbilities::new_ability_fast(
-                    game,
-                    disguised,
-                    AbilityID::role(Role::Disguiser, 1),
-                    AvailableAbilitySelection::new_role_option(
-                        Role::values().into_iter()
-                            .map(|role| Some(role))
-                            .collect()
-                    ),
-                    AbilitySelection::new_role_option(Some(Role::Disguiser)),
-                    !actor_ref.alive(game),
-                    None,
-                    false
-                )
+        ).combine_overwrite_owned(
+            AllPlayersAvailableAbilities::new_ability_fast(
+                game,
+                Self::player_with_disguiser_menu(&self, actor_ref),
+                AbilityID::role(Role::Disguiser, 1),
+                AvailableAbilitySelection::new_role_option(
+                    Role::values().into_iter()
+                        .map(|role| Some(role))
+                        .collect()
+                ),
+                AbilitySelection::new_role_option(Some(Self::disguised_role(&self, game, actor_ref))),
+                !actor_ref.alive(game),
+                None,
+                false
             )
-        }
-        out
+        )
     }
     fn on_any_death(mut self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference) {
         if
@@ -119,17 +114,12 @@ impl RoleStateImpl for Disguiser {
                 will: grave.deref(game).player.will(game).to_string(),
             });
 
-
-            let disguised_role = AllPlayersSavedAbilityInputs::get_role_option_selection_if_id(game, actor_ref, AbilityID::role(Role::Disguiser, 1))
-                .and_then(|selection| selection.0)
-                .unwrap_or(Role::Disguiser);
-
             
             let mut grave = grave_ref.deref(game).clone();
             *grave_ref.deref_mut(game) = match grave.information {
                 GraveInformation::Normal{role: _, will, death_cause, death_notes} => {
                     grave.information = GraveInformation::Normal{
-                        role: disguised_role,
+                        role: Self::disguised_role(&self, game, actor_ref),
                         will,
                         death_cause,
                         death_notes
@@ -144,6 +134,37 @@ impl RoleStateImpl for Disguiser {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
+    }
+}
+
+impl Disguiser{
+    fn player_with_disguiser_menu(&self, actor_ref: PlayerReference)->PlayerReference{
+        let mut player = actor_ref;
+        if let Some(disguised) = self.current_target{
+            player = disguised;
+        }
+        player
+    }
+    fn disguised_role(&self, game: &Game, actor_ref: PlayerReference)->Role{
+        if let Some(disguised) = self.current_target{
+            if let Some(role) = AllPlayersSavedAbilityInputs::get_role_option_selection_if_id(
+                game, 
+                disguised, 
+                AbilityID::role(Role::Disguiser, 1)
+            )
+                .and_then(|selection| selection.0)
+            {
+                    return role;
+            }
+        }
+
+        return AllPlayersSavedAbilityInputs::get_role_option_selection_if_id(
+            game, 
+            actor_ref, 
+            AbilityID::role(Role::Disguiser, 1)
+        )
+            .and_then(|selection| selection.0)
+            .unwrap_or(Role::Disguiser)
     }
 }
 
