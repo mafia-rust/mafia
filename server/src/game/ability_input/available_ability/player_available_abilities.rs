@@ -1,24 +1,24 @@
-
 use std::iter::once;
 
 use serde::{Deserialize, Serialize};
 
 use crate::{game::{phase::PhaseType, player::PlayerReference, Game}, vec_map::{vec_map, VecMap}, vec_set::VecSet};
 
-use super::{
+use super::super::{
     ability_id::AbilityID,
     ability_selection::AbilitySelection, AvailableAbilitySelection,
 };
 
-pub mod available_single_ability_data;
-use available_single_ability_data::*;
+use super::available_single_ability_data::*;
+
+
 
 #[derive(Default, Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
-pub struct AvailableAbilitiesData{
+pub struct PlayerAvailableAbilities{
     abilities: VecMap<AbilityID, AvailableSingleAbilityData>
 }
-impl AvailableAbilitiesData{
+impl PlayerAvailableAbilities{
     pub fn new(abilities: VecMap<AbilityID, AvailableSingleAbilityData>)->Self{
         Self{abilities}
     }
@@ -78,7 +78,7 @@ impl AvailableAbilitiesData{
             self.abilities.insert(ability_id, ability_selection);
         }
     }
-    pub fn combine_build(self, other: Self)->Self{
+    pub fn combine_overwrite_owned(self, other: Self)->Self{
         let mut out = self;
         out.combine_overwrite(other);
         out
@@ -87,6 +87,3 @@ impl AvailableAbilitiesData{
         &self.abilities
     }
 }
-
-
-

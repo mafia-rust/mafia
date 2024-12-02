@@ -5,20 +5,29 @@ use crate::game::{
 
 pub struct ForfeitVote;
 impl ForfeitVote{
-    pub fn available_ability_input(game: &Game, actor_ref: PlayerReference)->AvailableAbilitiesData {
+    pub fn available_abilities(game: &Game)->AllPlayersAvailableAbilities {
         if !game.settings.enabled_roles.contains(&Role::Blackmailer) {
-            return AvailableAbilitiesData::default();
+            return AllPlayersAvailableAbilities::default();
         }
 
-        AvailableAbilitiesData::new_ability_fast(
-            game,
-            AbilityID::forfeit_vote(),
-            AvailableAbilitySelection::new_boolean(),
-            AbilitySelection::new_boolean(false),
-            !actor_ref.alive(game) || game.current_phase().phase() != PhaseType::Discussion,
-            Some(PhaseType::Obituary),
-            false
-        )
+        let mut out = AllPlayersAvailableAbilities::default();
+
+        for player in PlayerReference::all_players(game) {
+            out.combine_overwrite(
+                AllPlayersAvailableAbilities::new_ability_fast(
+                    game,
+                    player,
+                    AbilityID::forfeit_vote(),
+                    AvailableAbilitySelection::new_boolean(),
+                    AbilitySelection::new_boolean(false),
+                    !player.alive(game) || game.current_phase().phase() != PhaseType::Discussion,
+                    Some(PhaseType::Obituary),
+                    false
+                )
+            );
+        }
+
+        out
     }
 
     pub fn on_ability_input_received(game: &mut Game, actor_ref: PlayerReference, input: AbilityInput){

@@ -8,7 +8,7 @@ use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
-use super::{Priority, RoleStateImpl};
+use super::{AllPlayersAvailableAbilities, Priority, RoleStateImpl};
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -36,8 +36,8 @@ impl RoleStateImpl for Detective {
             actor_ref.push_night_message(game, message);
         }
     }
-    fn available_ability_input(self, game: &Game, actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilitiesData {
-        crate::game::role::common_role::available_ability_input_one_player_night(game, actor_ref, false, AbilityID::role(actor_ref.role(game), 0))
+    fn available_abilities(self, game: &Game, actor_ref: PlayerReference) -> AllPlayersAvailableAbilities {
+        crate::game::role::common_role::available_abilities_one_player_night(game, actor_ref, false, AbilityID::role(actor_ref.role(game), 0))
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_saved_ability_to_visits(game, actor_ref, AbilityID::role(actor_ref.role(game), 0), false)

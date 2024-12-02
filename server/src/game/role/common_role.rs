@@ -1,11 +1,7 @@
 use std::collections::HashSet;
 
 use crate::game::{
-    ability_input::{
-        ability_id::AbilityID, ability_selection::AbilitySelection,
-        available_abilities_data::AvailableAbilitiesData,
-        saved_ability_inputs::AllPlayersSavedAbilityInputs,
-    },
+    ability_input::*,
     chat::ChatGroup,
     components::{
         detained::Detained,
@@ -38,20 +34,21 @@ pub(super) fn convert_selection_to_visits(_game: &Game, actor_ref: PlayerReferen
     }
 }
 
-pub fn available_ability_input_one_player_night(
+pub fn available_abilities_one_player_night(
     game: &Game,
     actor_ref: PlayerReference,
     can_select_self: bool,
     ability_id: AbilityID,
-) -> AvailableAbilitiesData {
+) -> AllPlayersAvailableAbilities {
     
     let grayed_out = 
         !actor_ref.alive(game) || 
         Detained::is_detained(game, actor_ref) ||
         game.current_phase().phase() != PhaseType::Night;
 
-    AvailableAbilitiesData::new_one_player_ability_fast(
+    AllPlayersAvailableAbilities::new_one_player_ability_fast(
         game,
+        actor_ref,
         ability_id,
         PlayerReference::all_players(game)
                 .into_iter()

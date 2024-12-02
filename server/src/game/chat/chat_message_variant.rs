@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::{
-    ability_input::{ability_id::AbilityID, ability_selection::AbilitySelection},
+    ability_input::*,
     grave::Grave, phase::PhaseState,
     player::{PlayerIndex, PlayerReference},
     role::{
@@ -242,6 +242,4 @@ pub enum ChatMessageVariant {
     MartyrWon,
     MartyrFailed,
     WildcardConvertFailed{ role: Role },
-
-    SyndicateGunTarget{shooter: PlayerIndex, target: Option<PlayerIndex>},
 }

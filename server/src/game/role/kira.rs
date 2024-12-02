@@ -187,21 +187,28 @@ impl RoleStateImpl for Kira {
             _ => return,
         }    
     }
-    fn available_ability_input(self, game: &Game, _actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilitiesData {
+    fn available_abilities(self, game: &Game, actor_ref: PlayerReference) -> AllPlayersAvailableAbilities {
         match PlayerReference::all_players(game).filter(|p|p.alive(game)).count().saturating_sub(1).try_into() {
             Ok(count) => {
-                AvailableAbilitiesData::new_ability_fast(
+
+                let default_players = PlayerReference::all_players(game)
+                    .filter(|p|p.alive(game) && *p != actor_ref)
+                    .map(|p|(p, KiraGuess::None))
+                    .collect();
+
+                AllPlayersAvailableAbilities::new_ability_fast(
                     game,
+                    actor_ref,
                     AbilityID::role(Role::Kira, 0),
                     AvailableAbilitySelection::new_kira(AvailableKiraSelection::new(count)),
-                    AbilitySelection::new_kira(KiraSelection::default()),
+                    AbilitySelection::new_kira(KiraSelection::new(default_players)),
                     false,
                     None,
                     false
                 )
             }
             Err(_) => {
-                AvailableAbilitiesData::default()
+                AllPlayersAvailableAbilities::default()
             }
         }        
     }

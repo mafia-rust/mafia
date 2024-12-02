@@ -10,14 +10,10 @@ use crate::{
         phase::PhaseType, player::PlayerReference, Game
     },
     packet::ToClientPacket,
-    vec_map::VecMap};
-
-use super::{
-    ability_selection::AbilitySelection,
-    available_abilities_data::{available_single_ability_data::AvailableSingleAbilityData, AvailableAbilitiesData},
-    selection_type::two_role_outline_option_selection::TwoRoleOutlineOptionSelection, AbilityID,
-    AbilityInput
+    vec_map::VecMap
 };
+
+use super::*;
 
 #[derive(Default)]
 pub struct AllPlayersSavedAbilityInputs{
@@ -85,24 +81,34 @@ impl AllPlayersSavedAbilityInputs{
     }
 
     pub fn on_tick(game: &mut Game){
-        for player in PlayerReference::all_players(game){
-            let mut new_available_selection = 
-                player.role_state(game).clone().available_ability_input(game, player);
+        let mut all_players_available_abilities = AllPlayersAvailableAbilities::default();
 
-            new_available_selection.combine_overwrite(
-                SyndicateGunItem::available_ability_input(game, player)
-            );
-            new_available_selection.combine_overwrite(
-                ForfeitVote::available_ability_input(game, player)
-            );
-            new_available_selection.combine_overwrite(
-                Pitchfork::available_ability_input(game, player)
-            );
-            
+        for player in PlayerReference::all_players(game) {
+            all_players_available_abilities.combine_overwrite(player.available_abilities(game));
+        }
+
+        all_players_available_abilities.combine_overwrite(
+            SyndicateGunItem::available_abilities(game)
+        );
+        all_players_available_abilities.combine_overwrite(
+            ForfeitVote::available_abilities(game)
+        );
+        all_players_available_abilities.combine_overwrite(
+            Pitchfork::available_abilities(game)
+        );
+
+        for player in PlayerReference::all_players(game){
             let current = Self::get_available_abilities_data(game, player);
 
-            if current != new_available_selection {
-                Self::set_available_ability_data(game, player, new_available_selection);
+            let new_available = all_players_available_abilities.players().get(&player).map_or_else(
+                || None,
+                |new_available| if current != *new_available {
+                    Some(new_available)
+                }else{None}
+            );
+
+            if let Some(new_available) = new_available {
+                Self::set_player_available_abilities(game, player, new_available.clone());
             }
         }
     }
@@ -111,10 +117,10 @@ impl AllPlayersSavedAbilityInputs{
     //mutators
     /// Keeps old selection if its valid, otherwise uses default_selection,
     /// even if default selection is invalid
-    fn set_available_ability_data(
+    fn set_player_available_abilities(
         game: &mut Game,
         player: PlayerReference,
-        new_available_ability_data: AvailableAbilitiesData
+        new_available_ability_data: PlayerAvailableAbilities
     ){
         //set new available, try to keep old selection if possible
         
@@ -201,8 +207,8 @@ impl AllPlayersSavedAbilityInputs{
             .unwrap_or_default()
     }
 
-    pub fn get_available_abilities_data(game: &Game, player_ref: PlayerReference)->AvailableAbilitiesData{
-        AvailableAbilitiesData::new(
+    pub fn get_available_abilities_data(game: &Game, player_ref: PlayerReference)->PlayerAvailableAbilities{
+        PlayerAvailableAbilities::new(
             Self::get_player_saved_abilities(game, player_ref).save.into_iter()
                 .map(|(id, saved_single_ability)| 
                     (id, saved_single_ability.available_ability_data))
@@ -222,6 +228,20 @@ impl AllPlayersSavedAbilityInputs{
             .map(|save_input| save_input.selection.clone())
     }
 
+    pub fn get_role_option_selection_if_id(
+        game: &Game,
+        player_ref: PlayerReference,
+        id: AbilityID
+    )->Option<RoleOptionSelection>{
+        Self::get_saved_ability_selection(game, player_ref, id)
+            .and_then(|selection| 
+                if let AbilitySelection::RoleOption { selection } = selection {
+                    Some(selection)
+                }else{
+                    None
+                }
+            )
+    }
     pub fn get_two_role_outline_option_selection_if_id(
         game: &Game,
         player_ref: PlayerReference,

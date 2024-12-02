@@ -18,14 +18,12 @@ use super::{InsiderGroupID, Priority, Role, RoleStateImpl};
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Disguiser{
-    pub current_target: Option<PlayerReference>,
-    pub disguised_role: Role,
+    pub current_target: Option<PlayerReference>
 }
 impl Default for Disguiser{
     fn default() -> Self {
         Self{
-            current_target: None,
-            disguised_role: Role::Jester,
+            current_target: None
         }
     }
 }
@@ -54,9 +52,10 @@ impl RoleStateImpl for Disguiser {
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_saved_ability_to_visits(game, actor_ref, AbilityID::role(Role::Disguiser, 0), false)
     }
-    fn available_ability_input(self, game: &Game, actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilitiesData {
-        AvailableAbilitiesData::new_ability_fast(
+    fn available_abilities(self, game: &Game, actor_ref: PlayerReference) -> AllPlayersAvailableAbilities {
+        let mut out = AllPlayersAvailableAbilities::new_ability_fast(
             game,
+            actor_ref,
             AbilityID::role(Role::Disguiser, 0),
             AvailableAbilitySelection::new_one_player_option(PlayerReference::all_players(game)
                     .filter(|p|
@@ -73,34 +72,27 @@ impl RoleStateImpl for Disguiser {
             Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),
             false
-        ).combine_build(
-            AvailableAbilitiesData::new_ability_fast(
-                game,
-                AbilityID::role(Role::Disguiser, 1),
-                AvailableAbilitySelection::new_role_option(
-                    Role::values().into_iter()
-                        .map(|role| Some(role))
-                        .collect()
-                ),
-                AbilitySelection::new_role_option(Some(Role::Disguiser)),
-                !actor_ref.alive(game),
-                None,
-                false
-            )
-        )
-    }
-    fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: AbilityInput) {
-        if actor_ref != input_player {return;}
-
-        if let Some(selection) = ability_input.get_role_option_selection_if_id(
-            AbilityID::role(Role::Disguiser, 1)
-        ) {
-            if let Some(target) = selection.0 {
-                self.disguised_role = target;
-            }
-        };
+        );
         
-        actor_ref.set_role_state(game, self);
+        if let Some(disguised) = self.current_target{
+            out.combine_overwrite(
+                AllPlayersAvailableAbilities::new_ability_fast(
+                    game,
+                    disguised,
+                    AbilityID::role(Role::Disguiser, 1),
+                    AvailableAbilitySelection::new_role_option(
+                        Role::values().into_iter()
+                            .map(|role| Some(role))
+                            .collect()
+                    ),
+                    AbilitySelection::new_role_option(Some(Role::Disguiser)),
+                    !actor_ref.alive(game),
+                    None,
+                    false
+                )
+            )
+        }
+        out
     }
     fn on_any_death(mut self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference) {
         if
@@ -126,12 +118,18 @@ impl RoleStateImpl for Disguiser {
                 role: grave.deref(game).player.role(game),
                 will: grave.deref(game).player.will(game).to_string(),
             });
+
+
+            let disguised_role = AllPlayersSavedAbilityInputs::get_role_option_selection_if_id(game, actor_ref, AbilityID::role(Role::Disguiser, 1))
+                .and_then(|selection| selection.0)
+                .unwrap_or(Role::Disguiser);
+
             
             let mut grave = grave_ref.deref(game).clone();
             *grave_ref.deref_mut(game) = match grave.information {
                 GraveInformation::Normal{role: _, will, death_cause, death_notes} => {
                     grave.information = GraveInformation::Normal{
-                        role: self.disguised_role,
+                        role: disguised_role,
                         will,
                         death_cause,
                         death_notes

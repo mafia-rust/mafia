@@ -56,42 +56,39 @@ impl SyndicateGunItem {
     }
 
     //available ability
-    pub fn available_ability_input(game: &Game, actor: PlayerReference) -> AvailableAbilitiesData {
+    pub fn available_abilities(game: &Game) -> AllPlayersAvailableAbilities {
         if let Some(player_with_gun) = game.syndicate_gun_item.player_with_gun {
-            if actor != player_with_gun {
-                AvailableAbilitiesData::default()
-            }else{            
-                common_role::available_ability_input_one_player_night(
+            common_role::available_abilities_one_player_night(
+                game,
+                player_with_gun,
+                false,
+                AbilityID::syndicate_gun_item_shoot()
+            ).combine_overwrite_owned(
+                AllPlayersAvailableAbilities::new_ability_fast(
                     game,
-                    actor,
-                    false,
-                    AbilityID::syndicate_gun_item_shoot()
-                ).combine_build(
-                    AvailableAbilitiesData::new_ability_fast(
-                        game,
-                        AbilityID::syndicate_gun_item_give(),
-                        AvailableAbilitySelection::new_one_player_option(
-                            PlayerReference::all_players(game)
-                                .into_iter()
-                                .filter(|target|
-                                    actor != *target &&
-                                    target.alive(game) &&
-                                    InsiderGroupID::Mafia.is_player_in_revealed_group(game, *target))
-                                .map(|p|Some(p))
-                                .chain(std::iter::once(None))
-                                .collect()
-                        ),
-                        AbilitySelection::new_one_player_option(None),
-                        game.current_phase().phase() != PhaseType::Night ||
-                        Detained::is_detained(game, actor) ||
-                        !actor.alive(game),
-                        Some(PhaseType::Obituary),
-                        true,
-                    )
+                    player_with_gun,
+                    AbilityID::syndicate_gun_item_give(),
+                    AvailableAbilitySelection::new_one_player_option(
+                        PlayerReference::all_players(game)
+                            .into_iter()
+                            .filter(|target|
+                                player_with_gun != *target &&
+                                target.alive(game) &&
+                                InsiderGroupID::Mafia.is_player_in_revealed_group(game, *target))
+                            .map(|p|Some(p))
+                            .chain(std::iter::once(None))
+                            .collect()
+                    ),
+                    AbilitySelection::new_one_player_option(None),
+                    game.current_phase().phase() != PhaseType::Night ||
+                    Detained::is_detained(game, player_with_gun) ||
+                    !player_with_gun.alive(game),
+                    Some(PhaseType::Obituary),
+                    true,
                 )
-            }
+            )
         }else{
-            AvailableAbilitiesData::default()
+            AllPlayersAvailableAbilities::default()
         }
     }
 
@@ -190,14 +187,6 @@ impl SyndicateGunItem {
             }else{
                 SyndicateGunItem::target_gun(game, None);
             }
-
-            game.add_message_to_chat_group(
-                crate::game::chat::ChatGroup::Mafia, 
-                crate::game::chat::ChatMessageVariant::SyndicateGunTarget {
-                    shooter: actor_ref.index(),
-                    target: selection.0.map(|f|f.index()),
-                }
-            );
         }
     }
 }

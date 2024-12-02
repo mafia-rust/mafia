@@ -2,7 +2,13 @@
     "syndicateGunItemShoot": {
         "midnight": true
     },
+    "role/detective/0": {
+        "midnight": true
+    },
     "role/disguiser/0": {
+        "midnight": true
+    },
+    "role/kira/0": {
         "midnight": true
     }
 }

@@ -1,8 +1,15 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{game::{player::PlayerReference, role::Role, role_outline_reference::RoleOutlineReference, Game}, vec_set::VecSet};
-
-use super::{ability_selection::AbilitySelection, selection_type::{kira_selection::AvailableKiraSelection, one_player_option_selection::AvailableOnePlayerOptionSelection, role_option_selection::AvailableRoleOptionSelection, two_player_option_selection::AvailableTwoPlayerOptionSelection, two_role_option_selection::AvailableTwoRoleOptionSelection, two_role_outline_option_selection::AvailableTwoRoleOutlineOptionSelection}, ValidateAvailableSelection};
+use crate::{
+    game::{
+        ability_input::*,
+        player::PlayerReference,
+        role::Role,
+        role_outline_reference::RoleOutlineReference,
+        Game
+    },
+    vec_set::VecSet
+};
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]

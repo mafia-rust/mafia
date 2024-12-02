@@ -5,7 +5,7 @@ use serde::Serialize;
 use crate::game::components::confused::Confused;
 use crate::game::components::detained::Detained;
 use crate::game::role_outline_reference::RoleOutlineReference;
-use crate::game::ability_input::{AbilityID, AvailableAbilitiesData};
+use crate::game::ability_input::AbilityID;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -15,7 +15,7 @@ use crate::game::Game;
 use crate::vec_map::VecMap;
 
 use rand::prelude::SliceRandom;
-use super::{common_role, AbilitySelection, AllPlayersSavedAbilityInputs, AvailableAbilitySelection, Priority, Role, RoleStateImpl};
+use super::{common_role, AbilitySelection, AllPlayersAvailableAbilities, AllPlayersSavedAbilityInputs, AvailableAbilitySelection, Priority, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -81,9 +81,10 @@ impl RoleStateImpl for Auditor {
 
         actor_ref.set_role_state(game, self);
     }
-    fn available_ability_input(self, game: &Game, actor_ref: PlayerReference) -> crate::game::ability_input::AvailableAbilitiesData {
-        AvailableAbilitiesData::new_ability_fast(
+    fn available_abilities(self, game: &Game, actor_ref: PlayerReference) -> AllPlayersAvailableAbilities {
+        AllPlayersAvailableAbilities::new_ability_fast(
             game,
+            actor_ref,
             AbilityID::role(Role::Auditor, 0),
             AvailableAbilitySelection::new_two_role_outline_option(
                 RoleOutlineReference::all_outlines(game)

@@ -3,15 +3,11 @@ use std::collections::HashSet;
 use rand::seq::SliceRandom;
 
 use crate::{game::{
-    attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
+    ability_input::AllPlayersAvailableAbilities, attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
         arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura, insider_group::InsiderGroupID, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch
-    }, game_conclusion::GameConclusion, 
-    grave::{Grave, GraveKiller}, 
-    role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, 
-    win_condition::WinCondition,
-    Game
+    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, win_condition::WinCondition, Game
 }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
 use super::PlayerReference;
@@ -323,6 +319,9 @@ impl PlayerReference{
         Role functions
     */
 
+    pub fn available_abilities(&self, game: &Game) -> AllPlayersAvailableAbilities {
+        self.role_state(game).clone().available_abilities(game, *self)
+    }
     pub fn can_select(&self, game: &Game, target_ref: PlayerReference) -> bool {
         self.role_state(game).clone().can_select(game, *self, target_ref)
     }

@@ -13,6 +13,11 @@ use crate::{
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq)]
 pub struct KiraSelection(pub VecMap<PlayerReference, KiraGuess>);
+impl KiraSelection{
+    pub fn new(map: VecMap<PlayerReference, KiraGuess>) -> Self{
+        KiraSelection(map)
+    }
+}
 
 impl PartialOrd for KiraSelection{
     fn partial_cmp(&self, _other: &Self) -> Option<std::cmp::Ordering> {
