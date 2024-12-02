@@ -130,20 +130,23 @@ impl AllPlayersSavedAbilityInputs{
                 let mut new_saved_input_map: VecMap<AbilityID, SavedSingleAbility> = VecMap::new();
 
                 for (ability_id, new_single_ability_data) in new_available_ability_data.abilities().clone().into_iter() {
-                    new_saved_input_map.insert(ability_id.clone(), SavedSingleAbility::new(
+                    
+                    let mut new_selection = new_single_ability_data.default_selection().clone();
+
+                    //if its grayed out or don't save, it should reset to the default here
+                    if !new_single_ability_data.dont_save() && !new_single_ability_data.grayed_out(){
                         if let Some(SavedSingleAbility{selection: old_selection, ..}) = current_saved_input.save.get(&ability_id) {
                             if new_single_ability_data.validate_selection(game, old_selection){
-                                old_selection.clone()
-                            }else{
-                                new_single_ability_data.default_selection().clone()
+                                new_selection = old_selection.clone()
                             }
-                        }else{
-                            new_single_ability_data.default_selection().clone()
-                        },
+                        }
+                    };
+                    
+                    new_saved_input_map.insert(ability_id.clone(), SavedSingleAbility::new(
+                        new_selection,
                         new_single_ability_data
                     ));
                 }
-
                 PlayerSavedAbilities::new(new_saved_input_map)
             }else{
                 PlayerSavedAbilities::new(
@@ -160,8 +163,6 @@ impl AllPlayersSavedAbilityInputs{
                 )
             }
         );
-
-
 
         //inform client
         Self::send_saved_abilities(game, player);

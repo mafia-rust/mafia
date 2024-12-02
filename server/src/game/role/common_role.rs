@@ -43,8 +43,8 @@ pub fn available_abilities_one_player_night(
     
     let grayed_out = 
         !actor_ref.alive(game) || 
-        Detained::is_detained(game, actor_ref) ||
-        game.current_phase().phase() != PhaseType::Night;
+        Detained::is_detained(game, actor_ref);// ||
+        // game.current_phase().phase() != PhaseType::Night;
 
     AllPlayersAvailableAbilities::new_one_player_ability_fast(
         game,

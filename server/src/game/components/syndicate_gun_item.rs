@@ -80,7 +80,7 @@ impl SyndicateGunItem {
                             .collect()
                     ),
                     AbilitySelection::new_one_player_option(None),
-                    game.current_phase().phase() != PhaseType::Night ||
+                    // game.current_phase().phase() != PhaseType::Night ||
                     Detained::is_detained(game, player_with_gun) ||
                     !player_with_gun.alive(game),
                     Some(PhaseType::Obituary),

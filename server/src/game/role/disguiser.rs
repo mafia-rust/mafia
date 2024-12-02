@@ -67,7 +67,7 @@ impl RoleStateImpl for Disguiser {
                     .collect()
                 ),
             AbilitySelection::new_one_player_option(None),
-            game.current_phase().phase() != PhaseType::Night || 
+            // game.current_phase().phase() != PhaseType::Night || 
             !actor_ref.alive(game) ||
             Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),

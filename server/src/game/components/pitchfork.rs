@@ -67,7 +67,7 @@ impl Pitchfork{
                     AbilitySelection::new_one_player_option(None),
                     game.day_number() == 1 ||
                         !player.alive(game) ||
-                        game.current_phase().is_night() ||
+                        // game.current_phase().is_night() ||
                         !player.win_condition(game).is_loyalist_for(GameConclusion::Town),
                     Some(PhaseType::Obituary),
                     false
