@@ -91,7 +91,7 @@ impl ControllerParametersMap{
         out.combine_overwrite(other);
         out
     }
-    pub fn abilities(&self)->&VecMap<ControllerID, ControllerParameters>{
+    pub fn controller_parameters(&self)->&VecMap<ControllerID, ControllerParameters>{
         &self.controllers
     }
 }

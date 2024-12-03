@@ -5,7 +5,7 @@ use crate::{game::{
 
 pub struct ForfeitVote;
 impl ForfeitVote{
-    pub fn available_abilities(game: &Game)->ControllerParametersMap {
+    pub fn controller_parameters_map(game: &Game)->ControllerParametersMap {
         if !game.settings.enabled_roles.contains(&Role::Blackmailer) {
             return ControllerParametersMap::default();
         }

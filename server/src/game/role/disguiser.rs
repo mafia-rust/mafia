@@ -12,6 +12,7 @@ use crate::game::{attack_power::DefensePower, player::PlayerReference};
 use crate::game::visit::Visit;
 
 use crate::game::Game;
+use crate::vec_set::{vec_set, VecSet};
 use super::{InsiderGroupID, Priority, Role, RoleStateImpl};
 
 
@@ -50,13 +51,17 @@ impl RoleStateImpl for Disguiser {
         }
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_saved_ability_to_visits(game, actor_ref, ControllerID::role(Role::Disguiser, 0), false)
-    }
-    fn available_abilities(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
+        crate::game::role::common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,
-            ControllerID::role(Role::Disguiser, 0),
+            ControllerID::role(actor_ref, Role::Disguiser, 0),
+            false
+        )
+    }
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Disguiser, 0),
             AvailableAbilitySelection::new_one_player_option(PlayerReference::all_players(game)
                     .filter(|p|
                         p.alive(game) &&
@@ -71,21 +76,22 @@ impl RoleStateImpl for Disguiser {
             !actor_ref.alive(game) ||
             Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),
-            false
+            false,
+            self.players_with_disguiser_menu(actor_ref)
         ).combine_overwrite_owned(
             ControllerParametersMap::new_controller_fast(
                 game,
-                Self::player_with_disguiser_menu(&self, actor_ref),
-                ControllerID::role(Role::Disguiser, 1),
+                ControllerID::role(actor_ref, Role::Disguiser, 1),
                 AvailableAbilitySelection::new_role_option(
                     Role::values().into_iter()
                         .map(|role| Some(role))
                         .collect()
                 ),
-                AbilitySelection::new_role_option(Some(Self::disguised_role(&self, game, actor_ref))),
+                AbilitySelection::new_role_option(Some(Role::Disguiser)),
                 !actor_ref.alive(game),
                 None,
-                false
+                false,
+                self.players_with_disguiser_menu(actor_ref)
             )
         )
     }
@@ -138,33 +144,22 @@ impl RoleStateImpl for Disguiser {
 }
 
 impl Disguiser{
-    fn player_with_disguiser_menu(&self, actor_ref: PlayerReference)->PlayerReference{
-        let mut player = actor_ref;
+    fn players_with_disguiser_menu(&self, actor_ref: PlayerReference)->VecSet<PlayerReference>{
+        let mut players = vec_set!(actor_ref);
         if let Some(disguised) = self.current_target{
-            player = disguised;
+            players.insert(disguised);
         }
-        player
+        players
     }
     fn disguised_role(&self, game: &Game, actor_ref: PlayerReference)->Role{
-        if let Some(disguised) = self.current_target{
-            if let Some(role) = SavedControllers::get_role_option_selection_if_id(
-                game, 
-                disguised, 
-                ControllerID::role(Role::Disguiser, 1)
-            )
-                .and_then(|selection| selection.0)
-            {
-                    return role;
-            }
+        if let Some(role) = game.saved_controllers.get_controller_current_selection_role_option(
+            ControllerID::role(actor_ref, Role::Disguiser, 1)
+        ).and_then(|selection| selection.0)
+        {
+            role
+        }else{
+            Role::Disguiser
         }
-
-        return SavedControllers::get_role_option_selection_if_id(
-            game, 
-            actor_ref, 
-            ControllerID::role(Role::Disguiser, 1)
-        )
-            .and_then(|selection| selection.0)
-            .unwrap_or(Role::Disguiser)
     }
 }
 

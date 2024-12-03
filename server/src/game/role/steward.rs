@@ -107,7 +107,7 @@ impl RoleStateImpl for Steward {
         if !actor_ref.alive(game) {return}
         
         let Some(selection) = ability_input
-            .get_two_role_option_selection_if_id(ControllerID::role(actor_ref.role(game), 0)) else {return};
+            .get_two_role_option_selection_if_id(ControllerID::role(actor_ref, actor_ref.role(game), 0)) else {return};
         
         if selection.any_in_common(&self.previous_input) || selection.same_role(){
             return;

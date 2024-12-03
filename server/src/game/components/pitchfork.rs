@@ -7,7 +7,7 @@ use crate::{
         grave::GraveKiller, phase::PhaseType, player::PlayerReference,
         role::{Priority, Role}, role_list::RoleSet, Game
     },
-    packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet
+    packet::ToClientPacket, vec_map::VecMap, vec_set::{vec_set, VecSet}
 };
 
 #[derive(Clone)]
@@ -41,7 +41,7 @@ impl Default for Pitchfork{
 }
 
 impl Pitchfork{
-    pub fn available_abilities(game: &Game)->ControllerParametersMap{
+    pub fn controller_parameters_map(game: &Game)->ControllerParametersMap{
         if
             !game.settings.enabled_roles.contains(&Role::Rabblerouser)
         {
@@ -54,8 +54,7 @@ impl Pitchfork{
             out.combine_overwrite(
                 ControllerParametersMap::new_controller_fast(
                     game,
-                    player,
-                    ControllerID::pitchfork_vote(),
+                    ControllerID::pitchfork_vote(player),
                     AvailableAbilitySelection::new_one_player_option(
                         PlayerReference::all_players(game)
                             .into_iter()
@@ -69,8 +68,9 @@ impl Pitchfork{
                         !player.alive(game) ||
                         // game.current_phase().is_night() ||
                         !player.win_condition(game).is_loyalist_for(GameConclusion::Town),
-                    Some(PhaseType::Obituary),
-                    false
+                        Some(PhaseType::Obituary),
+                        false,
+                        vec_set![player]
                 )
             );
         }
@@ -78,7 +78,7 @@ impl Pitchfork{
         out
     }
     pub fn on_ability_input_received(game: &mut Game, actor_ref: PlayerReference, input: AbilityInput){
-        let Some(selection) = input.get_player_option_selection_if_id(ControllerID::pitchfork_vote()) else {return};
+        let Some(selection) = input.get_player_option_selection_if_id(ControllerID::pitchfork_vote(actor_ref)) else {return};
         Pitchfork::player_votes_for_angry_mob_action(game, actor_ref, selection.0);
     }
     pub fn on_phase_start(game: &mut Game, phase: PhaseType){

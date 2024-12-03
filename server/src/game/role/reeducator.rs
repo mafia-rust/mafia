@@ -114,7 +114,7 @@ impl RoleStateImpl for Reeducator {
         if actor_ref != input_player {return;}
         if !actor_ref.alive(game) {return};
 
-        if let Some(selection) = ability_input.get_role_option_selection_if_id(ControllerID::role(actor_ref.role(game), 0)) {
+        if let Some(selection) = ability_input.get_role_option_selection_if_id(ControllerID::role(actor_ref, actor_ref.role(game), 0)) {
             if let Some(target) = selection.0 {
                 if 
                     RoleSet::MafiaSupport.get_roles().contains(&target) && 

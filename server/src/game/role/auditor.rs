@@ -5,7 +5,7 @@ use serde::Serialize;
 use crate::game::components::confused::Confused;
 use crate::game::components::detained::Detained;
 use crate::game::role_outline_reference::RoleOutlineReference;
-use crate::game::ability_input::ControllerID;
+use crate::game::ability_input::*;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -13,9 +13,10 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_map::VecMap;
+use crate::vec_set::vec_set;
 
 use rand::prelude::SliceRandom;
-use super::{common_role, AbilitySelection, ControllerParametersMap, SavedControllers, AvailableAbilitySelection, Priority, Role, RoleStateImpl};
+use super::{common_role, Priority, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -44,10 +45,8 @@ impl RoleStateImpl for Auditor {
         if priority != Priority::Investigative {return;}
         if actor_ref.night_blocked(game) {return;}
         
-        let Some(selection) = SavedControllers::get_two_role_outline_option_selection_if_id(
-            game,
-            actor_ref,
-            ControllerID::role(Role::Auditor, 0)
+        let Some(selection) = game.saved_controllers.get_controller_current_selection_two_role_outline_option(
+            ControllerID::role(actor_ref, Role::Auditor, 0)
         )
         else{return};
 
@@ -81,11 +80,10 @@ impl RoleStateImpl for Auditor {
 
         actor_ref.set_role_state(game, self);
     }
-    fn available_abilities(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::new_controller_fast(
             game,
-            actor_ref,
-            ControllerID::role(Role::Auditor, 0),
+            ControllerID::role(actor_ref, Role::Auditor, 0),
             AvailableAbilitySelection::new_two_role_outline_option(
                 RoleOutlineReference::all_outlines(game)
                     .filter(|o|!self.previously_given_results.contains(o))
@@ -98,11 +96,17 @@ impl RoleStateImpl for Auditor {
             // game.current_phase().phase() != PhaseType::Night ||
             Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),
-            false
+            false,
+            vec_set![actor_ref],
         )
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        common_role::convert_saved_ability_to_visits(game, actor_ref, ControllerID::Role { role: Role::Auditor, id: 0 }, false)
+        common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Auditor, 0),
+            false
+        )
     }
 }
 

@@ -15,12 +15,16 @@ use crate::{
 
 use super::*;
 
-#[derive(Default)]
-pub struct SavedControllers{
-    saved_controllers: VecMap<ControllerID, SingleSavedController>,
+#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SavedControllersMap{
+    saved_controllers: VecMap<ControllerID, SavedController>,
 }
 
-impl SavedControllers{
+impl SavedControllersMap{
+    pub fn new(saved_controllers: VecMap<ControllerID, SavedController>)->Self{
+        Self{saved_controllers}
+    }
+
     //event listeners
     pub fn on_ability_input_received(
         game: &mut Game,
@@ -31,7 +35,7 @@ impl SavedControllers{
 
         // validate input using available selection
         {
-            let Some(SingleSavedController {
+            let Some(SavedController {
                 selection: saved_selection,
                 available_ability_data
             }) = game.saved_controllers.saved_controllers.get(&id) else {return};
@@ -47,7 +51,7 @@ impl SavedControllers{
         }
         
 
-        let Some(SingleSavedController {
+        let Some(SavedController {
             selection: saved_selection,
             available_ability_data
         }) = game.saved_controllers.saved_controllers.get_mut(&id) else {return};
@@ -57,7 +61,7 @@ impl SavedControllers{
         }
 
         Self::send_selection_message(game, actor, id, incoming_selection);
-        Self::send_saved_abilities(game, actor);
+        Self::send_saved_controllers_to_client(game, actor);
     }
 
 
@@ -67,103 +71,179 @@ impl SavedControllers{
             saved_controller.reset_on_phase_start(phase);
         }
         for player in PlayerReference::all_players(game){
-            Self::send_saved_abilities(game, player);
+            Self::send_saved_controllers_to_client(game, player);
         }
     }
 
     pub fn on_tick(game: &mut Game){
-        let mut all_players_available_abilities = ControllerParametersMap::default();
+        let mut new_controller_parameters_map = ControllerParametersMap::default();
 
         for player in PlayerReference::all_players(game) {
-            all_players_available_abilities.combine_overwrite(player.available_abilities(game));
+            new_controller_parameters_map.combine_overwrite(player.controller_parameters_map(game));
         }
 
-        all_players_available_abilities.combine_overwrite(
-            SyndicateGunItem::available_abilities(game)
+        new_controller_parameters_map.combine_overwrite(
+            SyndicateGunItem::controller_parameters_map(game)
         );
-        all_players_available_abilities.combine_overwrite(
-            ForfeitVote::available_abilities(game)
+        new_controller_parameters_map.combine_overwrite(
+            ForfeitVote::controller_parameters_map(game)
         );
-        all_players_available_abilities.combine_overwrite(
-            Pitchfork::available_abilities(game)
+        new_controller_parameters_map.combine_overwrite(
+            Pitchfork::controller_parameters_map(game)
         );
 
-        for player in PlayerReference::all_players(game){
-            let current = Self::get_available_abilities_data(game, player);
+        let current_controller_parameters = &game.saved_controllers.controller_parameters();
 
-            let new_available = all_players_available_abilities.players().get(&player).map_or_else(
-                || None,
-                |new_available| if current != *new_available {
-                    Some(new_available)
-                }else{None}
-            );
-
-            if let Some(new_available) = new_available {
-                Self::set_player_available_abilities(game, player, new_available.clone());
-            }
+        if *current_controller_parameters != new_controller_parameters_map {
+            Self::set_controller_parameters(game, new_controller_parameters_map);
         }
     }
 
 
+    // new mutators
+
+    // new query
+    pub fn controllers_allowed_to_player(
+        &self,
+        player: PlayerReference
+    )->SavedControllersMap{
+        SavedControllersMap::new(
+            self.saved_controllers.iter()
+                .filter(|(_, saved_controller)| saved_controller.available_ability_data.allowed_players().contains(&player))
+                .map(|(id, saved_controller)| (id.clone(), saved_controller.clone()))
+                .collect()
+        )
+    }
+    
+    pub fn controller_parameters(
+        &self
+    )->ControllerParametersMap{
+        ControllerParametersMap::new(
+            self.saved_controllers.iter()
+                .map(|(id, saved_controller)| (id.clone(), saved_controller.available_ability_data.clone()))
+                .collect()
+        )
+    }
+    
+    pub fn controller_parameters_allowed_to_player(
+        &self,
+        player: PlayerReference
+    )->ControllerParametersMap{
+        ControllerParametersMap::new(
+            self.controller_parameters().controller_parameters().iter()
+                .filter(|(_, saved_controller)| saved_controller.allowed_players().contains(&player))
+                .map(|(a, b)| (a.clone(), b.clone()))
+                .collect()
+        )
+    }
+
+    pub fn get_controller(
+        &self,
+        id: ControllerID
+    )->Option<&SavedController>{
+        self.saved_controllers.get(&id)
+    }
+
+    pub fn get_controller_current_selection(
+        &self,
+        id: ControllerID
+    )->Option<AbilitySelection>{
+        self
+            .get_controller(id)
+            .map(|saved_controller| saved_controller.selection.clone())
+    }
+
+    // selection type queries
+    pub fn get_controller_current_selection_player_option(
+        &self,
+        id: ControllerID
+    )->Option<OnePlayerOptionSelection>{
+        self
+            .get_controller_current_selection(id)
+            .and_then(|selection| 
+                if let AbilitySelection::OnePlayerOption { selection } = selection {
+                    Some(selection)
+                }else{
+                    None
+                }
+            )
+    }
+
+
+    pub fn get_controller_current_selection_role_option(
+        &self,
+        id: ControllerID
+    )->Option<RoleOptionSelection>{
+        self
+            .get_controller_current_selection(id)
+            .and_then(|selection| 
+                if let AbilitySelection::RoleOption { selection } = selection {
+                    Some(selection)
+                }else{
+                    None
+                }
+            )
+    }
+
+    pub fn get_controller_current_selection_two_role_outline_option(
+        &self,
+        id: ControllerID
+    )->Option<TwoRoleOutlineOptionSelection>{
+        self
+            .get_controller_current_selection(id)
+            .and_then(|selection| 
+                if let AbilitySelection::TwoRoleOutlineOption { selection } = selection {
+                    Some(selection)
+                }else{
+                    None
+                }
+            )
+    }
+    
+    pub fn get_controller_current_selection_kira(
+        &self,
+        id: ControllerID
+    )->Option<KiraSelection>{
+        self
+            .get_controller_current_selection(id)
+            .and_then(|selection| 
+                if let AbilitySelection::Kira { selection } = selection {
+                    Some(selection)
+                }else{
+                    None
+                }
+            )
+    }
+    
     //mutators
     /// Keeps old selection if its valid, otherwise uses default_selection,
     /// even if default selection is invalid
-    fn set_player_available_abilities(
+    fn set_controller_parameters(
         game: &mut Game,
-        player: PlayerReference,
-        new_available_ability_data: ControllerParametersMap
+        controller_parameters_map: ControllerParametersMap
     ){
-        //set new available, try to keep old selection if possible
-        
-        game.saved_controllers.players_saved_inputs.insert(player, 
-            if let Some(current_saved_input) = game.saved_controllers.players_saved_inputs.get(&player){
-
-                let mut new_saved_input_map: VecMap<ControllerID, SingleSavedController> = VecMap::new();
-
-                for (ability_id, new_single_ability_data) in new_available_ability_data.abilities().clone().into_iter() {
-                    
-                    let mut new_selection = new_single_ability_data.default_selection().clone();
-
-                    //if its grayed out or don't save, it should reset to the default here
-                    if !new_single_ability_data.dont_save() && !new_single_ability_data.grayed_out(){
-                        if let Some(SingleSavedController{selection: old_selection, ..}) = current_saved_input.save.get(&ability_id) {
-                            if new_single_ability_data.validate_selection(game, old_selection){
-                                new_selection = old_selection.clone()
-                            }
-                        }
-                    };
-                    
-                    new_saved_input_map.insert(ability_id.clone(), SingleSavedController::new(
-                        new_selection,
-                        new_single_ability_data
-                    ));
+        for (id, controller_parameters) in controller_parameters_map.controller_parameters().iter(){
+            let mut new_selection = controller_parameters.default_selection().clone();
+            
+            if !controller_parameters.dont_save() && !controller_parameters.grayed_out(){
+                if let Some(SavedController{selection: old_selection, ..}) = game.saved_controllers.saved_controllers.get(&id) {
+                    if controller_parameters.validate_selection(game, old_selection){
+                        new_selection = old_selection.clone()
+                    }
                 }
-                PlayerSavedAbilities::new(new_saved_input_map)
-            }else{
-                PlayerSavedAbilities::new(
-                    new_available_ability_data.abilities()
-                        .iter()
-                        .map(|(id, available_data)|{
-
-                            let selection = available_data.default_selection().clone();
-                            let available_data = available_data.clone();
-                            (id.clone(), SingleSavedController::new(selection, available_data))
-
-                        })
-                        .collect()
-                )
             }
-        );
 
-        //inform client
-        Self::send_saved_abilities(game, player);
-    }
+            game.saved_controllers.saved_controllers.insert(
+                id.clone(),
+                SavedController::new(
+                    new_selection,
+                    controller_parameters.clone()
+                )
+            );
+        }
 
-    fn send_saved_abilities(game: &Game, player: PlayerReference){
-        if let Some(player_saved_input) = game.saved_controllers.players_saved_inputs.get(&player) {
-            player.send_packet(game, ToClientPacket::YourSavedAbilities { 
-                save: player_saved_input.clone()
-            });
+        for player in PlayerReference::all_players(game){
+            Self::send_saved_controllers_to_client(game, player);
         }
     }
 
@@ -188,77 +268,26 @@ impl SavedControllers{
             player_ref.add_private_chat_message(game, chat_message);
         }
     }
-
-    // query
-    pub fn get_player_saved_abilities(
-        game: &Game,
-        player_ref: PlayerReference
-    )->PlayerSavedAbilities{
-        game.saved_controllers.players_saved_inputs
-            .get(&player_ref).cloned()
-            .unwrap_or_default()
-    }
-
-    pub fn get_available_abilities_data(game: &Game, player_ref: PlayerReference)->ControllerParametersMap{
-        ControllerParametersMap::new(
-            Self::get_player_saved_abilities(game, player_ref).save.into_iter()
-                .map(|(id, saved_single_ability)| 
-                    (id, saved_single_ability.available_ability_data))
-                .collect()
-        )
-    }
-
-
-    pub fn get_saved_ability_selection(
-        game: &Game,
-        player_ref: PlayerReference,
-        id: ControllerID
-    )->Option<AbilitySelection>{
-        game.saved_controllers.players_saved_inputs
-            .get(&player_ref)
-            .and_then(|data| data.save.get(&id))
-            .map(|save_input| save_input.selection.clone())
-    }
-
-    pub fn get_role_option_selection_if_id(
-        game: &Game,
-        player_ref: PlayerReference,
-        id: ControllerID
-    )->Option<RoleOptionSelection>{
-        Self::get_saved_ability_selection(game, player_ref, id)
-            .and_then(|selection| 
-                if let AbilitySelection::RoleOption { selection } = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-    pub fn get_two_role_outline_option_selection_if_id(
-        game: &Game,
-        player_ref: PlayerReference,
-        id: ControllerID
-    )->Option<TwoRoleOutlineOptionSelection>{
-        Self::get_saved_ability_selection(game, player_ref, id)
-            .and_then(|selection| 
-                if let AbilitySelection::TwoRoleOutlineOption { selection } = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
+    
+    
+    // game stuff
+    
+    pub fn send_saved_controllers_to_client(game: &Game, player: PlayerReference){
+        player.send_packet(game, ToClientPacket::YourAllowedControllers { 
+            save: game.saved_controllers.controllers_allowed_to_player(player).saved_controllers
+        });
     }
 }
 
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
-struct SingleSavedController{
+pub struct SavedController{
     selection: AbilitySelection,
 
     available_ability_data: ControllerParameters
 }
-impl SingleSavedController{
+impl SavedController{
     fn new(selection: AbilitySelection, available_ability_data: ControllerParameters)->Self{
         Self{selection, available_ability_data}
     }

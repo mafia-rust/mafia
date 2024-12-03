@@ -1,5 +1,5 @@
 use crate::game::{
-    ability_input::saved_ability_inputs::SavedControllers,
+    ability_input::saved_ability_inputs::SavedControllersMap,
     components::{
         cult::Cult, detained::Detained,
         mafia::Mafia, night_visits::NightVisits,
@@ -27,7 +27,7 @@ impl OnPhaseStart{
         Mafia::on_phase_start(game, self.phase);
         Cult::on_phase_start(game, self.phase);
         Pitchfork::on_phase_start(game, self.phase);
-        SavedControllers::on_phase_start(game, self.phase);
+        SavedControllersMap::on_phase_start(game, self.phase);
         SyndicateGunItem::on_phase_start(game, self.phase);
 
         game.on_phase_start(self.phase);

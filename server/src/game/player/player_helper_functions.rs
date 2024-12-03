@@ -319,8 +319,8 @@ impl PlayerReference{
         Role functions
     */
 
-    pub fn available_abilities(&self, game: &Game) -> ControllerParametersMap {
-        self.role_state(game).clone().available_abilities(game, *self)
+    pub fn controller_parameters_map(&self, game: &Game) -> ControllerParametersMap {
+        self.role_state(game).clone().controller_parameters_map(game, *self)
     }
     pub fn can_select(&self, game: &Game, target_ref: PlayerReference) -> bool {
         self.role_state(game).clone().can_select(game, *self, target_ref)

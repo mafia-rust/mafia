@@ -106,7 +106,7 @@ mod macros {
     #[macro_export]
     macro_rules! vec_set {
         ($($key:expr),*) => {{
-            let mut map = VecSet::new();
+            let mut map = crate::vec_set::VecSet::new();
             $(map.insert($key);)*
             map
         }};

@@ -23,9 +23,7 @@ use vec1::Vec1;
 
 use crate::{
     game::{
-        ability_input::{
-            saved_ability_inputs::PlayerSavedAbilities, AbilityInput
-        },
+        ability_input::*,
         available_buttons::AvailableButtons,
         chat::{ChatGroup, ChatMessage},
         components::insider_group::InsiderGroupID,
@@ -121,8 +119,8 @@ pub enum ToClientPacket{
     YourInsiderGroups{insider_groups: VecSet<InsiderGroupID>},
 
     #[serde(rename_all = "camelCase")]
-    YourSavedAbilities{
-        save: PlayerSavedAbilities
+    YourAllowedControllers{
+        save: VecMap<ControllerID, SavedController>
     },
 
     YourButtons{buttons: Vec<AvailableButtons>},

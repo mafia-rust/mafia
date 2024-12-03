@@ -1,5 +1,5 @@
 use crate::game::{
-    ability_input::{saved_ability_inputs::SavedControllers, AbilityInput},
+    ability_input::{saved_ability_inputs::SavedControllersMap, AbilityInput},
     components::{
         forfeit_vote::ForfeitVote, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem
     }, 
@@ -24,7 +24,7 @@ impl OnAbilityInputReceived{
         Pitchfork::on_ability_input_received(game, self.actor_ref, self.input.clone());
         Modifiers::on_ability_input_received(game, self.actor_ref, self.input.clone());
         ForfeitVote::on_ability_input_received(game, self.actor_ref, self.input.clone());
-        SavedControllers::on_ability_input_received(game, self.actor_ref, self.input.clone());
+        SavedControllersMap::on_ability_input_received(game, self.actor_ref, self.input.clone());
         SyndicateGunItem::on_ability_input_received(game, self.actor_ref, self.input);
     }
 }

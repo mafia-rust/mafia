@@ -9,6 +9,7 @@ use crate::game::player::PlayerReference;
 use crate::game::Game;
 use crate::vec_map::VecMap;
 use crate::game::ability_input::*;
+use crate::vec_set;
 use super::{Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -162,12 +163,11 @@ impl RoleStateImpl for Kira {
         if actor_ref.night_blocked(game) {return;}
         if !actor_ref.alive(game) {return;}
 
-        let Some(AbilitySelection::Kira { selection }) = 
-            SavedControllers::get_saved_ability_selection(game, actor_ref, 
-                ControllerID::Role { role: Role::Kira, id: 0 }
+        let Some(KiraSelection(selection)) = 
+            game.saved_controllers.get_controller_current_selection_kira(
+                ControllerID::role(actor_ref, Role::Kira, 0)
             )
             else {return};
-        let selection = selection.0;
 
         let result = KiraResult::new(selection.clone(), game);
 
@@ -187,7 +187,7 @@ impl RoleStateImpl for Kira {
             _ => return,
         }    
     }
-    fn available_abilities(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         match PlayerReference::all_players(game).filter(|p|p.alive(game)).count().saturating_sub(1).try_into() {
             Ok(count) => {
 
@@ -198,13 +198,13 @@ impl RoleStateImpl for Kira {
 
                 ControllerParametersMap::new_controller_fast(
                     game,
-                    actor_ref,
-                    ControllerID::role(Role::Kira, 0),
+                    ControllerID::role(actor_ref, Role::Kira, 0),
                     AvailableAbilitySelection::new_kira(AvailableKiraSelection::new(count)),
                     AbilitySelection::new_kira(KiraSelection::new(default_players)),
                     false,
                     None,
-                    false
+                    false,
+                    vec_set![actor_ref]
                 )
             }
             Err(_) => {

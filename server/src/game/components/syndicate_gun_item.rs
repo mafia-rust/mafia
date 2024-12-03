@@ -2,9 +2,10 @@ use crate::{
     game::{
         ability_input::*,
         attack_power::AttackPower, grave::GraveKiller, phase::PhaseType, player::PlayerReference,
-        role::{common_role, Priority}, role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, Game
+        role::{common_role, Priority},
+        role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, Game
     }, 
-    packet::ToClientPacket
+    packet::ToClientPacket, vec_set::vec_set
 };
 
 use super::{detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits};
@@ -56,9 +57,9 @@ impl SyndicateGunItem {
     }
 
     //available ability
-    pub fn available_abilities(game: &Game) -> ControllerParametersMap {
+    pub fn controller_parameters_map(game: &Game) -> ControllerParametersMap {
         if let Some(player_with_gun) = game.syndicate_gun_item.player_with_gun {
-            common_role::available_abilities_one_player_night(
+            common_role::controller_parameters_map_one_player_night(
                 game,
                 player_with_gun,
                 false,
@@ -66,7 +67,6 @@ impl SyndicateGunItem {
             ).combine_overwrite_owned(
                 ControllerParametersMap::new_controller_fast(
                     game,
-                    player_with_gun,
                     ControllerID::syndicate_gun_item_give(),
                     AvailableAbilitySelection::new_one_player_option(
                         PlayerReference::all_players(game)
@@ -85,6 +85,7 @@ impl SyndicateGunItem {
                     !player_with_gun.alive(game),
                     Some(PhaseType::Obituary),
                     true,
+                    vec_set![player_with_gun],
                 )
             )
         }else{

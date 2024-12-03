@@ -34,7 +34,7 @@ pub(super) fn convert_selection_to_visits(_game: &Game, actor_ref: PlayerReferen
     }
 }
 
-pub fn available_abilities_one_player_night(
+pub fn controller_parameters_map_one_player_night(
     game: &Game,
     actor_ref: PlayerReference,
     can_select_self: bool,
@@ -67,10 +67,9 @@ pub fn available_abilities_one_player_night(
 }
 
 /// This function uses defaults. When using this function, consider if you need to override the defaults.
-pub(super) fn convert_saved_ability_to_visits(game: &Game, actor_ref: PlayerReference, ability_id: ControllerID, attack: bool) -> Vec<Visit> {
+pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: PlayerReference, ability_id: ControllerID, attack: bool) -> Vec<Visit> {
     
-    let Some(selection) = 
-        SavedControllers::get_saved_ability_selection(game, actor_ref, ability_id) else {return Vec::new()};
+    let Some(selection) = game.saved_controllers.get_controller_current_selection(ability_id) else {return Vec::new()};
     
     match selection {
         AbilitySelection::Unit => vec![Visit::new_none(actor_ref, actor_ref, attack)],
