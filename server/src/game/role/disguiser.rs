@@ -50,13 +50,13 @@ impl RoleStateImpl for Disguiser {
         }
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_saved_ability_to_visits(game, actor_ref, AbilityID::role(Role::Disguiser, 0), false)
+        crate::game::role::common_role::convert_saved_ability_to_visits(game, actor_ref, ControllerID::role(Role::Disguiser, 0), false)
     }
-    fn available_abilities(self, game: &Game, actor_ref: PlayerReference) -> AllPlayersAvailableAbilities {
-        AllPlayersAvailableAbilities::new_ability_fast(
+    fn available_abilities(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        ControllerParametersMap::new_controller_fast(
             game,
             actor_ref,
-            AbilityID::role(Role::Disguiser, 0),
+            ControllerID::role(Role::Disguiser, 0),
             AvailableAbilitySelection::new_one_player_option(PlayerReference::all_players(game)
                     .filter(|p|
                         p.alive(game) &&
@@ -73,10 +73,10 @@ impl RoleStateImpl for Disguiser {
             Some(PhaseType::Obituary),
             false
         ).combine_overwrite_owned(
-            AllPlayersAvailableAbilities::new_ability_fast(
+            ControllerParametersMap::new_controller_fast(
                 game,
                 Self::player_with_disguiser_menu(&self, actor_ref),
-                AbilityID::role(Role::Disguiser, 1),
+                ControllerID::role(Role::Disguiser, 1),
                 AvailableAbilitySelection::new_role_option(
                     Role::values().into_iter()
                         .map(|role| Some(role))
@@ -147,10 +147,10 @@ impl Disguiser{
     }
     fn disguised_role(&self, game: &Game, actor_ref: PlayerReference)->Role{
         if let Some(disguised) = self.current_target{
-            if let Some(role) = AllPlayersSavedAbilityInputs::get_role_option_selection_if_id(
+            if let Some(role) = SavedControllers::get_role_option_selection_if_id(
                 game, 
                 disguised, 
-                AbilityID::role(Role::Disguiser, 1)
+                ControllerID::role(Role::Disguiser, 1)
             )
                 .and_then(|selection| selection.0)
             {
@@ -158,10 +158,10 @@ impl Disguiser{
             }
         }
 
-        return AllPlayersSavedAbilityInputs::get_role_option_selection_if_id(
+        return SavedControllers::get_role_option_selection_if_id(
             game, 
             actor_ref, 
-            AbilityID::role(Role::Disguiser, 1)
+            ControllerID::role(Role::Disguiser, 1)
         )
             .and_then(|selection| selection.0)
             .unwrap_or(Role::Disguiser)

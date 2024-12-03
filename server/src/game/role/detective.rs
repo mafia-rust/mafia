@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::ability_input::AbilityID;
+use crate::game::ability_input::ControllerID;
 use crate::game::components::confused::Confused;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::game_conclusion::GameConclusion;
@@ -8,7 +8,7 @@ use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
-use super::{AllPlayersAvailableAbilities, Priority, RoleStateImpl};
+use super::{ControllerParametersMap, Priority, RoleStateImpl};
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -36,11 +36,11 @@ impl RoleStateImpl for Detective {
             actor_ref.push_night_message(game, message);
         }
     }
-    fn available_abilities(self, game: &Game, actor_ref: PlayerReference) -> AllPlayersAvailableAbilities {
-        crate::game::role::common_role::available_abilities_one_player_night(game, actor_ref, false, AbilityID::role(actor_ref.role(game), 0))
+    fn available_abilities(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        crate::game::role::common_role::available_abilities_one_player_night(game, actor_ref, false, ControllerID::role(actor_ref.role(game), 0))
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_saved_ability_to_visits(game, actor_ref, AbilityID::role(actor_ref.role(game), 0), false)
+        crate::game::role::common_role::convert_saved_ability_to_visits(game, actor_ref, ControllerID::role(actor_ref.role(game), 0), false)
     }
 }
 

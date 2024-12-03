@@ -2,63 +2,70 @@ use std::iter::once;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{game::{phase::PhaseType, player::PlayerReference, Game}, vec_map::{vec_map, VecMap}, vec_set::VecSet};
+use crate::{
+    game::{phase::PhaseType, player::PlayerReference, Game},
+    vec_map::{vec_map, VecMap},
+    vec_set::{vec_set, VecSet}
+};
 
 use super::super::{
-    ability_id::AbilityID,
+    ability_id::ControllerID,
     ability_selection::AbilitySelection, AvailableAbilitySelection,
 };
 
-use super::available_single_ability_data::*;
+use super::controller_parameters::*;
 
 
 
 #[derive(Default, Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
-pub struct PlayerAvailableAbilities{
-    abilities: VecMap<AbilityID, AvailableSingleAbilityData>
+pub struct ControllerParametersMap{
+    controllers: VecMap<ControllerID, ControllerParameters>
 }
-impl PlayerAvailableAbilities{
-    pub fn new(abilities: VecMap<AbilityID, AvailableSingleAbilityData>)->Self{
-        Self{abilities}
+impl ControllerParametersMap{
+    pub fn new(abilities: VecMap<ControllerID, ControllerParameters>)->Self{
+        Self{controllers: abilities}
     }
-    pub fn new_ability(id: AbilityID, ability_data: AvailableSingleAbilityData)->Self{
+    pub fn new_controller(id: ControllerID, ability_data: ControllerParameters)->Self{
         Self{
-            abilities: vec_map!((id, ability_data))
+            controllers: vec_map!((id, ability_data))
         }
     }
-    pub fn new_ability_fast(
+    pub fn new_controller_fast(
         game: &Game,
-        id: AbilityID,
+        id: ControllerID,
         available: AvailableAbilitySelection,
         default_selection: AbilitySelection,
         grayed_out: bool,
         reset_on_phase_start: Option<PhaseType>,
-        dont_save: bool
+        dont_save: bool,
+        allowed_players: VecSet<PlayerReference>
     )->Self{
-        if let Some(single) = AvailableSingleAbilityData::new(
+        if let Some(single) = ControllerParameters::new(
             game,
             available,
             grayed_out,
             reset_on_phase_start,
             dont_save,
-            default_selection
+            default_selection,
+            allowed_players
         ){
-            Self{abilities: vec_map![(id, single)]}
+            Self{controllers: vec_map![(id, single)]}
         }else{
             Self::default()
         }
     }
     pub fn new_one_player_ability_fast(
         game: &Game,
-        id: AbilityID,
+        actor: PlayerReference,
+        id: ControllerID,
         available_players: VecSet<PlayerReference>,
         default_selection: Option<PlayerReference>,
         grayed_out: bool,
         reset_on_phase_start: Option<PhaseType>,
-        dont_save: bool
+        dont_save: bool,
     )->Self{
-        Self::new_ability_fast(
+        Self::new_controller_fast(
             game,
             id,
             AvailableAbilitySelection::new_one_player_option(
@@ -67,15 +74,16 @@ impl PlayerAvailableAbilities{
             AbilitySelection::new_one_player_option(default_selection),
             grayed_out,
             reset_on_phase_start,
-            dont_save
+            dont_save,
+            vec_set![actor]
         )
     }
-    pub fn insert_ability(&mut self, id: AbilityID, ability_data: AvailableSingleAbilityData){
-        self.abilities.insert(id, ability_data);
+    pub fn insert_ability(&mut self, id: ControllerID, ability_data: ControllerParameters){
+        self.controllers.insert(id, ability_data);
     }
     pub fn combine_overwrite(&mut self, other: Self){
-        for (ability_id, ability_selection) in other.abilities.into_iter(){
-            self.abilities.insert(ability_id, ability_selection);
+        for (ability_id, ability_selection) in other.controllers.into_iter(){
+            self.controllers.insert(ability_id, ability_selection);
         }
     }
     pub fn combine_overwrite_owned(self, other: Self)->Self{
@@ -83,7 +91,7 @@ impl PlayerAvailableAbilities{
         out.combine_overwrite(other);
         out
     }
-    pub fn abilities(&self)->&VecMap<AbilityID, AvailableSingleAbilityData>{
-        &self.abilities
+    pub fn abilities(&self)->&VecMap<ControllerID, ControllerParameters>{
+        &self.controllers
     }
 }

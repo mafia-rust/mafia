@@ -38,15 +38,15 @@ pub fn available_abilities_one_player_night(
     game: &Game,
     actor_ref: PlayerReference,
     can_select_self: bool,
-    ability_id: AbilityID,
-) -> AllPlayersAvailableAbilities {
+    ability_id: ControllerID,
+) -> ControllerParametersMap {
     
     let grayed_out = 
         !actor_ref.alive(game) || 
         Detained::is_detained(game, actor_ref);// ||
         // game.current_phase().phase() != PhaseType::Night;
 
-    AllPlayersAvailableAbilities::new_one_player_ability_fast(
+    ControllerParametersMap::new_one_player_ability_fast(
         game,
         actor_ref,
         ability_id,
@@ -67,10 +67,10 @@ pub fn available_abilities_one_player_night(
 }
 
 /// This function uses defaults. When using this function, consider if you need to override the defaults.
-pub(super) fn convert_saved_ability_to_visits(game: &Game, actor_ref: PlayerReference, ability_id: AbilityID, attack: bool) -> Vec<Visit> {
+pub(super) fn convert_saved_ability_to_visits(game: &Game, actor_ref: PlayerReference, ability_id: ControllerID, attack: bool) -> Vec<Visit> {
     
     let Some(selection) = 
-        AllPlayersSavedAbilityInputs::get_saved_ability_selection(game, actor_ref, ability_id) else {return Vec::new()};
+        SavedControllers::get_saved_ability_selection(game, actor_ref, ability_id) else {return Vec::new()};
     
     match selection {
         AbilitySelection::Unit => vec![Visit::new_none(actor_ref, actor_ref, attack)],

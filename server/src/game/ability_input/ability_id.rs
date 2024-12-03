@@ -1,28 +1,36 @@
 use serde::{Deserialize, Serialize};
 
-use crate::game::role::Role;
+use crate::game::{player::PlayerReference, role::Role};
 
 pub type RoleAbilityID = u8;
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Eq, Ord)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag="type")]
-pub enum AbilityID{
+pub enum ControllerID{
     #[serde(rename_all = "camelCase")]
-    Role{role: Role, id: RoleAbilityID},
-    ForfeitVote,
-    PitchforkVote,
+    Role{
+        player: PlayerReference,
+        role: Role,
+        id: RoleAbilityID
+    },
+    ForfeitVote{
+        player: PlayerReference
+    },
+    PitchforkVote{
+        player: PlayerReference
+    },
     SyndicateGunItemShoot,
     SyndicateGunItemGive,
 }
-impl AbilityID{
-    pub fn role(role: Role, role_ability_id: RoleAbilityID)->Self{
-        Self::Role{role, id: role_ability_id}
+impl ControllerID{
+    pub fn role(player: PlayerReference, role: Role, id: RoleAbilityID)->Self{
+        Self::Role{player, role, id}
     }
-    pub fn forfeit_vote()->Self{
-        Self::ForfeitVote
+    pub fn forfeit_vote(player: PlayerReference)->Self{
+        Self::ForfeitVote{player}
     }
-    pub fn pitchfork_vote()->Self{
-        Self::PitchforkVote
+    pub fn pitchfork_vote(player: PlayerReference)->Self{
+        Self::PitchforkVote{player}
     }
     pub fn syndicate_gun_item_shoot()->Self{
         Self::SyndicateGunItemShoot

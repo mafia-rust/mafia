@@ -2,7 +2,7 @@ use rand::seq::IteratorRandom;
 use serde::Serialize;
 use vec1::vec1;
 
-use crate::game::ability_input::AbilityID;
+use crate::game::ability_input::ControllerID;
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
@@ -114,7 +114,7 @@ impl RoleStateImpl for Reeducator {
         if actor_ref != input_player {return;}
         if !actor_ref.alive(game) {return};
 
-        if let Some(selection) = ability_input.get_role_option_selection_if_id(AbilityID::role(actor_ref.role(game), 0)) {
+        if let Some(selection) = ability_input.get_role_option_selection_if_id(ControllerID::role(actor_ref.role(game), 0)) {
             if let Some(target) = selection.0 {
                 if 
                     RoleSet::MafiaSupport.get_roles().contains(&target) && 

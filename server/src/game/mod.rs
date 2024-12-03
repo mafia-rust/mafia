@@ -22,7 +22,7 @@ pub mod role_outline_reference;
 pub mod ability_input;
 
 use std::time::Duration;
-use ability_input::saved_ability_inputs::AllPlayersSavedAbilityInputs;
+use ability_input::saved_ability_inputs::SavedControllers;
 use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
 use components::love_linked::LoveLinked;
@@ -96,7 +96,7 @@ pub struct Game {
     
     
     //components with data
-    pub saved_ability_inputs: AllPlayersSavedAbilityInputs,
+    pub saved_controllers: SavedControllers,
     night_visits: NightVisits,
     syndicate_gun_item: SyndicateGunItem,
     pub cult: Cult,
@@ -193,7 +193,7 @@ impl Game {
                 modifiers: Modifiers::default_from_settings(settings.enabled_modifiers.clone()),
                 settings,
 
-                saved_ability_inputs: AllPlayersSavedAbilityInputs::default(),
+                saved_controllers: SavedControllers::default(),
                 night_visits: NightVisits::default(),
                 syndicate_gun_item: SyndicateGunItem::default(),
                 cult: Cult::default(),
@@ -467,7 +467,7 @@ impl Game {
 pub mod test {
 
     use super::{
-        ability_input::saved_ability_inputs::AllPlayersSavedAbilityInputs,
+        ability_input::saved_ability_inputs::SavedControllers,
         components::{
             arsonist_doused::ArsonistDoused, cult::Cult,
             insider_group::InsiderGroupID, love_linked::LoveLinked,
@@ -524,7 +524,7 @@ pub mod test {
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
 
-            saved_ability_inputs: AllPlayersSavedAbilityInputs::default(),
+            saved_controllers: SavedControllers::default(),
             night_visits: NightVisits::default(),
             syndicate_gun_item: SyndicateGunItem::default(),
             cult: Cult::default(),

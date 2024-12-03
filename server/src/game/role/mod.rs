@@ -35,8 +35,8 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {}
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
 
-    fn available_abilities(self, _game: &Game, _actor_ref: PlayerReference) -> AllPlayersAvailableAbilities {
-        AllPlayersAvailableAbilities::default()
+    fn available_abilities(self, _game: &Game, _actor_ref: PlayerReference) -> ControllerParametersMap {
+        ControllerParametersMap::default()
     }
     fn on_ability_input_received(self, _game: &mut Game, _actor_ref: PlayerReference, _input_player: PlayerReference, _ability_input: AbilityInput) {}
 
@@ -265,7 +265,7 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.do_day_action(game, actor_ref, target_ref)),*
                     }
                 }
-                pub fn available_abilities(self, game: &Game, actor_ref: PlayerReference) -> AllPlayersAvailableAbilities {
+                pub fn available_abilities(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
                     match self {
                         $(Self::$name(role_struct) => role_struct.available_abilities(game, actor_ref)),*
                     }

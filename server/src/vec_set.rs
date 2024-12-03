@@ -99,3 +99,18 @@ impl<'de, K> Deserialize<'de> for VecSet<K> where K: Eq, K: Deserialize<'de> {
         Ok(vec.into_iter().collect())
     }
 }
+
+
+pub use macros::vec_set;
+mod macros {
+    #[macro_export]
+    macro_rules! vec_set {
+        ($($key:expr),*) => {{
+            let mut map = VecSet::new();
+            $(map.insert($key);)*
+            map
+        }};
+    }
+
+    pub use vec_set;
+}

@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::game::ability_input::selection_type::two_role_outline_option_selection::TwoRoleOutlineOptionSelection;
-use crate::game::ability_input::AbilityID;
+use crate::game::ability_input::ControllerID;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::phase::PhaseType;
@@ -85,7 +85,7 @@ impl RoleStateImpl for Ojo {
         if !actor_ref.alive(game) {return};
 
         let Some(selection) = ability_input
-            .get_two_role_outline_option_selection_if_id(AbilityID::role(actor_ref.role(game), 0)) else {return};
+            .get_two_role_outline_option_selection_if_id(ControllerID::role(actor_ref.role(game), 0)) else {return};
               
         if let Some(outline) = selection.0{
             if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {

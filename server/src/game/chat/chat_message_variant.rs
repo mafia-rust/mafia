@@ -112,7 +112,7 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     AbilityUsed{
         player: PlayerIndex,
-        ability_id: AbilityID,
+        ability_id: ControllerID,
         selection: AbilitySelection
     },
 

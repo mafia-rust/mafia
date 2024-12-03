@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use rand::seq::SliceRandom;
 
 use crate::{game::{
-    ability_input::AllPlayersAvailableAbilities, attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
+    ability_input::ControllerParametersMap, attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
         arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura, insider_group::InsiderGroupID, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch
@@ -319,7 +319,7 @@ impl PlayerReference{
         Role functions
     */
 
-    pub fn available_abilities(&self, game: &Game) -> AllPlayersAvailableAbilities {
+    pub fn available_abilities(&self, game: &Game) -> ControllerParametersMap {
         self.role_state(game).clone().available_abilities(game, *self)
     }
     pub fn can_select(&self, game: &Game, target_ref: PlayerReference) -> bool {

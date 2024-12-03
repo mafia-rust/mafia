@@ -18,14 +18,14 @@ use super::{
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
 pub struct AbilityInput{
-    id: AbilityID, 
+    id: ControllerID, 
     selection: AbilitySelection
 }
 impl AbilityInput{
-    pub fn new(id: AbilityID, selection: AbilitySelection)->Self{
+    pub fn new(id: ControllerID, selection: AbilitySelection)->Self{
         Self{id, selection}
     }
-    pub fn id(&self)->AbilityID{
+    pub fn id(&self)->ControllerID{
         self.id.clone()
     }
     pub fn selection(&self)->AbilitySelection{

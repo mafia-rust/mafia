@@ -41,21 +41,21 @@ impl Default for Pitchfork{
 }
 
 impl Pitchfork{
-    pub fn available_abilities(game: &Game)->AllPlayersAvailableAbilities{
+    pub fn available_abilities(game: &Game)->ControllerParametersMap{
         if
             !game.settings.enabled_roles.contains(&Role::Rabblerouser)
         {
-            return AllPlayersAvailableAbilities::default();
+            return ControllerParametersMap::default();
         }
 
-        let mut out = AllPlayersAvailableAbilities::default();
+        let mut out = ControllerParametersMap::default();
         
         for player in PlayerReference::all_players(game){
             out.combine_overwrite(
-                AllPlayersAvailableAbilities::new_ability_fast(
+                ControllerParametersMap::new_controller_fast(
                     game,
                     player,
-                    AbilityID::pitchfork_vote(),
+                    ControllerID::pitchfork_vote(),
                     AvailableAbilitySelection::new_one_player_option(
                         PlayerReference::all_players(game)
                             .into_iter()
@@ -78,7 +78,7 @@ impl Pitchfork{
         out
     }
     pub fn on_ability_input_received(game: &mut Game, actor_ref: PlayerReference, input: AbilityInput){
-        let Some(selection) = input.get_player_option_selection_if_id(AbilityID::pitchfork_vote()) else {return};
+        let Some(selection) = input.get_player_option_selection_if_id(ControllerID::pitchfork_vote()) else {return};
         Pitchfork::player_votes_for_angry_mob_action(game, actor_ref, selection.0);
     }
     pub fn on_phase_start(game: &mut Game, phase: PhaseType){

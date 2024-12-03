@@ -56,18 +56,18 @@ impl SyndicateGunItem {
     }
 
     //available ability
-    pub fn available_abilities(game: &Game) -> AllPlayersAvailableAbilities {
+    pub fn available_abilities(game: &Game) -> ControllerParametersMap {
         if let Some(player_with_gun) = game.syndicate_gun_item.player_with_gun {
             common_role::available_abilities_one_player_night(
                 game,
                 player_with_gun,
                 false,
-                AbilityID::syndicate_gun_item_shoot()
+                ControllerID::syndicate_gun_item_shoot()
             ).combine_overwrite_owned(
-                AllPlayersAvailableAbilities::new_ability_fast(
+                ControllerParametersMap::new_controller_fast(
                     game,
                     player_with_gun,
-                    AbilityID::syndicate_gun_item_give(),
+                    ControllerID::syndicate_gun_item_give(),
                     AvailableAbilitySelection::new_one_player_option(
                         PlayerReference::all_players(game)
                             .into_iter()
@@ -88,7 +88,7 @@ impl SyndicateGunItem {
                 )
             )
         }else{
-            AllPlayersAvailableAbilities::default()
+            ControllerParametersMap::default()
         }
     }
 
@@ -156,7 +156,7 @@ impl SyndicateGunItem {
         }
 
         if let Some(selection) = ability_input
-            .get_player_option_selection_if_id(AbilityID::SyndicateGunItemGive)
+            .get_player_option_selection_if_id(ControllerID::SyndicateGunItemGive)
         {
             if let Some(target) = selection.0 {
                 if 
@@ -168,7 +168,7 @@ impl SyndicateGunItem {
                 }
             }
         }else if let Some(selection) = ability_input
-            .get_player_option_selection_if_id(AbilityID::SyndicateGunItemShoot) 
+            .get_player_option_selection_if_id(ControllerID::SyndicateGunItemShoot) 
         {
 
             if let Some(target) = selection.0 {

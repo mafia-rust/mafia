@@ -1,24 +1,26 @@
 use serde::{Deserialize, Serialize};
 
-use crate::game::{ability_input::{ability_selection::AbilitySelection, available_ability_selection::AvailableAbilitySelection, ValidateAvailableSelection}, phase::PhaseType, Game};
+use crate::{game::{ability_input::{ability_selection::AbilitySelection, available_ability_selection::AvailableAbilitySelection, ValidateAvailableSelection}, phase::PhaseType, player::PlayerReference, Game}, vec_set::VecSet};
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
-pub struct AvailableSingleAbilityData{
+pub struct ControllerParameters{
     available: AvailableAbilitySelection,
     grayed_out: bool,
     reset_on_phase_start: Option<PhaseType>,
     dont_save: bool,
-    default_selection: AbilitySelection
+    default_selection: AbilitySelection,
+    allowed_players: VecSet<PlayerReference>
 }
-impl AvailableSingleAbilityData{
+impl ControllerParameters{
     pub fn new(
         game: &Game,
         available: AvailableAbilitySelection,
         grayed_out: bool,
         reset_on_phase_start: Option<PhaseType>,
         dont_save: bool,
-        default_selection: AbilitySelection
+        default_selection: AbilitySelection,
+        allowed_players: VecSet<PlayerReference>
     )->Option<Self>{
         if available.validate_selection(game, &default_selection) {
             Some(
@@ -27,7 +29,8 @@ impl AvailableSingleAbilityData{
                     grayed_out,
                     reset_on_phase_start,
                     default_selection,
-                    dont_save
+                    dont_save,
+                    allowed_players
                 }
             )
         }else{
@@ -52,5 +55,8 @@ impl AvailableSingleAbilityData{
     }
     pub fn reset_on_phase_start(&self)->Option<PhaseType>{
         self.reset_on_phase_start
+    }
+    pub fn allowed_players(&self)->&VecSet<PlayerReference>{
+        &self.allowed_players
     }
 }

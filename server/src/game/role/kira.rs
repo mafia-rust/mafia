@@ -163,8 +163,8 @@ impl RoleStateImpl for Kira {
         if !actor_ref.alive(game) {return;}
 
         let Some(AbilitySelection::Kira { selection }) = 
-            AllPlayersSavedAbilityInputs::get_saved_ability_selection(game, actor_ref, 
-                AbilityID::Role { role: Role::Kira, id: 0 }
+            SavedControllers::get_saved_ability_selection(game, actor_ref, 
+                ControllerID::Role { role: Role::Kira, id: 0 }
             )
             else {return};
         let selection = selection.0;
@@ -187,7 +187,7 @@ impl RoleStateImpl for Kira {
             _ => return,
         }    
     }
-    fn available_abilities(self, game: &Game, actor_ref: PlayerReference) -> AllPlayersAvailableAbilities {
+    fn available_abilities(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         match PlayerReference::all_players(game).filter(|p|p.alive(game)).count().saturating_sub(1).try_into() {
             Ok(count) => {
 
@@ -196,10 +196,10 @@ impl RoleStateImpl for Kira {
                     .map(|p|(p, KiraGuess::None))
                     .collect();
 
-                AllPlayersAvailableAbilities::new_ability_fast(
+                ControllerParametersMap::new_controller_fast(
                     game,
                     actor_ref,
-                    AbilityID::role(Role::Kira, 0),
+                    ControllerID::role(Role::Kira, 0),
                     AvailableAbilitySelection::new_kira(AvailableKiraSelection::new(count)),
                     AbilitySelection::new_kira(KiraSelection::new(default_players)),
                     false,
@@ -208,7 +208,7 @@ impl RoleStateImpl for Kira {
                 )
             }
             Err(_) => {
-                AllPlayersAvailableAbilities::default()
+                ControllerParametersMap::default()
             }
         }        
     }
