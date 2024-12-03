@@ -1,7 +1,7 @@
 pub mod selection_type; pub use selection_type::*;
 pub mod ability_selection; pub use ability_selection::*;
-pub mod saved_ability_inputs; pub use saved_ability_inputs::*;
-pub mod ability_id; pub use ability_id::*;
+pub mod saved_controllers_map; pub use saved_controllers_map::*;
+pub mod controller_id; pub use controller_id::*;
 pub mod available_ability; pub use available_ability::*;
 
 use serde::{Deserialize, Serialize};

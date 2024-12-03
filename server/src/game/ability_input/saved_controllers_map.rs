@@ -10,7 +10,7 @@ use crate::{
         phase::PhaseType, player::PlayerReference, Game
     },
     packet::ToClientPacket,
-    vec_map::VecMap
+    vec_map::VecMap, vec_set::VecSet
 };
 
 use super::*;
@@ -26,56 +26,45 @@ impl SavedControllersMap{
     }
 
     //event listeners
+    /// returns false if any of these
+    /// - selection is invalid
+    /// - the controllerId doesnt exist
+    /// - the controller is grayed out
+    /// - actor is not allowed for this controller
+    /// - the incoming selection is the same as the current selection
     pub fn on_ability_input_received(
         game: &mut Game,
         actor: PlayerReference,
         ability_input: AbilityInput
-    ){
+    )->bool{
         let (id, incoming_selection) = (ability_input.id, ability_input.selection);
 
-        // validate input using available selection
-        {
-            let Some(SavedController {
-                selection: saved_selection,
-                available_ability_data
-            }) = game.saved_controllers.saved_controllers.get(&id) else {return};
-            
-            if 
-                !available_ability_data.validate_selection(game, &incoming_selection) ||
-                available_ability_data.grayed_out() ||
-                !available_ability_data.allowed_players().contains(&actor) ||
-                *saved_selection == incoming_selection
-            {
-                return;
-            }
-        }
-        
-
-        let Some(SavedController {
-            selection: saved_selection,
-            available_ability_data
-        }) = game.saved_controllers.saved_controllers.get_mut(&id) else {return};
-
-        if !available_ability_data.dont_save() {
-            *saved_selection = incoming_selection.clone();
+        if !Self::set_selection_in_controller(game, actor, id.clone(), incoming_selection.clone(), false) {
+            return false;
         }
 
         Self::send_selection_message(game, actor, id, incoming_selection);
-        Self::send_saved_controllers_to_client(game, actor);
+        
+        Self::send_saved_controllers_to_clients(game);
+
+        true
     }
 
-
-
     pub fn on_phase_start(game: &mut Game, phase: PhaseType){
+        Self::update_controllers_from_parameters(game);
         for (_, saved_controller) in game.saved_controllers.saved_controllers.iter_mut(){
             saved_controller.reset_on_phase_start(phase);
         }
-        for player in PlayerReference::all_players(game){
-            Self::send_saved_controllers_to_client(game, player);
-        }
+        Self::send_saved_controllers_to_clients(game);
     }
 
     pub fn on_tick(game: &mut Game){
+        Self::update_controllers_from_parameters(game);
+    }
+
+
+    // new mutators
+    fn update_controllers_from_parameters(game: &mut Game){
         let mut new_controller_parameters_map = ControllerParametersMap::default();
 
         for player in PlayerReference::all_players(game) {
@@ -99,10 +88,60 @@ impl SavedControllersMap{
         }
     }
 
+    /// return true if selection was valid
+    pub fn set_selection_in_controller(
+        game: &mut Game,
+        actor: PlayerReference,
+        id: ControllerID,
+        selection: AbilitySelection,
+        overwrite_gray_out: bool
+    )->bool{
+        Self::update_controllers_from_parameters(game);
 
-    // new mutators
+        // validate input using available selection
+        {
+            let Some(SavedController {
+                selection: saved_selection,
+                available_ability_data
+            }) = game.saved_controllers.saved_controllers.get(&id) else {return false};
+            
+            if 
+                !available_ability_data.validate_selection(game, &selection) ||
+                (!overwrite_gray_out && available_ability_data.grayed_out()) ||
+                !available_ability_data.allowed_players().contains(&actor) ||
+                *saved_selection == selection
+            {
+                return false;
+            }
+        }
+        
+
+        let Some(SavedController {
+            selection: saved_selection,
+            available_ability_data
+        }) = game.saved_controllers.saved_controllers.get_mut(&id) else {return false};
+
+        if !available_ability_data.dont_save() {
+            *saved_selection = selection.clone();
+        }
+
+        true
+    }
 
     // new query
+    pub fn all_controllers(
+        &self
+    )->&VecMap<ControllerID, SavedController>{
+        &self.saved_controllers
+    }
+    pub fn all_controller_ids(
+        &self
+    )->VecSet<ControllerID>{
+        self.saved_controllers.iter()
+            .map(|(c, _)|c.clone())
+            .collect()
+    }
+
     pub fn controllers_allowed_to_player(
         &self,
         player: PlayerReference
@@ -242,9 +281,7 @@ impl SavedControllersMap{
             );
         }
 
-        for player in PlayerReference::all_players(game){
-            Self::send_saved_controllers_to_client(game, player);
-        }
+        Self::send_saved_controllers_to_clients(game);
     }
 
     pub fn send_selection_message(
@@ -272,10 +309,12 @@ impl SavedControllersMap{
     
     // game stuff
     
-    pub fn send_saved_controllers_to_client(game: &Game, player: PlayerReference){
-        player.send_packet(game, ToClientPacket::YourAllowedControllers { 
-            save: game.saved_controllers.controllers_allowed_to_player(player).saved_controllers
-        });
+    pub fn send_saved_controllers_to_clients(game: &Game){
+        for player in PlayerReference::all_players(game){
+            player.send_packet(game, ToClientPacket::YourAllowedControllers { 
+                save: game.saved_controllers.controllers_allowed_to_player(player).saved_controllers
+            });
+        }
     }
 }
 
@@ -290,6 +329,9 @@ pub struct SavedController{
 impl SavedController{
     fn new(selection: AbilitySelection, available_ability_data: ControllerParameters)->Self{
         Self{selection, available_ability_data}
+    }
+    pub fn selection(&self)->&AbilitySelection{
+        &self.selection
     }
     pub fn reset_on_phase_start(&mut self, phase: PhaseType){
         if let Some(reset_phase) = self.available_ability_data.reset_on_phase_start(){

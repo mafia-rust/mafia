@@ -7,7 +7,7 @@ import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleS
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu"
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu"
 import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu"
-import { AbilityID, AbilityInput, AbilitySelection, AvailableAbilitySelection, PlayerSavedAbilities } from "./abilityInput"
+import { AbilityInput, ControllerID, SavedController } from "./abilityInput"
 import { ListMapData } from "../ListMap"
 
 export type LobbyPreviewData = {
@@ -119,8 +119,8 @@ export type ToClientPacket = {
     type: "yourInsiderGroups",
     insiderGroups: InsiderGroup[]
 } | {
-    type: "yourSavedAbilities",
-    save: PlayerSavedAbilities,
+    type: "yourAllowedControllers",
+    save: ListMapData<ControllerID, SavedController>,
 } | {
     type: "yourButtons", 
     buttons: [{

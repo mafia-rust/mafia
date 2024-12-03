@@ -6,7 +6,7 @@ import { Role } from "./roleState.d";
 import abilitiesJson from "../resources/abilityId.json";
 
 
-export type AbilityJsonData = Partial<Record<AbilityIdLink, SingleAbilityJsonData>>;
+export type AbilityJsonData = Partial<Record<ControllerIDLink, SingleAbilityJsonData>>;
 export type SingleAbilityJsonData = {
     midnight: boolean,
 }
@@ -14,72 +14,76 @@ export type SingleAbilityJsonData = {
 export function allAbilitiesJsonData(): AbilityJsonData {
     return abilitiesJson;
 }
-export function singleAbilityJsonData(link: AbilityIdLink): SingleAbilityJsonData | null {
+export function singleAbilityJsonData(link: ControllerIDLink): SingleAbilityJsonData | null {
     return allAbilitiesJsonData()[link]??null;
 }
 
 
 export type AbilityInput = {
-    id: AbilityID, 
+    id: ControllerID, 
     selection: AbilitySelection
 }
 
 
-export type PlayerSavedAbilities = {
-    save: ListMapData<AbilityID, SavedSingleAbility>
+export type SavedControllersMap = {
+    save: ListMapData<ControllerID, SavedController>
 }
 
-export type SavedSingleAbility = {
+export type SavedController = {
     selection: AbilitySelection,
     availableAbilityData: {
         available: AvailableAbilitySelection,
         grayedOut: boolean,
         resetOnPhaseStart: PhaseType | null,
         dontSave: boolean
-        defaultSelection: AbilitySelection
+        defaultSelection: AbilitySelection,
+        allowedPlayers: PlayerIndex[]
     }
 }
 
-export type AbilityID = {
+export type ControllerID = {
     type: "role",
+    player: PlayerIndex,
     role: Role,
-    id: RoleAbilityID,
+    id: RoleControllerID,
 } | {
     type: "forfeitVote",
+    player: PlayerIndex,
 } | {
     type: "pitchforkVote",
+    player: PlayerIndex,
 } | {
     type: "syndicateGunItemShoot",
 } | {
     type: "syndicateGunItemGive",
 };
 
-export type RoleAbilityID = number;
+export type RoleControllerID = number;
 
 /// create a type that represnts all strings that look like "abilityId/role/1"
 
-export type AbilityIdLink = (
-    `role/${Role}/${RoleAbilityID}` | 
-    `${AbilityID["type"]}`
+export type ControllerIDLink = (
+    `role/${Role}/${RoleControllerID}` | 
+    `${ControllerID["type"]}`
 );
 
-export function abilityIdToLink(id: AbilityID): AbilityIdLink {
-    let out: AbilityIdLink = `${id.type}`;
+export function controllerIdToLink(id: ControllerID): ControllerIDLink {
+    let out: ControllerIDLink = `${id.type}`;
     if (id.type === "role") {
         out += `/${id.role}/${id.id}`;
     }
-    return out as AbilityIdLink;
+    return out as ControllerIDLink;
 }
 
 /// if it doesnt exist then returns ""
-export function translateAbilityId(
-    abilityId: AbilityID
+export function translateControllerID(
+    abilityId: ControllerID
 ): string {
     switch (abilityId.type) {
         case "role":
-            return translateChecked("ability.abilityId."+abilityId.role+"."+abilityId.id+".name")??"";
+            return translateChecked("controllerId."+abilityId.role+"."+abilityId.id+".name")??"";
         default:
-            return translateChecked("ability.abilityId."+abilityId.type+".name")??"";
+            return translateChecked("controllerId."+abilityId.type+".name")??"";
     }
 }
 

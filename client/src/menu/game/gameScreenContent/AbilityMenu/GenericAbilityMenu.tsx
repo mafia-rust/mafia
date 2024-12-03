@@ -2,14 +2,14 @@ import { ReactElement } from "react";
 import { 
     TwoPlayerOptionSelection, 
     TwoRoleOptionSelection, 
-    AbilityID,
+    ControllerID,
     AbilitySelection,
-    translateAbilityId,
+    translateControllerID,
     AvailableAbilitySelection,
     TwoRoleOutlineOptionSelection,
     RoleOptionSelection,
-    SavedSingleAbility,
-    abilityIdToLink,
+    SavedController,
+    controllerIdToLink,
     singleAbilityJsonData
 } from "../../../../game/abilityInput";
 import React from "react";
@@ -31,8 +31,8 @@ import translate from "../../../../game/lang";
 
 export default function GenericAbilityMenu(): ReactElement {
     const savedAbilities = usePlayerState(
-        playerState => playerState.savedAbilities,
-        ["yourSavedAbilities"]
+        playerState => playerState.savedControllers,
+        ["yourAllowedControllers"]
     )!;
 
     return <>
@@ -48,15 +48,15 @@ export default function GenericAbilityMenu(): ReactElement {
 
 
 function SingleAbilityMenu(props: Readonly<{
-    abilityId: AbilityID,
+    abilityId: ControllerID,
     key: number,
-    saveData: SavedSingleAbility,
+    saveData: SavedController,
 }>): ReactElement {
     const myIndex = usePlayerState(
         (playerState, gameState)=>playerState.myIndex
     )!;
 
-    const nightIcon = singleAbilityJsonData(abilityIdToLink(props.abilityId))?.midnight;
+    const nightIcon = singleAbilityJsonData(controllerIdToLink(props.abilityId))?.midnight;
 
 
     return <div
@@ -66,7 +66,7 @@ function SingleAbilityMenu(props: Readonly<{
         <DetailsSummary
             summary={
                 <div className="generic-ability-menu-tab">
-                    <span><StyledText>{translateAbilityId(props.abilityId)}</StyledText></span>
+                    <span><StyledText>{translateControllerID(props.abilityId)}</StyledText></span>
                     {nightIcon?<span>{translate("night.icon")}</span>:null}
                 </div>
             }
@@ -98,7 +98,7 @@ function SingleAbilityMenu(props: Readonly<{
 
 function SwitchSingleAbilityMenuType(props: Readonly<{
     key: number,
-    id: AbilityID,
+    id: ControllerID,
     available: AvailableAbilitySelection,
     selected: AbilitySelection
 }>): ReactElement {
@@ -109,7 +109,7 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
     switch(available.type) {
         case "unit":
             return <Button key={key}>
-                {translateAbilityId(props.id)}
+                {translateControllerID(props.id)}
             </Button>
         case "boolean":{
             let bool;

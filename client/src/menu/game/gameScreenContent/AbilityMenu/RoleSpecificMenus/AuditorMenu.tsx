@@ -3,7 +3,7 @@ import React from "react"
 import { Role, RoleState } from "../../../../../game/roleState.d"
 import TwoRoleOutlineOptionSelectionMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionSelectionMenu"
 import GAME_MANAGER from "../../../../.."
-import { abilityIdToLink, TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput"
+import { controllerIdToLink, TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput"
 import { usePlayerState } from "../../../../../components/useHooks"
 import ListMap from "../../../../../ListMap"
 
@@ -18,11 +18,18 @@ export type AuditorResult = {
 export default function AuditorMenu(props: Readonly<{
     roleState: RoleState & {type: "auditor"}
 }>): ReactElement {
+    
+    const myPlayerIndex = usePlayerState(
+        state=>state.myIndex,
+        ["yourPlayerIndex"]
+    )!;
+
     const onInput = (selection: TwoRoleOutlineOptionSelection) => {
         GAME_MANAGER.sendAbilityInput({
             id: {
                 type: "role",
                 role: "auditor",
+                player: myPlayerIndex,
                 id: 0
             },
             selection: {
@@ -31,14 +38,21 @@ export default function AuditorMenu(props: Readonly<{
             }
         });
     }
+    
 
     const savedAbilities = usePlayerState(
-        playerState => playerState.savedAbilities,
-        ["yourSavedAbilities"]
+        playerState => playerState.savedControllers,
+        ["yourAllowedControllers"]
     )!;
-    const savedAbilitiesMap = new ListMap(savedAbilities, (k1, k2) => abilityIdToLink(k1) === abilityIdToLink(k2));
+    
+    const savedAbilitiesMap = new ListMap(savedAbilities, (k1, k2) => controllerIdToLink(k1) === controllerIdToLink(k2));
 
-    let singleAbilitySave = savedAbilitiesMap.get({type: "role", role: "auditor", id: 0});
+    let singleAbilitySave = savedAbilitiesMap.get({
+        type: "role",
+        role: "auditor",
+        player: myPlayerIndex,
+        id: 0
+    });
 
     let newSelection;
     let newAvailable;

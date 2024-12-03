@@ -3,7 +3,7 @@ import { ChatMessage } from "../components/ChatMessage";
 import { Role, RoleState } from "./roleState.d";
 import { RoleList } from "./roleListState.d";
 import { LobbyPreviewData } from "./packet";
-import { AbilityID, SavedSingleAbility } from "./abilityInput";
+import { ControllerID, SavedController } from "./abilityInput";
 import { ListMapData } from "../ListMap";
 
 
@@ -94,7 +94,7 @@ export type PlayerGameState = {
     voted: PlayerIndex | null,
     judgement: Verdict,
 
-    savedAbilities: ListMapData<AbilityID, SavedSingleAbility>,
+    savedControllers: ListMapData<ControllerID, SavedController>,
 
     fellowInsiders: PlayerIndex[],
     

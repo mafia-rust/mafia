@@ -22,7 +22,7 @@ pub mod role_outline_reference;
 pub mod ability_input;
 
 use std::time::Duration;
-use ability_input::saved_ability_inputs::SavedControllersMap;
+use ability_input::saved_controllers_map::SavedControllersMap;
 use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
 use components::love_linked::LoveLinked;
@@ -467,7 +467,7 @@ impl Game {
 pub mod test {
 
     use super::{
-        ability_input::saved_ability_inputs::SavedControllersMap,
+        ability_input::saved_controllers_map::SavedControllersMap,
         components::{
             arsonist_doused::ArsonistDoused, cult::Cult,
             insider_group::InsiderGroupID, love_linked::LoveLinked,

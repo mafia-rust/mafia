@@ -1,5 +1,5 @@
 use crate::game::{
-    ability_input::saved_ability_inputs::SavedControllersMap, 
+    ability_input::saved_controllers_map::SavedControllersMap, 
     Game
 };
 

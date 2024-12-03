@@ -196,7 +196,7 @@
     "role.detective.name":"Detective",
     "role.detective.name:var.0":"Detectives",
     "role.detective.target": "Interrogate",
-    "ability.abilityId.detective.0.name": "Detective Interrogate",
+    "controllerId.detective.0.name": "Detective Interrogate",
     "role.detective.youAreSelecting": "You are interrogating \\0.",
     "role.detective.youAreSelecting.null": "You aren't to interrogating anybody",
 
@@ -228,7 +228,7 @@
 
     "role.auditor.name": "Auditor",
     "role.auditor.name:var.0": "Auditors",
-    "ability.abilityId.auditor.0.name": "Auditor Audit",
+    "controllerId.auditor.0.name": "Auditor Audit",
 
     "role.snoop.name": "Snoop",
     "role.snoop.name:var.0": "Snoops",
@@ -299,7 +299,7 @@
 
     "role.mayor.name": "Mayor",
     "role.mayor.name:var.0": "Mayors",
-    "ability.abilityId.mayor.0.name": "Mayor Enfranchise",
+    "controllerId.mayor.0.name": "Mayor Enfranchise",
     "role.mayor.dayTarget": "Enfranchise",
 
     "role.transporter.name": "Transporter",
@@ -467,8 +467,8 @@
     "role.disguiser.name": "Disguiser",
     "role.disguiser.name:var.0": "Disguiser",
     "role.disguiser.target": "Disguise",
-    "ability.abilityId.disguiser.0.name": "Disguiser Target",
-    "ability.abilityId.disguiser.1.name": "Disguiser Role",
+    "controllerId.disguiser.0.name": "Disguiser Target",
+    "controllerId.disguiser.1.name": "Disguiser Role",
 
     "role.reeducator.name": "Reeducator",
     "role.reeducator.name:var.0": "Reeducators",
@@ -557,7 +557,7 @@
     
     "role.kira.name": "Kira",
     "role.kira.name:var.0": "Kiras",
-    "ability.abilityId.kira.0.name": "Kira Guess",
+    "controllerId.kira.0.name": "Kira Guess",
 
     "role.serialKiller.name": "Serial Killer",
     "role.serialKiller.name:var.0": "Serial Killers",
@@ -698,10 +698,10 @@
 
     "messageSender.livingToDead.icon": "🔮",
 
-    "ability.abilityId.syndicateGunItemShoot.name": "Shoot Gun",
-    "ability.abilityId.syndicateGunItemGive.name": "Give Gun",
-    "ability.abilityId.pitchforkVote.name": "Pitchfork",
-    "ability.abilityId.forfeitVote.name": "Forfeit Vote",
+    "controllerId.syndicateGunItemShoot.name": "Shoot Gun",
+    "controllerId.syndicateGunItemGive.name": "Give Gun",
+    "controllerId.pitchforkVote.name": "Pitchfork",
+    "controllerId.forfeitVote.name": "Forfeit Vote",
 
 
     "standard":"Standard",
@@ -1317,7 +1317,7 @@
     "wiki.article.role.jailor.guide": "- Each day, choose a player to detain. At night, you interrogate them in text chat\n- You can kill your prisoner up to three times\n- You can talk to your prisoner during the night, and they are not told who you are\n- If you kill a townie, you lose the ability to kill your prisoner\n- The players you jail are warded and roleblocked.",
     "wiki.article.role.jailor.abilities":"* Choose one player to jail during the day\n* Visit your prisoner to attack them",
     "wiki.article.role.jailor.attributes":"* You may talk with your prisoner at night in jail chat\n* If you kill a town loyalist, you forfeit the ability to execute prisoners\n* Players in jail are warded and roleblocked, they also can't select anybody",
-    "wiki.article.role.jailor.extra":"* The Jailor can not kill someone on night one\n* If you kill a townie, or run out of kills, you can not select to kill anymore\n* You invisibly roleblock the player you put in jail, they aren't told their roleblocked\n* Players in jail don't see your name on your messages. The messages you send appear to be from the jailor\n* If you jail a cult or syndicate member, their teammates know that that player is in jail",
+    "wiki.article.role.jailor.extra":"* The Jailor can not kill someone on night one\n* If you kill a townie, or run out of kills, you can not select to kill anymore\n* You roleblock the player you put in jail\n* Players in jail don't see your name on your messages. The messages you send appear to be from the jailor\n* If you jail a cult or syndicate member, their teammates know that that player is in jail",
 
     "wiki.article.role.villager.reminder": "No ability.",
     "wiki.article.role.villager.guide": "You have no nighttime ability, but you can still speak and vote. Try to help find out who is evil and vote them. Your only ability is your own critical thinking.",
@@ -1682,7 +1682,7 @@
     "wiki.article.role.kidnapper.guide": "- Each day, choose a player to kidnap. At night, you interrogate them in text chat\n- You can kill your prisoner one time\n- You can talk to your prisoner during the night, and they are not told who you are\n- The players you kidnap are warded and roleblocked.",
     "wiki.article.role.kidnapper.abilities":"* Choose one player to kidnap during the day\n* Visit your prisoner to attack them\n- If you kill your prisoner, their grave shows that they were killed by a jailor",
     "wiki.article.role.kidnapper.attributes":"* You may talk with your prisoner at night in kidnapped chat\n* Players you kidnap are warded and roleblocked, they also can't select anybody",
-    "wiki.article.role.kidnapper.extra":"* The Kidnapper can not kill someone on night one\n* You invisibly roleblock the player you detain, they aren't told their roleblocked\n* Players you kidnap don't see your name on your messages. The messages you send appear to be from the jailor\n* If you kidnap a cult or syndicate member, their teammates are told that player is in jail",
+    "wiki.article.role.kidnapper.extra":"* The Kidnapper can not kill someone on night one\n* You roleblock the player you detain\n* Players you kidnap don't see your name on your messages. The messages you send appear to be from the jailor\n* If you kidnap a cult or syndicate member, their teammates are told that player is in jail",
 
     "wiki.article.role.warper.reminder": "Each night, select two players, all visits to the first player are redirected to the second.",
     "wiki.article.role.warper.guide": "- At night, select 2 players\n    - If somebody else tries to visit the first player, they instead visit the second player\n    - The first player is told they are transported, but the second is not\n    - You can't choose yourself as your first target, you can't warp yourself\n- You are told the role of your first target\n\n _For example_\n- If a godfather tries to attack @1, but you warped @1 to @4, then @4 will die instead, and @1 is told they are transported\n\nYou are a minion, so you should try to harm the town as much as possible while looking to benefit non-town players.\n\n",

@@ -15,7 +15,7 @@ import { KiraResult, KiraResultDisplay } from "../menu/game/gameScreenContent/Ab
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
-import { AbilityID, AbilitySelection, translateAbilityId } from "../game/abilityInput";
+import { ControllerID, AbilitySelection, translateControllerID } from "../game/abilityInput";
 import DetailsSummary from "./DetailsSummary";
 
 const ChatElement = React.memo((
@@ -511,7 +511,7 @@ export function translateChatMessage(
                     out = "";
             }
             
-            let abilityIdString = translateAbilityId(message.abilityId);
+            let abilityIdString = translateControllerID(message.abilityId);
                 
             return translate("chatMessage.abilityUsed", playerNames[message.player], abilityIdString, out);
         case "mayorRevealed":
@@ -837,7 +837,7 @@ export type ChatMessageVariant = {
 } | {
     type: "abilityUsed", 
     player: PlayerIndex,
-    abilityId: AbilityID,
+    abilityId: ControllerID,
     selection: AbilitySelection
     
 } | {

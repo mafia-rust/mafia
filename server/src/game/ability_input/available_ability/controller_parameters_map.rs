@@ -9,7 +9,7 @@ use crate::{
 };
 
 use super::super::{
-    ability_id::ControllerID,
+    controller_id::ControllerID,
     ability_selection::AbilitySelection, AvailableAbilitySelection,
 };
 

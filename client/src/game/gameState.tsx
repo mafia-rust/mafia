@@ -70,7 +70,7 @@ export function createPlayerGameState(): PlayerGameState {
         
         roleState: { type: "detective" },
 
-        savedAbilities: [],
+        savedControllers: [],
 
         will: "",
         notes: [],

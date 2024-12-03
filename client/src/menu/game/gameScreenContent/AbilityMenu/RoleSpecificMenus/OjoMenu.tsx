@@ -1,6 +1,6 @@
 import { ReactElement } from "react"
 import React from "react"
-import { useGameState } from "../../../../../components/useHooks";
+import { useGameState, usePlayerState } from "../../../../../components/useHooks";
 import GAME_MANAGER from "../../../../..";
 import { Role, RoleState } from "../../../../../game/roleState.d";
 import RoleDropdown from "../../../../../components/RoleDropdown";
@@ -23,6 +23,10 @@ export default function OjoMenu(
         state=>state.dayNumber,
         ["phase"]
     )!;
+    const myPlayerIndex = usePlayerState(
+        state=>state.myIndex,
+        ["yourPlayerIndex"]
+    )!;
 
     const onInput = (chosenOutlines: TwoRoleOutlineOptionSelection) => {
         const selection: AbilitySelection = {
@@ -33,6 +37,7 @@ export default function OjoMenu(
         const input: AbilityInput = {
             id: {
                 type: "role",
+                player: myPlayerIndex,
                 role: "ojo",
                 id: 0
             },

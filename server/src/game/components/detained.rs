@@ -28,7 +28,7 @@ impl Detained{
             Priority::Roleblock => {
                 for player in PlayerReference::all_players(game){
                     if Self::is_detained(game, player){
-                        // player.roleblock(game, true);
+                        player.roleblock(game, true);
                     }
                 }
             }
