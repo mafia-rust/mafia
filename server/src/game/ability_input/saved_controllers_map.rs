@@ -193,6 +193,22 @@ impl SavedControllersMap{
     }
 
     // selection type queries
+
+    pub fn get_controller_current_selection_boolean(
+        &self,
+        id: ControllerID
+    )->Option<BooleanSelection>{
+        self
+            .get_controller_current_selection(id)
+            .and_then(|selection| 
+                if let AbilitySelection::Boolean { selection } = selection {
+                    Some(selection)
+                }else{
+                    None
+                }
+            )
+    }
+
     pub fn get_controller_current_selection_player_option(
         &self,
         id: ControllerID
@@ -207,7 +223,6 @@ impl SavedControllersMap{
                 }
             )
     }
-
 
     pub fn get_controller_current_selection_role_option(
         &self,

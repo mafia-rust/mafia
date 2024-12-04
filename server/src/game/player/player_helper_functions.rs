@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use rand::seq::SliceRandom;
 
 use crate::{game::{
-    ability_input::{AbilitySelection, ControllerParametersMap, OnePlayerOptionSelection, SavedControllersMap, TwoPlayerOptionSelection}, attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
+    ability_input::{AbilitySelection, ControllerParametersMap, SavedControllersMap}, attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
         arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura, insider_group::InsiderGroupID, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch
@@ -143,15 +143,23 @@ impl PlayerReference{
                 for (controller_id, controller_data) in game.saved_controllers.all_controllers().clone().iter() {
                     match controller_data.selection() {
                         AbilitySelection::Unit => {},
-                        AbilitySelection::Boolean { .. } => {},
+                        AbilitySelection::Boolean { .. } => {
+                            if possessed_visit.target == possessed_into_visit.target {
+                                SavedControllersMap::set_selection_in_controller(
+                                    game,
+                                    possessed_visit.target,
+                                    controller_id.clone(),
+                                    AbilitySelection::new_boolean(true),
+                                    true
+                                );
+                            }
+                        },
                         AbilitySelection::OnePlayerOption { .. } => {
                             SavedControllersMap::set_selection_in_controller(
                                 game,
                                 possessed_visit.target,
                                 controller_id.clone(),
-                                AbilitySelection::OnePlayerOption { selection: OnePlayerOptionSelection(
-                                    Some(possessed_into_visit.target)
-                                )},
+                                AbilitySelection::new_one_player_option(Some(possessed_into_visit.target)),
                                 true
                             );
                         },
@@ -160,10 +168,7 @@ impl PlayerReference{
                                 game,
                                 possessed_visit.target,
                                 controller_id.clone(),
-                                AbilitySelection::TwoPlayerOption { selection: TwoPlayerOptionSelection(
-                                    Some(possessed_into_visit.target),
-                                    selection.1
-                                )},
+                                AbilitySelection::new_two_player_option(Some(possessed_into_visit.target), selection.1),
                                 true
                             );
                         },
