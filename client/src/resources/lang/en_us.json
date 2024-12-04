@@ -412,9 +412,9 @@
 
     "role.hypnotist.name": "Hypnotist",
     "role.hypnotist.name:var.0": "Hypnotists",
-    "role.hypnotist.target": "Hypnotize",
     "role.hypnotist.youAreSelecting": "You are hypnotizing \\0.",
     "role.hypnotist.youAreSelecting.null": "You aren't hypnotizing anyone.",
+    "controllerId.hypnotist.0.name": "Hypnotist Hypnotize",
 
     "role.consort.name": "Consort",
     "role.consort.name:var.0": "Consorts",
@@ -424,9 +424,9 @@
     
     "role.blackmailer.name": "Blackmailer",
     "role.blackmailer.name:var.0": "Blackmailers",
-    "role.blackmailer.target": "Silence",
     "role.blackmailer.youAreSelecting": "You are silencing \\0.",
     "role.blackmailer.youAreSelecting.null": "You aren't silencing anyone.",
+    "controllerId.blackmailer.0.name": "Blackmailer Silence",
     
     "role.informant.name": "Informant",
     "role.informant.name:var.0": "Informants",

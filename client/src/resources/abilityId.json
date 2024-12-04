@@ -44,6 +44,9 @@
     "role/informant/0": {
         "midnight": true
     },
+    "role/hypnotist/0": {
+        "midnight": true
+    },
     "role/mortician/0": {
         "midnight": true
     },
@@ -52,6 +55,9 @@
     },
     "role/disguiser/1": {
         "midnight": false
+    },
+    "role/blackmailer/0": {
+        "midnight": true
     },
     "role/consort/0": {
         "midnight": true

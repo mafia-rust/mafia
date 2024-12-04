@@ -547,7 +547,7 @@ fn spy_basic_transported() {
     );
     spy.send_ability_input_one_player_typical(jester);
     transp.set_night_selection(vec![jester, bugged]);
-    blackmailer.set_night_selection_single(jester);
+    blackmailer.send_ability_input_one_player_typical(jester);
     esc.send_ability_input_one_player_typical(jester);
     witch.set_night_selection(vec![jester, esc]);
 
@@ -1255,7 +1255,7 @@ fn godfather_backup_kills_esc() {
 
     assert!(godfather.day_target(hypnotist));
 
-    assert!(hypnotist.set_night_selection_single(det));
+    assert!(hypnotist.send_ability_input_one_player_typical(det));
     assert!(esc.send_ability_input_one_player_typical(godfather));
 
     game.next_phase();
@@ -1315,7 +1315,7 @@ fn godfather_backup_kills_jail() {
     assert!(godfather.day_target(hypnotist));
 
     game.next_phase();
-    assert!(hypnotist.set_night_selection_single(det));
+    assert!(hypnotist.send_ability_input_one_player_typical(det));
 
     game.next_phase();
 
@@ -2157,7 +2157,7 @@ fn martyr_roleblocked() {
     );
 
     martyr.set_night_selection_single(martyr);
-    hypnotist.set_night_selection_single(martyr);
+    hypnotist.send_ability_input_one_player_typical(martyr);
 
     game.next_phase();
 
