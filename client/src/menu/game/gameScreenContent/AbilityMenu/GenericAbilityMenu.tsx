@@ -108,7 +108,15 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
 
     switch(available.type) {
         case "unit":
-            return <Button key={key}>
+            return <Button
+                key={key}
+                onClick={()=>{
+                    GAME_MANAGER.sendAbilityInput({
+                        id, 
+                        selection: {type: "unit"}
+                    });
+                }}
+            >
                 {translateControllerID(props.id)}
             </Button>
         case "boolean":{

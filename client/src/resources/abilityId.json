@@ -26,6 +26,9 @@
     "role/armorsmith/0": {
         "midnight": true
     },
+    "role/vigilante/0": {
+        "midnight": true
+    },
     "role/veteran/0": {
         "midnight": true
     },
@@ -34,6 +37,9 @@
     },
     "role/escort/0": {
         "midnight": true
+    },
+    "role/mayor/0": {
+        "midnight": false
     },
     "role/informant/0": {
         "midnight": true
@@ -47,6 +53,9 @@
     "role/consort/0": {
         "midnight": true
     },
+    "role/politician/0": {
+        "midnight": false
+    },
     "role/scarecrow/0": {
         "midnight": true
     },
@@ -54,6 +63,9 @@
         "midnight": true
     },
     "role/kira/0": {
+        "midnight": true
+    },
+    "role/zealot/0": {
         "midnight": true
     },
     "syndicateGunItemShoot": {

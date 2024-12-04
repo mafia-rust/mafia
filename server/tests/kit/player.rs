@@ -37,6 +37,16 @@ impl TestPlayer {
         );
     }
 
+    pub fn send_ability_input_unit_typical(&self)->bool{
+        self.send_ability_input(
+            AbilityInput::new(
+                ControllerID::role(self.player_ref(), self.role(), 0),
+                AbilitySelection::new_unit()
+            )
+        );
+        true
+    }
+
     pub fn send_ability_input_one_player_typical(&self, selection: TestPlayer)->bool{
         self.send_ability_input(
             AbilityInput::new(

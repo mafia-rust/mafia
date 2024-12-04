@@ -6,9 +6,7 @@ use crate::{
             forfeit_vote::ForfeitVote, insider_group::InsiderGroupID,
             pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem
         }, event::on_validated_ability_input_received::OnValidatedAbilityInputReceived, phase::PhaseType, player::PlayerReference, Game
-    },
-    packet::ToClientPacket,
-    vec_map::VecMap, vec_set::VecSet
+    }, log, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet
 };
 
 use super::*;
@@ -111,8 +109,9 @@ impl SavedControllersMap{
                 !available_ability_data.validate_selection(game, &selection) ||
                 (!overwrite_gray_out && available_ability_data.grayed_out()) ||
                 !available_ability_data.allowed_players().contains(&actor) ||
-                *saved_selection == selection
+                (*saved_selection == selection && selection != AbilitySelection::new_unit())
             {
+                log!(error "saved_controllers_map"; "Invalid input id:{:?} selection:{:?} controller_param:{:?}", id, selection, available_ability_data);
                 return false;
             }
         }

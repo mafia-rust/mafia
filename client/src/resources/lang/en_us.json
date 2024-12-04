@@ -300,7 +300,6 @@
     "role.mayor.name": "Mayor",
     "role.mayor.name:var.0": "Mayors",
     "controllerId.mayor.0.name": "Mayor Enfranchise",
-    "role.mayor.dayTarget": "Enfranchise",
 
     "role.transporter.name": "Transporter",
     "role.transporter.name:var.0": "Transporters",
@@ -335,12 +334,12 @@
 
     "role.vigilante.name": "Vigilante",
     "role.vigilante.name:var.0": "Vigilantes",
-    "role.vigilante.target": "Shoot",
     "role.vigilante.roleDataText.suicide": "You killed an innocent townie and will commit suicide tonight",
     "role.vigilante.roleDataText": "\\0 bullets remaining",
     "role.vigilante.roleDataText.notLoaded": "You are reloading your gun. You can not shoot yet.",
     "role.vigilante.youAreSelecting": "You are shooting \\0.",
     "role.vigilante.youAreSelecting.null": "You aren't shooting anyone.",
+    "controllerId.vigilante.0.name": "Vigilante Shoot",
 
     "role.veteran.name": "Veteran",
     "role.veteran.name:var.0": "Veterans",
@@ -419,9 +418,9 @@
 
     "role.consort.name": "Consort",
     "role.consort.name:var.0": "Consorts",
-    "role.consort.target": "Roleblock",
     "role.consort.youAreSelecting": "You are roleblocking \\0.",
     "role.consort.youAreSelecting.null": "You aren't roleblocking anyone.",
+    "controllerId.consort.0.name": "Consort Roleblock",
     
     "role.blackmailer.name": "Blackmailer",
     "role.blackmailer.name:var.0": "Blackmailers",
@@ -525,7 +524,7 @@
 
     "role.politician.name": "Politician",
     "role.politician.name:var.0": "Politicians",
-    "role.politician.dayTarget": "Enfranchise",
+    "controllerId.politician.0.name": "Politician Enfranchise",
 
     "role.drunk.name": "Drunk",
     "role.drunk.name:var.0": "Drunks",
@@ -599,9 +598,9 @@
 
     "role.zealot.name": "Zealot",
     "role.zealot.name:var.0": "Zealots",
-    "role.zealot.target": "Attack",
     "role.zealot.youAreSelecting": "You are attacking \\0.",
     "role.zealot.youAreSelecting.null": "You aren't attacking anyone.",
+    "controllerId.zealot.0.name": "Zealot Attack",
 
     "role.martyr.name": "Martyr",
     "role.martyr.name:var.0": "Martyrs",
