@@ -52,13 +52,13 @@ pub fn controller_parameters_map_one_player_night(
         actor_ref,
         ability_id,
         PlayerReference::all_players(game)
-                .into_iter()
-                .filter(|p| can_select_self || *p != actor_ref)
-                .filter(|player| 
-                    player.alive(game) &&
-                    !InsiderGroupID::in_same_revealed_group(game, actor_ref, *player)
-                )
-                .collect(),
+            .into_iter()
+            .filter(|p| can_select_self || *p != actor_ref)
+            .filter(|player| 
+                player.alive(game) &&
+                !InsiderGroupID::in_same_revealed_group(game, actor_ref, *player)
+            )
+            .collect(),
         None,
         grayed_out,
         Some(PhaseType::Obituary),
