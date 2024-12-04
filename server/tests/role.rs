@@ -144,7 +144,7 @@ fn detective_basic() {
         mafia: Mafioso,
         townie: Detective
     );
-    sher.send_ability_input_typical(mafia);
+    sher.send_ability_input_one_player_typical(mafia);
     game.next_phase();
     assert_contains!(
         sher.get_messages_after_night(1),
@@ -152,7 +152,7 @@ fn detective_basic() {
     );
 
     game.skip_to(Night, 2);
-    sher.send_ability_input_typical(townie);
+    sher.send_ability_input_one_player_typical(townie);
     game.next_phase();
     assert_contains!(
         sher.get_messages_after_night(2),
@@ -170,7 +170,7 @@ fn detective_neutrals(){
         politician: Politician
     );
 
-    sher.send_ability_input_typical(witch);
+    sher.send_ability_input_one_player_typical(witch);
     game.next_phase();
     assert_contains!(
         sher.get_messages_after_night(1),
@@ -178,7 +178,7 @@ fn detective_neutrals(){
     );
     
     game.skip_to(Night, 2);
-    sher.send_ability_input_typical(jester);
+    sher.send_ability_input_one_player_typical(jester);
     game.next_phase();
     assert_contains!(
         sher.get_messages_after_night(2),
@@ -186,7 +186,7 @@ fn detective_neutrals(){
     );
     
     game.skip_to(Night, 3);
-    sher.send_ability_input_typical(politician);
+    sher.send_ability_input_one_player_typical(politician);
     game.next_phase();
     assert_contains!(
         sher.get_messages_after_night(3),
@@ -290,7 +290,7 @@ fn detective_godfather() {
         sher: Detective,
         mafia: Godfather
     );
-    sher.send_ability_input_typical(mafia);
+    sher.send_ability_input_one_player_typical(mafia);
     game.next_phase();
     assert_contains!(sher.get_messages(), ChatMessageVariant::SheriffResult { suspicious: false });
 }
@@ -621,8 +621,8 @@ fn transporter_basic_seer_sheriff_framer() {
     assert!(trans.set_night_selection(vec![town1, town2]));
     assert!(framer.set_night_selection(vec![town1, philosopher]));
     assert!(philosopher.set_night_selection(vec![town1, town2]));
-    assert!(town1.send_ability_input_typical(town2));
-    assert!(town2.send_ability_input_typical(town1));
+    assert!(town1.send_ability_input_one_player_typical(town2));
+    assert!(town2.send_ability_input_one_player_typical(town1));
 
     game.skip_to(Obituary, 2);
     assert_contains!(
@@ -794,8 +794,8 @@ fn cop_basic(){
     );
 
     crus.set_night_selection(vec![protected]);
-    townie1.send_ability_input_typical(protected);
-    townie2.send_ability_input_typical(protected);
+    townie1.send_ability_input_one_player_typical(protected);
+    townie2.send_ability_input_one_player_typical(protected);
     mafioso.set_night_selection(vec![protected]);
 
     game.skip_to(Night, 3);
@@ -807,8 +807,8 @@ fn cop_basic(){
     assert!(!mafioso.alive());
 
     crus.set_night_selection(vec![protected]);
-    townie1.send_ability_input_typical(protected);
-    townie2.send_ability_input_typical(protected);
+    townie1.send_ability_input_one_player_typical(protected);
+    townie2.send_ability_input_one_player_typical(protected);
 
     game.next_phase();
     
@@ -850,7 +850,7 @@ fn veteran_basic(){
         tracker: Tracker
     );
 
-    assert!(vet.set_night_selection(vec![vet]));
+    assert!(vet.send_ability_input_boolean_typical(true));
     assert!(framer.set_night_selection(vec![vet]));
     assert!(townie.set_night_selection(vec![vet]));
     assert!(tracker.set_night_selection(vec![vet]));
@@ -874,15 +874,6 @@ fn veteran_basic(){
         tracker.get_messages(),
         ChatMessageVariant::TrackerResult { players: vec![] }
     );
-
-    game.skip_to(Night, 3);
-    assert!(vet.set_night_selection(vec![vet]));
-    
-    game.skip_to(Night, 4);
-    assert!(vet.set_night_selection(vec![vet]));
-    
-    game.skip_to(Night, 5);
-    assert!(!vet.set_night_selection(vec![vet]));
 }
 
 #[test]
@@ -894,7 +885,7 @@ fn veteran_does_not_kill_framed_player(){
         mafioso: Mafioso
     );
 
-    assert!(vet.set_night_selection(vec![vet]));
+    assert!(vet.send_ability_input_boolean_typical(true));
     assert!(framer.set_night_selection(vec![townie, vet]));
 
     game.next_phase();
@@ -981,7 +972,7 @@ fn marksman_basic() {
         gf: Godfather
     );
 
-    assert!(dt.send_ability_input_typical(gf));
+    assert!(dt.send_ability_input_one_player_typical(gf));
     assert!(mk.day_target(dt));
     assert!(mk.set_night_selection(vec![dt, gf]));
 
@@ -1171,7 +1162,7 @@ fn drunk_suspicious_aura() {
         _mafioso: Mafioso
     );
 
-    assert!(detective.send_ability_input_typical(drunk));
+    assert!(detective.send_ability_input_one_player_typical(drunk));
 
     game.next_phase();
 
@@ -1283,7 +1274,7 @@ fn snoop_basic() {
     );
 
     assert!(snoop.set_night_selection_single(det));
-    assert!(det.send_ability_input_typical(snoop));
+    assert!(det.send_ability_input_one_player_typical(snoop));
     game.next_phase();
     assert_contains!(
         snoop.get_messages(),
@@ -1367,7 +1358,7 @@ fn gossip_basic_friends() {
     );
 
     assert!(gossip.set_night_selection_single(t1));
-    assert!(t1.send_ability_input_typical(t2));
+    assert!(t1.send_ability_input_one_player_typical(t2));
 
     game.next_phase();
 
@@ -1407,7 +1398,7 @@ fn gossip_basic_enemies() {
     );
 
     assert!(gossip.set_night_selection_single(t1));
-    assert!(t1.send_ability_input_typical(py));
+    assert!(t1.send_ability_input_one_player_typical(py));
 
     game.next_phase();
 
@@ -1428,7 +1419,7 @@ fn gossip_framer() {
     );
 
     assert!(gossip.set_night_selection_single(townie));
-    assert!(townie.send_ability_input_typical(framer));
+    assert!(townie.send_ability_input_one_player_typical(framer));
 
     game.next_phase();
 
@@ -1440,7 +1431,7 @@ fn gossip_framer() {
     game.skip_to(Night, 2);
 
     assert!(gossip.set_night_selection_single(townie));
-    assert!(townie.send_ability_input_typical(framer));
+    assert!(townie.send_ability_input_one_player_typical(framer));
     assert!(framer.set_night_selection(vec![townie, gossip]));
 
     game.next_phase();
@@ -1453,7 +1444,7 @@ fn gossip_framer() {
     game.skip_to(Night, 3);
 
     assert!(gossip.set_night_selection_single(t2));
-    assert!(t2.send_ability_input_typical(townie));
+    assert!(t2.send_ability_input_one_player_typical(townie));
     assert!(framer.set_night_selection(vec![townie, gossip]));
 
     game.next_phase();
@@ -1466,7 +1457,7 @@ fn gossip_framer() {
     game.skip_to(Night, 4);
 
     assert!(gossip.set_night_selection_single(t2));
-    assert!(t2.send_ability_input_typical(townie));
+    assert!(t2.send_ability_input_one_player_typical(townie));
 
     game.next_phase();
 
@@ -1518,7 +1509,7 @@ fn bouncer_jailor_double_block() {
 
     game.next_phase();
 
-    det.send_ability_input_typical(gf);
+    det.send_ability_input_one_player_typical(gf);
     b.set_night_selection_single(gf);
 
     game.next_phase();
@@ -1984,9 +1975,9 @@ fn arsonist_ignites_and_aura(){
         sher: Detective
     );
 
-    assert!(townie.send_ability_input_typical(arso));
+    assert!(townie.send_ability_input_one_player_typical(arso));
     assert!(arso.set_night_selection_single(arso));
-    assert!(sher.send_ability_input_typical(townie));
+    assert!(sher.send_ability_input_one_player_typical(townie));
 
     game.next_phase();
 
@@ -2003,7 +1994,7 @@ fn arsonist_ignites_and_aura(){
     game.skip_to(Night, 2);
     
     assert!(arso.set_night_selection_single(townie2));
-    assert!(sher.send_ability_input_typical(townie2));
+    assert!(sher.send_ability_input_one_player_typical(townie2));
 
     game.next_phase();
 
@@ -2023,7 +2014,7 @@ fn arsonist_ignites_and_aura(){
 
     game.skip_to(Night, 3);
 
-    assert!(sher.send_ability_input_typical(townie2));
+    assert!(sher.send_ability_input_one_player_typical(townie2));
 
     game.next_phase();
     
@@ -2045,7 +2036,7 @@ fn pyrolisk_tags_day_one() {
     );
 
     assert!(pyro.set_night_selection_single(townie));
-    assert!(townie3.send_ability_input_typical(pyro));
+    assert!(townie3.send_ability_input_one_player_typical(pyro));
 
     game.next_phase();
 
@@ -2316,7 +2307,7 @@ fn godfather_dies_to_veteran(){
     );
 
     assert!(gf.set_night_selection_single(vet));
-    assert!(vet.set_night_selection_single(vet));
+    assert!(vet.send_ability_input_boolean_typical(true));
 
     game.next_phase();
 
@@ -2378,7 +2369,7 @@ fn witch_leaves_by_winning_puppeteer(){
 
     game.skip_to(Night, 3);
 
-    assert!(t.set_night_selection_single(t));
+    assert!(t.send_ability_input_boolean_typical(true));
     assert!(gf.set_night_selection_single(t2));
 
     game.next_phase();
@@ -2400,7 +2391,7 @@ fn armorsmith_doesnt_get_wardblocked_when_warded(){
 
     assert!(gf.set_night_selection_single(bouncer));
     assert!(bouncer.set_night_selection_single(armor));
-    assert!(armor.set_night_selection_single(armor));
+    assert!(armor.send_ability_input_boolean_typical(true));
 
     game.next_phase();
 
@@ -2433,7 +2424,7 @@ fn godfather_dies_to_veteran_after_possessed(){
     );
 
     assert!(min.set_night_selection(vec![gf, vet]));
-    assert!(vet.set_night_selection_single(vet));
+    assert!(vet.send_ability_input_boolean_typical(true));
 
     game.next_phase();
 

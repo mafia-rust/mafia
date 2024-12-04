@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::game::{
+use crate::{game::{
     ability_input::*,
     chat::ChatGroup,
     components::{
@@ -12,7 +12,7 @@ use crate::game::{
     phase::{PhaseState, PhaseType}, player::PlayerReference,
     role_list::RoleSet, visit::{Visit, VisitTag}, win_condition::WinCondition,
     Game
-};
+}, vec_set};
 
 use super::{reporter::Reporter, medium::Medium, InsiderGroupID, Role, RoleState};
 
@@ -43,8 +43,7 @@ pub fn controller_parameters_map_one_player_night(
     
     let grayed_out = 
         !actor_ref.alive(game) || 
-        Detained::is_detained(game, actor_ref);// ||
-        // game.current_phase().phase() != PhaseType::Night;
+        Detained::is_detained(game, actor_ref);
 
     ControllerParametersMap::new_one_player_ability_fast(
         game,
@@ -65,6 +64,30 @@ pub fn controller_parameters_map_one_player_night(
         false
     )
 }
+
+pub fn controller_parameters_map_boolean(
+    game: &Game,
+    actor_ref: PlayerReference,
+    grayed_out: bool,
+    ability_id: ControllerID,
+) -> ControllerParametersMap {
+    let grayed_out = 
+        !actor_ref.alive(game) || 
+        Detained::is_detained(game, actor_ref) ||
+        !grayed_out;
+
+    ControllerParametersMap::new_controller_fast(
+        game,
+        ability_id,
+        AvailableAbilitySelection::Boolean,
+        AbilitySelection::new_boolean(false),
+        grayed_out,
+        Some(PhaseType::Obituary),
+        false,
+        vec_set!(actor_ref)
+    )
+}
+
 
 /// This function uses defaults. When using this function, consider if you need to override the defaults.
 pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: PlayerReference, ability_id: ControllerID, attack: bool) -> Vec<Visit> {

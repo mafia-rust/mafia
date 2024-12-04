@@ -37,11 +37,21 @@ impl TestPlayer {
         );
     }
 
-    pub fn send_ability_input_typical(&self, selection: TestPlayer)->bool{
+    pub fn send_ability_input_one_player_typical(&self, selection: TestPlayer)->bool{
         self.send_ability_input(
             AbilityInput::new(
                 ControllerID::role(self.player_ref(), self.role(), 0),
-                AbilitySelection::OnePlayerOption { selection: OnePlayerOptionSelection(Some(selection.player_ref())) }
+                AbilitySelection::new_one_player_option(Some(selection.player_ref()))
+            )
+        );
+        true
+    }
+
+    pub fn send_ability_input_boolean_typical(&self, selection: bool)->bool{
+        self.send_ability_input(
+            AbilityInput::new(
+                ControllerID::role(self.player_ref(), self.role(), 0),
+                AbilitySelection::new_boolean(selection)
             )
         );
         true
