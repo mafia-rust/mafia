@@ -1,4 +1,9 @@
-.generic-ability-menu-tab {
+.generic-ability-menu {
+    margin-top: .4rem;
+}
+
+
+.generic-ability-menu-tab-summary {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -10,8 +15,6 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    margin-top: .4rem;
-    margin-bottom: .13rem;
     background-color: var(--secondary-color);
     border-style: solid;
     border-color: var(--primary-border-color);

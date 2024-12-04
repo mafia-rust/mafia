@@ -21,7 +21,6 @@ import TwoRoleOutlineOptionSelectionMenu from "./AbilitySelectionTypes/TwoRoleOu
 import GAME_MANAGER from "../../../..";
 import TwoRoleOptionSelectionMenu from "./AbilitySelectionTypes/TwoRoleOptionSelectionMenu";
 import TwoPlayerOptionSelectionMenu from "./AbilitySelectionTypes/TwoPlayerOptionSelectionMenu";
-import ChatMessage from "../../../../components/ChatMessage";
 import StyledText from "../../../../components/StyledText";
 import CheckBox from "../../../../components/CheckBox";
 import KiraSelectionMenu, { KiraSelection } from "./AbilitySelectionTypes/KiraSelectionMenu";
@@ -127,10 +126,13 @@ function MultipleControllersMenu(props: Readonly<{
     }
 
     return <DetailsSummary
-        summary={<div className="generic-ability-menu-tab">
-            <StyledText>{groupName}</StyledText>
-            {nightIcon?<span>{translate("night.icon")}</span>:null}
-        </div>}
+        className="generic-ability-menu"
+        summary={
+            <div className="generic-ability-menu-tab-summary">
+                <StyledText>{groupName}</StyledText>
+                {nightIcon?<span>{translate("night.icon")}</span>:null}
+            </div>
+        }
         defaultOpen={true}
         disabled={disabled}
     >
@@ -151,14 +153,12 @@ function SingleAbilityMenu(props: Readonly<{
     saveData: SavedController,
     includeDropdown?: boolean
 }>): ReactElement {
-    const myIndex = usePlayerState(
-        (playerState, gameState)=>playerState.myIndex
-    )!;
-
     const nightIcon = singleAbilityJsonData(controllerIdToLink(props.abilityId))?.midnight;
 
+    //The chat message makes it more verbose, showing more relevant information
+    // as menus get large, it makes it harder to parse. so i keep it out for now
     const inner = <>
-        {props.saveData.availableAbilityData.dontSave ? null : 
+        {/* {props.saveData.availableAbilityData.dontSave ? null : 
             <ChatMessage message={{
                 variant: {
                     type: "abilityUsed",
@@ -168,7 +168,7 @@ function SingleAbilityMenu(props: Readonly<{
                 },
                 chatGroup: "all"
             }}/>
-        }
+        } */}
         <SwitchSingleAbilityMenuType
             key={props.key}
             id={props.abilityId}
@@ -178,29 +178,23 @@ function SingleAbilityMenu(props: Readonly<{
     </>
 
     if(props.includeDropdown===true || props.includeDropdown===undefined){
-        return <div
-            key={props.key}
-            className="small-role-specific-menu"
+        return <DetailsSummary
+            className="generic-ability-menu"
+            summary={
+                <div className="generic-ability-menu-tab-summary">
+                    <span><StyledText>{translateControllerID(props.abilityId)}</StyledText></span>
+                    {nightIcon?<span>{translate("night.icon")}</span>:null}
+                </div>
+            }
+            defaultOpen={true}
+            disabled={props.saveData.availableAbilityData.grayedOut}
         >
-            <DetailsSummary
-                summary={
-                    <div className="generic-ability-menu-tab">
-                        <span><StyledText>{translateControllerID(props.abilityId)}</StyledText></span>
-                        {nightIcon?<span>{translate("night.icon")}</span>:null}
-                    </div>
-                }
-                defaultOpen={true}
-                disabled={props.saveData.availableAbilityData.grayedOut}
-            >
-                {inner}
-            </DetailsSummary>
-        </div>
+            {inner}
+        </DetailsSummary>
+        
     }else{
-        return <div
-            key={props.key}
-            className="small-role-specific-menu"
-        >
-            <div className="generic-ability-menu-tab-no-summary">
+        return <>
+            <div className="generic-ability-menu generic-ability-menu-tab-no-summary">
                 <span>
                     {
                         props.saveData.availableAbilityData.grayedOut === true ?
@@ -216,7 +210,7 @@ function SingleAbilityMenu(props: Readonly<{
                 <>{inner}</>
                 : null
             }
-        </div>
+        </>
     }
     
 }

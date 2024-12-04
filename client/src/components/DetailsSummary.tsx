@@ -11,6 +11,8 @@ export default function DetailsSummary(props: Readonly<{
     open?: boolean,
     disabled?: boolean,
     onClick?: () => void
+    className?: string
+    summaryClassName?: string
 }>): ReactElement {
 
     const [openState, setOpen] = React.useState(props.defaultOpen??false);
@@ -21,7 +23,7 @@ export default function DetailsSummary(props: Readonly<{
         return openState;
     }, [props.open, openState, props.disabled]);
 
-    return <div className="details-summary-container">
+    return <div className={"details-summary-container "+(props.className??"")}>
         <div className="details-summary-summary-container"
             onClick={() => {
                 if(props.disabled) return;
