@@ -4,3 +4,20 @@
     justify-content: space-between;
     width: 100%;
 }
+.generic-ability-menu-tab-no-summary {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: .4rem;
+    margin-bottom: .13rem;
+    background-color: var(--secondary-color);
+    border-style: solid;
+    border-color: var(--primary-border-color);
+    border-radius: .4rem;
+    border-width: .13rem;
+}
+.generic-ability-menu-tab-no-summary > span{
+    display: inline-flex;
+}

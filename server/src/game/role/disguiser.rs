@@ -35,20 +35,19 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 impl RoleStateImpl for Disguiser {
     type ClientRoleState = Disguiser;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        match priority {
-            Priority::Deception => {
-                
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-                let Some(first_visit) = actor_visits.first() else {return};
-                
-                actor_ref.remove_player_tag_on_all(game, crate::game::tag::Tag::Disguise);
-                self.current_target = Some(first_visit.target);
-                actor_ref.push_player_tag(game, first_visit.target, crate::game::tag::Tag::Disguise);
 
-                actor_ref.set_role_state(game, self);
-            },
-            _ => {}
-        }
+        if priority != Priority::Deception {return}
+                
+        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        let Some(first_visit) = actor_visits.first() else {return};
+        
+        if !InsiderGroupID::in_same_revealed_group(game, actor_ref, first_visit.target) {return}
+
+        actor_ref.remove_player_tag_on_all(game, crate::game::tag::Tag::Disguise);
+        self.current_target = Some(first_visit.target);
+        actor_ref.push_player_tag(game, first_visit.target, crate::game::tag::Tag::Disguise);
+
+        actor_ref.set_role_state(game, self);
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
@@ -77,7 +76,7 @@ impl RoleStateImpl for Disguiser {
             Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),
             false,
-            self.players_with_disguiser_menu(actor_ref)
+            vec_set!(actor_ref)
         ).combine_overwrite_owned(
             ControllerParametersMap::new_controller_fast(
                 game,

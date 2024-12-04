@@ -4,6 +4,7 @@ import { ContentMenu, ContentTab } from "../../GameScreen";
 import { useGameState } from "../../../../components/useHooks";
 import OldSelectionType from "./AbilitySelectionTypes/OldSelectionMenu";
 import GenericAbilityMenu from "./GenericAbilityMenu";
+import "./abilityMenu.css";
 
 export default function AbilityMenu(): ReactElement {
     const mySpectator = useGameState(
@@ -11,7 +12,7 @@ export default function AbilityMenu(): ReactElement {
         ["gamePlayers", "acceptJoin"]
     )!;
 
-    return <div className="role-specific-colors">
+    return <div className="ability-menu role-specific-colors">
         <ContentTab close={ContentMenu.RoleSpecificMenu} helpMenu={"standard/abilityMenu"}>
             {translate("menu.ability.title")}
         </ContentTab>
