@@ -131,8 +131,6 @@ export type RoleState = {
     cremationsRemaining: number
 } | {
     type: "forger",
-    fakeRole: Role,
-    fakeWill: string,
     forgesRemaining: number,
 } | {
     type: "disguiser",
@@ -224,7 +222,6 @@ export type SingleRoleJsonData = {
     armor: boolean,
     aura: null | "innocent" | "suspicious",
     maxCount: null | number,
-    roleSpecificMenu: boolean,
     canWriteDeathNote: boolean,
     canBeConvertedTo: Role[],
     chatMessages: ChatMessageVariant[] 

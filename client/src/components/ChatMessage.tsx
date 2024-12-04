@@ -94,22 +94,28 @@ const ChatElement = React.memo((
                 }}/>
             </span>
         </div>
+        case "reporterReport":
+            style += " block";
+        break;
         case "abilityUsed":
-            if(message.variant.selection.type === "kira"){
-                return <div className={"chat-message-div chat-message kira-guess-results " + style}>
-                    <StyledText
-                        className="chat-message result"
-                        playerKeywordData={props.playerKeywordData}
-                    >{chatGroupIcon ?? ""} {translate("chatMessage.kiraSelection")}</StyledText>
-                    <KiraResultDisplay 
-                        map={{
-                            type: "selection",
-                            map: message.variant.selection.selection
-                        }}
-                        playerKeywordData={props.playerKeywordData}
-                        playerNames={playerNames}
-                    />
-                </div>
+            switch (message.variant.selection.type){
+                case "kira":
+                    return <div className={"chat-message-div chat-message kira-guess-results " + style}>
+                        <StyledText
+                            className="chat-message result"
+                            playerKeywordData={props.playerKeywordData}
+                        >{chatGroupIcon ?? ""} {translate("chatMessage.kiraSelection")}</StyledText>
+                        <KiraResultDisplay 
+                            map={{
+                                type: "selection",
+                                map: message.variant.selection.selection
+                            }}
+                            playerKeywordData={props.playerKeywordData}
+                            playerNames={playerNames}
+                        />
+                    </div>
+                case "string":
+                    style += " block"
             }
         break;
         case "kiraResult":
@@ -506,6 +512,9 @@ export function translateChatMessage(
                     
 
                     out = translate("chatMessage.abilityUsed.selection.twoRoleOutlineOption", first, second);
+                    break;
+                case "string":
+                    out = translate("chatMessage.abilityUsed.selection.string", sanitizePlayerMessage(replaceMentions(message.selection.selection)));
                     break;
                 default:
                     out = "";

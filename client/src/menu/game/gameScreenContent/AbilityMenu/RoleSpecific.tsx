@@ -3,7 +3,6 @@ import React, { ReactElement, useMemo } from "react";
 import AuditorMenu from "./RoleSpecificMenus/AuditorMenu";
 import LargeReporterMenu from "./RoleSpecificMenus/LargeReporterMenu";
 import LargeHypnotistMenu from "./RoleSpecificMenus/LargeHypnotistMenu";
-import LargeForgerMenu from "./RoleSpecificMenus/LargeForgerMenu";
 import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
 import Counter from "../../../../components/Counter";
 import StyledText from "../../../../components/StyledText";
@@ -41,8 +40,6 @@ export default function RoleSpecificSection(){
             return <LargeReporterMenu/>;
         case "hypnotist":
             return <LargeHypnotistMenu/>;
-        case "forger":
-            return <LargeForgerMenu/>;
         case "doomsayer":
             return <LargeDoomsayerMenu/>;
         case "jailor": 

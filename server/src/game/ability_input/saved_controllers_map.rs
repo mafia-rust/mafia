@@ -254,6 +254,21 @@ impl SavedControllersMap{
                 }
             )
     }
+
+    pub fn get_controller_current_selection_string(
+        &self,
+        id: ControllerID
+    )->Option<StringSelection>{
+        self
+            .get_controller_current_selection(id)
+            .and_then(|selection| 
+                if let AbilitySelection::String { selection } = selection {
+                    Some(selection)
+                }else{
+                    None
+                }
+            )
+    }
     
     pub fn get_controller_current_selection_kira(
         &self,

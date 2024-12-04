@@ -454,10 +454,12 @@
 
     "role.forger.name": "Forger",
     "role.forger.name:var.0": "Forgers",
-    "role.forger.target": "Forge",
     "role.forger.menu.forgesRemaining": "\\0 forges remaining",
     "role.forger.youAreSelecting": "You are forging \\0.",
     "role.forger.youAreSelecting.null": "You aren't forging anyone.",
+    "controllerId.forger.0.name": "Forger Target",
+    "controllerId.forger.1.name": "Forger Role",
+    "controllerId.forger.2.name": "Forger Alibi",
 
     "role.framer.name": "Framer",
     "role.framer.name:var.0": "Framers",
@@ -486,9 +488,9 @@
 
     "role.jester.name": "Jester",
     "role.jester.name:var.0": "Jesters",
-    "role.jester.target": "Haunt",
     "role.jester.youAreSelecting": "You are getting your revenge on \\0.",
     "role.jester.youAreSelecting.null": "You aren't getting your revenge on anyone.",
+    "controllerId.jester.0.name": "Jester Haunt",
 
     "role.revolutionary.name": "Revolutionary",
     "role.revolutionary.name:var.0": "Revolutionaries",
@@ -868,12 +870,13 @@
     "chatMessage.abilityUsed.selection.roleOption":" selecting \\0",
     "chatMessage.abilityUsed.selection.twoRoleOption":" selecting \\0 and \\1",
     "chatMessage.abilityUsed.selection.twoRoleOutlineOption":" selecting \\0 and \\1",
+    "chatMessage.abilityUsed.selection.string":" set to\n\\0",
 
     "chatMessage.mayorRevealed":"\\0 has enfranchised!",
     "chatMessage.mayorCantWhisper":"You can not whisper with an enfranchised player.",
     "chatMessage.politicianCountdownStarted":"The politician is about to seize control of the town! This is your last chance to execute them before they take over!",
     "chatMessage.martyrRevealed":"Praise the Martyr \\0, for they will lead us to harmony!",
-    "chatMessage.reporterReport":"The town report states this: \\0",
+    "chatMessage.reporterReport":"The town report states this:\n\\0",
     "chatMessage.youAreInterviewingPlayer":"You are interviewing \\0.",
     "chatMessage.playerIsBeingInterviewed":"\\0 is being interviewed by a reporter",
     "chatMessage.jailedTarget": "You put \\0 into jail.",

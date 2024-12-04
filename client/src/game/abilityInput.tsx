@@ -108,6 +108,9 @@ export type AbilitySelection = {
     type: "twoRoleOutlineOption"
     selection: TwoRoleOutlineOptionSelection
 } | {
+    type: "string",
+    selection: StringSelection
+} | {
     type: "kira",
     selection: KiraSelection
 }
@@ -128,6 +131,8 @@ export function defaultAbilitySelection(available: AvailableAbilitySelection): A
             return {type: "twoRoleOption", selection: [null, null]};
         case "twoRoleOutlineOption":
             return {type: "twoRoleOutlineOption", selection: [null, null]};
+        case "string":
+            return {type: "string", selection: ""};
         case "kira":
             return {type: "kira", selection: []};
     }
@@ -153,6 +158,8 @@ export type AvailableAbilitySelection = {
 } | {
     type: "twoRoleOutlineOption"
     selection: AvailableTwoRoleOutlineOptionSelection,
+} | {
+    type: "string"
 } | {
     type: "kira",
     selection: AvailableKiraSelection
@@ -183,6 +190,8 @@ export type AvailableTwoRoleOptionSelection = {
 
 export type TwoRoleOutlineOptionSelection = [PlayerIndex | null, PlayerIndex | null];
 export type AvailableTwoRoleOutlineOptionSelection = (number | null)[];
+
+export type StringSelection = string;
 
 export type KiraSelection = ListMapData<PlayerIndex, KiraGuess>
 export type AvailableKiraSelection = {

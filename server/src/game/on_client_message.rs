@@ -306,12 +306,7 @@ impl Game {
                 }
             },
             ToServerPacket::SetForgerWill { role, will } => {
-                if let RoleState::Forger(mut forger) = sender_player_ref.role_state(self).clone(){
-                    forger.fake_role = role;
-                    forger.fake_will = will;
-                    sender_player_ref.set_role_state(self, RoleState::Forger(forger));
-                }
-                else if let RoleState::Counterfeiter(mut counterfeiter) = sender_player_ref.role_state(self).clone(){
+                if let RoleState::Counterfeiter(mut counterfeiter) = sender_player_ref.role_state(self).clone(){
                     counterfeiter.fake_role = role;
                     counterfeiter.fake_will = will;
                     sender_player_ref.set_role_state(self, RoleState::Counterfeiter(counterfeiter));

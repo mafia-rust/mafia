@@ -23,3 +23,13 @@ impl AbilityInput{
         Some(selection)
     }
 }
+
+#[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct StringSelection(pub String);
+impl AbilityInput{
+    pub fn get_string_selection_if_id(&self, id: ControllerID)->Option<BooleanSelection>{
+        if id != self.id() {return None};
+        let AbilitySelection::Boolean { selection } = self.selection() else {return None};
+        Some(selection)
+    }
+}

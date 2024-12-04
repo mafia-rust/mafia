@@ -22,6 +22,7 @@ pub enum AvailableAbilitySelection{
     RoleOption{selection: AvailableRoleOptionSelection},
     TwoRoleOption{selection: AvailableTwoRoleOptionSelection},
     TwoRoleOutlineOption{selection: AvailableTwoRoleOutlineOptionSelection},
+    String,
     Kira{selection: AvailableKiraSelection}
 }
 impl AvailableAbilitySelection{
@@ -57,6 +58,9 @@ impl AvailableAbilitySelection{
     pub fn new_two_role_outline_option(available_outlines: VecSet<Option<RoleOutlineReference>>)->Self{
         Self::TwoRoleOutlineOption{selection: AvailableTwoRoleOutlineOptionSelection(available_outlines)}
     }
+    pub fn new_string()->Self{
+        Self::String
+    }
     pub fn new_kira(selection: AvailableKiraSelection)->Self{
         Self::Kira{selection}
     }
@@ -88,6 +92,7 @@ impl ValidateAvailableSelection for AvailableAbilitySelection{
                 let AbilitySelection::TwoRoleOutlineOption{selection} = selection else {return false};
                 return available.validate_selection(game, selection);
             },
+            Self::String => {true},
             Self::Kira{ selection: available} => {
                 let AbilitySelection::Kira { selection } = selection else {return false};
                 return available.validate_selection(game, selection);

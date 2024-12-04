@@ -50,6 +50,15 @@
     "role/mortician/0": {
         "midnight": true
     },
+    "role/forger/0": {
+        "midnight": true
+    },
+    "role/forger/1": {
+        "midnight": false
+    },
+    "role/forger/2": {
+        "midnight": false
+    },
     "role/disguiser/0": {
         "midnight": true
     },
@@ -60,6 +69,9 @@
         "midnight": true
     },
     "role/consort/0": {
+        "midnight": true
+    },
+    "role/jester/0": {
         "midnight": true
     },
     "role/politician/0": {

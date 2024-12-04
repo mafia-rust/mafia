@@ -10,7 +10,8 @@ import {
     RoleOptionSelection,
     SavedController,
     controllerIdToLink,
-    singleAbilityJsonData
+    singleAbilityJsonData,
+    StringSelection
 } from "../../../../game/abilityInput";
 import React from "react";
 import { usePlayerState } from "../../../../components/useHooks";
@@ -28,6 +29,7 @@ import RoleOptionSelectionMenu from "./AbilitySelectionTypes/RoleOptionSelection
 import "./genericAbilityMenu.css";
 import DetailsSummary from "../../../../components/DetailsSummary";
 import translate from "../../../../game/lang";
+import StringSelectionMenu from "./AbilitySelectionTypes/StringSelectionMenu";
 
 export default function GenericAbilityMenu(): ReactElement {
     const savedAbilities = usePlayerState(
@@ -258,6 +260,32 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
                         id,
                         selection: {
                             type: "twoRoleOutlineOption",
+                            selection: selection
+                        }
+                    });
+                }}
+            />
+        }
+        case "string":{
+            let input: StringSelection;
+            if(
+                props.selected === null ||
+                props.selected.type !== "string"
+            ){
+                input = "";
+            }else{
+                input = props.selected.selection;
+            }
+
+            return <StringSelectionMenu
+                id={id}
+                selection={input}
+                key={props.key}
+                onChoose={(selection) => {
+                    GAME_MANAGER.sendAbilityInput({
+                        id,
+                        selection: {
+                            type: "string",
                             selection: selection
                         }
                     });
