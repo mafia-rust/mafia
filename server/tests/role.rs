@@ -242,7 +242,7 @@ fn mortician_obscures_on_stand(){
         gf: Godfather
     );
 
-    mortician.set_night_selection_single(townie);
+    mortician.send_ability_input_one_player_typical(townie);
     game.skip_to(Nomination, 2);
     
     jail.vote_for_player(Some(townie));
@@ -1690,7 +1690,7 @@ fn godfather_wardblock_still_kills() {
     assert!(rev.send_ability_input_one_player_typical(townie_a));
     assert!(godfather.set_night_selection(vec![townie_a]));
     assert!(godfather.day_target(jan));
-    assert!(jan.set_night_selection(vec![townie_b]));
+    assert!(jan.send_ability_input_one_player_typical(townie_b));
 
     game.next_phase();
     assert_not_contains!(

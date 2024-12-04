@@ -447,10 +447,10 @@
     
     "role.mortician.name": "Mortician",
     "role.mortician.name:var.0": "Morticians",
-    "role.mortician.target": "Tag",
     "role.mortician.roleDataText": "\\0 cremations remaining",
     "role.mortician.youAreSelecting": "You are tagging \\0 for cremation.",
     "role.mortician.youAreSelecting.null": "You aren't tagging anyone.",
+    "controllerId.mortician.0.name": "Mortician Tag",
 
     "role.forger.name": "Forger",
     "role.forger.name:var.0": "Forgers",

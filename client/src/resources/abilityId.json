@@ -44,6 +44,9 @@
     "role/informant/0": {
         "midnight": true
     },
+    "role/mortician/0": {
+        "midnight": true
+    },
     "role/disguiser/0": {
         "midnight": true
     },
