@@ -63,7 +63,7 @@ export default function CounterfeiterMenu (props: {}): ReactElement {
             </select>
         </div>
         <Counter max={3} current={forgesRemaining}>
-            {translate("role.forger.menu.forgesRemaining", forgesRemaining)}
+            {translate("role.forger.roleDataText", forgesRemaining)}
         </Counter>
         <TextDropdownArea
             open={true}

@@ -105,6 +105,13 @@ export default function RoleSpecificSection(){
             return <MarksmanRoleSpecificMenu roleState={roleState} />;
         case "counterfeiter":
             return <CounterfeiterMenu/>;
+        case "forger":
+            return <Counter
+                max={3}
+                current={roleState.forgesRemaining}
+            >
+                <StyledText>{translate("role.forger.roleDataText", roleState.forgesRemaining)}</StyledText>
+            </Counter>
         case "mortician":
             return <Counter
                 max={3}

@@ -334,7 +334,7 @@
     "role.forger.name": "Frgr",
     "role.forger.name:var.0": "Frgrs",
     "role.forger.target": "Frg",
-    "role.forger.menu.forgesRemaining": "\\0 frgs rmnng",
+    "role.forger.roleDataText": "\\0 frgs rmnng",
     "role.forger.youAreSelecting": "Y r frgng \\0.",
     "role.forger.youAreSelecting.null": "Y rn't frgng nyn.",
     "role.framer.name": "Frmr",

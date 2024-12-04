@@ -454,7 +454,7 @@
 
     "role.forger.name": "Forger",
     "role.forger.name:var.0": "Forgers",
-    "role.forger.menu.forgesRemaining": "\\0 forges remaining",
+    "role.forger.roleDataText": "\\0 forges remaining",
     "role.forger.youAreSelecting": "You are forging \\0.",
     "role.forger.youAreSelecting.null": "You aren't forging anyone.",
     "controllerId.forger.0.name": "Forger Target",
