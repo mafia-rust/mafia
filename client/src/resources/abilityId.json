@@ -2,6 +2,27 @@
     "role/detective/0": {
         "midnight": true
     },
+    "role/lookout/0": {
+        "midnight": true
+    },
+    "role/tracker/0": {
+        "midnight": true
+    },
+    "role/spy/0": {
+        "midnight": true
+    },
+    "role/psychic/0": {
+        "midnight": true
+    },
+    "role/snoop/0": {
+        "midnight": true
+    },
+    "role/gossip/0": {
+        "midnight": true
+    },
+    "role/bouncer/0": {
+        "midnight": true
+    },
     "role/armorsmith/0": {
         "midnight": true
     },
@@ -11,11 +32,23 @@
     "role/deputy/0": {
         "midnight": false
     },
+    "role/escort/0": {
+        "midnight": true
+    },
+    "role/informant/0": {
+        "midnight": true
+    },
     "role/disguiser/0": {
         "midnight": true
     },
     "role/disguiser/1": {
         "midnight": false
+    },
+    "role/consort/0": {
+        "midnight": true
+    },
+    "role/scarecrow/0": {
+        "midnight": true
     },
     "role/serialKiller/0": {
         "midnight": true

@@ -195,15 +195,14 @@
 
     "role.detective.name":"Detective",
     "role.detective.name:var.0":"Detectives",
-    "role.detective.target": "Interrogate",
     "controllerId.detective.0.name": "Detective Interrogate",
     "role.detective.youAreSelecting": "You are interrogating \\0.",
     "role.detective.youAreSelecting.null": "You aren't to interrogating anybody",
 
     "role.lookout.name": "Lookout",
     "role.lookout.name:var.0": "Lookouts",
-    "role.lookout.target": "Watch",
     "role.lookout.youAreSelecting": "You are looking out for \\0.",
+    "controllerId.lookout.0.name": "Lookout Watch",
     
     "role.philosopher.name": "Philosopher",
     "role.philosopher.name:var.0": "Philosophers",
@@ -213,18 +212,19 @@
 
     "role.tracker.name": "Tracker",
     "role.tracker.name:var.0": "Trackers",
-    "role.tracker.target": "Track",
     "role.tracker.youAreSelecting": "You are tracking \\0.",
     "role.tracker.youAreSelecting.null": "You aren't tracking anybody",
+    "controllerId.tracker.0.name": "Tracker Track",
     
     "role.psychic.name": "Psychic",
     "role.psychic.name:var.0": "Psychics",
+    "controllerId.psychic.0.name": "Psychic Read",
     
     "role.spy.name": "Spy",
     "role.spy.name:var.0": "Spies",
-    "role.spy.target": "Bug",
     "role.spy.youAreSelecting": "You are placing a bug on \\0.",
     "role.spy.youAreSelecting.null": "You aren't spying on anybody",
+    "controllerId.spy.0.name": "Spy Bug",
 
     "role.auditor.name": "Auditor",
     "role.auditor.name:var.0": "Auditors",
@@ -235,15 +235,15 @@
     "role.snoop.name:var.1": "Snoopy",
     "role.snoop.name:var.2": "Snoopies",
     "role.snoop.name:var.3": "Snoopys",
-    "role.snoop.target": "Snoop",
     "role.snoop.youAreSelecting": "You are snooping on \\0.",
     "role.snoop.youAreSelecting.null": "You aren't snooping on anybody",
+    "controllerId.snoop.0.name": "Snoop Snoop",
 
     "role.gossip.name": "Gossip",
     "role.gossip.name:var.0": "Gossips",
-    "role.gossip.target": "Eavesdrop",
     "role.gossip.youAreSelecting": "You are eavesdropping on \\0.",
     "role.gossip.youAreSelecting.null": "You aren't eavesdropping on anyone.",
+    "controllerId.gossip.0.name": "Gossip Eavesdrop",
 
     "role.tallyClerk.name": "Tally Clerk",
     "role.tallyClerk.name:var.0": "Tally Clerks",
@@ -271,9 +271,9 @@
 
     "role.bouncer.name": "Bouncer",
     "role.bouncer.name:var.0": "Bouncers",
-    "role.bouncer.target": "Party",
     "role.bouncer.youAreSelecting": "You are bouncing \\0's party",
     "role.bouncer.youAreSelecting.null": "You aren't bouncing any parties.",
+    "controllerId.bouncer.0.name": "Bouncer Ward",
 
     "role.engineer.name": "Engineer",
     "role.engineer.name:var.0": "Engineers",
@@ -287,7 +287,6 @@
 
     "role.armorsmith.name": "Armorsmith",
     "role.armorsmith.name:var.0": "Armorsmiths",
-    "role.armorsmith.target": "Open",
     "role.armorsmith.roleDataText": "\\0 uses remaining.",
     "role.armorsmith.youAreSelecting": "You are opening shop tonight.",
     "role.armorsmith.youAreSelecting.null": "You aren't opening shop tonight.",
@@ -314,6 +313,7 @@
     "role.escort.target": "Roleblock",
     "role.escort.youAreSelecting": "You are escorting \\0 somewhere private.",
     "role.escort.youAreSelecting.null": "You aren't escorting anyone.",
+    "controllerId.escort.0.name": "Escort Roleblock",
 
     "role.medium.name": "Medium",
     "role.medium.name:var.0": "Mediums",
@@ -434,6 +434,7 @@
     "role.informant.target": "Investigate",
     "role.informant.youAreSelecting": "You are investigating \\0.",
     "role.informant.youAreSelecting.null": "You aren't investigating anyone.",
+    "controllerId.informant.0.name": "Informant Investigate",
 
     "role.necromancer.name": "Necromancer",
     "role.necromancer.name:var.0": "Necromancers",
@@ -509,6 +510,7 @@
     "role.scarecrow.target": "Ward",
     "role.scarecrow.youAreSelecting": "You are warding \\0.",
     "role.scarecrow.youAreSelecting.null": "You aren't warding anyone.",
+    "controllerId.scarecrow.0.name": "Scarecrow Ward",
 
     "role.warper.name": "Warper",
     "role.warper.name:var.0": "Warpers",

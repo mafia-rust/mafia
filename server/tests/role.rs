@@ -1273,7 +1273,7 @@ fn snoop_basic() {
         snoop: Snoop
     );
 
-    assert!(snoop.set_night_selection_single(det));
+    assert!(snoop.send_ability_input_one_player_typical(det));
     assert!(det.send_ability_input_one_player_typical(snoop));
     game.next_phase();
     assert_contains!(
@@ -1283,7 +1283,7 @@ fn snoop_basic() {
 
     game.skip_to(Night, 2);
 
-    assert!(snoop.set_night_selection_single(det));
+    assert!(snoop.send_ability_input_one_player_typical(det));
     game.next_phase();
     assert_contains!(
         snoop.get_messages(),
@@ -1292,7 +1292,7 @@ fn snoop_basic() {
 
     game.skip_to(Night, 3);
 
-    assert!(snoop.set_night_selection_single(gf));
+    assert!(snoop.send_ability_input_one_player_typical(gf));
     game.next_phase();
     assert_contains!(
         snoop.get_messages_after_last_message(
@@ -1357,7 +1357,7 @@ fn gossip_basic_friends() {
         _gf: Godfather
     );
 
-    assert!(gossip.set_night_selection_single(t1));
+    assert!(gossip.send_ability_input_one_player_typical(t1));
     assert!(t1.send_ability_input_one_player_typical(t2));
 
     game.next_phase();
@@ -1377,8 +1377,8 @@ fn gossip_basic_enemies_inverted() {
         py: Pyrolisk
     );
 
-    assert!(gossip.set_night_selection_single(py));
-    assert!(py.set_night_selection_single(t1));
+    assert!(gossip.send_ability_input_one_player_typical(py));
+    assert!(py.send_ability_input_one_player_typical(t1));
 
     game.next_phase();
 
@@ -1397,7 +1397,7 @@ fn gossip_basic_enemies() {
         py: Pyrolisk
     );
 
-    assert!(gossip.set_night_selection_single(t1));
+    assert!(gossip.send_ability_input_one_player_typical(t1));
     assert!(t1.send_ability_input_one_player_typical(py));
 
     game.next_phase();
@@ -1418,7 +1418,7 @@ fn gossip_framer() {
         _gf: Godfather    
     );
 
-    assert!(gossip.set_night_selection_single(townie));
+    assert!(gossip.send_ability_input_one_player_typical(townie));
     assert!(townie.send_ability_input_one_player_typical(framer));
 
     game.next_phase();
@@ -1430,7 +1430,7 @@ fn gossip_framer() {
 
     game.skip_to(Night, 2);
 
-    assert!(gossip.set_night_selection_single(townie));
+    assert!(gossip.send_ability_input_one_player_typical(townie));
     assert!(townie.send_ability_input_one_player_typical(framer));
     assert!(framer.set_night_selection(vec![townie, gossip]));
 
@@ -1443,7 +1443,7 @@ fn gossip_framer() {
 
     game.skip_to(Night, 3);
 
-    assert!(gossip.set_night_selection_single(t2));
+    assert!(gossip.send_ability_input_one_player_typical(t2));
     assert!(t2.send_ability_input_one_player_typical(townie));
     assert!(framer.set_night_selection(vec![townie, gossip]));
 
@@ -1456,7 +1456,7 @@ fn gossip_framer() {
 
     game.skip_to(Night, 4);
 
-    assert!(gossip.set_night_selection_single(t2));
+    assert!(gossip.send_ability_input_one_player_typical(t2));
     assert!(t2.send_ability_input_one_player_typical(townie));
 
     game.next_phase();
@@ -1510,7 +1510,7 @@ fn bouncer_jailor_double_block() {
     game.next_phase();
 
     det.send_ability_input_one_player_typical(gf);
-    b.set_night_selection_single(gf);
+    b.send_ability_input_one_player_typical(gf);
 
     game.next_phase();
 
@@ -1536,7 +1536,7 @@ fn bouncer_ojo_block() {
         previously_given_results: Vec::new(),
         chosen_outline: TwoRoleOutlineOptionSelection(None, None),
     }));
-    b.set_night_selection_single(det1);
+    b.send_ability_input_one_player_typical(det1);
 
     game.next_phase();
 
@@ -1564,7 +1564,7 @@ fn godfather_backup_sets_off_engineer_trap() {
 
         assert!(gf.day_target(backup));
         assert!(backup.set_night_selection_single(esc));
-        assert!(esc.set_night_selection_single(gf));
+        assert!(esc.send_ability_input_one_player_typical(gf));
         assert!(eng.set_night_selection_single(esc));
 
         game.next_phase();
@@ -1584,7 +1584,7 @@ fn godfather_backup_sets_off_engineer_trap() {
 
         assert!(gf.day_target(backup));
         assert!(backup.set_night_selection_single(esc));
-        assert!(esc.set_night_selection_single(gf));
+        assert!(esc.send_ability_input_one_player_typical(gf));
         assert!(eng.set_night_selection_single(esc));
 
         game.next_phase();
@@ -1605,7 +1605,7 @@ fn godfather_backup_sets_off_engineer_trap() {
 
         assert!(gf.day_target(backup));
         assert!(backup.set_night_selection_single(esc));
-        assert!(esc.set_night_selection_single(gf));
+        assert!(esc.send_ability_input_one_player_typical(gf));
         assert!(eng.set_night_selection_single(esc));
 
         game.next_phase();
@@ -1625,7 +1625,7 @@ fn godfather_backup_sets_off_engineer_trap() {
 
         assert!(gf.day_target(backup));
         assert!(backup.set_night_selection_single(esc));
-        assert!(esc.set_night_selection_single(gf));
+        assert!(esc.send_ability_input_one_player_typical(gf));
         assert!(eng.set_night_selection_single(esc));
 
         game.next_phase();
@@ -1645,7 +1645,7 @@ fn godfather_backup_sets_off_engineer_trap() {
 
         assert!(gf.day_target(backup));
         assert!(backup.set_night_selection_single(esc));
-        assert!(esc.set_night_selection_single(gf));
+        assert!(esc.send_ability_input_one_player_typical(gf));
         assert!(eng.set_night_selection_single(esc));
 
         game.next_phase();
@@ -1665,7 +1665,7 @@ fn godfather_backup_sets_off_engineer_trap() {
 
         assert!(gf.day_target(backup));
         assert!(backup.set_night_selection_single(esc));
-        assert!(esc.set_night_selection_single(gf));
+        assert!(esc.send_ability_input_one_player_typical(gf));
         assert!(eng.set_night_selection_single(esc));
 
         game.next_phase();
@@ -1887,7 +1887,7 @@ fn deputy_shoots_marionette(){
 
     game.skip_to(Discussion, 2);
 
-    deputy.day_target(townie);
+    deputy.send_ability_input_one_player_typical(townie);
 
     assert!(puppeteer.alive());
     assert!(!townie.alive());
@@ -2390,7 +2390,7 @@ fn armorsmith_doesnt_get_wardblocked_when_warded(){
     );
 
     assert!(gf.set_night_selection_single(bouncer));
-    assert!(bouncer.set_night_selection_single(armor));
+    assert!(bouncer.send_ability_input_one_player_typical(armor));
     assert!(armor.send_ability_input_boolean_typical(true));
 
     game.next_phase();
