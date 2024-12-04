@@ -99,7 +99,7 @@ export default function RoleSpecificSection(){
             </Counter>
         case "armorsmith":
             return <Counter
-                max={2}
+                max={3}
                 current={roleState.openShopsRemaining}
             >
                 <StyledText>{translate("role.armorsmith.roleDataText", roleState.openShopsRemaining)}</StyledText>

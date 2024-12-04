@@ -1,14 +1,20 @@
 {
-    "syndicateGunItemShoot": {
+    "role/detective/0": {
         "midnight": true
     },
-    "role/detective/0": {
+    "role/armorsmith/0": {
+        "midnight": true
+    },
+    "role/veteran/0": {
         "midnight": true
     },
     "role/disguiser/0": {
         "midnight": true
     },
     "role/kira/0": {
+        "midnight": true
+    },
+    "syndicateGunItemShoot": {
         "midnight": true
     }
 }

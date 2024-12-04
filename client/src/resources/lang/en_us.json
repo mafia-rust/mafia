@@ -291,6 +291,7 @@
     "role.armorsmith.roleDataText": "\\0 uses remaining.",
     "role.armorsmith.youAreSelecting": "You are opening shop tonight.",
     "role.armorsmith.youAreSelecting.null": "You aren't opening shop tonight.",
+    "controllerId.armorsmith.0.name": "Armorsmith Open Shop",
 
     "role.steward.name": "Steward",
     "role.steward.name:var.0": "Stewards",
@@ -347,6 +348,7 @@
     "role.veteran.roleDataText": "\\0 rampages remaining",
     "role.veteran.youAreSelecting": "You are rampaging tonight.",
     "role.veteran.youAreSelecting.null": "You aren't rampaging tonight.",
+    "controllerId.veteran.0.name": "Veteran Rampage",
 
     "role.marksman.name": "Marksman",
     "role.marksman.name:var.0": "Marksmen",
