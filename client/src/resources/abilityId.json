@@ -8,7 +8,16 @@
     "role/veteran/0": {
         "midnight": true
     },
+    "role/deputy/0": {
+        "midnight": false
+    },
     "role/disguiser/0": {
+        "midnight": true
+    },
+    "role/disguiser/1": {
+        "midnight": false
+    },
+    "role/serialKiller/0": {
         "midnight": true
     },
     "role/kira/0": {

@@ -363,7 +363,7 @@
 
     "role.deputy.name": "Deputy",
     "role.deputy.name:var.0": "Deputies",
-    "role.deputy.dayTarget": "Shoot",
+    "controllerId.deputy.0.name": "Deputy Shoot",
     
     "role.rabblerouser.name": "Rabblerouser",
     "role.rabblerouser.name:var.0": "Rabblerousers",
@@ -566,6 +566,7 @@
     "role.serialKiller.target": "Attack",
     "role.serialKiller.youAreSelecting": "You are attacking \\0.",
     "role.serialKiller.youAreSelecting.null": "You aren't attacking anyone.",
+    "controllerId.serialKiller.0.name": "Serial Killer Kill",
 
     "role.fiendsWildcard.name": "Fiends Wildcard",
     "role.fiendsWildcard.name:var.0": "Fiends Wildcards",

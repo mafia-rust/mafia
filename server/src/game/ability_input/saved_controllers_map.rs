@@ -2,12 +2,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     game::{
-        chat::ChatMessageVariant, 
-        components::{
+        chat::ChatMessageVariant, components::{
             forfeit_vote::ForfeitVote, insider_group::InsiderGroupID,
             pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem
-        },
-        phase::PhaseType, player::PlayerReference, Game
+        }, event::on_validated_ability_input_received::OnValidatedAbilityInputReceived, phase::PhaseType, player::PlayerReference, Game
     },
     packet::ToClientPacket,
     vec_map::VecMap, vec_set::VecSet
@@ -37,11 +35,15 @@ impl SavedControllersMap{
         actor: PlayerReference,
         ability_input: AbilityInput
     )->bool{
-        let (id, incoming_selection) = (ability_input.id, ability_input.selection);
+        let AbilityInput{
+            id, selection: incoming_selection
+        } = ability_input.clone();
 
         if !Self::set_selection_in_controller(game, actor, id.clone(), incoming_selection.clone(), false) {
             return false;
         }
+
+        OnValidatedAbilityInputReceived::new(actor, ability_input).invoke(game);
 
         Self::send_selection_message(game, actor, id, incoming_selection);
         

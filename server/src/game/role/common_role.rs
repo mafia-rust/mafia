@@ -38,12 +38,14 @@ pub fn controller_parameters_map_one_player_night(
     game: &Game,
     actor_ref: PlayerReference,
     can_select_self: bool,
+    grayed_out: bool,
     ability_id: ControllerID,
 ) -> ControllerParametersMap {
     
     let grayed_out = 
         !actor_ref.alive(game) || 
-        Detained::is_detained(game, actor_ref);
+        Detained::is_detained(game, actor_ref) ||
+        grayed_out;
 
     ControllerParametersMap::new_one_player_ability_fast(
         game,
@@ -53,7 +55,6 @@ pub fn controller_parameters_map_one_player_night(
                 .into_iter()
                 .filter(|p| can_select_self || *p != actor_ref)
                 .filter(|player| 
-                    actor_ref != *player &&
                     player.alive(game) &&
                     !InsiderGroupID::in_same_revealed_group(game, actor_ref, *player)
                 )
