@@ -159,7 +159,7 @@ function SingleAbilityMenu(props: Readonly<{
     const nightIcon = singleAbilityJsonData(controllerIdToLink(props.abilityId))?.midnight;
 
     let controllerIdName = translateControllerID(props.abilityId);
-    if(props.abilityId.type === "role" && props.includeDropdown===false){
+    if(props.abilityId.type === "role" && props.includeDropdown === false){
         controllerIdName = (translateControllerIDNoRole(props.abilityId)??"");
     }
 
