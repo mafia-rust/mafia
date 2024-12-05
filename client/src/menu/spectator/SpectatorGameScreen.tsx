@@ -1,5 +1,4 @@
 import React, { ReactElement, useContext } from "react";
-import "./spectatorGameScreen.css";
 import "../game/gameScreen.css"
 import HeaderMenu from "../game/HeaderMenu";
 import { MenuController, useMenuController, MenuControllerContext, GameScreenMenus } from "../game/GameScreen";
