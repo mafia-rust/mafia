@@ -74,9 +74,6 @@ function useDayTargetedPlayers(): PlayerIndex[] {
         case "reporter":
             if (roleState.interviewedTarget !== null) return [roleState.interviewedTarget]
             break;
-        case "marksman":
-            if (roleState.state.type === "marks") return roleState.state.marks
-            break
     }
 
     return []

@@ -1,8 +1,10 @@
+use std::iter::once;
+
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
 use crate::game::components::detained::Detained;
-use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
+use crate::game::attack_power::DefensePower;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -11,51 +13,26 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleStateImpl, Role, RoleState};
+use crate::vec_set::{vec_set, VecSet};
+use super::{
+    AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, Priority, Role, 
+    RoleStateImpl, ThreePlayerOptionSelection
+};
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Marksman {
     state: MarksmanState
 }
 
-#[derive(Clone, Debug, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Serialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub(self) enum MarksmanState{
+    #[default]
     NotLoaded,
-    Marks{
-        marks: Vec<PlayerReference>
-    },
+    Loaded,
     ShotTownie
-}
-impl MarksmanState{
-    fn no_marks(&self)->bool{
-        self.marks().is_empty()
-    }
-    fn marks(&self)->Vec<PlayerReference> {
-        if let Self::Marks{marks} = self {
-            marks.clone()
-        }else{
-            Vec::new()
-        }
-    }
-    /// This function will mark an unmarked player or un-mark a marked player
-    /// if the action is invalid, then it will do nothing
-    fn toggle_mark(&mut self, p: PlayerReference){
-        let Self::Marks { marks } = self else {return};
-        if marks.contains(&p) {
-            marks.retain(|x| x != &p);
-        } else if marks.len() < 3 {
-            marks.push(p);
-        }
-    }
-}
-
-impl Default for Marksman {
-    fn default() -> Self {
-        Self { state: MarksmanState::NotLoaded }
-    }
 }
 
 
@@ -65,86 +42,132 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 impl RoleStateImpl for Marksman {
     type ClientRoleState = Marksman;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+        if priority != Priority::Kill {return};
+
+        let visiting_players: Vec<_> = actor_ref
+            .untagged_night_visits_cloned(game)
+            .into_iter()
+            .flat_map(|p|p.target.all_night_visitors_cloned(game))
+            .collect();
+
+        let Some(ThreePlayerOptionSelection(a, b, c)) = 
+            game.saved_controllers.get_controller_current_selection_three_player_option(
+                ControllerID::role(actor_ref, Role::Marksman, 0)
+            ) else 
+        {
+            return;
+        };
+
+        let marks = vec![a, b, c]
+            .into_iter()
+            .collect::<VecSet<_>>();
+
+        for mark in marks {
+            let Some(mark) = mark else {continue};
+
+            if !visiting_players.contains(&mark) {continue};
+            
+            let killed = mark.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Marksman), AttackPower::Basic, false);
+
+            if killed && mark.win_condition(game).is_loyalist_for(GameConclusion::Town) {
+                self.state = MarksmanState::ShotTownie;
+            }
+        }
         
-    
-        match priority {
-            Priority::Kill => {
-                let visiting_players: Vec<_> = actor_ref
-                    .untagged_night_visits_cloned(game)
-                    .into_iter()
-                    .flat_map(|p|p.target.all_night_visitors_cloned(game))
-                    .collect();
-
-                for mark in self.state.marks().into_iter() {
-                    
-                    if !visiting_players.contains(&mark) {continue};
-                    
-                    let killed = mark.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Marksman), AttackPower::Basic, false);
-
-                    if killed && mark.win_condition(game).is_loyalist_for(GameConclusion::Town) {
-                        self.state = MarksmanState::ShotTownie;
-                    }
-                }
-                
-                actor_ref.set_role_state(game, RoleState::Marksman(self));
-            },
-            _ => {}
-        }
-
+        actor_ref.set_role_state(game, self);
     }
-    fn do_day_action(mut self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
-        self.state.toggle_mark(target_ref);
-        if self.state.marks().len() == 0 {
-            actor_ref.set_selection(game, vec![]);
-        }
-        actor_ref.add_private_chat_message(game, 
-            ChatMessageVariant::MarksmanChosenMarks { marks: PlayerReference::ref_vec_to_index(&self.state.marks()) }
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
+        
+        let gray_out_mark = 
+            !actor_ref.alive(game) || 
+            Detained::is_detained(game, actor_ref) ||
+            self.state != MarksmanState::Loaded;
+
+        let available_mark_players = PlayerReference::all_players(game)
+            .into_iter()
+            .filter(|p|
+                p.alive(game) && 
+                *p != actor_ref
+            )
+            .map(|p|Some(p))
+            .chain(once(None))
+            .collect::<VecSet<_>>();
+        
+        let mark_controller_param = ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Marksman, 0),
+            AvailableAbilitySelection::new_three_player_option(
+                available_mark_players.clone(),
+                available_mark_players.clone(),
+                available_mark_players,
+                false
+            ),
+            AbilitySelection::new_three_player_option(None, None, None),
+            gray_out_mark,
+            Some(PhaseType::Obituary),
+            false,
+            vec_set!(actor_ref)
         );
-        actor_ref.set_role_state(game, RoleState::Marksman(self));
-    }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        let selection = actor_ref.selection(game);
+
+
+        let marked_players = 
+            game.saved_controllers.get_controller_current_selection_three_player_option(
+                ControllerID::role(actor_ref, Role::Marksman, 0)
+            );
+
+
+        let gray_out_camp = 
+            !actor_ref.alive(game) || 
+            Detained::is_detained(game, actor_ref) ||
+            self.state != MarksmanState::Loaded ||
+            if let Some(marked_players) = marked_players {
+                !marked_players.any_is_some()
+            }else{
+                true
+            };
+
+            let available_camp_players = PlayerReference::all_players(game)
+            .into_iter()
+            .filter(|p|
+                p.alive(game) && 
+                *p != actor_ref
+            )
+            .map(|p|Some(p))
+            .chain(once(None))
+            .collect::<VecSet<_>>();
         
-        !self.state.no_marks() &&
-        actor_ref != target_ref &&
-        !Detained::is_detained(game, actor_ref) &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game) && 
-        (
-            selection.len() < 3 &&
-            !selection.contains(&target_ref)
+        let camp_controller_param = ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Marksman, 1),
+            AvailableAbilitySelection::new_three_player_option(
+                available_camp_players.clone(),
+                available_camp_players.clone(),
+                available_camp_players,
+                false
+            ),
+            AbilitySelection::new_three_player_option(None, None, None),
+            gray_out_camp,
+            Some(PhaseType::Obituary),
+            false,
+            vec_set!(actor_ref)
+        );
+
+        mark_controller_param.combine_overwrite_owned(camp_controller_param)
+    }
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        crate::game::role::common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Marksman, 1),
+            false
         )
     }
-    fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        game.current_phase().is_night() &&
-        actor_ref != target_ref &&
-        actor_ref.alive(game) &&
-        !Detained::is_detained(game, actor_ref) &&
-        target_ref.alive(game) &&
-        matches!(self.state, MarksmanState::Marks { .. }) &&
-        ((
-            self.state.marks().len() == 3 &&
-            self.state.marks().contains(&target_ref)
-        ) || (
-            self.state.marks().len() < 3
-        ))
-    }
-    fn convert_selection_to_visits(self, _game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        if target_refs.len() <= 3 {
-            target_refs.into_iter().map(|p|
-                Visit::new_none(actor_ref, p, false)
-            ).collect()
-        }else{
-            vec![]
-        }
-    }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
-        if matches!(phase, PhaseType::Night|PhaseType::Obituary) && game.day_number() != 1 {
-            actor_ref.set_role_state(game, 
-                RoleState::Marksman(Marksman{
-                    state:MarksmanState::Marks { marks: Vec::new() }
-                })
-            )
+        if 
+            matches!(phase, PhaseType::Obituary) && 
+            matches!(self.state, MarksmanState::NotLoaded)
+        {
+            actor_ref.set_role_state(game, Marksman{state: MarksmanState::Loaded})
         }
     }
 }

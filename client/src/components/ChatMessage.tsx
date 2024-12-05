@@ -485,6 +485,13 @@ export function translateChatMessage(
                         message.selection.selection[1]===null?translate("nobody"):playerNames[message.selection.selection[1]],
                     );
                     break;
+                case "threePlayerOption":
+                    out = translate("chatMessage.abilityUsed.selection.threePlayerOption",
+                        message.selection.selection[0]===null?translate("nobody"):playerNames[message.selection.selection[0]],
+                        message.selection.selection[1]===null?translate("nobody"):playerNames[message.selection.selection[1]],
+                        message.selection.selection[2]===null?translate("nobody"):playerNames[message.selection.selection[2]],
+                    );
+                    break;
                 case "roleOption":
                     out = translate("chatMessage.abilityUsed.selection.roleOption",
                         message.selection.selection===null?translate("none"):translate("role."+message.selection.selection+".name")
@@ -681,11 +688,6 @@ export function translateChatMessage(
             return translate("chatMessage.puppeteerActionChosen."+message.action);
         case "recruiterActionChosen":
             return translate("chatMessage.recruiterActionChosen."+message.action);
-        case "marksmanChosenMarks":
-            if(message.marks.length === 0){
-                return translate("chatMessage.marksmanChosenMarks.none");
-            }
-            return translate("chatMessage.marksmanChosenMarks", playerListToString(message.marks, playerNames));
         case "silenced":
             return translate("chatMessage.silenced");
         case "mediumHauntStarted":
@@ -1027,9 +1029,6 @@ export type ChatMessageVariant = {
 } | {
     type: "recruiterActionChosen",
     action: RecruiterAction,
-} | {
-    type: "marksmanChosenMarks",
-    marks: PlayerIndex[],
 } | {
     type: "targetIsPossessionImmune"
 } | {

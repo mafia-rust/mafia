@@ -73,7 +73,7 @@ export type RoleState = {
     alertsRemaining: number,
 } | {
     type: "marksman"
-    state: {type:"notLoaded"} | {type:"shotTownie"} | {type: "marks", marks: PlayerIndex[]}
+    state: {type:"notLoaded"} | {type:"shotTownie"} | {type: "loaded"}
 } | {
     type: "deputy"
 } | {

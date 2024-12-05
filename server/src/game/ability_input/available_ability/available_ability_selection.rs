@@ -19,6 +19,7 @@ pub enum AvailableAbilitySelection{
     Boolean,
     OnePlayerOption{selection: AvailableOnePlayerOptionSelection},
     TwoPlayerOption{selection: AvailableTwoPlayerOptionSelection},
+    ThreePlayerOption{selection: AvailableThreePlayerOptionSelection},
     RoleOption{selection: AvailableRoleOptionSelection},
     TwoRoleOption{selection: AvailableTwoRoleOptionSelection},
     TwoRoleOutlineOption{selection: AvailableTwoRoleOutlineOptionSelection},
@@ -44,6 +45,19 @@ impl AvailableAbilitySelection{
             available_first_player: first,
             available_second_player: second,
             can_choose_duplicates 
+        }}
+    }
+    pub fn new_three_player_option(
+        first: VecSet<Option<PlayerReference>>,
+        second: VecSet<Option<PlayerReference>>,
+        third: VecSet<Option<PlayerReference>>,
+        can_choose_duplicates: bool
+    )->Self{
+        Self::ThreePlayerOption{selection: AvailableThreePlayerOptionSelection{
+            available_first_players: first,
+            available_second_players: second,
+            available_third_players: third,
+            can_choose_duplicates
         }}
     }
     pub fn new_role_option(selection: VecSet<Option<Role>>)->Self{
@@ -78,6 +92,10 @@ impl ValidateAvailableSelection for AvailableAbilitySelection{
             },
             Self::TwoPlayerOption{ selection: available } => {
                 let AbilitySelection::TwoPlayerOption{selection} = selection else {return false};
+                return available.validate_selection(game, selection);
+            },
+            Self::ThreePlayerOption { selection: available } => {
+                let AbilitySelection::ThreePlayerOption{selection} = selection else {return false};
                 return available.validate_selection(game, selection);
             },
             Self::RoleOption{ selection: available } => {

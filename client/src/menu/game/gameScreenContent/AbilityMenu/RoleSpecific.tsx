@@ -176,25 +176,13 @@ export default function RoleSpecificSection(){
 function MarksmanRoleSpecificMenu(props: Readonly<{
     roleState: (RoleState & { type: "marksman" })
 }>): ReactElement {
-    const players = useGameState(
-        gameState => gameState.players,
-        ["gamePlayers"]
-    )!;
-    
     let stateText;
     switch(props.roleState.state.type){
         case "notLoaded":
+        case "loaded":
         case "shotTownie":
             stateText = translate("role.marksman.roleDataText."+props.roleState.state.type)
             break;
-        case "marks":
-            if(props.roleState.state.marks.length === 0){
-                stateText = translate("role.marksman.roleDataText.marks.none")
-            }else{
-                stateText = translate("role.marksman.roleDataText.marks",
-                    props.roleState.state.marks.map(index => players[index].toString()).join(", ")
-                )
-            }
     }
     
     return <div className="role-information">

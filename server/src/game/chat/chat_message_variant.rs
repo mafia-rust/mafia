@@ -217,8 +217,6 @@ pub enum ChatMessageVariant {
     PuppeteerActionChosen{action: PuppeteerAction},
     #[serde(rename_all = "camelCase")]
     RecruiterActionChosen{action: RecruiterAction},
-    #[serde(rename_all = "camelCase")]
-    MarksmanChosenMarks{marks: Vec<PlayerIndex>},
 
     TargetIsPossessionImmune,
     YouWerePossessed { immune: bool },
