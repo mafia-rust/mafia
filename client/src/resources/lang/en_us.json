@@ -357,7 +357,7 @@
     "role.marksman.youAreSelecting.null": "You aren't camping anyone.",
     "role.marksman.youAreSelecting": "You are camping these players: \\0.",
     "controllerId.marksman.0.name": "Marksman Mark",
-    "controllerId.marksman.1.name": "Marksman Camp & Visit",
+    "controllerId.marksman.1.name": "Marksman Camp",
 
     "role.deputy.name": "Deputy",
     "role.deputy.name:var.0": "Deputies",
