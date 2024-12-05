@@ -973,8 +973,14 @@ fn marksman_basic() {
     );
 
     assert!(dt.send_ability_input_one_player_typical(gf));
-    assert!(mk.day_target(dt));
-    assert!(mk.set_night_selection(vec![dt, gf]));
+    mk.send_ability_input(AbilityInput::new(
+        ControllerID::role(mk.player_ref(), Role::Marksman, 0),
+        AbilitySelection::new_three_player_option(Some(dt.player_ref()), None, None)
+    ));
+    mk.send_ability_input(AbilityInput::new(
+        ControllerID::role(mk.player_ref(), Role::Marksman, 1),
+        AbilitySelection::new_three_player_option(Some(gf.player_ref()), None, None)
+    ));
 
     game.next_phase();
 

@@ -1,7 +1,7 @@
 import { ListMapData } from "../ListMap";
 import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
 import { PhaseType, PlayerIndex } from "./gameState.d";
-import { translateChecked } from "./lang";
+import translate, { translateChecked } from "./lang";
 import { Role } from "./roleState.d";
 import abilitiesJson from "../resources/abilityId.json";
 
@@ -81,7 +81,17 @@ export function translateControllerID(
 ): string {
     switch (abilityId.type) {
         case "role":
-            return translateChecked("controllerId."+abilityId.role+"."+abilityId.id+".name")??"";
+            return translate("role."+abilityId.role+".name")+" "+(translateChecked("controllerId."+abilityId.role+"."+abilityId.id+".name")??"");
+        default:
+            return translateChecked("controllerId."+abilityId.type+".name")??"";
+    }
+}
+export function translateControllerIDNoRole(
+    abilityId: ControllerID
+): string {
+    switch (abilityId.type) {
+        case "role":
+            return (translateChecked("controllerId."+abilityId.role+"."+abilityId.id+".name")??"");
         default:
             return translateChecked("controllerId."+abilityId.type+".name")??"";
     }

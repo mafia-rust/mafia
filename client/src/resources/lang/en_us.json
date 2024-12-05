@@ -195,14 +195,14 @@
 
     "role.detective.name":"Detective",
     "role.detective.name:var.0":"Detectives",
-    "controllerId.detective.0.name": "Detective Interrogate",
+    "controllerId.detective.0.name": "Interrogate",
     "role.detective.youAreSelecting": "You are interrogating \\0.",
     "role.detective.youAreSelecting.null": "You aren't to interrogating anybody",
 
     "role.lookout.name": "Lookout",
     "role.lookout.name:var.0": "Lookouts",
     "role.lookout.youAreSelecting": "You are looking out for \\0.",
-    "controllerId.lookout.0.name": "Lookout Watch",
+    "controllerId.lookout.0.name": "Watch",
     
     "role.philosopher.name": "Philosopher",
     "role.philosopher.name:var.0": "Philosophers",
@@ -214,21 +214,21 @@
     "role.tracker.name:var.0": "Trackers",
     "role.tracker.youAreSelecting": "You are tracking \\0.",
     "role.tracker.youAreSelecting.null": "You aren't tracking anybody",
-    "controllerId.tracker.0.name": "Tracker Track",
+    "controllerId.tracker.0.name": "Track",
     
     "role.psychic.name": "Psychic",
     "role.psychic.name:var.0": "Psychics",
-    "controllerId.psychic.0.name": "Psychic Read",
+    "controllerId.psychic.0.name": "Read",
     
     "role.spy.name": "Spy",
     "role.spy.name:var.0": "Spies",
     "role.spy.youAreSelecting": "You are placing a bug on \\0.",
     "role.spy.youAreSelecting.null": "You aren't spying on anybody",
-    "controllerId.spy.0.name": "Spy Bug",
+    "controllerId.spy.0.name": "Bug",
 
     "role.auditor.name": "Auditor",
     "role.auditor.name:var.0": "Auditors",
-    "controllerId.auditor.0.name": "Auditor Audit",
+    "controllerId.auditor.0.name": "Audit",
 
     "role.snoop.name": "Snoop",
     "role.snoop.name:var.0": "Snoops",
@@ -237,13 +237,13 @@
     "role.snoop.name:var.3": "Snoopys",
     "role.snoop.youAreSelecting": "You are snooping on \\0.",
     "role.snoop.youAreSelecting.null": "You aren't snooping on anybody",
-    "controllerId.snoop.0.name": "Snoop Snoop",
+    "controllerId.snoop.0.name": "Snoop",
 
     "role.gossip.name": "Gossip",
     "role.gossip.name:var.0": "Gossips",
     "role.gossip.youAreSelecting": "You are eavesdropping on \\0.",
     "role.gossip.youAreSelecting.null": "You aren't eavesdropping on anyone.",
-    "controllerId.gossip.0.name": "Gossip Eavesdrop",
+    "controllerId.gossip.0.name": "Eavesdrop",
 
     "role.tallyClerk.name": "Tally Clerk",
     "role.tallyClerk.name:var.0": "Tally Clerks",
@@ -273,7 +273,7 @@
     "role.bouncer.name:var.0": "Bouncers",
     "role.bouncer.youAreSelecting": "You are bouncing \\0's party",
     "role.bouncer.youAreSelecting.null": "You aren't bouncing any parties.",
-    "controllerId.bouncer.0.name": "Bouncer Ward",
+    "controllerId.bouncer.0.name": "Ward",
 
     "role.engineer.name": "Engineer",
     "role.engineer.name:var.0": "Engineers",
@@ -290,7 +290,7 @@
     "role.armorsmith.roleDataText": "\\0 uses remaining.",
     "role.armorsmith.youAreSelecting": "You are opening shop tonight.",
     "role.armorsmith.youAreSelecting.null": "You aren't opening shop tonight.",
-    "controllerId.armorsmith.0.name": "Armorsmith Open Shop",
+    "controllerId.armorsmith.0.name": "Open Shop",
 
     "role.steward.name": "Steward",
     "role.steward.name:var.0": "Stewards",
@@ -299,7 +299,7 @@
 
     "role.mayor.name": "Mayor",
     "role.mayor.name:var.0": "Mayors",
-    "controllerId.mayor.0.name": "Mayor Enfranchise",
+    "controllerId.mayor.0.name": "Enfranchise",
 
     "role.transporter.name": "Transporter",
     "role.transporter.name:var.0": "Transporters",
@@ -312,7 +312,7 @@
     "role.escort.target": "Roleblock",
     "role.escort.youAreSelecting": "You are escorting \\0 somewhere private.",
     "role.escort.youAreSelecting.null": "You aren't escorting anyone.",
-    "controllerId.escort.0.name": "Escort Roleblock",
+    "controllerId.escort.0.name": "Roleblock",
 
     "role.medium.name": "Medium",
     "role.medium.name:var.0": "Mediums",
@@ -339,7 +339,7 @@
     "role.vigilante.roleDataText.notLoaded": "You are reloading your gun. You can not shoot yet.",
     "role.vigilante.youAreSelecting": "You are shooting \\0.",
     "role.vigilante.youAreSelecting.null": "You aren't shooting anyone.",
-    "controllerId.vigilante.0.name": "Vigilante Shoot",
+    "controllerId.vigilante.0.name": "Shoot",
 
     "role.veteran.name": "Veteran",
     "role.veteran.name:var.0": "Veterans",
@@ -347,7 +347,7 @@
     "role.veteran.roleDataText": "\\0 rampages remaining",
     "role.veteran.youAreSelecting": "You are rampaging tonight.",
     "role.veteran.youAreSelecting.null": "You aren't rampaging tonight.",
-    "controllerId.veteran.0.name": "Veteran Rampage",
+    "controllerId.veteran.0.name": "Rampage",
 
     "role.marksman.name": "Marksman",
     "role.marksman.name:var.0": "Marksmen",
@@ -356,12 +356,12 @@
     "role.marksman.roleDataText.notLoaded": "You are reloading your gun. You can not shoot yet.",
     "role.marksman.youAreSelecting.null": "You aren't camping anyone.",
     "role.marksman.youAreSelecting": "You are camping these players: \\0.",
-    "controllerId.marksman.0.name": "Marksman Mark",
-    "controllerId.marksman.1.name": "Marksman Camp",
+    "controllerId.marksman.0.name": "Mark",
+    "controllerId.marksman.1.name": "Camp",
 
     "role.deputy.name": "Deputy",
     "role.deputy.name:var.0": "Deputies",
-    "controllerId.deputy.0.name": "Deputy Shoot",
+    "controllerId.deputy.0.name": "Shoot",
     
     "role.rabblerouser.name": "Rabblerouser",
     "role.rabblerouser.name:var.0": "Rabblerousers",
@@ -413,26 +413,26 @@
     "role.hypnotist.name:var.0": "Hypnotists",
     "role.hypnotist.youAreSelecting": "You are hypnotizing \\0.",
     "role.hypnotist.youAreSelecting.null": "You aren't hypnotizing anyone.",
-    "controllerId.hypnotist.0.name": "Hypnotist Hypnotize",
+    "controllerId.hypnotist.0.name": "Hypnotize",
 
     "role.consort.name": "Consort",
     "role.consort.name:var.0": "Consorts",
     "role.consort.youAreSelecting": "You are roleblocking \\0.",
     "role.consort.youAreSelecting.null": "You aren't roleblocking anyone.",
-    "controllerId.consort.0.name": "Consort Roleblock",
+    "controllerId.consort.0.name": "Roleblock",
     
     "role.blackmailer.name": "Blackmailer",
     "role.blackmailer.name:var.0": "Blackmailers",
     "role.blackmailer.youAreSelecting": "You are silencing \\0.",
     "role.blackmailer.youAreSelecting.null": "You aren't silencing anyone.",
-    "controllerId.blackmailer.0.name": "Blackmailer Silence",
+    "controllerId.blackmailer.0.name": "Silence",
     
     "role.informant.name": "Informant",
     "role.informant.name:var.0": "Informants",
     "role.informant.target": "Investigate",
     "role.informant.youAreSelecting": "You are investigating \\0.",
     "role.informant.youAreSelecting.null": "You aren't investigating anyone.",
-    "controllerId.informant.0.name": "Informant Investigate",
+    "controllerId.informant.0.name": "Investigate",
 
     "role.necromancer.name": "Necromancer",
     "role.necromancer.name:var.0": "Necromancers",
@@ -449,16 +449,16 @@
     "role.mortician.roleDataText": "\\0 cremations remaining",
     "role.mortician.youAreSelecting": "You are tagging \\0 for cremation.",
     "role.mortician.youAreSelecting.null": "You aren't tagging anyone.",
-    "controllerId.mortician.0.name": "Mortician Tag",
+    "controllerId.mortician.0.name": "Tag",
 
     "role.forger.name": "Forger",
     "role.forger.name:var.0": "Forgers",
     "role.forger.roleDataText": "\\0 forges remaining",
     "role.forger.youAreSelecting": "You are forging \\0.",
     "role.forger.youAreSelecting.null": "You aren't forging anyone.",
-    "controllerId.forger.0.name": "Forger Target",
-    "controllerId.forger.1.name": "Forger Role",
-    "controllerId.forger.2.name": "Forger Alibi",
+    "controllerId.forger.0.name": "Target",
+    "controllerId.forger.1.name": "Role",
+    "controllerId.forger.2.name": "Alibi",
 
     "role.framer.name": "Framer",
     "role.framer.name:var.0": "Framers",
@@ -470,8 +470,8 @@
     "role.disguiser.name": "Disguiser",
     "role.disguiser.name:var.0": "Disguiser",
     "role.disguiser.target": "Disguise",
-    "controllerId.disguiser.0.name": "Disguiser Target",
-    "controllerId.disguiser.1.name": "Disguiser Role",
+    "controllerId.disguiser.0.name": "Target",
+    "controllerId.disguiser.1.name": "Role",
 
     "role.reeducator.name": "Reeducator",
     "role.reeducator.name:var.0": "Reeducators",
@@ -489,7 +489,7 @@
     "role.jester.name:var.0": "Jesters",
     "role.jester.youAreSelecting": "You are getting your revenge on \\0.",
     "role.jester.youAreSelecting.null": "You aren't getting your revenge on anyone.",
-    "controllerId.jester.0.name": "Jester Haunt",
+    "controllerId.jester.0.name": "Haunt",
 
     "role.revolutionary.name": "Revolutionary",
     "role.revolutionary.name:var.0": "Revolutionaries",
@@ -510,7 +510,7 @@
     "role.scarecrow.target": "Ward",
     "role.scarecrow.youAreSelecting": "You are warding \\0.",
     "role.scarecrow.youAreSelecting.null": "You aren't warding anyone.",
-    "controllerId.scarecrow.0.name": "Scarecrow Ward",
+    "controllerId.scarecrow.0.name": "Ward",
 
     "role.warper.name": "Warper",
     "role.warper.name:var.0": "Warpers",
@@ -525,7 +525,7 @@
 
     "role.politician.name": "Politician",
     "role.politician.name:var.0": "Politicians",
-    "controllerId.politician.0.name": "Politician Enfranchise",
+    "controllerId.politician.0.name": "Enfranchise",
 
     "role.drunk.name": "Drunk",
     "role.drunk.name:var.0": "Drunks",
@@ -561,14 +561,14 @@
     
     "role.kira.name": "Kira",
     "role.kira.name:var.0": "Kiras",
-    "controllerId.kira.0.name": "Kira Guess",
+    "controllerId.kira.0.name": "Guess",
 
     "role.serialKiller.name": "Serial Killer",
     "role.serialKiller.name:var.0": "Serial Killers",
     "role.serialKiller.target": "Attack",
     "role.serialKiller.youAreSelecting": "You are attacking \\0.",
     "role.serialKiller.youAreSelecting.null": "You aren't attacking anyone.",
-    "controllerId.serialKiller.0.name": "Serial Killer Kill",
+    "controllerId.serialKiller.0.name": "Attack",
 
     "role.fiendsWildcard.name": "Fiends Wildcard",
     "role.fiendsWildcard.name:var.0": "Fiends Wildcards",
@@ -601,7 +601,7 @@
     "role.zealot.name:var.0": "Zealots",
     "role.zealot.youAreSelecting": "You are attacking \\0.",
     "role.zealot.youAreSelecting.null": "You aren't attacking anyone.",
-    "controllerId.zealot.0.name": "Zealot Attack",
+    "controllerId.zealot.0.name": "Attack",
 
     "role.martyr.name": "Martyr",
     "role.martyr.name:var.0": "Martyrs",

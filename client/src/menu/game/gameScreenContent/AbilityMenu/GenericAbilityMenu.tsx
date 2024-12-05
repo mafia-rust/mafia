@@ -12,7 +12,8 @@ import {
     controllerIdToLink,
     singleAbilityJsonData,
     StringSelection,
-    ThreePlayerOptionSelection
+    ThreePlayerOptionSelection,
+    translateControllerIDNoRole
 } from "../../../../game/abilityInput";
 import React from "react";
 import { usePlayerState } from "../../../../components/useHooks";
@@ -157,6 +158,11 @@ function SingleAbilityMenu(props: Readonly<{
 }>): ReactElement {
     const nightIcon = singleAbilityJsonData(controllerIdToLink(props.abilityId))?.midnight;
 
+    let controllerIdName = translateControllerID(props.abilityId);
+    if(props.abilityId.type === "role" && props.includeDropdown===false){
+        controllerIdName = (translateControllerIDNoRole(props.abilityId)??"");
+    }
+
     //The chat message makes it more verbose, showing more relevant information
     // as menus get large, it makes it harder to parse. so i keep it out for now
     const inner = <>
@@ -184,7 +190,7 @@ function SingleAbilityMenu(props: Readonly<{
             className="generic-ability-menu"
             summary={
                 <div className="generic-ability-menu-tab-summary">
-                    <span><StyledText>{translateControllerID(props.abilityId)}</StyledText></span>
+                    <span><StyledText>{controllerIdName}</StyledText></span>
                     {nightIcon?<span>{translate("night.icon")}</span>:null}
                 </div>
             }
@@ -203,7 +209,7 @@ function SingleAbilityMenu(props: Readonly<{
                         <Icon>close</Icon>
                         : null
                     }
-                    <StyledText>{translateControllerID(props.abilityId)}</StyledText>
+                    <StyledText>{controllerIdName}</StyledText>
                 </span>
                 {nightIcon?<span>{translate("night.icon")}</span>:null}
             </div>
