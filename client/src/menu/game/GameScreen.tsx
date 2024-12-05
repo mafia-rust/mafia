@@ -192,30 +192,44 @@ export default function GameScreen(): ReactElement {
         return () => removeSwipeEventListener(swipeEventListener);
     })
 
-    const allMenusClosed = menuController.menusOpen().length === 0;
-    const minSize = 10;
-
     return <MenuControllerContext.Provider value={menuController}>
         <div className="game-screen">
             <div className="header">
                 <HeaderMenu chatMenuNotification={chatMenuNotification}/>
             </div>
-            <PanelGroup direction="horizontal" className="content">
-                {menuController.menusOpen().map((menu, index, menusOpen) => {
-                    const MenuElement = MENU_ELEMENTS[menu];
-                    return <>
-                        <Panel minSize={minSize}>
-                            <MenuElement />
-                        </Panel>
-                        {menusOpen.some((_, i) => i > index) && <PanelResizeHandle />}
-                    </>
-                })}
-                {allMenusClosed && <Panel><div className="no-content">
-                    {translate("menu.gameScreen.noContent")}
-                </div></Panel>}
-            </PanelGroup>
+            <GameScreenMenus />
         </div>
     </MenuControllerContext.Provider>
+}
+
+export function GameScreenMenus(): ReactElement {
+    const menuController = useContext(MenuControllerContext)!;
+    const minSize = 10; // Percentage
+
+    // These don't add up to 100, but the panel group will fix it
+    const defaultSizes = {
+        [ContentMenu.ChatMenu]: 35,
+        [ContentMenu.RoleSpecificMenu]: 15,
+        [ContentMenu.WillMenu]: 15,
+        [ContentMenu.PlayerListMenu]: 25,
+        [ContentMenu.GraveyardMenu]: 10,
+        [ContentMenu.WikiMenu]: 15,
+    }
+
+    return <PanelGroup direction="horizontal" className="content">
+        {menuController.menusOpen().map((menu, index, menusOpen) => {
+            const MenuElement = MENU_ELEMENTS[menu];
+            return <>
+                <Panel className="panel" minSize={minSize} defaultSize={defaultSizes[menu]}>
+                    <MenuElement />
+                </Panel>
+                {menusOpen.some((_, i) => i > index) && <PanelResizeHandle className="panel-handle"/>}
+            </>
+        })}
+        {menuController.menusOpen().length === 0 && <Panel><div className="no-content">
+            {translate("menu.gameScreen.noContent")}
+        </div></Panel>}
+    </PanelGroup>
 }
 
 export function ContentTab(props: Readonly<{
