@@ -3,6 +3,9 @@ use crate::game::{grave::GraveReference, role::RoleState, ability_input::Ability
 use super::PlayerReference;
 
 impl PlayerReference {
+    pub fn on_validated_ability_input_received(&self, game: &mut Game, input_player: PlayerReference, input: AbilityInput) {
+        self.role_state(game).clone().on_validated_ability_input_received(game, *self, input_player, input)
+    }
     pub fn on_ability_input_received(&self, game: &mut Game, input_player: PlayerReference, input: AbilityInput) {
         self.role_state(game).clone().on_ability_input_received(game, *self, input_player, input)
     }

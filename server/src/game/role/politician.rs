@@ -13,8 +13,9 @@ use crate::game::player::PlayerReference;
 use crate::game::tag::Tag;
 use crate::game::win_condition::WinCondition;
 use crate::game::Game;
+use crate::vec_set;
 
-use super::{GetClientRoleState, RoleState, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Role, RoleState, RoleStateImpl};
 
 
 #[derive(Debug, Clone, Default)]
@@ -61,11 +62,12 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Politician {
     type ClientRoleState = ClientRoleState;
-    fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, _target_ref: PlayerReference) {
-
-        if !actor_ref.alive(game) || !game.current_phase().is_day() {
+    fn on_validated_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: super::AbilityInput) {
+        if actor_ref != input_player {return;}
+        if ability_input.id() != ControllerID::role(actor_ref, Role::Mayor, 0) {
             return;
         }
+        
 
         game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::MayorRevealed { player_index: actor_ref.index() });
 
@@ -78,12 +80,20 @@ impl RoleStateImpl for Politician {
         }
         game.count_votes_and_start_trial();
     }
-    fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
-        game.current_phase().is_day() &&
-        !self.revealed &&
-        actor_ref == target_ref &&
-        actor_ref.alive(game) &&
-        PhaseType::Night != game.current_phase().phase()
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Politician, 0),
+            super::AvailableAbilitySelection::Unit,
+            super::AbilitySelection::new_unit(),
+            !actor_ref.alive(game) ||
+            self.revealed || 
+            PhaseType::Night == game.current_phase().phase() ||
+            PhaseType::Briefing == game.current_phase().phase(),
+            None,
+            true,
+            vec_set![actor_ref]
+        )
     }
 
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){

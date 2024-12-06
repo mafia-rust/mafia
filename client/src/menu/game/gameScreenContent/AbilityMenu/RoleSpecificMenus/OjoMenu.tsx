@@ -1,12 +1,12 @@
 import { ReactElement } from "react"
 import React from "react"
-import { useGameState } from "../../../../../components/useHooks";
+import { useGameState, usePlayerState } from "../../../../../components/useHooks";
 import GAME_MANAGER from "../../../../..";
 import { Role, RoleState } from "../../../../../game/roleState.d";
 import RoleDropdown from "../../../../../components/RoleDropdown";
 import translate from "../../../../../game/lang";
-import TwoRoleOutlineOptionInputMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionInputMenu";
-import { TwoRoleOutlineOptionInput } from "../../../../../game/abilityInput";
+import TwoRoleOutlineOptionSelectionMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionSelectionMenu";
+import { AbilityInput, AbilitySelection, TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput";
 
 
 export default function OjoMenu(
@@ -23,19 +23,33 @@ export default function OjoMenu(
         state=>state.dayNumber,
         ["phase"]
     )!;
+    const myPlayerIndex = usePlayerState(
+        state=>state.myIndex,
+        ["yourPlayerIndex"]
+    )!;
 
-    const onInput = (chosenOutlines: TwoRoleOutlineOptionInput) => {
-        const input = {
-            type: "ojoInvestigate" as const,
-            input: chosenOutlines
-        };
+    const onInput = (chosenOutlines: TwoRoleOutlineOptionSelection) => {
+        const selection: AbilitySelection = {
+            type: "twoRoleOutlineOption" as const,
+            selection: chosenOutlines
+        }
+
+        const input: AbilityInput = {
+            id: {
+                type: "role",
+                player: myPlayerIndex,
+                role: "ojo",
+                id: 0
+            },
+            selection: selection
+        }
         GAME_MANAGER.sendAbilityInput(input);
     }
 
     return <>
-        <TwoRoleOutlineOptionInputMenu
+        <TwoRoleOutlineOptionSelectionMenu
             previouslyGivenResults={props.roleState.previouslyGivenResults}
-            chosenOutlines={props.roleState.chosenOutline}
+            selection={props.roleState.chosenOutline}
             onChoose={onInput}
         />
         {(dayNumber > 1) && <div>

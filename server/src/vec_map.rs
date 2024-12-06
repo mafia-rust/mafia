@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug)]
 pub struct VecMap<K, V> where K: Eq {
     vec: Vec<(K, V)>,
 }
@@ -109,6 +109,16 @@ impl<K, V> VecMap<K, V> where K: Eq {
         self.vec.iter().any(|(k, _)| k == key)
     }
 }
+
+impl<K, V> PartialEq for VecMap<K, V> where K: Eq, V: Eq {
+    fn eq(&self, other: &Self) -> bool {
+        self.vec.iter().all(|(k, v)| other.get(k) == Some(v))
+            && other.vec.iter().all(|(k, v)| self.get(k) == Some(v))
+    }
+}
+impl<K, V> Eq for VecMap<K, V> where K: Eq, V: Eq {}
+
+
 impl<K, V> IntoIterator for VecMap<K, V> where K: Eq {
     type Item = (K, V);
     type IntoIter = std::vec::IntoIter<(K, V)>;
@@ -137,4 +147,22 @@ impl<'de, K, V> Deserialize<'de> for VecMap<K, V> where K: Eq, K: Deserialize<'d
         let vec = Vec::deserialize(deserializer)?;
         Ok(VecMap { vec })
     }
+}
+
+
+
+
+
+pub use macros::vec_map;
+mod macros {
+    #[macro_export]
+    macro_rules! vec_map {
+        ($(($key:expr, $value:expr)),*) => {{
+            let mut map = VecMap::new();
+            $(map.insert($key, $value);)*
+            map
+        }};
+    }
+
+    pub use vec_map;
 }

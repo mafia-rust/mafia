@@ -13,7 +13,12 @@ use crate::game::attack_power::DefensePower;
 
 use serde::{Serialize, Deserialize};
 
-use super::{components::insider_group::InsiderGroupID, grave::GraveReference, ability_input::AbilityInput, win_condition::WinCondition};
+use super::{
+    ability_input::*, 
+    components::insider_group::InsiderGroupID, 
+    grave::GraveReference, 
+    win_condition::WinCondition
+};
 
 pub trait GetClientRoleState<CRS> {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> CRS;
@@ -30,6 +35,10 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {}
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
 
+    fn controller_parameters_map(self, _game: &Game, _actor_ref: PlayerReference) -> ControllerParametersMap {
+        ControllerParametersMap::default()
+    }
+    fn on_validated_ability_input_received(self, _game: &mut Game, _actor_ref: PlayerReference, _input_player: PlayerReference, _ability_input: AbilityInput) {}
     fn on_ability_input_received(self, _game: &mut Game, _actor_ref: PlayerReference, _input_player: PlayerReference, _ability_input: AbilityInput) {}
 
     fn can_select(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
@@ -255,6 +264,16 @@ mod macros {
                 pub fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference){
                     match self {
                         $(Self::$name(role_struct) => role_struct.do_day_action(game, actor_ref, target_ref)),*
+                    }
+                }
+                pub fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.controller_parameters_map(game, actor_ref)),*
+                    }
+                }
+                pub fn on_validated_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: AbilityInput){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_validated_ability_input_received(game, actor_ref, input_player, ability_input)),*
                     }
                 }
                 pub fn on_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: AbilityInput){

@@ -1,8 +1,6 @@
-use std::collections::HashSet;
-
 use serde::{Deserialize, Serialize};
 
-use crate::{game::{player::PlayerReference, Game}, packet::ToClientPacket, vec_set::VecSet};
+use crate::{game::{chat::ChatGroup, player::PlayerReference, Game}, packet::ToClientPacket, vec_set::VecSet};
 
 #[derive(Default)]
 pub struct InsiderGroups{
@@ -45,12 +43,20 @@ impl<'a> From<&'a mut InsiderGroup> for &'a mut VecSet<PlayerReference> {
 }
 
 impl InsiderGroupID{
-    pub fn all()->HashSet<InsiderGroupID>{
+    //const
+    pub fn all()->VecSet<InsiderGroupID>{
         vec![
             InsiderGroupID::Mafia,
             InsiderGroupID::Cult,
             InsiderGroupID::Puppeteer
         ].into_iter().collect()
+    }
+    pub const fn get_insider_chat_group(&self)->ChatGroup{
+        match self{
+            InsiderGroupID::Mafia=>ChatGroup::Mafia,
+            InsiderGroupID::Cult=>ChatGroup::Cult,
+            InsiderGroupID::Puppeteer=>ChatGroup::Puppeteer
+        }
     }
     fn revealed_group<'a>(&self, game: &'a Game)->&'a InsiderGroup{
         match self{
@@ -157,6 +163,15 @@ impl InsiderGroupID{
         }
         players
     }
+    pub fn all_insider_groups_with_player(game: &Game, player_ref: PlayerReference)->VecSet<InsiderGroupID>{
+        InsiderGroupID::all()
+            .into_iter()
+            .filter(|group| 
+                group.is_player_in_revealed_group(game, player_ref)
+            ).collect()
+    }
+    
+
 
     // packets
     pub fn send_fellow_insiders(game: &Game, player: PlayerReference){

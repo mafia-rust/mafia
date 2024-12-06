@@ -9,7 +9,8 @@ use crate::game::player::PlayerReference;
 
 use crate::game::tag::Tag;
 use crate::game::Game;
-use super::{GetClientRoleState, RoleState, RoleStateImpl};
+use crate::vec_set;
+use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Default)]
 pub struct Mayor {
@@ -25,28 +26,37 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Mayor {
     type ClientRoleState = ClientRoleState;
-    fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, _target_ref: PlayerReference) {
-
-        if !actor_ref.alive(game) || !game.current_phase().is_day() {
+    fn on_validated_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: super::AbilityInput) {
+        if actor_ref != input_player {return;}
+        if ability_input.id() != ControllerID::role(actor_ref, Role::Mayor, 0) {
             return;
         }
+        
 
         game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::MayorRevealed { player_index: actor_ref.index() });
 
-        actor_ref.set_role_state(game, RoleState::Mayor(Mayor{
+        actor_ref.set_role_state(game, Mayor{
             revealed: true
-        }));
+        });
         for player in PlayerReference::all_players(game){
             player.push_player_tag(game, actor_ref, Tag::Enfranchised);
         }
         game.count_votes_and_start_trial();
     }
-    fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
-        game.current_phase().is_day() &&
-        !self.revealed &&
-        actor_ref == target_ref &&
-        actor_ref.alive(game) &&
-        PhaseType::Night != game.current_phase().phase()
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Mayor, 0),
+            super::AvailableAbilitySelection::Unit,
+            super::AbilitySelection::new_unit(),
+            !actor_ref.alive(game) ||
+            self.revealed || 
+            PhaseType::Night == game.current_phase().phase() ||
+            PhaseType::Briefing == game.current_phase().phase(),
+            None,
+            true,
+            vec_set![actor_ref]
+        )
     }
 }
 impl GetClientRoleState<ClientRoleState> for Mayor {

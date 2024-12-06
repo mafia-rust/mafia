@@ -1,7 +1,7 @@
 use serde::Serialize;
 
-use crate::game::ability_input::common_input::TwoRoleOutlineOptionInput;
-use crate::game::ability_input::AbilityInput;
+use crate::game::ability_input::selection_type::two_role_outline_option_selection::TwoRoleOutlineOptionSelection;
+use crate::game::ability_input::ControllerID;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::phase::PhaseType;
@@ -19,7 +19,7 @@ use super::{Priority, RoleStateImpl, Role};
 #[serde(rename_all = "camelCase")]
 pub struct Ojo{
     pub role_chosen: Option<Role>,
-    pub chosen_outline: TwoRoleOutlineOptionInput,
+    pub chosen_outline: TwoRoleOutlineOptionSelection,
     pub previously_given_results: Vec<(RoleOutlineReference, AuditorResult)>,
 }
 
@@ -83,31 +83,30 @@ impl RoleStateImpl for Ojo {
     fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: crate::game::ability_input::AbilityInput) {
         if actor_ref != input_player {return;}
         if !actor_ref.alive(game) {return};
-        match ability_input {
-            AbilityInput::OjoInvestigate { input } => {                   
-                if let Some(outline) = input.0{
-                    if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {
-                        self.chosen_outline.0 = Some(outline);
-                    }
-                }else{
-                    self.chosen_outline.0 = None;
-                }
-                if let Some(outline) = input.1{
-                    if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {
-                        self.chosen_outline.1 = Some(outline);
-                    }
-                }else{
-                    self.chosen_outline.1 = None;
-                }
-                
-                if self.chosen_outline.0.is_some() && self.chosen_outline.1 == self.chosen_outline.0{
-                    self.chosen_outline.1 = None;
-                }
 
-                actor_ref.set_role_state(game, self);
-            },
-            _ => {}
+        let Some(selection) = ability_input
+            .get_two_role_outline_option_selection_if_id(ControllerID::role(actor_ref, actor_ref.role(game), 0)) else {return};
+              
+        if let Some(outline) = selection.0{
+            if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {
+                self.chosen_outline.0 = Some(outline);
+            }
+        }else{
+            self.chosen_outline.0 = None;
         }
+        if let Some(outline) = selection.1{
+            if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {
+                self.chosen_outline.1 = Some(outline);
+            }
+        }else{
+            self.chosen_outline.1 = None;
+        }
+        
+        if self.chosen_outline.0.is_some() && self.chosen_outline.1 == self.chosen_outline.0{
+            self.chosen_outline.1 = None;
+        }
+
+        actor_ref.set_role_state(game, self);
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         let mut out = vec![];
@@ -135,7 +134,7 @@ impl RoleStateImpl for Ojo {
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Obituary => {
-                self.chosen_outline = TwoRoleOutlineOptionInput(None, None);
+                self.chosen_outline = TwoRoleOutlineOptionSelection(None, None);
                 self.role_chosen = None;
                 actor_ref.set_role_state(game, self);
             },

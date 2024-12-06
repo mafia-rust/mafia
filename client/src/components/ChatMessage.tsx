@@ -10,11 +10,12 @@ import DOMPurify from "dompurify";
 import GraveComponent from "./grave";
 import { RoleOutline, translateRoleOutline } from "../game/roleListState.d";
 import { CopyButton } from "./ClipboardButtons";
-import { useLobbyOrGameState, usePlayerState } from "./useHooks";
-import { KiraGuess, KiraGuessResult, kiraGuessTranslate } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu";
+import { useGameState, useLobbyOrGameState, usePlayerState } from "./useHooks";
+import { KiraResult, KiraResultDisplay } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
+import { ControllerID, AbilitySelection, translateControllerID } from "../game/abilityInput";
 import DetailsSummary from "./DetailsSummary";
 
 const ChatElement = React.memo((
@@ -28,6 +29,11 @@ const ChatElement = React.memo((
     const roleState = usePlayerState(
         playerState => playerState.roleState,
         ["yourRoleState"]
+    );
+    
+    const roleList = useGameState(
+        state => state.roleList,
+        ["roleList"]
     );
 
     const [mouseHovering, setMouseHovering] = React.useState(false); 
@@ -80,7 +86,7 @@ const ChatElement = React.memo((
                 <StyledText className={"chat-message " + style}
                     playerKeywordData={props.playerKeywordData}
                 >
-                    {(chatGroupIcon??"")} {translateChatMessage(message.variant, playerNames)}
+                    {(chatGroupIcon??"")} {translateChatMessage(message.variant, playerNames, roleList)}
                 </StyledText>
                 <ChatElement {...props} message={{
                     variant: message.variant.message,
@@ -88,51 +94,44 @@ const ChatElement = React.memo((
                 }}/>
             </span>
         </div>
-        case "kiraResult":
-            let out = [];
-
-            let sortedPlayerIndexes = Object.keys(message.variant.result.guesses).map((k)=>{return Number.parseInt(k)}).sort();
-
-            for(let playerIndex of sortedPlayerIndexes){
-                let resultStyle = "";
-                let resultIcon = "";
-                let resultString = "";
-
-                if(message.variant.result.guesses[playerIndex][1] === "correct"){
-                    resultStyle = "correct";
-                    resultIcon = "🟩";
-                    resultString = translate("kiraResult.correct");
-                }else if(message.variant.result.guesses[playerIndex][1] === "wrongSpot"){
-                    resultStyle = "wrongSpot";
-                    resultIcon = "🟨";
-                    resultString = translate("kiraResult.wrongSpot");
-                }else if(message.variant.result.guesses[playerIndex][1] === "notInGame"){
-                    resultStyle = "notInGame";
-                    resultIcon = "🟥";
-                    resultString = translate("kiraResult.notInGame");
-                }
-
-                if(message.variant.result.guesses[playerIndex][0] === "none"){
-                    resultStyle = "";
-                    resultIcon = "";
-                    resultString = "";
-                }
-
-                out.push(<div key={playerIndex} className={"kira-guess-result "+resultStyle}>
-                    <StyledText
-                        playerKeywordData={props.playerKeywordData}
-                    >
-                        {playerNames[playerIndex]} {kiraGuessTranslate(message.variant.result.guesses[playerIndex][0])} {resultIcon} {resultString}
-                    </StyledText>
-                </div>)
+        case "reporterReport":
+            style += " block";
+        break;
+        case "abilityUsed":
+            switch (message.variant.selection.type){
+                case "kira":
+                    return <div className={"chat-message-div chat-message kira-guess-results " + style}>
+                        <StyledText
+                            className="chat-message result"
+                            playerKeywordData={props.playerKeywordData}
+                        >{chatGroupIcon ?? ""} {translate("chatMessage.kiraSelection")}</StyledText>
+                        <KiraResultDisplay 
+                            map={{
+                                type: "selection",
+                                map: message.variant.selection.selection
+                            }}
+                            playerKeywordData={props.playerKeywordData}
+                            playerNames={playerNames}
+                        />
+                    </div>
+                case "string":
+                    style += " block"
             }
-
+        break;
+        case "kiraResult":
             return <div className={"chat-message-div chat-message kira-guess-results " + style}>
                 <StyledText
                     className="chat-message result"
                     playerKeywordData={props.playerKeywordData}
                 >{chatGroupIcon ?? ""} {translate("chatMessage.kiraResult")}</StyledText>
-                {out}
+                <KiraResultDisplay 
+                    map={{
+                        type: "reuslt",
+                        map: message.variant.result.guesses
+                    }}
+                    playerKeywordData={props.playerKeywordData}
+                    playerNames={playerNames}
+                />
             </div>
         case "playerDied":
 
@@ -172,13 +171,13 @@ const ChatElement = React.memo((
         onMouseOut={() => setMouseHovering(false)}
     >
         <StyledText className={"chat-message " + style} playerKeywordData={props.playerKeywordData}>
-            {(chatGroupIcon??"")} {translateChatMessage(message.variant, playerNames)}
+            {(chatGroupIcon??"")} {translateChatMessage(message.variant, playerNames, roleList)}
         </StyledText>
         {
             mouseHovering && ( roleState?.type === "forger" || roleState?.type === "counterfeiter")
             && <CopyButton
                 className="chat-message-div-copy-button"
-                text={translateChatMessage(message.variant, playerNames)}
+                text={translateChatMessage(message.variant, playerNames, roleList)}
             />
         }
     </div>;
@@ -264,7 +263,7 @@ function NormalChatMessage(props: Readonly<{
             <StyledText
                 playerKeywordData={props.playerKeywordData}
             >
-                {translateChatMessage(props.message.variant, props.playerNames)}
+                {translateChatMessage(props.message.variant, props.playerNames, undefined)}
             </StyledText>
         </span>
         {
@@ -327,7 +326,11 @@ export function sanitizePlayerMessage(text: string): string {
     });
 }
 
-export function translateChatMessage(message: ChatMessageVariant, playerNames?: string[]): string {
+export function translateChatMessage(
+    message: ChatMessageVariant,
+    playerNames?: string[],
+    roleList?: RoleOutline[]
+): string {
 
     if (playerNames === undefined) {
         playerNames = GAME_MANAGER.getPlayerNames();
@@ -456,6 +459,77 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
                     playerNames[message.targeter],
                 );
             }
+        case "abilityUsed":
+
+            let out;
+
+            switch (message.selection.type) {
+                case "unit":
+                    out = translate("chatMessage.abilityUsed.selection.unit");
+                    break;
+                case "boolean":
+                    if(message.selection.selection){
+                        out = " "+translate("on");
+                    }else{
+                        out = " "+translate("off");
+                    }
+                    break;
+                case "onePlayerOption":
+                    out = translate("chatMessage.abilityUsed.selection.onePlayerOption",
+                        message.selection.selection===null?translate("nobody"):playerNames[message.selection.selection],
+                    );
+                    break;
+                case "twoPlayerOption":
+                    out = translate("chatMessage.abilityUsed.selection.twoPlayerOption",
+                        message.selection.selection[0]===null?translate("nobody"):playerNames[message.selection.selection[0]],
+                        message.selection.selection[1]===null?translate("nobody"):playerNames[message.selection.selection[1]],
+                    );
+                    break;
+                case "threePlayerOption":
+                    out = translate("chatMessage.abilityUsed.selection.threePlayerOption",
+                        message.selection.selection[0]===null?translate("nobody"):playerNames[message.selection.selection[0]],
+                        message.selection.selection[1]===null?translate("nobody"):playerNames[message.selection.selection[1]],
+                        message.selection.selection[2]===null?translate("nobody"):playerNames[message.selection.selection[2]],
+                    );
+                    break;
+                case "roleOption":
+                    out = translate("chatMessage.abilityUsed.selection.roleOption",
+                        message.selection.selection===null?translate("none"):translate("role."+message.selection.selection+".name")
+                    );
+                    break;
+                case "twoRoleOption":
+                    out = translate("chatMessage.abilityUsed.selection.twoRoleOption",
+                        message.selection.selection[0]===null?translate("none"):translate("role."+message.selection.selection[0]+".name"),
+                        message.selection.selection[1]===null?translate("none"):translate("role."+message.selection.selection[1]+".name"),
+                    );
+                    break;
+                case "twoRoleOutlineOption":                    
+                    let first = message.selection.selection[0] === null ? 
+                        translate("none") :
+                        roleList === undefined ?
+                            message.selection.selection[0].toString() :
+                            translateRoleOutline(roleList[message.selection.selection[0]]);
+
+                    let second = message.selection.selection[1] === null ? 
+                        translate("none") :
+                        roleList === undefined ?
+                            message.selection.selection[1].toString() :
+                            translateRoleOutline(roleList[message.selection.selection[1]]);
+
+                    
+
+                    out = translate("chatMessage.abilityUsed.selection.twoRoleOutlineOption", first, second);
+                    break;
+                case "string":
+                    out = translate("chatMessage.abilityUsed.selection.string", sanitizePlayerMessage(replaceMentions(message.selection.selection)));
+                    break;
+                default:
+                    out = "";
+            }
+            
+            let abilityIdString = translateControllerID(message.abilityId);
+                
+            return translate("chatMessage.abilityUsed", playerNames[message.player], abilityIdString, out);
         case "mayorRevealed":
             return translate("chatMessage.mayorRevealed",
                 playerNames[message.playerIndex],
@@ -614,11 +688,6 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.puppeteerActionChosen."+message.action);
         case "recruiterActionChosen":
             return translate("chatMessage.recruiterActionChosen."+message.action);
-        case "marksmanChosenMarks":
-            if(message.marks.length === 0){
-                return translate("chatMessage.marksmanChosenMarks.none");
-            }
-            return translate("chatMessage.marksmanChosenMarks", playerListToString(message.marks, playerNames));
         case "silenced":
             return translate("chatMessage.silenced");
         case "mediumHauntStarted":
@@ -645,11 +714,6 @@ export function translateChatMessage(message: ChatMessageVariant, playerNames?: 
             return translate("chatMessage.youAreLoveLinked", playerNames[message.player]);
         case "playerDiedOfABrokenHeart":
             return translate("chatMessage.playerDiedOfBrokenHeart", playerNames[message.player], playerNames[message.lover]);
-        case "syndicateGunTarget":
-            return translate("chatMessage.syndicateGunTarget",
-                playerNames[message.shooter],
-                message.target===null?translate("nobody"):playerNames[message.target]
-            );
         case "chronokaiserSpeedUp":
             return translate("chatMessage.chronokaiserSpeedUp", message.percent);
         case "deputyShotYou":
@@ -781,6 +845,12 @@ export type ChatMessageVariant = {
     type: "targeted", 
     targeter: PlayerIndex, 
     targets: PlayerIndex[]
+} | {
+    type: "abilityUsed", 
+    player: PlayerIndex,
+    abilityId: ControllerID,
+    selection: AbilitySelection
+    
 } | {
     type: "phaseFastForwarded"
 } |
@@ -920,10 +990,6 @@ export type ChatMessageVariant = {
     player: PlayerIndex
     lover: PlayerIndex
 } | {
-    type: "syndicateGunTarget",
-    shooter: PlayerIndex
-    target: PlayerIndex | null
-} | {
     type: "youWereProtected"
 } | {
     type: "youDied"
@@ -964,9 +1030,6 @@ export type ChatMessageVariant = {
     type: "recruiterActionChosen",
     action: RecruiterAction,
 } | {
-    type: "marksmanChosenMarks",
-    marks: PlayerIndex[],
-} | {
     type: "targetIsPossessionImmune"
 } | {
     type: "youWerePossessed",
@@ -1000,7 +1063,7 @@ export type ChatMessageVariant = {
 } | {
     type: "kiraResult",
     result: {
-        guesses: Record<PlayerIndex, [KiraGuess, KiraGuessResult]>
+        guesses: KiraResult
     }
 } | {
     type: "martyrFailed"

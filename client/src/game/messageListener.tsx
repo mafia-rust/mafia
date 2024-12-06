@@ -356,6 +356,11 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.clientState.insiderGroups = [...packet.insiderGroups];
             }
         break;
+        case "yourAllowedControllers":
+            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                GAME_MANAGER.state.clientState.savedControllers = packet.save;
+            }
+        break;
         case "yourButtons":
             if(GAME_MANAGER.state.stateType === "game"){
                 for(let i = 0; i < GAME_MANAGER.state.players.length && i < packet.buttons.length; i++){
@@ -451,20 +456,6 @@ export default function messageListener(packet: ToClientPacket){
         case "yourVoteFastForwardPhase":
             if(GAME_MANAGER.state.stateType === "game")
                 GAME_MANAGER.state.fastForward = packet.fastForward;
-        break;
-        case "yourForfeitVote":
-            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
-                GAME_MANAGER.state.clientState.forfeitVote = packet.forfeit;
-        break;
-        case "yourPitchforkVote":
-            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
-                GAME_MANAGER.state.clientState.pitchforkVote = packet.player;
-        break;
-        case "yourSyndicateGunItemData":
-            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
-                GAME_MANAGER.state.clientState.syndicateGunItemData.shooter = packet.shooter;
-                GAME_MANAGER.state.clientState.syndicateGunItemData.target = packet.target;
-            }
         break;
         case "addChatMessages":
             if(GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby"){

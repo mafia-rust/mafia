@@ -1,13 +1,13 @@
 import { ReactElement } from "react"
 import React from "react"
-import "./twoRoleOutlineOptionInput.css"
+import "./twoRoleOutlineOptionSelectionMenu.css"
 import { Role } from "../../../../../game/roleState.d"
 import { RoleList, translateRoleOutline } from "../../../../../game/roleListState.d"
 import StyledText from "../../../../../components/StyledText"
 import translate from "../../../../../game/lang"
 import { useGameState } from "../../../../../components/useHooks"
 import { Button } from "../../../../../components/Button"
-import { TwoRoleOutlineOptionInput } from "../../../../../game/abilityInput"
+import { AvailableTwoRoleOutlineOptionSelection, TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput"
 
 export type AuditorResult = {
     type: "two",
@@ -24,10 +24,11 @@ type AuditorButtons = ({
     result: AuditorResult
 })[]
 
-export default function TwoRoleOutlineOptionInputMenu(props: {
-    chosenOutlines?: TwoRoleOutlineOptionInput,
+export default function TwoRoleOutlineOptionSelectionMenu(props: {
+    selection?: TwoRoleOutlineOptionSelection,
+    available?: AvailableTwoRoleOutlineOptionSelection,
     previouslyGivenResults?: [number, AuditorResult][],
-    onChoose: (chosenOutlines: TwoRoleOutlineOptionInput)=>void
+    onChoose: (chosenOutlines: TwoRoleOutlineOptionSelection)=>void
 }): ReactElement {
     const roleList = useGameState(
         (gameState)=>{
@@ -37,7 +38,18 @@ export default function TwoRoleOutlineOptionInputMenu(props: {
     )!;
 
     const previouslyGivenResults = props.previouslyGivenResults ?? [];
-    const chosenOutlines = props.chosenOutlines ?? [null, null];
+    const chosenOutlines = props.selection ?? [null, null];
+    const strikenOutlineIndexs = previouslyGivenResults.map(result=>result[0]);
+    if(props.available !== undefined){
+        for(let i = 0; i < roleList.length; i++){
+            if(strikenOutlineIndexs.includes(i)){
+                continue;
+            }
+            if(!props.available.includes(i)){
+                strikenOutlineIndexs.push(i);
+            }
+        }
+    }
     
     const buttons: AuditorButtons = [];
     for(let i = 0; i < roleList.length; i++){
@@ -53,9 +65,7 @@ export default function TwoRoleOutlineOptionInputMenu(props: {
         <div className="grid">
             <RoleListDisplay
                 roleList={roleList}
-                strikenOutlineIndexs={
-                    previouslyGivenResults.map(result=>{return result[0] as number})
-                }
+                strikenOutlineIndexs={strikenOutlineIndexs}
             />
             <ChooseButtons
                 buttons={buttons}
@@ -103,20 +113,19 @@ function ChooseButtons(props: Readonly<{
                     key={index}
                     onClick={()=>{
                         let newChosenOutlines = [...props.chosenOutlines];
-                        newChosenOutlines = newChosenOutlines.filter((outline)=>outline !== null);
 
-                        if(newChosenOutlines.includes(index)){
-                            newChosenOutlines = newChosenOutlines.filter((outline)=>outline !== index);
-                        }else{
-                            newChosenOutlines.unshift(index);
+                        const foundIndex = newChosenOutlines.indexOf(index);
+                        if(foundIndex !== -1){
+                            newChosenOutlines[foundIndex] = null;
                         }
-
-                        //use for loops instead of while loops to prevent infinite loops and tomfoolery
-                        for(let i = 0; newChosenOutlines.length > 2 && i < 100; i++){
-                            newChosenOutlines.pop();
+                        else if(newChosenOutlines[0] === null){
+                            newChosenOutlines[0] = index;
                         }
-                        for(let i = 0; newChosenOutlines.length < 2 && i < 100; i++){
-                            newChosenOutlines.push(null);
+                        else if(newChosenOutlines[1] === null){
+                            newChosenOutlines[1] = index;
+                        }
+                        else{
+                            newChosenOutlines[0] = index;
                         }
                         props.onChoose(newChosenOutlines as [number | null, number | null]);
                     }}
