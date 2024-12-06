@@ -7,6 +7,7 @@ use crate::game::components::detained::Detained;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::grave::GraveInformation;
 use crate::game::grave::GraveReference;
+use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::tag::Tag;
@@ -14,6 +15,8 @@ use crate::game::visit::Visit;
 
 use crate::game::Game;
 use crate::vec_set::VecSet;
+use super::ControllerID;
+use super::ControllerParametersMap;
 use super::Role;
 use super::{Priority, RoleState, RoleStateImpl};
 
@@ -44,7 +47,7 @@ impl RoleStateImpl for Mortician {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Deception=>{
-                                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else{return};
 
                 let target_ref = visit.target;
@@ -61,16 +64,37 @@ impl RoleStateImpl for Mortician {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        !Detained::is_detained(game, actor_ref) &&
-        actor_ref != target_ref &&
-        actor_ref.selection(game).is_empty() &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game) &&
-        !self.obscured_players.contains(&target_ref)
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        let grayed_out = 
+            !actor_ref.alive(game) || 
+            Detained::is_detained(game, actor_ref);
+
+        ControllerParametersMap::new_one_player_ability_fast(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Mortician, 0),
+            PlayerReference::all_players(game)
+                .into_iter()
+                .filter(|p| *p != actor_ref)
+                .filter(|player| 
+                    player.alive(game) &&
+                    !InsiderGroupID::in_same_revealed_group(game, actor_ref, *player) &&
+                    !self.obscured_players.contains(&player)
+                )
+                .collect(),
+            None,
+            grayed_out,
+            Some(PhaseType::Obituary),
+            false
+        )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        crate::game::role::common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Mortician, 0),
+            false
+        )
     }
     fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _old: RoleState, new: RoleState){
         if player == actor_ref && new.role() != Role::Mortician {

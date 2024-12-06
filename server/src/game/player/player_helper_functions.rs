@@ -3,15 +3,11 @@ use std::collections::HashSet;
 use rand::seq::SliceRandom;
 
 use crate::{game::{
-    attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
+    ability_input::{AbilitySelection, ControllerParametersMap, SavedControllersMap}, attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
         arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura, insider_group::InsiderGroupID, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch
-    }, game_conclusion::GameConclusion, 
-    grave::{Grave, GraveKiller}, 
-    role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, 
-    win_condition::WinCondition,
-    Game
+    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, win_condition::WinCondition, Game
 }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
 use super::PlayerReference;
@@ -140,6 +136,52 @@ impl PlayerReference{
                     *target = possessed_into_visit.target;
                 }else{
                     new_selection = vec![possessed_into_visit.target];
+                }
+
+
+                //change all controller inputs to be selecting this player as well
+                for (controller_id, controller_data) in game.saved_controllers.all_controllers().clone().iter() {
+                    match controller_data.selection() {
+                        AbilitySelection::Unit => {},
+                        AbilitySelection::Boolean { .. } => {
+                            if possessed_visit.target == possessed_into_visit.target {
+                                SavedControllersMap::set_selection_in_controller(
+                                    game,
+                                    possessed_visit.target,
+                                    controller_id.clone(),
+                                    AbilitySelection::new_boolean(true),
+                                    true
+                                );
+                            }
+                        },
+                        AbilitySelection::OnePlayerOption { .. } => {
+                            SavedControllersMap::set_selection_in_controller(
+                                game,
+                                possessed_visit.target,
+                                controller_id.clone(),
+                                AbilitySelection::new_one_player_option(Some(possessed_into_visit.target)),
+                                true
+                            );
+                        },
+                        AbilitySelection::TwoPlayerOption { selection } => {
+                            SavedControllersMap::set_selection_in_controller(
+                                game,
+                                possessed_visit.target,
+                                controller_id.clone(),
+                                AbilitySelection::new_two_player_option(Some(possessed_into_visit.target), selection.1),
+                                true
+                            );
+                        },
+                        AbilitySelection::ThreePlayerOption { .. } => {},
+                        AbilitySelection::PlayerList { .. } => {},
+                        AbilitySelection::RoleOption { .. } => {},
+                        AbilitySelection::TwoRoleOption { .. } => {},
+                        AbilitySelection::TwoRoleOutlineOption { .. } => {},
+                        AbilitySelection::String { .. } => {},
+                        AbilitySelection::Kira { .. } => {},
+                    }
+                    
+                    
                 }
 
                 possessed_visit.target.set_night_visits(game,
@@ -323,6 +365,9 @@ impl PlayerReference{
         Role functions
     */
 
+    pub fn controller_parameters_map(&self, game: &Game) -> ControllerParametersMap {
+        self.role_state(game).clone().controller_parameters_map(game, *self)
+    }
     pub fn can_select(&self, game: &Game, target_ref: PlayerReference) -> bool {
         self.role_state(game).clone().can_select(game, *self, target_ref)
     }

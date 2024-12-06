@@ -3,10 +3,7 @@ import React, { ReactElement, useMemo } from "react";
 import AuditorMenu from "./RoleSpecificMenus/AuditorMenu";
 import LargeReporterMenu from "./RoleSpecificMenus/LargeReporterMenu";
 import LargeHypnotistMenu from "./RoleSpecificMenus/LargeHypnotistMenu";
-import LargeForgerMenu from "./RoleSpecificMenus/LargeForgerMenu";
 import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
-import KiraMenu from "./RoleSpecificMenus/KiraMenu";
-import ImpostorMenu from "./RoleSpecificMenus/ImpostorMenu";
 import Counter from "../../../../components/Counter";
 import StyledText from "../../../../components/StyledText";
 import translate from "../../../../game/lang";
@@ -18,8 +15,6 @@ import RecruiterMenu from "./RoleSpecificMenus/RecruiterMenu";
 import { Role, roleJsonData, RoleState } from "../../../../game/roleState.d";
 import RoleDropdown from "../../../../components/RoleDropdown";
 import GAME_MANAGER from "../../../..";
-import DisguiserMenu from "./RoleSpecificMenus/DisguiserMenu";
-import ReeducatorMenu from "./RoleSpecificMenus/ReeducatorMenu";
 
 
 export default function RoleSpecificSection(){
@@ -40,23 +35,13 @@ export default function RoleSpecificSection(){
     
     switch(roleState.type){
         case "auditor":
-            return <AuditorMenu/>;
+            return <AuditorMenu roleState={roleState}/>;
         case "reporter":
             return <LargeReporterMenu/>;
         case "hypnotist":
             return <LargeHypnotistMenu/>;
-        case "forger":
-            return <LargeForgerMenu/>;
         case "doomsayer":
             return <LargeDoomsayerMenu/>;
-        case "kira":
-            return <KiraMenu roleState={roleState}/>;
-        case "impostor":
-            return <ImpostorMenu roleState={roleState}/>
-        case "disguiser":
-            return <DisguiserMenu roleState={roleState}/>;
-        case "reeducator":
-            return <ReeducatorMenu roleState={roleState}/>;
         case "jailor": 
             return <JailorRoleSpecificMenu roleState={roleState}/>;
         case "kidnapper": 
@@ -111,7 +96,7 @@ export default function RoleSpecificSection(){
             </Counter>
         case "armorsmith":
             return <Counter
-                max={2}
+                max={3}
                 current={roleState.openShopsRemaining}
             >
                 <StyledText>{translate("role.armorsmith.roleDataText", roleState.openShopsRemaining)}</StyledText>
@@ -120,6 +105,13 @@ export default function RoleSpecificSection(){
             return <MarksmanRoleSpecificMenu roleState={roleState} />;
         case "counterfeiter":
             return <CounterfeiterMenu/>;
+        case "forger":
+            return <Counter
+                max={3}
+                current={roleState.forgesRemaining}
+            >
+                <StyledText>{translate("role.forger.roleDataText", roleState.forgesRemaining)}</StyledText>
+            </Counter>
         case "mortician":
             return <Counter
                 max={3}
@@ -137,9 +129,7 @@ export default function RoleSpecificSection(){
         case "ojo":
             return <OjoMenu roleState={roleState}/>
         case "steward":
-            return <StewardMenu
-                roleState={roleState}
-            />;
+            return <StewardMenu roleState={roleState}/>;
         case "spiral": 
             return <SpiralMenu />;
         case "puppeteer":
@@ -186,25 +176,13 @@ export default function RoleSpecificSection(){
 function MarksmanRoleSpecificMenu(props: Readonly<{
     roleState: (RoleState & { type: "marksman" })
 }>): ReactElement {
-    const players = useGameState(
-        gameState => gameState.players,
-        ["gamePlayers"]
-    )!;
-    
     let stateText;
     switch(props.roleState.state.type){
         case "notLoaded":
+        case "loaded":
         case "shotTownie":
             stateText = translate("role.marksman.roleDataText."+props.roleState.state.type)
             break;
-        case "marks":
-            if(props.roleState.state.marks.length === 0){
-                stateText = translate("role.marksman.roleDataText.marks.none")
-            }else{
-                stateText = translate("role.marksman.roleDataText.marks",
-                    props.roleState.state.marks.map(index => players[index].toString()).join(", ")
-                )
-            }
     }
     
     return <div className="role-information">

@@ -10,7 +10,7 @@ use crate::game::player::PlayerReference;
 
 
 use crate::game::Game;
-use super::{RoleStateImpl, Role, RoleState};
+use super::{ControllerID, ControllerParametersMap, OnePlayerOptionSelection, Role, RoleStateImpl};
 
 
 
@@ -33,8 +33,14 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Deputy {
     type ClientRoleState = Deputy;
-    fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
-
+    fn on_validated_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: super::AbilityInput) {
+        
+        if actor_ref != input_player {return;}
+        let Some(OnePlayerOptionSelection(Some(target_ref))) = ability_input.get_player_option_selection_if_id(
+            ControllerID::role(actor_ref, Role::Deputy, 0)
+        )else{return};
+        
+        
         target_ref.add_private_chat_message(game, ChatMessageVariant::DeputyShotYou);
         if target_ref.defense(game).can_block(AttackPower::Basic) {
             target_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
@@ -56,14 +62,27 @@ impl RoleStateImpl for Deputy {
             }
         }
 
-        actor_ref.set_role_state(game, RoleState::Deputy(Deputy{bullets_remaining:self.bullets_remaining-1}));
+        actor_ref.set_role_state(game, Deputy{bullets_remaining:self.bullets_remaining.saturating_sub(1)});
     }
-    fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        game.current_phase().is_day() &&
-        game.phase_machine.day_number > 1 &&
-        self.bullets_remaining > 0 &&
-        actor_ref != target_ref &&
-        target_ref.alive(game) && actor_ref.alive(game) &&
-        (PhaseType::Discussion == game.current_phase().phase() || PhaseType::Nomination == game.current_phase().phase())
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        ControllerParametersMap::new_one_player_ability_fast(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Deputy, 0),
+            PlayerReference::all_players(game)
+                    .into_iter()
+                    .filter(|player| 
+                        actor_ref != *player &&
+                        player.alive(game)
+                    )
+                    .collect(),
+            None,
+            !actor_ref.alive(game) ||
+            self.bullets_remaining == 0 || 
+            game.day_number() <= 1 || 
+            !(PhaseType::Discussion == game.current_phase().phase() || PhaseType::Nomination == game.current_phase().phase()),
+            None,
+            true
+        )
     }
 }

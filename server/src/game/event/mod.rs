@@ -11,6 +11,8 @@ pub mod on_night_priority;
 pub mod on_remove_role_label;
 pub mod before_initial_role_creation;
 pub mod on_ability_input_received;
+pub mod on_validated_ability_input_received;
+pub mod on_tick;
 
 
 

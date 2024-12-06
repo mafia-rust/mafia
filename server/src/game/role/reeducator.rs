@@ -2,7 +2,7 @@ use rand::seq::IteratorRandom;
 use serde::Serialize;
 use vec1::vec1;
 
-use crate::game::ability_input::AbilityInput;
+use crate::game::ability_input::ControllerID;
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
@@ -113,20 +113,19 @@ impl RoleStateImpl for Reeducator {
     fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: crate::game::ability_input::AbilityInput) {
         if actor_ref != input_player {return;}
         if !actor_ref.alive(game) {return};
-        match ability_input {
-            AbilityInput::Disguiser{input} => {
-                if let Some(target) = input.0 {
-                    if 
-                        RoleSet::MafiaSupport.get_roles().contains(&target) && 
-                        game.settings.enabled_roles.contains(&target)
-                    {
-                        self.convert_role = target;
-                    }
+
+        if let Some(selection) = ability_input.get_role_option_selection_if_id(ControllerID::role(actor_ref, actor_ref.role(game), 0)) {
+            if let Some(target) = selection.0 {
+                if 
+                    RoleSet::MafiaSupport.get_roles().contains(&target) && 
+                    game.settings.enabled_roles.contains(&target)
+                {
+                    self.convert_role = target;
                 }
-                actor_ref.set_role_state(game, self);
-            },
-            _ => {}
-        }
+            }
+        };
+        
+        actor_ref.set_role_state(game, self);
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)

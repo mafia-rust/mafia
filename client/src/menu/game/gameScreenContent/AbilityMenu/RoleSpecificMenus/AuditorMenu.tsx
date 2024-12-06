@@ -1,10 +1,11 @@
 import { ReactElement } from "react"
 import React from "react"
-import { Role } from "../../../../../game/roleState.d"
-import { usePlayerState } from "../../../../../components/useHooks"
-import TwoRoleOutlineOptionInputMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionInputMenu"
+import { Role, RoleState } from "../../../../../game/roleState.d"
+import TwoRoleOutlineOptionSelectionMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionSelectionMenu"
 import GAME_MANAGER from "../../../../.."
-import { TwoRoleOutlineOptionInput } from "../../../../../game/abilityInput"
+import { controllerIdToLink, TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput"
+import { usePlayerState } from "../../../../../components/useHooks"
+import ListMap from "../../../../../ListMap"
 
 export type AuditorResult = {
     type: "two",
@@ -14,37 +15,63 @@ export type AuditorResult = {
     role: Role
 }
 
-export default function AuditorMenu(props: {}): ReactElement {
-    const previouslyGivenResults = usePlayerState(
-        (playerState, gameState)=>{
-            if(playerState.roleState?.type === "auditor"){
-                return playerState.roleState.previouslyGivenResults;
-            }
-            return [];
-        },
-        ["yourRoleState"]
-    )!;
-    const chosenOutlines = usePlayerState(
-        (playerState, gameState)=>{
-            if(playerState.roleState?.type === "auditor"){
-                return playerState.roleState.chosenOutline;
-            }
-            return null;
-        },
-        ["yourRoleState"]
+export default function AuditorMenu(props: Readonly<{
+    roleState: RoleState & {type: "auditor"}
+}>): ReactElement {
+    
+    const myPlayerIndex = usePlayerState(
+        state=>state.myIndex,
+        ["yourPlayerIndex"]
     )!;
 
-    const onInput = (chosenOutlines: TwoRoleOutlineOptionInput) => {
-        const input = {
-            type: "auditor" as const,
-            input: chosenOutlines
-        };
-        GAME_MANAGER.sendAbilityInput(input);
+    const onInput = (selection: TwoRoleOutlineOptionSelection) => {
+        GAME_MANAGER.sendAbilityInput({
+            id: {
+                type: "role",
+                role: "auditor",
+                player: myPlayerIndex,
+                id: 0
+            },
+            selection: {
+                type: "twoRoleOutlineOption",
+                selection: selection
+            }
+        });
     }
     
-    return <TwoRoleOutlineOptionInputMenu
-        previouslyGivenResults={previouslyGivenResults}
-        chosenOutlines={chosenOutlines}
+
+    const savedAbilities = usePlayerState(
+        playerState => playerState.savedControllers,
+        ["yourAllowedControllers"]
+    )!;
+    
+    const savedAbilitiesMap = new ListMap(savedAbilities, (k1, k2) => controllerIdToLink(k1) === controllerIdToLink(k2));
+
+    let singleAbilitySave = savedAbilitiesMap.get({
+        type: "role",
+        role: "auditor",
+        player: myPlayerIndex,
+        id: 0
+    });
+
+    let newSelection;
+    let newAvailable;
+    if(
+        singleAbilitySave !== null &&
+        singleAbilitySave.selection.type === "twoRoleOutlineOption" &&
+        singleAbilitySave.availableAbilityData.available.type === "twoRoleOutlineOption"
+    ){
+        newSelection = singleAbilitySave.selection.selection;
+        newAvailable = singleAbilitySave.availableAbilityData.available.selection;
+    } else {
+        newSelection = undefined;
+        newAvailable = undefined;
+    }
+
+    return <TwoRoleOutlineOptionSelectionMenu
+        previouslyGivenResults={props.roleState.previouslyGivenResults}
+        selection={newSelection}
+        available={newAvailable}
         onChoose={onInput}
     />
 }

@@ -4,6 +4,8 @@ import { Role, RoleState } from "./roleState.d";
 import { RoleList } from "./roleListState.d";
 import { LobbyPreviewData } from "./packet";
 import { ChatFilter } from "../menu/game/gameScreenContent/ChatMenu";
+import { ControllerID, SavedController } from "./abilityInput";
+import { ListMapData } from "../ListMap";
 
 
 export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;
@@ -93,15 +95,9 @@ export type PlayerGameState = {
     voted: PlayerIndex | null,
     judgement: Verdict,
 
-    fellowInsiders: PlayerIndex[],
-    
-    forfeitVote: boolean,
-    pitchforkVote: PlayerIndex | null,
-    syndicateGunItemData: {
-        shooter: PlayerIndex | null,
-        target: PlayerIndex | null,
-    },
+    savedControllers: ListMapData<ControllerID, SavedController>,
 
+    fellowInsiders: PlayerIndex[],
 
     sendChatGroups: ChatGroup[],
     insiderGroups: InsiderGroup[],

@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::components::detained::Detained;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::role_list::RoleSet;
 use crate::game::tag::Tag;
@@ -8,8 +9,8 @@ use crate::game::{attack_power::DefensePower, player::PlayerReference};
 use crate::game::visit::{Visit, VisitTag};
 
 use crate::game::Game;
-use crate::vec_set::VecSet;
-use super::{Priority, RoleStateImpl};
+use crate::vec_set::{vec_set, VecSet};
+use super::{AbilitySelection, ControllerID, ControllerParametersMap, OnePlayerOptionSelection, Priority, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -72,33 +73,84 @@ impl RoleStateImpl for Framer {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         
-        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
-        actor_ref.alive(game) &&
-        (
-            actor_ref.selection(game).is_empty() &&
-            actor_ref != target_ref &&
-            target_ref.alive(game) &&
-            !InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref)
-        ) || 
-        (
-            actor_ref.selection(game).len() == 1
-        )
+        let frame_players = PlayerReference::all_players(game)
+            .into_iter()
+            .filter(|p| 
+                p.alive(game) && 
+                *p != actor_ref && 
+                !InsiderGroupID::in_same_revealed_group(game, actor_ref, *p)
+            )
+            .map(|p|Some(p))
+            .chain(std::iter::once(None))
+            .collect::<VecSet<_>>();
+        
+        let grayed_out = 
+            !actor_ref.alive(game) || 
+            Detained::is_detained(game, actor_ref);
+        
+        
+        let frame_controller = ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Framer, 0),
+            super::AvailableAbilitySelection::new_one_player_option(frame_players),
+            AbilitySelection::new_one_player_option(None),
+            grayed_out,
+            Some(crate::game::phase::PhaseType::Obituary),
+            false,
+            vec_set!(actor_ref)
+        );
+
+
+        let framed_player_exists = if let Some(OnePlayerOptionSelection(Some(_))) = game.saved_controllers.get_controller_current_selection_player_option(
+            ControllerID::role(actor_ref, Role::Framer, 0)
+        ){
+            true
+        }else{
+            false
+        };
+
+
+        let grayed_out = 
+            !actor_ref.alive(game) || 
+            Detained::is_detained(game, actor_ref) ||
+            !framed_player_exists;
+
+        let frame_into_players = PlayerReference::all_players(game)
+            .into_iter()
+            .map(|p|Some(p))
+            .chain(std::iter::once(None))
+            .collect::<VecSet<_>>();
+        
+        
+        let frame_into_controller = ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Framer, 1),
+            super::AvailableAbilitySelection::new_one_player_option(frame_into_players),
+            AbilitySelection::new_one_player_option(None),
+            grayed_out,
+            Some(crate::game::phase::PhaseType::Obituary),
+            false,
+            vec_set!(actor_ref)
+        );
+
+        frame_controller.combine_overwrite_owned(frame_into_controller)
     }
-    fn convert_selection_to_visits(self, _game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        if target_refs.len() == 2 {
-            vec![
-                Visit::new_none(actor_ref, target_refs[0], false), 
-                Visit::new_none(actor_ref, target_refs[1], false)
-            ]
-        } else if target_refs.len() == 1 {
-            vec![
-                Visit::new_none(actor_ref, target_refs[0], false)
-            ]
-        } else {
-            Vec::new()
-        }
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        crate::game::role::common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Framer, 0),
+            false
+        ).into_iter().chain(
+            crate::game::role::common_role::convert_controller_selection_to_visits(
+                game,
+                actor_ref,
+                ControllerID::role(actor_ref, Role::Framer, 1),
+                false
+            )
+        ).collect()
     }
      fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![

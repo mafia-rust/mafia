@@ -22,6 +22,7 @@ pub mod role_outline_reference;
 pub mod ability_input;
 
 use std::time::Duration;
+use ability_input::saved_controllers_map::SavedControllersMap;
 use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
 use components::love_linked::LoveLinked;
@@ -35,6 +36,7 @@ use components::insider_group::InsiderGroupID;
 use components::insider_group::InsiderGroups;
 use components::syndicate_gun_item::SyndicateGunItem;
 use components::verdicts_today::VerdictsToday;
+use event::on_tick::OnTick;
 use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
 use rand::seq::SliceRandom;
@@ -94,6 +96,7 @@ pub struct Game {
     
     
     //components with data
+    pub saved_controllers: SavedControllersMap,
     night_visits: NightVisits,
     syndicate_gun_item: SyndicateGunItem,
     pub cult: Cult,
@@ -190,6 +193,7 @@ impl Game {
                 modifiers: Modifiers::default_from_settings(settings.enabled_modifiers.clone()),
                 settings,
 
+                saved_controllers: SavedControllersMap::default(),
                 night_visits: NightVisits::default(),
                 syndicate_gun_item: SyndicateGunItem::default(),
                 cult: Cult::default(),
@@ -397,6 +401,8 @@ impl Game {
         SpectatorPointer::all_spectators(self).for_each(|s|s.tick(self, time_passed));
 
         self.phase_machine.time_remaining = self.phase_machine.time_remaining.saturating_sub(time_passed);
+
+        OnTick::new().invoke(self);
     }
 
     pub fn add_grave(&mut self, grave: Grave){
@@ -461,14 +467,17 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem, verdicts_today::VerdictsToday},
+        ability_input::saved_controllers_map::SavedControllersMap,
+        components::{
+            arsonist_doused::ArsonistDoused, cult::Cult,
+            insider_group::InsiderGroupID, love_linked::LoveLinked,
+            mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits,
+            pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette,
+            syndicate_gun_item::SyndicateGunItem, verdicts_today::VerdictsToday
+        }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
-        phase::PhaseStateMachine,
-        player::{test::mock_player, PlayerIndex, PlayerReference},
-        role::Role,
-        settings::Settings, 
-        Game,
-        RejectStartReason
+        phase::PhaseStateMachine, player::{test::mock_player, PlayerIndex, PlayerReference},
+        role::Role, settings::Settings, Game, RejectStartReason
     };
 
 
@@ -515,6 +524,7 @@ pub mod test {
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
 
+            saved_controllers: SavedControllersMap::default(),
             night_visits: NightVisits::default(),
             syndicate_gun_item: SyndicateGunItem::default(),
             cult: Cult::default(),

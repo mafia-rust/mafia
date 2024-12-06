@@ -4,6 +4,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::components::detained::Detained;
 use crate::game::phase::{PhaseType, PhaseState};
 use crate::game::player::PlayerReference;
 use crate::game::role::RoleState;
@@ -11,7 +12,11 @@ use crate::game::role::RoleState;
 use crate::game::verdict::Verdict;
 
 use crate::game::Game;
-use super::{GetClientRoleState, Priority, RoleStateImpl};
+use super::{
+    ControllerID, ControllerParametersMap,
+    GetClientRoleState, OnePlayerOptionSelection, Priority,
+    Role, RoleStateImpl
+};
 
 #[derive(Clone, Debug, Default)]
 pub struct Jester {
@@ -33,31 +38,55 @@ impl RoleStateImpl for Jester {
         if actor_ref.alive(game) {return;}
         if !self.lynched_yesterday {return}
         
-        let all_killable_players: Vec<PlayerReference> = PlayerReference::all_players(game)
-            .filter(|player_ref|{
-                player_ref.alive(game) &&
-                *player_ref != actor_ref &&
-                player_ref.verdict(game) != Verdict::Innocent
-            }).collect();
+        
     
-        let player = match actor_ref.selection(game).first() {
-            Some(v) => *v,
-            None => {
-                let Some(target_ref) = all_killable_players.choose(&mut rand::thread_rng()) else {return};
-                *target_ref
-            },
+
+        let player = if let Some(OnePlayerOptionSelection(Some(selection))) = game.saved_controllers
+            .get_controller_current_selection_player_option(ControllerID::role(actor_ref, Role::Jester, 0)){
+            selection
+        }else{
+
+            let all_killable_players: Vec<PlayerReference> = PlayerReference::all_players(game)
+                .filter(|player_ref|{
+                    player_ref.alive(game) &&
+                    *player_ref != actor_ref &&
+                    player_ref.verdict(game) != Verdict::Innocent
+                })
+                .collect();
+
+            let Some(target_ref) = all_killable_players
+                .choose(&mut rand::thread_rng()) else {return};
+            
+            *target_ref
         };
+        
         player.try_night_kill_single_attacker(actor_ref, game, 
             crate::game::grave::GraveKiller::Role(super::Role::Jester), AttackPower::ProtectionPiercing, true
         );
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        actor_ref != target_ref &&
-        actor_ref.selection(game).is_empty() &&
-        !actor_ref.alive(game) &&
-        target_ref.alive(game) &&
-        target_ref.verdict(game) != Verdict::Innocent &&
-        self.lynched_yesterday
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        let grayed_out = 
+            actor_ref.alive(game) || 
+            Detained::is_detained(game, actor_ref) ||
+            !self.lynched_yesterday;
+
+        ControllerParametersMap::new_one_player_ability_fast(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Jester, 0),
+            PlayerReference::all_players(game)
+                .into_iter()
+                .filter(|p| *p != actor_ref)
+                .filter(|player| 
+                    player.alive(game) &&
+                    player.verdict(game) != Verdict::Innocent
+                )
+                .collect(),
+            None,
+            grayed_out,
+            Some(PhaseType::Obituary),
+            false
+        )
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         match game.current_phase() {

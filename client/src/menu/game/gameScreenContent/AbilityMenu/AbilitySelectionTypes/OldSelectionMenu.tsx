@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ReactElement } from "react";
 import { usePlayerState } from "../../../../../components/useHooks";
 import { PlayerIndex } from "../../../../../game/gameState.d";
@@ -7,9 +7,9 @@ import { Button } from "../../../../../components/Button";
 import GAME_MANAGER from "../../../../..";
 import { RoleState } from "../../../../../game/roleState.d";
 import PlayerNamePlate from "../../../../../components/PlayerNamePlate";
-import "./oldSelectionType.css";
-import StyledText from "../../../../../components/StyledText";
+import "./oldSelectionMenu.css";
 import SelectionInformation from "../SelectionInformation";
+import RoleSpecificSection from "../RoleSpecific";
 
 export default function OldSelectionType(): ReactElement {
     const useablePlayers = usePlayerState(
@@ -19,14 +19,30 @@ export default function OldSelectionType(): ReactElement {
         ["yourButtons"]
     )!;
 
-
-    return <>
+    const roleState = usePlayerState(
+        playerState => playerState.roleState,
+        ["yourRoleState"]
+    )!;
+    
+    const [roleSpecificOpen, setRoleSpecificOpen] = useState<boolean>(true);
+            
+    return <details className="role-specific-colors small-role-specific-menu" open={roleSpecificOpen}>
+        <summary
+            onClick={(e)=>{
+                e.preventDefault();
+                setRoleSpecificOpen(!roleSpecificOpen);
+            }}
+        >
+            {translate("role."+roleState?.type+".name")}
+        </summary>
+        <RoleSpecificSection/>
         <SelectionInformation />
-        <div className="old-selection-type">
-            {useablePlayers.map(idx => <PlayerCard key={idx} playerIndex={idx}/>)}
-            {useablePlayers.length === 0 && <StyledText>{translate("none")}</StyledText>}
-        </div>
-    </>
+        {useablePlayers.length !== 0 && 
+            <div className="old-selection-type">
+                {useablePlayers.map(idx => <PlayerCard key={idx} playerIndex={idx}/>)}
+            </div>
+        }
+    </details>
 }
 
 function useSelectedPlayers(): PlayerIndex[] {
@@ -58,9 +74,6 @@ function useDayTargetedPlayers(): PlayerIndex[] {
         case "reporter":
             if (roleState.interviewedTarget !== null) return [roleState.interviewedTarget]
             break;
-        case "marksman":
-            if (roleState.state.type === "marks") return roleState.state.marks
-            break
     }
 
     return []

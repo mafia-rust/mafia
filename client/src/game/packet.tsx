@@ -6,8 +6,8 @@ import { Role, RoleState } from "./roleState.d"
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu"
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu"
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu"
-import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu"
-import { AbilityInput } from "./abilityInput"
+import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu"
+import { AbilityInput, ControllerID, SavedController } from "./abilityInput"
 import { ListMapData } from "../ListMap"
 
 export type LobbyPreviewData = {
@@ -119,6 +119,9 @@ export type ToClientPacket = {
     type: "yourInsiderGroups",
     insiderGroups: InsiderGroup[]
 } | {
+    type: "yourAllowedControllers",
+    save: ListMapData<ControllerID, SavedController>,
+} | {
     type: "yourButtons", 
     buttons: [{
         dayTarget: boolean,
@@ -171,15 +174,8 @@ export type ToClientPacket = {
     type: "gameOver",
     reason: string
 } | {
-    type: "yourForfeitVote",
-    forfeit: boolean
-} | {
     type: "yourPitchforkVote",
     player: PlayerIndex | null
-} | {
-    type: "yourSyndicateGunItemData",
-    shooter: PlayerIndex | null
-    target: PlayerIndex | null
 }
 
 export type ToServerPacket = {
