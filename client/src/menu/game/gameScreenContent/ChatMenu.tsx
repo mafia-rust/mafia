@@ -129,9 +129,10 @@ export function ChatMessageSection(props: Readonly<{
                             else
                                 return false;
                         default:
-                            return false
+                            return false;
                     }
             }
+            return true;
         }).filter((msg, index, array)=>{
             //if there is a filter, remove repeat phaseChange message
             if(filter === null){return true}
@@ -174,14 +175,14 @@ export function ChatMessageSection(props: Readonly<{
             />;
         })
 
-    return  <Virtuoso
+    return <div className="chat-message-section"><Virtuoso
         alignToBottom={true}
         totalCount={allMessages.length}
         followOutput={'smooth'}
         initialTopMostItemIndex={allMessages.length===0 ? 0 : allMessages.length-1}
         itemContent={(index) => allMessages[index]}
         atBottomThreshold={4}
-    />
+    /></div>;
 }
 
 export function ChatTextInput(props: Readonly<{

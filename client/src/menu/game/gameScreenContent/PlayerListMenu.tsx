@@ -39,13 +39,13 @@ export default function PlayerListMenu(): ReactElement {
         <div className="player-list">
             {players
                 .filter(player => player.alive)
-                .map(player => <div className="playerCardHolderDiv"><PlayerCard key={player.index} playerIndex={player.index}/></div>)}
+                .map(player => <div className="player-card-holder"><PlayerCard key={player.index} playerIndex={player.index}/></div>)}
 
             {graves.length === 0 || <>
                 <div className="dead-players-separator">
                     <StyledText>{translate("grave.icon")} {translate("graveyard")}</StyledText>
                 </div>
-                {graves.map((grave, index) => <div className="playerCardHolderDiv"><PlayerCard key={grave.player} graveIndex={index} playerIndex={grave.player}/></div>)}
+                {graves.map((grave, index) => <div className="player-card-holder"><PlayerCard key={grave.player} graveIndex={index} playerIndex={grave.player}/></div>)}
             </>}
             {players
                 .filter(
@@ -57,7 +57,7 @@ export default function PlayerListMenu(): ReactElement {
                 </div>
                 {players
                     .filter(player => !player.alive)
-                    .map(player => <div className="playerCardHolderDiv"><PlayerCard key={player.index} playerIndex={player.index}/></div>)}
+                    .map(player => <div className="player-card-holder"><PlayerCard key={player.index} playerIndex={player.index}/></div>)}
             </>}
         </div>
     </div>
@@ -79,11 +79,6 @@ function PlayerCard(props: Readonly<{
     const playerAlive = useGameState(
         gameState => gameState.players[props.playerIndex].alive,
         ["gamePlayers", "playerAlive"]
-    )!;
-    const hasAllChat = usePlayerState(
-        gameState => gameState.sendChatGroups.includes("all"),
-        ["yourSendChatGroups"],
-        false
     )!;
     const phaseState = useGameState(
         gameState => gameState.phaseState,
@@ -206,7 +201,7 @@ function PlayerCard(props: Readonly<{
     {graveOpen && grave !== undefined ? <div onClick={()=>setGraveOpen(false)}>
         <GraveComponent grave={grave}/>
     </div> : null}
-    {(whisperChatOpen && !isPlayerSelf) && <>
+    {(whisperChatOpen && !isPlayerSelf) && <div className="chat-menu-colors player-list-chat-section">
         <div className="player-list-chat-message-section">
             <ChatMessageSection filter={{
                 type: "myWhispersWithPlayer",
@@ -217,7 +212,7 @@ function PlayerCard(props: Readonly<{
             disabled={sendChatGroups.length === 0}
             whispering={props.playerIndex}
         />}
-    </>}
+    </div>}
     </>
 }
 
