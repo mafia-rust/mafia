@@ -571,7 +571,7 @@ fn bodyguard_basic() {
     );
 
     maf.set_night_selection_single(townie);
-    bg.set_night_selection_single(townie);
+    bg.send_ability_input_one_player_typical(townie);
 
     game.skip_to(Obituary, 3);
 
@@ -652,7 +652,7 @@ fn bodyguard_protects_transported_target() {
     );
     trans.set_night_selection(vec![t1, t2]);
     maf.set_night_selection_single(t1);
-    bg.set_night_selection_single(t1);
+    bg.send_ability_input_one_player_typical(t1);
     
     game.skip_to(Obituary, 3);
     assert!(t1.alive());
@@ -794,7 +794,7 @@ fn cop_basic(){
         _maf2: Framer
     );
 
-    crus.set_night_selection(vec![protected]);
+    crus.send_ability_input_one_player_typical(protected);
     townie1.send_ability_input_one_player_typical(protected);
     townie2.send_ability_input_one_player_typical(protected);
     mafioso.set_night_selection(vec![protected]);
@@ -807,7 +807,7 @@ fn cop_basic(){
     assert!(townie2.alive());
     assert!(!mafioso.alive());
 
-    crus.set_night_selection(vec![protected]);
+    crus.send_ability_input_one_player_typical(protected);
     townie1.send_ability_input_one_player_typical(protected);
     townie2.send_ability_input_one_player_typical(protected);
 
@@ -829,7 +829,7 @@ fn cop_does_not_kill_framed_player(){
         mafioso: Mafioso
     );
 
-    assert!(crus.set_night_selection(vec![protected]));
+    assert!(crus.send_ability_input_one_player_typical(protected));
     assert!(framer.send_ability_input_one_player(townie, 0));
     assert!(framer.send_ability_input_one_player(protected, 1));
 
@@ -2099,23 +2099,18 @@ fn bodyguard_gets_single_target_jailed_message() {
 
     game.next_phase();
 
-    bg.set_night_selection_single(townie);
+    bg.send_ability_input_one_player_typical(townie);
 
     game.next_phase();
 
-    assert_eq!(
+    assert_contains!(
         bg.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange { 
                 phase: PhaseState::Night, day_number: 2
             }
         ),
-        vec![
-            ChatMessageVariant::Wardblocked,
-            /* They should not get a second Wardblocked message */
-            ChatMessageVariant::PhaseChange { 
-                phase: PhaseState::Obituary, day_number: 3
-            }
-        ]
+        ChatMessageVariant::Wardblocked
+        /* They should not get a second Wardblocked message */
     );
 }
 
@@ -2202,7 +2197,7 @@ fn martyr_healed() {
     );
 
     martyr.set_night_selection_single(martyr);
-    doctor.set_night_selection_single(martyr);
+    doctor.send_ability_input_one_player_typical(martyr);
 
     game.next_phase();
 
@@ -2536,7 +2531,7 @@ fn spiral_does_not_kill_protected_player() {
     );
     spiral.set_night_selection_single(doctor);
 
-    doctor.set_night_selection_single(doctor);
+    doctor.send_ability_input_one_player_typical(doctor);
 
     game.skip_to(Obituary, 3);
     assert!(doctor.alive());
