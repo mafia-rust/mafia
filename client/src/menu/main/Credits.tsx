@@ -28,6 +28,7 @@ export default function Credits(): ReactElement {
                 <span>Alex Eng</span>
                 <span>Bit Haag</span>
                 <span>copop22</span>
+                <span>Firefly707</span>
                 <span>Gabriel Arias</span>
                 <span>Genevieve Rolnick</span>
                 <span>Jamin Chen</span>

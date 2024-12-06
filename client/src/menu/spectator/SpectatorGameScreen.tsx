@@ -1,11 +1,8 @@
 import React, { ReactElement, useContext } from "react";
-import "./spectatorGameScreen.css";
 import "../game/gameScreen.css"
 import HeaderMenu from "../game/HeaderMenu";
-import { MenuController, useMenuController, MenuControllerContext, MENU_ELEMENTS } from "../game/GameScreen";
+import { MenuController, useMenuController, MenuControllerContext, GameScreenMenus } from "../game/GameScreen";
 import { MobileContext } from "../Anchor";
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import translate from "../../game/lang";
 
 let CONTENT_CONTROLLER: MenuController | undefined;
 
@@ -40,20 +37,7 @@ export default function SpectatorGameScreen(): ReactElement {
                 <div className="header">
                     <HeaderMenu chatMenuNotification={false}/>
                 </div>
-                <PanelGroup direction="horizontal" className="content">
-                    {contentController.menusOpen().map((menu, index, menusOpen) => {
-                        const MenuElement = MENU_ELEMENTS[menu];
-                        return <>
-                            <Panel minSize={10}>
-                                <MenuElement />
-                            </Panel>
-                            {menusOpen.some((_, i) => i > index) && <PanelResizeHandle />}
-                        </>
-                    })}
-                    {contentController.menusOpen().length === 0 && <Panel><div className="no-content">
-                        {translate("menu.gameScreen.noContent")}
-                    </div></Panel>}
-                </PanelGroup>
+                <GameScreenMenus />
             </div>
         </MenuControllerContext.Provider>
     );
