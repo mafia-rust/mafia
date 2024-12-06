@@ -30,7 +30,7 @@ impl ForfeitVote{
         out
     }
 
-    pub fn on_ability_input_received(game: &mut Game, actor_ref: PlayerReference, input: AbilityInput){
+    pub fn on_validated_ability_input_received(game: &mut Game, actor_ref: PlayerReference, input: AbilityInput){
         let Some(selection) = input.get_boolean_selection_if_id(ControllerID::forfeit_vote(actor_ref)) else {return};
         if 
             game.current_phase().phase() == PhaseType::Discussion &&

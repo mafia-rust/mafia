@@ -462,10 +462,11 @@
 
     "role.framer.name": "Framer",
     "role.framer.name:var.0": "Framers",
-    "role.framer.target": "Frame",
     "role.framer.youAreSelecting": "You are framing \\0.",
     "role.framer.youAreSelecting.2": "You are framing \\0 into visiting \\1.",
     "role.framer.youAreSelecting.null": "You aren't framing anyone.",
+    "controllerId.framer.0.name": "Frame",
+    "controllerId.framer.1.name": "Appeared Visit",
     
     "role.disguiser.name": "Disguiser",
     "role.disguiser.name:var.0": "Disguiser",

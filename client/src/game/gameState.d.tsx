@@ -97,14 +97,6 @@ export type PlayerGameState = {
     savedControllers: ListMapData<ControllerID, SavedController>,
 
     fellowInsiders: PlayerIndex[],
-    
-    forfeitVote: boolean,
-    pitchforkVote: PlayerIndex | null,
-    syndicateGunItemData: {
-        shooter: PlayerIndex | null,
-        target: PlayerIndex | null,
-    },
-
 
     sendChatGroups: ChatGroup[],
     insiderGroups: InsiderGroup[],

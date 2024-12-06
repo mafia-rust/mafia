@@ -67,6 +67,16 @@ impl TestPlayer {
         true
     }
 
+    pub fn send_ability_input_one_player(&self, selection: TestPlayer, id: RoleControllerID)->bool{
+        self.send_ability_input(
+            AbilityInput::new(
+                ControllerID::role(self.player_ref(), self.role(), id),
+                AbilitySelection::new_one_player_option(Some(selection.player_ref()))
+            )
+        );
+        true
+    }
+
     pub fn set_night_selection(&self, selection: Vec<TestPlayer>)->bool {
         self.0.set_selection(
             game!(self), 

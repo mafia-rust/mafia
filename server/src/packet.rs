@@ -144,10 +144,6 @@ pub enum ToClientPacket{
     YourJudgement{verdict: Verdict},
     #[serde(rename_all = "camelCase")]
     YourVoteFastForwardPhase{fast_forward: bool},
-    YourForfeitVote{forfeit: bool},
-    #[serde(rename_all = "camelCase")]
-    YourPitchforkVote{player: Option<PlayerReference>},
-    YourSyndicateGunItemData{shooter: Option<PlayerReference>, target: Option<PlayerReference>},
 
     #[serde(rename_all = "camelCase")]
     AddChatMessages{chat_messages: Vec<ChatMessage>},

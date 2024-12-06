@@ -174,15 +174,8 @@ export type ToClientPacket = {
     type: "gameOver",
     reason: string
 } | {
-    type: "yourForfeitVote",
-    forfeit: boolean
-} | {
     type: "yourPitchforkVote",
     player: PlayerIndex | null
-} | {
-    type: "yourSyndicateGunItemData",
-    shooter: PlayerIndex | null
-    target: PlayerIndex | null
 }
 
 export type ToServerPacket = {

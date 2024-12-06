@@ -488,7 +488,7 @@ fn psychic_auras(){
         }
 
         game.skip_to(Night, 2);
-        maf.set_night_selection_single(town1);
+        maf.send_ability_input_one_player_typical(town1);
         psy.send_ability_input_one_player_typical(town2);
         game.next_phase();
         let messages = psy.get_messages_after_night(2);
@@ -619,7 +619,8 @@ fn transporter_basic_seer_sheriff_framer() {
         town2: Detective
     );
     assert!(trans.set_night_selection(vec![town1, town2]));
-    assert!(framer.set_night_selection(vec![town1, philosopher]));
+    assert!(framer.send_ability_input_one_player_typical(town1));
+    assert!(framer.send_ability_input_one_player(philosopher, 1));
     assert!(philosopher.set_night_selection(vec![town1, town2]));
     assert!(town1.send_ability_input_one_player_typical(town2));
     assert!(town2.send_ability_input_one_player_typical(town1));
@@ -829,7 +830,8 @@ fn cop_does_not_kill_framed_player(){
     );
 
     assert!(crus.set_night_selection(vec![protected]));
-    assert!(framer.set_night_selection(vec![townie, protected]));
+    assert!(framer.send_ability_input_one_player(townie, 0));
+    assert!(framer.send_ability_input_one_player(protected, 1));
 
     game.next_phase();
 
@@ -851,7 +853,7 @@ fn veteran_basic(){
     );
 
     assert!(vet.send_ability_input_boolean_typical(true));
-    assert!(framer.set_night_selection(vec![vet]));
+    assert!(framer.send_ability_input_one_player_typical(vet));
     assert!(townie.send_ability_input_one_player_typical(vet));
     assert!(tracker.send_ability_input_one_player_typical(vet));
 
@@ -886,7 +888,8 @@ fn veteran_does_not_kill_framed_player(){
     );
 
     assert!(vet.send_ability_input_boolean_typical(true));
-    assert!(framer.set_night_selection(vec![townie, vet]));
+    assert!(framer.send_ability_input_one_player_typical(townie));
+    assert!(framer.send_ability_input_one_player(vet, 1));
 
     game.next_phase();
 
@@ -1192,7 +1195,8 @@ fn drunk_framer() {
     assert!(mafioso.set_night_selection_single(townie));
     assert!(lookout.send_ability_input_one_player_typical(townie));
     assert!(lookout2.send_ability_input_one_player_typical(mafioso));
-    assert!(framer.set_night_selection(vec![drunk, mafioso]));
+    framer.send_ability_input_one_player_typical(drunk);
+    framer.send_ability_input_one_player(mafioso, 1);
 
     game.next_phase();
 
@@ -1438,7 +1442,8 @@ fn gossip_framer() {
 
     assert!(gossip.send_ability_input_one_player_typical(townie));
     assert!(townie.send_ability_input_one_player_typical(framer));
-    assert!(framer.set_night_selection(vec![townie, gossip]));
+    assert!(framer.send_ability_input_one_player_typical(townie));
+    assert!(framer.send_ability_input_one_player(gossip, 1));
 
     game.next_phase();
 
@@ -1451,7 +1456,8 @@ fn gossip_framer() {
 
     assert!(gossip.send_ability_input_one_player_typical(t2));
     assert!(t2.send_ability_input_one_player_typical(townie));
-    assert!(framer.set_night_selection(vec![townie, gossip]));
+    assert!(framer.send_ability_input_one_player_typical(townie));
+    assert!(framer.send_ability_input_one_player(gossip, 1));
 
     game.next_phase();
 
@@ -1569,7 +1575,7 @@ fn godfather_backup_sets_off_engineer_trap() {
         );
 
         assert!(gf.day_target(backup));
-        assert!(backup.set_night_selection_single(esc));
+        assert!(backup.send_ability_input_one_player_typical(esc));
         assert!(esc.send_ability_input_one_player_typical(gf));
         assert!(eng.set_night_selection_single(esc));
 
@@ -1589,7 +1595,7 @@ fn godfather_backup_sets_off_engineer_trap() {
         );
 
         assert!(gf.day_target(backup));
-        assert!(backup.set_night_selection_single(esc));
+        assert!(backup.send_ability_input_one_player_typical(esc));
         assert!(esc.send_ability_input_one_player_typical(gf));
         assert!(eng.set_night_selection_single(esc));
 
@@ -1610,7 +1616,7 @@ fn godfather_backup_sets_off_engineer_trap() {
         );
 
         assert!(gf.day_target(backup));
-        assert!(backup.set_night_selection_single(esc));
+        assert!(backup.send_ability_input_one_player_typical(esc));
         assert!(esc.send_ability_input_one_player_typical(gf));
         assert!(eng.set_night_selection_single(esc));
 
@@ -1630,7 +1636,7 @@ fn godfather_backup_sets_off_engineer_trap() {
         );
 
         assert!(gf.day_target(backup));
-        assert!(backup.set_night_selection_single(esc));
+        assert!(backup.send_ability_input_one_player_typical(esc));
         assert!(esc.send_ability_input_one_player_typical(gf));
         assert!(eng.set_night_selection_single(esc));
 
@@ -1650,7 +1656,7 @@ fn godfather_backup_sets_off_engineer_trap() {
         );
 
         assert!(gf.day_target(backup));
-        assert!(backup.set_night_selection_single(esc));
+        assert!(backup.send_ability_input_one_player_typical(esc));
         assert!(esc.send_ability_input_one_player_typical(gf));
         assert!(eng.set_night_selection_single(esc));
 
@@ -1670,7 +1676,7 @@ fn godfather_backup_sets_off_engineer_trap() {
         );
 
         assert!(gf.day_target(backup));
-        assert!(backup.set_night_selection_single(esc));
+        assert!(backup.send_ability_input_one_player_typical(esc));
         assert!(esc.send_ability_input_one_player_typical(gf));
         assert!(eng.set_night_selection_single(esc));
 

@@ -199,8 +199,6 @@ impl PlayerReference{
 
     pub fn set_forfeit_vote(&self, game: &mut Game, forfeit: bool) {
         self.deref_mut(game).forfeit_vote = forfeit;
-
-        self.send_packet(game, ToClientPacket::YourForfeitVote { forfeit });
     }
     pub fn forfeit_vote(&self, game: &Game) -> bool{
         self.deref(game).forfeit_vote

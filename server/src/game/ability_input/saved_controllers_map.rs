@@ -130,23 +130,16 @@ impl SavedControllersMap{
     }
 
     // new query
-    pub fn all_controllers(
-        &self
-    )->&VecMap<ControllerID, SavedController>{
+    pub fn all_controllers(&self)->&VecMap<ControllerID, SavedController>{
         &self.saved_controllers
     }
-    pub fn all_controller_ids(
-        &self
-    )->VecSet<ControllerID>{
+    pub fn all_controller_ids(&self)->VecSet<ControllerID>{
         self.saved_controllers.iter()
             .map(|(c, _)|c.clone())
             .collect()
     }
 
-    pub fn controllers_allowed_to_player(
-        &self,
-        player: PlayerReference
-    )->SavedControllersMap{
+    pub fn controllers_allowed_to_player(&self, player: PlayerReference)->SavedControllersMap{
         SavedControllersMap::new(
             self.saved_controllers.iter()
                 .filter(|(_, saved_controller)| saved_controller.available_ability_data.allowed_players().contains(&player))
@@ -155,9 +148,7 @@ impl SavedControllersMap{
         )
     }
     
-    pub fn controller_parameters(
-        &self
-    )->ControllerParametersMap{
+    pub fn controller_parameters(&self)->ControllerParametersMap{
         ControllerParametersMap::new(
             self.saved_controllers.iter()
                 .map(|(id, saved_controller)| (id.clone(), saved_controller.available_ability_data.clone()))
@@ -165,10 +156,7 @@ impl SavedControllersMap{
         )
     }
     
-    pub fn controller_parameters_allowed_to_player(
-        &self,
-        player: PlayerReference
-    )->ControllerParametersMap{
+    pub fn controller_parameters_allowed_to_player(&self, player: PlayerReference)->ControllerParametersMap{
         ControllerParametersMap::new(
             self.controller_parameters().controller_parameters().iter()
                 .filter(|(_, saved_controller)| saved_controller.allowed_players().contains(&player))
@@ -177,17 +165,11 @@ impl SavedControllersMap{
         )
     }
 
-    pub fn get_controller(
-        &self,
-        id: ControllerID
-    )->Option<&SavedController>{
+    pub fn get_controller(&self, id: ControllerID)->Option<&SavedController>{
         self.saved_controllers.get(&id)
     }
 
-    pub fn get_controller_current_selection(
-        &self,
-        id: ControllerID
-    )->Option<AbilitySelection>{
+    pub fn get_controller_current_selection(&self, id: ControllerID)->Option<AbilitySelection>{
         self
             .get_controller(id)
             .map(|saved_controller| saved_controller.selection.clone())
@@ -195,10 +177,7 @@ impl SavedControllersMap{
 
     // selection type queries
 
-    pub fn get_controller_current_selection_boolean(
-        &self,
-        id: ControllerID
-    )->Option<BooleanSelection>{
+    pub fn get_controller_current_selection_boolean(&self,id: ControllerID)->Option<BooleanSelection>{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
@@ -210,10 +189,7 @@ impl SavedControllersMap{
             )
     }
 
-    pub fn get_controller_current_selection_player_option(
-        &self,
-        id: ControllerID
-    )->Option<OnePlayerOptionSelection>{
+    pub fn get_controller_current_selection_player_option(&self,id: ControllerID)->Option<OnePlayerOptionSelection>{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
@@ -225,10 +201,7 @@ impl SavedControllersMap{
             )
     }
 
-    pub fn get_controller_current_selection_three_player_option(
-        &self,
-        id: ControllerID
-    )->Option<ThreePlayerOptionSelection>{
+    pub fn get_controller_current_selection_three_player_option(&self,id: ControllerID)->Option<ThreePlayerOptionSelection>{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
@@ -240,10 +213,7 @@ impl SavedControllersMap{
             )
     }
 
-    pub fn get_controller_current_selection_player_list(
-        &self,
-        id: ControllerID
-    )->Option<PlayerListSelection>{
+    pub fn get_controller_current_selection_player_list(&self,id: ControllerID)->Option<PlayerListSelection>{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
@@ -255,10 +225,7 @@ impl SavedControllersMap{
             )
     }
 
-    pub fn get_controller_current_selection_role_option(
-        &self,
-        id: ControllerID
-    )->Option<RoleOptionSelection>{
+    pub fn get_controller_current_selection_role_option(&self,id: ControllerID)->Option<RoleOptionSelection>{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
@@ -270,10 +237,7 @@ impl SavedControllersMap{
             )
     }
 
-    pub fn get_controller_current_selection_two_role_outline_option(
-        &self,
-        id: ControllerID
-    )->Option<TwoRoleOutlineOptionSelection>{
+    pub fn get_controller_current_selection_two_role_outline_option(&self,id: ControllerID)->Option<TwoRoleOutlineOptionSelection>{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
@@ -285,10 +249,7 @@ impl SavedControllersMap{
             )
     }
 
-    pub fn get_controller_current_selection_string(
-        &self,
-        id: ControllerID
-    )->Option<StringSelection>{
+    pub fn get_controller_current_selection_string(&self,id: ControllerID)->Option<StringSelection>{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
@@ -300,10 +261,7 @@ impl SavedControllersMap{
             )
     }
     
-    pub fn get_controller_current_selection_kira(
-        &self,
-        id: ControllerID
-    )->Option<KiraSelection>{
+    pub fn get_controller_current_selection_kira(&self,id: ControllerID)->Option<KiraSelection>{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
@@ -318,10 +276,7 @@ impl SavedControllersMap{
     //mutators
     /// Keeps old selection if its valid, otherwise uses default_selection,
     /// even if default selection is invalid
-    fn set_controller_parameters(
-        game: &mut Game,
-        controller_parameters_map: ControllerParametersMap
-    ){
+    fn set_controller_parameters(game: &mut Game,controller_parameters_map: ControllerParametersMap){
         for (id, controller_parameters) in controller_parameters_map.controller_parameters().iter(){
             let mut new_selection = controller_parameters.default_selection().clone();
             
