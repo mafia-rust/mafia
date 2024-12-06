@@ -1,5 +1,3 @@
-use std::iter::once;
-
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
@@ -15,8 +13,8 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_set::{vec_set, VecSet};
 use super::{
-    AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, Priority, Role, 
-    RoleStateImpl, ThreePlayerOptionSelection
+    AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap,
+    PlayerListSelection, Priority, Role, RoleStateImpl
 };
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -50,21 +48,15 @@ impl RoleStateImpl for Marksman {
             .flat_map(|p|p.target.all_night_visitors_cloned(game))
             .collect();
 
-        let Some(ThreePlayerOptionSelection(a, b, c)) = 
-            game.saved_controllers.get_controller_current_selection_three_player_option(
+        let Some(PlayerListSelection(marks)) = 
+            game.saved_controllers.get_controller_current_selection_player_list(
                 ControllerID::role(actor_ref, Role::Marksman, 0)
             ) else 
         {
             return;
         };
 
-        let marks = vec![a, b, c]
-            .into_iter()
-            .collect::<VecSet<_>>();
-
         for mark in marks {
-            let Some(mark) = mark else {continue};
-
             if !visiting_players.contains(&mark) {continue};
             
             let killed = mark.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Marksman), AttackPower::Basic, false);
@@ -89,20 +81,17 @@ impl RoleStateImpl for Marksman {
                 p.alive(game) && 
                 *p != actor_ref
             )
-            .map(|p|Some(p))
-            .chain(once(None))
             .collect::<VecSet<_>>();
         
         let mark_controller_param = ControllerParametersMap::new_controller_fast(
             game,
             ControllerID::role(actor_ref, Role::Marksman, 0),
-            AvailableAbilitySelection::new_three_player_option(
-                available_mark_players.clone(),
-                available_mark_players.clone(),
+            AvailableAbilitySelection::new_player_list(
                 available_mark_players,
-                false
+                false,
+                Some(3)
             ),
-            AbilitySelection::new_three_player_option(None, None, None),
+            AbilitySelection::new_player_list(vec![]),
             gray_out_mark,
             Some(PhaseType::Obituary),
             false,
@@ -111,7 +100,7 @@ impl RoleStateImpl for Marksman {
 
 
         let marked_players = 
-            game.saved_controllers.get_controller_current_selection_three_player_option(
+            game.saved_controllers.get_controller_current_selection_player_list(
                 ControllerID::role(actor_ref, Role::Marksman, 0)
             );
 
@@ -121,7 +110,7 @@ impl RoleStateImpl for Marksman {
             Detained::is_detained(game, actor_ref) ||
             self.state != MarksmanState::Loaded ||
             if let Some(marked_players) = marked_players {
-                !marked_players.any_is_some()
+                marked_players.0.len() == 0
             }else{
                 true
             };
@@ -132,20 +121,17 @@ impl RoleStateImpl for Marksman {
                 p.alive(game) && 
                 *p != actor_ref
             )
-            .map(|p|Some(p))
-            .chain(once(None))
             .collect::<VecSet<_>>();
         
         let camp_controller_param = ControllerParametersMap::new_controller_fast(
             game,
             ControllerID::role(actor_ref, Role::Marksman, 1),
-            AvailableAbilitySelection::new_three_player_option(
-                available_camp_players.clone(),
-                available_camp_players.clone(),
+            AvailableAbilitySelection::new_player_list(
                 available_camp_players,
-                false
+                false,
+                Some(3)
             ),
-            AbilitySelection::new_three_player_option(None, None, None),
+            AbilitySelection::new_player_list(vec![]),
             gray_out_camp,
             Some(PhaseType::Obituary),
             false,

@@ -112,6 +112,9 @@ export type AbilitySelection = {
     type: "threePlayerOption"
     selection: ThreePlayerOptionSelection
 } | {
+    type: "playerList",
+    selection: PlayerListSelection
+} | {
     type: "roleOption"
     selection: RoleOptionSelection
 } | {
@@ -140,6 +143,8 @@ export function defaultAbilitySelection(available: AvailableAbilitySelection): A
             return {type: "twoPlayerOption", selection: [null, null]};
         case "threePlayerOption":
             return {type: "threePlayerOption", selection: [null, null, null]};
+        case "playerList":
+            return {type: "playerList", selection: []};
         case "roleOption":
             return {type: "roleOption", selection: null};
         case "twoRoleOption":
@@ -167,6 +172,9 @@ export type AvailableAbilitySelection = {
 } | {
     type: "threePlayerOption"
     selection: AvailableThreePlayerOptionSelection,
+} | {
+    type: "playerList",
+    selection: AvailablePlayerListSelection,
 } | {
     type: "roleOption"
     selection: AvailableRoleOptionSelection,
@@ -202,6 +210,13 @@ export type AvailableThreePlayerOptionSelection = {
     availableSecondPlayers: (number | null)[],
     availableThirdPlayers: (number | null)[],
     canChooseDuplicates: boolean
+}
+
+export type PlayerListSelection = PlayerIndex[];
+export type AvailablePlayerListSelection = {
+    availablePlayers: PlayerIndex[],
+    canChooseDuplicates: boolean,
+    maxPlayers: number | null
 }
 
 export type RoleOptionSelection = Role | null;

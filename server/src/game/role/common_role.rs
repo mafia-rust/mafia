@@ -124,6 +124,12 @@ pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: Pla
             }
             out
         },
+        AbilitySelection::PlayerList { selection } => {
+            selection.0
+                .iter()
+                .map(|target_ref| Visit::new_none(actor_ref, *target_ref, attack))
+                .collect()
+        }
         AbilitySelection::TwoRoleOption { selection } => {
             let mut out = Vec::new();
             for player in PlayerReference::all_players(game){

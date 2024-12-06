@@ -5,6 +5,7 @@ pub mod two_role_outline_option_selection; pub use two_role_outline_option_selec
 pub mod three_player_option_selection; pub use three_player_option_selection::*;
 pub mod role_option_selection; pub use role_option_selection::*;
 pub mod kira_selection; pub use kira_selection::*;
+pub mod player_list_selection; pub use player_list_selection::*;
 
 use serde::{Deserialize, Serialize};
 

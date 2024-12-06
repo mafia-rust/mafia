@@ -13,7 +13,8 @@ import {
     singleAbilityJsonData,
     StringSelection,
     ThreePlayerOptionSelection,
-    translateControllerIDNoRole
+    translateControllerIDNoRole,
+    PlayerListSelection
 } from "../../../../game/abilityInput";
 import React from "react";
 import { usePlayerState } from "../../../../components/useHooks";
@@ -36,6 +37,7 @@ import { Role } from "../../../../game/roleState.d";
 import { PlayerIndex } from "../../../../game/gameState.d";
 import Icon from "../../../../components/Icon";
 import ThreePlayerOptionSelectionMenu from "./AbilitySelectionTypes/ThreePlayerOptionSelectionMenu";
+import PlayerListSelectionMenu from "./AbilitySelectionTypes/PlayerListSelectionMenu";
 
 type GroupName = `${PlayerIndex}/${Role}` | "syndicateGunItem" | ControllerID["type"];
 
@@ -334,6 +336,32 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
                         id, 
                         selection: {
                             type: "threePlayerOption",
+                            selection
+                        }
+                    });
+                }}
+            />;
+        }
+        case "playerList":{
+            let input: PlayerListSelection;
+            if(
+                props.selected === null ||
+                props.selected.type !== "playerList"
+            ){
+                input = [];
+            }else{
+                input = props.selected.selection;
+            }
+
+            return <PlayerListSelectionMenu
+                key={props.key}
+                selection={input}
+                availableSelection={available.selection}
+                onChoose={(selection) => {
+                    GAME_MANAGER.sendAbilityInput({
+                        id, 
+                        selection: {
+                            type: "playerList",
                             selection
                         }
                     });

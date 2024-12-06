@@ -68,6 +68,13 @@ impl <K> VecSet<K> where K: Eq {
     pub fn union(&self, other: &Self) -> Self where K: Clone {
         self.vec.keys().cloned().chain(other.vec.keys().cloned()).collect()
     }
+
+    pub fn is_subset(&self, other: &Self) -> bool {
+        self.vec.keys().all(|k| other.contains(k))
+    }
+    pub fn is_superset(&self, other: &Self) -> bool {
+        other.is_subset(self)
+    }
 }
 
 impl<K> IntoIterator for VecSet<K> where K: Eq {

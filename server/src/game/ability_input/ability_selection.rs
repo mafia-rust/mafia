@@ -6,8 +6,8 @@ use crate::game::{
 };
 
 use super::{selection_type::{
-    kira_selection::KiraSelection, one_player_option_selection::OnePlayerOptionSelection, role_option_selection::RoleOptionSelection, two_player_option_selection::TwoPlayerOptionSelection, two_role_option_selection::TwoRoleOptionSelection, two_role_outline_option_selection::TwoRoleOutlineOptionSelection, BooleanSelection
-}, StringSelection, ThreePlayerOptionSelection};
+    kira_selection::KiraSelection, role_option_selection::RoleOptionSelection, two_player_option_selection::TwoPlayerOptionSelection, two_role_option_selection::TwoRoleOptionSelection, two_role_outline_option_selection::TwoRoleOutlineOptionSelection, BooleanSelection
+}, OnePlayerOptionSelection, PlayerListSelection, StringSelection, ThreePlayerOptionSelection};
 
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Ord, Eq)]
@@ -19,6 +19,7 @@ pub enum AbilitySelection{
     OnePlayerOption{selection: OnePlayerOptionSelection},
     TwoPlayerOption{selection: TwoPlayerOptionSelection},
     ThreePlayerOption{selection: ThreePlayerOptionSelection},
+    PlayerList{selection: PlayerListSelection},
     RoleOption{selection: RoleOptionSelection,},
     TwoRoleOption{selection: TwoRoleOptionSelection},
     TwoRoleOutlineOption{selection: TwoRoleOutlineOptionSelection},
@@ -40,6 +41,9 @@ impl AbilitySelection{
     }
     pub fn new_three_player_option(first: Option<PlayerReference>, second: Option<PlayerReference>, third: Option<PlayerReference>)->Self{
         Self::ThreePlayerOption{selection: ThreePlayerOptionSelection(first, second, third)}
+    }
+    pub fn new_player_list(selection: Vec<PlayerReference>)->Self{
+        Self::PlayerList{selection: PlayerListSelection(selection)}
     }
     pub fn new_role_option(selection: Option<Role>)->Self{
         Self::RoleOption{selection: RoleOptionSelection(selection)}

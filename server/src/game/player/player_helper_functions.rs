@@ -173,6 +173,7 @@ impl PlayerReference{
                             );
                         },
                         AbilitySelection::ThreePlayerOption { .. } => {},
+                        AbilitySelection::PlayerList { .. } => {},
                         AbilitySelection::RoleOption { .. } => {},
                         AbilitySelection::TwoRoleOption { .. } => {},
                         AbilitySelection::TwoRoleOutlineOption { .. } => {},
