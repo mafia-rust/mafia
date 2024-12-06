@@ -162,7 +162,10 @@ export function createGameManager(): GameManager {
         },
         updateChatFilter(filter: PlayerIndex | null) {
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
-                GAME_MANAGER.state.clientState.chatFilter = filter;
+                GAME_MANAGER.state.clientState.chatFilter = filter===null?null:{
+                    type: "playerNameInMessage",
+                    player: filter
+                };
                 GAME_MANAGER.invokeStateListeners("filterUpdate");
             }
         },
