@@ -975,11 +975,11 @@ fn marksman_basic() {
     assert!(dt.send_ability_input_one_player_typical(gf));
     mk.send_ability_input(AbilityInput::new(
         ControllerID::role(mk.player_ref(), Role::Marksman, 0),
-        AbilitySelection::new_three_player_option(Some(dt.player_ref()), None, None)
+        AbilitySelection::new_player_list(vec!(dt.player_ref()))
     ));
     mk.send_ability_input(AbilityInput::new(
         ControllerID::role(mk.player_ref(), Role::Marksman, 1),
-        AbilitySelection::new_three_player_option(Some(gf.player_ref()), None, None)
+        AbilitySelection::new_player_list(vec!(gf.player_ref()))
     ));
 
     game.next_phase();
