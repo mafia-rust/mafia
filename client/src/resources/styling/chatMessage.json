@@ -1,6 +1,6 @@
 {
     "lobbyMessage": "player",
-    "whisper": "special",
+    "whisper": "discreet",
     "broadcastWhisper": "discreet",
     "roleAssignment": "important center",
     "playerDied": "important",

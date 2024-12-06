@@ -3,6 +3,7 @@ import { ChatMessage } from "../components/ChatMessage";
 import { Role, RoleState } from "./roleState.d";
 import { RoleList } from "./roleListState.d";
 import { LobbyPreviewData } from "./packet";
+import { ChatFilter } from "../menu/game/gameScreenContent/ChatMenu";
 import { ControllerID, SavedController } from "./abilityInput";
 import { ListMapData } from "../ListMap";
 
@@ -88,7 +89,7 @@ export type PlayerGameState = {
     will: string,
     notes: string[],
     crossedOutOutlines: number[],
-    chatFilter: PlayerIndex | null,
+    chatFilter: ChatFilter,
     deathNote: string,
     targets: PlayerIndex[],
     voted: PlayerIndex | null,

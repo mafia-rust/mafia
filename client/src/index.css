@@ -263,9 +263,26 @@ code, .code {
 }
 
 .chat-menu-colors {
+
+    --fade-color: #161b34;
+
+    --primary-color: #1c244e;
+    --secondary-color: #232754;
+    --text-color: #ffffff;
+
+    --primary-border-color: #3c4675;
+    --primary-border-shadow-color: #111836;
+
+    --hover-color: #232c57;
+    --focus-outline-color: #929ccc;
+
+
     --background-color: #151a41;
     --background-border-color: #2b3162;
     --background-border-shadow-color: #0e1024;
+
+    --primary-color: #1c244e;
+    --secondary-color: #232754;
 }
 
 .player-list-menu-colors {
