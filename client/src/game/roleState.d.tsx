@@ -63,7 +63,6 @@ export type RoleState = {
 } | {
     type: "steward",
     stewardProtectsRemaining: number,
-    roleChosen: TwoRoleOptionSelection,
     previousRoleChosen: TwoRoleOptionSelection
 } | {
     type: "vigilante",

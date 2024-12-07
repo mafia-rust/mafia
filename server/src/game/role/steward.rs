@@ -2,20 +2,21 @@
 use serde::Serialize;
 
 use crate::game::ability_input::selection_type::two_role_option_selection::TwoRoleOptionSelection;
-use crate::game::ability_input::{ControllerID, AbilityInput};
+use crate::game::ability_input::ControllerID;
+use crate::game::components::detained::Detained;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 
 use crate::game::Game;
-use super::{GetClientRoleState, Priority, Role, RoleStateImpl};
+use crate::vec_set;
+use super::{AbilitySelection, AvailableAbilitySelection, ControllerParametersMap, GetClientRoleState, Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Debug)]
 pub struct Steward {
     self_heals_remaining: u8,
     target_healed_refs: Vec<PlayerReference>,
-    role_chosen: TwoRoleOptionSelection,
     previous_input: TwoRoleOptionSelection
 }
 
@@ -23,7 +24,6 @@ pub struct Steward {
 #[serde(rename_all = "camelCase")]
 pub struct ClientRoleState {
     steward_protects_remaining: u8,
-    role_chosen: TwoRoleOptionSelection,
     previous_role_chosen: TwoRoleOptionSelection
 }
 
@@ -32,7 +32,6 @@ impl Default for Steward {
         Self { 
             self_heals_remaining: 1,
             target_healed_refs: vec![],
-            role_chosen: TwoRoleOptionSelection(None, None),
             previous_input: TwoRoleOptionSelection(None, None)
         }
     }
@@ -52,16 +51,11 @@ impl RoleStateImpl for Steward {
         match priority {
             Priority::Heal => {
                 let mut healed_players = vec![];
-                let mut healed_roles = self.role_chosen;
+                let selection = game.saved_controllers.get_controller_current_selection_two_role_option(ControllerID::role(actor_ref, Role::Steward, 0));
+                let Some(selection) = selection else {return};
+                let TwoRoleOptionSelection(first, second) = selection;
                 
-                if self.self_heals_remaining == 0 && healed_roles.contains(Role::Steward) {
-                    healed_roles = TwoRoleOptionSelection(None, None)
-                }
-                if healed_roles.any_in_common(&self.previous_input) || healed_roles.same_role(){
-                    healed_roles = TwoRoleOptionSelection(None, None)
-                }
-
-                if let Some(role) = healed_roles.0 {
+                if let Some(role) = first {
                     for player in PlayerReference::all_players(game){
                         if role != player.role(game) {continue;}
     
@@ -69,7 +63,7 @@ impl RoleStateImpl for Steward {
                         healed_players.push(player);
                     }
                 }
-                if let Some(role) = healed_roles.1 {
+                if let Some(role) = second {
                     for player in PlayerReference::all_players(game){
                         if role != player.role(game) {continue;}
     
@@ -78,7 +72,10 @@ impl RoleStateImpl for Steward {
                     }
                 }
                 
-                let self_heals_remaining = if healed_roles.contains(Role::Steward) {
+                let self_heals_remaining = if 
+                    first.is_some_and(|r|r == Role::Steward) || 
+                    second.is_some_and(|r|r == Role::Steward)
+                {
                     self.self_heals_remaining.saturating_sub(1)
                 }else{
                     self.self_heals_remaining
@@ -87,8 +84,7 @@ impl RoleStateImpl for Steward {
                 actor_ref.set_role_state(game, Steward{
                     self_heals_remaining,
                     target_healed_refs: healed_players,
-                    role_chosen: healed_roles.clone(),
-                    previous_input: healed_roles, //updates here
+                    previous_input: TwoRoleOptionSelection(first, second), //updates here
                 });
             }
             Priority::Investigative => {
@@ -102,31 +98,31 @@ impl RoleStateImpl for Steward {
             _ => {}
         }
     }
-    fn on_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: AbilityInput) {
-        if actor_ref != input_player {return}
-        if !actor_ref.alive(game) {return}
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
+        let valid_roles = Role::values()
+            .into_iter()
+            .filter(|role| self.self_heals_remaining>0 || role != &Role::Steward)
+            .filter(|role| self.previous_input.0 != Some(*role) && self.previous_input.1 != Some(*role))
+            .map(|role|Some(role))
+            .chain(std::iter::once(None))
+            .collect();
+            
         
-        let Some(selection) = ability_input
-            .get_two_role_option_selection_if_id(ControllerID::role(actor_ref, actor_ref.role(game), 0)) else {return};
-        
-        if selection.any_in_common(&self.previous_input) || selection.same_role(){
-            return;
-        }
-
-        if self.self_heals_remaining == 0 && selection.contains(Role::Steward){
-            return;
-        }
-
-        actor_ref.set_role_state(game, Steward{
-            role_chosen: selection,
-            ..self
-        });
+        ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Steward, 0),
+            AvailableAbilitySelection::new_two_role_option(valid_roles, false),
+            AbilitySelection::new_two_role_option(None, None),
+            !actor_ref.alive(game) || Detained::is_detained(game, actor_ref),
+            Some(PhaseType::Obituary),
+            false,
+            vec_set!(actor_ref)
+        )
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         actor_ref.set_role_state(game, Steward{
             self_heals_remaining: self.self_heals_remaining,
             target_healed_refs: vec![],
-            role_chosen: TwoRoleOptionSelection(None, None),
             previous_input: self.previous_input
         });
     }
@@ -135,7 +131,6 @@ impl GetClientRoleState<ClientRoleState> for Steward {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState {
             steward_protects_remaining: self.self_heals_remaining,
-            role_chosen: self.role_chosen,
             previous_role_chosen: self.previous_input
         }
     }

@@ -236,6 +236,18 @@ impl SavedControllersMap{
             )
     }
 
+    pub fn get_controller_current_selection_two_role_option(&self,id: ControllerID)->Option<TwoRoleOptionSelection>{
+        self
+            .get_controller_current_selection(id)
+            .and_then(|selection| 
+                if let AbilitySelection::TwoRoleOption { selection } = selection {
+                    Some(selection)
+                }else{
+                    None
+                }
+            )
+    }
+
     pub fn get_controller_current_selection_two_role_outline_option(&self,id: ControllerID)->Option<TwoRoleOutlineOptionSelection>{
         self
             .get_controller_current_selection(id)
