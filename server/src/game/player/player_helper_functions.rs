@@ -173,7 +173,24 @@ impl PlayerReference{
                             );
                         },
                         AbilitySelection::ThreePlayerOption { .. } => {},
-                        AbilitySelection::PlayerList { .. } => {},
+                        AbilitySelection::PlayerList { selection } => {
+
+                            let mut selection = selection.0.clone();
+                            if let Some(first) = selection.first_mut(){
+                                *first = possessed_into_visit.target;
+                            }else{
+                                selection = vec![possessed_into_visit.target];
+                            }
+
+
+                            SavedControllersMap::set_selection_in_controller(
+                                game,
+                                possessed_visit.target,
+                                controller_id.clone(),
+                                AbilitySelection::new_player_list(selection),
+                                true
+                            );
+                        },
                         AbilitySelection::RoleOption { .. } => {},
                         AbilitySelection::TwoRoleOption { .. } => {},
                         AbilitySelection::TwoRoleOutlineOption { .. } => {},

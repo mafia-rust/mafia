@@ -49,7 +49,7 @@ impl RoleStateImpl for Framer {
                 let mut new_visits = vec![];
                 let mut got_first = false;
                 for visit in actor_ref.all_night_visits_cloned(game){
-                    if visit.tag == VisitTag::None {
+                    if visit.tag == VisitTag::Role {
                         if !got_first {
                             new_visits.push(visit);
                         }

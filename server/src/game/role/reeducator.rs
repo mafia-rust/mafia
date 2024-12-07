@@ -49,7 +49,7 @@ impl RoleStateImpl for Reeducator {
                     .map(|mut v|{
                         if 
                             !InsiderGroupID::in_same_revealed_group(game, actor_ref, v.target) &&
-                            v.tag == VisitTag::None
+                            v.tag == VisitTag::Role
                         {
                             v.attack = true;
                         }

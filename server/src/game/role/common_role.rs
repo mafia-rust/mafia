@@ -28,7 +28,7 @@ pub fn can_night_select(game: &Game, actor_ref: PlayerReference, target_ref: Pla
 
 pub(super) fn convert_selection_to_visits(_game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, attack: bool) -> Vec<Visit> {
     if !target_refs.is_empty() {
-        vec![Visit::new(actor_ref, target_refs[0], attack, VisitTag::None)]
+        vec![Visit::new(actor_ref, target_refs[0], attack, VisitTag::Role)]
     } else {
         Vec::new()
     }
