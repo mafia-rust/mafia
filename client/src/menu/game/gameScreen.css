@@ -29,6 +29,9 @@
     border: .13rem solid var(--background-border-color);
     border-bottom-color: var(--background-border-shadow-color);
     border-right-color: var(--background-border-shadow-color);
+
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .game-screen .content > .panel-handle[data-resize-handle-state="hover"],
