@@ -5,29 +5,43 @@ use serde::{Deserialize, Serialize};
 use crate::{game::{ability_input::ValidateAvailableSelection, player::PlayerReference, Game}, vec_set::VecSet};
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
-pub struct TwoPlayerOptionSelection(pub Option<PlayerReference>, pub Option<PlayerReference>);
+pub struct TwoPlayerOptionSelection(pub Option<(PlayerReference, PlayerReference)>);
 impl TwoPlayerOptionSelection{
     pub fn any_in_common(&self, other: &TwoPlayerOptionSelection) -> bool{
-        (self.0.is_some() && self.0 == other.0) || 
-        (self.0.is_some() && self.0 == other.1) || 
-        (self.1.is_some() && self.1 == other.0) || 
-        (self.1.is_some() && self.1 == other.1)
+        match (self.0, other.0) {
+            (Some((first, second)), Some((other_first, other_second))) => {
+                first == other_first || 
+                first == other_second || 
+                second == other_first || 
+                second == other_second
+            },
+            _ => false
+        }
     }
     pub fn same_role(&self) -> bool{
-        self.0.is_some() && self.0 == self.1 
+        if let Some((first, second)) = self.0{
+            first == second
+        }else{
+            false
+        }
     }
     pub fn contains(&self, player: PlayerReference) -> bool{
-        self.0 == Some(player) || self.1 == Some(player)
+        if let Some((first, second)) = self.0{
+            first == player || second == player
+        }else{
+            false
+        }
     }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct AvailableTwoPlayerOptionSelection{
-    pub available_first_player: VecSet<Option<PlayerReference>>,
-    pub available_second_player: VecSet<Option<PlayerReference>>,
+    pub available_first_players: VecSet<PlayerReference>,
+    pub available_second_players: VecSet<PlayerReference>,
     
-    pub can_choose_duplicates: bool
+    pub can_choose_duplicates: bool,
+    pub can_choose_none: bool
 }
 impl PartialOrd for AvailableTwoPlayerOptionSelection{
     fn partial_cmp(&self, _other: &Self) -> Option<std::cmp::Ordering>{
@@ -42,9 +56,25 @@ impl Ord for AvailableTwoPlayerOptionSelection{
 impl ValidateAvailableSelection for AvailableTwoPlayerOptionSelection{
     type Selection = TwoPlayerOptionSelection;
     fn validate_selection(&self, _game: &Game, selection: &TwoPlayerOptionSelection)->bool{
-        if !self.can_choose_duplicates && selection.same_role(){
+        let Some((first, second)) = selection.0 else {
+            if self.can_choose_none{
+                return true
+            }else{
+                return false
+            }
+        };
+
+        if !self.can_choose_duplicates && first == second{
             return false
         }
-        self.available_first_player.contains(&selection.0) && self.available_first_player.contains(&selection.1)
+
+        if 
+            !self.available_first_players.contains(&first) || 
+            !self.available_second_players.contains(&second)
+        {
+            return false
+        }
+        
+        true
     }
 }

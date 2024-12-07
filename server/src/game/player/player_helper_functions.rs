@@ -164,11 +164,17 @@ impl PlayerReference{
                             );
                         },
                         AbilitySelection::TwoPlayerOption { selection } => {
+
+                            let mut selection = selection.0.clone();
+                            if let Some((_, second)) = selection {
+                                selection = Some((possessed_into_visit.target, second));
+                            }
+
                             SavedControllersMap::set_selection_in_controller(
                                 game,
                                 possessed_visit.target,
                                 controller_id.clone(),
-                                AbilitySelection::new_two_player_option(Some(possessed_into_visit.target), selection.1),
+                                AbilitySelection::new_two_player_option(selection),
                                 true
                             );
                         },

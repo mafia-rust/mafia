@@ -36,8 +36,8 @@ impl AbilitySelection{
     pub fn new_one_player_option(selection: Option<PlayerReference>)->Self{
         Self::OnePlayerOption{selection: OnePlayerOptionSelection(selection)}
     }
-    pub fn new_two_player_option(first: Option<PlayerReference>, second: Option<PlayerReference>)->Self{
-        Self::TwoPlayerOption{selection: TwoPlayerOptionSelection(first, second)}
+    pub fn new_two_player_option(selection: Option<(PlayerReference, PlayerReference)>)->Self{
+        Self::TwoPlayerOption{selection: TwoPlayerOptionSelection(selection)}
     }
     pub fn new_three_player_option(first: Option<PlayerReference>, second: Option<PlayerReference>, third: Option<PlayerReference>)->Self{
         Self::ThreePlayerOption{selection: ThreePlayerOptionSelection(first, second, third)}

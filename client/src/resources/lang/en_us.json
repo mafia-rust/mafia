@@ -206,9 +206,9 @@
     
     "role.philosopher.name": "Philosopher",
     "role.philosopher.name:var.0": "Philosophers",
-    "role.philosopher.target": "Examine",
     "role.philosopher.youAreSelecting": "You are examining \\0 and \\1's relationship.",
     "role.philosopher.youAreSelecting.null": "You aren't examining anybody",
+    "controllerId.philosopher.0.name": "Consider",
 
     "role.tracker.name": "Tracker",
     "role.tracker.name:var.0": "Trackers",
@@ -871,7 +871,7 @@
     "chatMessage.abilityUsed.selection.unit":"",
     "chatMessage.abilityUsed.selection.playerList":" selecting \\0",
     "chatMessage.abilityUsed.selection.onePlayerOption":" selecting \\0",
-    "chatMessage.abilityUsed.selection.twoPlayerOption":" selecting \\0 and \\1",
+    "chatMessage.abilityUsed.selection.twoPlayerOption":" selecting \\0",
     "chatMessage.abilityUsed.selection.threePlayerOption":" selecting \\0, \\1, and \\2",
     "chatMessage.abilityUsed.selection.roleOption":" selecting \\0",
     "chatMessage.abilityUsed.selection.twoRoleOption":" selecting \\0 and \\1",

@@ -6,8 +6,9 @@ use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
+use crate::vec_set;
 
-use super::{Priority, RoleStateImpl, Role};
+use super::{common_role, AvailableAbilitySelection, ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Transporter;
@@ -45,27 +46,36 @@ impl RoleStateImpl for Transporter {
             player_ref.set_night_visits(game, new_visits);
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        let chosen_targets = actor_ref.selection(game);
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
 
-        !Detained::is_detained(game, actor_ref) &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game) && 
-        ((
-            chosen_targets.is_empty()
-        ) || (
-            chosen_targets.len() == 1 &&
-            Some(target_ref) != chosen_targets.first().copied()
-        ))
+        let available_players: vec_set::VecSet<PlayerReference> = PlayerReference::all_players(game)
+            .into_iter()
+            .filter(|p| p.alive(game))
+            .collect();
+
+        ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Transporter, 0),
+            AvailableAbilitySelection::new_two_player_option(
+                available_players.clone(), 
+                available_players,
+                false,
+                true
+            ),
+            super::AbilitySelection::new_two_player_option(None),
+            !actor_ref.alive(game) ||
+            Detained::is_detained(game, actor_ref),
+            Some(crate::game::phase::PhaseType::Obituary),
+            false,
+            vec_set![actor_ref]
+        )
     }
-    fn convert_selection_to_visits(self, _game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        if target_refs.len() == 2 {
-            vec![
-                Visit::new_none(actor_ref, target_refs[0], false),
-                Visit::new_none(actor_ref, target_refs[1], false)
-            ]
-        } else {
-            Vec::new()
-        }
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Transporter, 0),
+            false
+        )
     }
 }

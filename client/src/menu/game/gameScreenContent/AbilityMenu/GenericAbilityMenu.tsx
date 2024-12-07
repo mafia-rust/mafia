@@ -292,7 +292,7 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
                 props.selected === null ||
                 props.selected.type !== "twoPlayerOption"
             ){
-                input = [null, null];
+                input = null;
             }else{
                 input = props.selected.selection;
             }

@@ -38,14 +38,16 @@ impl AvailableAbilitySelection{
         Self::OnePlayerOption{selection: AvailableOnePlayerOptionSelection(players)}
     }
     pub fn new_two_player_option(
-        first: VecSet<Option<PlayerReference>>,
-        second: VecSet<Option<PlayerReference>>,
-        can_choose_duplicates: bool
+        first: VecSet<PlayerReference>,
+        second: VecSet<PlayerReference>,
+        can_choose_duplicates: bool,
+        can_choose_none: bool
     )->Self{
         Self::TwoPlayerOption{selection: AvailableTwoPlayerOptionSelection{
-            available_first_player: first,
-            available_second_player: second,
-            can_choose_duplicates 
+            available_first_players: first,
+            available_second_players: second,
+            can_choose_duplicates,
+            can_choose_none
         }}
     }
     pub fn new_three_player_option(

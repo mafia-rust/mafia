@@ -161,7 +161,7 @@ export function defaultAbilitySelection(available: AvailableAbilitySelection): A
         case "onePlayerOption":
             return {type: "onePlayerOption", selection: null};
         case "twoPlayerOption":
-            return {type: "twoPlayerOption", selection: [null, null]};
+            return {type: "twoPlayerOption", selection: null};
         case "threePlayerOption":
             return {type: "threePlayerOption", selection: [null, null, null]};
         case "playerList":
@@ -218,11 +218,12 @@ export type BooleanSelection = boolean;
 export type OnePlayerOptionSelection = number | null;
 export type AvailableOnePlayerOptionSelection = (number | null)[];
 
-export type TwoPlayerOptionSelection = [number | null, number | null];
+export type TwoPlayerOptionSelection = [number, number] | null;
 export type AvailableTwoPlayerOptionSelection = {
-    availableFirstPlayers: (number | null)[],
-    availableSecondPlayers: (number | null)[],
-    canChooseDuplicates: boolean
+    availableFirstPlayers: number[],
+    availableSecondPlayers: number[],
+    canChooseDuplicates: boolean,
+    canChooseNone: boolean
 }
 
 export type ThreePlayerOptionSelection = [number | null, number | null, number | null];

@@ -488,8 +488,7 @@ export function translateChatMessage(
                     break;
                 case "twoPlayerOption":
                     out = translate("chatMessage.abilityUsed.selection.twoPlayerOption",
-                        message.selection.selection[0]===null?translate("nobody"):playerNames[message.selection.selection[0]],
-                        message.selection.selection[1]===null?translate("nobody"):playerNames[message.selection.selection[1]],
+                        playerListToString(message.selection.selection===null?[]:message.selection.selection, playerNames)
                     );
                     break;
                 case "threePlayerOption":
