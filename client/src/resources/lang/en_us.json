@@ -303,9 +303,9 @@
 
     "role.transporter.name": "Transporter",
     "role.transporter.name:var.0": "Transporters",
-    "role.transporter.target": "Transport",
     "role.transporter.youAreSelecting": "You are transporting \\0 with \\1.",
     "role.transporter.youAreSelecting.null": "You aren't transporting anyone.",
+    "controllerId.transporter.0.name": "Transport",
 
     "role.escort.name": "Escort",
     "role.escort.name:var.0": "Escorts",
@@ -481,7 +481,7 @@
 
     "role.cupid.name": "Cupid",
     "role.cupid.name:var.0": "Cupids",
-    "role.cupid.target": "Link",
+    "controllerId.cupid.0.name": "Love Link",
 
     "role.mafiaSupportWildcard.name": "Syndicate Support Wildcard",
     "role.mafiaSupportWildcard.name:var.0": "Syndicate Support Wildcards",
