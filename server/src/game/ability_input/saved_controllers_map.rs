@@ -287,8 +287,18 @@ impl SavedControllersMap{
     //mutators
     /// Keeps old selection if its valid, otherwise uses default_selection,
     /// even if default selection is invalid
-    fn set_controller_parameters(game: &mut Game,controller_parameters_map: ControllerParametersMap){
-        for (id, controller_parameters) in controller_parameters_map.controller_parameters().iter(){
+    fn set_controller_parameters(game: &mut Game, new_controller_parameters_map: ControllerParametersMap){
+
+        let controller_ids_to_remove = game.saved_controllers.controller_parameters().controller_parameters().keys()
+            .filter(|id| !new_controller_parameters_map.controller_parameters().contains_key(id))
+            .cloned()
+            .collect::<Vec<_>>();
+
+        for id in controller_ids_to_remove{
+            game.saved_controllers.saved_controllers.remove(&id);
+        }
+
+        for (id, controller_parameters) in new_controller_parameters_map.controller_parameters().iter(){
             let mut new_selection = controller_parameters.default_selection().clone();
             
             if !controller_parameters.dont_save() && !controller_parameters.grayed_out(){

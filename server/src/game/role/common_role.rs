@@ -34,7 +34,7 @@ pub(super) fn convert_selection_to_visits(_game: &Game, actor_ref: PlayerReferen
     }
 }
 
-pub fn controller_parameters_map_one_player_night(
+pub fn controller_parameters_map_player_list_night_typical(
     game: &Game,
     actor_ref: PlayerReference,
     can_select_self: bool,
@@ -47,22 +47,26 @@ pub fn controller_parameters_map_one_player_night(
         Detained::is_detained(game, actor_ref) ||
         grayed_out;
 
-    ControllerParametersMap::new_one_player_ability_fast(
+    ControllerParametersMap::new_controller_fast(
         game,
-        actor_ref,
         ability_id,
-        PlayerReference::all_players(game)
-            .into_iter()
-            .filter(|p| can_select_self || *p != actor_ref)
-            .filter(|player| 
-                player.alive(game) &&
-                !InsiderGroupID::in_same_revealed_group(game, actor_ref, *player)
-            )
-            .collect(),
-        None,
+        AvailableAbilitySelection::new_player_list(
+            PlayerReference::all_players(game)
+                .into_iter()
+                .filter(|p| can_select_self || *p != actor_ref)
+                .filter(|player| 
+                    player.alive(game) &&
+                    !InsiderGroupID::in_same_revealed_group(game, actor_ref, *player)
+                )
+                .collect(),
+                false,
+                Some(1)
+            ),
+        AbilitySelection::new_player_list(Vec::new()),
         grayed_out,
         Some(PhaseType::Obituary),
-        false
+        false,
+        vec_set!(actor_ref)
     )
 }
 

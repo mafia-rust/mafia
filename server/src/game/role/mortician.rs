@@ -14,7 +14,9 @@ use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
+use crate::vec_set;
 use crate::vec_set::VecSet;
+use super::AbilitySelection;
 use super::ControllerID;
 use super::ControllerParametersMap;
 use super::Role;
@@ -69,23 +71,27 @@ impl RoleStateImpl for Mortician {
             !actor_ref.alive(game) || 
             Detained::is_detained(game, actor_ref);
 
-        ControllerParametersMap::new_one_player_ability_fast(
+        ControllerParametersMap::new_controller_fast(
             game,
-            actor_ref,
             ControllerID::role(actor_ref, Role::Mortician, 0),
-            PlayerReference::all_players(game)
-                .into_iter()
-                .filter(|p| *p != actor_ref)
-                .filter(|player| 
-                    player.alive(game) &&
-                    !InsiderGroupID::in_same_revealed_group(game, actor_ref, *player) &&
-                    !self.obscured_players.contains(&player)
-                )
-                .collect(),
-            None,
+            super::AvailableAbilitySelection::new_player_list(
+                PlayerReference::all_players(game)
+                    .into_iter()
+                    .filter(|p| *p != actor_ref)
+                    .filter(|player| 
+                        player.alive(game) &&
+                        !InsiderGroupID::in_same_revealed_group(game, actor_ref, *player) &&
+                        !self.obscured_players.contains(&player)
+                    )
+                    .collect(),
+                false,
+                Some(1)
+            ),
+            AbilitySelection::new_player_list(vec![]),
             grayed_out,
             Some(PhaseType::Obituary),
-            false
+            false,
+            vec_set![actor_ref]
         )
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {

@@ -84,7 +84,7 @@ impl RoleStateImpl for Vigilante {
             false
         };
         
-        crate::game::role::common_role::controller_parameters_map_one_player_night(
+        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
             game,
             actor_ref,
             false,

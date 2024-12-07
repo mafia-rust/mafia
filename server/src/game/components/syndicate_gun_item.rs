@@ -35,7 +35,7 @@ impl SyndicateGunItem {
     //available ability
     pub fn controller_parameters_map(game: &Game) -> ControllerParametersMap {
         if let Some(player_with_gun) = game.syndicate_gun_item.player_with_gun {
-            common_role::controller_parameters_map_one_player_night(
+            common_role::controller_parameters_map_player_list_night_typical(
                 game,
                 player_with_gun,
                 false,

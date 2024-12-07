@@ -57,6 +57,16 @@ impl TestPlayer {
         true
     }
 
+    pub fn send_ability_input_player_list_typical(&self, selection: TestPlayer)->bool{
+        self.send_ability_input(
+            AbilityInput::new(
+                ControllerID::role(self.player_ref(), self.role(), 0),
+                AbilitySelection::new_player_list(vec![selection.player_ref()])
+            )
+        );
+        true
+    }
+
     pub fn send_ability_input_boolean_typical(&self, selection: bool)->bool{
         self.send_ability_input(
             AbilityInput::new(

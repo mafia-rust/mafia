@@ -180,7 +180,6 @@ function SingleAbilityMenu(props: Readonly<{
             }}/>
         } */}
         <SwitchSingleAbilityMenuType
-            key={props.key}
             id={props.abilityId}
             available={props.saveData.availableAbilityData.available}
             selected={props.saveData.selection}
@@ -227,19 +226,17 @@ function SingleAbilityMenu(props: Readonly<{
 
 
 function SwitchSingleAbilityMenuType(props: Readonly<{
-    key: number,
     id: ControllerID,
     available: AvailableAbilitySelection,
     selected: AbilitySelection
 }>): ReactElement {
 
-    const {key, id, available} = props;
+    const {id, available} = props;
     let selected: AbilitySelection = props.selected;
 
     switch(available.type) {
         case "unit":
             return <Button
-                key={key}
                 onClick={()=>{
                     GAME_MANAGER.sendAbilityInput({
                         id, 
@@ -256,7 +253,7 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
             }else{
                 bool = selected.selection;
             }
-            return <div><CheckBox key={key} checked={bool} onChange={(x)=>{
+            return <div><CheckBox checked={bool} onChange={(x)=>{
                 GAME_MANAGER.sendAbilityInput({
                     id, 
                     selection: {
@@ -276,7 +273,6 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
             }
             
             return <OnePlayerOptionSelectionMenu
-                key={key}
                 availablePlayers={available.selection}
                 selectedPlayer={selectedPlayer}
                 onChoose={(player) => {
@@ -302,7 +298,6 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
             }
 
             return <TwoPlayerOptionSelectionMenu
-                key={props.key}
                 selection={input}
                 availableSelection={available.selection}
                 onChoose={(selection) => {
@@ -328,7 +323,6 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
             }
 
             return <ThreePlayerOptionSelectionMenu
-                key={props.key}
                 selection={input}
                 availableSelection={available.selection}
                 onChoose={(selection) => {
@@ -354,7 +348,6 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
             }
 
             return <PlayerListSelectionMenu
-                key={props.key}
                 selection={input}
                 availableSelection={available.selection}
                 onChoose={(selection) => {
@@ -406,7 +399,6 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
             }
 
             return <TwoRoleOptionSelectionMenu
-                key={props.key}
                 input={input}
                 availableSelection={available.selection}
                 onChoose={(selection) => {
@@ -434,7 +426,6 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
             return <TwoRoleOutlineOptionSelectionMenu
                 selection={input}
                 available={available.selection}
-                key={props.key}
                 onChoose={(selection) => {
                     GAME_MANAGER.sendAbilityInput({
                         id,
@@ -460,7 +451,6 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
             return <StringSelectionMenu
                 id={id}
                 selection={input}
-                key={props.key}
                 onChoose={(selection) => {
                     GAME_MANAGER.sendAbilityInput({
                         id,
@@ -484,7 +474,6 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
             }
 
             return <KiraSelectionMenu
-                key={props.key}
                 selection={input}
                 available={available.selection}
                 onChange={(selection)=>{

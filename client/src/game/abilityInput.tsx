@@ -97,6 +97,27 @@ export function translateControllerIDNoRole(
     }
 }
 
+export function sortControllerIdCompare(a: ControllerID, b: ControllerID, firstRole: Role | null = null): number {
+    if (a.type === "role" && b.type === "role") {
+        if (a.role !== b.role && firstRole !== null) {
+            if (a.role === firstRole) {
+                return -1;
+            }
+            if (b.role === firstRole) {
+                return 1;
+            }
+        }
+        return a.id - b.id;
+    }
+    if (a.type === "role") {
+        return -1;
+    }
+    if (b.type === "role") {
+        return 1;
+    }
+    return 0;
+}
+
 export type AbilitySelection = {
     type: "unit",
 } | {

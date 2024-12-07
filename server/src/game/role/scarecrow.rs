@@ -47,7 +47,7 @@ impl RoleStateImpl for Scarecrow {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        crate::game::role::common_role::controller_parameters_map_one_player_night(
+        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
             game,
             actor_ref,
             false,

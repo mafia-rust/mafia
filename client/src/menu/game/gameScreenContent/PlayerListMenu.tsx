@@ -39,13 +39,13 @@ export default function PlayerListMenu(): ReactElement {
         <div className="player-list">
             {players
                 .filter(player => player.alive)
-                .map(player => <div className="player-card-holder"><PlayerCard key={player.index} playerIndex={player.index}/></div>)}
+                .map(player => <div key={player.index} className="player-card-holder"><PlayerCard playerIndex={player.index}/></div>)}
 
             {graves.length === 0 || <>
                 <div className="dead-players-separator">
                     <StyledText>{translate("grave.icon")} {translate("graveyard")}</StyledText>
                 </div>
-                {graves.map((grave, index) => <div className="player-card-holder"><PlayerCard key={grave.player} graveIndex={index} playerIndex={grave.player}/></div>)}
+                {graves.map((grave, index) => <div key={grave.player} className="player-card-holder"><PlayerCard graveIndex={index} playerIndex={grave.player}/></div>)}
             </>}
             {players
                 .filter(
@@ -57,7 +57,7 @@ export default function PlayerListMenu(): ReactElement {
                 </div>
                 {players
                     .filter(player => !player.alive)
-                    .map(player => <div className="player-card-holder"><PlayerCard key={player.index} playerIndex={player.index}/></div>)}
+                    .map(player => <div key={player.index} className="player-card-holder"><PlayerCard playerIndex={player.index}/></div>)}
             </>}
         </div>
     </div>

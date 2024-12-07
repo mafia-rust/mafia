@@ -8,6 +8,7 @@ use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::game_conclusion::GameConclusion;
+use crate::game::phase::PhaseType;
 use crate::game::role_list::{RoleOutline, RoleOutlineOption, RoleSet};
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
@@ -15,20 +16,23 @@ use crate::game::{attack_power::DefensePower, player::PlayerReference};
 use crate::game::visit::{Visit, VisitTag};
 
 use crate::game::Game;
-use super::{common_role, Priority, Role, RoleState, RoleStateImpl};
+use crate::vec_set;
+use super::{
+    common_role,
+    AbilitySelection, AvailableAbilitySelection, ControllerParametersMap, Priority, Role, RoleOptionSelection, 
+    RoleStateImpl
+};
 
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Reeducator{
     convert_charges_remaining: bool,
-    convert_role: Role,
 }
 impl Default for Reeducator{
     fn default() -> Self {
         Self {
             convert_charges_remaining: true,
-            convert_role: Role::Reeducator,
         }
     }
 }
@@ -61,14 +65,18 @@ impl RoleStateImpl for Reeducator {
                 let visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(target_ref) = visits.first().map(|v| v.target) else {return};
 
-                let new_state = if self.convert_role == Role::Reeducator {
-                    RoleState::Reeducator(Reeducator {
-                        convert_charges_remaining: false,
-                        ..Reeducator::default()
-                    })
+                let role = 
+                if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
+                    ControllerID::role(actor_ref, Role::Reeducator, 1)
+                ){
+                    role
+                }else if let Some(role) = Reeducator::default_role(game){
+                    role
                 }else{
-                    self.convert_role.default_state()
+                    return
                 };
+
+                let new_state = role.default_state();
 
                 if InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref) {
 
@@ -95,40 +103,59 @@ impl RoleStateImpl for Reeducator {
             _ => {}
         }                
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        actor_ref != target_ref &&
-        !Detained::is_detained(game, actor_ref) &&
-        actor_ref.selection(game).is_empty() &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game) &&
-        (
-            (
-                !InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref) &&
-                self.convert_charges_remaining &&
-                game.day_number() > 1
-            ) || 
-            InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref)
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
+        
+        
+        let grayed_out = 
+            !actor_ref.alive(game) || 
+            Detained::is_detained(game, actor_ref);
+
+        let default = Reeducator::default_role(game);
+
+        ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Reeducator, 0),
+            AvailableAbilitySelection::new_player_list(
+                PlayerReference::all_players(game)
+                    .into_iter()
+                    // .filter(|p| *p != actor_ref)
+                    .filter(|player| 
+                        player.alive(game) &&
+                        (
+                            InsiderGroupID::in_same_revealed_group(game, actor_ref, *player) || 
+                            (game.day_number() > 1 && self.convert_charges_remaining)
+                        )
+                    )
+                    .collect(),
+                    false,
+                    Some(1)
+                ),
+            AbilitySelection::new_player_list(Vec::new()),
+            grayed_out,
+            Some(PhaseType::Obituary),
+            false,
+            vec_set!(actor_ref)
+        ).combine_overwrite_owned(
+            ControllerParametersMap::new_controller_fast(
+                game,
+                ControllerID::role(actor_ref, Role::Reeducator, 1),
+                AvailableAbilitySelection::new_role_option(
+                    RoleSet::MafiaSupport.get_roles().into_iter()
+                        .filter(|p|game.settings.enabled_roles.contains(&p))
+                        .filter(|p|*p!=Role::Reeducator)
+                        .map(|p|Some(p))
+                        .collect()
+                ),
+                AbilitySelection::new_role_option(default),
+                false,
+                None,
+                false,
+                vec_set!(actor_ref)
+            )
         )
     }
-    fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: crate::game::ability_input::AbilityInput) {
-        if actor_ref != input_player {return;}
-        if !actor_ref.alive(game) {return};
-
-        if let Some(selection) = ability_input.get_role_option_selection_if_id(ControllerID::role(actor_ref, actor_ref.role(game), 0)) {
-            if let Some(target) = selection.0 {
-                if 
-                    RoleSet::MafiaSupport.get_roles().contains(&target) && 
-                    game.settings.enabled_roles.contains(&target)
-                {
-                    self.convert_role = target;
-                }
-            }
-        };
-        
-        actor_ref.set_role_state(game, self);
-    }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        common_role::convert_controller_selection_to_visits(game, actor_ref, ControllerID::role(actor_ref, Role::Reeducator, 0), false)
     }
     fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
 
@@ -175,5 +202,14 @@ impl RoleStateImpl for Reeducator {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
+    }
+}
+
+impl Reeducator {
+    pub fn default_role(game: &Game) -> Option<Role> {
+        RoleSet::MafiaSupport.get_roles().into_iter()
+            .filter(|p|game.settings.enabled_roles.contains(&p))
+            .filter(|p|*p!=Role::Reeducator)
+            .choose(&mut rand::thread_rng())
     }
 }

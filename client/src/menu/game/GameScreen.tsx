@@ -220,7 +220,7 @@ export function GameScreenMenus(): ReactElement {
         {menuController.menusOpen().map((menu, index, menusOpen) => {
             const MenuElement = MENU_ELEMENTS[menu];
             return <>
-                <Panel className="panel" minSize={minSize} defaultSize={defaultSizes[menu]}>
+                <Panel className="panel" minSize={minSize} defaultSize={defaultSizes[menu]} key={index}>
                     <MenuElement />
                 </Panel>
                 {menusOpen.some((_, i) => i > index) && <PanelResizeHandle className="panel-handle"/>}

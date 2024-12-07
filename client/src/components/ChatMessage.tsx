@@ -314,7 +314,9 @@ function useContainsMention(message: ChatMessageVariant & { text: string }, play
 export default ChatElement;
 
 function playerListToString(playerList: PlayerIndex[], playerNames: string[]): string {
-
+    if (playerList.length === 0) {
+        return translate("nobody");
+    }
     return playerList.map((playerIndex) => {
         return playerNames[playerIndex];
     }).join(", ");
@@ -474,6 +476,11 @@ export function translateChatMessage(
                         out = " "+translate("off");
                     }
                     break;
+                case "playerList":
+                    out = translate("chatMessage.abilityUsed.selection.playerList",
+                        playerListToString(message.selection.selection, playerNames)
+                    );
+                    break;
                 case "onePlayerOption":
                     out = translate("chatMessage.abilityUsed.selection.onePlayerOption",
                         message.selection.selection===null?translate("nobody"):playerNames[message.selection.selection],
@@ -596,25 +603,13 @@ export function translateChatMessage(
         case "tallyClerkResult":
             return translate("chatMessage.tallyClerkResult", message.evilCount);
         case "lookoutResult":
-            if (message.players.length === 0) {
-                return translate("chatMessage.lookoutResult.nobody");
-            } else {
-                return translate("chatMessage.lookoutResult", playerListToString(message.players, playerNames));
-            }
+            return translate("chatMessage.lookoutResult", playerListToString(message.players, playerNames));
         case "spyMafiaVisit":
-            if (message.players.length === 0) {
-                return translate("chatMessage.spyMafiaVisit.nobody");
-            } else {
-                return translate("chatMessage.spyMafiaVisit", playerListToString(message.players, playerNames));
-            }
+            return translate("chatMessage.spyMafiaVisit", playerListToString(message.players, playerNames));
         case "spyBug":
             return translate("chatMessage.spyBug."+message.bug);
         case "trackerResult":
-            if (message.players.length === 0) {
-                return translate("chatMessage.trackerResult.nobody");
-            } else {
-                return translate("chatMessage.trackerResult", playerListToString(message.players, playerNames));
-            }
+            return translate("chatMessage.trackerResult", playerListToString(message.players, playerNames));
         case "seerResult":
             return translate("chatMessage.seerResult." + (message.enemies ? "enemies" : "friends"));
         case "psychicEvil":
@@ -647,17 +642,10 @@ export function translateChatMessage(
                 sanitizePlayerMessage(replaceMentions(message.will, playerNames))
             );
         case "informantResult":
-            const visitedNobody = message.visited.length === 0;
-            const visitedByNobody = message.visitedBy.length === 0;
-
             return translate("chatMessage.informantResult",
                 translate("chatMessage.targetHasRole", translate("role."+message.role+".name")),
-                visitedNobody 
-                    ? translate("chatMessage.informantResult.visited.nobody") 
-                    : translate("chatMessage.informantResult.visited", playerListToString(message.visited, playerNames)),
-                visitedByNobody 
-                    ? translate("chatMessage.informantResult.visitedBy.nobody") 
-                    : translate("chatMessage.informantResult.visitedBy", playerListToString(message.visitedBy, playerNames))
+                translate("chatMessage.informantResult.visited", playerListToString(message.visited, playerNames)),
+                translate("chatMessage.informantResult.visitedBy", playerListToString(message.visitedBy, playerNames))
             );
         case "framerResult":
             const mafiaMemberName = playerNames[message.mafiaMember];
@@ -671,10 +659,6 @@ export function translateChatMessage(
                 visitorRoles.join(", ")
             );
         case "scarecrowResult":
-            if(message.players.length === 0){
-                return translate("chatMessage.scarecrowResult.nobody");
-            }
-
             return translate("chatMessage.scarecrowResult",
                 playerListToString(message.players, playerNames)
             );
@@ -697,17 +681,10 @@ export function translateChatMessage(
         case "targetHasRole":
             return translate("chatMessage.targetHasRole", translate("role."+message.role+".name"));
         case "werewolfTrackingResult":
-            if(message.players.length === 0){
-                return translate(
-                    "chatMessage.werewolfTrackingResult.nobody", 
-                    playerNames[message.trackedPlayer]
-                );
-            }else{
-                return translate("chatMessage.werewolfTrackingResult", 
-                    playerNames[message.trackedPlayer],
-                    playerListToString(message.players, playerNames)
-                );
-            }
+            return translate("chatMessage.werewolfTrackingResult", 
+                playerNames[message.trackedPlayer],
+                playerListToString(message.players, playerNames)
+            );
         case "wildcardConvertFailed":
             return translate("chatMessage.wildcardConvertFailed", translate("role."+message.role+".name"));
         case "youAreLoveLinked":

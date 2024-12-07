@@ -21,6 +21,7 @@ import PlayMenu from "../menu/main/PlayMenu";
 import StartMenu from "../menu/main/StartMenu";
 import { defaultAlibi } from "../menu/game/gameScreenContent/WillMenu";
 import ListMap from "../ListMap";
+import { sortControllerIdCompare } from "./abilityInput";
 
 
 function sendDefaultName() {
@@ -358,7 +359,8 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "yourAllowedControllers":
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
-                GAME_MANAGER.state.clientState.savedControllers = packet.save;
+                GAME_MANAGER.state.clientState.savedControllers = 
+                    packet.save.sort((a, b) => sortControllerIdCompare(a[0],b[0]));
             }
         break;
         case "yourButtons":
