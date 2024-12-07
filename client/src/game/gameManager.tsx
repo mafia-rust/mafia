@@ -542,12 +542,6 @@ export function createGameManager(): GameManager {
                 action: action
             });
         },
-        sendSetRoleChosen(role: Role | null) {
-            this.server.sendPacket({
-                type: "setRoleChosen",
-                role: role
-            });
-        },
 
         sendVoteFastForwardPhase(fastForward: boolean) {
             this.server.sendPacket({

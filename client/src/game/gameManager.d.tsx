@@ -120,7 +120,6 @@ export type GameManager = {
     sendSetCounterfeiterAction(action: "forge" | "noForge"): void;
     sendSetPuppeteerAction(action: PuppeteerAction): void;
     sendSetRecruiterAction(action: RecruiterAction): void;
-    sendSetRoleChosen(role: Role | null): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
 

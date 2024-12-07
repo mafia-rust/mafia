@@ -1543,11 +1543,10 @@ fn bouncer_ojo_block() {
         det4: Detective
     );
 
-    ojo.set_role_state(RoleState::Ojo(Ojo{
-        role_chosen: Some(Role::Detective),
-        previously_given_results: Vec::new(),
-        chosen_outline: TwoRoleOutlineOptionSelection(None, None),
-    }));
+    ojo.send_ability_input(AbilityInput::new(
+        ControllerID::role(ojo.player_ref(), Role::Ojo, 1),
+        AbilitySelection::new_role_option(Some(Role::Detective))
+    ));
     b.send_ability_input_player_list_typical(det1);
 
     game.next_phase();
@@ -2241,13 +2240,10 @@ fn ojo_transporter(){
         gf: Godfather
     );
 
-    ojo.set_role_state(
-        RoleState::Ojo(Ojo{
-            role_chosen: Some(Role::Philosopher),
-            chosen_outline: TwoRoleOutlineOptionSelection(None, None),
-            previously_given_results: Vec::new(),
-        })
-    );
+    ojo.send_ability_input(AbilityInput::new(
+        ControllerID::role(ojo.player_ref(), Role::Ojo, 1),
+        AbilitySelection::new_role_option(Some(Role::Philosopher))
+    ));
 
     transporter.set_night_selection(vec![player1, player2]);
     gf.set_night_selection_single(ojo);

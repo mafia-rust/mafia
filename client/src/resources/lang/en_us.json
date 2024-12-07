@@ -542,6 +542,8 @@
     "role.ojo.name:var.0": "Ojos",
     "role.ojo.audit": "Select an outline to find what role initially generated from that outline.",
     "role.ojo.attack": "Select a role to attack all players with that role.",
+    "controllerId.ojo.0.name": "Audit",
+    "controllerId.ojo.1.name": "Attack",
     
     "role.pyrolisk.name": "Pyrolisk",
     "role.pyrolisk.name:var.0": "Pyrolisks",

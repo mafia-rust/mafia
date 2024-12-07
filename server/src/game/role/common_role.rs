@@ -134,6 +134,15 @@ pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: Pla
                 .map(|target_ref| Visit::new_none(actor_ref, *target_ref, attack))
                 .collect()
         }
+        AbilitySelection::RoleOption { selection } => {
+            let mut out = Vec::new();
+            for player in PlayerReference::all_players(game){
+                if Some(player.role(game)) == selection.0 {
+                    out.push(Visit::new_none(actor_ref, player, attack));
+                }
+            }
+            out
+        }
         AbilitySelection::TwoRoleOption { selection } => {
             let mut out = Vec::new();
             for player in PlayerReference::all_players(game){

@@ -93,7 +93,6 @@ impl RoleStateImpl for Auditor {
             ),
             AbilitySelection::new_two_role_outline_option(None, None),
             !actor_ref.alive(game) || 
-            // game.current_phase().phase() != PhaseType::Night ||
             Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),
             false,

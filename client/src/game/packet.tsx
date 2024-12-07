@@ -323,9 +323,6 @@ export type ToServerPacket = {
     type: "setRecruiterAction",
     action: RecruiterAction
 } | {
-    type: "setRoleChosen",
-    role: Role | null
-} | {
     type: "voteFastForwardPhase",
     fastForward: boolean
 }

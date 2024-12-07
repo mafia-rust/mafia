@@ -191,8 +191,6 @@ Doomsayer
     type: "werewolf",
 } | {
     type: "ojo"
-    roleChosen: Role | null,
-    chosenOutline: [number | null, number | null],
     previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "puppeteer"

@@ -1,12 +1,11 @@
 import { ReactElement } from "react"
 import React from "react"
-import { useGameState, usePlayerState } from "../../../../../components/useHooks";
+import { usePlayerState } from "../../../../../components/useHooks";
 import GAME_MANAGER from "../../../../..";
-import { Role, RoleState } from "../../../../../game/roleState.d";
-import RoleDropdown from "../../../../../components/RoleDropdown";
-import translate from "../../../../../game/lang";
+import { RoleState } from "../../../../../game/roleState.d";
 import TwoRoleOutlineOptionSelectionMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionSelectionMenu";
-import { AbilityInput, AbilitySelection, TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput";
+import { AbilityInput, AbilitySelection, controllerIdToLink, TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput";
+import ListMap from "../../../../../ListMap";
 
 
 export default function OjoMenu(
@@ -14,21 +13,12 @@ export default function OjoMenu(
         roleState: RoleState & {type: "ojo"}
     }
 ): ReactElement | null {
-
-    const sendRoleChosen = (roleChosen: Role | null) => {
-        GAME_MANAGER.sendSetRoleChosen(roleChosen);
-    }
-
-    const dayNumber = useGameState(
-        state=>state.dayNumber,
-        ["phase"]
-    )!;
     const myPlayerIndex = usePlayerState(
         state=>state.myIndex,
         ["yourPlayerIndex"]
     )!;
 
-    const onInput = (chosenOutlines: TwoRoleOutlineOptionSelection) => {
+    const onInputOutline = (chosenOutlines: TwoRoleOutlineOptionSelection) => {
         const selection: AbilitySelection = {
             type: "twoRoleOutlineOption" as const,
             selection: chosenOutlines
@@ -46,21 +36,41 @@ export default function OjoMenu(
         GAME_MANAGER.sendAbilityInput(input);
     }
 
+    const savedAbilities = usePlayerState(
+        playerState => playerState.savedControllers,
+        ["yourAllowedControllers"]
+    )!;
+    
+    const savedAbilitiesMap = new ListMap(savedAbilities, (k1, k2) => controllerIdToLink(k1) === controllerIdToLink(k2));
+
+    let singleAbilitySave = savedAbilitiesMap.get({
+        type: "role",
+        role: "ojo",
+        player: myPlayerIndex,
+        id: 0
+    });
+
+    let newSelection;
+    let newAvailable;
+    if(
+        singleAbilitySave !== null &&
+        singleAbilitySave.selection.type === "twoRoleOutlineOption" &&
+        singleAbilitySave.availableAbilityData.available.type === "twoRoleOutlineOption"
+    ){
+        newSelection = singleAbilitySave.selection.selection;
+        newAvailable = singleAbilitySave.availableAbilityData.available.selection;
+    } else {
+        newSelection = undefined;
+        newAvailable = undefined;
+    }
+
+
     return <>
         <TwoRoleOutlineOptionSelectionMenu
             previouslyGivenResults={props.roleState.previouslyGivenResults}
-            selection={props.roleState.chosenOutline}
-            onChoose={onInput}
+            selection={newSelection}
+            available={newAvailable}
+            onChoose={onInputOutline}
         />
-        {(dayNumber > 1) && <div>
-            {translate("role.ojo.attack")}
-            <RoleDropdown
-                value={props.roleState.roleChosen}
-                onChange={(roleOption)=>{
-                    sendRoleChosen(roleOption)
-                }}
-                canChooseNone={true}
-            />
-        </div>}
     </>
 }

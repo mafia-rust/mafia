@@ -1,9 +1,9 @@
 use serde::Serialize;
 
-use crate::game::ability_input::selection_type::two_role_outline_option_selection::TwoRoleOutlineOptionSelection;
 use crate::game::ability_input::ControllerID;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
+use crate::game::components::detained::Detained;
 use crate::game::phase::PhaseType;
 use crate::game::role_outline_reference::RoleOutlineReference;
 use crate::game::visit::Visit;
@@ -11,16 +11,16 @@ use crate::game::{attack_power::AttackPower, grave::GraveKiller};
 use crate::game::player::PlayerReference;
 
 use crate::game::Game;
+use crate::vec_map::VecMap;
+use crate::vec_set;
 use super::auditor::AuditorResult;
-use super::{Priority, RoleStateImpl, Role};
+use super::{common_role, AbilitySelection, AvailableAbilitySelection, ControllerParametersMap, Priority, Role, RoleOptionSelection, RoleStateImpl, TwoRoleOutlineOptionSelection};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Ojo{
-    pub role_chosen: Option<Role>,
-    pub chosen_outline: TwoRoleOutlineOptionSelection,
-    pub previously_given_results: Vec<(RoleOutlineReference, AuditorResult)>,
+    pub previously_given_results: VecMap<RoleOutlineReference, AuditorResult>,
 }
 
 
@@ -56,23 +56,26 @@ impl RoleStateImpl for Ojo {
                     }
                 }
 
-
-                if let Some(chosen_outline) = self.chosen_outline.0{
-                    let result = Self::get_result(game, chosen_outline);
-                    actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                        role_outline: chosen_outline.deref(&game).clone(),
-                        result: result.clone()
-                    });
-                    self.previously_given_results.push((chosen_outline, result));
-                }
-        
-                if let Some(chosen_outline) = self.chosen_outline.1{
-                    let result = Self::get_result(game, chosen_outline);
-                    actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                        role_outline: chosen_outline.deref(&game).clone(),
-                        result: result.clone()
-                    });
-                    self.previously_given_results.push((chosen_outline, result));
+                if let Some(TwoRoleOutlineOptionSelection(a, b)) = game.saved_controllers.get_controller_current_selection_two_role_outline_option(
+                    ControllerID::role(actor_ref, Role::Ojo, 0)
+                ){
+                    if let Some(chosen_outline) = a{
+                        let result = Self::get_result(game, chosen_outline);
+                        actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
+                            role_outline: chosen_outline.deref(&game).clone(),
+                            result: result.clone()
+                        });
+                        self.previously_given_results.insert(chosen_outline, result);
+                    }
+            
+                    if let Some(chosen_outline) = b{
+                        let result = Self::get_result(game, chosen_outline);
+                        actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
+                            role_outline: chosen_outline.deref(&game).clone(),
+                            result: result.clone()
+                        });
+                        self.previously_given_results.insert(chosen_outline, result);
+                    }
                 }
         
                 actor_ref.set_role_state(game, self);
@@ -80,47 +83,55 @@ impl RoleStateImpl for Ojo {
             _ => {}
         }
     }
-    fn on_ability_input_received(mut self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: crate::game::ability_input::AbilityInput) {
-        if actor_ref != input_player {return;}
-        if !actor_ref.alive(game) {return};
-
-        let Some(selection) = ability_input
-            .get_two_role_outline_option_selection_if_id(ControllerID::role(actor_ref, actor_ref.role(game), 0)) else {return};
-              
-        if let Some(outline) = selection.0{
-            if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {
-                self.chosen_outline.0 = Some(outline);
-            }
-        }else{
-            self.chosen_outline.0 = None;
-        }
-        if let Some(outline) = selection.1{
-            if !self.previously_given_results.iter().any(|(i, _)| *i == outline) {
-                self.chosen_outline.1 = Some(outline);
-            }
-        }else{
-            self.chosen_outline.1 = None;
-        }
-        
-        if self.chosen_outline.0.is_some() && self.chosen_outline.1 == self.chosen_outline.0{
-            self.chosen_outline.1 = None;
-        }
-
-        actor_ref.set_role_state(game, self);
+    
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Ojo, 0),
+            AvailableAbilitySelection::new_two_role_outline_option(
+                RoleOutlineReference::all_outlines(game)
+                    .filter(|o|!self.previously_given_results.contains(o))
+                    .map(|o|Some(o))
+                    .chain(std::iter::once(None))
+                    .collect()
+            ),
+            AbilitySelection::new_two_role_outline_option(None, None),
+            !actor_ref.alive(game) || 
+            Detained::is_detained(game, actor_ref),
+            Some(PhaseType::Obituary),
+            false,
+            vec_set![actor_ref],
+        ).combine_overwrite_owned(
+            ControllerParametersMap::new_controller_fast(
+                game,
+                ControllerID::role(actor_ref, Role::Ojo, 1),
+                AvailableAbilitySelection::new_role_option(
+                    Role::values().into_iter().map(|r|Some(r)).chain(std::iter::once(None)).collect()
+                ),
+                AbilitySelection::new_role_option(None),
+                !actor_ref.alive(game) || 
+                Detained::is_detained(game, actor_ref) ||
+                game.day_number() == 1,
+                Some(PhaseType::Obituary),
+                false,
+                vec_set![actor_ref],
+            )
+        )
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
         let mut out = vec![];
-        if let Some(chosen_outline) = self.chosen_outline.0{
-            let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-            out.push(Visit::new_none(actor_ref, player, false));
-        }
-        if let Some(chosen_outline) = self.chosen_outline.1{
-            let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-            out.push(Visit::new_none(actor_ref, player, false));
-        }
+
+        out.extend(common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Ojo, 0),
+            false
+        ));
 
         if game.day_number() > 1 {
-            if let Some(role) = self.role_chosen {
+            if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
+                ControllerID::role(actor_ref, Role::Ojo, 1)
+            ) {
                 for player in PlayerReference::all_players(game){
                     if player.alive(game) && player.role(game) == role {
                         out.push(Visit::new_none(actor_ref, player, true));
@@ -130,16 +141,6 @@ impl RoleStateImpl for Ojo {
         }
 
         out
-    }
-    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
-        match phase {
-            PhaseType::Obituary => {
-                self.chosen_outline = TwoRoleOutlineOptionSelection(None, None);
-                self.role_chosen = None;
-                actor_ref.set_role_state(game, self);
-            },
-            _ => {}
-        }
     }
 }
 

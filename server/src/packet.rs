@@ -279,7 +279,6 @@ pub enum ToServerPacket{
     SetCounterfeiterAction{action: CounterfeiterAction},
     SetPuppeteerAction{action: PuppeteerAction},
     SetRecruiterAction{action: RecruiterAction},
-    SetRoleChosen{role: Option<Role>},
 
 
     #[serde(rename_all = "camelCase")]

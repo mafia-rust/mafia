@@ -344,16 +344,6 @@ impl Game {
                     sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
                 }
             },
-            ToServerPacket::SetRoleChosen { role } => {
-                match sender_player_ref.role_state(self).clone() {
-                    RoleState::Ojo(mut ojo) => {
-                        ojo.role_chosen = role;
-                        sender_player_ref.set_role_state(self, ojo);
-                        sender_player_ref.add_private_chat_message(self, ChatMessageVariant::RoleChosen { role });
-                    },
-                    _ => {}
-                }
-            },
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
                 sender_player_ref.set_fast_forward_vote(self, fast_forward);
             },
