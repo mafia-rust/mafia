@@ -32,6 +32,10 @@ impl SyndicateGunItem {
         }
     }
 
+    pub fn player_with_gun(&self) -> Option<PlayerReference> {
+        self.player_with_gun
+    }
+
     //available ability
     pub fn controller_parameters_map(game: &Game) -> ControllerParametersMap {
         if let Some(player_with_gun) = game.syndicate_gun_item.player_with_gun {
@@ -57,7 +61,6 @@ impl SyndicateGunItem {
                             .collect()
                     ),
                     AbilitySelection::new_one_player_option(None),
-                    // game.current_phase().phase() != PhaseType::Night ||
                     Detained::is_detained(game, player_with_gun) ||
                     !player_with_gun.alive(game),
                     Some(PhaseType::Obituary),
@@ -89,16 +92,18 @@ impl SyndicateGunItem {
         }
     }
     pub fn on_night_priority(game: &mut Game, priority: Priority) {
+        if game.day_number() <= 1 {return}
         match priority {
             Priority::TopPriority => {
                 let Some(player_with_gun) = game.syndicate_gun_item.player_with_gun else {return}; 
 
-                let Some(OnePlayerOptionSelection(Some(gun_target))) = game.saved_controllers
-                    .get_controller_current_selection_player_option(ControllerID::syndicate_gun_item_shoot()) else {return};
+                let Some(PlayerListSelection(gun_target)) = game.saved_controllers
+                    .get_controller_current_selection_player_list(ControllerID::syndicate_gun_item_shoot()) else {return};
+                let Some(gun_target) = gun_target.first() else {return};
 
                 NightVisits::add_visit(
                     game, 
-                    Visit::new(player_with_gun, gun_target, true, VisitTag::SyndicateGunItem)
+                    Visit::new(player_with_gun, *gun_target, true, VisitTag::SyndicateGunItem)
                 );
             }
             Priority::Kill => {

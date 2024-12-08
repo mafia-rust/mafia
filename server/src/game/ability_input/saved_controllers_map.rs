@@ -3,8 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     game::{
         chat::ChatMessageVariant, components::{
-            forfeit_vote::ForfeitVote, insider_group::InsiderGroupID,
-            pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem
+            forfeit_vote::ForfeitVote, insider_group::InsiderGroupID, mafia::Mafia, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem
         }, event::on_validated_ability_input_received::OnValidatedAbilityInputReceived, phase::PhaseType, player::PlayerReference, Game
     }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet
 };
@@ -73,6 +72,9 @@ impl SavedControllersMap{
 
         new_controller_parameters_map.combine_overwrite(
             SyndicateGunItem::controller_parameters_map(game)
+        );
+        new_controller_parameters_map.combine_overwrite(
+            Mafia::controller_parameters_map(game)
         );
         new_controller_parameters_map.combine_overwrite(
             ForfeitVote::controller_parameters_map(game)
