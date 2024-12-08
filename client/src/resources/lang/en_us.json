@@ -368,20 +368,18 @@
 
     "role.godfather.name": "Godfather",
     "role.godfather.name:var.0": "Godfathers",
-    "role.godfather.target": "Attack",
-    "role.godfather.dayTarget": "Backup",
     "role.godfather.youAreSelecting": "You are organizing an attack on \\0.",
     "role.godfather.youAreSelecting.null": "You aren't attacking anyone.",
+    "controllerId.godfather.0.name": "Attack",
 
     "role.impostor.name": "Impostor",
     "role.impostor.name:var.0": "Impostors",
     "role.impostor.name:var.1": "Imposter",
     "role.impostor.name:var.2": "Imposters",
-    "role.impostor.target": "Attack",
-    "role.impostor.dayTarget": "Backup",
     "role.impostor.youAreSelecting": "You are organizing an attack on \\0.",
     "role.impostor.youAreSelecting.null": "You aren't attacking anyone.",
-    "role.impostor.roleMenu": "Choose what role you want to appear on your grave.",
+    "controllerId.impostor.0.name": "Attack",
+    "controllerId.impostor.1.name": "Disguise",
     
     "role.counterfeiter.name": "Counterfeiter",
     "role.counterfeiter.name:var.0": "Counterfeiters",
