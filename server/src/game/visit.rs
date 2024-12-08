@@ -32,4 +32,5 @@ pub enum VisitTag{
     #[default]
     Role,
     SyndicateGunItem,
+    SyndicateBackupAttack
 }

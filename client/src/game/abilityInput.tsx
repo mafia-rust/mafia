@@ -56,7 +56,11 @@ export type ControllerID = {
     type: "syndicateGunItemShoot",
 } | {
     type: "syndicateGunItemGive",
-};
+} | {
+    type: "syndicateChooseBackup"
+} | {
+    type: "syndicateBackupAttack"
+}
 
 export type RoleControllerID = number;
 

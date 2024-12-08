@@ -24,7 +24,7 @@ impl NightVisits{
         game.night_visits.visits.clear();
     }
 
-    fn clear_visits_with_predicate(game: &mut Game, predicate: impl Fn(&Visit) -> bool){
+    pub fn clear_visits_with_predicate(game: &mut Game, predicate: impl Fn(&Visit) -> bool){
         game.night_visits.visits.retain(|visit| !predicate(visit));
     }
 

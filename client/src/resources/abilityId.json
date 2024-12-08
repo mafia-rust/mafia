@@ -109,5 +109,8 @@
     },
     "syndicateGunItemShoot": {
         "midnight": true
+    },
+    "syndicateBackupAttack": {
+        "midnight": true
     }
 }

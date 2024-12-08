@@ -21,6 +21,8 @@ pub enum ControllerID{
     },
     SyndicateGunItemShoot,
     SyndicateGunItemGive,
+    SyndicateChooseBackup,
+    SyndicateBackupAttack,
 }
 impl ControllerID{
     pub fn role(player: PlayerReference, role: Role, id: RoleControllerID)->Self{
@@ -37,5 +39,11 @@ impl ControllerID{
     }
     pub fn syndicate_gun_item_give()->Self{
         Self::SyndicateGunItemGive
+    }
+    pub fn syndicate_choose_backup()->Self{
+        Self::SyndicateChooseBackup
+    }
+    pub fn syndicate_backup_attack()->Self{
+        Self::SyndicateBackupAttack
     }
 }
