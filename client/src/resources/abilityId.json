@@ -104,7 +104,7 @@
     "role/zealot/0": {
         "midnight": true
     },
-    "pitchfork": {
+    "pitchforkVote": {
         "midnight": true
     },
     "syndicateGunItemShoot": {
