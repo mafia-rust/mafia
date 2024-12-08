@@ -709,6 +709,7 @@
 
     "controllerId.syndicateGunItemShoot.name": "Shoot Gun",
     "controllerId.syndicateGunItemGive.name": "Give Gun",
+    "controllerId.syndicateBackup.name": "Backup",
     "controllerId.pitchforkVote.name": "Pitchfork",
     "controllerId.forfeitVote.name": "Forfeit Vote",
 
@@ -767,8 +768,7 @@
     "defense.3": "Invincible",
     "vision": "Vision",
     "pitchfork": "Pitchfork",
-    "pitchfork.description": "Vote for a player before night starts. If two-thirds of town loyalists vote for a player, that player dies.",
-    "switchToMafioso": "Switch to Mafioso",
+    "pitchfork.description": "Vote for a player before midnight. If two-thirds of town loyalists vote for a player, that player dies.",
     "nobodyDiedLastNight": "Nobody died last night.",
     "nobody": "nobody",
     "modifiers": "Modifiers",
