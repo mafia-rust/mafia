@@ -22,9 +22,9 @@ export default function SpectatorGameScreen(): ReactElement {
     const contentController = useMenuController<SpectatorContentMenus>(
         mobile ? 2 : Infinity,
         {
-            ChatMenu: true,
+            GraveyardMenu: !mobile,
             PlayerListMenu: true,
-            GraveyardMenu: !mobile
+            ChatMenu: true
         },
         () => CONTENT_CONTROLLER!,
         contentController => CONTENT_CONTROLLER = contentController

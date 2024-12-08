@@ -174,6 +174,27 @@ function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactE
     const menuController = useContext(MenuControllerContext)!;
 
     return <div className="menu-buttons">
+        <Button className="wiki-menu-colors"
+            highlighted={menuController.menusOpen().includes(ContentMenu.WikiMenu)} 
+            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.WikiMenu)}
+        >
+            {translate("menu.wiki.icon")}
+            <span className="mobile-hidden">{translate("menu.wiki.title")}</span>
+        </Button>
+        <Button className="graveyard-menu-colors" 
+            highlighted={menuController.menusOpen().includes(ContentMenu.GraveyardMenu)}
+            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.GraveyardMenu)}
+        >
+            {translate("menu.gameMode.icon")}
+            <span className="mobile-hidden">{translate("menu.gameMode.title")}</span>
+        </Button>
+        <Button className="player-list-menu-colors"
+            highlighted={menuController.menusOpen().includes(ContentMenu.PlayerListMenu)}
+            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.PlayerListMenu)}
+        >
+            {translate("menu.playerList.icon")}
+            <span className="mobile-hidden">{translate("menu.playerList.title")}</span>
+        </Button>
         <Button className="chat-menu-colors"
             highlighted={menuController.menusOpen().includes(ContentMenu.ChatMenu)}
             onClick={()=>menuController.closeOrOpenMenu(ContentMenu.ChatMenu)}
@@ -182,6 +203,13 @@ function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactE
             {translate("menu.chat.icon")}
             <span className="mobile-hidden">{translate("menu.chat.title")}</span>
         </Button>
+        {GAME_MANAGER.getMySpectator() || <Button className="will-menu-colors" 
+            highlighted={menuController.menusOpen().includes(ContentMenu.WillMenu)}
+            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.WillMenu)}
+        >
+            {translate("menu.will.icon")}
+            <span className="mobile-hidden">{translate("menu.will.title")}</span>
+        </Button>}
         {!GAME_MANAGER.getMySpectator() && <Button className="role-specific-colors" 
                 highlighted={menuController.menusOpen().includes(ContentMenu.RoleSpecificMenu)}
                 onClick={()=>menuController.closeOrOpenMenu(ContentMenu.RoleSpecificMenu)}
@@ -192,34 +220,6 @@ function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactE
                 </span>
             </Button>
         }
-        {GAME_MANAGER.getMySpectator() || <Button className="will-menu-colors" 
-            highlighted={menuController.menusOpen().includes(ContentMenu.WillMenu)}
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.WillMenu)}
-        >
-            {translate("menu.will.icon")}
-            <span className="mobile-hidden">{translate("menu.will.title")}</span>
-        </Button>}
-        <Button className="player-list-menu-colors"
-            highlighted={menuController.menusOpen().includes(ContentMenu.PlayerListMenu)}
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.PlayerListMenu)}
-        >
-            {translate("menu.playerList.icon")}
-            <span className="mobile-hidden">{translate("menu.playerList.title")}</span>
-        </Button>
-        <Button className="graveyard-menu-colors" 
-            highlighted={menuController.menusOpen().includes(ContentMenu.GraveyardMenu)}
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.GraveyardMenu)}
-        >
-            {translate("menu.gameMode.icon")}
-            <span className="mobile-hidden">{translate("menu.gameMode.title")}</span>
-        </Button>
-        {GAME_MANAGER.getMySpectator() || <Button className="wiki-menu-colors"
-            highlighted={menuController.menusOpen().includes(ContentMenu.WikiMenu)} 
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.WikiMenu)}
-        >
-            {translate("menu.wiki.icon")}
-            <span className="mobile-hidden">{translate("menu.wiki.title")}</span>
-        </Button>}
     </div>
 }
 

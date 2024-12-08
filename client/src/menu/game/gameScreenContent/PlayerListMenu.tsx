@@ -164,6 +164,18 @@ function PlayerCard(props: Readonly<{
             <StyledText>{translate("menu.playerList.player.votes", numVoted)}</StyledText>
         }
         <VoteButton playerIndex={props.playerIndex} />
+        {GAME_MANAGER.getMySpectator() ||
+            <Button 
+                disabled={isPlayerSelf}
+                onClick={()=>{
+                    // GAME_MANAGER.prependWhisper(props.playerIndex); return true;
+                    setWhisperChatOpen(!whisperChatOpen);
+                }}
+                pressedChildren={() => <Icon>done</Icon>}
+            >
+                <Icon>chat</Icon>
+            </Button>
+        }
         {GAME_MANAGER.getMySpectator() || (() => {
             const filter = props.playerIndex;
             const isFilterSet = chatFilter?.type === "playerNameInMessage" && (chatFilter.player === filter);
@@ -181,19 +193,6 @@ function PlayerCard(props: Readonly<{
                 <Icon>filter_alt</Icon>
             </Button>
         })()}
-        {GAME_MANAGER.getMySpectator() ||
-            <Button 
-                disabled={isPlayerSelf}
-                onClick={()=>{
-                    // GAME_MANAGER.prependWhisper(props.playerIndex); return true;
-                    setWhisperChatOpen(!whisperChatOpen);
-                }}
-                pressedChildren={() => <Icon>done</Icon>}
-            >
-                <Icon>chat</Icon>
-            </Button>
-        }
-
     </div>
     {alibiOpen && mostRecentBlockMessage !== undefined ? <div onClick={()=>setAlibiOpen(false)}>
         <ChatMessage message={mostRecentBlockMessage}/>

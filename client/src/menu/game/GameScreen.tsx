@@ -148,12 +148,12 @@ export default function GameScreen(): ReactElement {
     const menuController = useMenuController(
         mobile ? 2 : Infinity, 
         {
-            ChatMenu: true,
-            RoleSpecificMenu: !mobile,
-            WillMenu: !mobile,
-            PlayerListMenu: true,
-            GraveyardMenu: !mobile,
             WikiMenu: false,
+            GraveyardMenu: !mobile,
+            PlayerListMenu: true,
+            ChatMenu: true,
+            WillMenu: !mobile,
+            RoleSpecificMenu: !mobile,
         },
         () => MENU_CONTROLLER_HOLDER.controller!,
         menuController => MENU_CONTROLLER_HOLDER.controller = menuController
