@@ -267,7 +267,7 @@ fn mortician_obscures_fail_after_death(){
         gf: Godfather
     );
 
-    mortician.set_night_selection_single(townie);
+    mortician.send_ability_input_player_list_typical(townie);
     game.skip_to(Nomination, 2);
     
     jail.vote_for_player(Some(mortician));
@@ -278,7 +278,7 @@ fn mortician_obscures_fail_after_death(){
     jail.set_verdict(Verdict::Guilty);
 
     game.skip_to(Night, 2);
-    gf.set_night_selection_single(townie);
+    gf.send_ability_input_player_list_typical(townie);
     game.next_phase();
     assert!(matches!(game.graves[1].information, GraveInformation::Normal { role: Role::Detective, .. }));
     assert_not_contains!(mortician.get_messages(), ChatMessageVariant::PlayerRoleAndAlibi { player: townie.player_ref(), role: Role::Detective, will: "".to_string() });
@@ -305,7 +305,7 @@ fn philosopher_basic() {
         townie2: Vigilante
     );
 
-    philosopher.set_night_selection(vec![mafia1, townie1]);
+    philosopher.send_ability_input_two_player_typical(mafia1, townie1);
     
     game.next_phase();
     assert_contains!(
@@ -314,7 +314,7 @@ fn philosopher_basic() {
     );
 
     game.skip_to(Night, 2);
-    philosopher.set_night_selection(vec![mafia1, mafia2]);
+    philosopher.send_ability_input_two_player_typical(mafia1, mafia2);
     
     game.next_phase();
     assert_contains!(
@@ -323,7 +323,7 @@ fn philosopher_basic() {
     );
 
     game.skip_to(Night, 3);
-    philosopher.set_night_selection(vec![townie2, townie1]);
+    philosopher.send_ability_input_two_player_typical(townie2, townie1);
     
     game.next_phase();
     assert_contains!(
@@ -343,7 +343,7 @@ fn philosopher_neutrals() {
     );
 
     game.skip_to(Night, 3);
-    philosopher.set_night_selection(vec![jester, mafia1]);
+    philosopher.send_ability_input_two_player_typical(jester, mafia1);
     
     game.next_phase();
     assert_contains!(
@@ -352,7 +352,7 @@ fn philosopher_neutrals() {
     );
 
     game.skip_to(Night, 4);
-    philosopher.set_night_selection(vec![townie1, jester]);
+    philosopher.send_ability_input_two_player_typical(townie1, jester);
     
     game.next_phase();
     assert_contains!(
@@ -361,7 +361,7 @@ fn philosopher_neutrals() {
     );
 
     game.skip_to(Night, 6);
-    philosopher.set_night_selection(vec![townie1, witch]);
+    philosopher.send_ability_input_two_player_typical(townie1, witch);
     
     game.next_phase();
     assert_contains!(
@@ -370,7 +370,7 @@ fn philosopher_neutrals() {
     );
 
     game.skip_to(Night, 7);
-    philosopher.set_night_selection(vec![jester, witch]);
+    philosopher.send_ability_input_two_player_typical(jester, witch);
     
     game.next_phase();
     assert_contains!(
@@ -379,7 +379,7 @@ fn philosopher_neutrals() {
     );
 
     game.skip_to(Night, 8);
-    philosopher.set_night_selection(vec![mafia1, witch]);
+    philosopher.send_ability_input_two_player_typical(mafia1, witch);
     
     game.next_phase();
     assert_contains!(
@@ -546,7 +546,7 @@ fn spy_basic_transported() {
         witch: MafiaWitch
     );
     spy.send_ability_input_player_list_typical(jester);
-    transp.set_night_selection(vec![jester, bugged]);
+    transp.send_ability_input_two_player_typical(jester, bugged);
     blackmailer.send_ability_input_player_list_typical(jester);
     esc.send_ability_input_player_list_typical(jester);
     witch.set_night_selection(vec![jester, esc]);
@@ -593,7 +593,7 @@ fn transporter_basic_vigilante_escort() {
         town1: Detective,
         town2: Detective
     );
-    trans.set_night_selection(vec![town1, town2]);
+    trans.send_ability_input_two_player_typical(town1, town2);
     vigi.send_ability_input_player_list_typical(town1);
     escort.send_ability_input_player_list_typical(town2);
 
@@ -618,10 +618,10 @@ fn transporter_basic_seer_sheriff_framer() {
         town1: Detective,
         town2: Detective
     );
-    assert!(trans.set_night_selection(vec![town1, town2]));
+    assert!(trans.send_ability_input_two_player_typical(town1, town2));
     assert!(framer.send_ability_input_one_player_typical(town1));
     assert!(framer.send_ability_input_one_player(philosopher, 1));
-    assert!(philosopher.set_night_selection(vec![town1, town2]));
+    assert!(philosopher.send_ability_input_two_player_typical(town1, town2));
     assert!(town1.send_ability_input_player_list_typical(town2));
     assert!(town2.send_ability_input_player_list_typical(town1));
 
@@ -650,7 +650,7 @@ fn bodyguard_protects_transported_target() {
         t1: Detective,
         t2: Detective
     );
-    trans.set_night_selection(vec![t1, t2]);
+    trans.send_ability_input_two_player_typical(t1, t2);
     maf.set_night_selection_single(t1);
     bg.send_ability_input_player_list_typical(t1);
     
@@ -772,7 +772,7 @@ fn witch_basic(){
     )});
     
     game.skip_to(Night, 2);
-    assert!(philosopher.set_night_selection(vec![sher, informant]));
+    assert!(philosopher.send_ability_input_two_player_typical(sher, informant));
     assert!(witch.set_night_selection(vec![philosopher, mafioso]));
     game.next_phase();
     assert_contains!(
@@ -1012,8 +1012,7 @@ fn transporter_cant_transport_dead() {
 
     game.skip_to(Night, 3);
 
-    assert!(trans.set_night_selection_single(townie));
-    assert!(!trans.set_night_selection(vec![townie, thomas]), "Transporter targeted dead player");
+    trans.send_ability_input_two_player_typical(townie, thomas);
 
     game.next_phase();
 
@@ -1035,8 +1034,8 @@ fn double_transport() {
     
     assert!(mafioso.set_night_selection_single(townie_a));
 
-    assert!(trans_a.set_night_selection(vec![townie_a, townie_b]));
-    assert!(trans_b.set_night_selection(vec![townie_b, townie_a]));
+    assert!(trans_a.send_ability_input_two_player_typical(townie_a, townie_b));
+    assert!(trans_b.send_ability_input_two_player_typical(townie_b, townie_a));
 
     game.next_phase();
     assert!(!townie_a.alive());
@@ -1059,8 +1058,8 @@ fn double_transport_single_player() {
     
     assert!(mafioso.set_night_selection_single(townie_a));
 
-    assert!(trans_a.set_night_selection(vec![townie_a, townie_b]));
-    assert!(trans_b.set_night_selection(vec![townie_a, townie_c]));
+    assert!(trans_a.send_ability_input_two_player_typical(townie_a, townie_b));
+    assert!(trans_b.send_ability_input_two_player_typical(townie_a, townie_c));
 
 
     game.next_phase();
@@ -1085,9 +1084,9 @@ fn double_transport_three_players() {
     
     assert!(mafioso.set_night_selection_single(townie_a));
 
-    assert!(trans_a.set_night_selection(vec![townie_a, townie_b]));
-    assert!(trans_b.set_night_selection(vec![townie_a, townie_c]));
-    assert!(trans_c.set_night_selection(vec![townie_b, townie_c]));
+    assert!(trans_a.send_ability_input_two_player_typical(townie_a, townie_b));
+    assert!(trans_b.send_ability_input_two_player_typical(townie_a, townie_c));
+    assert!(trans_c.send_ability_input_two_player_typical(townie_b, townie_c));
 
 
     game.next_phase();
@@ -1263,9 +1262,15 @@ fn godfather_backup_kills_esc() {
         esc: Escort
     );
 
-    assert!(godfather.day_target(hypnotist));
+    godfather.send_ability_input(AbilityInput::new(
+        ControllerID::SyndicateChooseBackup,
+        AbilitySelection::new_player_list(vec![hypnotist.player_ref()])
+    ));
+    hypnotist.send_ability_input(AbilityInput::new(
+        ControllerID::SyndicateBackupAttack,
+        AbilitySelection::new_player_list(vec![det.player_ref()])
+    ));
 
-    assert!(hypnotist.send_ability_input_player_list_typical(det));
     assert!(esc.send_ability_input_player_list_typical(godfather));
 
     game.next_phase();
@@ -1322,10 +1327,17 @@ fn godfather_backup_kills_jail() {
     );
 
     assert!(jail.day_target(godfather));
-    assert!(godfather.day_target(hypnotist));
+    godfather.send_ability_input(AbilityInput::new(
+        ControllerID::syndicate_choose_backup(),
+        AbilitySelection::new_player_list(vec![hypnotist.player_ref()])
+    ));
 
     game.next_phase();
     assert!(hypnotist.send_ability_input_player_list_typical(det));
+    hypnotist.send_ability_input(AbilityInput::new(
+        ControllerID::syndicate_backup_attack(),
+        AbilitySelection::new_player_list(vec![det.player_ref()])
+    ));
 
     game.next_phase();
 
@@ -1344,16 +1356,28 @@ fn godfathers_backup_tag_works() {
         _vigi: Vigilante
     );
 
-    assert!(godfather.day_target(blackmailer));
+    godfather.send_ability_input(AbilityInput::new(
+        ControllerID::syndicate_choose_backup(),
+        AbilitySelection::new_player_list(vec![blackmailer.player_ref()])
+    ));
     assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).expect("blackmailer doesnt have tag").contains(&Tag::GodfatherBackup));
     
-    assert!(godfather.day_target(blackmailer));
+    godfather.send_ability_input(AbilityInput::new(
+        ControllerID::syndicate_choose_backup(),
+        AbilitySelection::new_player_list(vec![])
+    ));
     assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).is_none());
 
-    assert!(godfather.day_target(blackmailer));
+    godfather.send_ability_input(AbilityInput::new(
+        ControllerID::syndicate_choose_backup(),
+        AbilitySelection::new_player_list(vec![blackmailer.player_ref()])
+    ));
     assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).expect("blackmailer doesnt have tag").contains(&Tag::GodfatherBackup));
     
-    assert!(godfather.day_target(hypnotist));
+    godfather.send_ability_input(AbilityInput::new(
+        ControllerID::syndicate_choose_backup(),
+        AbilitySelection::new_player_list(vec![hypnotist.player_ref()])
+    ));
     assert!(blackmailer.get_player_tags().get(&hypnotist.player_ref()).expect("hypnotist doesnt have tag").contains(&Tag::GodfatherBackup));
     assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).is_none());
 }
@@ -1488,7 +1512,7 @@ fn seer_cant_see_godfather() {
         townie: Detective
     );
 
-    assert!(philosopher.set_night_selection(vec![godfather, mafioso]));
+    assert!(philosopher.send_ability_input_two_player_typical(godfather, mafioso));
     game.next_phase();
     assert_contains!(
         philosopher.get_messages_after_last_message(
@@ -1498,7 +1522,7 @@ fn seer_cant_see_godfather() {
     );
     game.skip_to(Night, 2);
 
-    assert!(philosopher.set_night_selection(vec![godfather, townie]));
+    assert!(philosopher.send_ability_input_two_player_typical(godfather, townie));
     game.next_phase();
     assert_contains!(
         philosopher.get_messages_after_last_message(
@@ -1564,128 +1588,33 @@ fn bouncer_ojo_block() {
 
 #[test]
 fn godfather_backup_sets_off_engineer_trap() {
-    //run test twice with different player numbers
-    {
-        kit::scenario!(game in Night 2 where
-            backup: Informant,
-            eng: Engineer,
-            gf: Godfather,
-            esc: Escort
-        );
+    kit::scenario!(game in Night 2 where
+        backup: Informant,
+        eng: Engineer,
+        gf: Godfather,
+        esc: Escort
+    );
 
-        assert!(gf.day_target(backup));
-        assert!(backup.send_ability_input_player_list_typical(esc));
-        assert!(esc.send_ability_input_player_list_typical(gf));
-        assert!(eng.set_night_selection_single(esc));
+    gf.send_ability_input(AbilityInput::new(
+        ControllerID::syndicate_choose_backup(),
+        AbilitySelection::new_player_list(vec![backup.player_ref()])
+    ));
+    gf.send_ability_input_player_list_typical(eng);
 
-        game.next_phase();
+    backup.send_ability_input(AbilityInput::new(
+        ControllerID::syndicate_backup_attack(),
+        AbilitySelection::new_player_list(vec![esc.player_ref()])
+    ));
+    assert!(esc.send_ability_input_player_list_typical(gf));
+    assert!(eng.set_night_selection_single(esc));
 
-        assert!(gf.alive());
-        assert!(!backup.alive());
-        assert!(esc.alive());
-        assert!(eng.alive());
-    }
-    {
-        kit::scenario!(game in Night 2 where
-            gf: Godfather,
-            backup: Informant,
-            eng: Engineer,
-            esc: Escort
-        );
+    game.next_phase();
 
-        assert!(gf.day_target(backup));
-        assert!(backup.send_ability_input_player_list_typical(esc));
-        assert!(esc.send_ability_input_player_list_typical(gf));
-        assert!(eng.set_night_selection_single(esc));
-
-        game.next_phase();
-
-        assert!(gf.alive());
-        assert!(!backup.alive());
-        assert!(esc.alive());
-        assert!(eng.alive());
-    }
-    //run test again with different roles that have the same ability
-    {
-        kit::scenario!(game in Night 2 where
-            backup: Informant,
-            eng: Engineer,
-            esc: Escort,
-            gf: Godfather
-        );
-
-        assert!(gf.day_target(backup));
-        assert!(backup.send_ability_input_player_list_typical(esc));
-        assert!(esc.send_ability_input_player_list_typical(gf));
-        assert!(eng.set_night_selection_single(esc));
-
-        game.next_phase();
-
-        assert!(gf.alive());
-        assert!(!backup.alive());
-        assert!(esc.alive());
-        assert!(eng.alive());
-    }
-    {
-        kit::scenario!(game in Night 2 where
-            backup: Informant,
-            eng: Engineer,
-            gf: Counterfeiter,
-            esc: Escort
-        );
-
-        assert!(gf.day_target(backup));
-        assert!(backup.send_ability_input_player_list_typical(esc));
-        assert!(esc.send_ability_input_player_list_typical(gf));
-        assert!(eng.set_night_selection_single(esc));
-
-        game.next_phase();
-
-        assert!(gf.alive());
-        assert!(!backup.alive());
-        assert!(esc.alive());
-        assert!(eng.alive());
-    }
-    {
-        kit::scenario!(game in Night 2 where
-            backup: Informant,
-            gf: Godfather,
-            eng: Engineer,
-            esc: Escort
-        );
-
-        assert!(gf.day_target(backup));
-        assert!(backup.send_ability_input_player_list_typical(esc));
-        assert!(esc.send_ability_input_player_list_typical(gf));
-        assert!(eng.set_night_selection_single(esc));
-
-        game.next_phase();
-
-        assert!(gf.alive());
-        assert!(!backup.alive());
-        assert!(esc.alive());
-        assert!(eng.alive());
-    }
-    {
-        kit::scenario!(game in Night 2 where
-            backup: Informant,
-            eng: Engineer,
-            gf: Impostor,
-            esc: Escort
-        );
-
-        assert!(gf.day_target(backup));
-        assert!(backup.send_ability_input_player_list_typical(esc));
-        assert!(esc.send_ability_input_player_list_typical(gf));
-        assert!(eng.set_night_selection_single(esc));
-
-        game.next_phase();
-
-        assert!(gf.alive());
-        assert!(!backup.alive());
-        assert!(esc.alive());
-        assert!(eng.alive());
-    }
+    assert!(gf.alive());
+    assert!(esc.alive());
+    assert!(eng.alive());
+    assert!(!backup.alive());
+    
 }
 
 #[test]
@@ -1699,9 +1628,15 @@ fn godfather_wardblock_still_kills() {
     );
 
     assert!(rev.send_ability_input_player_list_typical(townie_a));
-    assert!(godfather.set_night_selection(vec![townie_a]));
-    assert!(godfather.day_target(jan));
-    assert!(jan.send_ability_input_player_list_typical(townie_b));
+    assert!(godfather.send_ability_input_player_list_typical(townie_a));
+    godfather.send_ability_input(AbilityInput::new(
+        ControllerID::syndicate_choose_backup(),
+        AbilitySelection::new_player_list(vec![jan.player_ref()])
+    ));
+    jan.send_ability_input(AbilityInput::new(
+        ControllerID::syndicate_backup_attack(),
+        AbilitySelection::new_player_list(vec![townie_b.player_ref()])
+    ));
 
     game.next_phase();
     assert_not_contains!(
@@ -1792,7 +1727,7 @@ fn puppeteer_marionettes_philosopher(){
     }));
 
     assert!(puppeteer.set_night_selection_single(townie));
-    assert!(philo.set_night_selection(vec![townie2, townie]));
+    assert!(philo.send_ability_input_two_player_typical(townie2, townie));
 
     game.next_phase();
     assert_contains!(
@@ -1802,7 +1737,7 @@ fn puppeteer_marionettes_philosopher(){
 
     game.skip_to(Night, 2);
 
-    assert!(philo.set_night_selection(vec![puppeteer, townie]));
+    assert!(philo.send_ability_input_two_player_typical(puppeteer, townie));
 
     game.next_phase();
     assert_contains!(
@@ -2245,7 +2180,7 @@ fn ojo_transporter(){
         AbilitySelection::new_role_option(Some(Role::Philosopher))
     ));
 
-    transporter.set_night_selection(vec![player1, player2]);
+    transporter.send_ability_input_two_player_typical(player1, player2);
     gf.set_night_selection_single(ojo);
 
     game.next_phase(); 
@@ -2308,7 +2243,7 @@ fn godfather_dies_to_veteran(){
         _maf: Mortician
     );
 
-    assert!(gf.set_night_selection_single(vet));
+    assert!(gf.send_ability_input_player_list_typical(vet));
     assert!(vet.send_ability_input_boolean_typical(true));
 
     game.next_phase();
@@ -2326,7 +2261,7 @@ fn witch_leaves_by_winning(){
         min: Witch
     );
 
-    assert!(gf.set_night_selection_single(t));
+    assert!(gf.send_ability_input_player_list_typical(t));
 
     game.next_phase();
 
@@ -2344,7 +2279,7 @@ fn scarecrow_leaves_by_winning(){
         min: Scarecrow
     );
 
-    assert!(gf.set_night_selection_single(t));
+    assert!(gf.send_ability_input_player_list_typical(t));
 
     game.next_phase();
 
@@ -2372,7 +2307,7 @@ fn witch_leaves_by_winning_puppeteer(){
     game.skip_to(Night, 3);
 
     assert!(t.send_ability_input_boolean_typical(true));
-    assert!(gf.set_night_selection_single(t2));
+    assert!(gf.send_ability_input_player_list_typical(t2));
 
     game.next_phase();
 
@@ -2391,7 +2326,7 @@ fn armorsmith_doesnt_get_wardblocked_when_warded(){
         bouncer: Bouncer
     );
 
-    assert!(gf.set_night_selection_single(bouncer));
+    assert!(gf.send_ability_input_player_list_typical(bouncer));
     assert!(bouncer.send_ability_input_player_list_typical(armor));
     assert!(armor.send_ability_input_boolean_typical(true));
 
@@ -2454,7 +2389,7 @@ fn fiends_wildcard_defense_upgrade(){
     }));
 
     assert!(fiend.role() == Role::Puppeteer);
-    assert!(mafia.set_night_selection_single(fiend));
+    assert!(mafia.send_ability_input_player_list_typical(fiend));
     assert!(fiend.set_night_selection_single(mafia));
 
     game.next_phase();

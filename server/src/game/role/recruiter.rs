@@ -2,7 +2,6 @@ use rand::seq::IteratorRandom;
 use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::{AttackPower, DefensePower};
-use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::mafia_recruits::MafiaRecruits;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::grave::GraveKiller;
@@ -10,10 +9,10 @@ use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::role_list::{RoleOutline, RoleOutlineOption, RoleSet};
-use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
+use super::godfather::Godfather;
 use super::{Priority, Role, RoleState, RoleStateImpl};
 
 use vec1::vec1;
@@ -21,7 +20,6 @@ use vec1::vec1;
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Recruiter{
-    pub backup: Option<PlayerReference>,
     pub recruits_remaining: u8,
     pub action: RecruiterAction,
 }
@@ -29,7 +27,6 @@ pub struct Recruiter{
 impl Default for Recruiter {
     fn default() -> Self {
         Self {
-            backup: None,
             recruits_remaining: 3,
             action: RecruiterAction::Recruit
         }
@@ -60,80 +57,19 @@ impl RoleStateImpl for Recruiter {
         }
 
         match priority {
-            Priority::Deception => {
-                if actor_ref.night_blocked(game) {
-                    let Some(backup) = self.backup else {return};
-                    let mut visits = backup.untagged_night_visits_cloned(game).clone();
-                    let Some(visit) = visits.first_mut() else {return};
-
-                    visit.attack = self.action == RecruiterAction::Kill;
-                    game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackupKilled { backup: backup.index() });
-                    backup.set_night_visits(game, visits);
-                }
-            },
             Priority::Kill => {
-                let mut ability_successful = false;
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-                if actor_ref.night_blocked(game) {
-                    if let Some(backup) = self.backup {
-                        if let Some(visit) = backup.untagged_night_visits_cloned(game).first(){
-                            ability_successful = Recruiter::night_ability(self.clone(), game, backup, visit.target);
+                if let Some(visit) = actor_visits.first(){
+                    if Recruiter::night_ability(self.clone(), game, actor_ref, visit.target) {
+                        match self.action {
+                            RecruiterAction::Recruit => actor_ref.set_role_state(game, RoleState::Recruiter(Recruiter{recruits_remaining: self.recruits_remaining-1, ..self})),
+                            RecruiterAction::Kill => actor_ref.set_role_state(game, RoleState::Recruiter(Recruiter{recruits_remaining: self.recruits_remaining+1, ..self})),
                         }
-                    }
-                    
-                } else if let Some(visit) = actor_visits.first(){
-                    ability_successful = Recruiter::night_ability(self.clone(), game, actor_ref, visit.target);
-                }
-        
-                if ability_successful {
-                    match self.action {
-                        RecruiterAction::Recruit => actor_ref.set_role_state(game, RoleState::Recruiter(Recruiter{recruits_remaining: self.recruits_remaining-1, ..self})),
-                        RecruiterAction::Kill => actor_ref.set_role_state(game, RoleState::Recruiter(Recruiter{recruits_remaining: self.recruits_remaining+1, ..self})),
                     }
                 }
             },
             _ => {return}
         }
-    }
-    fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
-        if let Some(old_target_ref) = self.backup {
-            if old_target_ref == target_ref {
-                actor_ref.set_role_state(game, RoleState::Recruiter(Recruiter{backup: None, ..self}));
-            } else {
-                actor_ref.set_role_state(game, RoleState::Recruiter(Recruiter{backup: Some(target_ref), ..self}));
-            }
-        } else {
-            actor_ref.set_role_state(game, RoleState::Recruiter(Recruiter{backup: Some(target_ref), ..self}));
-        }
-
-        let RoleState::Recruiter(Recruiter { backup, .. }) = *actor_ref.role_state(game) else {
-            unreachable!("Role was just set to Recruiter");
-        };
-
-        game.add_message_to_chat_group(ChatGroup::Mafia, ChatMessageVariant::GodfatherBackup { backup: backup.map(|p|p.index()) });
-
-        for player_ref in PlayerReference::all_players(game){
-            if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player_ref){
-                continue;
-            }
-            player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
-        }
-
-        if let Some(backup) = backup {
-            for player_ref in PlayerReference::all_players(game){
-                if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player_ref) {
-                    continue;
-                }
-                player_ref.push_player_tag(game, backup, Tag::GodfatherBackup);
-            }
-        }
-        
-    }
-    fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        actor_ref != target_ref &&
-        actor_ref.alive(game) && target_ref.alive(game) &&
-        RoleSet::Mafia.get_roles().contains(&target_ref.role(game)) &&
-        InsiderGroupID::Mafia.is_player_in_revealed_group(game, target_ref)
     }
     fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         crate::game::role::common_role::can_night_select(game, actor_ref, target_ref) &&
@@ -154,26 +90,7 @@ impl RoleStateImpl for Recruiter {
         })
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
-
-        if actor_ref == dead_player_ref {
-            let Some(backup) = self.backup else {return};
-
-            actor_ref.set_role_state(game, Recruiter{backup: None, ..self.clone()});
-            for player_ref in PlayerReference::all_players(game){
-                if InsiderGroupID::Mafia.is_player_in_revealed_group(game, player_ref){
-                    continue;
-                }
-                player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
-            }
-            
-            if !backup.alive(game){return}
-
-            //convert backup to godfather
-            backup.set_role_and_win_condition_and_revealed_group(game, Recruiter{backup: None, ..self});
-        }
-        else if self.backup.is_some_and(|p|p == dead_player_ref) {
-            actor_ref.set_role_state(game, Recruiter{backup: None, ..self});
-        }
+        Godfather::pass_role_state_down(game, actor_ref, dead_player_ref, self);
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: crate::game::phase::PhaseType) {
         if phase == PhaseType::Night && self.recruits_remaining == 0{
