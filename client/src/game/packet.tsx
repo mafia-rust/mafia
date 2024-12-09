@@ -277,10 +277,6 @@ export type ToServerPacket = {
     type: "abilityInput",
     abilityInput: AbilityInput
 } | {
-    type: "setForgerWill",
-    role: Role,
-    will: string
-} | {
     type: "setCounterfeiterAction",
     action: "forge" | "noForge"
 } | {
@@ -312,10 +308,6 @@ export type ToServerPacket = {
     youWereTransportedMessage: boolean,
     youWerePossessedMessage: boolean,
     yourTargetWasJailedMessage: boolean
-} | {
-    type: "setForgerWill",
-    role: Role | null,
-    will: string
 } | {
     type: "setPuppeteerAction",
     action: PuppeteerAction

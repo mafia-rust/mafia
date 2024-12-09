@@ -104,7 +104,7 @@ export default function RoleSpecificSection(){
         case "marksman": 
             return <MarksmanRoleSpecificMenu roleState={roleState} />;
         case "counterfeiter":
-            return <CounterfeiterMenu/>;
+            return <CounterfeiterMenu roleState={roleState}/>;
         case "forger":
             return <Counter
                 max={3}

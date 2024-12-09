@@ -10,14 +10,13 @@ use crate::game::role_list::RoleSet;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{ControllerID, GetClientRoleState, PlayerListSelection, Priority, Role, RoleStateImpl};
+use crate::vec_set;
+use super::{AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, GetClientRoleState, PlayerListSelection, Priority, Role, RoleOptionSelection, RoleStateImpl, StringSelection};
 
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Counterfeiter{
-    pub fake_role: Role,
-    pub fake_will: String,
     pub forges_remaining: u8,
     pub forged_ref: Option<PlayerReference>,
 
@@ -27,8 +26,6 @@ pub struct Counterfeiter{
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ClientRoleState{
-    pub fake_role: Role,
-    pub fake_will: String,
     pub forges_remaining: u8,
 
     pub action: CounterfeiterAction
@@ -45,8 +42,6 @@ impl Default for Counterfeiter {
         Counterfeiter {
             forges_remaining: 3,
             forged_ref: None,
-            fake_role: Role::Jester,
-            fake_will: "".to_owned(),
 
             action: CounterfeiterAction::NoForge,
         }
@@ -65,13 +60,29 @@ impl RoleStateImpl for Counterfeiter {
         match priority {
             Priority::Deception => {
                 if self.forges_remaining == 0 || self.action == CounterfeiterAction::NoForge {return}
-
+                
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else{return};
+
                 let target_ref = visit.target;
 
-                target_ref.set_night_grave_role(game, Some(self.fake_role));
-                target_ref.set_night_grave_will(game, self.fake_will.clone());
+                let fake_role = if let Some(RoleOptionSelection(fake_role)) = game.saved_controllers
+                    .get_controller_current_selection_role_option(ControllerID::role(actor_ref, Role::Counterfeiter, 1)) {
+                    fake_role
+                } else {
+                    None
+                };
+
+                target_ref.set_night_grave_role(game, fake_role);
+
+                let fake_alibi = if let Some(StringSelection(string)) = game.saved_controllers
+                    .get_controller_current_selection_string(ControllerID::role(actor_ref, Role::Counterfeiter, 2)) {
+                    string
+                } else {
+                    "".to_owned()
+                };
+                target_ref.set_night_grave_will(game, fake_alibi);
+
                 actor_ref.set_role_state(game, Counterfeiter { 
                     forges_remaining: self.forges_remaining.saturating_sub(1), 
                     forged_ref: Some(target_ref), 
@@ -102,12 +113,52 @@ impl RoleStateImpl for Counterfeiter {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref) &&
-        game.day_number() > 1
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        crate::game::role::common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Counterfeiter, 0),
+            true
+        )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
+        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
+            game,
+            actor_ref,
+            false,
+            game.day_number() <= 1,
+            ControllerID::role(actor_ref, Role::Counterfeiter, 0)
+        ).combine_overwrite_owned(
+            //role
+            ControllerParametersMap::new_controller_fast(
+                game,
+                ControllerID::role(actor_ref, Role::Counterfeiter, 1),
+                AvailableAbilitySelection::new_role_option(
+                    Role::values().into_iter()
+                        .map(|role| Some(role))
+                        .collect()
+                ),
+                AbilitySelection::new_role_option(Some(Role::Counterfeiter)),
+                self.forges_remaining == 0 ||
+                !actor_ref.alive(game),
+                None,
+                false,
+                vec_set![actor_ref]
+            )
+        ).combine_overwrite_owned(
+            //alibi
+            ControllerParametersMap::new_controller_fast(
+                game,
+                ControllerID::role(actor_ref, Role::Counterfeiter, 2),
+                AvailableAbilitySelection::new_string(),
+                AbilitySelection::new_string(String::new()),
+                self.forges_remaining == 0 ||
+                !actor_ref.alive(game),
+                None,
+                false,
+                vec_set![actor_ref]
+            )
+        )
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         actor_ref.set_role_state(game, Counterfeiter{
@@ -136,8 +187,6 @@ impl RoleStateImpl for Counterfeiter {
 impl GetClientRoleState<ClientRoleState> for Counterfeiter {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState{
-            fake_role: self.fake_role,
-            fake_will: self.fake_will,
             forges_remaining: self.forges_remaining,
             action: self.action,
         }

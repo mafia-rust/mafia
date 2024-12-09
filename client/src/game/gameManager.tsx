@@ -11,7 +11,6 @@ import { RoleOutline } from "./roleListState.d";
 import translate from "./lang";
 import PlayMenu from "../menu/main/PlayMenu";
 import { createGameState, createLobbyState } from "./gameState";
-import { Role } from "./roleState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
 import AudioController from "../menu/AudioController";
@@ -515,13 +514,6 @@ export function createGameManager(): GameManager {
                 youWereTransportedMessage: youWereTransportedMessage ?? false,
                 youWerePossessedMessage: youWerePossessedMessage ?? false,
                 yourTargetWasJailedMessage: yourTargetWasJailedMessage ?? false
-            });
-        },
-        sendSetForgerWill(role: Role | null, will: string) {
-            this.server.sendPacket({
-                type: "setForgerWill",
-                role: role,
-                will: will
             });
         },
         sendSetCounterfeiterAction(action: "forge" | "noForge") {

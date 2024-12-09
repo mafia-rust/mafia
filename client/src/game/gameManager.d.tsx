@@ -116,7 +116,6 @@ export type GameManager = {
         youWerePossessedMessage: boolean, 
         yourTargetWasJailedMessage: boolean
     ): void
-    sendSetForgerWill(role: Role | null, will: string): void;
     sendSetCounterfeiterAction(action: "forge" | "noForge"): void;
     sendSetPuppeteerAction(action: PuppeteerAction): void;
     sendSetRecruiterAction(action: RecruiterAction): void;

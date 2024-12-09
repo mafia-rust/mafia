@@ -274,8 +274,6 @@ pub enum ToServerPacket{
         you_were_possessed_message: bool,
         your_target_was_jailed_message: bool,
     },
-    #[serde(rename_all = "camelCase")]
-    SetForgerWill{ role: Role, will: String },
     SetCounterfeiterAction{action: CounterfeiterAction},
     SetPuppeteerAction{action: PuppeteerAction},
     SetRecruiterAction{action: RecruiterAction},

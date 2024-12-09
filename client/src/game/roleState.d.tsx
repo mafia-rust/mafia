@@ -92,18 +92,12 @@ export type RoleState = {
     interviewedTarget: PlayerIndex | null
 } | {
     type: "godfather"
-    backup: PlayerIndex | null
 } | {
     type: "impostor"
-    backup: PlayerIndex | null,
-    fakeRole: Role
 } | {
     type: "counterfeiter",
     action: "forge" | "noForge",
-    fakeRole: Role,
-    fakeWill: string
     forgesRemaining: number,
-    backup: PlayerIndex | null
 } | {
     type: "recruiter",
     action: RecruiterAction,
