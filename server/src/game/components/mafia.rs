@@ -1,7 +1,7 @@
 use rand::seq::SliceRandom;
 
 use crate::{game::{ 
-    ability_input::{AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection}, attack_power::AttackPower, chat::{ChatGroup, ChatMessageVariant}, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::{Priority, RoleState}, role_list::RoleSet, visit::Visit, Game
+    ability_input::{AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection}, attack_power::AttackPower, chat::{ChatGroup, ChatMessageVariant}, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::{Priority, RoleState}, role_list::RoleSet, tag::Tag, visit::Visit, Game
 }, vec_set::{vec_set, VecSet}};
 
 use super::{detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits, syndicate_gun_item::SyndicateGunItem};
@@ -150,6 +150,26 @@ impl Mafia{
         }
     }
 
+    pub fn on_controller_selection_changed(game: &mut Game, controller_id: ControllerID){
+        if controller_id != ControllerID::syndicate_choose_backup() {return};
+
+        let backup = 
+            game.saved_controllers.get_controller_current_selection_player_list(controller_id)
+            .map(|b|b.0.first().cloned())
+            .flatten();
+
+        
+        for player_ref in PlayerReference::all_players(game){
+            if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player_ref) {continue}
+            player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
+        }
+        if let Some(backup) = backup{
+            for player_ref in PlayerReference::all_players(game){
+                if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player_ref) {continue}
+                player_ref.push_player_tag(game, backup, Tag::GodfatherBackup);
+            }
+        }
+    }
 
     /// - This must go after rolestate on any death
     /// - Godfathers backup should become godfather if godfather dies as part of the godfathers ability

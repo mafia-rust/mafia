@@ -4,7 +4,12 @@ use crate::{
     game::{
         chat::ChatMessageVariant, components::{
             forfeit_vote::ForfeitVote, insider_group::InsiderGroupID, mafia::Mafia, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem
-        }, event::on_validated_ability_input_received::OnValidatedAbilityInputReceived, phase::PhaseType, player::PlayerReference, Game
+        }, 
+        event::{
+            on_controller_selection_changed::OnControllerSelectionChanged,
+            on_validated_ability_input_received::OnValidatedAbilityInputReceived
+        }, 
+        phase::PhaseType, player::PlayerReference, Game
     }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet
 };
 
@@ -62,7 +67,7 @@ impl SavedControllersMap{
     }
 
 
-    // new mutators
+    // mutators
     fn update_controllers_from_parameters(game: &mut Game){
         let mut new_controller_parameters_map = ControllerParametersMap::default();
 
@@ -88,6 +93,75 @@ impl SavedControllersMap{
         if *current_controller_parameters != new_controller_parameters_map {
             Self::set_controller_parameters(game, new_controller_parameters_map);
         }
+    }
+
+    pub fn send_selection_message(
+        game: &mut Game,
+        player_ref: PlayerReference,
+        id: ControllerID,
+        selection: AbilitySelection
+    ){
+        let chat_message = ChatMessageVariant::AbilityUsed{
+            player: player_ref.index(),
+            ability_id: id,
+            selection: selection.clone()
+        };
+
+        let mut target_message_sent = false;
+        for insider_group in InsiderGroupID::all_insider_groups_with_player(game, player_ref){
+            game.add_message_to_chat_group( insider_group.get_insider_chat_group(), chat_message.clone());
+            target_message_sent = true;
+        }
+        if !target_message_sent{
+            player_ref.add_private_chat_message(game, chat_message);
+        }
+    }
+    
+    /// Keeps old selection if its valid, otherwise uses default_selection,
+    /// even if default selection is invalid
+    fn set_controller_parameters(game: &mut Game, new_controller_parameters_map: ControllerParametersMap){
+
+        let controller_ids_to_remove = game.saved_controllers.controller_parameters().controller_parameters().keys()
+            .filter(|id| !new_controller_parameters_map.controller_parameters().contains_key(id))
+            .cloned()
+            .collect::<Vec<_>>();
+
+        for id in controller_ids_to_remove{
+            game.saved_controllers.saved_controllers.remove(&id);
+        }
+
+        for (id, controller_parameters) in new_controller_parameters_map.controller_parameters().iter(){
+            let mut new_selection = controller_parameters.default_selection().clone();
+            
+            let mut kept_old_selection = false;
+            
+
+            if let Some(SavedController{selection: old_selection, ..}) = game.saved_controllers.saved_controllers.get(&id) {
+                if 
+                    controller_parameters.validate_selection(game, old_selection) &&
+                    !controller_parameters.dont_save() &&
+                    !controller_parameters.grayed_out()
+                {
+                    new_selection = old_selection.clone();
+                    kept_old_selection = true;
+                }
+            }
+            
+
+            game.saved_controllers.saved_controllers.insert(
+                id.clone(),
+                SavedController::new(
+                    new_selection,
+                    controller_parameters.clone()
+                )
+            );
+
+            if !kept_old_selection {
+                OnControllerSelectionChanged::new(id.clone()).invoke(game);
+            }
+        }
+
+        Self::send_saved_controllers_to_clients(game);
     }
 
     /// return true if selection was valid
@@ -125,6 +199,7 @@ impl SavedControllersMap{
 
         if !available_ability_data.dont_save() {
             *saved_selection = selection.clone();
+            OnControllerSelectionChanged::new(id).invoke(game);
         }
 
         true
@@ -286,64 +361,6 @@ impl SavedControllersMap{
             )
     }
     
-    //mutators
-    /// Keeps old selection if its valid, otherwise uses default_selection,
-    /// even if default selection is invalid
-    fn set_controller_parameters(game: &mut Game, new_controller_parameters_map: ControllerParametersMap){
-
-        let controller_ids_to_remove = game.saved_controllers.controller_parameters().controller_parameters().keys()
-            .filter(|id| !new_controller_parameters_map.controller_parameters().contains_key(id))
-            .cloned()
-            .collect::<Vec<_>>();
-
-        for id in controller_ids_to_remove{
-            game.saved_controllers.saved_controllers.remove(&id);
-        }
-
-        for (id, controller_parameters) in new_controller_parameters_map.controller_parameters().iter(){
-            let mut new_selection = controller_parameters.default_selection().clone();
-            
-            if !controller_parameters.dont_save() && !controller_parameters.grayed_out(){
-                if let Some(SavedController{selection: old_selection, ..}) = game.saved_controllers.saved_controllers.get(&id) {
-                    if controller_parameters.validate_selection(game, old_selection){
-                        new_selection = old_selection.clone()
-                    }
-                }
-            }
-
-            game.saved_controllers.saved_controllers.insert(
-                id.clone(),
-                SavedController::new(
-                    new_selection,
-                    controller_parameters.clone()
-                )
-            );
-        }
-
-        Self::send_saved_controllers_to_clients(game);
-    }
-
-    pub fn send_selection_message(
-        game: &mut Game,
-        player_ref: PlayerReference,
-        id: ControllerID,
-        selection: AbilitySelection
-    ){
-        let chat_message = ChatMessageVariant::AbilityUsed{
-            player: player_ref.index(),
-            ability_id: id,
-            selection: selection.clone()
-        };
-
-        let mut target_message_sent = false;
-        for insider_group in InsiderGroupID::all_insider_groups_with_player(game, player_ref){
-            game.add_message_to_chat_group( insider_group.get_insider_chat_group(), chat_message.clone());
-            target_message_sent = true;
-        }
-        if !target_message_sent{
-            player_ref.add_private_chat_message(game, chat_message);
-        }
-    }
     
     
     // game stuff

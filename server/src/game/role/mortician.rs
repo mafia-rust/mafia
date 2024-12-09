@@ -80,7 +80,6 @@ impl RoleStateImpl for Mortician {
                     .filter(|p| *p != actor_ref)
                     .filter(|player| 
                         player.alive(game) &&
-                        !InsiderGroupID::in_same_revealed_group(game, actor_ref, *player) &&
                         !self.obscured_players.contains(&player)
                     )
                     .collect(),

@@ -1,12 +1,10 @@
 use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
-use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 
 use crate::game::role_list::RoleSet;
-use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
@@ -50,13 +48,6 @@ impl RoleStateImpl for Godfather {
         else {return};
         let Some(backup) = backup.first() else {return};
         if actor_ref != dead_player_ref {return}
-
-        for player_ref in PlayerReference::all_players(game){
-            if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player_ref) {
-                continue;
-            }
-            player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
-        }
 
         //convert backup to godfather
         backup.set_role_and_win_condition_and_revealed_group(game, Godfather);
