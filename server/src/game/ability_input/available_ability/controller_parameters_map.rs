@@ -1,11 +1,8 @@
-use std::iter::once;
-
 use serde::{Deserialize, Serialize};
 
 use crate::{
     game::{phase::PhaseType, player::PlayerReference, Game},
-    vec_map::{vec_map, VecMap},
-    vec_set::{vec_set, VecSet}
+    vec_map::{vec_map, VecMap}, vec_set::VecSet
 };
 
 use super::super::{
@@ -54,29 +51,6 @@ impl ControllerParametersMap{
         }else{
             Self::default()
         }
-    }
-    pub fn new_one_player_ability_fast(
-        game: &Game,
-        actor: PlayerReference,
-        id: ControllerID,
-        available_players: VecSet<PlayerReference>,
-        default_selection: Option<PlayerReference>,
-        grayed_out: bool,
-        reset_on_phase_start: Option<PhaseType>,
-        dont_save: bool,
-    )->Self{
-        Self::new_controller_fast(
-            game,
-            id,
-            AvailableAbilitySelection::new_one_player_option(
-                available_players.into_iter().map(|p| Some(p)).chain(once(None)).collect()
-            ),
-            AbilitySelection::new_one_player_option(default_selection),
-            grayed_out,
-            reset_on_phase_start,
-            dont_save,
-            vec_set![actor]
-        )
     }
     pub fn insert_ability(&mut self, id: ControllerID, ability_data: ControllerParameters){
         self.controllers.insert(id, ability_data);

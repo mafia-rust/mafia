@@ -17,9 +17,7 @@ use crate::{
 pub enum AvailableAbilitySelection{
     Unit,
     Boolean,
-    OnePlayerOption{selection: AvailableOnePlayerOptionSelection},
     TwoPlayerOption{selection: AvailableTwoPlayerOptionSelection},
-    ThreePlayerOption{selection: AvailableThreePlayerOptionSelection},
     PlayerList{selection: AvailablePlayerListSelection},
     RoleOption{selection: AvailableRoleOptionSelection},
     TwoRoleOption{selection: AvailableTwoRoleOptionSelection},
@@ -34,9 +32,6 @@ impl AvailableAbilitySelection{
     pub fn new_boolean()->Self{
         Self::Boolean
     }
-    pub fn new_one_player_option(players: VecSet<Option<PlayerReference>>)->Self{
-        Self::OnePlayerOption{selection: AvailableOnePlayerOptionSelection(players)}
-    }
     pub fn new_two_player_option(
         first: VecSet<PlayerReference>,
         second: VecSet<PlayerReference>,
@@ -48,19 +43,6 @@ impl AvailableAbilitySelection{
             available_second_players: second,
             can_choose_duplicates,
             can_choose_none
-        }}
-    }
-    pub fn new_three_player_option(
-        first: VecSet<Option<PlayerReference>>,
-        second: VecSet<Option<PlayerReference>>,
-        third: VecSet<Option<PlayerReference>>,
-        can_choose_duplicates: bool
-    )->Self{
-        Self::ThreePlayerOption{selection: AvailableThreePlayerOptionSelection{
-            available_first_players: first,
-            available_second_players: second,
-            available_third_players: third,
-            can_choose_duplicates
         }}
     }
     pub fn new_player_list(players: VecSet<PlayerReference>, can_choose_duplicates: bool, max: Option<u8>)->Self{
@@ -96,16 +78,8 @@ impl ValidateAvailableSelection for AvailableAbilitySelection{
         match self {
             Self::Unit => {true},
             Self::Boolean => {true},
-            Self::OnePlayerOption{ selection: available } => {
-                let AbilitySelection::OnePlayerOption{selection} = selection else {return false};
-                return available.validate_selection(game, selection);
-            },
             Self::TwoPlayerOption{ selection: available } => {
                 let AbilitySelection::TwoPlayerOption{selection} = selection else {return false};
-                return available.validate_selection(game, selection);
-            },
-            Self::ThreePlayerOption { selection: available } => {
-                let AbilitySelection::ThreePlayerOption{selection} = selection else {return false};
                 return available.validate_selection(game, selection);
             },
             Self::PlayerList { selection: available } => {

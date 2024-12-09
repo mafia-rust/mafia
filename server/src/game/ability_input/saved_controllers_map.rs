@@ -265,30 +265,6 @@ impl SavedControllersMap{
             )
     }
 
-    pub fn get_controller_current_selection_player_option(&self,id: ControllerID)->Option<OnePlayerOptionSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::OnePlayerOption { selection } = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-
-    pub fn get_controller_current_selection_three_player_option(&self,id: ControllerID)->Option<ThreePlayerOptionSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::ThreePlayerOption { selection } = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-
     pub fn get_controller_current_selection_player_list(&self,id: ControllerID)->Option<PlayerListSelection>{
         self
             .get_controller_current_selection(id)

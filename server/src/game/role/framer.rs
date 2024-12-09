@@ -10,7 +10,7 @@ use crate::game::visit::{Visit, VisitTag};
 
 use crate::game::Game;
 use crate::vec_set::{vec_set, VecSet};
-use super::{AbilitySelection, ControllerID, ControllerParametersMap, OnePlayerOptionSelection, Priority, Role, RoleStateImpl};
+use super::{AbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection, Priority, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -82,8 +82,6 @@ impl RoleStateImpl for Framer {
                 *p != actor_ref && 
                 !InsiderGroupID::in_same_revealed_group(game, actor_ref, *p)
             )
-            .map(|p|Some(p))
-            .chain(std::iter::once(None))
             .collect::<VecSet<_>>();
         
         let grayed_out = 
@@ -94,8 +92,12 @@ impl RoleStateImpl for Framer {
         let frame_controller = ControllerParametersMap::new_controller_fast(
             game,
             ControllerID::role(actor_ref, Role::Framer, 0),
-            super::AvailableAbilitySelection::new_one_player_option(frame_players),
-            AbilitySelection::new_one_player_option(None),
+            super::AvailableAbilitySelection::new_player_list(
+                frame_players,
+                false,
+                Some(1)
+            ),
+            AbilitySelection::new_player_list(vec![]),
             grayed_out,
             Some(crate::game::phase::PhaseType::Obituary),
             false,
@@ -103,10 +105,10 @@ impl RoleStateImpl for Framer {
         );
 
 
-        let framed_player_exists = if let Some(OnePlayerOptionSelection(Some(_))) = game.saved_controllers.get_controller_current_selection_player_option(
+        let framed_player_exists = if let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(
             ControllerID::role(actor_ref, Role::Framer, 0)
         ){
-            true
+            target.len() > 0
         }else{
             false
         };
@@ -116,19 +118,16 @@ impl RoleStateImpl for Framer {
             !actor_ref.alive(game) || 
             Detained::is_detained(game, actor_ref) ||
             !framed_player_exists;
-
-        let frame_into_players = PlayerReference::all_players(game)
-            .into_iter()
-            .map(|p|Some(p))
-            .chain(std::iter::once(None))
-            .collect::<VecSet<_>>();
-        
         
         let frame_into_controller = ControllerParametersMap::new_controller_fast(
             game,
             ControllerID::role(actor_ref, Role::Framer, 1),
-            super::AvailableAbilitySelection::new_one_player_option(frame_into_players),
-            AbilitySelection::new_one_player_option(None),
+            super::AvailableAbilitySelection::new_player_list(
+                PlayerReference::all_players(game).into_iter().collect(),
+                false,
+                Some(1)
+            ),
+            AbilitySelection::new_player_list(vec![]),
             grayed_out,
             Some(crate::game::phase::PhaseType::Obituary),
             false,

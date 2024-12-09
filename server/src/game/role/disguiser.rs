@@ -1,5 +1,3 @@
-use std::iter::once;
-
 use serde::Serialize;
 
 use crate::game::ability_input::*;
@@ -61,17 +59,16 @@ impl RoleStateImpl for Disguiser {
         ControllerParametersMap::new_controller_fast(
             game,
             ControllerID::role(actor_ref, Role::Disguiser, 0),
-            AvailableAbilitySelection::new_one_player_option(PlayerReference::all_players(game)
+            AvailableAbilitySelection::new_player_list(PlayerReference::all_players(game)
                     .filter(|p|
                         p.alive(game) &&
                         InsiderGroupID::in_same_revealed_group(game, actor_ref, *p)
                     )
-                    .map(|p| Some(p))
-                    .chain(once(None))
-                    .collect()
+                    .collect(),
+                    false,
+                    Some(1)
                 ),
-            AbilitySelection::new_one_player_option(None),
-            // game.current_phase().phase() != PhaseType::Night || 
+            AbilitySelection::new_player_list(vec![]),
             !actor_ref.alive(game) ||
             Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),

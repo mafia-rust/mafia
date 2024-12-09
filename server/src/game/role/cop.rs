@@ -60,9 +60,7 @@ impl RoleStateImpl for Cop {
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref &&
                         !other_player_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
-                        other_player_ref.untagged_night_visits_cloned(game)
-                            .iter()
-                            .any(|v|v.target==target_ref)
+                        target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
                     ).collect::<Vec<PlayerReference>>()
                     .choose(&mut rand::thread_rng())
                     .copied(){
@@ -71,9 +69,7 @@ impl RoleStateImpl for Cop {
                     .filter(|other_player_ref|
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref &&
-                        other_player_ref.untagged_night_visits_cloned(game)
-                            .iter()
-                            .any(|v|v.target==target_ref)
+                        target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
                     ).collect::<Vec<PlayerReference>>()
                     .choose(&mut rand::thread_rng())
                     .copied(){

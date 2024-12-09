@@ -1,13 +1,13 @@
 use serde::Serialize;
 
 use crate::game::components::confused::Confused;
-use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
 
+use super::detective::Detective;
 use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
 
 
@@ -60,18 +60,12 @@ impl Gossip {
 
         match player_ref.night_appeared_visits(game) {
             Some(x) => x.clone(),
-            None => player_ref.untagged_night_visits_cloned(game),
+            None => player_ref.all_night_visits_cloned(game),
         }
             .iter()
             .map(|v|v.target.clone())
-            .any(|visited_player|
-                if visited_player.has_suspicious_aura(game){
-                    true
-                }else if visited_player.has_innocent_aura(game){
-                    false
-                }else{
-                    !WinCondition::are_friends(player_ref.win_condition(game), visited_player.win_condition(game))
-                }
+            .any(|targets_target|
+                Detective::player_is_suspicious(game, targets_target)
             )
     }
 }

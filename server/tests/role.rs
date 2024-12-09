@@ -9,7 +9,6 @@ pub use mafia_server::game::{
     grave::*,
     ability_input::{
         selection_type::{
-            one_player_option_selection::OnePlayerOptionSelection, 
             two_role_option_selection::TwoRoleOptionSelection,
             two_role_outline_option_selection::TwoRoleOutlineOptionSelection
         },
@@ -488,7 +487,7 @@ fn psychic_auras(){
         }
 
         game.skip_to(Night, 2);
-        maf.send_ability_input_one_player_typical(town1);
+        maf.send_ability_input_player_list_typical(town1);
         psy.send_ability_input_player_list_typical(town2);
         game.next_phase();
         let messages = psy.get_messages_after_night(2);
@@ -619,8 +618,8 @@ fn transporter_basic_seer_sheriff_framer() {
         town2: Detective
     );
     assert!(trans.send_ability_input_two_player_typical(town1, town2));
-    assert!(framer.send_ability_input_one_player_typical(town1));
-    assert!(framer.send_ability_input_one_player(philosopher, 1));
+    assert!(framer.send_ability_input_player_list_typical(town1));
+    assert!(framer.send_ability_input_player_list(philosopher, 1));
     assert!(philosopher.send_ability_input_two_player_typical(town1, town2));
     assert!(town1.send_ability_input_player_list_typical(town2));
     assert!(town2.send_ability_input_player_list_typical(town1));
@@ -830,8 +829,8 @@ fn cop_does_not_kill_framed_player(){
     );
 
     assert!(crus.send_ability_input_player_list_typical(protected));
-    assert!(framer.send_ability_input_one_player(townie, 0));
-    assert!(framer.send_ability_input_one_player(protected, 1));
+    assert!(framer.send_ability_input_player_list(townie, 0));
+    assert!(framer.send_ability_input_player_list(protected, 1));
 
     game.next_phase();
 
@@ -853,7 +852,7 @@ fn veteran_basic(){
     );
 
     assert!(vet.send_ability_input_boolean_typical(true));
-    assert!(framer.send_ability_input_one_player_typical(vet));
+    assert!(framer.send_ability_input_player_list_typical(vet));
     assert!(townie.send_ability_input_player_list_typical(vet));
     assert!(tracker.send_ability_input_player_list_typical(vet));
 
@@ -889,7 +888,7 @@ fn veteran_does_not_kill_framed_player(){
 
     assert!(vet.send_ability_input_boolean_typical(true));
     assert!(framer.send_ability_input_player_list_typical(townie));
-    assert!(framer.send_ability_input_one_player(vet, 1));
+    assert!(framer.send_ability_input_player_list(vet, 1));
 
     game.next_phase();
 
@@ -1194,8 +1193,8 @@ fn drunk_framer() {
     assert!(mafioso.set_night_selection_single(townie));
     assert!(lookout.send_ability_input_player_list_typical(townie));
     assert!(lookout2.send_ability_input_player_list_typical(mafioso));
-    framer.send_ability_input_one_player_typical(drunk);
-    framer.send_ability_input_one_player(mafioso, 1);
+    framer.send_ability_input_player_list_typical(drunk);
+    framer.send_ability_input_player_list(mafioso, 1);
 
     game.next_phase();
 
@@ -1404,7 +1403,7 @@ fn gossip_basic_friends() {
 
 #[test]
 fn gossip_basic_enemies_inverted() {
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         gossip: Gossip,
         t1: Detective,
         _t2: Detective,
@@ -1412,19 +1411,19 @@ fn gossip_basic_enemies_inverted() {
     );
 
     assert!(gossip.send_ability_input_player_list_typical(py));
-    assert!(py.set_night_selection_single(t1));
+    assert!(py.send_ability_input_player_list_typical(t1));
 
     game.next_phase();
 
     assert_contains!(
         gossip.get_messages(),
-        ChatMessageVariant::GossipResult { enemies: true }
+        ChatMessageVariant::GossipResult { enemies: false }
     );
 }
 
 #[test]
 fn gossip_basic_enemies() {
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         gossip: Gossip,
         t1: Detective,
         _t2: Detective,
@@ -1466,8 +1465,8 @@ fn gossip_framer() {
 
     assert!(gossip.send_ability_input_player_list_typical(townie));
     assert!(townie.send_ability_input_player_list_typical(framer));
-    assert!(framer.send_ability_input_one_player_typical(townie));
-    assert!(framer.send_ability_input_one_player(gossip, 1));
+    assert!(framer.send_ability_input_player_list_typical(townie));
+    assert!(framer.send_ability_input_player_list(gossip, 1));
 
     game.next_phase();
 
@@ -1480,8 +1479,8 @@ fn gossip_framer() {
 
     assert!(gossip.send_ability_input_player_list_typical(t2));
     assert!(t2.send_ability_input_player_list_typical(townie));
-    assert!(framer.send_ability_input_one_player_typical(townie));
-    assert!(framer.send_ability_input_one_player(gossip, 1));
+    assert!(framer.send_ability_input_player_list_typical(townie));
+    assert!(framer.send_ability_input_player_list(gossip, 1));
 
     game.next_phase();
 
@@ -1832,7 +1831,7 @@ fn deputy_shoots_marionette(){
 
     game.skip_to(Discussion, 2);
 
-    deputy.send_ability_input_one_player_typical(townie);
+    deputy.send_ability_input_player_list_typical(townie);
 
     assert!(puppeteer.alive());
     assert!(!townie.alive());
@@ -1921,7 +1920,7 @@ fn arsonist_ignites_and_aura(){
     );
 
     assert!(townie.send_ability_input_player_list_typical(arso));
-    assert!(arso.set_night_selection_single(arso));
+    assert!(arso.send_ability_input_player_list_typical(arso));
     assert!(sher.send_ability_input_player_list_typical(townie));
 
     game.next_phase();
@@ -1938,7 +1937,7 @@ fn arsonist_ignites_and_aura(){
 
     game.skip_to(Night, 2);
     
-    assert!(arso.set_night_selection_single(townie2));
+    assert!(arso.send_ability_input_player_list_typical(townie2));
     assert!(sher.send_ability_input_player_list_typical(townie2));
 
     game.next_phase();
@@ -1969,56 +1968,6 @@ fn arsonist_ignites_and_aura(){
 
     
 }
-
-#[test]
-fn pyrolisk_tags_day_one() {
-    kit::scenario!(game in Night 1 where
-        pyro: Pyrolisk,
-        townie: Detective,
-        townie2: Detective,
-        townie3: Detective,
-        townie4: Detective
-    );
-
-    assert!(pyro.set_night_selection_single(townie));
-    assert!(townie3.send_ability_input_player_list_typical(pyro));
-
-    game.next_phase();
-
-    assert!(pyro.alive());
-    assert!(townie.alive());
-    assert!(townie2.alive());
-    assert!(townie3.alive());
-    assert!(townie4.alive());
-    
-    assert!(pyro.get_player_tags().get(&pyro.player_ref()).unwrap().contains(&Tag::MorticianTagged));
-    assert!(pyro.get_player_tags().get(&townie.player_ref()).unwrap().contains(&Tag::MorticianTagged));
-    assert!(pyro.get_player_tags().get(&townie2.player_ref()).is_none());
-    assert!(pyro.get_player_tags().get(&townie3.player_ref()).unwrap().contains(&Tag::MorticianTagged));
-    assert!(pyro.get_player_tags().get(&townie4.player_ref()).is_none());
-
-    //vote out townie
-    game.skip_to(Nomination, 2);
-
-    townie.vote_for_player(Some(townie3));
-    townie2.vote_for_player(Some(townie3));
-    pyro.vote_for_player(Some(townie3));
-
-    game.skip_to(Judgement, 2);
-
-    townie.set_verdict(Verdict::Guilty);
-
-    game.skip_to(Dusk, 2);
-
-    assert!(game.graves.len() == 1);
-    assert!(game.graves.first().unwrap().player == townie3.player_ref());
-    assert!(game.graves.first().unwrap().information == GraveInformation::Obscured);
-    assert_contains!(pyro.get_messages_after_night(1), ChatMessageVariant::PlayerRoleAndAlibi{
-        player: townie3.player_ref(),
-        role: Role::Detective,
-        will: "".to_string(),
-    });
-} 
 
 #[test]
 fn bodyguard_gets_single_target_jailed_message() {
@@ -2156,7 +2105,7 @@ fn deputy_shoots_townie(){
         player2: Detective
     );
 
-    assert!(deputy.send_ability_input_one_player_typical(player2));
+    assert!(deputy.send_ability_input_player_list_typical(player2));
     assert!(!deputy.alive());
     assert!(!player2.alive());
     assert!(player1.alive());

@@ -10,7 +10,8 @@ use crate::game::player::PlayerReference;
 
 
 use crate::game::Game;
-use super::{ControllerID, ControllerParametersMap, OnePlayerOptionSelection, Role, RoleStateImpl};
+use crate::vec_set;
+use super::{AbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection, Role, RoleStateImpl};
 
 
 
@@ -36,9 +37,10 @@ impl RoleStateImpl for Deputy {
     fn on_validated_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: super::AbilityInput) {
         
         if actor_ref != input_player {return;}
-        let Some(OnePlayerOptionSelection(Some(target_ref))) = ability_input.get_player_option_selection_if_id(
+        let Some(PlayerListSelection(target_ref)) = ability_input.get_player_list_selection_if_id(
             ControllerID::role(actor_ref, Role::Deputy, 0)
         )else{return};
+        let Some(target_ref) = target_ref.first() else {return};
         
         
         target_ref.add_private_chat_message(game, ChatMessageVariant::DeputyShotYou);
@@ -50,7 +52,7 @@ impl RoleStateImpl for Deputy {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::DeputyKilled{shot_index: target_ref.index()});
             
             
-            let mut grave = Grave::from_player_lynch(game, target_ref);
+            let mut grave = Grave::from_player_lynch(game, *target_ref);
             if let GraveInformation::Normal{death_cause, ..} = &mut grave.information {
                 *death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Deputy)]);
             }
@@ -65,24 +67,28 @@ impl RoleStateImpl for Deputy {
         actor_ref.set_role_state(game, Deputy{bullets_remaining:self.bullets_remaining.saturating_sub(1)});
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        ControllerParametersMap::new_one_player_ability_fast(
+        ControllerParametersMap::new_controller_fast(
             game,
-            actor_ref,
             ControllerID::role(actor_ref, Role::Deputy, 0),
-            PlayerReference::all_players(game)
+            super::AvailableAbilitySelection::new_player_list(
+                PlayerReference::all_players(game)
                     .into_iter()
                     .filter(|player| 
                         actor_ref != *player &&
                         player.alive(game)
                     )
                     .collect(),
-            None,
+                false,
+                Some(1)
+            ),
+            AbilitySelection::new_player_list(vec![]),
             !actor_ref.alive(game) ||
             self.bullets_remaining == 0 || 
             game.day_number() <= 1 || 
             !(PhaseType::Discussion == game.current_phase().phase() || PhaseType::Nomination == game.current_phase().phase()),
             None,
-            true
+            true,
+            vec_set!(actor_ref)
         )
     }
 }

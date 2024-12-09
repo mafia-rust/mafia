@@ -12,14 +12,12 @@ import {
     controllerIdToLink,
     singleAbilityJsonData,
     StringSelection,
-    ThreePlayerOptionSelection,
     translateControllerIDNoRole,
     PlayerListSelection
 } from "../../../../game/abilityInput";
 import React from "react";
 import { usePlayerState } from "../../../../components/useHooks";
 import { Button } from "../../../../components/Button";
-import OnePlayerOptionSelectionMenu from "./AbilitySelectionTypes/OnePlayerOptionSelectionMenu";
 import TwoRoleOutlineOptionSelectionMenu from "./AbilitySelectionTypes/TwoRoleOutlineOptionSelectionMenu";
 import GAME_MANAGER from "../../../..";
 import TwoRoleOptionSelectionMenu from "./AbilitySelectionTypes/TwoRoleOptionSelectionMenu";
@@ -36,7 +34,6 @@ import ListMap from "../../../../ListMap";
 import { Role } from "../../../../game/roleState.d";
 import { PlayerIndex } from "../../../../game/gameState.d";
 import Icon from "../../../../components/Icon";
-import ThreePlayerOptionSelectionMenu from "./AbilitySelectionTypes/ThreePlayerOptionSelectionMenu";
 import PlayerListSelectionMenu from "./AbilitySelectionTypes/PlayerListSelectionMenu";
 
 type GroupName = `${PlayerIndex}/${Role}` | "syndicateGunItem" | ControllerID["type"];
@@ -263,24 +260,26 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
                 });
             }}/></div>;
         }
-        case "onePlayerOption":{
-            
-            let selectedPlayer;
-            if(selected === null || selected.type !== "onePlayerOption"){
-                selectedPlayer = null;
+        case "playerList":{
+            let input: PlayerListSelection;
+            if(
+                props.selected === null ||
+                props.selected.type !== "playerList"
+            ){
+                input = [];
             }else{
-                selectedPlayer = selected.selection;
+                input = props.selected.selection;
             }
-            
-            return <OnePlayerOptionSelectionMenu
-                availablePlayers={available.selection}
-                selectedPlayer={selectedPlayer}
-                onChoose={(player) => {
+
+            return <PlayerListSelectionMenu
+                selection={input}
+                availableSelection={available.selection}
+                onChoose={(selection) => {
                     GAME_MANAGER.sendAbilityInput({
                         id, 
                         selection: {
-                            type: "onePlayerOption",
-                            selection: player
+                            type: "playerList",
+                            selection
                         }
                     });
                 }}
@@ -305,56 +304,6 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
                         id, 
                         selection: {
                             type: "twoPlayerOption",
-                            selection
-                        }
-                    });
-                }}
-            />;
-        }
-        case "threePlayerOption":{
-            let input: ThreePlayerOptionSelection;
-            if(
-                props.selected === null ||
-                props.selected.type !== "threePlayerOption"
-            ){
-                input = [null, null, null];
-            }else{
-                input = props.selected.selection;
-            }
-
-            return <ThreePlayerOptionSelectionMenu
-                selection={input}
-                availableSelection={available.selection}
-                onChoose={(selection) => {
-                    GAME_MANAGER.sendAbilityInput({
-                        id, 
-                        selection: {
-                            type: "threePlayerOption",
-                            selection
-                        }
-                    });
-                }}
-            />;
-        }
-        case "playerList":{
-            let input: PlayerListSelection;
-            if(
-                props.selected === null ||
-                props.selected.type !== "playerList"
-            ){
-                input = [];
-            }else{
-                input = props.selected.selection;
-            }
-
-            return <PlayerListSelectionMenu
-                selection={input}
-                availableSelection={available.selection}
-                onChoose={(selection) => {
-                    GAME_MANAGER.sendAbilityInput({
-                        id, 
-                        selection: {
-                            type: "playerList",
                             selection
                         }
                     });

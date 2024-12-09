@@ -53,15 +53,15 @@ impl Pitchfork{
                 ControllerParametersMap::new_controller_fast(
                     game,
                     ControllerID::pitchfork_vote(player),
-                    AvailableAbilitySelection::new_one_player_option(
+                    AvailableAbilitySelection::new_player_list(
                         PlayerReference::all_players(game)
                             .into_iter()
                             .filter(|p|p.alive(game))
-                            .map(|p|Some(p))
-                            .chain(std::iter::once(None))
-                            .collect()
+                            .collect(),
+                            false,
+                            Some(1)
                     ),
-                    AbilitySelection::new_one_player_option(None),
+                    AbilitySelection::new_player_list(vec![]),
                     game.day_number() == 1 ||
                         !player.alive(game) ||
                         !player.win_condition(game).is_loyalist_for(GameConclusion::Town),
@@ -120,9 +120,10 @@ impl Pitchfork{
 
 
         for voter in PlayerReference::all_players(game){
-            let Some(OnePlayerOptionSelection(Some(target))) = game.saved_controllers
-                .get_controller_current_selection_player_option(ControllerID::pitchfork_vote(voter))
+            let Some(PlayerListSelection(target)) = game.saved_controllers
+                .get_controller_current_selection_player_list(ControllerID::pitchfork_vote(voter))
                 else {continue};
+            let Some(target) = target.first() else {continue};
             if 
                 !voter.alive(game) || 
                 !voter.win_condition(game).is_loyalist_for(GameConclusion::Town) ||
@@ -135,8 +136,8 @@ impl Pitchfork{
             }else{
                 1
             };
-            if count >= Pitchfork::number_of_votes_needed(game) {return Some(target);}
-            votes.insert(target, count);
+            if count >= Pitchfork::number_of_votes_needed(game) {return Some(*target);}
+            votes.insert(*target, count);
         }
         None
     }

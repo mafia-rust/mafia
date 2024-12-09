@@ -49,18 +49,18 @@ impl SyndicateGunItem {
                 ControllerParametersMap::new_controller_fast(
                     game,
                     ControllerID::syndicate_gun_item_give(),
-                    AvailableAbilitySelection::new_one_player_option(
+                    AvailableAbilitySelection::new_player_list(
                         PlayerReference::all_players(game)
                             .into_iter()
                             .filter(|target|
                                 player_with_gun != *target &&
                                 target.alive(game) &&
                                 InsiderGroupID::Mafia.is_player_in_revealed_group(game, *target))
-                            .map(|p|Some(p))
-                            .chain(std::iter::once(None))
-                            .collect()
+                            .collect(),
+                            false,
+                            Some(1)
                     ),
-                    AbilitySelection::new_one_player_option(None),
+                    AbilitySelection::new_player_list(vec![]),
                     Detained::is_detained(game, player_with_gun) ||
                     !player_with_gun.alive(game),
                     Some(PhaseType::Obituary),
@@ -135,18 +135,17 @@ impl SyndicateGunItem {
             return;
         }
 
-        if let Some(selection) = ability_input
-            .get_player_option_selection_if_id(ControllerID::SyndicateGunItemGive)
+        let Some(PlayerListSelection(target)) = ability_input
+            .get_player_list_selection_if_id(ControllerID::SyndicateGunItemGive)
+        else {return};
+        let Some(target) = target.first() else {return};
+
+        if 
+            actor_ref != *target &&
+            target.alive(game) &&
+            InsiderGroupID::Mafia.is_player_in_revealed_group(game, *target) 
         {
-            if let Some(target) = selection.0 {
-                if 
-                    actor_ref != target &&
-                    target.alive(game) &&
-                    InsiderGroupID::Mafia.is_player_in_revealed_group(game, target) 
-                {
-                    SyndicateGunItem::give_gun(game, target);
-                }
-            }
+            SyndicateGunItem::give_gun(game, *target);
         }
     }
 }

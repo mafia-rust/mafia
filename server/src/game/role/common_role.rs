@@ -101,29 +101,12 @@ pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: Pla
     
     match selection {
         AbilitySelection::Unit => vec![Visit::new_none(actor_ref, actor_ref, attack)],
-        AbilitySelection::OnePlayerOption { selection } => match selection.0 {
-            Some(target_ref) => vec![Visit::new_none(actor_ref, target_ref, attack)],
-            None => Vec::new(),
-        },
         AbilitySelection::TwoPlayerOption { selection } => {
             if let Some((target_1, target_2)) = selection.0 {
                 vec![Visit::new_none(actor_ref, target_1, attack), Visit::new_none(actor_ref, target_2, attack)]
             }else{
                 vec![]
             }
-        },
-        AbilitySelection::ThreePlayerOption { selection } => {
-            let mut out = Vec::new();
-            if let Some(target_ref) = selection.0 {
-                out.push(Visit::new_none(actor_ref, target_ref, attack));
-            }
-            if let Some(target_ref) = selection.1 {
-                out.push(Visit::new_none(actor_ref, target_ref, attack));
-            }
-            if let Some(target_ref) = selection.2 {
-                out.push(Visit::new_none(actor_ref, target_ref, attack));
-            }
-            out
         },
         AbilitySelection::PlayerList { selection } => {
             selection.0

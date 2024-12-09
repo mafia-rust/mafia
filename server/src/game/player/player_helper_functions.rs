@@ -154,15 +154,6 @@ impl PlayerReference{
                                 );
                             }
                         },
-                        AbilitySelection::OnePlayerOption { .. } => {
-                            SavedControllersMap::set_selection_in_controller(
-                                game,
-                                possessed_visit.target,
-                                controller_id.clone(),
-                                AbilitySelection::new_one_player_option(Some(possessed_into_visit.target)),
-                                true
-                            );
-                        },
                         AbilitySelection::TwoPlayerOption { selection } => {
 
                             let mut selection = selection.0.clone();
@@ -178,7 +169,6 @@ impl PlayerReference{
                                 true
                             );
                         },
-                        AbilitySelection::ThreePlayerOption { .. } => {},
                         AbilitySelection::PlayerList { selection } => {
 
                             let mut selection = selection.0.clone();

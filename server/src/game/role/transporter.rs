@@ -35,7 +35,7 @@ impl RoleStateImpl for Transporter {
             if player_ref.role(game) == Role::Transporter {continue;}
 
 
-            let new_visits = player_ref.untagged_night_visits_cloned(game).clone().into_iter().map(|mut v|{
+            let new_visits = player_ref.all_night_visits_cloned(game).clone().into_iter().map(|mut v|{
                 if v.target == first_visit.target {
                     v.target = second_visit.target;
                 } else if v.target == second_visit.target{

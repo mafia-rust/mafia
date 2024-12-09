@@ -47,6 +47,15 @@
     "role/transporter/0": {
         "midnight": true
     },
+    "role/godfather/0": {
+        "midnight": true
+    },
+    "role/impostor/0": {
+        "midnight": true
+    },
+    "role/counterfeiter/0": {
+        "midnight": true
+    },
     "role/framer/0": {
         "midnight": true
     },
@@ -96,6 +105,15 @@
         "midnight": true
     },
     "role/serialKiller/0": {
+        "midnight": true
+    },
+    "role/arsonist/0": {
+        "midnight": true
+    },
+    "role/werewolf/0": {
+        "midnight": true
+    },
+    "role/pyrolisk/0": {
         "midnight": true
     },
     "role/kira/0": {

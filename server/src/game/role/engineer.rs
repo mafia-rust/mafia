@@ -79,16 +79,15 @@ impl RoleStateImpl for Engineer {
                 if !actor_ref.night_blocked(game) {
                     match self.trap {
                         Trap::Dismantled => {
-                            actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}));
+                            actor_ref.set_role_state(game, Engineer {trap: Trap::Ready});
                         },
                         Trap::Ready => {
-                            let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-                            if let Some(visit) = actor_visits.first(){
-                                actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Set{target: visit.target}}));
+                            if let Some(visit) = actor_ref.untagged_night_visits_cloned(game).first(){
+                                actor_ref.set_role_state(game, Engineer {trap: Trap::Set{target: visit.target}});
                             }
                         },
                         Trap::Set { .. } if actor_ref.untagged_night_visits_cloned(game).first().is_some() => {
-                            actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}));
+                            actor_ref.set_role_state(game, Engineer {trap: Trap::Ready});
                         },
                         _ => {}
                     }

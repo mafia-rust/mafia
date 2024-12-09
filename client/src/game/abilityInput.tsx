@@ -128,14 +128,8 @@ export type AbilitySelection = {
     type: "boolean"
     selection: BooleanSelection
 } | {
-    type: "onePlayerOption"
-    selection: OnePlayerOptionSelection
-} | {
     type: "twoPlayerOption"
     selection: TwoPlayerOptionSelection
-} | {
-    type: "threePlayerOption"
-    selection: ThreePlayerOptionSelection
 } | {
     type: "playerList",
     selection: PlayerListSelection
@@ -162,12 +156,8 @@ export function defaultAbilitySelection(available: AvailableAbilitySelection): A
             return {type: "unit"};
         case "boolean":
             return {type: "boolean", selection: false};
-        case "onePlayerOption":
-            return {type: "onePlayerOption", selection: null};
         case "twoPlayerOption":
             return {type: "twoPlayerOption", selection: null};
-        case "threePlayerOption":
-            return {type: "threePlayerOption", selection: [null, null, null]};
         case "playerList":
             return {type: "playerList", selection: []};
         case "roleOption":
@@ -189,14 +179,8 @@ export type AvailableAbilitySelection = {
 } | {
     type: "boolean",
 } | {
-    type: "onePlayerOption"
-    selection: AvailableOnePlayerOptionSelection,
-} | {
     type: "twoPlayerOption"
     selection: AvailableTwoPlayerOptionSelection,
-} | {
-    type: "threePlayerOption"
-    selection: AvailableThreePlayerOptionSelection,
 } | {
     type: "playerList",
     selection: AvailablePlayerListSelection,
@@ -219,23 +203,12 @@ export type AvailableAbilitySelection = {
 
 export type BooleanSelection = boolean;
 
-export type OnePlayerOptionSelection = number | null;
-export type AvailableOnePlayerOptionSelection = (number | null)[];
-
 export type TwoPlayerOptionSelection = [number, number] | null;
 export type AvailableTwoPlayerOptionSelection = {
     availableFirstPlayers: number[],
     availableSecondPlayers: number[],
     canChooseDuplicates: boolean,
     canChooseNone: boolean
-}
-
-export type ThreePlayerOptionSelection = [number | null, number | null, number | null];
-export type AvailableThreePlayerOptionSelection = {
-    availableFirstPlayers: (number | null)[],
-    availableSecondPlayers: (number | null)[],
-    availableThirdPlayers: (number | null)[],
-    canChooseDuplicates: boolean
 }
 
 export type PlayerListSelection = PlayerIndex[];

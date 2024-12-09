@@ -425,6 +425,9 @@ impl Role{
     pub fn has_innocent_aura(&self, game: &Game)->bool{
         match self {
             Role::Godfather => true,
+            Role::Pyrolisk => {
+                game.day_number() == 1
+            },
             Role::Werewolf => {
                 game.day_number() == 1 || game.day_number() == 3
             },

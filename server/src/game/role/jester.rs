@@ -7,15 +7,13 @@ use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::detained::Detained;
 use crate::game::phase::{PhaseType, PhaseState};
 use crate::game::player::PlayerReference;
-use crate::game::role::RoleState;
 
 use crate::game::verdict::Verdict;
 
 use crate::game::Game;
+use crate::vec_set;
 use super::{
-    ControllerID, ControllerParametersMap,
-    GetClientRoleState, OnePlayerOptionSelection, Priority,
-    Role, RoleStateImpl
+    AbilitySelection, ControllerID, ControllerParametersMap, GetClientRoleState, PlayerListSelection, Priority, Role, RoleStateImpl
 };
 
 #[derive(Clone, Debug, Default)]
@@ -41,11 +39,16 @@ impl RoleStateImpl for Jester {
         
     
 
-        let player = if let Some(OnePlayerOptionSelection(Some(selection))) = game.saved_controllers
-            .get_controller_current_selection_player_option(ControllerID::role(actor_ref, Role::Jester, 0)){
-            selection
+        let target_ref = if let Some(PlayerListSelection(selection)) = game.saved_controllers
+            .get_controller_current_selection_player_list(ControllerID::role(actor_ref, Role::Jester, 0)){
+            selection.first().cloned()
         }else{
+            None
+        };
 
+        let target_ref = if let Some(target_ref) = target_ref {
+            target_ref
+        }else{
             let all_killable_players: Vec<PlayerReference> = PlayerReference::all_players(game)
                 .filter(|player_ref|{
                     player_ref.alive(game) &&
@@ -60,7 +63,8 @@ impl RoleStateImpl for Jester {
             *target_ref
         };
         
-        player.try_night_kill_single_attacker(actor_ref, game, 
+        
+        target_ref.try_night_kill_single_attacker(actor_ref, game, 
             crate::game::grave::GraveKiller::Role(super::Role::Jester), AttackPower::ProtectionPiercing, true
         );
     }
@@ -70,39 +74,43 @@ impl RoleStateImpl for Jester {
             Detained::is_detained(game, actor_ref) ||
             !self.lynched_yesterday;
 
-        ControllerParametersMap::new_one_player_ability_fast(
+        ControllerParametersMap::new_controller_fast(
             game,
-            actor_ref,
             ControllerID::role(actor_ref, Role::Jester, 0),
-            PlayerReference::all_players(game)
-                .into_iter()
-                .filter(|p| *p != actor_ref)
-                .filter(|player| 
-                    player.alive(game) &&
-                    player.verdict(game) != Verdict::Innocent
-                )
-                .collect(),
-            None,
+            super::AvailableAbilitySelection::new_player_list(
+                PlayerReference::all_players(game)
+                    .into_iter()
+                    .filter(|p| *p != actor_ref)
+                    .filter(|player| 
+                        player.alive(game) &&
+                        player.verdict(game) != Verdict::Innocent
+                    )
+                    .collect(),
+                false,
+                Some(1)
+            ),
+            AbilitySelection::new_player_list(vec![]),
             grayed_out,
             Some(PhaseType::Obituary),
-            false
+            false,
+            vec_set!(actor_ref),
         )
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         match game.current_phase() {
             &PhaseState::FinalWords { player_on_trial } => {
                 if player_on_trial == actor_ref {
-                    actor_ref.set_role_state(game, RoleState::Jester(Jester { 
+                    actor_ref.set_role_state(game, Jester { 
                         lynched_yesterday: true,
                         won: true
-                    }));
+                    });
                 }
             }
             PhaseState::Obituary => {
-                actor_ref.set_role_state(game, RoleState::Jester(Jester { 
+                actor_ref.set_role_state(game, Jester { 
                     lynched_yesterday: false,
                     won: self.won
-                }));
+                });
             }
             _ => {}
         }
