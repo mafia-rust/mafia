@@ -101,24 +101,53 @@ export function translateControllerIDNoRole(
     }
 }
 
-export function sortControllerIdCompare(a: ControllerID, b: ControllerID, firstRole: Role | null = null): number {
+export function sortControllerIdCompare(
+    a: ControllerID, 
+    b: ControllerID, 
+    firstRole: Role | null = null
+): number {
+    // Define priority order for each type
+    const typePriority: Record<string, number> = {
+        role: 1,
+        syndicateGunItemShoot: 2,
+        syndicateGunItemGive: 3,
+        syndicateChooseBackup: 4,
+        syndicateBackupAttack: 5,
+        forfeitVote: 6,
+        pitchforkVote: 7
+    };
+
+    // Get priority of types
+    const aPriority = typePriority[a.type] ?? Infinity;
+    const bPriority = typePriority[b.type] ?? Infinity;
+
+    // Compare types by priority
+    if (aPriority !== bPriority) {
+        return aPriority - bPriority;
+    }
+
+    // For "role", further sorting by player, role, and id
     if (a.type === "role" && b.type === "role") {
-        if (a.role !== b.role && firstRole !== null) {
-            if (a.role === firstRole) {
-                return -1;
-            }
-            if (b.role === firstRole) {
-                return 1;
-            }
+        // If firstRole is provided, prioritize it
+        if (firstRole && a.role === firstRole && b.role !== firstRole) return -1;
+        if (firstRole && b.role === firstRole && a.role !== firstRole) return 1;
+
+        // Compare by player index
+        if (a.player !== b.player) {
+            return a.player - b.player;
         }
+
+        // Compare by role name (or id if roles are the same)
+        const roleComparison = a.role.localeCompare(b.role);
+        if (roleComparison !== 0) {
+            return roleComparison;
+        }
+
+        // Compare by id as a fallback
         return a.id - b.id;
     }
-    if (a.type === "role") {
-        return -1;
-    }
-    if (b.type === "role") {
-        return 1;
-    }
+
+    // Default fallback: equal priority
     return 0;
 }
 

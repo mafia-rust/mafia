@@ -36,7 +36,7 @@ import { PlayerIndex } from "../../../../game/gameState.d";
 import Icon from "../../../../components/Icon";
 import PlayerListSelectionMenu from "./AbilitySelectionTypes/PlayerListSelectionMenu";
 
-type GroupName = `${PlayerIndex}/${Role}` | "syndicateGunItem" | ControllerID["type"];
+type GroupName = `${PlayerIndex}/${Role}` | "syndicateGunItem" | "backup" | ControllerID["type"];
 
 type ControllerGroupsMap = ListMap<
     GroupName, 
@@ -50,6 +50,9 @@ function getGroupNameFromControllerID(id: ControllerID): GroupName {
         case "syndicateGunItemGive":
         case "syndicateGunItemShoot":
             return "syndicateGunItem";
+        case "syndicateBackupAttack":
+        case "syndicateChooseBackup":
+            return "backup";
         default:
             return id.type;
     }
@@ -62,6 +65,9 @@ function translateGroupName(id: ControllerID): string {
         case "syndicateGunItemGive":
         case "syndicateGunItemShoot":
             return translate("syndicateGunItem");
+        case "syndicateBackupAttack":
+        case "syndicateChooseBackup":
+            return translate("backup");
         default:
             return id.type;
     }
