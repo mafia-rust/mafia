@@ -180,25 +180,20 @@ macros::priorities! {
     Possess,
     Roleblock,
 
-    Armorsmith,
-
     Deception,
 
     Bodyguard,
 
     Heal,
     Kill,
+    Convert,
     Poison,
     Investigative,
 
     Cupid,
     SpyBug,
 
-    StealMessages,
-
-    Convert,
-
-    FinalPriority
+    StealMessages
 }
 
 pub(crate) mod common_role;

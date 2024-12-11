@@ -42,7 +42,7 @@ impl RoleStateImpl for Armorsmith {
     type ClientRoleState = ClientRoleState;
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
-            Priority::Armorsmith => {
+            Priority::Heal => {
 
                 let selected_to_open_shop = if let Some(BooleanSelection(true)) =
                     game.saved_controllers.get_controller_current_selection_boolean(
@@ -52,25 +52,16 @@ impl RoleStateImpl for Armorsmith {
                     }else{
                         false
                     };
+                
+                if
+                    !actor_ref.night_blocked(game) &&
+                    (self.open_shops_remaining > 0) &&
+                    selected_to_open_shop
+                {
+                    self.night_open_shop = true;
+                    self.open_shops_remaining = self.open_shops_remaining.saturating_sub(1);
 
-                let allowed_to_open_shop = !actor_ref.night_blocked(game) && (self.open_shops_remaining > 0);
 
-                if allowed_to_open_shop && selected_to_open_shop {
-                    actor_ref.set_role_state(game, 
-                        Armorsmith {
-                            night_open_shop: true,
-                            open_shops_remaining: self.open_shops_remaining.saturating_sub(1),
-                            ..self
-                        }
-                    )
-                }
-            }
-            Priority::Heal => {
-                for player in self.players_armor.iter(){
-                    player.increase_defense_to(game, DefensePower::Protection);
-                }
-
-                if self.night_open_shop {
                     actor_ref.increase_defense_to(game, DefensePower::Protection);
 
                     let visitors = actor_ref.all_night_visitors_cloned(game);
@@ -83,11 +74,15 @@ impl RoleStateImpl for Armorsmith {
                         self.players_armor.push(random_visitor.clone());
                     }
 
-                    actor_ref.set_role_state(game, Armorsmith{
-                        night_protected_players: visitors,
-                        ..self
-                    });
+                    self.night_protected_players = visitors;
                 }
+
+
+                for player in self.players_armor.iter(){
+                    player.increase_defense_to(game, DefensePower::Protection);
+                }
+
+                actor_ref.set_role_state(game, self);
             }
             Priority::Investigative => {
 
@@ -108,9 +103,7 @@ impl RoleStateImpl for Armorsmith {
                     }
                 }
 
-                actor_ref.set_role_state(game, Armorsmith{
-                    ..self
-                });
+                actor_ref.set_role_state(game, self);
             }
             _ => {}
         }
