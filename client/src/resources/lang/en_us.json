@@ -1228,7 +1228,6 @@
     "wiki.article.standard.loveLinked.title:var.3": "Broken Hearts",
     "wiki.article.standard.loveLinked.title:var.4": "Love Linking",
     "wiki.article.standard.loveLinked.text": "2 players who are love linked are told who each other are. If one dies, the other dies of a broken heart. Cupid can love link players. So can the love link game modifier.",
-
     "wiki.article.standard.howToPlay.title":"How To Play",
     "wiki.article.standard.howToPlay.title:var.0":"Phase",
     "wiki.article.standard.howToPlay.title:var.1":"Phases",
@@ -1299,7 +1298,7 @@
     "wiki.article.standard.claimswap.title:var.1":"Claim swaped",
     "wiki.article.standard.claimswap.title:var.2":"Claim swapping",
     "wiki.article.standard.claimswap.text":"When 2 players do a claim swap, they are both claiming each others roles. John Proctor is claiming engineer even though Deodat Lawson is engineer, and Deodat Lawson is claiming detective even thought John Proctor is detective. This is in order to hide information from evil players while still giving information to town. A doomsayer or kira can easily kill alot of townies if they know the exact roles of townies. Claim swap might help a veteran kill evil players.",
-
+    
     "wiki.article.standard.shwompt.title":"Shwompt",
     "wiki.article.standard.shwompt.text":"Shwompt \nPronunciation: ʃwɒmpt \nA sudden whooshing sound that contains a siblant conclusion. This describes the sound that is made when objects phase through a solid wall. \nOther forms: Shwompter, Shwompting, Shwompted, Shwomptee",
 
@@ -1323,8 +1322,8 @@
     "wiki.article.role.noExtra": "There is no extras section written for this role.",
     "wiki.article.role.details": "Details",
 
-    "wiki.article.role.jailor.reminder": "Each day, choose a player to detain. At night, talk to your prisoner, and decide weather or not kill them, with a max of 3 attack uses.",
-    "wiki.article.role.jailor.guide": "- Each day, choose a player to detain. At night, you interrogate them in text chat\n- You can kill your prisoner up to three times\n- You can talk to your prisoner during the night, and they are not told who you are\n- If you kill a townie, you lose the ability to kill your prisoner\n- The players you jail are warded and roleblocked.",
+    "wiki.article.role.jailor.reminder": "Each day, choose a player to detain. At night, talk to your prisoner, and decide weather or not kill them.",
+    "wiki.article.role.jailor.guide": "- Each day, choose a player to detain. At night, you interrogate them in text chat\n- You can kill your prisoner up to X times (X = Total players ÷ 5 (round up))\n- You can talk to your prisoner during the night, and they are not told who you are\n- If you kill a townie, you lose the ability to kill your prisoner\n- The players you jail are warded and roleblocked.",
     "wiki.article.role.jailor.abilities":"* Choose one player to jail during the day\n* Visit your prisoner to attack them",
     "wiki.article.role.jailor.attributes":"* You may talk with your prisoner at night in jail chat\n* If you kill a town loyalist, you forfeit the ability to execute prisoners\n* Players in jail are warded and roleblocked, they also can't select anybody",
     "wiki.article.role.jailor.extra":"* The Jailor can not kill someone on night one\n* If you kill a townie, or run out of kills, you can not select to kill anymore\n* You roleblock the player you put in jail\n* Players in jail don't see your name on your messages. The messages you send appear to be from the jailor\n* If you jail a cult or syndicate member, their teammates know that that player is in jail",
@@ -1438,9 +1437,9 @@
     "wiki.article.role.engineer.extra":"* When the player with the trap is attacked, you are told they are attacked, and they are told they are protected\n* You can't activate your own trap\n* If you stop being the engineer your trap disappears\n* Your role still works while dead, but you can't select anyone to visit them",
 
     "wiki.article.role.armorsmith.reminder": "At night, open shop to protect yourself and all visitors to you. Give one visitor secret temporary armor.",
-    "wiki.article.role.armorsmith.guide": "- At night, visit a player to open shop up to 3 times per game\n    - You and all visitors to you are protected for the night\n    - One random visitor to you is given temporary armor, prioritizing the player you visited, they have protected defense at night until they are attacked, when they are attacked, armor breaks.",
+    "wiki.article.role.armorsmith.guide": "- At night, visit a player to open shop, up to X times per game (X = Total players ÷ 5 (round up))\n    - You and all visitors to you are protected for the night\n    - One random visitor to you is given temporary armor, prioritizing the player you visited, they have protected defense at night until they are attacked, when they are attacked, armor breaks.",
     "wiki.article.role.armorsmith.abilities":"* Visit anyone to open shop\n    * You and all visitors to you are protected\n    * One random visitor to you is given temporary armor, prioritizing the player you visited, which gives them protected defense at night until they are attacked, in which case it breaks",
-    "wiki.article.role.armorsmith.attributes":"* You have only 3 uses of your ability\n* Players with temporary armor are told when their armor breaks, but not when they gain it\n* You are not told who has temporary armor\n* Possession can force you to open shop, and blocking can stop you from opening shop",
+    "wiki.article.role.armorsmith.attributes":"* You have only X uses of your ability (X = Total players ÷ 5 (round up))\n* Players with temporary armor are told when their armor breaks, but not when they gain it\n* You are not told who has temporary armor\n* Possession can force you to open shop, and blocking can stop you from opening shop",
     "wiki.article.role.armorsmith.extra":"* Your target is told they are protected if they get attacked\n* You can't choose yourself\n- If you somehow visit yourself, you give yourself the temporary armor",
 
     "wiki.article.role.steward.reminder": "At night, select up to 2 roles to protect everyone with those roles.",
@@ -1472,20 +1471,20 @@
     "wiki.article.role.reporter.attributes":"*  You can talk with the player you interview at night\n* Your report is posted anonymously, nobody knows who wrote it\n* Players you interview do not see your name on your messages, instead, the messages you send appear to be from the reporter.",
     "wiki.article.role.reporter.extra": "* If there is more than one Reporter with a public report, the reports are posted in player order\n* Your report does not get posted if you are silenced or blocked\n* If you interview a cultist or syndicate member, their teammates are told that the player is being interviewed",
 
-    "wiki.article.role.vigilante.reminder": "Each night, select a player to attack. If you kill a town loyalist, you die the following night. You have 3 attack uses.",
-    "wiki.article.role.vigilante.guide": "- At night, select a player to attack\n- If you kill a town loyalist, you will commit suicide on the following night (and probably cause town to lose)\n- You have three bullets\n- You can't shoot on night one\n\n If you attack someone and they survive it is likely that they were either protected by a protective role, or they are a role that is armored. Most roles that are armored are evil.",
+    "wiki.article.role.vigilante.reminder": "Each night, select a player to attack. If you kill a town loyalist, you die the following night.",
+    "wiki.article.role.vigilante.guide": "- At night, select a player to attack\n- If you kill a town loyalist, you will commit suicide on the following night (and probably cause town to lose)\n- You have X bullets (X = Total players ÷ 5 (round up))\n- You can't shoot on night one\n\n If you attack someone and they survive it is likely that they were either protected by a protective role, or they are a role that is armored. Most roles that are armored are evil.",
     "wiki.article.role.vigilante.abilities":"* Visit a player to attack and spend a bullet\n* If you kill a town loyalist you will commit suicide on the following night\n* You have three bullets",
     "wiki.article.role.vigilante.attributes":"* If your attack overpowers a town loyalist's defense and they die, you commit suicide on the following night\n* When it is night one, when you have 0 bullets left, when you are going to commit suicide, or when you have already committed suicide, you can not select or attack anyone",
     "wiki.article.role.vigilante.extra": "* You only have a basic attack\n* Even while dead, killing someone requires and spends a bullet (such as when you get possessed)",
 
-    "wiki.article.role.rabblerouser.reminder": "As long as you are alive, each day, the town can choose to pitchfork somebody. If 2/3rds of town loyalists vote the same player, that player is attacked.\n-  You can do this up to 3 times.\n- You can't pitchfork night 1\n- If you are blocked, you can't attack.",
-    "wiki.article.role.rabblerouser.guide":"- If a Rabblerouser is in the game, everyone can vote using the pitchfork menu\n- If two-thirds of town loyalists vote the same player, that player is killed\n- This ability can be used up to 3 times\n- This ability doesn't work on night 1\n- This ability only works if there is an alive rabblerouser who isnt blocked",
+    "wiki.article.role.rabblerouser.reminder": "If 2/3rds of town vote to pitchfork someone, that player dies at night.",
+    "wiki.article.role.rabblerouser.guide":"- If a Rabblerouser is in the game, everyone can vote using the pitchfork menu\n- If two-thirds of town loyalists vote the same player, that player is killed\n- This ability can be used up to X times (X = Total players ÷ 5 (round up))\n- This ability doesn't work on night 1\n- This ability only works if there is an alive rabblerouser who isn't blocked",
     "wiki.article.role.rabblerouser.abilities":"- All alive non-blocked Rabblerousers are told when the pitchfork attacks someone, or if the attacked player has defense and survive\n- You don't visit due to your ability\n- The pitchfork can only be used to kill someone up to 3 times",
     "wiki.article.role.rabblerouser.attributes":"- Non Town Loyalists are not counted as voters for the pitchfork\n- The attack is indirect and protection piercing",
     "wiki.article.role.rabblerouser.extra":"- The pitchfork menu stays available\n   - Even if all Rabblerousers are dead\n    - Even if there is no Rabblerouser\n    - Even if all three uses are consumed\n- Multiple Rabblerousers does not mean multiple attacks or more uses. There is a maximum of 3 uses and a maximum of 1 attack per night",
 
-    "wiki.article.role.veteran.reminder":"Each night, choose to rampage yourself, killing all visitors to you. You can do this up to 3 times.",
-    "wiki.article.role.veteran.guide": "- At night, you can choose to alert to gain protected defense for the night and rampage yourself, attacking everyone who visits you\n- You can only use your ability three times\n- You can't use your ability on night 1\n* You should try to trick evil players into visiting you, so you can block the attack and kill them. Try to avoid killing unnecessary townies.\n* There can only be one veteran in a game.",
+    "wiki.article.role.veteran.reminder":"Each night, choose to rampage yourself, killing all visitors to you.",
+    "wiki.article.role.veteran.guide": "- At night, you can choose to alert to gain protected defense for the night and rampage yourself, attacking everyone who visits you\n- You can only use your ability X times (X = Total players ÷ 5 (round up))\n- You can't use your ability on night 1\n* You should try to trick evil players into visiting you, so you can block the attack and kill them. Try to avoid killing unnecessary townies.",
     "wiki.article.role.veteran.abilities":"* Select yourself\n    - rampage yourself\n    - gain protected defense for the night",
     "wiki.article.role.veteran.attributes":"* You only have three uses of your ability\n* You are told when a visitor is attacked by your rampage\n* You have an indirect, armor-piercing attack\n- You can't use your ability night 1",
     "wiki.article.role.veteran.extra":"* You are immune to getting roleblocked and getting possessed\n* When you select yourself, you don't visit yourself\n* You can't attack dead players",
@@ -1514,8 +1513,8 @@
     "wiki.article.role.impostor.attributes":"* When you are blocked, the syndicate is told that the backup attacks for you\n- Neither you or the backup can select or attack night 1\n- You have armor defense at all times by default",
     "wiki.article.role.impostor.extra":"* You only have a basic attack\n* When the Impostor dies, their current backup becomes the Impostor\n* You can not select other syndicate members",
     
-    "wiki.article.role.counterfeiter.reminder": "Each night, select a player to attack. You can forge the grave of the player you attack up to 3 times.",
-    "wiki.article.role.counterfeiter.guide": "- Each night except the first, kill a player\n- 3 times per game, you can forge the player you kill, changing their role and albi in their grave",
+    "wiki.article.role.counterfeiter.reminder": "Each night, select a player to attack. You can forge the grave of the player you attack.",
+    "wiki.article.role.counterfeiter.guide": "- Each night except the first, kill a player\n- X times per game (X = Total players ÷ 5 (round up)), you can forge the player you kill, changing their role and albi in their grave",
     "wiki.article.role.counterfeiter.abilities": "- Visit a player to basic attack them\n- If you chose to forge and you have uses left, you forge the player you visit, changing their role and alibi in their grave",
     "wiki.article.role.counterfeiter.attributes": "- You can copy paste chat messages\n- If you are blocked, it doesn't cost an ability use, but it does cost a use if the player you attack survives",
     "wiki.article.role.counterfeiter.extra": "- You can't select syndicate members",
@@ -1592,9 +1591,9 @@
     "wiki.article.role.mortician.extra":"* You can target other syndicate members, but not yourself\n* Your ability doesn't work after you are dead\n- You can't select a player who is already tagged",
 
     "wiki.article.role.forger.reminder": "At night, select a player, if they die, their role and alibi on their grave is forged.",
-    "wiki.article.role.forger.guide": "- At night, select a player who dies to forge their role and alibi\n- Forging a player on the night they die allows you to edit their role and alibi in their grave\n- You can use your ability 3 times\n\nYou should select the same player as the godfather or syndicate killing so your ability actually works.",
+    "wiki.article.role.forger.guide": "- At night, select a player who dies to forge their role and alibi\n- Forging a player on the night they die allows you to edit their role and alibi in their grave\n- You can use your ability X times (X = Total players ÷ 5 (round up))\n\nYou should select the same player as the godfather or syndicate killing so your ability actually works.",
     "wiki.article.role.forger.abilities":"* Visit a player to forge their grave only if they die tonight\n* If a grave is forged, that player's role and alibi appear to be what you choose\n* You are told the original role and alibi of the player you forge",
-    "wiki.article.role.forger.attributes":"* You only have 3 uses of your ability\n- You can copy paste chat messages",
+    "wiki.article.role.forger.attributes":"* You only have X uses of your ability (X = Total players ÷ 5 (round up))\n- You can copy paste chat messages",
     "wiki.article.role.forger.extra":"* If you visit a player to attempt to forge them, it costs an ability use, even if they don't die\n* If you are blocked, it doesn't cost an ability use\n* You can't target other syndicate members",
 
     "wiki.article.role.framer.reminder": "Each night, select a player to give suspicious aura. If you select 2 players, the first player appears to visit the second player.",
@@ -1726,7 +1725,7 @@
 
     "wiki.article.role.puppeteer.reminder": "Each night, select a player to either poison them or recruit them.",
     "wiki.article.role.puppeteer.guide":"- You may choose to do one of the following\n    - Select and poison a player\n        - They are told they are poisoned, and then they are attacked the next night\n\n    - Select a player to string up into a marionette\n        - They are told they are strung up, and that they will win with fiends, regardless of their role\n        - They attacked the following night, and every night until they die\n        - They should try their hardest to help you and should NOT say they were strung up\n - At night all puppeteers and marionettes can chat in the puppeteer chat, even if dead\n    - The players in the puppeteer chat that are dead can chat during the day or night",
-    "wiki.article.role.puppeteer.abilities":"- You may choose to do one of the following\n    - Visit a player to poison them\n        - They are told they are poisoned\n        - They are indirectly hit with an armor-piercing attack on the following night\n\n    - Visit a player to string up into a marionette\n        - They are told they are strung up, and they now win with fiends, regardless of their role\n        - They will be indirectly hit with a protection-piercing attack every night by all puppeteers until they die, if there are no puppeteers they are still attacked",
+    "wiki.article.role.puppeteer.abilities":"- You may choose to do one of the following\n    - Visit a player to poison them\n        - They are told they are poisoned\n        - They are indirectly hit with an armor-piercing attack on the following night\n\n    - Visit a player to string up into a marionette\n        - They are told they are strung up, and they now win with fiends, regardless of their role\n        - They will be indirectly hit with a protection-piercing attack every night by all puppeteers until they die, if there are no puppeteers they are still attacked\n        - You can only use this X times (X = Total players ÷ 5 (round up))",
     "wiki.article.role.puppeteer.attributes":"- You and the marionettes are all puppeteer insiders\n- Stringing someone up is armor-piercing, if a player has higher defense than armor when you attempt to string them up, they are instead poisoned\n - At night all puppeteers and marionettes can chat in the puppeteer chat, even if dead\n    - The players in the puppeteer chat that are dead can chat during the day or night",
     "wiki.article.role.puppeteer.extra":"- You can't select anybody who is a puppeteer, marionette, or is being strung into a marionette\n- A puppeteer can't be stringed into a marionette\n- A marionette can't be stringed into a marionette twice, if 2 puppeteers choose a player to be turned into a marionette on the same night, they get the message only once",
     

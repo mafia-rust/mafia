@@ -59,6 +59,12 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Counterfeiter {
     type ClientRoleState = ClientRoleState;
+    fn new_state(game: &Game) -> Self {
+        Self{
+            forges_remaining: game.num_players().div_ceil(5),
+            ..Self::default()
+        }
+    }
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if game.day_number() <= 1 {return}
 

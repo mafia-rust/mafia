@@ -66,7 +66,7 @@ impl RoleStateImpl for Vigilante {
                     }       
 
                     VigilanteState::NotLoaded => {
-                        self.state = VigilanteState::Loaded { bullets:3 };
+                        self.state = VigilanteState::Loaded { bullets: game.num_players().div_ceil(5) };
                     }
 
                     _ => {},

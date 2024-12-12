@@ -1503,6 +1503,27 @@ fn gossip_framer() {
 }
 
 #[test]
+fn vigilante_one_bullet_with_four_players() {
+    kit::scenario!(game in Night 2 where
+        vigi: Vigilante,
+        t1: Detective,
+        t2: Detective,
+        gf: Godfather
+    );
+
+    assert!(vigi.send_ability_input_player_list_typical(gf));
+    game.skip_to(Night, 3);
+    assert!(vigi.send_ability_input_player_list_typical(t1));
+
+    game.next_phase();
+
+    assert!(t1.alive());
+    assert!(t2.alive());
+    assert!(vigi.alive());
+    assert!(gf.alive());
+}
+
+#[test]
 fn seer_cant_see_godfather() {
     kit::scenario!(game in Night 1 where
         philosopher: Philosopher,

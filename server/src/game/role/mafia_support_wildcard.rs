@@ -59,7 +59,7 @@ impl MafiaSupportWildcard {
                     .collect::<Vec<Role>>()
             )
         {
-            actor_ref.set_role_and_win_condition_and_revealed_group(game, self.role.default_state());
+            actor_ref.set_role_and_win_condition_and_revealed_group(game, self.role.new_state(game));
         }else{
             actor_ref.add_private_chat_message(game, ChatMessageVariant::WildcardConvertFailed{role: self.role.clone()})
         }

@@ -2,10 +2,7 @@ use std::ops::Mul;
 
 use crate::{
     game::{
-        ability_input::*,
-        attack_power::AttackPower, game_conclusion::GameConclusion,
-        grave::GraveKiller, phase::PhaseType, player::PlayerReference,
-        role::{Priority, Role}, role_list::RoleSet, Game
+        ability_input::*, attack_power::AttackPower, game_conclusion::GameConclusion, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::{Priority, Role}, role_list::RoleSet, Game
     },
     vec_map::VecMap, vec_set::{vec_set, VecSet}
 };
@@ -39,6 +36,12 @@ impl Default for Pitchfork{
 }
 
 impl Pitchfork{
+    pub fn new(num_players: u8)->Self{
+        Self{
+            pitchfork_uses_remaining: num_players.div_ceil(5),
+            ..Self::default()
+        }
+    }
     pub fn controller_parameters_map(game: &Game)->ControllerParametersMap{
         if
             !game.settings.enabled_roles.contains(&Role::Rabblerouser)

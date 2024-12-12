@@ -50,7 +50,7 @@ impl RoleStateImpl for Apostle {
                     return
                 }
 
-                target_ref.set_night_convert_role_to(game, Some(Role::Zealot.default_state()));
+                target_ref.set_night_convert_role_to(game, Some(Role::Zealot.new_state(game)));
                 InsiderGroupID::Cult.add_player_to_revealed_group(game, target_ref);
                 target_ref.set_win_condition(game, WinCondition::new_loyalist(GameConclusion::Cult));
                 

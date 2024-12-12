@@ -133,6 +133,12 @@ impl RoleStateImpl for Armorsmith {
                 ..self
             });
     }
+    fn new_state(game: &Game) -> Self {
+        Self{
+            open_shops_remaining: game.num_players().div_ceil(5),
+            ..Self::default()
+        }
+    }
 }
 impl GetClientRoleState<ClientRoleState> for Armorsmith {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

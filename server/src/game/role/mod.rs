@@ -58,6 +58,9 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
     }
+    fn new_state(_game: &Game) -> Self {
+        Self::default()
+    }
     fn default_revealed_groups(self) -> VecSet<InsiderGroupID> {
         VecSet::new()
     }
@@ -218,6 +221,11 @@ mod macros {
                 pub fn default_state(&self) -> RoleState {
                     match self {
                         $(Self::$name => RoleState::$name($file::$name::default())),*
+                    }
+                }
+                pub fn new_state(&self, game: &Game) -> RoleState {
+                    match self {
+                        $(Self::$name => RoleState::$name($file::$name::new_state(game))),*
                     }
                 }
                 pub fn maximum_count(&self) -> Option<u8> {

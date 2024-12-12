@@ -45,6 +45,12 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Recruiter {
     type ClientRoleState = Recruiter;
+    fn new_state(game: &Game) -> Self {
+        Self{
+            recruits_remaining: game.num_players().div_ceil(5),
+            ..Self::default()
+        }
+    }
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         match self.action {
@@ -127,7 +133,7 @@ impl RoleStateImpl for Recruiter {
                 random_mafia_player.set_win_condition(game, crate::game::win_condition::WinCondition::GameConclusionReached{
                     win_if_any: vec![GameConclusion::Town].into_iter().collect()
                 });
-                random_mafia_player.set_role_state(game, random_town_role.default_state());
+                random_mafia_player.set_role_state(game, random_town_role.new_state(game));
                 
             }
         }

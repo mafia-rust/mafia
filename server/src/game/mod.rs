@@ -183,6 +183,8 @@ impl Game {
             drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
             let game = Self{
+                pitchfork: Pitchfork::new(new_players.len() as u8),
+
                 roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
                 ticking: true,
                 spectators: spectators.clone().into_iter().map(Spectator::new).collect(),
@@ -203,7 +205,6 @@ impl Game {
                 mafia_recruits: MafiaRecruits::default(),
                 love_linked: LoveLinked::default(),
                 verdicts_today: VerdictsToday::default(),
-                pitchfork: Pitchfork::default(),
                 poison: Poison::default(),
 
                 revealed_groups: InsiderGroups::default(),
@@ -268,6 +269,9 @@ impl Game {
         roles.into_iter().zip(player_indices).collect()
     }
 
+    pub fn num_players(&self) -> u8 {
+        self.players.len() as u8
+    }
 
     /// Returns a tuple containing the number of guilty votes and the number of innocent votes
     pub fn count_verdict_votes(&self, player_on_trial: PlayerReference)->(u8,u8){
@@ -515,6 +519,8 @@ pub mod test {
         drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
         let mut game = Game{
+            pitchfork: Pitchfork::new(players.len() as u8),
+            
             roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
             ticking: true,
             spectators: Vec::new(),
@@ -534,7 +540,6 @@ pub mod test {
             mafia_recruits: MafiaRecruits::default(),
             love_linked: LoveLinked::default(),
             verdicts_today: VerdictsToday::default(),
-            pitchfork: Pitchfork::default(),
             poison: Poison::default(),
             modifiers: Default::default(),
             revealed_groups: Default::default(),

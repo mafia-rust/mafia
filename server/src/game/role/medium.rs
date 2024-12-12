@@ -31,6 +31,12 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Medium {
     type ClientRoleState = Medium;
+    fn new_state(game: &Game) -> Self {
+        Self{
+            seances_remaining: game.num_players().div_ceil(5),
+            ..Self::default()
+        }
+    }
     fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
         if let Some(old_target_ref) = self.seanced_target {
             if old_target_ref == target_ref {
