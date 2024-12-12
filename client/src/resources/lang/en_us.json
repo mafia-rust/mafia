@@ -958,7 +958,6 @@
     "chatMessage.trapStateEndOfNight.set": "Your trap is set.",
     
     
-    "chatMessage.vigilanteSuicide":"You committed suicide over the guilt of killing a townie.",
     "chatMessage.transported": "You were transported!",
     "chatMessage.godfatherBackup": "The Syndicate has selected \\0 to be their backup.",
     "chatMessage.godfatherBackup.nobody": "The Syndicate has deselected a backup.",
@@ -1438,11 +1437,11 @@
     "wiki.article.role.engineer.attributes":"* You can only have one trap set at a time\n* The trap still triggers even if you are blocked or dead\n* When your trap is triggered, you are told which roles visited the trapped player, even if the players with those roles didn't attack the trapped player\n* The trap still triggers even if none of the trapped players visitors are attackers\n* The trap only attacks attackers to the trapped player\n* You have an indirect, armor-piercing attack\n* You are told the state of your trap at the start of night, and again at the end of night, even while dead.",
     "wiki.article.role.engineer.extra":"* When the player with the trap is attacked, you are told they are attacked, and they are told they are protected\n* You can't activate your own trap\n* If you stop being the engineer your trap disappears\n* Your role still works while dead, but you can't select anyone to visit them",
 
-    "wiki.article.role.armorsmith.reminder": "At night, open shop to protect yourself and all visitors to you. Give a random visitor temporary armor.",
-    "wiki.article.role.armorsmith.guide": "- At night, select to open shop up to 3 times per game\n    - You and all visitors to you are protected for the night\n    - One random visitor to you is given temporary armor, they have protected defense until they are attacked, when they are attacked, armor breaks.",
-    "wiki.article.role.armorsmith.abilities":"* Visit anyone to open shop\n    * You and all visitors to you are protected\n    * One random visitor to you is given temporary armor, which gives them protected defense until they are attacked, in which case it breaks",
+    "wiki.article.role.armorsmith.reminder": "At night, open shop to protect yourself and all visitors to you. Give one visitor secret temporary armor.",
+    "wiki.article.role.armorsmith.guide": "- At night, visit a player to open shop up to 3 times per game\n    - You and all visitors to you are protected for the night\n    - One random visitor to you is given temporary armor, prioritizing the player you visited, they have protected defense at night until they are attacked, when they are attacked, armor breaks.",
+    "wiki.article.role.armorsmith.abilities":"* Visit anyone to open shop\n    * You and all visitors to you are protected\n    * One random visitor to you is given temporary armor, prioritizing the player you visited, which gives them protected defense at night until they are attacked, in which case it breaks",
     "wiki.article.role.armorsmith.attributes":"* You have only 3 uses of your ability\n* Players with temporary armor are told when their armor breaks, but not when they gain it\n* You are not told who has temporary armor\n* Possession can force you to open shop, and blocking can stop you from opening shop",
-    "wiki.article.role.armorsmith.extra":"* Your target is told they are protected if they get attacked\n* You can't select anyone other than yourself",
+    "wiki.article.role.armorsmith.extra":"* Your target is told they are protected if they get attacked\n* You can't choose yourself\n- If you somehow visit yourself, you give yourself the temporary armor",
 
     "wiki.article.role.steward.reminder": "At night, select up to 2 roles to protect everyone with those roles.",
     "wiki.article.role.steward.guide":"- At night, choose up to 2 roles to protect\n    - Everyone with these roles are protected from attacks\n    - You are told if anyone with this role is attacked\n    - You can't protect the same role twice in a row\n    - You can't protect Steward more than once per game", 

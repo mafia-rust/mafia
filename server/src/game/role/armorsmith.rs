@@ -7,7 +7,7 @@ use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::Game;
-use super::{common_role, BooleanSelection, ControllerID, GetClientRoleState, Priority, Role, RoleStateImpl};
+use super::{common_role, ControllerID, GetClientRoleState, PlayerListSelection, Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Debug)]
 pub struct Armorsmith {
@@ -44,37 +44,37 @@ impl RoleStateImpl for Armorsmith {
         match priority {
             Priority::Heal => {
 
-                let selected_to_open_shop = if let Some(BooleanSelection(true)) =
-                    game.saved_controllers.get_controller_current_selection_boolean(
-                        ControllerID::role(actor_ref, Role::Armorsmith, 0)
-                    ){
-                        true
-                    }else{
-                        false
-                    };
-                
-                if
-                    !actor_ref.night_blocked(game) &&
-                    (self.open_shops_remaining > 0) &&
-                    selected_to_open_shop
-                {
-                    self.night_open_shop = true;
-                    self.open_shops_remaining = self.open_shops_remaining.saturating_sub(1);
+                if self.open_shops_remaining > 0 {
+                    if let Some(target) = if let Some(PlayerListSelection(target)) =
+                            game.saved_controllers.get_controller_current_selection_player_list(
+                                ControllerID::role(actor_ref, Role::Armorsmith, 0)
+                            )
+                        {
+                            target.first().cloned()
+                        }else{
+                            None
+                        }
+                    {
+                        self.night_open_shop = true;
+                        self.open_shops_remaining = self.open_shops_remaining.saturating_sub(1);
 
 
-                    actor_ref.increase_defense_to(game, DefensePower::Protection);
+                        actor_ref.increase_defense_to(game, DefensePower::Protection);
 
-                    let visitors = actor_ref.all_night_visitors_cloned(game);
+                        let visitors = actor_ref.all_night_visitors_cloned(game);
 
-                    for visitor in visitors.iter(){
-                        visitor.increase_defense_to(game, DefensePower::Protection);
+                        for visitor in visitors.iter(){
+                            visitor.increase_defense_to(game, DefensePower::Protection);
+                        }
+
+                        if visitors.contains(&target){
+                            self.players_armor.push(target.clone());
+                        }else if let Some(random_visitor) = visitors.choose(&mut thread_rng()) {
+                            self.players_armor.push(random_visitor.clone());
+                        }
+
+                        self.night_protected_players = visitors;
                     }
-
-                    if let Some(random_visitor) = visitors.choose(&mut thread_rng()) {
-                        self.players_armor.push(random_visitor.clone());
-                    }
-
-                    self.night_protected_players = visitors;
                 }
 
 
@@ -109,11 +109,20 @@ impl RoleStateImpl for Armorsmith {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        common_role::controller_parameters_map_boolean(
+        common_role::controller_parameters_map_player_list_night_typical(
             game,
             actor_ref,
-            self.open_shops_remaining > 0,
+            false,
+            self.open_shops_remaining <= 0,
             ControllerID::role(actor_ref, Role::Armorsmith, 0)
+        )
+    }
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<crate::game::visit::Visit> {
+        common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Armorsmith, 0),
+            false
         )
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){

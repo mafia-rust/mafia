@@ -694,9 +694,6 @@ export function translateChatMessage(
         case "cultKillsNext":
         case "someoneSurvivedYourAttack":
         case "transported":
-        case "veteranAttackedVisitor":
-        case "veteranAttackedYou":
-        case "vigilanteSuicide":
         case "targetIsPossessionImmune":
         case "youSurvivedAttack":
         case "youArePoisoned":
@@ -924,10 +921,6 @@ export type ChatMessageVariant = {
     roleOutline: RoleOutline,
     result: AuditorResult,
 } | {
-    type: "veteranAttackedYou"
-} | {
-    type: "veteranAttackedVisitor"
-} | {
     type: "engineerVisitorsRole",
     role: Role
 } | {
@@ -942,8 +935,6 @@ export type ChatMessageVariant = {
     }
 } | {
     type: "armorsmithArmorBroke"
-} | {
-    type: "vigilanteSuicide"
 } | {
     type: "targetWasAttacked"
 } | {

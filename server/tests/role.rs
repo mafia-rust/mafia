@@ -2277,7 +2277,7 @@ fn armorsmith_doesnt_get_wardblocked_when_warded(){
 
     assert!(gf.send_ability_input_player_list_typical(bouncer));
     assert!(bouncer.send_ability_input_player_list_typical(armor));
-    assert!(armor.send_ability_input_boolean_typical(true));
+    assert!(armor.send_ability_input_player_list_typical(bouncer));
 
     game.next_phase();
 
@@ -2297,6 +2297,13 @@ fn armorsmith_doesnt_get_wardblocked_when_warded(){
             ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 2 }
         ),
         ChatMessageVariant::YouWereProtected
+    );
+    
+    assert_contains!(
+        bouncer.get_messages_after_last_message(
+            ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 2 }
+        ),
+        ChatMessageVariant::ArmorsmithArmorBroke
     );
 }
 

@@ -315,7 +315,6 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "vigilanteSuicide"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youAttackedSomeone"}
         ]
