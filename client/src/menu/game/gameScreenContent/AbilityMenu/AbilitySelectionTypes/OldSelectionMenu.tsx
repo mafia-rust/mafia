@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { ReactElement } from "react";
 import { usePlayerState } from "../../../../../components/useHooks";
 import { PlayerIndex } from "../../../../../game/gameState.d";
@@ -10,6 +10,8 @@ import PlayerNamePlate from "../../../../../components/PlayerNamePlate";
 import "./oldSelectionMenu.css";
 import SelectionInformation from "../SelectionInformation";
 import RoleSpecificSection from "../RoleSpecific";
+import DetailsSummary from "../../../../../components/DetailsSummary";
+import StyledText from "../../../../../components/StyledText";
 
 export default function OldSelectionType(): ReactElement {
     const useablePlayers = usePlayerState(
@@ -24,25 +26,20 @@ export default function OldSelectionType(): ReactElement {
         ["yourRoleState"]
     )!;
     
-    const [roleSpecificOpen, setRoleSpecificOpen] = useState<boolean>(true);
             
-    return <details className="role-specific-colors small-role-specific-menu" open={roleSpecificOpen}>
-        <summary
-            onClick={(e)=>{
-                e.preventDefault();
-                setRoleSpecificOpen(!roleSpecificOpen);
-            }}
+    return <div className="role-specific-colors small-role-specific-menu">
+        <DetailsSummary
+            summary={<StyledText>{translate("role."+roleState?.type+".name")}</StyledText>}
         >
-            {translate("role."+roleState?.type+".name")}
-        </summary>
-        <RoleSpecificSection/>
-        <SelectionInformation />
-        {useablePlayers.length !== 0 && 
-            <div className="old-selection-type">
-                {useablePlayers.map(idx => <PlayerCard key={idx} playerIndex={idx}/>)}
-            </div>
-        }
-    </details>
+            <RoleSpecificSection/>
+            <SelectionInformation />
+            {useablePlayers.length !== 0 && 
+                <div className="old-selection-type">
+                    {useablePlayers.map(idx => <PlayerCard key={idx} playerIndex={idx}/>)}
+                </div>
+            }
+        </DetailsSummary>
+    </div>
 }
 
 function useSelectedPlayers(): PlayerIndex[] {

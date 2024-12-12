@@ -94,10 +94,11 @@ function EnabledModifiers(): ReactElement {
         ["enabledModifiers"]
     )!
 
-    return <details className="graveyard-menu-excludedRoles">
-        <summary>
-            {translate("modifiers")}
-        </summary>
-        <EnabledModifiersDisplay disabled={true} enabledModifiers={enabledModifiers}/>
-    </details>
+    return <div className="graveyard-menu-excludedRoles">
+        <DetailsSummary
+            summary={translate("modifiers")}
+        >
+            <EnabledModifiersDisplay disabled={true} enabledModifiers={enabledModifiers}/>
+        </DetailsSummary>
+    </div>
 }
