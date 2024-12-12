@@ -171,6 +171,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
 
         if (buttonElement && open) {
             dropdownRoot.render(<SelectOptions
+                searchString={searchString===""?undefined:searchString.substring(0, 20)}
                 options={optionsNoSearch}
                 onChange={(value)=>{
                     if(props.disabled) return;
@@ -207,7 +208,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
         } else {
             dropdownElement.hidden = true;
         }
-    }, [handleOnChange, handleSetOpen, open, props.disabled, optionsNoSearch, dropdownRoot])
+    }, [handleOnChange, handleSetOpen, open, props.disabled, optionsNoSearch, dropdownRoot, searchString])
 
     //close on click outside
     useEffect(() => {
@@ -254,11 +255,15 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
 }
 
 function SelectOptions<K extends { toString(): string}>(props: Readonly<{
+    searchString?: string,
     options: SelectOptionsNoSearch<K>,
     onChange?: (value: K)=>void,
 }>) {
 
     return <div>
+        {props.searchString!==undefined?
+            props.searchString
+        :null}
         {[...props.options.entries()]
             .map(([key, value]) => {
                 return <Button
