@@ -33,7 +33,6 @@ impl RoleStateImpl for Warper {
     
         for player_ref in PlayerReference::all_players(game){
             if player_ref == actor_ref {continue;}
-            if player_ref.role(game) == Role::Geist {continue;}
             if player_ref.role(game) == Role::Warper {continue;}
             if player_ref.role(game) == Role::Transporter {continue;}
 
