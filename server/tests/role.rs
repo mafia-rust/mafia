@@ -74,6 +74,7 @@ pub use mafia_server::game::{
 
         jester::Jester,
         revolutionary::Revolutionary,
+        geist::Geist,
         witch::Witch,
         politician::Politician,
         doomsayer::{Doomsayer, DoomsayerGuess},
