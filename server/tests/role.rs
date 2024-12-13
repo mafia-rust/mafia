@@ -2382,7 +2382,7 @@ fn spiraling_player_infects_visitors() {
         townie1: Villager,
         townie2: Snoop
     );
-    spiral.set_night_selection_single(townie1);
+    spiral.send_ability_input_player_list_typical(townie1);
 
 
     townie2.send_ability_input_player_list_typical(townie1);
@@ -2405,7 +2405,7 @@ fn spiral_can_select_when_no_spiraling_players() {
         _townie4: Villager
     );
 
-    spiral.set_night_selection_single(townie1);
+    spiral.send_ability_input_player_list_typical(townie1);
     townie2.send_ability_input_player_list_typical(townie1);
     //kill 1
     //spiral 2
@@ -2418,7 +2418,7 @@ fn spiral_can_select_when_no_spiraling_players() {
 
     //kill 2
     //nobody is spiraling
-    assert!(!spiral.set_night_selection_single(townie2));
+    spiral.send_ability_input_player_list_typical(townie2);
 
     game.skip_to(Night, 4);
     assert!(spiral.alive());
@@ -2426,7 +2426,7 @@ fn spiral_can_select_when_no_spiraling_players() {
     assert!(townie3.alive());
 
     //nobody is spiraling so we can kill 3
-    assert!(spiral.set_night_selection_single(townie3));
+    assert!(spiral.send_ability_input_player_list_typical(townie3));
 }
 
 #[test]
@@ -2435,7 +2435,7 @@ fn spiral_does_not_kill_protected_player() {
         spiral: Spiral,
         doctor: Doctor
     );
-    spiral.set_night_selection_single(doctor);
+    spiral.send_ability_input_player_list_typical(doctor);
 
     doctor.send_ability_input_player_list_typical(doctor);
 
@@ -2450,7 +2450,7 @@ fn killed_player_is_not_spiraling() {
         spiral: Spiral,
         townie: Villager
     );
-    spiral.set_night_selection_single(townie);
+    spiral.send_ability_input_player_list_typical(townie);
 
     game.skip_to(Obituary, 3);
     assert!(!townie.alive());
