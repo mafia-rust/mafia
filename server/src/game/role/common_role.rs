@@ -198,7 +198,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         },
         PhaseState::Discussion 
         | PhaseState::Nomination {..}
-        | PhaseState::Judgement {..} 
+        | PhaseState::Judgement {..}
         | PhaseState::FinalWords {..}
         | PhaseState::Dusk => vec![ChatGroup::All].into_iter().collect(),
         &PhaseState::Testimony { player_on_trial, .. } => {

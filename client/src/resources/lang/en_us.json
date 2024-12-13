@@ -561,10 +561,10 @@
     
     "role.spiral.name": "UZUMAKI",
     "role.spiral.name:var.0": "UZUMAKIS",
-    "role.spiral.target": "Infatuate",
     "role.spiral.youAreSelecting": "You are infatuating \\0.",
     "role.spiral.youAreSelecting.null": "You aren't infatuating anyone.",
     "role.spiral.roleDataText.cannotSelect": "You cannot infatuate anyone because players are still spiraling",
+    "controllerId.spiral.0.name": "Infatuate",
     
     "role.puppeteer.name": "Puppeteer",
     "role.puppeteer.name:var.0": "Puppeteers",
