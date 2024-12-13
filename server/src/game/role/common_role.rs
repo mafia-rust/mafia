@@ -79,7 +79,7 @@ pub fn controller_parameters_map_boolean(
     let grayed_out = 
         !actor_ref.alive(game) || 
         Detained::is_detained(game, actor_ref) ||
-        !grayed_out;
+        grayed_out;
 
     ControllerParametersMap::new_controller_fast(
         game,
@@ -198,7 +198,7 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         },
         PhaseState::Discussion 
         | PhaseState::Nomination {..}
-        | PhaseState::Judgement {..} 
+        | PhaseState::Judgement {..}
         | PhaseState::FinalWords {..}
         | PhaseState::Dusk => vec![ChatGroup::All].into_iter().collect(),
         &PhaseState::Testimony { player_on_trial, .. } => {

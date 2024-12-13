@@ -277,13 +277,14 @@
 
     "role.engineer.name": "Engineer",
     "role.engineer.name:var.0": "Engineers",
-    "role.engineer.target": "Visit",
     "role.engineer.roleDataText.dismantled": "The trap is dismantled, wait for it to be ready.",
-    "role.engineer.roleDataText.ready": "The trap is ready, visit someone to set it on them.",
-    "role.engineer.roleDataText.set": "The trap is currently set, visit anyone to dismantle it, and have it be ready next night.",
+    "role.engineer.roleDataText.ready": "The trap is ready, you can set it on someone for it to trigger as soon as tonight.",
+    "role.engineer.roleDataText.set": "The trap is currently set, If you dismantle it, it will be ready next night.",
     "role.engineer.roleDataText.unset": "Remove trap",
     "role.engineer.youAreSelecting": "You are placing a trap on \\0.",
     "role.engineer.youAreSelecting.null": "You aren't placing a trap on anyone.",
+    "controllerId.engineer.0.name": "Set Trap",
+    "controllerId.engineer.1.name": "Dismantle Trap",
 
     "role.armorsmith.name": "Armorsmith",
     "role.armorsmith.name:var.0": "Armorsmiths",
@@ -320,11 +321,13 @@
     "role.medium.roleDataText.nobody": "You didn't decide to haunt anybody.",
     "role.medium.roleDataText": "You decided to haunt \\0.",
     "role.medium.dayTarget": "Haunt",
+    "controllerId.medium.0.name": "Haunt",
 
     "role.retributionist.name": "Retributionist",
     "role.retributionist.name:var.0": "Retributionists",
     "role.retributionist.youAreSelecting": "You are possessing \\0 into \\1.",
     "role.retributionist.youAreSelecting.null": "You aren't possessing anyone.",
+    "controllerId.retributionist.0.name": "Possess",
 
     "role.reporter.name": "Reporter",
     "role.reporter.name:var.0": "Reporters",
@@ -397,9 +400,9 @@
 
     "role.mafioso.name": "Mafioso",
     "role.mafioso.name:var.0": "Mafiosos",
-    "role.mafioso.target": "Attack",
     "role.mafioso.youAreSelecting": "You are attacking \\0.",
     "role.mafioso.youAreSelecting.null": "You aren't attacking anyone.",
+    "controllerId.mafioso.0.name": "Attack",
     
     "role.mafiaKillingWildcard.name": "Syndicate Killing Wildcard",
     "role.mafiaKillingWildcard.name:var.0": "Syndicate Killing Wildcards",
@@ -437,11 +440,13 @@
     "role.necromancer.name:var.0": "Necromancers",
     "role.necromancer.youAreSelecting": "You are possessing \\0 into \\1.",
     "role.necromancer.youAreSelecting.null": "You aren't possessing anyone.",
+    "controllerId.necromancer.0.name": "Possess",
 
     "role.mafiaWitch.name": "Syndicate Witch",
     "role.mafiaWitch.name:var.0": "Syndicate Witches",
     "role.mafiaWitch.youAreSelecting": "You are possessing \\0 into \\1.",
     "role.mafiaWitch.youAreSelecting.null": "You aren't possessing anyone.",
+    "controllerId.mafiaWitch.0.name": "Possess",
     
     "role.mortician.name": "Mortician",
     "role.mortician.name:var.0": "Morticians",
@@ -505,6 +510,7 @@
     "role.witch.name:var.0": "Witches",
     "role.witch.youAreSelecting": "You are possessing \\0 into \\1.",
     "role.witch.youAreSelecting.null": "You aren't possessing anyone.",
+    "controllerId.witch.0.name": "Possess",
     
     "role.scarecrow.name": "Scarecrow",
     "role.scarecrow.name:var.0": "Scarecrows",
@@ -518,6 +524,7 @@
     "role.warper.target": "Warp",
     "role.warper.youAreSelecting": "You are warping visits to \\0 to \\1 instead.",
     "role.warper.youAreSelecting.null": "You aren't warping anyone.",
+    "controllerId.warper.0.name": "Warp",
 
     "role.kidnapper.name": "Kidnapper",
     "role.kidnapper.name:var.0": "Kidnappers",
@@ -554,10 +561,10 @@
     
     "role.spiral.name": "UZUMAKI",
     "role.spiral.name:var.0": "UZUMAKIS",
-    "role.spiral.target": "Infatuate",
     "role.spiral.youAreSelecting": "You are infatuating \\0.",
     "role.spiral.youAreSelecting.null": "You aren't infatuating anyone.",
     "role.spiral.roleDataText.cannotSelect": "You cannot infatuate anyone because players are still spiraling",
+    "controllerId.spiral.0.name": "Infatuate",
     
     "role.puppeteer.name": "Puppeteer",
     "role.puppeteer.name:var.0": "Puppeteers",
@@ -589,9 +596,9 @@
 
     "role.apostle.name": "Apostle",
     "role.apostle.name:var.0": "Apostles",
-    "role.apostle.target": "Indoctrinate",
     "role.apostle.youAreSelecting": "You are indoctrinating \\0.",
     "role.apostle.youAreSelecting.null": "You aren't indoctrinating anyone.",
+    "controllerId.apostle.0.name": "Indoctrinate",
 
     "role.disciple.name": "Disciple",
     "role.disciple.name:var.0": "Disciples",

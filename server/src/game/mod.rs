@@ -227,7 +227,7 @@ impl Game {
 
         //set wincons and revealed groups
         for player in PlayerReference::all_players(&game){
-            let role_data = player.role_state(&game).clone();
+            let role_data = player.role(&game).new_state(&game);
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         
@@ -550,7 +550,7 @@ pub mod test {
 
         //set wincons and revealed groups
         for player in PlayerReference::all_players(&game){
-            let role_data = player.role_state(&game).clone();
+            let role_data = player.role(&game).new_state(&game);
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         

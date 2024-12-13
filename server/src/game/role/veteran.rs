@@ -85,7 +85,7 @@ impl RoleStateImpl for Veteran {
         common_role::controller_parameters_map_boolean(
             game,
             actor_ref,
-            self.alerts_remaining > 0 && game.day_number() > 1,
+            self.alerts_remaining <= 0 && game.day_number() <= 1,
             ControllerID::role(actor_ref, Role::Veteran, 0)
         )
     }
