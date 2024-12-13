@@ -8,7 +8,6 @@ pub enum GameConclusion {
 
     Fiends,
 
-    Death,
     Politician,
 
     Draw
@@ -20,7 +19,6 @@ impl GameConclusion {
             GameConclusion::Mafia,
             GameConclusion::Cult,
             GameConclusion::Fiends,
-            GameConclusion::Death,
             GameConclusion::Politician,
             GameConclusion::Draw
         ]

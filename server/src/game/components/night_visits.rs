@@ -24,7 +24,7 @@ impl NightVisits{
         game.night_visits.visits.clear();
     }
 
-    fn clear_visits_with_predicate(game: &mut Game, predicate: impl Fn(&Visit) -> bool){
+    pub fn clear_visits_with_predicate(game: &mut Game, predicate: impl Fn(&Visit) -> bool){
         game.night_visits.visits.retain(|visit| !predicate(visit));
     }
 
@@ -45,13 +45,13 @@ impl NightVisits{
     fn get_untagged_visits_from_visitor<'a>(game: &Game, visitor: PlayerReference) -> Vec<&Visit>{
         game.night_visits.visits.iter()
             .filter(|visit| visit.visitor == visitor)
-            .filter(|visit| visit.tag == VisitTag::None)
+            .filter(|visit| visit.tag == VisitTag::Role)
             .collect()
     }
     fn get_untagged_visits_from_visitor_mut<'a>(game: &'a mut Game, visitor: PlayerReference) -> Vec<&'a mut Visit>{
         game.night_visits.visits.iter_mut()
             .filter(|visit| visit.visitor == visitor)
-            .filter(|visit| visit.tag == VisitTag::None)
+            .filter(|visit| visit.tag == VisitTag::Role)
             .collect()
     }
 }

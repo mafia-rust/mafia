@@ -13,7 +13,12 @@ use crate::game::attack_power::DefensePower;
 
 use serde::{Serialize, Deserialize};
 
-use super::{components::insider_group::InsiderGroupID, grave::GraveReference, ability_input::AbilityInput, win_condition::WinCondition};
+use super::{
+    ability_input::*, 
+    components::insider_group::InsiderGroupID, 
+    grave::GraveReference, 
+    win_condition::WinCondition
+};
 
 pub trait GetClientRoleState<CRS> {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> CRS;
@@ -30,6 +35,10 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {}
     fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
 
+    fn controller_parameters_map(self, _game: &Game, _actor_ref: PlayerReference) -> ControllerParametersMap {
+        ControllerParametersMap::default()
+    }
+    fn on_validated_ability_input_received(self, _game: &mut Game, _actor_ref: PlayerReference, _input_player: PlayerReference, _ability_input: AbilityInput) {}
     fn on_ability_input_received(self, _game: &mut Game, _actor_ref: PlayerReference, _input_player: PlayerReference, _ability_input: AbilityInput) {}
 
     fn can_select(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
@@ -48,6 +57,9 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     }
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
+    }
+    fn new_state(_game: &Game) -> Self {
+        Self::default()
     }
     fn default_revealed_groups(self) -> VecSet<InsiderGroupID> {
         VecSet::new()
@@ -134,7 +146,9 @@ macros::roles! {
     Revolutionary : revolutionary,
     Politician : politician,
     Doomsayer : doomsayer,
-    Death : death,
+    Wildcard : wild_card,
+    TrueWildcard : true_wildcard,
+    Martyr : martyr,
 
     Witch : witch,
     Scarecrow : scarecrow,
@@ -152,10 +166,6 @@ macros::roles! {
     FiendsWildcard : fiends_wildcard,
     SerialKiller : serial_killer,
 
-    Wildcard : wild_card,
-    TrueWildcard : true_wildcard,
-    Martyr : martyr,
-
     Apostle : apostle,
     Disciple : disciple,
     Zealot : zealot
@@ -171,25 +181,20 @@ macros::priorities! {
     Possess,
     Roleblock,
 
-    Armorsmith,
-
     Deception,
 
     Bodyguard,
 
     Heal,
     Kill,
+    Convert,
     Poison,
     Investigative,
 
     Cupid,
     SpyBug,
 
-    StealMessages,
-
-    Convert,
-
-    FinalPriority
+    StealMessages
 }
 
 pub(crate) mod common_role;
@@ -214,6 +219,11 @@ mod macros {
                 pub fn default_state(&self) -> RoleState {
                     match self {
                         $(Self::$name => RoleState::$name($file::$name::default())),*
+                    }
+                }
+                pub fn new_state(&self, game: &Game) -> RoleState {
+                    match self {
+                        $(Self::$name => RoleState::$name($file::$name::new_state(game))),*
                     }
                 }
                 pub fn maximum_count(&self) -> Option<u8> {
@@ -255,6 +265,16 @@ mod macros {
                 pub fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference){
                     match self {
                         $(Self::$name(role_struct) => role_struct.do_day_action(game, actor_ref, target_ref)),*
+                    }
+                }
+                pub fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.controller_parameters_map(game, actor_ref)),*
+                    }
+                }
+                pub fn on_validated_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: AbilityInput){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_validated_ability_input_received(game, actor_ref, input_player, ability_input)),*
                     }
                 }
                 pub fn on_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: AbilityInput){
@@ -406,6 +426,9 @@ impl Role{
     pub fn has_innocent_aura(&self, game: &Game)->bool{
         match self {
             Role::Godfather => true,
+            Role::Pyrolisk => {
+                game.day_number() == 1
+            },
             Role::Werewolf => {
                 game.day_number() == 1 || game.day_number() == 3
             },

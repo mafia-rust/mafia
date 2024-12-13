@@ -12,7 +12,10 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{common_role, GetClientRoleState, Priority, Role, RoleStateImpl};
+use super::{
+    ControllerID, ControllerParametersMap,
+    GetClientRoleState, Priority, Role, RoleStateImpl
+};
 
 
 
@@ -57,9 +60,7 @@ impl RoleStateImpl for Cop {
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref &&
                         !other_player_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
-                        other_player_ref.untagged_night_visits_cloned(game)
-                            .iter()
-                            .any(|v|v.target==target_ref)
+                        target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
                     ).collect::<Vec<PlayerReference>>()
                     .choose(&mut rand::thread_rng())
                     .copied(){
@@ -68,9 +69,7 @@ impl RoleStateImpl for Cop {
                     .filter(|other_player_ref|
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref &&
-                        other_player_ref.untagged_night_visits_cloned(game)
-                            .iter()
-                            .any(|v|v.target==target_ref)
+                        target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
                     ).collect::<Vec<PlayerReference>>()
                     .choose(&mut rand::thread_rng())
                     .copied(){
@@ -93,11 +92,22 @@ impl RoleStateImpl for Cop {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        common_role::can_night_select(game, actor_ref, target_ref) && game.day_number() > 1
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
+            game,
+            actor_ref,
+            false,
+            !(game.day_number() > 1),
+            ControllerID::role(actor_ref, Role::Cop, 0)
+        )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        crate::game::role::common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Cop, 0),
+            false
+        )
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         if phase != PhaseType::Night {return;}

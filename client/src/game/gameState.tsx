@@ -70,6 +70,8 @@ export function createPlayerGameState(): PlayerGameState {
         
         roleState: { type: "detective" },
 
+        savedControllers: [],
+
         will: "",
         notes: [],
         crossedOutOutlines: [],
@@ -80,13 +82,6 @@ export function createPlayerGameState(): PlayerGameState {
         judgement: "abstain",
 
         fellowInsiders: [],
-
-        forfeitVote: false,
-        pitchforkVote: null,
-        syndicateGunItemData: {
-            shooter: null,
-            target: null,
-        },
 
         sendChatGroups: [],
         insiderGroups: [],

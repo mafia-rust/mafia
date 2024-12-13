@@ -69,7 +69,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
                 handleSetOpen(false);
                 break;
             case "Enter": {
-                const found = [...optionsSearch.keys()].find((key) => {
+                const allSearchResults = [...optionsSearch.keys()].filter((key) => {
                     for(const search of searchString.split(" ")) {
                         
                         const val = optionsSearch.get(key);
@@ -80,9 +80,12 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
                     }
                     return true;
                 });
-        
-                if(found !== undefined) {
-                    handleOnChange(found);
+
+                //sort by length and take the first. If you type "witch" we don't want "syndicate witch"
+                allSearchResults.sort((a, b) => a.toString().length - b.toString().length);
+
+                if(allSearchResults[0] !== undefined) {
+                    handleOnChange(allSearchResults[0]);
                 }
                 handleSetOpen(false);
 
@@ -168,6 +171,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
 
         if (buttonElement && open) {
             dropdownRoot.render(<SelectOptions
+                searchString={searchString===""?undefined:searchString.substring(0, 20)}
                 options={optionsNoSearch}
                 onChange={(value)=>{
                     if(props.disabled) return;
@@ -204,7 +208,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
         } else {
             dropdownElement.hidden = true;
         }
-    }, [handleOnChange, handleSetOpen, open, props.disabled, optionsNoSearch, dropdownRoot])
+    }, [handleOnChange, handleSetOpen, open, props.disabled, optionsNoSearch, dropdownRoot, searchString])
 
     //close on click outside
     useEffect(() => {
@@ -251,11 +255,15 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
 }
 
 function SelectOptions<K extends { toString(): string}>(props: Readonly<{
+    searchString?: string,
     options: SelectOptionsNoSearch<K>,
     onChange?: (value: K)=>void,
 }>) {
 
     return <div>
+        {props.searchString!==undefined?
+            props.searchString
+        :null}
         {[...props.options.entries()]
             .map(([key, value]) => {
                 return <Button

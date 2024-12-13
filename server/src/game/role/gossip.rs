@@ -1,14 +1,14 @@
 use serde::Serialize;
 
 use crate::game::components::confused::Confused;
-use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{Priority, RoleStateImpl};
+use super::detective::Detective;
+use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -36,11 +36,22 @@ impl RoleStateImpl for Gossip {
             actor_ref.push_night_message(game, message);
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
+            game,
+            actor_ref,
+            false,
+            false,
+            ControllerID::role(actor_ref, Role::Gossip, 0)
+        )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        crate::game::role::common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Gossip, 0),
+            false
+        )
     }
 }
 
@@ -49,18 +60,12 @@ impl Gossip {
 
         match player_ref.night_appeared_visits(game) {
             Some(x) => x.clone(),
-            None => player_ref.untagged_night_visits_cloned(game),
+            None => player_ref.all_night_visits_cloned(game),
         }
             .iter()
             .map(|v|v.target.clone())
-            .any(|visited_player|
-                if visited_player.has_suspicious_aura(game){
-                    true
-                }else if visited_player.has_innocent_aura(game){
-                    false
-                }else{
-                    !WinCondition::are_friends(player_ref.win_condition(game), visited_player.win_condition(game))
-                }
+            .any(|targets_target|
+                Detective::player_is_suspicious(game, targets_target)
             )
     }
 }

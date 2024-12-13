@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::components::night_visits::NightVisits;
 use crate::game::grave::GraveKiller;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
@@ -78,16 +79,15 @@ impl RoleStateImpl for Engineer {
                 if !actor_ref.night_blocked(game) {
                     match self.trap {
                         Trap::Dismantled => {
-                            actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}));
+                            actor_ref.set_role_state(game, Engineer {trap: Trap::Ready});
                         },
                         Trap::Ready => {
-                            let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-                            if let Some(visit) = actor_visits.first(){
-                                actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Set{target: visit.target}}));
+                            if let Some(visit) = actor_ref.untagged_night_visits_cloned(game).first(){
+                                actor_ref.set_role_state(game, Engineer {trap: Trap::Set{target: visit.target}});
                             }
                         },
                         Trap::Set { .. } if actor_ref.untagged_night_visits_cloned(game).first().is_some() => {
-                            actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}));
+                            actor_ref.set_role_state(game, Engineer {trap: Trap::Ready});
                         },
                         _ => {}
                     }
@@ -99,12 +99,13 @@ impl RoleStateImpl for Engineer {
             }
             Priority::Kill => {
                 if let Trap::Set { target, .. } = self.trap {
-                    for attacker in PlayerReference::all_players(game) {
+                    for visit in NightVisits::all_visits(game).into_iter().cloned().collect::<Vec<_>>() {
                         if 
-                            attacker.untagged_night_visits_cloned(game).iter().any(|visit| visit.target == target && visit.attack) &&
-                            attacker != actor_ref
+                            visit.attack &&
+                            visit.target == target &&
+                            visit.visitor != actor_ref
                         {
-                            attacker.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Engineer), AttackPower::ArmorPiercing, false);
+                            visit.visitor.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Engineer), AttackPower::ArmorPiercing, false);
                         }
                     }
                 }
@@ -119,11 +120,8 @@ impl RoleStateImpl for Engineer {
                         target.push_night_message(game, ChatMessageVariant::YouWereProtected);
                     }
 
-                    for visitor in PlayerReference::all_players(game) {
-                        if 
-                            visitor.untagged_night_visits_cloned(game).iter().any(|visit|visit.target == target) &&
-                            visitor != actor_ref
-                        {
+                    for visitor in target.all_night_visitors_cloned(game) {
+                        if visitor != actor_ref{
                             actor_ref.push_night_message(game, ChatMessageVariant::EngineerVisitorsRole { role: visitor.role(game) });
                             should_dismantle = true;
                         }

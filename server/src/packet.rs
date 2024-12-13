@@ -23,11 +23,19 @@ use vec1::Vec1;
 
 use crate::{
     game::{
-        ability_input::AbilityInput, available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, components::insider_group::InsiderGroupID, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
+        ability_input::*,
+        available_buttons::AvailableButtons,
+        chat::{ChatGroup, ChatMessage},
+        components::insider_group::InsiderGroupID,
+        grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType},
+        player::{PlayerIndex, PlayerReference}, 
+        role::{
             counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess,
             puppeteer::PuppeteerAction, recruiter::RecruiterAction, 
             ClientRoleStateEnum, Role
-        }, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
+        },
+        role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings,
+        tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
     }, listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log, vec_map::VecMap, vec_set::VecSet
 };
 
@@ -110,6 +118,11 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourInsiderGroups{insider_groups: VecSet<InsiderGroupID>},
 
+    #[serde(rename_all = "camelCase")]
+    YourAllowedControllers{
+        save: VecMap<ControllerID, SavedController>
+    },
+
     YourButtons{buttons: Vec<AvailableButtons>},
     #[serde(rename_all = "camelCase")]
     YourRoleLabels{role_labels: VecMap<PlayerIndex, Role>},
@@ -131,10 +144,6 @@ pub enum ToClientPacket{
     YourJudgement{verdict: Verdict},
     #[serde(rename_all = "camelCase")]
     YourVoteFastForwardPhase{fast_forward: bool},
-    YourForfeitVote{forfeit: bool},
-    #[serde(rename_all = "camelCase")]
-    YourPitchforkVote{player: Option<PlayerReference>},
-    YourSyndicateGunItemData{shooter: Option<PlayerReference>, target: Option<PlayerReference>},
 
     #[serde(rename_all = "camelCase")]
     AddChatMessages{chat_messages: Vec<ChatMessage>},
@@ -265,12 +274,9 @@ pub enum ToServerPacket{
         you_were_possessed_message: bool,
         your_target_was_jailed_message: bool,
     },
-    #[serde(rename_all = "camelCase")]
-    SetForgerWill{ role: Role, will: String },
     SetCounterfeiterAction{action: CounterfeiterAction},
     SetPuppeteerAction{action: PuppeteerAction},
     SetRecruiterAction{action: RecruiterAction},
-    SetRoleChosen{role: Option<Role>},
 
 
     #[serde(rename_all = "camelCase")]

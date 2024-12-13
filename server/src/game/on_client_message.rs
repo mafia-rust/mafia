@@ -305,18 +305,6 @@ impl Game {
                     sender_player_ref.set_role_state(self, RoleState::Hypnotist(hypnotist));
                 }
             },
-            ToServerPacket::SetForgerWill { role, will } => {
-                if let RoleState::Forger(mut forger) = sender_player_ref.role_state(self).clone(){
-                    forger.fake_role = role;
-                    forger.fake_will = will;
-                    sender_player_ref.set_role_state(self, RoleState::Forger(forger));
-                }
-                else if let RoleState::Counterfeiter(mut counterfeiter) = sender_player_ref.role_state(self).clone(){
-                    counterfeiter.fake_role = role;
-                    counterfeiter.fake_will = will;
-                    sender_player_ref.set_role_state(self, RoleState::Counterfeiter(counterfeiter));
-                }
-            },
             ToServerPacket::SetCounterfeiterAction {action} => {
                 if let RoleState::Counterfeiter(mut counterfeiter) = sender_player_ref.role_state(self).clone(){
                     counterfeiter.action = action;
@@ -347,16 +335,6 @@ impl Game {
                     
                     //Updates selection if it was invalid
                     sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
-                }
-            },
-            ToServerPacket::SetRoleChosen { role } => {
-                match sender_player_ref.role_state(self).clone() {
-                    RoleState::Ojo(mut ojo) => {
-                        ojo.role_chosen = role;
-                        sender_player_ref.set_role_state(self, ojo);
-                        sender_player_ref.add_private_chat_message(self, ChatMessageVariant::RoleChosen { role });
-                    },
-                    _ => {}
                 }
             },
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {

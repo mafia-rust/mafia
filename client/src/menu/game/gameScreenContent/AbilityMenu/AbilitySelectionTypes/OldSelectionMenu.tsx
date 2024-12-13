@@ -7,9 +7,11 @@ import { Button } from "../../../../../components/Button";
 import GAME_MANAGER from "../../../../..";
 import { RoleState } from "../../../../../game/roleState.d";
 import PlayerNamePlate from "../../../../../components/PlayerNamePlate";
-import "./oldSelectionType.css";
-import StyledText from "../../../../../components/StyledText";
+import "./oldSelectionMenu.css";
 import SelectionInformation from "../SelectionInformation";
+import RoleSpecificSection from "../RoleSpecific";
+import DetailsSummary from "../../../../../components/DetailsSummary";
+import StyledText from "../../../../../components/StyledText";
 
 export default function OldSelectionType(): ReactElement {
     const useablePlayers = usePlayerState(
@@ -19,14 +21,25 @@ export default function OldSelectionType(): ReactElement {
         ["yourButtons"]
     )!;
 
-
-    return <>
-        <SelectionInformation />
-        <div className="old-selection-type">
-            {useablePlayers.map(idx => <PlayerCard key={idx} playerIndex={idx}/>)}
-            {useablePlayers.length === 0 && <StyledText>{translate("none")}</StyledText>}
-        </div>
-    </>
+    const roleState = usePlayerState(
+        playerState => playerState.roleState,
+        ["yourRoleState"]
+    )!;
+    
+            
+    return <div className="role-specific-colors small-role-specific-menu">
+        <DetailsSummary
+            summary={<StyledText>{translate("role."+roleState?.type+".name")}</StyledText>}
+        >
+            <RoleSpecificSection/>
+            <SelectionInformation />
+            {useablePlayers.length !== 0 && 
+                <div className="old-selection-type">
+                    {useablePlayers.map(idx => <PlayerCard key={idx} playerIndex={idx}/>)}
+                </div>
+            }
+        </DetailsSummary>
+    </div>
 }
 
 function useSelectedPlayers(): PlayerIndex[] {
@@ -44,10 +57,6 @@ function useDayTargetedPlayers(): PlayerIndex[] {
     );
 
     switch (roleState?.type){
-        case "godfather":
-        case "counterfeiter":
-            if (roleState.backup !== null) return [roleState.backup]
-            break;
         case "jailor":
         case "kidnapper":
             if (roleState.jailedTargetRef !== null) return [roleState.jailedTargetRef]
@@ -58,9 +67,6 @@ function useDayTargetedPlayers(): PlayerIndex[] {
         case "reporter":
             if (roleState.interviewedTarget !== null) return [roleState.interviewedTarget]
             break;
-        case "marksman":
-            if (roleState.state.type === "marks") return roleState.state.marks
-            break
     }
 
     return []

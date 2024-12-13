@@ -1,4 +1,4 @@
-use mafia_server::{game::{ability_input::AbilityInput, chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, Game}, packet::ToServerPacket, vec_map::VecMap};
+use mafia_server::{game::{ability_input::*, chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, Game}, packet::ToServerPacket, vec_map::VecMap};
 use vec1::Vec1;
 
 #[derive(Clone, Copy, Debug)]
@@ -29,6 +29,64 @@ impl TestPlayer {
 
     pub fn player_ref(&self) -> PlayerReference {
         self.0
+    }
+
+    pub fn send_ability_input(&self, ability_input: AbilityInput) {
+        game!(self).on_client_message(self.0.index(), 
+            ToServerPacket::AbilityInput { ability_input }
+        );
+    }
+
+    pub fn send_ability_input_unit_typical(&self)->bool{
+        self.send_ability_input(
+            AbilityInput::new(
+                ControllerID::role(self.player_ref(), self.role(), 0),
+                AbilitySelection::new_unit()
+            )
+        );
+        true
+    }
+
+    pub fn send_ability_input_two_player_typical(&self, a: TestPlayer, b: TestPlayer)->bool{
+        self.send_ability_input(
+            AbilityInput::new(
+                ControllerID::role(self.player_ref(), self.role(), 0),
+                AbilitySelection::new_two_player_option(
+                    Some((a.player_ref(), b.player_ref()))
+                )
+            )
+        );
+        true
+    }
+
+    pub fn send_ability_input_player_list_typical(&self, selection: TestPlayer)->bool{
+        self.send_ability_input(
+            AbilityInput::new(
+                ControllerID::role(self.player_ref(), self.role(), 0),
+                AbilitySelection::new_player_list(vec![selection.player_ref()])
+            )
+        );
+        true
+    }
+
+    pub fn send_ability_input_boolean_typical(&self, selection: bool)->bool{
+        self.send_ability_input(
+            AbilityInput::new(
+                ControllerID::role(self.player_ref(), self.role(), 0),
+                AbilitySelection::new_boolean(selection)
+            )
+        );
+        true
+    }
+
+    pub fn send_ability_input_player_list(&self, selection: TestPlayer, id: RoleControllerID)->bool{
+        self.send_ability_input(
+            AbilityInput::new(
+                ControllerID::role(self.player_ref(), self.role(), id),
+                AbilitySelection::new_player_list(vec![selection.player_ref()])
+            )
+        );
+        true
     }
 
     pub fn set_night_selection(&self, selection: Vec<TestPlayer>)->bool {
@@ -114,13 +172,6 @@ impl TestPlayer {
 
     pub fn set_role_state(&self, new_role_data: RoleState){
         self.0.set_role_state(game!(self), new_role_data);
-    }
-
-    pub fn send_ability_input(&self, input: AbilityInput){
-        game!(self).on_client_message(
-            self.0.index(), 
-            ToServerPacket::AbilityInput { ability_input: input }
-        );
     }
 
     pub fn get_player_tags(&self) -> &VecMap<PlayerReference, Vec1<Tag>> {

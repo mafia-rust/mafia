@@ -11,7 +11,6 @@ import { RoleOutline } from "./roleListState.d";
 import translate from "./lang";
 import PlayMenu from "../menu/main/PlayMenu";
 import { createGameState, createLobbyState } from "./gameState";
-import { Role } from "./roleState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
 import AudioController from "../menu/AudioController";
@@ -162,7 +161,10 @@ export function createGameManager(): GameManager {
         },
         updateChatFilter(filter: PlayerIndex | null) {
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
-                GAME_MANAGER.state.clientState.chatFilter = filter;
+                GAME_MANAGER.state.clientState.chatFilter = filter===null?null:{
+                    type: "playerNameInMessage",
+                    player: filter
+                };
                 GAME_MANAGER.invokeStateListeners("filterUpdate");
             }
         },
@@ -514,13 +516,6 @@ export function createGameManager(): GameManager {
                 yourTargetWasJailedMessage: yourTargetWasJailedMessage ?? false
             });
         },
-        sendSetForgerWill(role: Role | null, will: string) {
-            this.server.sendPacket({
-                type: "setForgerWill",
-                role: role,
-                will: will
-            });
-        },
         sendSetCounterfeiterAction(action: "forge" | "noForge") {
             this.server.sendPacket({
                 type: "setCounterfeiterAction",
@@ -537,12 +532,6 @@ export function createGameManager(): GameManager {
             this.server.sendPacket({
                 type: "setRecruiterAction",
                 action: action
-            });
-        },
-        sendSetRoleChosen(role: Role | null) {
-            this.server.sendPacket({
-                type: "setRoleChosen",
-                role: role
             });
         },
 

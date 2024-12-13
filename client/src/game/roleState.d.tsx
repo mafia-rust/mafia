@@ -7,8 +7,7 @@ import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/Role
 import { Hypnotist } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeHypnotistMenu";
 import { Doomsayer } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
 import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
-import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/KiraMenu";
-import { TwoRoleOptionInput } from "./abilityInput";
+import { TwoRoleOptionSelection } from "./abilityInput";
 
 export type RoleState = {
     type: "jailor",
@@ -38,7 +37,6 @@ export type RoleState = {
     type: "psychic"
 } | {
     type: "auditor",
-    chosenOutline: [number | null, number | null],
     previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "snoop",
@@ -65,8 +63,7 @@ export type RoleState = {
 } | {
     type: "steward",
     stewardProtectsRemaining: number,
-    roleChosen: TwoRoleOptionInput,
-    previousRoleChosen: TwoRoleOptionInput
+    previousRoleChosen: TwoRoleOptionSelection
 } | {
     type: "vigilante",
     state: {type:"notLoaded"} | {type:"willSuicide"} | {type:"loaded",bullets:number} | {type:"suicided"}
@@ -75,7 +72,7 @@ export type RoleState = {
     alertsRemaining: number,
 } | {
     type: "marksman"
-    state: {type:"notLoaded"} | {type:"shotTownie"} | {type: "marks", marks: PlayerIndex[]}
+    state: {type:"notLoaded"} | {type:"shotTownie"} | {type: "loaded"}
 } | {
     type: "deputy"
 } | {
@@ -95,18 +92,12 @@ export type RoleState = {
     interviewedTarget: PlayerIndex | null
 } | {
     type: "godfather"
-    backup: PlayerIndex | null
 } | {
     type: "impostor"
-    backup: PlayerIndex | null,
-    fakeRole: Role
 } | {
     type: "counterfeiter",
     action: "forge" | "noForge",
-    fakeRole: Role,
-    fakeWill: string
     forgesRemaining: number,
-    backup: PlayerIndex | null
 } | {
     type: "recruiter",
     action: RecruiterAction,
@@ -133,8 +124,6 @@ export type RoleState = {
     cremationsRemaining: number
 } | {
     type: "forger",
-    fakeRole: Role,
-    fakeWill: string,
     forgesRemaining: number,
 } | {
     type: "disguiser",
@@ -172,9 +161,6 @@ Doomsayer
     executionsRemaining: number,
     jailedTargetRef: number | null
 } | {
-    type: "death",
-    souls: number
-} | {
     type: "wildcard"
     role: Role
 } | {
@@ -196,8 +182,6 @@ Doomsayer
     type: "werewolf",
 } | {
     type: "ojo"
-    roleChosen: Role | null,
-    chosenOutline: [number | null, number | null],
     previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "puppeteer"
@@ -205,7 +189,6 @@ Doomsayer
     marionettesRemaining: number
 } | {
     type: "kira"
-    guesses: Partial<Record<PlayerIndex, KiraGuess>>
 } | {
     type: "fiendsWildcard"
     role: Role
@@ -227,7 +210,6 @@ export type SingleRoleJsonData = {
     armor: boolean,
     aura: null | "innocent" | "suspicious",
     maxCount: null | number,
-    roleSpecificMenu: boolean,
     canWriteDeathNote: boolean,
     canBeConvertedTo: Role[],
     chatMessages: ChatMessageVariant[] 

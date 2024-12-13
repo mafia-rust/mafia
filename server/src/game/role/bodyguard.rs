@@ -10,7 +10,11 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
+use super::{
+    ControllerID, ControllerParametersMap,
+    GetClientRoleState, Priority, Role,
+    RoleStateImpl
+};
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -54,7 +58,7 @@ impl RoleStateImpl for Bodyguard {
                 let mut target_protected_ref = None;
                 for attacker_ref in PlayerReference::all_players(game){
                     let mut new_visits = vec![];
-                    for mut attacking_visit in attacker_ref.untagged_night_visits_cloned(game).clone(){
+                    for mut attacking_visit in attacker_ref.all_night_visits_cloned(game).clone(){
                         if attacking_visit.target == target_ref && attacking_visit.attack {
                             attacking_visit.target = actor_ref;
                             redirected_player_refs.push(attacker_ref);
@@ -102,21 +106,30 @@ impl RoleStateImpl for Bodyguard {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        game.day_number() > 1 &&
-        (actor_ref != target_ref || self.self_shields_remaining > 0) &&
-        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
-        actor_ref.selection(game).is_empty() &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game)
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
+            game,
+            actor_ref,
+            self.self_shields_remaining > 0,
+            !(game.day_number() > 1),
+            ControllerID::role(actor_ref, Role::Bodyguard, 0)
+        )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+        crate::game::role::common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Bodyguard, 0),
+            false
+        )
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         let redirected_player_refs = Vec::new();
         let target_protected_ref = None;
-        actor_ref.set_role_state(game, RoleState::Bodyguard(Bodyguard { self_shields_remaining: self.self_shields_remaining, redirected_player_refs, target_protected_ref }));
+        actor_ref.set_role_state(game, Bodyguard {
+            self_shields_remaining: self.self_shields_remaining,
+            redirected_player_refs, target_protected_ref
+        });
     }
 }
 impl GetClientRoleState<ClientRoleState> for Bodyguard {

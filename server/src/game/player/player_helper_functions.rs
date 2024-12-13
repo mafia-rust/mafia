@@ -3,15 +3,11 @@ use std::collections::HashSet;
 use rand::seq::SliceRandom;
 
 use crate::{game::{
-    attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
+    ability_input::{AbilitySelection, ControllerParametersMap, SavedControllersMap}, attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
         arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura, insider_group::InsiderGroupID, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch
-    }, game_conclusion::GameConclusion, 
-    grave::{Grave, GraveKiller}, 
-    role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, 
-    win_condition::WinCondition,
-    Game
+    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, win_condition::WinCondition, Game
 }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
 use super::PlayerReference;
@@ -142,6 +138,65 @@ impl PlayerReference{
                     new_selection = vec![possessed_into_visit.target];
                 }
 
+
+                //change all controller inputs to be selecting this player as well
+                for (controller_id, controller_data) in game.saved_controllers.all_controllers().clone().iter() {
+                    match controller_data.selection() {
+                        AbilitySelection::Unit => {},
+                        AbilitySelection::Boolean { .. } => {
+                            if possessed_visit.target == possessed_into_visit.target {
+                                SavedControllersMap::set_selection_in_controller(
+                                    game,
+                                    possessed_visit.target,
+                                    controller_id.clone(),
+                                    AbilitySelection::new_boolean(true),
+                                    true
+                                );
+                            }
+                        },
+                        AbilitySelection::TwoPlayerOption { selection } => {
+
+                            let mut selection = selection.0.clone();
+                            if let Some((_, second)) = selection {
+                                selection = Some((possessed_into_visit.target, second));
+                            }
+
+                            SavedControllersMap::set_selection_in_controller(
+                                game,
+                                possessed_visit.target,
+                                controller_id.clone(),
+                                AbilitySelection::new_two_player_option(selection),
+                                true
+                            );
+                        },
+                        AbilitySelection::PlayerList { selection } => {
+
+                            let mut selection = selection.0.clone();
+                            if let Some(first) = selection.first_mut(){
+                                *first = possessed_into_visit.target;
+                            }else{
+                                selection = vec![possessed_into_visit.target];
+                            }
+
+
+                            SavedControllersMap::set_selection_in_controller(
+                                game,
+                                possessed_visit.target,
+                                controller_id.clone(),
+                                AbilitySelection::new_player_list(selection),
+                                true
+                            );
+                        },
+                        AbilitySelection::RoleOption { .. } => {},
+                        AbilitySelection::TwoRoleOption { .. } => {},
+                        AbilitySelection::TwoRoleOutlineOption { .. } => {},
+                        AbilitySelection::String { .. } => {},
+                        AbilitySelection::Kira { .. } => {},
+                    }
+                    
+                    
+                }
+
                 possessed_visit.target.set_night_visits(game,
                     possessed_visit.target.convert_selection_to_visits(game, new_selection)
                 );
@@ -152,7 +207,7 @@ impl PlayerReference{
             Priority::Investigative => {
                 if let Some(currently_used_player) = currently_used_player {
                     self.push_night_message(game,
-                        ChatMessageVariant::PossessionTargetsRole { role: currently_used_player.role(game) }
+                        ChatMessageVariant::TargetHasRole { role: currently_used_player.role(game) }
                     );
                 }
                 return None;
@@ -307,7 +362,6 @@ impl PlayerReference{
                     RoleState::Revolutionary(r) => r.won(),
                     RoleState::Chronokaiser(_) => Chronokaiser::won(game, *self),
                     RoleState::Martyr(r) => r.won(),
-                    RoleState::Death(r) => r.won(),
                     _ => false
                 }
             },
@@ -323,6 +377,9 @@ impl PlayerReference{
         Role functions
     */
 
+    pub fn controller_parameters_map(&self, game: &Game) -> ControllerParametersMap {
+        self.role_state(game).clone().controller_parameters_map(game, *self)
+    }
     pub fn can_select(&self, game: &Game, target_ref: PlayerReference) -> bool {
         self.role_state(game).clone().can_select(game, *self, target_ref)
     }

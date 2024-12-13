@@ -2,23 +2,28 @@ export type ListMapData<K, V> = [K, V][]
 
 export default class ListMap<K, V> {
     list: ListMapData<K, V>;
-    constructor(list: ListMapData<K, V> = []) {
-        this.list = list
+    equalsFn: ((k1: K, k2: K)=>boolean);
+    constructor(
+        list: ListMapData<K, V> = [],
+        equalsFn: ((k1: K, k2: K)=>boolean) = (k1, k2)=>k1 === k2
+    ) {
+        this.list = list;
+        this.equalsFn = equalsFn;
     }
     get(key: K): V | null {
         for (const [k, v] of this.list) {
-            if (k === key) {
+            if (this.equalsFn(k, key)) {
                 return v
             }
         }
         return null
     }
-    set(key: K, value: V) {
-        this.list = this.list.filter(([k, v]) => k !== key);
+    insert(key: K, value: V) {
+        this.list = this.list.filter(([k, v]) => !this.equalsFn(k, key));
         this.list.push([key, value])
     }
     delete(key: K) {
-        this.list = this.list.filter(([k, v]) => k !== key)
+        this.list = this.list.filter(([k, v]) => !this.equalsFn(k, key))
     }
     entries(): ListMapData<K, V> {
         return this.list
@@ -29,4 +34,6 @@ export default class ListMap<K, V> {
     values(): V[] {
         return this.list.map(([k, v]) => v)
     }
+
+
 }

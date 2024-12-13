@@ -68,7 +68,15 @@ impl <K> VecSet<K> where K: Eq {
     pub fn union(&self, other: &Self) -> Self where K: Clone {
         self.vec.keys().cloned().chain(other.vec.keys().cloned()).collect()
     }
+
+    pub fn is_subset(&self, other: &Self) -> bool {
+        self.vec.keys().all(|k| other.contains(k))
+    }
+    pub fn is_superset(&self, other: &Self) -> bool {
+        other.is_subset(self)
+    }
 }
+
 impl<K> IntoIterator for VecSet<K> where K: Eq {
     type Item = K;
     type IntoIter = std::iter::Map<std::vec::IntoIter<(K, ())>, fn((K, ())) -> K>;
@@ -97,4 +105,19 @@ impl<'de, K> Deserialize<'de> for VecSet<K> where K: Eq, K: Deserialize<'de> {
         let vec: Vec<K> = Deserialize::deserialize(deserializer)?;
         Ok(vec.into_iter().collect())
     }
+}
+
+
+pub use macros::vec_set;
+mod macros {
+    #[macro_export]
+    macro_rules! vec_set {
+        ($($key:expr),*) => {{
+            let mut map = crate::vec_set::VecSet::new();
+            $(map.insert($key);)*
+            map
+        }};
+    }
+
+    pub use vec_set;
 }

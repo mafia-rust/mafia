@@ -14,7 +14,7 @@ impl Visit {
             visitor,
             target,
             attack,
-            tag: VisitTag::None,
+            tag: VisitTag::Role,
         }
     }
     pub fn new(visitor: PlayerReference, target: PlayerReference, attack: bool, tag: VisitTag) -> Self {
@@ -30,6 +30,7 @@ impl Visit {
 #[derive(Default, Clone, Copy, Debug, PartialEq, Eq)]
 pub enum VisitTag{
     #[default]
-    None,
+    Role,
     SyndicateGunItem,
+    SyndicateBackupAttack
 }

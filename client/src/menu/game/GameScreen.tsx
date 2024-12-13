@@ -16,6 +16,7 @@ import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import translate from "../../game/lang";
 import { useGameState } from "../../components/useHooks";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
@@ -25,6 +26,16 @@ export enum ContentMenu {
     GraveyardMenu = "GraveyardMenu",
     WikiMenu = "WikiMenu",
 }
+
+export const MENU_ELEMENTS = {
+    [ContentMenu.ChatMenu]: ChatMenu,
+    [ContentMenu.PlayerListMenu]: PlayerListMenu,
+    [ContentMenu.RoleSpecificMenu]: AbilityMenu,
+    [ContentMenu.WillMenu]: WillMenu,
+    [ContentMenu.GraveyardMenu]: GraveyardMenu,
+    [ContentMenu.WikiMenu]: WikiMenu
+}
+
 const ALL_CONTENT_MENUS = Object.values(ContentMenu);
 
 export interface MenuController {
@@ -137,12 +148,12 @@ export default function GameScreen(): ReactElement {
     const menuController = useMenuController(
         mobile ? 2 : Infinity, 
         {
-            ChatMenu: true,
-            RoleSpecificMenu: !mobile,
-            WillMenu: !mobile,
-            PlayerListMenu: true,
-            GraveyardMenu: !mobile,
             WikiMenu: false,
+            GraveyardMenu: !mobile,
+            PlayerListMenu: true,
+            ChatMenu: true,
+            WillMenu: !mobile,
+            RoleSpecificMenu: !mobile,
         },
         () => MENU_CONTROLLER_HOLDER.controller!,
         menuController => MENU_CONTROLLER_HOLDER.controller = menuController
@@ -181,26 +192,44 @@ export default function GameScreen(): ReactElement {
         return () => removeSwipeEventListener(swipeEventListener);
     })
 
-    const allMenusClosed = menuController.menusOpen().length === 0;
-
     return <MenuControllerContext.Provider value={menuController}>
         <div className="game-screen">
             <div className="header">
                 <HeaderMenu chatMenuNotification={chatMenuNotification}/>
             </div>
-            <div className="content">
-                {menuController.menuOpen(ContentMenu.ChatMenu) && <ChatMenu/>}
-                {menuController.menuOpen(ContentMenu.RoleSpecificMenu) && <AbilityMenu/>}
-                {menuController.menuOpen(ContentMenu.WillMenu) && <WillMenu/>}
-                {menuController.menuOpen(ContentMenu.PlayerListMenu) && <PlayerListMenu/>}
-                {menuController.menuOpen(ContentMenu.GraveyardMenu) && <GraveyardMenu/>}
-                {menuController.menuOpen(ContentMenu.WikiMenu) && <WikiMenu/>}
-                {allMenusClosed && <div className="no-content">
-                    {translate("menu.gameScreen.noContent")}
-                </div>}
-            </div>
+            <GameScreenMenus />
         </div>
     </MenuControllerContext.Provider>
+}
+
+export function GameScreenMenus(): ReactElement {
+    const menuController = useContext(MenuControllerContext)!;
+    const minSize = 10; // Percentage
+
+    // These don't add up to 100, but the panel group will fix it
+    const defaultSizes = {
+        [ContentMenu.ChatMenu]: 35,
+        [ContentMenu.RoleSpecificMenu]: 15,
+        [ContentMenu.WillMenu]: 15,
+        [ContentMenu.PlayerListMenu]: 25,
+        [ContentMenu.GraveyardMenu]: 10,
+        [ContentMenu.WikiMenu]: 15,
+    }
+
+    return <PanelGroup direction="horizontal" className="content">
+        {menuController.menusOpen().map((menu, index, menusOpen) => {
+            const MenuElement = MENU_ELEMENTS[menu];
+            return <>
+                <Panel className="panel" minSize={minSize} defaultSize={defaultSizes[menu]} key={index}>
+                    <MenuElement />
+                </Panel>
+                {menusOpen.some((_, i) => i > index) && <PanelResizeHandle className="panel-handle"/>}
+            </>
+        })}
+        {menuController.menusOpen().length === 0 && <Panel><div className="no-content">
+            {translate("menu.gameScreen.noContent")}
+        </div></Panel>}
+    </PanelGroup>
 }
 
 export function ContentTab(props: Readonly<{

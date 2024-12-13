@@ -1,9 +1,16 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::{
-    grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
-        auditor::AuditorResult, engineer::TrapState, kira::KiraResult, puppeteer::PuppeteerAction, recruiter::RecruiterAction, spy::SpyBug, Role
-    }, role_list::RoleOutline, tag::Tag, verdict::Verdict
+    ability_input::*,
+    grave::Grave, phase::PhaseState,
+    player::{PlayerIndex, PlayerReference},
+    role::{
+        auditor::AuditorResult, engineer::TrapState, kira::KiraResult,
+        puppeteer::PuppeteerAction, recruiter::RecruiterAction, spy::SpyBug, Role
+    },
+    role_list::RoleOutline,
+    tag::Tag,
+    verdict::Verdict,
 };
 
 
@@ -101,6 +108,12 @@ pub enum ChatMessageVariant {
     Targeted {
         targeter: PlayerIndex,
         targets: Vec<PlayerIndex>
+    },
+    #[serde(rename_all = "camelCase")]
+    AbilityUsed{
+        player: PlayerIndex,
+        ability_id: ControllerID,
+        selection: AbilitySelection
     },
 
     #[serde(rename_all = "camelCase")]
@@ -204,13 +217,11 @@ pub enum ChatMessageVariant {
     PuppeteerActionChosen{action: PuppeteerAction},
     #[serde(rename_all = "camelCase")]
     RecruiterActionChosen{action: RecruiterAction},
-    #[serde(rename_all = "camelCase")]
-    MarksmanChosenMarks{marks: Vec<PlayerIndex>},
 
     TargetIsPossessionImmune,
     YouWerePossessed { immune: bool },
     TargetsMessage{message: Box<ChatMessageVariant>},
-    PossessionTargetsRole { role: Role },
+    TargetHasRole { role: Role },
 
     #[serde(rename_all = "camelCase")]
     WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},
@@ -221,7 +232,6 @@ pub enum ChatMessageVariant {
     JesterWon,
     RevolutionaryWon,
     ChronokaiserSpeedUp{percent: u32},
-    DeathCollectedSouls,
     DoomsayerWon,
     DoomsayerFailed,
     KiraResult{result: KiraResult},
@@ -229,6 +239,4 @@ pub enum ChatMessageVariant {
     MartyrWon,
     MartyrFailed,
     WildcardConvertFailed{ role: Role },
-
-    SyndicateGunTarget{shooter: PlayerIndex, target: Option<PlayerIndex>},
 }
