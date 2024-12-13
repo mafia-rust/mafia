@@ -79,7 +79,7 @@ pub fn controller_parameters_map_boolean(
     let grayed_out = 
         !actor_ref.alive(game) || 
         Detained::is_detained(game, actor_ref) ||
-        !grayed_out;
+        grayed_out;
 
     ControllerParametersMap::new_controller_fast(
         game,
