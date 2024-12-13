@@ -230,7 +230,7 @@ function MediumRoleSpecificMenu(props: Readonly<{
     )!;
 
     const counter = <Counter
-        max={2}
+        max={3}
         current={props.roleState.seancesRemaining}
     >
         <StyledText>{translate("role.medium.roleDataText.hauntsRemaining", props.roleState.seancesRemaining)}</StyledText>

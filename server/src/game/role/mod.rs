@@ -38,6 +38,7 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn controller_parameters_map(self, _game: &Game, _actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::default()
     }
+    fn on_controller_selection_changed(self, _game: &mut Game, _actor_ref: PlayerReference, _id: ControllerID) {}
     fn on_validated_ability_input_received(self, _game: &mut Game, _actor_ref: PlayerReference, _input_player: PlayerReference, _ability_input: AbilityInput) {}
     fn on_ability_input_received(self, _game: &mut Game, _actor_ref: PlayerReference, _input_player: PlayerReference, _ability_input: AbilityInput) {}
 
@@ -270,6 +271,11 @@ mod macros {
                 pub fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
                     match self {
                         $(Self::$name(role_struct) => role_struct.controller_parameters_map(game, actor_ref)),*
+                    }
+                }
+                pub fn on_controller_selection_changed(self, game: &mut Game, actor_ref: PlayerReference, id: ControllerID){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_controller_selection_changed(game, actor_ref, id)),*
                     }
                 }
                 pub fn on_validated_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: AbilityInput){

@@ -44,7 +44,13 @@
     "role/mayor/0": {
         "midnight": false
     },
+    "role/medium/0": {
+        "midnight": false
+    },
     "role/transporter/0": {
+        "midnight": true
+    },
+    "role/retributionist/0": {
         "midnight": true
     },
     "role/godfather/0": {
@@ -95,6 +101,9 @@
     "role/consort/0": {
         "midnight": true
     },
+    "role/necromancer/0": {
+        "midnight": true
+    },
     "role/jester/0": {
         "midnight": true
     },
@@ -102,6 +111,12 @@
         "midnight": false
     },
     "role/scarecrow/0": {
+        "midnight": true
+    },
+    "role/witch/0": {
+        "midnight": true
+    },
+    "role/warper/0": {
         "midnight": true
     },
     "role/serialKiller/0": {
@@ -114,6 +129,9 @@
         "midnight": true
     },
     "role/pyrolisk/0": {
+        "midnight": true
+    },
+    "role/spiral/0": {
         "midnight": true
     },
     "role/kira/0": {

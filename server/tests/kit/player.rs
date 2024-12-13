@@ -89,13 +89,6 @@ impl TestPlayer {
         true
     }
 
-    pub fn set_night_selection(&self, selection: Vec<TestPlayer>)->bool {
-        self.0.set_selection(
-            game!(self), 
-            selection.into_iter().map(|t|t.0).collect()
-        )
-    }
-
     pub fn set_night_selection_single(&self, selection: TestPlayer)->bool {
         self.0.set_selection(game!(self), vec![selection.0])
     }

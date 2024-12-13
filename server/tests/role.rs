@@ -696,7 +696,7 @@ fn retributionist_basic(){
     assert!(!sher1.alive());
     assert!(!sher2.alive());
 
-    assert!(ret.set_night_selection(vec![sher1, mafioso]));
+    assert!(ret.send_ability_input_two_player_typical(sher1, mafioso));
     game.next_phase();
     assert_contains!(
         ret.get_messages_after_night(4),
@@ -706,7 +706,7 @@ fn retributionist_basic(){
     );
 
     game.skip_to(Night, 5);
-    assert!(ret.set_night_selection(vec![sher1, mafioso]));
+    assert!(ret.send_ability_input_two_player_typical(sher1, mafioso));
     game.next_phase();
     assert_contains!(
         ret.get_messages_after_night(5),
@@ -716,7 +716,7 @@ fn retributionist_basic(){
     );
 
     game.skip_to(Night, 6);
-    assert!(!ret.set_night_selection(vec![sher1, mafioso]));
+    ret.send_ability_input_two_player_typical(sher1, mafioso);
     game.next_phase();
     assert_not_contains!(
         ret.get_messages_after_night(6),
@@ -743,7 +743,7 @@ fn necromancer_basic(){
 
 
 
-    assert!(ret.set_night_selection(vec![sher, mafioso]));
+    assert!(ret.send_ability_input_two_player_typical(sher, mafioso));
     game.next_phase();
     assert_contains!(
         ret.get_messages_after_night(3),

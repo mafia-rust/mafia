@@ -9,8 +9,11 @@ use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::Game;
+use crate::vec_set;
 
-use super::{RoleStateImpl, RoleState};
+use super::{
+    AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection, Role, RoleStateImpl
+};
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -21,7 +24,7 @@ pub struct Medium{
 
 impl Default for Medium{
     fn default() -> Self {
-        Self { seances_remaining: 2, seanced_target: None}
+        Self { seances_remaining: 3, seanced_target: None}
     }
 }
 
@@ -37,23 +40,24 @@ impl RoleStateImpl for Medium {
             ..Self::default()
         }
     }
-    fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) {
-        if let Some(old_target_ref) = self.seanced_target {
-            if old_target_ref == target_ref {
-                actor_ref.set_role_state(game, RoleState::Medium(Medium { seanced_target: None, seances_remaining: self.seances_remaining}));
-            } else {
-                actor_ref.set_role_state(game, RoleState::Medium(Medium { seanced_target: Some(target_ref), seances_remaining: self.seances_remaining }));
-            }
-        } else {
-            actor_ref.set_role_state(game, RoleState::Medium(Medium { seanced_target: Some(target_ref), seances_remaining: self.seances_remaining }));
-        }
-    }
-    fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        game.current_phase().is_day() &&
-        self.seances_remaining > 0 && 
-        actor_ref != target_ref &&
-        !actor_ref.alive(game) && target_ref.alive(game) && 
-        game.current_phase().phase() != PhaseType::Night
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
+        ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Medium, 0),
+            AvailableAbilitySelection::new_player_list(
+                PlayerReference::all_players(game)
+                    .filter(|p| p.alive(game))
+                    .filter(|p| *p != actor_ref)
+                    .collect(),
+                false,
+                Some(1)
+            ),
+            AbilitySelection::new_player_list(vec![]),
+            actor_ref.alive(game) || self.seances_remaining <= 0,
+            Some(PhaseType::Night),
+            false,
+            vec_set!(actor_ref)
+        )
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         let mut out = crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Dead]);
@@ -90,16 +94,22 @@ impl RoleStateImpl for Medium {
                 actor_ref.set_role_state(game, self);
             },
             PhaseType::Night => {
-                if let Some(seanced) = self.seanced_target {
-                    if seanced.alive(game) && !actor_ref.alive(game){
-                
-                        game.add_message_to_chat_group(ChatGroup::Dead,
-                            ChatMessageVariant::MediumHauntStarted{ medium: actor_ref.index(), player: seanced.index() }
-                        );
+                let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(
+                    ControllerID::role(actor_ref, Role::Medium, 0)
+                ) else {return};
 
-                        self.seances_remaining = self.seances_remaining.saturating_sub(1);
+                let Some(target) = target.first() else {return};
+                
+                self.seances_remaining = self.seances_remaining.saturating_sub(1);
+                self.seanced_target = Some(target.clone());
+                
+                game.add_message_to_chat_group(ChatGroup::Dead,
+                    ChatMessageVariant::MediumHauntStarted{
+                        medium: actor_ref.index(),
+                        player: target.index()
                     }
-                }
+                );
+                
                 actor_ref.set_role_state(game, self);
             },
             _=>{}

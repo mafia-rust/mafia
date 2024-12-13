@@ -321,11 +321,13 @@
     "role.medium.roleDataText.nobody": "You didn't decide to haunt anybody.",
     "role.medium.roleDataText": "You decided to haunt \\0.",
     "role.medium.dayTarget": "Haunt",
+    "controllerId.medium.0.name": "Haunt",
 
     "role.retributionist.name": "Retributionist",
     "role.retributionist.name:var.0": "Retributionists",
     "role.retributionist.youAreSelecting": "You are possessing \\0 into \\1.",
     "role.retributionist.youAreSelecting.null": "You aren't possessing anyone.",
+    "controllerId.retributionist.0.name": "Possess",
 
     "role.reporter.name": "Reporter",
     "role.reporter.name:var.0": "Reporters",
@@ -438,6 +440,7 @@
     "role.necromancer.name:var.0": "Necromancers",
     "role.necromancer.youAreSelecting": "You are possessing \\0 into \\1.",
     "role.necromancer.youAreSelecting.null": "You aren't possessing anyone.",
+    "controllerId.necromancer.0.name": "Possess",
 
     "role.mafiaWitch.name": "Syndicate Witch",
     "role.mafiaWitch.name:var.0": "Syndicate Witches",

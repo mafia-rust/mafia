@@ -241,7 +241,7 @@ impl PlayerReference{
         OnAnyDeath::new(*self)
     }
     pub fn initial_role_creation(&self, game: &mut Game){
-        let new_role_data = self.role_state(game).clone();
+        let new_role_data = self.role(&game).new_state(&game);
         self.set_role_state(game, new_role_data.clone());
         self.on_role_creation(game);    //this function can change role state
         if new_role_data.role() == self.role(game) {
