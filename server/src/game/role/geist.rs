@@ -27,16 +27,12 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 impl RoleStateImpl for Geist {
     type ClientRoleState = Geist;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        
+        let transporter_visits = actor_ref.untagged_night_visits_cloned(game).clone();
+        let Some(first_visit) = transporter_visits.get(0) else {return};
         if priority == Priority::Geist {
-            let transporter_visits = actor_ref.untagged_night_visits_cloned(game).clone();
-            let Some(first_visit) = transporter_visits.get(0) else {return};
-
-            
             
             first_visit.target.push_night_message(game, ChatMessageVariant::Transported);
-            actor_ref.push_night_message(game, ChatMessageVariant::TargetHasRole { role: first_visit.target.role(game) });
-        
+
             for player_ref in PlayerReference::all_players(game){
                 if player_ref == actor_ref {continue;}
                 if player_ref.role(game) == Role::Geist {continue;}
@@ -54,33 +50,42 @@ impl RoleStateImpl for Geist {
                 player_ref.set_night_visits(game, new_visits);
             
             }
-            if priority == Priority::Heal {
-
-                actor_ref.increase_defense_to(game, DefensePower::Protection);
-                first_visit.target.increase_defense_to(game, DefensePower::Protection);
-
-                let mut all_attackers: Vec<PlayerReference> = vec![];
-                for visit in NightVisits::all_visits(game).into_iter().cloned().collect::<Vec<_>>() {
-                    if 
-                        visit.attack &&
-                        visit.target == actor_ref &&
-                        visit.visitor != actor_ref
-                    {
-                        all_attackers.push(visit.visitor);
-                    }
-                }
+        }
+        if priority == Priority::Heal {
+            actor_ref.increase_defense_to(game, DefensePower::Protection);
+            first_visit.target.increase_defense_to(game, DefensePower::Protection);
             
-                if all_attackers.len() > 0 {
-                    for attacker_ref in all_attackers {
-                        if attacker_ref.win_condition(game).friends_with_resolution_state(GameConclusion::Town) { 
-                            attacker_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Geist), AttackPower::ProtectionPiercing, true);
-                        }              
-                        actor_ref.set_role_state(game, Geist { won: true});     
-                    }
+        }
+
+        if priority == Priority::Kill{
+            let mut all_attackers: Vec<PlayerReference> = vec![];
+            for visit in NightVisits::all_visits(game).into_iter().cloned().collect::<Vec<_>>() {
+                if 
+                    visit.attack &&
+                    visit.target == actor_ref &&
+                    visit.visitor != actor_ref
+                {
+                    all_attackers.push(visit.visitor);
+                }
+            }
+            if all_attackers.len() > 0 {
+                for attacker_ref in all_attackers {
+                    if attacker_ref.win_condition(game).friends_with_resolution_state(GameConclusion::Town) { 
+                        attacker_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Geist), AttackPower::ProtectionPiercing, true);
+                    }              
+                    actor_ref.set_role_state(game, Geist { won: true});     
                 }
             }
         }
 
+        if priority == Priority::Investigative {
+            if let Some(target_healed_ref) = Some(first_visit.target) {
+                if target_healed_ref.night_attacked(game){
+                    actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
+                    target_healed_ref.push_night_message(game, ChatMessageVariant::YouWereProtected);
+                }
+            }
+        }
     }
 
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {

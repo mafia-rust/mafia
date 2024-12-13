@@ -1643,11 +1643,11 @@
     "wiki.article.role.revolutionary.attributes":"* When your execution target is executed, you win\n* After you win, you leave town at the start of final words\n* You are armored",
     "wiki.article.role.revolutionary.extra":"* If your target dies by something other than execution, you convert to a jester immediately, even while dead\n* If there are no valid targets in the game when you become the Revolutionary, you convert to a Jester",
 
-    "wiki.article.role.geist.reminder": "Each night, if the player you protect and transport with yourself is attacked, the attacker dies and you win.",
-    "wiki.article.role.geist.guide": "- At night, select a player to transport with yourself and protect both players\n - If somebody else tries to visit the first player, they instead visit the second player and vice versa.\n    - If the player you transport receives an attacking visit: the visitor dies, you win the game, and you leave town. \n- You are told the role of your first target\n\n _For example_\n- If a godfather tries to attack @1, but you warped @1 to @4, then @4 will die instead, and @1 is told they are transported\n\nYou are a minion, so you should try to harm the town as much as possible while looking to benefit non-town players.\n\n",
-    "wiki.article.role.geist.abilities":" - Visit 2 players to warp visits from the first player to the second player\n - You can't select yourself as the first target, you cannot warp yourself\n- You are told the role of your first target",
-    "wiki.article.role.geist.attributes":" -  All visits to first player instead visit the second player\n - The first player you visit is told they were transported",
-    "wiki.article.role.geist.extra": " - Some abilities are not affected by yours due to the priority system. _For example_ You can't stop a jester from haunting their target using a transport, this depends on priorities and whether or not an ability is indirect\n* Warpers act after transporters\n* Warpers do not warp the visits of a transporter",
+    "wiki.article.role.geist.reminder": "Each night, transport a player with yourself. Protect both players. If you recieve an attacking visit, you win and kill attacking town loyalists.",
+    "wiki.article.role.geist.guide": "- At night, select a player to transport with yourself and protect both players\n - If somebody else tries to visit the first player, they instead visit the second player and vice versa.\n    - If you receive an attacking visit: the visitor dies, you win the game, and you leave town",
+    "wiki.article.role.geist.abilities":" - Visit a player to transport them with you\n - You protect your target and yourself \n - You can't select yourself",
+    "wiki.article.role.geist.attributes":" -  All visits to first player instead visit the second player and vice versa\n - The first players you transport are told they are transported\n - You are immune to getting roleblocked, transported, or possessed\n - You have armor",
+    "wiki.article.role.geist.extra": "",
 
 
     "wiki.article.role.doomsayer.reminder": "Guess the role of three different players correctly to win. When you win you attack the players you guessed.",
