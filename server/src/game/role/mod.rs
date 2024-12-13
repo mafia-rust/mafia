@@ -146,7 +146,9 @@ macros::roles! {
     Revolutionary : revolutionary,
     Politician : politician,
     Doomsayer : doomsayer,
-    Death : death,
+    Wildcard : wild_card,
+    TrueWildcard : true_wildcard,
+    Martyr : martyr,
 
     Witch : witch,
     Scarecrow : scarecrow,
@@ -163,10 +165,6 @@ macros::roles! {
     Kira : kira,
     FiendsWildcard : fiends_wildcard,
     SerialKiller : serial_killer,
-
-    Wildcard : wild_card,
-    TrueWildcard : true_wildcard,
-    Martyr : martyr,
 
     Apostle : apostle,
     Disciple : disciple,

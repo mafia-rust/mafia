@@ -876,20 +876,6 @@
             {"type": "martyrFailed"}
         ]
     },
-    "death":{
-        "mainRoleSet": "neutral",
-        "roleSets": ["neutral"],
-        "armor": false,
-        "aura": null,
-        "maxCount": 1,
-        "canWriteDeathNote": true,
-        "canBeConvertedTo": [],
-        "chatMessages":[
-            {"type": "deathCollectedSouls"},
-            {"type": "someoneSurvivedYourAttack"},
-            {"type": "youSurvivedAttack"}
-        ]
-    },
     "wildcard": {
         "mainRoleSet": "neutral",
         "roleSets": ["neutral"],

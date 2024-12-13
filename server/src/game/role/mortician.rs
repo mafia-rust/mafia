@@ -29,12 +29,11 @@ pub struct Mortician {
     obscured_players: VecSet<PlayerReference>,
     cremations_remaining: u8,
 }
-const MAX_CREMATIONS: u8 = 4;
 impl Default for Mortician {
     fn default() -> Self {
         Self {
             obscured_players: VecSet::new(),
-            cremations_remaining: MAX_CREMATIONS,
+            cremations_remaining: 3,
         }
     }
 }

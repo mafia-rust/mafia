@@ -682,7 +682,6 @@ export function translateChatMessage(
             return translate("chatMessage.chronokaiserSpeedUp", message.percent);
         case "deputyShotYou":
         case "mediumExists":
-        case "deathCollectedSouls":
         case "targetWasAttacked":
         case "youWereProtected":
         case "revolutionaryWon":
@@ -1004,8 +1003,6 @@ export type ChatMessageVariant = {
 } | {
     type: "wildcardConvertFailed",
     role: Role
-} | {
-    type: "deathCollectedSouls"
 } | {
     type: "revolutionaryWon"
 } | {

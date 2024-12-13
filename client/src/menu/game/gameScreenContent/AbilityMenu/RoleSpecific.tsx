@@ -119,13 +119,6 @@ export default function RoleSpecificSection(){
             >
                 <StyledText>{translate("role.mortician.roleDataText", roleState.cremationsRemaining)}</StyledText>
             </Counter>
-        case "death":
-            return <Counter
-                max={6}
-                current={roleState.souls}
-            >
-                <StyledText>{translate("role.death.roleDataText", roleState.souls)}</StyledText>
-            </Counter>
         case "ojo":
             return <OjoMenu roleState={roleState}/>
         case "steward":

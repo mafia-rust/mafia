@@ -161,9 +161,6 @@ Doomsayer
     executionsRemaining: number,
     jailedTargetRef: number | null
 } | {
-    type: "death",
-    souls: number
-} | {
     type: "wildcard"
     role: Role
 } | {

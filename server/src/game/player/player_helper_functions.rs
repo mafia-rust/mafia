@@ -362,7 +362,6 @@ impl PlayerReference{
                     RoleState::Revolutionary(r) => r.won(),
                     RoleState::Chronokaiser(_) => Chronokaiser::won(game, *self),
                     RoleState::Martyr(r) => r.won(),
-                    RoleState::Death(r) => r.won(),
                     _ => false
                 }
             },

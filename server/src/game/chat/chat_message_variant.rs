@@ -232,7 +232,6 @@ pub enum ChatMessageVariant {
     JesterWon,
     RevolutionaryWon,
     ChronokaiserSpeedUp{percent: u32},
-    DeathCollectedSouls,
     DoomsayerWon,
     DoomsayerFailed,
     KiraResult{result: KiraResult},

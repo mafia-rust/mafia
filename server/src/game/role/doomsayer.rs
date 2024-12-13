@@ -76,7 +76,7 @@ impl DoomsayerGuess{
 
             //Neutral
             Role::Jester | Role::Revolutionary | Role::Politician |
-            Role::Doomsayer | Role::Death | 
+            Role::Doomsayer |
             Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | Role::Chronokaiser |
             Role::Wildcard | Role::TrueWildcard | Role::Drunk | Role::Spiral => Some(DoomsayerGuess::NonTown),
             Role::Martyr => None,

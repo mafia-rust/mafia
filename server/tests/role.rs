@@ -77,7 +77,6 @@ pub use mafia_server::game::{
         witch::Witch,
         politician::Politician,
         doomsayer::{Doomsayer, DoomsayerGuess},
-        death::Death,
         wild_card::Wildcard,
         martyr::Martyr,
 
