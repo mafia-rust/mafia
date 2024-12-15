@@ -10,29 +10,11 @@ use crate::{game::{
     game_conclusion::GameConclusion,
     modifiers::{ModifierType, Modifiers},
     phase::{PhaseState, PhaseType}, player::PlayerReference,
-    role_list::RoleSet, visit::{Visit, VisitTag}, win_condition::WinCondition,
+    role_list::RoleSet, visit::Visit, win_condition::WinCondition,
     Game
 }, vec_set};
 
 use super::{reporter::Reporter, medium::Medium, InsiderGroupID, Role, RoleState};
-
-
-pub fn can_night_select(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    actor_ref != target_ref &&
-    !Detained::is_detained(game, actor_ref) &&
-    actor_ref.selection(game).is_empty() &&
-    actor_ref.alive(game) &&
-    target_ref.alive(game) &&
-    !InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref)
-}
-
-pub(super) fn convert_selection_to_visits(_game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, attack: bool) -> Vec<Visit> {
-    if !target_refs.is_empty() {
-        vec![Visit::new(actor_ref, target_refs[0], attack, VisitTag::Role)]
-    } else {
-        Vec::new()
-    }
-}
 
 pub fn controller_parameters_map_player_list_night_typical(
     game: &Game,

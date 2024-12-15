@@ -6,7 +6,7 @@ use super::{
     phase::{PhaseState, PhaseType},
     player::{PlayerIndex, PlayerReference},
     role::{
-        mayor::Mayor, politician::Politician, recruiter::RecruiterAction,
+        mayor::Mayor, politician::Politician,
         Role, RoleState
     },
     spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
@@ -230,18 +230,6 @@ impl Game {
                     sender_player_ref.set_role_state(self, RoleState::Doomsayer(doomsayer));
                 }
             },
-            ToServerPacket::SetReporterReport { report } => {
-                if let RoleState::Reporter(mut reporter) = sender_player_ref.role_state(self).clone(){
-                    reporter.report = report;
-                    sender_player_ref.set_role_state(self, RoleState::Reporter(reporter));
-                }
-            }
-            ToServerPacket::SetReporterReportPublic { public } => {
-                if let RoleState::Reporter(mut reporter) = sender_player_ref.role_state(self).clone(){
-                    reporter.public = public;
-                    sender_player_ref.set_role_state(self, RoleState::Reporter(reporter));
-                }
-            }
             ToServerPacket::SetConsortOptions { 
                 roleblock, 
                 you_were_roleblocked_message, 
@@ -265,25 +253,6 @@ impl Game {
                     hypnotist.ensure_at_least_one_message();
 
                     sender_player_ref.set_role_state(self, RoleState::Hypnotist(hypnotist));
-                }
-            },
-            ToServerPacket::SetCounterfeiterAction {action} => {
-                if let RoleState::Counterfeiter(mut counterfeiter) = sender_player_ref.role_state(self).clone(){
-                    counterfeiter.action = action;
-                    sender_player_ref.set_role_state(self, RoleState::Counterfeiter(counterfeiter));
-                }
-            },
-            ToServerPacket::SetRecruiterAction { action } => {
-                if let RoleState::Recruiter(mut pup) = sender_player_ref.role_state(self).clone(){
-                    pup.action = action.clone();
-                    if pup.recruits_remaining == 0 {
-                        pup.action = RecruiterAction::Kill;
-                    }
-                    sender_player_ref.set_role_state(self, RoleState::Recruiter(pup));
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::RecruiterActionChosen { action });
-                    
-                    //Updates selection if it was invalid
-                    sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
                 }
             },
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {

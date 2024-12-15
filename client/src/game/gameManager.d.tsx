@@ -102,8 +102,6 @@ export type GameManager = {
         [number, DoomsayerGuess],
         [number, DoomsayerGuess]
     ]): void;
-    sendSetReporterReport(report: string): void;
-    sendSetReporterReportPublic(isPublic: boolean): void;
     sendSetConsortOptions(
         roleblock: boolean, 
         youWereRoleblockedMessage: boolean, 
@@ -113,8 +111,6 @@ export type GameManager = {
         youWerePossessedMessage: boolean, 
         yourTargetWasJailedMessage: boolean
     ): void
-    sendSetCounterfeiterAction(action: "forge" | "noForge"): void;
-    sendSetRecruiterAction(action: RecruiterAction): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
 

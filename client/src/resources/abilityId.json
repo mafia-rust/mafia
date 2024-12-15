@@ -59,6 +59,15 @@
     "role/retributionist/0": {
         "midnight": true
     },
+    "role/reporter/0": {
+        "midnight": false
+    },
+    "role/reporter/1": {
+        "midnight": true
+    },
+    "role/reporter/2": {
+        "midnight": true
+    },
     "role/godfather/0": {
         "midnight": true
     },
@@ -66,6 +75,21 @@
         "midnight": true
     },
     "role/counterfeiter/0": {
+        "midnight": true
+    },
+    "role/counterfeiter/1": {
+        "midnight": true
+    },
+    "role/counterfeiter/2": {
+        "midnight": true
+    },
+    "role/counterfeiter/3": {
+        "midnight": true
+    },
+    "role/recruiter/0": {
+        "midnight": true
+    },
+    "role/recruiter/1": {
         "midnight": true
     },
     "role/mafiaKillingWildcard/0": {
@@ -90,10 +114,10 @@
         "midnight": true
     },
     "role/forger/1": {
-        "midnight": false
+        "midnight": true
     },
     "role/forger/2": {
-        "midnight": false
+        "midnight": true
     },
     "role/disguiser/0": {
         "midnight": true

@@ -276,9 +276,6 @@ export type ToServerPacket = {
     type: "abilityInput",
     abilityInput: AbilityInput
 } | {
-    type: "setCounterfeiterAction",
-    action: "forge" | "noForge"
-} | {
     type: "setKiraGuess",
     guesses: [PlayerIndex, KiraGuess][]
 } | {
@@ -289,12 +286,6 @@ export type ToServerPacket = {
         [number, DoomsayerGuess]
     ]
 } | {
-    type: "setReporterReport",
-    report: string
-} | {
-    type: "setReporterReportPublic",
-    public: boolean
-} | {
     type: "setConsortOptions",
     roleblock: boolean,
     
@@ -304,9 +295,6 @@ export type ToServerPacket = {
     youWereTransportedMessage: boolean,
     youWerePossessedMessage: boolean,
     yourTargetWasJailedMessage: boolean
-} | {
-    type: "setRecruiterAction",
-    action: RecruiterAction
 } | {
     type: "voteFastForwardPhase",
     fastForward: boolean

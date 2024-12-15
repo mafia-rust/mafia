@@ -1891,6 +1891,10 @@ fn recruits_dont_get_converted_to_mk(){
     );
 
     assert!(vigi.send_ability_input_player_list_typical(recruiter));
+    recruiter.send_ability_input(AbilityInput::new(
+        ControllerID::syndicate_choose_backup(),
+        AbilitySelection::new_player_list(vec![mortician.player_ref()])
+    ));
 
     game.skip_to(Night, 3);
 
@@ -1898,7 +1902,11 @@ fn recruits_dont_get_converted_to_mk(){
     assert!(mortician.role() == Role::Recruiter);
     assert!(vigi.role() == Role::Vigilante);
 
-    assert!(mortician.set_night_selection_single(a));
+    assert!(mortician.send_ability_input_player_list_typical(a));
+    mortician.send_ability_input(AbilityInput::new(
+        ControllerID::role(mortician.player_ref(), Role::Recruiter, 1),
+        AbilitySelection::new_integer(1)
+    ));
     assert!(vigi.send_ability_input_player_list_typical(mortician));
 
     game.next_phase();

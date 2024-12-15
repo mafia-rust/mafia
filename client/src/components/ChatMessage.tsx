@@ -544,10 +544,6 @@ export function translateChatMessage(
             return translate("chatMessage.reporterReport",
                 sanitizePlayerMessage(replaceMentions(message.report, playerNames))
             );
-        case "youAreInterviewingPlayer":
-            return translate("chatMessage.youAreInterviewingPlayer",
-                playerNames[message.playerIndex],
-            );
         case "playerIsBeingInterviewed":
             return translate("chatMessage.playerIsBeingInterviewed",
                 playerNames[message.playerIndex],
@@ -663,8 +659,6 @@ export function translateChatMessage(
             }else{
                 return translate("chatMessage.roleChosen.role", translate("role."+message.role+".name"));
             }
-        case "recruiterActionChosen":
-            return translate("chatMessage.recruiterActionChosen."+message.action);
         case "silenced":
             return translate("chatMessage.silenced");
         case "mediumHauntStarted":
@@ -832,9 +826,6 @@ export type ChatMessageVariant = {
     type: "reporterReport",
     report: string
 } | {
-    type: "youAreInterviewingPlayer",
-    playerIndex: PlayerIndex
-} | {
     type: "playerIsBeingInterviewed",
     playerIndex: PlayerIndex
 } | {
@@ -983,9 +974,6 @@ export type ChatMessageVariant = {
 } | {
     type: "roleChosen",
     role: Role | null,
-} | {
-    type: "recruiterActionChosen",
-    action: RecruiterAction,
 } | {
     type: "targetIsPossessionImmune"
 } | {

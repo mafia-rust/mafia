@@ -1,13 +1,11 @@
 import { useGameState, usePlayerState } from "../../../../components/useHooks";
 import React, { ReactElement } from "react";
 import AuditorMenu from "./RoleSpecificMenus/AuditorMenu";
-import LargeReporterMenu from "./RoleSpecificMenus/LargeReporterMenu";
 import LargeHypnotistMenu from "./RoleSpecificMenus/LargeHypnotistMenu";
 import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
 import Counter from "../../../../components/Counter";
 import StyledText from "../../../../components/StyledText";
 import translate from "../../../../game/lang";
-import CounterfeiterMenu from "./RoleSpecificMenus/CounterfeiterMenu";
 import SmallPuppeteerMenu from "./RoleSpecificMenus/SmallPuppeteerMenu";
 import StewardMenu from "./RoleSpecificMenus/StewardMenu";
 import OjoMenu from "./RoleSpecificMenus/OjoMenu";
@@ -34,8 +32,6 @@ export default function RoleSpecificSection(){
     switch(roleState.type){
         case "auditor":
             return <AuditorMenu roleState={roleState}/>;
-        case "reporter":
-            return <LargeReporterMenu/>;
         case "hypnotist":
             return <LargeHypnotistMenu/>;
         case "doomsayer":
@@ -102,7 +98,6 @@ export default function RoleSpecificSection(){
         case "marksman": 
             return <MarksmanRoleSpecificMenu roleState={roleState} />;
         case "counterfeiter":
-            return <CounterfeiterMenu roleState={roleState}/>;
         case "forger":
             return <Counter
                 max={3}

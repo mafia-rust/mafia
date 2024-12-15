@@ -477,18 +477,6 @@ export function createGameManager(): GameManager {
                 guesses: guesses
             });
         },
-        sendSetReporterReport(report: string) {
-            this.server.sendPacket({
-                type: "setReporterReport",
-                report: report,
-            });
-        },
-        sendSetReporterReportPublic(isPublic: boolean) {
-            this.server.sendPacket({
-                type: "setReporterReportPublic",
-                public: isPublic,
-            });
-        },
         sendSetConsortOptions(
             roleblock: boolean,
             youWereRoleblockedMessage: boolean,
@@ -508,18 +496,6 @@ export function createGameManager(): GameManager {
                 youWereTransportedMessage: youWereTransportedMessage ?? false,
                 youWerePossessedMessage: youWerePossessedMessage ?? false,
                 yourTargetWasJailedMessage: yourTargetWasJailedMessage ?? false
-            });
-        },
-        sendSetCounterfeiterAction(action: "forge" | "noForge") {
-            this.server.sendPacket({
-                type: "setCounterfeiterAction",
-                action: action
-            });
-        },
-        sendSetRecruiterAction(action) {
-            this.server.sendPacket({
-                type: "setRecruiterAction",
-                action: action
             });
         },
 
