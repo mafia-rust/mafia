@@ -1,5 +1,5 @@
 import { useGameState, usePlayerState } from "../../../../components/useHooks";
-import React, { ReactElement, useMemo } from "react";
+import React, { ReactElement } from "react";
 import AuditorMenu from "./RoleSpecificMenus/AuditorMenu";
 import LargeReporterMenu from "./RoleSpecificMenus/LargeReporterMenu";
 import LargeHypnotistMenu from "./RoleSpecificMenus/LargeHypnotistMenu";
@@ -12,9 +12,7 @@ import SmallPuppeteerMenu from "./RoleSpecificMenus/SmallPuppeteerMenu";
 import StewardMenu from "./RoleSpecificMenus/StewardMenu";
 import OjoMenu from "./RoleSpecificMenus/OjoMenu";
 import RecruiterMenu from "./RoleSpecificMenus/RecruiterMenu";
-import { Role, roleJsonData, RoleState } from "../../../../game/roleState.d";
-import RoleDropdown from "../../../../components/RoleDropdown";
-import GAME_MANAGER from "../../../..";
+import { RoleState } from "../../../../game/roleState.d";
 
 
 export default function RoleSpecificSection(){
@@ -127,7 +125,6 @@ export default function RoleSpecificSection(){
             return <SpiralMenu />;
         case "puppeteer":
             return <SmallPuppeteerMenu 
-                action={roleState.action} 
                 marionettesRemaining={roleState.marionettesRemaining}
                 phase={phaseState.type}
             />;
@@ -138,13 +135,6 @@ export default function RoleSpecificSection(){
                 dayNumber={dayNumber}
                 phase={phaseState.type}
             />;
-        case "wildcard":
-        case "trueWildcard":
-        case "mafiaSupportWildcard":
-        case "mafiaKillingWildcard":
-        case "fiendsWildcard": {
-            return <WildcardRoleSpecificMenu roleState={roleState} />
-        }
         case "martyr":
             if (roleState.state.type === "stillPlaying") {
                 return <>
@@ -252,57 +242,6 @@ function MediumRoleSpecificMenu(props: Readonly<{
             </div>
         </>;
     }
-}
-
-function WildcardRoleSpecificMenu(props: Readonly<{
-    roleState: RoleState & { type: "wildcard" | "trueWildcard" | "mafiaSupportWildcard" | "mafiaKillingWildcard" | "fiendsWildcard" }
-}>): ReactElement {
-    const enabledRoles = useGameState(
-        gameState => gameState.enabledRoles,
-        ["enabledRoles"]
-    )!;
-
-    const ROLES = roleJsonData();
-
-    const choosable = useMemo(() => {
-        switch (props.roleState.type) {
-            case "wildcard":
-            case "trueWildcard":
-                return enabledRoles
-            case "mafiaSupportWildcard":
-                return Object.keys(ROLES).filter((rle)=>
-                    rle === "mafiaSupportWildcard" ||
-                    (
-                        ROLES[rle as keyof typeof ROLES].roleSets.includes("mafiaSupport") &&
-                        enabledRoles.includes(rle as Role)
-                    )
-                ).map((r)=>r as Role)
-            case "mafiaKillingWildcard":
-                return Object.keys(ROLES).filter((rle)=>
-                    rle === "mafiaKillingWildcard" ||
-                    (
-                        ROLES[rle as keyof typeof ROLES].roleSets.includes("mafiaKilling") &&
-                        enabledRoles.includes(rle as Role)
-                    )
-                ).map((r)=>r as Role)
-            case "fiendsWildcard":
-                return Object.keys(ROLES).filter((rle)=>
-                    ROLES[rle as keyof typeof ROLES].roleSets.includes("fiends") &&
-                    enabledRoles.includes(rle as Role)
-                ).map((r)=>r as Role)
-        }
-    }, [enabledRoles, props.roleState.type, ROLES])
-
-    return <div className="role-information">
-        <StyledText>{translate(`role.${props.roleState.type}.smallRoleMenu`)}</StyledText>
-        <RoleDropdown 
-            value={props.roleState.role} 
-            enabledRoles={choosable}
-            onChange={(rle)=>{
-                GAME_MANAGER.sendSetWildcardRoleOutline(rle);
-            }}
-        />
-    </div>;
 }
 
 function SpiralMenu(props: {}): ReactElement | null {

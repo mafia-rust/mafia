@@ -6,11 +6,9 @@ use super::{
     phase::{PhaseState, PhaseType},
     player::{PlayerIndex, PlayerReference},
     role::{
-        mayor::Mayor, politician::Politician,
-        puppeteer::PuppeteerAction, recruiter::RecruiterAction,
+        mayor::Mayor, politician::Politician, recruiter::RecruiterAction,
         Role, RoleState
     },
-    role_list::RoleSet,
     spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
     Game
 };
@@ -232,42 +230,6 @@ impl Game {
                     sender_player_ref.set_role_state(self, RoleState::Doomsayer(doomsayer));
                 }
             },
-            ToServerPacket::SetWildcardRole { role } => {
-
-                if !self.settings.enabled_roles.contains(&role) {
-                    break 'packet_match;
-                }
-                
-                match sender_player_ref.role_state(self).clone() {
-                    RoleState::Wildcard(mut wild_card) => {
-                        wild_card.role = role;
-                        sender_player_ref.set_role_state(self, RoleState::Wildcard(wild_card));
-                    }
-                    RoleState::TrueWildcard(mut true_wildcard) => {
-                        true_wildcard.role = role;
-                        sender_player_ref.set_role_state(self, RoleState::TrueWildcard(true_wildcard));
-                    }
-                    RoleState::MafiaSupportWildcard(mut mafia_wild_card) => {
-                        if RoleSet::MafiaSupport.get_roles().contains(&role) {
-                            mafia_wild_card.role = role;
-                        }
-                        sender_player_ref.set_role_state(self, RoleState::MafiaSupportWildcard(mafia_wild_card));
-                    }
-                    RoleState::MafiaKillingWildcard(mut mafia_wild_card) => {
-                        if RoleSet::MafiaKilling.get_roles().contains(&role) {
-                            mafia_wild_card.role = role;
-                        }
-                        sender_player_ref.set_role_state(self, RoleState::MafiaKillingWildcard(mafia_wild_card));
-                    }
-                    RoleState::FiendsWildcard(mut fiends_wild_card) => {
-                        if RoleSet::Fiends.get_roles().contains(&role) {
-                            fiends_wild_card.role = role;
-                        }
-                        sender_player_ref.set_role_state(self, RoleState::FiendsWildcard(fiends_wild_card));
-                    }
-                    _ => {}
-                }
-            }
             ToServerPacket::SetReporterReport { report } => {
                 if let RoleState::Reporter(mut reporter) = sender_player_ref.role_state(self).clone(){
                     reporter.report = report;
@@ -309,19 +271,6 @@ impl Game {
                 if let RoleState::Counterfeiter(mut counterfeiter) = sender_player_ref.role_state(self).clone(){
                     counterfeiter.action = action;
                     sender_player_ref.set_role_state(self, RoleState::Counterfeiter(counterfeiter));
-                }
-            },
-            ToServerPacket::SetPuppeteerAction { action } => {
-                if let RoleState::Puppeteer(mut pup) = sender_player_ref.role_state(self).clone(){
-                    pup.action = action.clone();
-                    if pup.marionettes_remaining == 0 {
-                        pup.action = PuppeteerAction::Poison;
-                    }
-                    sender_player_ref.set_role_state(self, RoleState::Puppeteer(pup));
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::PuppeteerActionChosen { action });
-                    
-                    //Updates selection if it was invalid
-                    sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
                 }
             },
             ToServerPacket::SetRecruiterAction { action } => {

@@ -6,7 +6,7 @@ use crate::game::{
     player::{PlayerIndex, PlayerReference},
     role::{
         auditor::AuditorResult, engineer::TrapState, kira::KiraResult,
-        puppeteer::PuppeteerAction, recruiter::RecruiterAction, spy::SpyBug, Role
+        recruiter::RecruiterAction, spy::SpyBug, Role
     },
     role_list::RoleOutline,
     tag::Tag,
@@ -213,8 +213,6 @@ pub enum ChatMessageVariant {
     ScarecrowResult{players: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
     RoleChosen{role: Option<Role>},
-    #[serde(rename_all = "camelCase")]
-    PuppeteerActionChosen{action: PuppeteerAction},
     #[serde(rename_all = "camelCase")]
     RecruiterActionChosen{action: RecruiterAction},
 

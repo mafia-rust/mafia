@@ -191,6 +191,7 @@ impl PlayerReference{
                         AbilitySelection::TwoRoleOption { .. } => {},
                         AbilitySelection::TwoRoleOutlineOption { .. } => {},
                         AbilitySelection::String { .. } => {},
+                        AbilitySelection::Integer { .. } => {},
                         AbilitySelection::Kira { .. } => {},
                     }
                     

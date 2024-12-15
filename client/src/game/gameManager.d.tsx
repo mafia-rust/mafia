@@ -1,8 +1,6 @@
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
-import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
-import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
 import { AbilityInput } from "./abilityInput";
 import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player, ModifierType } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
@@ -104,7 +102,6 @@ export type GameManager = {
         [number, DoomsayerGuess],
         [number, DoomsayerGuess]
     ]): void;
-    sendSetWildcardRoleOutline(roleOutline: Role): void;
     sendSetReporterReport(report: string): void;
     sendSetReporterReportPublic(isPublic: boolean): void;
     sendSetConsortOptions(
@@ -117,7 +114,6 @@ export type GameManager = {
         yourTargetWasJailedMessage: boolean
     ): void
     sendSetCounterfeiterAction(action: "forge" | "noForge"): void;
-    sendSetPuppeteerAction(action: PuppeteerAction): void;
     sendSetRecruiterAction(action: RecruiterAction): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;

@@ -1057,9 +1057,7 @@
                 "text": "Erm... Guys? What do i do, they're gonna catch me!", 
                 "chatGroup": "puppeteer",
                 "block": false
-            },
-            {"type": "puppeteerActionChosen", "action": "poison"},
-            {"type": "puppeteerActionChosen", "action": "string"}
+            }
         ]
     },
     "pyrolisk": {

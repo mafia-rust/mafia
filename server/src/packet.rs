@@ -30,8 +30,7 @@ use crate::{
         grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType},
         player::{PlayerIndex, PlayerReference}, 
         role::{
-            counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess,
-            puppeteer::PuppeteerAction, recruiter::RecruiterAction, 
+            counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess, recruiter::RecruiterAction, 
             ClientRoleStateEnum, Role
         },
         role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings,
@@ -258,8 +257,6 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SetDoomsayerGuess{ guesses: [(PlayerReference, DoomsayerGuess); 3] },
     #[serde(rename_all = "camelCase")]
-    SetWildcardRole{ role: Role },
-    #[serde(rename_all = "camelCase")]
     SetReporterReport{ report: String},
     #[serde(rename_all = "camelCase")]
     SetReporterReportPublic{ public: bool},
@@ -275,7 +272,6 @@ pub enum ToServerPacket{
         your_target_was_jailed_message: bool,
     },
     SetCounterfeiterAction{action: CounterfeiterAction},
-    SetPuppeteerAction{action: PuppeteerAction},
     SetRecruiterAction{action: RecruiterAction},
 
 

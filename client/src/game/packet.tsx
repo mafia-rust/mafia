@@ -5,7 +5,6 @@ import { RoleList, RoleOutline } from "./roleListState.d"
 import { Role, RoleState } from "./roleState.d"
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu"
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu"
-import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu"
 import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu"
 import { AbilityInput, ControllerID, SavedController } from "./abilityInput"
 import { ListMapData } from "../ListMap"
@@ -290,9 +289,6 @@ export type ToServerPacket = {
         [number, DoomsayerGuess]
     ]
 } | {
-    type: "setWildcardRole",
-    role: Role
-} | {
     type: "setReporterReport",
     report: string
 } | {
@@ -308,9 +304,6 @@ export type ToServerPacket = {
     youWereTransportedMessage: boolean,
     youWerePossessedMessage: boolean,
     yourTargetWasJailedMessage: boolean
-} | {
-    type: "setPuppeteerAction",
-    action: PuppeteerAction
 } | {
     type: "setRecruiterAction",
     action: RecruiterAction

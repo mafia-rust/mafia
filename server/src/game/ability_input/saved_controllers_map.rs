@@ -324,6 +324,18 @@ impl SavedControllersMap{
                 }
             )
     }
+
+    pub fn get_controller_current_selection_integer(&self,id: ControllerID)->Option<IntegerSelection>{
+        self
+            .get_controller_current_selection(id)
+            .and_then(|selection| 
+                if let AbilitySelection::Integer { selection } = selection {
+                    Some(selection)
+                }else{
+                    None
+                }
+            )
+    }
     
     pub fn get_controller_current_selection_kira(&self,id: ControllerID)->Option<KiraSelection>{
         self

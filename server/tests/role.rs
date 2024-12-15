@@ -86,7 +86,7 @@ pub use mafia_server::game::{
         arsonist::Arsonist,
         spiral::Spiral,
         pyrolisk::Pyrolisk,
-        puppeteer::{Puppeteer, PuppeteerAction},
+        puppeteer::Puppeteer,
         fiends_wildcard::FiendsWildcard,
 
         armorsmith::Armorsmith, auditor::AuditorResult,
@@ -1738,12 +1738,12 @@ fn puppeteer_marionettes_philosopher(){
         townie2: Detective
     );
 
-    puppeteer.set_role_state(RoleState::Puppeteer(Puppeteer{
-        marionettes_remaining: 3,
-        action: PuppeteerAction::String
-    }));
+    puppeteer.send_ability_input(AbilityInput::new(
+        ControllerID::role(puppeteer.player_ref(), Role::Puppeteer, 1),
+        AbilitySelection::new_integer(1)
+    ));
 
-    assert!(puppeteer.set_night_selection_single(townie));
+    assert!(puppeteer.send_ability_input_player_list_typical(townie));
     assert!(philo.send_ability_input_two_player_typical(townie2, townie));
 
     game.next_phase();
@@ -1772,16 +1772,16 @@ fn puppeteer_marionettes_die(){
         townie3: Detective
     );
 
-    puppeteer.set_role_state(RoleState::Puppeteer(Puppeteer{
-        marionettes_remaining: 3,
-        action: PuppeteerAction::String
-    }));
+    puppeteer.send_ability_input(AbilityInput::new(
+        ControllerID::role(puppeteer.player_ref(), Role::Puppeteer, 1),
+        AbilitySelection::new_integer(1)
+    ));
 
-    assert!(puppeteer.set_night_selection_single(townie));
+    assert!(puppeteer.send_ability_input_player_list_typical(townie));
 
     game.skip_to(Night, 2);
 
-    assert!(puppeteer.set_night_selection_single(townie2));
+    assert!(puppeteer.send_ability_input_player_list_typical(townie2));
 
     game.next_phase();
 
@@ -1806,12 +1806,12 @@ fn puppeteer_marionettes_win(){
         townie2: Detective
     );
 
-    puppeteer.set_role_state(RoleState::Puppeteer(Puppeteer{
-        marionettes_remaining: 3,
-        action: PuppeteerAction::String
-    }));
+    puppeteer.send_ability_input(AbilityInput::new(
+        ControllerID::role(puppeteer.player_ref(), Role::Puppeteer, 1),
+        AbilitySelection::new_integer(1)
+    ));
 
-    assert!(puppeteer.set_night_selection_single(townie));
+    assert!(puppeteer.send_ability_input_player_list_typical(townie));
 
     game.skip_to(Nomination, 2);
 
@@ -1841,11 +1841,11 @@ fn deputy_shoots_marionette(){
         townie: Detective
     );
 
-    puppeteer.set_role_state(RoleState::Puppeteer(Puppeteer{
-        marionettes_remaining: 3,
-        action: PuppeteerAction::String
-    }));
-    assert!(puppeteer.set_night_selection_single(townie));
+    puppeteer.send_ability_input(AbilityInput::new(
+        ControllerID::role(puppeteer.player_ref(), Role::Puppeteer, 1),
+        AbilitySelection::new_integer(1)
+    ));
+    assert!(puppeteer.send_ability_input_player_list_typical(townie));
 
     game.skip_to(Discussion, 2);
 
@@ -1864,11 +1864,11 @@ fn vigilante_shoots_marionette(){
         townie: Detective
     );
 
-    puppeteer.set_role_state(RoleState::Puppeteer(Puppeteer{
-        marionettes_remaining: 3,
-        action: PuppeteerAction::String
-    }));
-    assert!(puppeteer.set_night_selection_single(townie));
+    puppeteer.send_ability_input(AbilityInput::new(
+        ControllerID::role(puppeteer.player_ref(), Role::Puppeteer, 1),
+        AbilitySelection::new_integer(1)
+    ));
+    assert!(puppeteer.send_ability_input_player_list_typical(townie));
     assert!(vigilante.send_ability_input_player_list_typical(townie));
 
     game.next_phase();
@@ -2265,11 +2265,11 @@ fn witch_leaves_by_winning_puppeteer(){
         min: Witch
     );
 
-    pup.set_role_state(RoleState::Puppeteer(Puppeteer{
-        marionettes_remaining: 3,
-        action: PuppeteerAction::String
-    }));
-    assert!(pup.set_night_selection_single(t));
+    pup.send_ability_input(AbilityInput::new(
+        ControllerID::role(pup.player_ref(), Role::Puppeteer, 1),
+        AbilitySelection::new_integer(1)
+    ));
+    assert!(pup.send_ability_input_player_list_typical(t));
 
     game.skip_to(Night, 3);
 
@@ -2351,20 +2351,21 @@ fn fiends_wildcard_defense_upgrade(){
         mafia: Godfather
     );
     
-    fiend.set_role_state(RoleState::FiendsWildcard(FiendsWildcard{
-        role: Role::Puppeteer
-    }));
+    fiend.send_ability_input(AbilityInput::new(
+        ControllerID::role(fiend.player_ref(), Role::FiendsWildcard, 0),
+        AbilitySelection::new_role_option(Some(Role::Puppeteer))
+    ));
 
     game.next_phase();
 
-    fiend.set_role_state(RoleState::Puppeteer(Puppeteer{
-        marionettes_remaining: 3,
-        action: PuppeteerAction::String
-    }));
+    fiend.send_ability_input(AbilityInput::new(
+        ControllerID::role(fiend.player_ref(), Role::Puppeteer, 1),
+        AbilitySelection::new_integer(1)
+    ));
 
     assert!(fiend.role() == Role::Puppeteer);
     assert!(mafia.send_ability_input_player_list_typical(fiend));
-    assert!(fiend.set_night_selection_single(mafia));
+    assert!(fiend.send_ability_input_player_list_typical(mafia));
 
     game.next_phase();
 

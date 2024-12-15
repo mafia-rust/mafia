@@ -7,7 +7,7 @@ use crate::game::{
 
 use super::{selection_type::{
     kira_selection::KiraSelection, role_option_selection::RoleOptionSelection, two_player_option_selection::TwoPlayerOptionSelection, two_role_option_selection::TwoRoleOptionSelection, two_role_outline_option_selection::TwoRoleOutlineOptionSelection, BooleanSelection
-}, PlayerListSelection, StringSelection};
+}, IntegerSelection, PlayerListSelection, StringSelection};
 
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Ord, Eq)]
@@ -22,6 +22,7 @@ pub enum AbilitySelection{
     TwoRoleOption{selection: TwoRoleOptionSelection},
     TwoRoleOutlineOption{selection: TwoRoleOutlineOptionSelection},
     String{selection: StringSelection},
+    Integer{selection: IntegerSelection},
     Kira{selection: KiraSelection}
 }
 impl AbilitySelection{
@@ -48,6 +49,9 @@ impl AbilitySelection{
     }
     pub fn new_string(string: String)->Self{
         Self::String{selection: StringSelection(string)}
+    }
+    pub fn new_integer(integer: i8)->Self{
+        Self::Integer{selection: IntegerSelection(integer)}
     }
     pub fn new_kira(selection: KiraSelection)->Self{
         Self::Kira{selection}

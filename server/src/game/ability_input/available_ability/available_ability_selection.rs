@@ -23,6 +23,7 @@ pub enum AvailableAbilitySelection{
     TwoRoleOption{selection: AvailableTwoRoleOptionSelection},
     TwoRoleOutlineOption{selection: AvailableTwoRoleOutlineOptionSelection},
     String,
+    Integer{selection: AvailableIntegerSelection},
     Kira{selection: AvailableKiraSelection}
 }
 impl AvailableAbilitySelection{
@@ -64,6 +65,10 @@ impl AvailableAbilitySelection{
     pub fn new_two_role_outline_option(available_outlines: VecSet<Option<RoleOutlineReference>>)->Self{
         Self::TwoRoleOutlineOption{selection: AvailableTwoRoleOutlineOptionSelection(available_outlines)}
     }
+    /// if min > max, then it sets both of them to min
+    pub fn new_integer(min: i8, max: i8)->Self{
+        Self::Integer { selection: AvailableIntegerSelection{min, max}}
+    }
     pub fn new_string()->Self{
         Self::String
     }
@@ -99,6 +104,10 @@ impl ValidateAvailableSelection for AvailableAbilitySelection{
                 return available.validate_selection(game, selection);
             },
             Self::String => {true},
+            Self::Integer{ selection: available } => {
+                let AbilitySelection::Integer{selection} = selection else {return false};
+                return available.validate_selection(game, selection);
+            },
             Self::Kira{ selection: available} => {
                 let AbilitySelection::Kira { selection } = selection else {return false};
                 return available.validate_selection(game, selection);

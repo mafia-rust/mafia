@@ -68,6 +68,9 @@
     "role/counterfeiter/0": {
         "midnight": true
     },
+    "role/mafiaKillingWildcard/0": {
+        "midnight": false
+    },
     "role/framer/0": {
         "midnight": true
     },
@@ -110,6 +113,9 @@
     "role/necromancer/0": {
         "midnight": true
     },
+    "role/mafiaSupportWildcard/0": {
+        "midnight": false
+    },
     "role/jester/0": {
         "midnight": true
     },
@@ -140,6 +146,12 @@
     "role/werewolf/0": {
         "midnight": true
     },
+    "role/puppeteer/0": {
+        "midnight": true
+    },
+    "role/puppeteer/1": {
+        "midnight": true
+    },
     "role/pyrolisk/0": {
         "midnight": true
     },
@@ -149,8 +161,20 @@
     "role/kira/0": {
         "midnight": true
     },
+    "role/fiendsWildcard/0": {
+        "midnight": false
+    },
+    "role/apostle/0": {
+        "midnight": true
+    },
     "role/zealot/0": {
         "midnight": true
+    },
+    "role/wildcard/0": {
+        "midnight": false
+    },
+    "role/trueWildcard/0": {
+        "midnight": false
     },
     "pitchforkVote": {
         "midnight": true

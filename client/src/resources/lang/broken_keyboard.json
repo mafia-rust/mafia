@@ -686,8 +686,6 @@
     "chatMessage.scarecrowResult.nobody": "Y ddn't wrdblck nybdy.",
     "chatMessage.wildcardConvertFailed": "Y fld t cnvrt t th rl \\0. Th rl mght hv bn dsbld r tkn.",
     "chatMessage.kiraResult": "Kr rslt",
-    "chatMessage.puppeteerActionChosen.string": "Y chs t strng p  mrntt.",
-    "chatMessage.puppeteerActionChosen.poison": "Y chs t psn.",
     "chatMessage.cultConvertsNext": "Th clt wll ttmpt t ndctrnt nd cnvrt smn tnght.",
     "chatMessage.cultKillsNext": "Th clt wll ttmpt t scrfc nd kll smn tnght.",
     "chatMessage.phaseFastForwarded": "Th phs hs bn fst frwrdd.",

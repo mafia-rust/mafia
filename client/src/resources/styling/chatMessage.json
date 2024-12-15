@@ -32,7 +32,6 @@
     "playerNominated": "trial",
     "puppeteerPlayerIsNowMarionette": "result",
     "recruiterPlayerIsNowRecruit": "result",
-    "puppeteerActionChosen": "special",
     "recruiterActionChosen": "special",
     "jailorDecideExecute": "special",
     "roleBlocked": "result",

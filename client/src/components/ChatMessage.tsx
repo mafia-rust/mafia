@@ -13,9 +13,8 @@ import { CopyButton } from "./ClipboardButtons";
 import { useGameState, useLobbyOrGameState, usePlayerState } from "./useHooks";
 import { KiraResult, KiraResultDisplay } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
-import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
 import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
-import { ControllerID, AbilitySelection, translateControllerID } from "../game/abilityInput";
+import { ControllerID, AbilitySelection, translateControllerID, controllerIdToLink } from "../game/abilityInput";
 import DetailsSummary from "./DetailsSummary";
 
 const ChatElement = React.memo((
@@ -517,6 +516,15 @@ export function translateChatMessage(
                 case "string":
                     out = translate("chatMessage.abilityUsed.selection.string", sanitizePlayerMessage(replaceMentions(message.selection.selection)));
                     break;
+                case "integer":
+                    let text = translateChecked("controllerId."+controllerIdToLink(message.abilityId).replace(/\//g, ".") + ".integer." + message.selection.selection);
+                    
+                    if(text === null){
+                        text = message.selection.selection.toString()
+                    }
+
+                    out = translate("chatMessage.abilityUsed.selection.integer", text);
+                    break;
                 default:
                     out = "";
             }
@@ -655,8 +663,6 @@ export function translateChatMessage(
             }else{
                 return translate("chatMessage.roleChosen.role", translate("role."+message.role+".name"));
             }
-        case "puppeteerActionChosen":
-            return translate("chatMessage.puppeteerActionChosen."+message.action);
         case "recruiterActionChosen":
             return translate("chatMessage.recruiterActionChosen."+message.action);
         case "silenced":
@@ -977,9 +983,6 @@ export type ChatMessageVariant = {
 } | {
     type: "roleChosen",
     role: Role | null,
-} | {
-    type: "puppeteerActionChosen",
-    action: PuppeteerAction,
 } | {
     type: "recruiterActionChosen",
     action: RecruiterAction,

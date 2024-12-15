@@ -477,12 +477,6 @@ export function createGameManager(): GameManager {
                 guesses: guesses
             });
         },
-        sendSetWildcardRoleOutline(role) {
-            this.server.sendPacket({
-                type: "setWildcardRole",
-                role: role
-            });
-        },
         sendSetReporterReport(report: string) {
             this.server.sendPacket({
                 type: "setReporterReport",
@@ -519,12 +513,6 @@ export function createGameManager(): GameManager {
         sendSetCounterfeiterAction(action: "forge" | "noForge") {
             this.server.sendPacket({
                 type: "setCounterfeiterAction",
-                action: action
-            });
-        },
-        sendSetPuppeteerAction(action) {
-            this.server.sendPacket({
-                type: "setPuppeteerAction",
                 action: action
             });
         },
