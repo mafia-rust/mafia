@@ -929,7 +929,7 @@ fn can_type_in_jail() {
         detective: Detective
     );
 
-    jailor.day_target(detective);
+    jailor.send_ability_input_player_list_typical(detective);
     game.next_phase();
 
     detective.send_message("Hello!");
@@ -1324,14 +1324,14 @@ fn godfather_backup_kills_jail() {
         jail: Jailor
     );
 
-    assert!(jail.day_target(godfather));
+    jail.send_ability_input_player_list_typical(godfather);
     godfather.send_ability_input(AbilityInput::new(
         ControllerID::syndicate_choose_backup(),
         AbilitySelection::new_player_list(vec![hypnotist.player_ref()])
     ));
 
     game.next_phase();
-    assert!(hypnotist.send_ability_input_player_list_typical(det));
+    hypnotist.send_ability_input_player_list_typical(det);
     hypnotist.send_ability_input(AbilityInput::new(
         ControllerID::syndicate_backup_attack(),
         AbilitySelection::new_player_list(vec![det.player_ref()])
@@ -1996,7 +1996,7 @@ fn bodyguard_gets_single_target_jailed_message() {
         townie: Detective
     );
 
-    jailor.day_target(townie);
+    jailor.send_ability_input_player_list_typical(townie);
 
     game.next_phase();
 
@@ -2017,7 +2017,7 @@ fn bodyguard_gets_single_target_jailed_message() {
 
 #[test]
 fn martyr_suicide_ends_game() {
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         martyr: Martyr,
         player1: Mafioso,
         player2: Detective,
@@ -2030,7 +2030,7 @@ fn martyr_suicide_ends_game() {
         ChatMessageVariant::MartyrRevealed { martyr: martyr.index() }
     );
 
-    martyr.set_night_selection_single(martyr);
+    martyr.send_ability_input_boolean_typical(true);
 
     game.next_phase();
 

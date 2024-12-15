@@ -182,13 +182,13 @@
     "role.jailor.name:var.0": "Jailer",
     "role.jailor.name:var.1": "Jailors",
     "role.jailor.name:var.2": "Jailers",
-    "role.jailor.target": "Execute",
     "role.jailor.roleDataText.executionsRemaining": "\\0 executions remaining",
     "role.jailor.roleDataText.nobody": "You haven't chosen to jail anybody.",
     "role.jailor.roleDataText": "You chose to jail \\0.",
-    "role.jailor.dayTarget": "Jail",
     "role.jailor.youAreSelecting": "You chose to execute \\0.",
     "role.jailor.youAreSelecting.null": "You haven't chosen to execute anyone",
+    "controllerId.jailor.0.name": "Jail",
+    "controllerId.jailor.1.name": "Kill Prisoner",
 
     "role.villager.name":"Villager",
     "role.villager.name:var.0":"Villagers",
@@ -528,8 +528,8 @@
 
     "role.kidnapper.name": "Kidnapper",
     "role.kidnapper.name:var.0": "Kidnappers",
-    "role.kidnapper.target": "Execute",
-    "role.kidnapper.dayTarget": "Kidnap",
+    "controllerId.kidnapper.0.name": "Kidnap",
+    "controllerId.kidnapper.1.name": "Kill Prisoner",
 
     "role.politician.name": "Politician",
     "role.politician.name:var.0": "Politicians",
@@ -1648,11 +1648,11 @@
     "wiki.article.role.chronokaiser.attributes":"* You have no night time ability\n* Everyone is told how much you sped up the game each day",
     "wiki.article.role.chronokaiser.extra":"* Roleblocking doesn't effect your ability\n If there are multiple Chronokaisers, the message is sent twice during discussion, and the game is sped up twice",
 
-    "wiki.article.role.martyr.reminder": "If you die, you win, and everyone else dies too",
-    "wiki.article.role.martyr.guide": "If you die, you win, and everyone commits suicide in an attempt to follow you to the afterlife. The entire town knows that you're the martyr. Good Luck!",
-    "wiki.article.role.martyr.abilities":"* Visit yourself to attack yourself and spend one bullet\n* You start with 2 bullets\n* When you die, everyone else commits suicide and you win.",
+    "wiki.article.role.martyr.reminder": "If you die, you win, and everyone else dies too, you can shoot yourself.",
+    "wiki.article.role.martyr.guide": "If you die, you win, and everyone commits suicide in an attempt to follow you to the afterlife\n - You are revealed to the entire town\n - You can choose to shoot yourself X times (X = Total players ÷ 5 (round up))\n - You can't shoot night 1",
+    "wiki.article.role.martyr.abilities":"* Visit yourself to attack yourself and spend one bullet\n* You start with X bullets (X = Total players ÷ 5 (round up))\n* When you die, everyone else commits suicide and you win.",
     "wiki.article.role.martyr.attributes":"* When you have zero bullets left, you leave town and lose\n* You have a basic attack",
-    "wiki.article.role.martyr.extra":"* When you visit a player while you have zero bullets left you will not attack them\n* You're an ex-cultist, they rejected you because you told the truth",
+    "wiki.article.role.martyr.extra":"* You're an ex-cultist, they rejected you because you told the truth",
 
     "wiki.article.role.drunk.reminder": "You are told you are a town investigate role, not the drunk, but you get dubious information.",
     "wiki.article.role.drunk.guide": "Before the game starts, whoever gets this role switches roles without being told, and they become confused until the end of the game. Their role switches to either Detective, Philosopher, Snoop, Gossip, Tally Clerk, Auditor, or Psychic\n - This means that if you got one of those roles, you could be confused and not even know it.\n - The drunk is a town loyalist, so you still win with town.\n - You have suspicious aura\n - If your role changes, you stop being confused and you don't have suspicious aura anymore.",

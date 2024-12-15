@@ -1,4 +1,10 @@
 {
+    "role/jailor/0": {
+        "midnight": false
+    },
+    "role/jailor/1": {
+        "midnight": true
+    },
     "role/detective/0": {
         "midnight": true
     },
@@ -117,6 +123,12 @@
         "midnight": true
     },
     "role/warper/0": {
+        "midnight": true
+    },
+    "role/kidnapper/0": {
+        "midnight": false
+    },
+    "role/kidnapper/1": {
         "midnight": true
     },
     "role/serialKiller/0": {

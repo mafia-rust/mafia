@@ -103,14 +103,14 @@ impl RoleStateImpl for Medium {
                 self.seances_remaining = self.seances_remaining.saturating_sub(1);
                 self.seanced_target = Some(target.clone());
                 
+                actor_ref.set_role_state(game, self);
+
                 game.add_message_to_chat_group(ChatGroup::Dead,
                     ChatMessageVariant::MediumHauntStarted{
                         medium: actor_ref.index(),
                         player: target.index()
                     }
                 );
-                
-                actor_ref.set_role_state(game, self);
             },
             _=>{}
         }
