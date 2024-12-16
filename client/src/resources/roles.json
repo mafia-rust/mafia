@@ -29,8 +29,6 @@
                 "chatGroup": "jail",
                 "block": false
             },
-            {"type": "jailorDecideExecute","target": 7},
-            {"type": "jailorDecideExecute","target": null},
             {"type": "wardblocked"},
             {"type": "someoneSurvivedYourAttack"}
         ]
@@ -971,8 +969,6 @@
                 "text": "I'm jester", 
                 "chatGroup": "jail"
             },
-            {"type": "jailorDecideExecute","target": 7},
-            {"type": "jailorDecideExecute","target": null},
             {"type": "wardblocked"},
             {"type": "someoneSurvivedYourAttack"}
         ]

@@ -152,14 +152,4 @@ impl RoleStateImpl for Jailor {
             _ => {}
         }
     }
-    fn on_validated_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: super::AbilityInput) {
-        if actor_ref != input_player {return};
-        if ability_input.id() != ControllerID::role(actor_ref, Role::Jailor, 1) {return};
-        let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(ControllerID::role(actor_ref, Role::Jailor, 1)) else {return};
-        game.add_message_to_chat_group(ChatGroup::Jail,
-            ChatMessageVariant::JailorDecideExecute {
-                target: target.first().map(|p|p.index())
-            }
-        );
-    }
 }

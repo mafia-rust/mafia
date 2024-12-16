@@ -30,7 +30,6 @@
     "playerNominated": "trial",
     "puppeteerPlayerIsNowMarionette": "result",
     "recruiterPlayerIsNowRecruit": "result",
-    "jailorDecideExecute": "special",
     "roleBlocked": "result",
     "sheriffResult": "result",
     "lookoutResult": "result",

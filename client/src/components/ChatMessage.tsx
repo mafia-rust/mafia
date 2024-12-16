@@ -557,12 +557,6 @@ export function translateChatMessage(
             return translate("chatMessage.recruiterPlayerIsNowRecruit",
                 playerNames[message.player]
             );
-        case "jailorDecideExecute":
-            if (message.target !== null) {
-                return translate("chatMessage.jailorDecideExecute", playerNames[message.target]);
-            } else {
-                return translate("chatMessage.jailorDecideExecute.nobody");
-            }
         case "godfatherBackup":
             if (message.backup !== null) {
                 return translate("chatMessage.godfatherBackup", playerNames[message.backup]);
@@ -819,9 +813,6 @@ export type ChatMessageVariant = {
 } | {
     type: "jailedSomeone",
     playerIndex: PlayerIndex
-} | {
-    type: "jailorDecideExecute"
-    target: PlayerIndex | null
 } | {
     type: "yourConvertFailed"
 } | {
