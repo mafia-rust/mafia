@@ -1,6 +1,5 @@
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
-import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
 import { AbilityInput } from "./abilityInput";
 import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player, ModifierType } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
@@ -85,8 +84,6 @@ export type GameManager = {
     
     sendJudgementPacket(judgement: Verdict): void;
     sendVotePacket(voteeIndex: PlayerIndex| null): void;
-    sendTargetPacket(targetIndexList: number[]): void;
-    sendDayTargetPacket(targetIndex: number): void;
     sendSaveWillPacket(will: string): void;
     sendSaveNotesPacket(notes: string[]): void;
     sendSaveCrossedOutOutlinesPacket(crossedOutOutlines: number[]): void;

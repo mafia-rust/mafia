@@ -117,7 +117,7 @@ impl RoleStateImpl for Armorsmith {
             ControllerID::role(actor_ref, Role::Armorsmith, 0)
         )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<crate::game::visit::Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<crate::game::visit::Visit> {
         common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,

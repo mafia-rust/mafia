@@ -11,9 +11,16 @@ import StewardMenu from "./RoleSpecificMenus/StewardMenu";
 import OjoMenu from "./RoleSpecificMenus/OjoMenu";
 import RecruiterMenu from "./RoleSpecificMenus/RecruiterMenu";
 import { RoleState } from "../../../../game/roleState.d";
+import { PhaseState } from "../../../../game/gameState.d";
+import DetailsSummary from "../../../../components/DetailsSummary";
 
+    
 
-export default function RoleSpecificSection(){
+export default function RoleSpecificSection(): ReactElement{
+    const roleState = usePlayerState(
+        playerState => playerState.roleState,
+        ["yourRoleState"]
+    )!;
     const phaseState = useGameState(
         gameState => gameState.phaseState,
         ["phase"]
@@ -24,11 +31,22 @@ export default function RoleSpecificSection(){
         ["phase"]
     )!;
 
-    const roleState = usePlayerState(
-        playerState => playerState.roleState,
-        ["yourRoleState"]
-    )!;
-    
+    const inner = roleSpecificSectionInner(phaseState, dayNumber, roleState);
+
+    return <>{inner===null ? null : 
+        <DetailsSummary
+            summary={<StyledText>{translate("role."+roleState?.type+".name")}</StyledText>}
+        >
+            {inner}
+        </DetailsSummary>
+    }</>;
+}
+
+function roleSpecificSectionInner(
+    phaseState: PhaseState,
+    dayNumber: number,
+    roleState: RoleState
+): ReactElement | null{
     switch(roleState.type){
         case "auditor":
             return <AuditorMenu roleState={roleState}/>;
@@ -37,11 +55,21 @@ export default function RoleSpecificSection(){
         case "doomsayer":
             return <LargeDoomsayerMenu/>;
         case "jailor": 
-            return <JailorRoleSpecificMenu roleState={roleState}/>;
+            return <Counter 
+                max={3} 
+                current={roleState.executionsRemaining}
+            >
+                <StyledText>{translate("role.jailor.roleDataText.executionsRemaining", roleState.executionsRemaining)}</StyledText>
+            </Counter>;
         case "kidnapper": 
-            return <JailorRoleSpecificMenu roleState={roleState}/>;
+            return <Counter 
+                max={1} 
+                current={roleState.executionsRemaining}
+            >
+                <StyledText>{translate("role.jailor.roleDataText.executionsRemaining", roleState.executionsRemaining)}</StyledText>
+            </Counter>;
         case "medium": 
-            return <MediumRoleSpecificMenu roleState={roleState}/>
+            return <MediumRoleSpecificMenu roleState={roleState}/>;
         case "doctor": {
             return <Counter
                 max={1}
@@ -79,7 +107,7 @@ export default function RoleSpecificSection(){
                         <StyledText>{translate("role.vigilante.roleDataText", roleState.state.bullets)}</StyledText>
                     </Counter>
                 default:
-                    return null
+                    return null as null
             }
         case "veteran":
             return <Counter
@@ -113,7 +141,7 @@ export default function RoleSpecificSection(){
                 <StyledText>{translate("role.mortician.roleDataText", roleState.cremationsRemaining)}</StyledText>
             </Counter>
         case "ojo":
-            return <OjoMenu roleState={roleState}/>
+            return <OjoMenu roleState={roleState}/>;
         case "steward":
             return <StewardMenu roleState={roleState}/>;
         case "spiral": 
@@ -125,7 +153,6 @@ export default function RoleSpecificSection(){
             />;
         case "recruiter":
             return <RecruiterMenu 
-                action={roleState.action} 
                 remaining={roleState.recruitsRemaining}
                 dayNumber={dayNumber}
                 phase={phaseState.type}
@@ -144,10 +171,10 @@ export default function RoleSpecificSection(){
                     </Counter>
                 </>
             } else {
-                return null;
+                return null as null;
             }
         default:
-            return null;
+            return null as null;
     }
 }
 
@@ -166,44 +193,6 @@ function MarksmanRoleSpecificMenu(props: Readonly<{
     return <div className="role-information">
         <StyledText>{stateText}</StyledText>
     </div>
-}
-
-function JailorRoleSpecificMenu(props: Readonly<{
-    roleState: RoleState & { type: "jailor" | "kidnapper" } 
-}>): ReactElement {
-    const players = useGameState(
-        gameState => gameState.players,
-        ["gamePlayers"]
-    )!;
-    const phaseState = useGameState(
-        gameState => gameState.phaseState
-    )!;
-
-    const counter = <Counter 
-        max={props.roleState.type === "jailor" ? 3 : 1} 
-        current={props.roleState.executionsRemaining}
-    >
-        <StyledText>{translate("role.jailor.roleDataText.executionsRemaining", props.roleState.executionsRemaining)}</StyledText>
-    </Counter>;
-    if(phaseState.type==="night") {
-        return counter;
-    } else if (props.roleState.jailedTargetRef === null) {
-        return <>
-            {counter}
-            <div className="role-information">
-                <StyledText>{translate("role.jailor.roleDataText.nobody")}</StyledText>
-            </div>
-        </>
-    } else {
-        return <>
-            {counter}
-            <div className="role-information">
-                <StyledText>{translate("role.jailor.roleDataText", 
-                    players[props.roleState.jailedTargetRef].toString(), 
-                )}</StyledText>
-            </div>
-        </>
-    }
 }
 
 function MediumRoleSpecificMenu(props: Readonly<{
@@ -250,6 +239,6 @@ function SpiralMenu(props: {}): ReactElement | null {
             <StyledText>{translate("role.spiral.roleDataText.cannotSelect")}</StyledText>
         </div>
     } else {
-        return null;
+        return null as null;
     }
 }

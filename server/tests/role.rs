@@ -958,7 +958,7 @@ fn mafioso_cant_kill_mafia() {
         mortician: Mortician
     );
 
-    mafioso.set_night_selection_single(mortician);
+    mafioso.send_ability_input_player_list_typical(mortician);
 
     game.next_phase();
 
@@ -1248,7 +1248,9 @@ fn vigilante_cant_select_night_one() {
         vigilante_suicide: Vigilante
 
     );
-    assert!(!vigilante_suicide.set_night_selection_single(townie_b));
+    vigilante_suicide.send_ability_input_player_list_typical(townie_b);
+    game.next_phase();
+    assert!(townie_b.alive());
 }
 
 #[test]
@@ -1560,7 +1562,7 @@ fn bouncer_jailor_double_block() {
         det: Detective
     );
 
-    jail.day_target(gf);
+    jail.send_ability_input_player_list_typical(gf);
 
     game.next_phase();
 
@@ -2072,7 +2074,7 @@ fn martyr_roleblocked() {
         ChatMessageVariant::MartyrRevealed { martyr: martyr.index() }
     );
 
-    martyr.set_night_selection_single(martyr);
+    martyr.send_ability_input_player_list_typical(martyr);
     hypnotist.send_ability_input_player_list_typical(martyr);
 
     game.next_phase();
@@ -2105,7 +2107,7 @@ fn martyr_healed() {
         ChatMessageVariant::MartyrRevealed { martyr: martyr.index() }
     );
 
-    martyr.set_night_selection_single(martyr);
+    martyr.send_ability_input_player_list_typical(martyr);
     doctor.send_ability_input_player_list_typical(martyr);
 
     game.next_phase();
@@ -2156,7 +2158,7 @@ fn ojo_transporter(){
     ));
 
     transporter.send_ability_input_two_player_typical(player1, player2);
-    gf.set_night_selection_single(ojo);
+    gf.send_ability_input_player_list_typical(ojo);
 
     game.next_phase(); 
 

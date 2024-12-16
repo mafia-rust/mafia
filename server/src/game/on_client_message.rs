@@ -59,61 +59,6 @@ impl Game {
                 
                 sender_player_ref.set_verdict(self, verdict);
             },
-            ToServerPacket::Target { player_index_list }=>{
-                if self.current_phase().phase() != PhaseType::Night {break 'packet_match;}
-
-                let target_ref_list = match PlayerReference::index_vec_to_ref(self, &player_index_list){
-                    Ok(target_ref_list) => target_ref_list,
-                    Err(_) => {
-                        break 'packet_match;
-                    },
-                };
-                sender_player_ref.set_selection(self, target_ref_list.clone());
-                let target_ref_list = sender_player_ref.selection(self).clone();
-                
-                let mut target_message_sent = false;
-                for chat_group in sender_player_ref.get_current_send_chat_groups(self){
-                    match chat_group {
-                        ChatGroup::All | ChatGroup::Interview | ChatGroup::Dead => {},
-                        ChatGroup::Mafia | ChatGroup::Cult | ChatGroup::Puppeteer => {
-                            self.add_message_to_chat_group( chat_group,
-                                ChatMessageVariant::Targeted { 
-                                    targeter: sender_player_ref.index(), 
-                                    targets: PlayerReference::ref_vec_to_index(&target_ref_list)
-                                }
-                            );
-                            target_message_sent = true;
-                        },
-                        ChatGroup::Jail | ChatGroup::Kidnapped => {
-                            if sender_player_ref.role(self) == Role::Jailor || sender_player_ref.role(self) == Role::Kidnapper {
-                                self.add_message_to_chat_group(chat_group,
-                                    ChatMessageVariant::JailorDecideExecute {
-                                        target: target_ref_list.first().map(|p|p.index())
-                                    }
-                                );
-                                target_message_sent = true;
-                            }
-                        },
-                    }
-                }
-                
-                
-                if !target_message_sent{
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::Targeted { 
-                        targeter: sender_player_ref.index(), 
-                        targets: PlayerReference::ref_vec_to_index(&target_ref_list)
-                    });
-                }
-            },
-            ToServerPacket::DayTarget { player_index } => {               
-                let target_ref = match PlayerReference::new(self, player_index){
-                    Ok(target_ref) => target_ref,
-                    Err(_) => break 'packet_match,
-                };
-                if sender_player_ref.can_day_target(self, target_ref){
-                    sender_player_ref.do_day_action(self, target_ref);
-                }
-            },
             ToServerPacket::SendChatMessage { text, block } => {
 
                 if text.replace(['\n', '\r'], "").trim().is_empty() {

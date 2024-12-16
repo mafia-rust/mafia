@@ -235,10 +235,6 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     Vote{player_index: Option<PlayerIndex>},
     Judgement{verdict: Verdict},
-    #[serde(rename_all = "camelCase")]
-    Target{player_index_list: Vec<PlayerIndex>},
-    #[serde(rename_all = "camelCase")]
-    DayTarget{player_index:  PlayerIndex},
 
     SendChatMessage{text: String, block: bool},
     #[serde(rename_all = "camelCase")]

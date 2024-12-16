@@ -16,7 +16,6 @@
     "trialVerdict": "important",
     "phaseFastForwarded": "important",
     "playerWonOrLost": "trial",
-    "targeted": "target",
     "abilityUsed": "target",
     "mayorRevealed": "special",
     "mayorCantWhisper": "special",

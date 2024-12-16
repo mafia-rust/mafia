@@ -13,7 +13,6 @@ import { CopyButton } from "./ClipboardButtons";
 import { useGameState, useLobbyOrGameState, usePlayerState } from "./useHooks";
 import { KiraResult, KiraResultDisplay } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
-import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
 import { ControllerID, AbilitySelection, translateControllerID, controllerIdToLink } from "../game/abilityInput";
 import DetailsSummary from "./DetailsSummary";
 
@@ -450,16 +449,6 @@ export function translateChatMessage(
                 message.innocent,
                 message.guilty
             );
-        case "targeted":
-            if (message.targets.length > 0) {
-                return translate("chatMessage.targeted",
-                    playerNames[message.targeter],
-                    playerListToString(message.targets, playerNames));
-            } else {
-                return translate("chatMessage.targeted.cleared",
-                    playerNames[message.targeter],
-                );
-            }
         case "abilityUsed":
 
             let out;
@@ -802,10 +791,6 @@ export type ChatMessageVariant = {
 } | 
 // Misc.
 {
-    type: "targeted", 
-    targeter: PlayerIndex, 
-    targets: PlayerIndex[]
-} | {
     type: "abilityUsed", 
     player: PlayerIndex,
     abilityId: ControllerID,

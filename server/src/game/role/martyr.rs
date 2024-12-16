@@ -92,7 +92,7 @@ impl RoleStateImpl for Martyr {
             vec_set!(actor_ref)
         )
     }
-    fn convert_selection_to_visits(self,  game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         let Some(AbilitySelection::Boolean {selection: BooleanSelection(true)}) = game.saved_controllers.get_controller_current_selection(ControllerID::role(actor_ref, Role::Martyr, 0)) else {return Vec::new()};
         vec![Visit::new_none(actor_ref, actor_ref, true)]
     }

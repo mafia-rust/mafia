@@ -105,11 +105,6 @@ pub enum ChatMessageVariant {
     
     /* Misc */
     #[serde(rename_all = "camelCase")]
-    Targeted {
-        targeter: PlayerIndex,
-        targets: Vec<PlayerIndex>
-    },
-    #[serde(rename_all = "camelCase")]
     AbilityUsed{
         player: PlayerIndex,
         ability_id: ControllerID,

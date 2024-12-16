@@ -401,18 +401,6 @@ export function createGameManager(): GameManager {
                 playerIndex: voteeIndex
             });
         },
-        sendTargetPacket(targetIndexList) {
-            this.server.sendPacket({
-                type: "target",
-                playerIndexList: targetIndexList
-            });
-        },
-        sendDayTargetPacket(targetIndex) {
-            this.server.sendPacket({
-                type: "dayTarget",
-                playerIndex: targetIndex
-            });
-        },
 
         sendSaveWillPacket(will) {
             this.server.sendPacket({

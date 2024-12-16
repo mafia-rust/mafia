@@ -98,7 +98,7 @@ impl RoleStateImpl for Kidnapper {
             )
         )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         let Some(AbilitySelection::Boolean {selection: BooleanSelection(true)}) = game.saved_controllers.get_controller_current_selection(ControllerID::role(actor_ref, Role::Kidnapper, 1)) else {return Vec::new()};
         let Some(target) = self.jailed_target_ref else {return Vec::new()};
         vec![Visit::new_none(actor_ref, target, true)]
@@ -161,5 +161,15 @@ impl RoleStateImpl for Kidnapper {
         {
             actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
         }
+    }
+    fn on_validated_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: super::AbilityInput) {
+        if actor_ref != input_player {return};
+        if ability_input.id() != ControllerID::role(actor_ref, Role::Kidnapper, 1) {return};
+        let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(ControllerID::role(actor_ref, Role::Kidnapper, 1)) else {return};
+        game.add_message_to_chat_group(ChatGroup::Kidnapped,
+            ChatMessageVariant::JailorDecideExecute {
+                target: target.first().map(|p|p.index())
+            }
+        );
     }
 }

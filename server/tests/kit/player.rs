@@ -89,10 +89,6 @@ impl TestPlayer {
         true
     }
 
-    pub fn set_night_selection_single(&self, selection: TestPlayer)->bool {
-        self.0.set_selection(game!(self), vec![selection.0])
-    }
-
     pub fn vote_for_player(&self, target: Option<TestPlayer>) {
         let &PhaseState::Nomination { .. } = game!(self).current_phase() else {return};
 
@@ -113,14 +109,6 @@ impl TestPlayer {
         game!(self).on_client_message(self.0.index(), 
             ToServerPacket::SendChatMessage { text: message.to_string(), block: false }
         );
-    }
-
-    pub fn day_target(&self, target: TestPlayer)->bool{
-        let out = self.0.can_day_target(game!(self), target.0);
-        game!(self).on_client_message(self.0.index(), 
-            ToServerPacket::DayTarget { player_index: target.index() }
-        );
-        out
     }
 
     pub fn alive(&self) -> bool {

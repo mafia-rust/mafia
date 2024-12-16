@@ -3,7 +3,6 @@ import { RoleSet } from "./roleListState.d"
 import ROLES from "./../resources/roles.json";
 import { ChatMessageVariant } from "../components/ChatMessage";
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
-import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
 import { Hypnotist } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeHypnotistMenu";
 import { Doomsayer } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
 import { TwoRoleOptionSelection } from "./abilityInput";
@@ -95,11 +94,9 @@ export type RoleState = {
     type: "impostor"
 } | {
     type: "counterfeiter",
-    action: "forge" | "noForge",
     forgesRemaining: number,
 } | {
     type: "recruiter",
-    action: RecruiterAction,
     recruitsRemaining: number
     backup: PlayerIndex | null
 } | {
