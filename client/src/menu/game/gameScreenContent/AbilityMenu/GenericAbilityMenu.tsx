@@ -13,7 +13,8 @@ import {
     singleAbilityJsonData,
     StringSelection,
     translateControllerIDNoRole,
-    PlayerListSelection
+    PlayerListSelection,
+    IntegerSelection
 } from "../../../../game/abilityInput";
 import React from "react";
 import { usePlayerState } from "../../../../components/useHooks";
@@ -35,6 +36,7 @@ import { Role } from "../../../../game/roleState.d";
 import { PlayerIndex } from "../../../../game/gameState.d";
 import Icon from "../../../../components/Icon";
 import PlayerListSelectionMenu from "./AbilitySelectionTypes/PlayerListSelectionMenu";
+import IntegerSelectionMenu from "./AbilitySelectionTypes/IntegerSelectionMenu";
 
 type GroupName = `${PlayerIndex}/${Role}` | "syndicateGunItem" | "backup" | ControllerID["type"];
 
@@ -411,6 +413,32 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
                         id,
                         selection: {
                             type: "string",
+                            selection: selection
+                        }
+                    });
+                }}
+            />
+        }
+        case "integer":{
+            let input: IntegerSelection;
+            if(
+                props.selected === null ||
+                props.selected.type !== "integer"
+            ){
+                input = 0;
+            }else{
+                input = props.selected.selection;
+            }
+
+            return <IntegerSelectionMenu
+                id={id}
+                selection={input}
+                available={available.selection}
+                onChoose={(selection: number) => {
+                    GAME_MANAGER.sendAbilityInput({
+                        id,
+                        selection: {
+                            type: "integer",
                             selection: selection
                         }
                     });

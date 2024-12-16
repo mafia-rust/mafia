@@ -81,7 +81,7 @@ impl RoleStateImpl for Spy {
             ControllerID::role(actor_ref, Role::Spy, 0)
         )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,

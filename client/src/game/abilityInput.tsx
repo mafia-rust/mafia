@@ -85,7 +85,7 @@ export function translateControllerID(
 ): string {
     switch (abilityId.type) {
         case "role":
-            return translate("role."+abilityId.role+".name")+" "+(translateChecked("controllerId."+abilityId.role+"."+abilityId.id+".name")??"");
+            return translate("role."+abilityId.role+".name")+" "+(translateChecked("controllerId.role."+abilityId.role+"."+abilityId.id+".name")??"");
         default:
             return translateChecked("controllerId."+abilityId.type+".name")??"";
     }
@@ -95,7 +95,7 @@ export function translateControllerIDNoRole(
 ): string {
     switch (abilityId.type) {
         case "role":
-            return (translateChecked("controllerId."+abilityId.role+"."+abilityId.id+".name")??"");
+            return (translateChecked("controllerId.role."+abilityId.role+"."+abilityId.id+".name")??"");
         default:
             return translateChecked("controllerId."+abilityId.type+".name")??"";
     }
@@ -175,6 +175,9 @@ export type AbilitySelection = {
     type: "string",
     selection: StringSelection
 } | {
+    type: "integer",
+    selection: IntegerSelection
+} | {
     type: "kira",
     selection: KiraSelection
 }
@@ -197,6 +200,8 @@ export function defaultAbilitySelection(available: AvailableAbilitySelection): A
             return {type: "twoRoleOutlineOption", selection: [null, null]};
         case "string":
             return {type: "string", selection: ""};
+        case "integer":
+            return {type: "integer", selection: 0};
         case "kira":
             return {type: "kira", selection: []};
     }
@@ -224,6 +229,9 @@ export type AvailableAbilitySelection = {
     selection: AvailableTwoRoleOutlineOptionSelection,
 } | {
     type: "string"
+} | {
+    type: "integer",
+    selection: AvailableIntegerSelection
 } | {
     type: "kira",
     selection: AvailableKiraSelection
@@ -261,6 +269,12 @@ export type TwoRoleOutlineOptionSelection = [PlayerIndex | null, PlayerIndex | n
 export type AvailableTwoRoleOutlineOptionSelection = (number | null)[];
 
 export type StringSelection = string;
+
+export type IntegerSelection = number;
+export type AvailableIntegerSelection = {
+    min: number,
+    max: number
+};
 
 export type KiraSelection = ListMapData<PlayerIndex, KiraGuess>
 export type AvailableKiraSelection = {

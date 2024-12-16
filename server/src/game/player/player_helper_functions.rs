@@ -126,18 +126,6 @@ impl PlayerReference{
                     return None;
                 }
 
-                let mut new_selection = possessed_visit.target
-                    .untagged_night_visits_cloned(game)
-                    .iter()
-                    .map(|v|v.target)
-                    .collect::<Vec<PlayerReference>>();
-
-                if let Some(target) = new_selection.first_mut(){
-                    *target = possessed_into_visit.target;
-                }else{
-                    new_selection = vec![possessed_into_visit.target];
-                }
-
 
                 //change all controller inputs to be selecting this player as well
                 for (controller_id, controller_data) in game.saved_controllers.all_controllers().clone().iter() {
@@ -191,6 +179,7 @@ impl PlayerReference{
                         AbilitySelection::TwoRoleOption { .. } => {},
                         AbilitySelection::TwoRoleOutlineOption { .. } => {},
                         AbilitySelection::String { .. } => {},
+                        AbilitySelection::Integer { .. } => {},
                         AbilitySelection::Kira { .. } => {},
                     }
                     
@@ -198,7 +187,7 @@ impl PlayerReference{
                 }
 
                 possessed_visit.target.set_night_visits(game,
-                    possessed_visit.target.convert_selection_to_visits(game, new_selection)
+                    possessed_visit.target.convert_selection_to_visits(game)
                 );
 
                 self.set_night_visits(game, vec![possessed_visit.clone()]);
@@ -380,17 +369,8 @@ impl PlayerReference{
     pub fn controller_parameters_map(&self, game: &Game) -> ControllerParametersMap {
         self.role_state(game).clone().controller_parameters_map(game, *self)
     }
-    pub fn can_select(&self, game: &Game, target_ref: PlayerReference) -> bool {
-        self.role_state(game).clone().can_select(game, *self, target_ref)
-    }
-    pub fn can_day_target(&self, game: &Game, target_ref: PlayerReference) -> bool {
-        self.role_state(game).clone().can_day_target(game, *self, target_ref)
-    }
     pub fn do_night_action(&self, game: &mut Game, priority: Priority) {
         self.role_state(game).clone().do_night_action(game, *self, priority)
-    }
-    pub fn do_day_action(&self, game: &mut Game, target_ref: PlayerReference) {
-        self.role_state(game).clone().do_day_action(game, *self, target_ref)
     }
     pub fn on_role_creation(&self, game: &mut Game) {
         self.role_state(game).clone().on_role_creation(game, *self)
@@ -401,8 +381,8 @@ impl PlayerReference{
     pub fn get_current_receive_chat_groups(&self, game: &Game) -> HashSet<ChatGroup> {
         self.role_state(game).clone().get_current_receive_chat_groups(game, *self)
     }
-    pub fn convert_selection_to_visits(&self, game: &Game, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        self.role_state(game).clone().convert_selection_to_visits(game, *self, target_refs)
+    pub fn convert_selection_to_visits(&self, game: &Game) -> Vec<Visit> {
+        self.role_state(game).clone().convert_selection_to_visits(game, *self)
     }
 }
 

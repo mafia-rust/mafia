@@ -1,23 +1,26 @@
 import { useGameState, usePlayerState } from "../../../../components/useHooks";
-import React, { ReactElement, useMemo } from "react";
+import React, { ReactElement } from "react";
 import AuditorMenu from "./RoleSpecificMenus/AuditorMenu";
-import LargeReporterMenu from "./RoleSpecificMenus/LargeReporterMenu";
 import LargeHypnotistMenu from "./RoleSpecificMenus/LargeHypnotistMenu";
 import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
 import Counter from "../../../../components/Counter";
 import StyledText from "../../../../components/StyledText";
 import translate from "../../../../game/lang";
-import CounterfeiterMenu from "./RoleSpecificMenus/CounterfeiterMenu";
 import SmallPuppeteerMenu from "./RoleSpecificMenus/SmallPuppeteerMenu";
 import StewardMenu from "./RoleSpecificMenus/StewardMenu";
 import OjoMenu from "./RoleSpecificMenus/OjoMenu";
 import RecruiterMenu from "./RoleSpecificMenus/RecruiterMenu";
-import { Role, roleJsonData, RoleState } from "../../../../game/roleState.d";
-import RoleDropdown from "../../../../components/RoleDropdown";
-import GAME_MANAGER from "../../../..";
+import { RoleState } from "../../../../game/roleState.d";
+import { PhaseState } from "../../../../game/gameState.d";
+import DetailsSummary from "../../../../components/DetailsSummary";
 
+    
 
-export default function RoleSpecificSection(){
+export default function RoleSpecificSection(): ReactElement{
+    const roleState = usePlayerState(
+        playerState => playerState.roleState,
+        ["yourRoleState"]
+    )!;
     const phaseState = useGameState(
         gameState => gameState.phaseState,
         ["phase"]
@@ -28,26 +31,45 @@ export default function RoleSpecificSection(){
         ["phase"]
     )!;
 
-    const roleState = usePlayerState(
-        playerState => playerState.roleState,
-        ["yourRoleState"]
-    )!;
-    
+    const inner = roleSpecificSectionInner(phaseState, dayNumber, roleState);
+
+    return <>{inner===null ? null : 
+        <DetailsSummary
+            summary={<StyledText>{translate("role."+roleState?.type+".name")}</StyledText>}
+        >
+            {inner}
+        </DetailsSummary>
+    }</>;
+}
+
+function roleSpecificSectionInner(
+    phaseState: PhaseState,
+    dayNumber: number,
+    roleState: RoleState
+): ReactElement | null{
     switch(roleState.type){
         case "auditor":
             return <AuditorMenu roleState={roleState}/>;
-        case "reporter":
-            return <LargeReporterMenu/>;
         case "hypnotist":
             return <LargeHypnotistMenu/>;
         case "doomsayer":
             return <LargeDoomsayerMenu/>;
         case "jailor": 
-            return <JailorRoleSpecificMenu roleState={roleState}/>;
+            return <Counter 
+                max={3} 
+                current={roleState.executionsRemaining}
+            >
+                <StyledText>{translate("role.jailor.roleDataText.executionsRemaining", roleState.executionsRemaining)}</StyledText>
+            </Counter>;
         case "kidnapper": 
-            return <JailorRoleSpecificMenu roleState={roleState}/>;
+            return <Counter 
+                max={1} 
+                current={roleState.executionsRemaining}
+            >
+                <StyledText>{translate("role.jailor.roleDataText.executionsRemaining", roleState.executionsRemaining)}</StyledText>
+            </Counter>;
         case "medium": 
-            return <MediumRoleSpecificMenu roleState={roleState}/>
+            return <MediumRoleSpecificMenu roleState={roleState}/>;
         case "doctor": {
             return <Counter
                 max={1}
@@ -85,7 +107,7 @@ export default function RoleSpecificSection(){
                         <StyledText>{translate("role.vigilante.roleDataText", roleState.state.bullets)}</StyledText>
                     </Counter>
                 default:
-                    return null
+                    return null as null
             }
         case "veteran":
             return <Counter
@@ -104,7 +126,6 @@ export default function RoleSpecificSection(){
         case "marksman": 
             return <MarksmanRoleSpecificMenu roleState={roleState} />;
         case "counterfeiter":
-            return <CounterfeiterMenu roleState={roleState}/>;
         case "forger":
             return <Counter
                 max={3}
@@ -120,31 +141,22 @@ export default function RoleSpecificSection(){
                 <StyledText>{translate("role.mortician.roleDataText", roleState.cremationsRemaining)}</StyledText>
             </Counter>
         case "ojo":
-            return <OjoMenu roleState={roleState}/>
+            return <OjoMenu roleState={roleState}/>;
         case "steward":
             return <StewardMenu roleState={roleState}/>;
         case "spiral": 
             return <SpiralMenu />;
         case "puppeteer":
             return <SmallPuppeteerMenu 
-                action={roleState.action} 
                 marionettesRemaining={roleState.marionettesRemaining}
                 phase={phaseState.type}
             />;
         case "recruiter":
             return <RecruiterMenu 
-                action={roleState.action} 
                 remaining={roleState.recruitsRemaining}
                 dayNumber={dayNumber}
                 phase={phaseState.type}
             />;
-        case "wildcard":
-        case "trueWildcard":
-        case "mafiaSupportWildcard":
-        case "mafiaKillingWildcard":
-        case "fiendsWildcard": {
-            return <WildcardRoleSpecificMenu roleState={roleState} />
-        }
         case "martyr":
             if (roleState.state.type === "stillPlaying") {
                 return <>
@@ -159,10 +171,10 @@ export default function RoleSpecificSection(){
                     </Counter>
                 </>
             } else {
-                return null;
+                return null as null;
             }
         default:
-            return null;
+            return null as null;
     }
 }
 
@@ -181,44 +193,6 @@ function MarksmanRoleSpecificMenu(props: Readonly<{
     return <div className="role-information">
         <StyledText>{stateText}</StyledText>
     </div>
-}
-
-function JailorRoleSpecificMenu(props: Readonly<{
-    roleState: RoleState & { type: "jailor" | "kidnapper" } 
-}>): ReactElement {
-    const players = useGameState(
-        gameState => gameState.players,
-        ["gamePlayers"]
-    )!;
-    const phaseState = useGameState(
-        gameState => gameState.phaseState
-    )!;
-
-    const counter = <Counter 
-        max={props.roleState.type === "jailor" ? 3 : 1} 
-        current={props.roleState.executionsRemaining}
-    >
-        <StyledText>{translate("role.jailor.roleDataText.executionsRemaining", props.roleState.executionsRemaining)}</StyledText>
-    </Counter>;
-    if(phaseState.type==="night") {
-        return counter;
-    } else if (props.roleState.jailedTargetRef === null) {
-        return <>
-            {counter}
-            <div className="role-information">
-                <StyledText>{translate("role.jailor.roleDataText.nobody")}</StyledText>
-            </div>
-        </>
-    } else {
-        return <>
-            {counter}
-            <div className="role-information">
-                <StyledText>{translate("role.jailor.roleDataText", 
-                    players[props.roleState.jailedTargetRef].toString(), 
-                )}</StyledText>
-            </div>
-        </>
-    }
 }
 
 function MediumRoleSpecificMenu(props: Readonly<{
@@ -254,57 +228,6 @@ function MediumRoleSpecificMenu(props: Readonly<{
     }
 }
 
-function WildcardRoleSpecificMenu(props: Readonly<{
-    roleState: RoleState & { type: "wildcard" | "trueWildcard" | "mafiaSupportWildcard" | "mafiaKillingWildcard" | "fiendsWildcard" }
-}>): ReactElement {
-    const enabledRoles = useGameState(
-        gameState => gameState.enabledRoles,
-        ["enabledRoles"]
-    )!;
-
-    const ROLES = roleJsonData();
-
-    const choosable = useMemo(() => {
-        switch (props.roleState.type) {
-            case "wildcard":
-            case "trueWildcard":
-                return enabledRoles
-            case "mafiaSupportWildcard":
-                return Object.keys(ROLES).filter((rle)=>
-                    rle === "mafiaSupportWildcard" ||
-                    (
-                        ROLES[rle as keyof typeof ROLES].roleSets.includes("mafiaSupport") &&
-                        enabledRoles.includes(rle as Role)
-                    )
-                ).map((r)=>r as Role)
-            case "mafiaKillingWildcard":
-                return Object.keys(ROLES).filter((rle)=>
-                    rle === "mafiaKillingWildcard" ||
-                    (
-                        ROLES[rle as keyof typeof ROLES].roleSets.includes("mafiaKilling") &&
-                        enabledRoles.includes(rle as Role)
-                    )
-                ).map((r)=>r as Role)
-            case "fiendsWildcard":
-                return Object.keys(ROLES).filter((rle)=>
-                    ROLES[rle as keyof typeof ROLES].roleSets.includes("fiends") &&
-                    enabledRoles.includes(rle as Role)
-                ).map((r)=>r as Role)
-        }
-    }, [enabledRoles, props.roleState.type, ROLES])
-
-    return <div className="role-information">
-        <StyledText>{translate(`role.${props.roleState.type}.smallRoleMenu`)}</StyledText>
-        <RoleDropdown 
-            value={props.roleState.role} 
-            enabledRoles={choosable}
-            onChange={(rle)=>{
-                GAME_MANAGER.sendSetWildcardRoleOutline(rle);
-            }}
-        />
-    </div>;
-}
-
 function SpiralMenu(props: {}): ReactElement | null {
     const spiralingPlayers = useGameState(
         gameState => gameState.players.filter(p => p.playerTags.includes("spiraling")),
@@ -316,6 +239,6 @@ function SpiralMenu(props: {}): ReactElement | null {
             <StyledText>{translate("role.spiral.roleDataText.cannotSelect")}</StyledText>
         </div>
     } else {
-        return null;
+        return null as null;
     }
 }
