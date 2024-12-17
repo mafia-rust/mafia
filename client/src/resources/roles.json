@@ -764,6 +764,19 @@
             {"type": "youWerePossessed", "immune": true}
         ]
     },
+    "ambusher": {
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youAttackedSomeone"}
+        ]
+    },
     "cupid": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaSupport"],

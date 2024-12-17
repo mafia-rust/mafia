@@ -140,6 +140,12 @@
     "role/necromancer/0": {
         "midnight": true
     },
+    "role/ambusher/0": {
+        "midnight": true
+    },
+    "role/cupid/0": {
+        "midnight": true
+    },
     "role/mafiaSupportWildcard/0": {
         "midnight": false
     },
