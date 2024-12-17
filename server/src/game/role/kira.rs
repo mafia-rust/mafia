@@ -73,7 +73,7 @@ impl KiraGuess{
             Role::MafiaWitch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
             Role::Disguiser | Role::Reeducator |
-            Role::Cupid | Role::MafiaSupportWildcard => Some(Self::NonTown),
+            Role::Cupid | Role::Ambusher | Role::MafiaSupportWildcard => Some(Self::NonTown),
 
             //Neutral
             Role::Jester | Role::Revolutionary | Role::Politician |

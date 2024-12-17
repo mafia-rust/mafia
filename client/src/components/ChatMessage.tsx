@@ -636,12 +636,10 @@ export function translateChatMessage(
             return translate("chatMessage.scarecrowResult",
                 playerListToString(message.players, playerNames)
             );
-        case "roleChosen":
-            if(message.role === null){
-                return translate("chatMessage.roleChosen.none");
-            }else{
-                return translate("chatMessage.roleChosen.role", translate("role."+message.role+".name"));
-            }
+        case "ambusherCaught":
+            return translate("chatMessage.ambusherCaught",
+                playerNames[message.ambusher]
+            );
         case "silenced":
             return translate("chatMessage.silenced");
         case "mediumHauntStarted":
@@ -948,8 +946,8 @@ export type ChatMessageVariant = {
     type: "scarecrowResult",
     players: PlayerIndex[]
 } | {
-    type: "roleChosen",
-    role: Role | null,
+    type: "ambusherCaught",
+    ambusher: PlayerIndex
 } | {
     type: "targetIsPossessionImmune"
 } | {

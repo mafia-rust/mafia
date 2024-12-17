@@ -72,7 +72,7 @@ impl DoomsayerGuess{
             Role::MafiaWitch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
             Role::Disguiser | Role::Reeducator |
-            Role::Cupid | Role::MafiaSupportWildcard => Some(DoomsayerGuess::NonTown),
+            Role::Cupid | Role::Ambusher | Role::MafiaSupportWildcard => Some(DoomsayerGuess::NonTown),
 
             //Neutral
             Role::Jester | Role::Revolutionary | Role::Politician |

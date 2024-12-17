@@ -414,6 +414,10 @@
     "controllerId.role.reeducator.0.name": "Student",
     "controllerId.role.reeducator.1.name": "Lesson",
 
+    "role.ambusher.name": "Ambusher",
+    "role.ambusher.name:var.0": "Ambushers",
+    "controllerId.role.ambusher.0.name": "Camp",
+
     "role.cupid.name": "Cupid",
     "role.cupid.name:var.0": "Cupids",
     "controllerId.role.cupid.0.name": "Love Link",
@@ -880,9 +884,8 @@
     "chatMessage.framerResult": "\\0 was visited by town loyalists with these roles: \\1.",
     "chatMessage.framerResult.nobody": "\\0 was not visited by any town loyalists.",
     "chatMessage.scarecrowResult": "You wardblocked \\0.",
+    "chatMessage.ambusherCaught": "You caught an ambusher, it was \\0.",
     "chatMessage.wildcardConvertFailed": "You failed to convert to the role \\0. The role might have been disabled or taken.",
-    "chatMessage.roleChosen.role": "You selected the role \\0.",
-    "chatMessage.roleChosen.none": "You selected no role.",
     "chatMessage.kiraResult": "Kira result",
     "chatMessage.kiraSelection": "Kira selection",
     "chatMessage.cultConvertsNext": "The cult will attempt to indoctrinate and convert someone tonight.",
@@ -1520,6 +1523,13 @@
     "wiki.article.role.reeducator.attributes": "- After you convert somebody, you can't select non-insiders anymore\n- Converting a non-syndicate insider to join the syndicate does a defense check, it has an attack power of basic\n- If the convert is blocked by defense, the charge is not consumed\n- You can't convert a non syndicate insider on night 1\n- You can select yourself",
     "wiki.article.role.reeducator.extra": "- Players roles switch after night ends, so their ability still happens for tonight\n- You can't select roles that aren't enabled",
 
+    "wiki.article.role.ambusher.reminder": "At night, choose a player to attack a random visitor to them",
+    "wiki.article.role.ambusher.guide": "- At night, choose a player to camp\n    - You attack a random visitor to the player you chose to camp\n        - The attack prioritizes town loyalists\n   - All other visitors to your target are told you are the ambusher\n    - You can't use your ability night 1\n    - You only visit the player you camp",
+    "wiki.article.role.ambusher.abilities":"- At night, choose a player to camp\n    - You attack a random visitor to the player you chose to camp\n        - The attack prioritizes town loyalists\n   - All other visitors to your target are told you are the ambusher\n    - You can't use your ability night 1\n    - You only visit the player you camp",
+    "wiki.article.role.ambusher.attributes":"- The ambushers attack has an attack power of basic\n- You can't ever attack yourself",
+    "wiki.article.role.ambusher.extra":"- You can't select yourself or other syndicate members",
+
+    "wiki.article.role.cupid.reminder": "At night, choose two players to love link to each other",
     "wiki.article.role.cupid.guide": "- At night, select 2 players to love link\n* The players are told they are love linked, if one of them dies, the other dies of a broken heart",
     "wiki.article.role.cupid.abilities":"- Visit 2 players to love link them\n    - If one of them dies, the other dies of a broken heart immediately\n    - If one of the players you visit dies on the night you try to love link them, they don't link.",
     "wiki.article.role.cupid.attributes":"- The player that dies of a broken heart dies separate from night deaths\n-    The love linked players are told that they are love linked",

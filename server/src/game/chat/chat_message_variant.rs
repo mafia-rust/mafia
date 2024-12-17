@@ -204,7 +204,7 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     ScarecrowResult{players: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
-    RoleChosen{role: Option<Role>},
+    AmbusherCaught{ambusher: PlayerReference},
 
     TargetIsPossessionImmune,
     YouWerePossessed { immune: bool },
