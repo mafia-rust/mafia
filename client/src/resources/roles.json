@@ -774,7 +774,8 @@
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "someoneSurvivedYourAttack"},
-            {"type": "youAttackedSomeone"}
+            {"type": "youAttackedSomeone"},
+            {"type": "ambusherCaught", "ambusher": 17}
         ]
     },
     "cupid": {
