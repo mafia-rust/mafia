@@ -1,9 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { Button, RawButton } from "./Button";
 import "./select.css";
 import Icon from "./Icon";
-import ReactDOM from "react-dom/client";
-import { THEME_CSS_ATTRIBUTES } from "..";
 import Popover from "./Popover";
 
 export type SelectOptionsNoSearch<K extends { toString(): string}> = Map<K, React.ReactNode>;
@@ -140,6 +138,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
         >
             <SelectOptions 
                 options={optionsNoSearch}
+                searchString={searchString===""?undefined:searchString.substring(0, 20)}
                 onChange={(value)=>{
                     if(props.disabled) return;
                     handleSetOpen(false);
@@ -151,11 +150,13 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
 }
 
 function SelectOptions<K extends { toString(): string}>(props: Readonly<{
+    searchString?: string,
     options: SelectOptionsNoSearch<K>,
     onChange?: (value: K)=>void,
 }>) {
 
     return <div>
+        {props.searchString ?? null}
         {[...props.options.entries()]
             .map(([key, value]) => {
                 return <Button

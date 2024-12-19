@@ -33,22 +33,15 @@ impl<T> GetClientRoleState<T> for T {
 pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<<Self as RoleStateImpl>::ClientRoleState> {
     type ClientRoleState: Clone + std::fmt::Debug + Serialize;
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {}
-    fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
 
     fn controller_parameters_map(self, _game: &Game, _actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::default()
     }
+    fn on_controller_selection_changed(self, _game: &mut Game, _actor_ref: PlayerReference, _id: ControllerID) {}
     fn on_validated_ability_input_received(self, _game: &mut Game, _actor_ref: PlayerReference, _input_player: PlayerReference, _ability_input: AbilityInput) {}
     fn on_ability_input_received(self, _game: &mut Game, _actor_ref: PlayerReference, _input_player: PlayerReference, _ability_input: AbilityInput) {}
 
-    fn can_select(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
-    }
-    fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
-    }
-
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
         vec![]
     }
 
@@ -57,6 +50,9 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     }
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref)
+    }
+    fn new_state(_game: &Game) -> Self {
+        Self::default()
     }
     fn default_revealed_groups(self) -> VecSet<InsiderGroupID> {
         VecSet::new()
@@ -136,6 +132,7 @@ macros::roles! {
     Forger : forger,
     Reeducator : reeducator,
     Cupid : cupid,
+    Ambusher : ambusher,
     MafiaSupportWildcard: mafia_support_wildcard,
 
     // Neutral
@@ -143,7 +140,9 @@ macros::roles! {
     Revolutionary : revolutionary,
     Politician : politician,
     Doomsayer : doomsayer,
-    Death : death,
+    Wildcard : wild_card,
+    TrueWildcard : true_wildcard,
+    Martyr : martyr,
 
     Witch : witch,
     Scarecrow : scarecrow,
@@ -160,10 +159,6 @@ macros::roles! {
     Kira : kira,
     FiendsWildcard : fiends_wildcard,
     SerialKiller : serial_killer,
-
-    Wildcard : wild_card,
-    TrueWildcard : true_wildcard,
-    Martyr : martyr,
 
     Apostle : apostle,
     Disciple : disciple,
@@ -220,6 +215,11 @@ mod macros {
                         $(Self::$name => RoleState::$name($file::$name::default())),*
                     }
                 }
+                pub fn new_state(&self, game: &Game) -> RoleState {
+                    match self {
+                        $(Self::$name => RoleState::$name($file::$name::new_state(game))),*
+                    }
+                }
                 pub fn maximum_count(&self) -> Option<u8> {
                     match self {
                         $(Self::$name => $file::MAXIMUM_COUNT),*
@@ -256,14 +256,14 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.do_night_action(game, actor_ref, priority)),*
                     }
                 }
-                pub fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference){
-                    match self {
-                        $(Self::$name(role_struct) => role_struct.do_day_action(game, actor_ref, target_ref)),*
-                    }
-                }
                 pub fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
                     match self {
                         $(Self::$name(role_struct) => role_struct.controller_parameters_map(game, actor_ref)),*
+                    }
+                }
+                pub fn on_controller_selection_changed(self, game: &mut Game, actor_ref: PlayerReference, id: ControllerID){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_controller_selection_changed(game, actor_ref, id)),*
                     }
                 }
                 pub fn on_validated_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: AbilityInput){
@@ -276,19 +276,9 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.on_ability_input_received(game, actor_ref, input_player, ability_input)),*
                     }
                 }
-                pub fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
+                pub fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit>{
                     match self {
-                        $(Self::$name(role_struct) => role_struct.can_select(game, actor_ref, target_ref)),*
-                    }
-                }
-                pub fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
-                    match self {
-                        $(Self::$name(role_struct) => role_struct.can_day_target(game, actor_ref, target_ref)),*
-                    }
-                }
-                pub fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit>{
-                    match self {
-                        $(Self::$name(role_struct) => role_struct.convert_selection_to_visits(game, actor_ref, target_refs)),*
+                        $(Self::$name(role_struct) => role_struct.convert_selection_to_visits(game, actor_ref)),*
                     }
                 }
                 pub fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup>{

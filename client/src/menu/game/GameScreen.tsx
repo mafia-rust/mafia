@@ -223,7 +223,7 @@ export function GameScreenMenus(): ReactElement {
                 <Panel className="panel" minSize={minSize} defaultSize={defaultSizes[menu]} key={index}>
                     <MenuElement />
                 </Panel>
-                {menusOpen.some((_, i) => i > index) && <PanelResizeHandle className="panel-handle"/>}
+                {menusOpen.some((_, i) => i > index) && <PanelResizeHandle key={index+".handle"} className="panel-handle"/>}
             </>
         })}
         {menuController.menusOpen().length === 0 && <Panel><div className="no-content">

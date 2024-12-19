@@ -93,8 +93,6 @@ export function createPlayer(name: string, index: number): Player {
         name: name,
         index: index,
         buttons: {
-            dayTarget: false,
-            target: false,
             vote: false,
         },
         numVoted: 0,

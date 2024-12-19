@@ -13,9 +13,7 @@ import { CopyButton } from "./ClipboardButtons";
 import { useGameState, useLobbyOrGameState, usePlayerState } from "./useHooks";
 import { KiraResult, KiraResultDisplay } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
-import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
-import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
-import { ControllerID, AbilitySelection, translateControllerID } from "../game/abilityInput";
+import { ControllerID, AbilitySelection, translateControllerID, controllerIdToLink } from "../game/abilityInput";
 import DetailsSummary from "./DetailsSummary";
 
 const ChatElement = React.memo((
@@ -451,16 +449,6 @@ export function translateChatMessage(
                 message.innocent,
                 message.guilty
             );
-        case "targeted":
-            if (message.targets.length > 0) {
-                return translate("chatMessage.targeted",
-                    playerNames[message.targeter],
-                    playerListToString(message.targets, playerNames));
-            } else {
-                return translate("chatMessage.targeted.cleared",
-                    playerNames[message.targeter],
-                );
-            }
         case "abilityUsed":
 
             let out;
@@ -517,6 +505,15 @@ export function translateChatMessage(
                 case "string":
                     out = translate("chatMessage.abilityUsed.selection.string", sanitizePlayerMessage(replaceMentions(message.selection.selection)));
                     break;
+                case "integer":
+                    let text = translateChecked("controllerId."+controllerIdToLink(message.abilityId).replace(/\//g, ".") + ".integer." + message.selection.selection);
+                    
+                    if(text === null){
+                        text = message.selection.selection.toString()
+                    }
+
+                    out = translate("chatMessage.abilityUsed.selection.integer", text);
+                    break;
                 default:
                     out = "";
             }
@@ -535,10 +532,6 @@ export function translateChatMessage(
         case "reporterReport":
             return translate("chatMessage.reporterReport",
                 sanitizePlayerMessage(replaceMentions(message.report, playerNames))
-            );
-        case "youAreInterviewingPlayer":
-            return translate("chatMessage.youAreInterviewingPlayer",
-                playerNames[message.playerIndex],
             );
         case "playerIsBeingInterviewed":
             return translate("chatMessage.playerIsBeingInterviewed",
@@ -564,12 +557,6 @@ export function translateChatMessage(
             return translate("chatMessage.recruiterPlayerIsNowRecruit",
                 playerNames[message.player]
             );
-        case "jailorDecideExecute":
-            if (message.target !== null) {
-                return translate("chatMessage.jailorDecideExecute", playerNames[message.target]);
-            } else {
-                return translate("chatMessage.jailorDecideExecute.nobody");
-            }
         case "godfatherBackup":
             if (message.backup !== null) {
                 return translate("chatMessage.godfatherBackup", playerNames[message.backup]);
@@ -649,16 +636,10 @@ export function translateChatMessage(
             return translate("chatMessage.scarecrowResult",
                 playerListToString(message.players, playerNames)
             );
-        case "roleChosen":
-            if(message.role === null){
-                return translate("chatMessage.roleChosen.none");
-            }else{
-                return translate("chatMessage.roleChosen.role", translate("role."+message.role+".name"));
-            }
-        case "puppeteerActionChosen":
-            return translate("chatMessage.puppeteerActionChosen."+message.action);
-        case "recruiterActionChosen":
-            return translate("chatMessage.recruiterActionChosen."+message.action);
+        case "ambusherCaught":
+            return translate("chatMessage.ambusherCaught",
+                playerNames[message.ambusher]
+            );
         case "silenced":
             return translate("chatMessage.silenced");
         case "mediumHauntStarted":
@@ -682,7 +663,6 @@ export function translateChatMessage(
             return translate("chatMessage.chronokaiserSpeedUp", message.percent);
         case "deputyShotYou":
         case "mediumExists":
-        case "deathCollectedSouls":
         case "targetWasAttacked":
         case "youWereProtected":
         case "revolutionaryWon":
@@ -694,9 +674,6 @@ export function translateChatMessage(
         case "cultKillsNext":
         case "someoneSurvivedYourAttack":
         case "transported":
-        case "veteranAttackedVisitor":
-        case "veteranAttackedYou":
-        case "vigilanteSuicide":
         case "targetIsPossessionImmune":
         case "youSurvivedAttack":
         case "youArePoisoned":
@@ -806,10 +783,6 @@ export type ChatMessageVariant = {
 } | 
 // Misc.
 {
-    type: "targeted", 
-    targeter: PlayerIndex, 
-    targets: PlayerIndex[]
-} | {
     type: "abilityUsed", 
     player: PlayerIndex,
     abilityId: ControllerID,
@@ -830,9 +803,6 @@ export type ChatMessageVariant = {
     type: "reporterReport",
     report: string
 } | {
-    type: "youAreInterviewingPlayer",
-    playerIndex: PlayerIndex
-} | {
     type: "playerIsBeingInterviewed",
     playerIndex: PlayerIndex
 } | {
@@ -841,9 +811,6 @@ export type ChatMessageVariant = {
 } | {
     type: "jailedSomeone",
     playerIndex: PlayerIndex
-} | {
-    type: "jailorDecideExecute"
-    target: PlayerIndex | null
 } | {
     type: "yourConvertFailed"
 } | {
@@ -924,10 +891,6 @@ export type ChatMessageVariant = {
     roleOutline: RoleOutline,
     result: AuditorResult,
 } | {
-    type: "veteranAttackedYou"
-} | {
-    type: "veteranAttackedVisitor"
-} | {
     type: "engineerVisitorsRole",
     role: Role
 } | {
@@ -942,8 +905,6 @@ export type ChatMessageVariant = {
     }
 } | {
     type: "armorsmithArmorBroke"
-} | {
-    type: "vigilanteSuicide"
 } | {
     type: "targetWasAttacked"
 } | {
@@ -985,14 +946,8 @@ export type ChatMessageVariant = {
     type: "scarecrowResult",
     players: PlayerIndex[]
 } | {
-    type: "roleChosen",
-    role: Role | null,
-} | {
-    type: "puppeteerActionChosen",
-    action: PuppeteerAction,
-} | {
-    type: "recruiterActionChosen",
-    action: RecruiterAction,
+    type: "ambusherCaught",
+    ambusher: PlayerIndex
 } | {
     type: "targetIsPossessionImmune"
 } | {
@@ -1013,8 +968,6 @@ export type ChatMessageVariant = {
 } | {
     type: "wildcardConvertFailed",
     role: Role
-} | {
-    type: "deathCollectedSouls"
 } | {
     type: "revolutionaryWon"
 } | {

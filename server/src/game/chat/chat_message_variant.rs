@@ -6,7 +6,7 @@ use crate::game::{
     player::{PlayerIndex, PlayerReference},
     role::{
         auditor::AuditorResult, engineer::TrapState, kira::KiraResult,
-        puppeteer::PuppeteerAction, recruiter::RecruiterAction, spy::SpyBug, Role
+        spy::SpyBug, Role
     },
     role_list::RoleOutline,
     tag::Tag,
@@ -105,11 +105,6 @@ pub enum ChatMessageVariant {
     
     /* Misc */
     #[serde(rename_all = "camelCase")]
-    Targeted {
-        targeter: PlayerIndex,
-        targets: Vec<PlayerIndex>
-    },
-    #[serde(rename_all = "camelCase")]
     AbilityUsed{
         player: PlayerIndex,
         ability_id: ControllerID,
@@ -128,15 +123,12 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     ReporterReport{report: String},
     #[serde(rename_all = "camelCase")]
-    YouAreInterviewingPlayer{player_index: PlayerIndex},
-    #[serde(rename_all = "camelCase")]
     PlayerIsBeingInterviewed{player_index: PlayerIndex},
 
     #[serde(rename_all = "camelCase")]
     JailedTarget{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
     JailedSomeone{player_index: PlayerIndex},
-    JailorDecideExecute {target: Option<PlayerIndex>},
     MediumHauntStarted{medium: PlayerIndex, player: PlayerIndex},
     MediumExists,
     #[serde(rename_all = "camelCase")]
@@ -212,11 +204,7 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     ScarecrowResult{players: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
-    RoleChosen{role: Option<Role>},
-    #[serde(rename_all = "camelCase")]
-    PuppeteerActionChosen{action: PuppeteerAction},
-    #[serde(rename_all = "camelCase")]
-    RecruiterActionChosen{action: RecruiterAction},
+    AmbusherCaught{ambusher: PlayerReference},
 
     TargetIsPossessionImmune,
     YouWerePossessed { immune: bool },
@@ -232,7 +220,6 @@ pub enum ChatMessageVariant {
     JesterWon,
     RevolutionaryWon,
     ChronokaiserSpeedUp{percent: u32},
-    DeathCollectedSouls,
     DoomsayerWon,
     DoomsayerFailed,
     KiraResult{result: KiraResult},

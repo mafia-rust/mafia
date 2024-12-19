@@ -3,10 +3,8 @@ import { RoleSet } from "./roleListState.d"
 import ROLES from "./../resources/roles.json";
 import { ChatMessageVariant } from "../components/ChatMessage";
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
-import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
 import { Hypnotist } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeHypnotistMenu";
 import { Doomsayer } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
-import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
 import { TwoRoleOptionSelection } from "./abilityInput";
 
 export type RoleState = {
@@ -96,11 +94,9 @@ export type RoleState = {
     type: "impostor"
 } | {
     type: "counterfeiter",
-    action: "forge" | "noForge",
     forgesRemaining: number,
 } | {
     type: "recruiter",
-    action: RecruiterAction,
     recruitsRemaining: number
     backup: PlayerIndex | null
 } | {
@@ -161,9 +157,6 @@ Doomsayer
     executionsRemaining: number,
     jailedTargetRef: number | null
 } | {
-    type: "death",
-    souls: number
-} | {
     type: "wildcard"
     role: Role
 } | {
@@ -188,13 +181,11 @@ Doomsayer
     previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "puppeteer"
-    action: PuppeteerAction,
     marionettesRemaining: number
 } | {
     type: "kira"
 } | {
     type: "fiendsWildcard"
-    role: Role
 } | {
     type: "apostle"
 } | {

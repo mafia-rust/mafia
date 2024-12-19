@@ -36,6 +36,12 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Veteran {
     type ClientRoleState = ClientRoleState;
+    fn new_state(game: &Game) -> Self {
+        Self{
+            alerts_remaining: game.num_players().div_ceil(5),
+            ..Self::default()
+        }
+    }
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::TopPriority => {
@@ -79,7 +85,7 @@ impl RoleStateImpl for Veteran {
         common_role::controller_parameters_map_boolean(
             game,
             actor_ref,
-            self.alerts_remaining > 0 && game.day_number() > 1,
+            self.alerts_remaining <= 0 && game.day_number() <= 1,
             ControllerID::role(actor_ref, Role::Veteran, 0)
         )
     }

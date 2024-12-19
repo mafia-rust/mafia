@@ -4,8 +4,6 @@ import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
 import { Role, RoleState } from "./roleState.d"
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu"
-import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu"
-import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu"
 import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu"
 import { AbilityInput, ControllerID, SavedController } from "./abilityInput"
 import { ListMapData } from "../ListMap"
@@ -124,8 +122,6 @@ export type ToClientPacket = {
 } | {
     type: "yourButtons", 
     buttons: [{
-        dayTarget: boolean,
-        target: boolean,
         vote: boolean,
     }]
 } | {
@@ -246,12 +242,6 @@ export type ToServerPacket = {
     type: "judgement", 
     verdict: Verdict
 } | {
-    type: "target", 
-    playerIndexList: PlayerIndex[]
-} | {
-    type: "dayTarget", 
-    playerIndex:  PlayerIndex
-} | {
     type: "sendChatMessage", 
     text: string,
     block: boolean,
@@ -277,9 +267,6 @@ export type ToServerPacket = {
     type: "abilityInput",
     abilityInput: AbilityInput
 } | {
-    type: "setCounterfeiterAction",
-    action: "forge" | "noForge"
-} | {
     type: "setKiraGuess",
     guesses: [PlayerIndex, KiraGuess][]
 } | {
@@ -290,15 +277,6 @@ export type ToServerPacket = {
         [number, DoomsayerGuess]
     ]
 } | {
-    type: "setWildcardRole",
-    role: Role
-} | {
-    type: "setReporterReport",
-    report: string
-} | {
-    type: "setReporterReportPublic",
-    public: boolean
-} | {
     type: "setConsortOptions",
     roleblock: boolean,
     
@@ -308,12 +286,6 @@ export type ToServerPacket = {
     youWereTransportedMessage: boolean,
     youWerePossessedMessage: boolean,
     yourTargetWasJailedMessage: boolean
-} | {
-    type: "setPuppeteerAction",
-    action: PuppeteerAction
-} | {
-    type: "setRecruiterAction",
-    action: RecruiterAction
 } | {
     type: "voteFastForwardPhase",
     fastForward: boolean

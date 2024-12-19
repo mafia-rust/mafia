@@ -156,8 +156,6 @@ export type Player = {
     name: string,
     index: number
     buttons: {
-        dayTarget: boolean,
-        target: boolean,
         vote: boolean,
     },
     numVoted: number,

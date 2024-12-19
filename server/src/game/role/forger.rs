@@ -42,6 +42,12 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Forger {
     type ClientRoleState = ClientRoleState;
+    fn new_state(game: &Game) -> Self {
+        Self{
+            forges_remaining: game.num_players().div_ceil(5),
+            ..Self::default()
+        }
+    }
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if self.forges_remaining == 0 {return}
 
@@ -128,7 +134,7 @@ impl RoleStateImpl for Forger {
             )
         )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,

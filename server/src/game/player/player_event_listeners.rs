@@ -1,8 +1,11 @@
-use crate::game::{grave::GraveReference, role::RoleState, ability_input::AbilityInput, Game};
+use crate::game::{ability_input::{AbilityInput, ControllerID}, grave::GraveReference, role::RoleState, Game};
 
 use super::PlayerReference;
 
 impl PlayerReference {
+    pub fn on_controller_selection_changed(&self, game: &mut Game, id: ControllerID){
+        self.role_state(game).clone().on_controller_selection_changed(game, *self, id)
+    }
     pub fn on_validated_ability_input_received(&self, game: &mut Game, input_player: PlayerReference, input: AbilityInput) {
         self.role_state(game).clone().on_validated_ability_input_received(game, *self, input_player, input)
     }

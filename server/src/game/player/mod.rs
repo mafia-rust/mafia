@@ -79,8 +79,6 @@ struct PlayerNightVariables{
 
     silenced: bool,
 
-    selection: Vec<PlayerReference>,
-
     messages: Vec<ChatMessageVariant>,
 
     grave_role: Option<Role>,
@@ -129,8 +127,6 @@ impl Player {
                 convert_role_to: None,
 
                 silenced: false,
-
-                selection: vec![],
 
                 messages: vec![],
 
@@ -191,8 +187,6 @@ pub mod test {
                 convert_role_to: None,
 
                 silenced: false,
-
-                selection: vec![],
 
                 messages: vec![],
 

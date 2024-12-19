@@ -10,7 +10,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_set::VecSet;
 
-use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
+use super::{common_role, ControllerID, GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Debug, Clone, Default)]
 pub struct Spiral{
@@ -54,14 +54,22 @@ impl RoleStateImpl for Spiral {
 
         actor_ref.set_role_state(game, RoleState::Spiral(Spiral{spiraling: new_spiraling}));
     }
-    
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        self.spiraling.is_empty() &&
-        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref) &&
-        game.day_number() > 1
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
+        common_role::controller_parameters_map_player_list_night_typical(
+            game,
+            actor_ref,
+            false,
+            game.day_number() <= 1 || !self.spiraling.is_empty(),
+            ControllerID::role(actor_ref, Role::Spiral, 0)
+        )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Spiral, 0),
+            true
+        )
     }
     fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _old: RoleState, _new: RoleState) {
         if player == actor_ref {

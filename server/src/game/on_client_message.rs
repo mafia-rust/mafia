@@ -7,10 +7,8 @@ use super::{
     player::{PlayerIndex, PlayerReference},
     role::{
         mayor::Mayor, politician::Politician,
-        puppeteer::PuppeteerAction, recruiter::RecruiterAction,
         Role, RoleState
     },
-    role_list::RoleSet,
     spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
     Game
 };
@@ -60,61 +58,6 @@ impl Game {
                 if self.current_phase().phase() != PhaseType::Judgement {break 'packet_match;}
                 
                 sender_player_ref.set_verdict(self, verdict);
-            },
-            ToServerPacket::Target { player_index_list }=>{
-                if self.current_phase().phase() != PhaseType::Night {break 'packet_match;}
-
-                let target_ref_list = match PlayerReference::index_vec_to_ref(self, &player_index_list){
-                    Ok(target_ref_list) => target_ref_list,
-                    Err(_) => {
-                        break 'packet_match;
-                    },
-                };
-                sender_player_ref.set_selection(self, target_ref_list.clone());
-                let target_ref_list = sender_player_ref.selection(self).clone();
-                
-                let mut target_message_sent = false;
-                for chat_group in sender_player_ref.get_current_send_chat_groups(self){
-                    match chat_group {
-                        ChatGroup::All | ChatGroup::Interview | ChatGroup::Dead => {},
-                        ChatGroup::Mafia | ChatGroup::Cult | ChatGroup::Puppeteer => {
-                            self.add_message_to_chat_group( chat_group,
-                                ChatMessageVariant::Targeted { 
-                                    targeter: sender_player_ref.index(), 
-                                    targets: PlayerReference::ref_vec_to_index(&target_ref_list)
-                                }
-                            );
-                            target_message_sent = true;
-                        },
-                        ChatGroup::Jail | ChatGroup::Kidnapped => {
-                            if sender_player_ref.role(self) == Role::Jailor || sender_player_ref.role(self) == Role::Kidnapper {
-                                self.add_message_to_chat_group(chat_group,
-                                    ChatMessageVariant::JailorDecideExecute {
-                                        target: target_ref_list.first().map(|p|p.index())
-                                    }
-                                );
-                                target_message_sent = true;
-                            }
-                        },
-                    }
-                }
-                
-                
-                if !target_message_sent{
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::Targeted { 
-                        targeter: sender_player_ref.index(), 
-                        targets: PlayerReference::ref_vec_to_index(&target_ref_list)
-                    });
-                }
-            },
-            ToServerPacket::DayTarget { player_index } => {               
-                let target_ref = match PlayerReference::new(self, player_index){
-                    Ok(target_ref) => target_ref,
-                    Err(_) => break 'packet_match,
-                };
-                if sender_player_ref.can_day_target(self, target_ref){
-                    sender_player_ref.do_day_action(self, target_ref);
-                }
             },
             ToServerPacket::SendChatMessage { text, block } => {
 
@@ -232,54 +175,6 @@ impl Game {
                     sender_player_ref.set_role_state(self, RoleState::Doomsayer(doomsayer));
                 }
             },
-            ToServerPacket::SetWildcardRole { role } => {
-
-                if !self.settings.enabled_roles.contains(&role) {
-                    break 'packet_match;
-                }
-                
-                match sender_player_ref.role_state(self).clone() {
-                    RoleState::Wildcard(mut wild_card) => {
-                        wild_card.role = role;
-                        sender_player_ref.set_role_state(self, RoleState::Wildcard(wild_card));
-                    }
-                    RoleState::TrueWildcard(mut true_wildcard) => {
-                        true_wildcard.role = role;
-                        sender_player_ref.set_role_state(self, RoleState::TrueWildcard(true_wildcard));
-                    }
-                    RoleState::MafiaSupportWildcard(mut mafia_wild_card) => {
-                        if RoleSet::MafiaSupport.get_roles().contains(&role) {
-                            mafia_wild_card.role = role;
-                        }
-                        sender_player_ref.set_role_state(self, RoleState::MafiaSupportWildcard(mafia_wild_card));
-                    }
-                    RoleState::MafiaKillingWildcard(mut mafia_wild_card) => {
-                        if RoleSet::MafiaKilling.get_roles().contains(&role) {
-                            mafia_wild_card.role = role;
-                        }
-                        sender_player_ref.set_role_state(self, RoleState::MafiaKillingWildcard(mafia_wild_card));
-                    }
-                    RoleState::FiendsWildcard(mut fiends_wild_card) => {
-                        if RoleSet::Fiends.get_roles().contains(&role) {
-                            fiends_wild_card.role = role;
-                        }
-                        sender_player_ref.set_role_state(self, RoleState::FiendsWildcard(fiends_wild_card));
-                    }
-                    _ => {}
-                }
-            }
-            ToServerPacket::SetReporterReport { report } => {
-                if let RoleState::Reporter(mut reporter) = sender_player_ref.role_state(self).clone(){
-                    reporter.report = report;
-                    sender_player_ref.set_role_state(self, RoleState::Reporter(reporter));
-                }
-            }
-            ToServerPacket::SetReporterReportPublic { public } => {
-                if let RoleState::Reporter(mut reporter) = sender_player_ref.role_state(self).clone(){
-                    reporter.public = public;
-                    sender_player_ref.set_role_state(self, RoleState::Reporter(reporter));
-                }
-            }
             ToServerPacket::SetConsortOptions { 
                 roleblock, 
                 you_were_roleblocked_message, 
@@ -303,38 +198,6 @@ impl Game {
                     hypnotist.ensure_at_least_one_message();
 
                     sender_player_ref.set_role_state(self, RoleState::Hypnotist(hypnotist));
-                }
-            },
-            ToServerPacket::SetCounterfeiterAction {action} => {
-                if let RoleState::Counterfeiter(mut counterfeiter) = sender_player_ref.role_state(self).clone(){
-                    counterfeiter.action = action;
-                    sender_player_ref.set_role_state(self, RoleState::Counterfeiter(counterfeiter));
-                }
-            },
-            ToServerPacket::SetPuppeteerAction { action } => {
-                if let RoleState::Puppeteer(mut pup) = sender_player_ref.role_state(self).clone(){
-                    pup.action = action.clone();
-                    if pup.marionettes_remaining == 0 {
-                        pup.action = PuppeteerAction::Poison;
-                    }
-                    sender_player_ref.set_role_state(self, RoleState::Puppeteer(pup));
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::PuppeteerActionChosen { action });
-                    
-                    //Updates selection if it was invalid
-                    sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
-                }
-            },
-            ToServerPacket::SetRecruiterAction { action } => {
-                if let RoleState::Recruiter(mut pup) = sender_player_ref.role_state(self).clone(){
-                    pup.action = action.clone();
-                    if pup.recruits_remaining == 0 {
-                        pup.action = RecruiterAction::Kill;
-                    }
-                    sender_player_ref.set_role_state(self, RoleState::Recruiter(pup));
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::RecruiterActionChosen { action });
-                    
-                    //Updates selection if it was invalid
-                    sender_player_ref.set_selection(self, sender_player_ref.selection(self).clone());
                 }
             },
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {

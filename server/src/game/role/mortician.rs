@@ -29,12 +29,11 @@ pub struct Mortician {
     obscured_players: VecSet<PlayerReference>,
     cremations_remaining: u8,
 }
-const MAX_CREMATIONS: u8 = 4;
 impl Default for Mortician {
     fn default() -> Self {
         Self {
             obscured_players: VecSet::new(),
-            cremations_remaining: MAX_CREMATIONS,
+            cremations_remaining: 3,
         }
     }
 }
@@ -46,6 +45,12 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Mortician {
     type ClientRoleState = Mortician;
+    fn new_state(game: &Game) -> Self {
+        Self{
+            cremations_remaining: game.num_players().div_ceil(5),
+            ..Self::default()
+        }
+    }
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Deception=>{
@@ -93,7 +98,7 @@ impl RoleStateImpl for Mortician {
             vec_set![actor_ref]
         )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,

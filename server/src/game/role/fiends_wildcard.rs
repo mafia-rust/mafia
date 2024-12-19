@@ -6,22 +6,13 @@ use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::role_can_generate;
 use crate::game::Game;
+use crate::vec_set;
 
-use super::{RoleStateImpl, Role};
+use super::{AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, Role, RoleOptionSelection, RoleStateImpl};
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct FiendsWildcard{
-    pub role: Role
-}
-
-impl Default for FiendsWildcard {
-    fn default() -> Self {
-        Self {
-            role: Role::FiendsWildcard
-        }
-    }
-}
+pub struct FiendsWildcard;
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -38,27 +29,45 @@ impl RoleStateImpl for FiendsWildcard {
             _ => {}
         }
     }
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
+        ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::FiendsWildcard, 0),
+            AvailableAbilitySelection::new_role_option(
+                RoleSet::Fiends.get_roles().into_iter().filter(|role|
+                    game.settings.enabled_roles.contains(role) && *role != Role::FiendsWildcard
+                ).map(|r|Some(r)).chain(std::iter::once(None)).collect()
+            ),
+            AbilitySelection::new_role_option(None),
+            !actor_ref.alive(game),
+            None,
+            false,
+            vec_set!(actor_ref)
+        )
+    }
 }
 
 impl FiendsWildcard {
     fn become_role(&self, game: &mut Game, actor_ref: PlayerReference) {
 
+        let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
+            ControllerID::role(actor_ref, Role::FiendsWildcard, 0)
+        ) else {return};
 
-        if self.role == Role::FiendsWildcard {return;}
+        println!("role: {:?}", role);
 
         if
-            RoleSet::Fiends.get_roles().contains(&self.role) &&
             role_can_generate(
-                self.role, 
+                role, 
                 &game.settings.enabled_roles, 
                 &PlayerReference::all_players(game)
                     .map(|player_ref| player_ref.role(game))
                     .collect::<Vec<Role>>()
             )
         {
-            actor_ref.set_role_and_win_condition_and_revealed_group(game, self.role.default_state());
+            actor_ref.set_role_and_win_condition_and_revealed_group(game, role.new_state(game));
         }else{
-            actor_ref.add_private_chat_message(game, ChatMessageVariant::WildcardConvertFailed{role: self.role.clone()})
+            actor_ref.add_private_chat_message(game, ChatMessageVariant::WildcardConvertFailed{role})
         }
     }
 }

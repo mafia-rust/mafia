@@ -76,7 +76,7 @@ impl RoleStateImpl for Reeducator {
                     return
                 };
 
-                let new_state = role.default_state();
+                let new_state = role.new_state(game);
 
                 if InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref) {
 
@@ -154,7 +154,7 @@ impl RoleStateImpl for Reeducator {
             )
         )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         common_role::convert_controller_selection_to_visits(game, actor_ref, ControllerID::role(actor_ref, Role::Reeducator, 0), false)
     }
     fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
@@ -192,7 +192,7 @@ impl RoleStateImpl for Reeducator {
                 random_mafia_player.set_win_condition(game, crate::game::win_condition::WinCondition::GameConclusionReached{
                     win_if_any: vec![GameConclusion::Town].into_iter().collect()
                 });
-                random_mafia_player.set_role_state(game, random_town_role.default_state());
+                random_mafia_player.set_role_state(game, random_town_role.new_state(game));
                 
             }
         }

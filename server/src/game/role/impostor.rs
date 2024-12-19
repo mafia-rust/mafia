@@ -36,7 +36,7 @@ impl RoleStateImpl for Impostor {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         Godfather::night_ability(game, actor_ref, priority);
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,

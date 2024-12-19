@@ -28,7 +28,7 @@ impl RoleStateImpl for Drunk {
         //NOTE: It will still send a packet to the player that their role state updated,
         //so it might be deducable that there is a recruiter
         if let Some(random_town_role) = possible_roles.choose(&mut thread_rng()) {
-            actor_ref.set_role_state(game, random_town_role.default_state());
+            actor_ref.set_role_state(game, random_town_role.new_state(game));
         }
 
         Confused::add_player(game, actor_ref);

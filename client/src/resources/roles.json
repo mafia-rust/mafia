@@ -29,8 +29,6 @@
                 "chatGroup": "jail",
                 "block": false
             },
-            {"type": "jailorDecideExecute","target": 7},
-            {"type": "jailorDecideExecute","target": null},
             {"type": "wardblocked"},
             {"type": "someoneSurvivedYourAttack"}
         ]
@@ -315,7 +313,6 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "vigilanteSuicide"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youAttackedSomeone"}
         ]
@@ -443,7 +440,6 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "youAreInterviewingPlayer","playerIndex": 1},
             {"type": "playerIsBeingInterviewed","playerIndex": 1},
             {
                 "type": "normal", 
@@ -558,9 +554,7 @@
             {"type": "godfatherBackup", "backup": null},
             {"type": "godfatherBackup", "backup": 26},
             {"type": "recruiterPlayerIsNowRecruit","player": 40},
-            {"type": "someoneSurvivedYourAttack"},
-            {"type": "recruiterActionChosen", "action": "kill"},
-            {"type": "recruiterActionChosen", "action": "recruit"}
+            {"type": "someoneSurvivedYourAttack"}
         ]
     },
     "mafioso": {
@@ -770,6 +764,20 @@
             {"type": "youWerePossessed", "immune": true}
         ]
     },
+    "ambusher": {
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youAttackedSomeone"},
+            {"type": "ambusherCaught", "ambusher": 17}
+        ]
+    },
     "cupid": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaSupport"],
@@ -877,20 +885,6 @@
             {"type": "martyrFailed"}
         ]
     },
-    "death":{
-        "mainRoleSet": "neutral",
-        "roleSets": ["neutral"],
-        "armor": false,
-        "aura": null,
-        "maxCount": 1,
-        "canWriteDeathNote": true,
-        "canBeConvertedTo": [],
-        "chatMessages":[
-            {"type": "deathCollectedSouls"},
-            {"type": "someoneSurvivedYourAttack"},
-            {"type": "youSurvivedAttack"}
-        ]
-    },
     "wildcard": {
         "mainRoleSet": "neutral",
         "roleSets": ["neutral"],
@@ -989,8 +983,6 @@
                 "text": "I'm jester", 
                 "chatGroup": "jail"
             },
-            {"type": "jailorDecideExecute","target": 7},
-            {"type": "jailorDecideExecute","target": null},
             {"type": "wardblocked"},
             {"type": "someoneSurvivedYourAttack"}
         ]
@@ -1072,9 +1064,7 @@
                 "text": "Erm... Guys? What do i do, they're gonna catch me!", 
                 "chatGroup": "puppeteer",
                 "block": false
-            },
-            {"type": "puppeteerActionChosen", "action": "poison"},
-            {"type": "puppeteerActionChosen", "action": "string"}
+            }
         ]
     },
     "pyrolisk": {
