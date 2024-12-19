@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useMemo, useRef } from "react";
-import "./select.css";
 import ReactDOM from "react-dom/client";
 import { THEME_CSS_ATTRIBUTES } from "..";
+
 export default function Popover<T extends HTMLElement = HTMLElement>(props: Readonly<{
     open: boolean,
     children: JSX.Element,
