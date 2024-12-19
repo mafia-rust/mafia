@@ -9,7 +9,7 @@
 .custom-select-options {
     position: absolute;
     min-width: max-content;
-    overflow-y: scroll;
+    overflow-y: auto;
 
     padding: .13rem .13rem;
     background-color: var(--secondary-color);

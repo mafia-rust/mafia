@@ -1,26 +1,15 @@
-import React, { ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
+import React, { ReactElement, useEffect, useMemo, useRef } from "react";
 import "./select.css";
 import ReactDOM from "react-dom/client";
 import { THEME_CSS_ATTRIBUTES } from "..";
-
-export type PopoverController = {
-    setOpenOrClosed: (open: boolean) => void,
-    open: boolean,
-}
-
-const PopoverContext = React.createContext<PopoverController | undefined>(undefined);
-
-export default function Popover(props: Readonly<{
+export default function Popover<T extends HTMLElement = HTMLElement>(props: Readonly<{
     open: boolean,
     children: JSX.Element,
     setOpenOrClosed: (open: boolean) => void,
-    anchorRef?: React.RefObject<HTMLElement>,
+    onRender?: (popoverElement: HTMLDivElement, anchorElement?: T | undefined) => void
+    anchorRef?: React.RefObject<T>,
     className?: string
 }>): ReactElement {
-    const handleSetOpen = useCallback((isOpen: boolean) => {
-        props.setOpenOrClosed(isOpen);
-    }, [props]);
-
     const thisRef = useRef<HTMLDivElement>(null);
     const popoverRef = useRef<HTMLDivElement>(document.createElement('div'));
 
@@ -83,7 +72,7 @@ export default function Popover(props: Readonly<{
                     anchorLocation.left !== bounds?.left
                 )
             )
-                handleSetOpen(false);
+            props.setOpenOrClosed(false);
         };
         
         window.addEventListener("scroll", listener, true);
@@ -94,58 +83,45 @@ export default function Popover(props: Readonly<{
         }
     })
 
-    const PopoverContextToBeProvided = useMemo(() => ({
-        setOpenOrClosed: props.setOpenOrClosed,
-        open: props.open
-    }), [props.open, props.setOpenOrClosed])
+    const popoverContext = useMemo(() => {
+        return {
+            popoverElement: popoverRef.current,
+            anchorElement: props.anchorRef?.current ?? undefined,
+            open: props.open
+        }
+    }, [props.anchorRef, props.open])
 
     //open and set position
     useEffect(() => {
-        const anchorElement = props.anchorRef?.current;
         const popoverElement = popoverRef.current;
+        const anchorElement = props.anchorRef?.current;
 
-        if (anchorElement && props.open) {
-            popoverRoot.render(
-                <PopoverContext.Provider value={PopoverContextToBeProvided}>
-                    {props.children}
-                </PopoverContext.Provider>
-            );
+        if (props.open) {
+            popoverRoot.render(props.children);
 
+            if (anchorElement) {
+                const anchorBounds = anchorElement.getBoundingClientRect();
 
-            popoverElement.hidden = false;
-
-            const buttonBounds = anchorElement.getBoundingClientRect();
-            // Position
-            popoverElement.style.width = `${buttonBounds.width}px`;
-            popoverElement.style.left = `${buttonBounds.left}px`;
-            setAnchorLocation({top: buttonBounds.top, left: buttonBounds.left});
-
-            const spaceAbove = buttonBounds.top;
-            const spaceBelow = window.innerHeight - buttonBounds.bottom;
-
-            const oneRem = parseFloat(getComputedStyle(anchorElement).fontSize);
-
-            if (spaceAbove > spaceBelow) {
-                const newHeight = Math.min((25 - .25) * oneRem, spaceAbove - .25 * oneRem);
-                popoverElement.style.height = `${newHeight}px`;
-                popoverElement.style.top = `unset`;
-                popoverElement.style.bottom = `${spaceBelow + buttonBounds.height + .25 * oneRem}px`;
-            } else {
-                const newHeight = Math.min((25 - .25) * oneRem, spaceBelow - .25 * oneRem);
-                popoverElement.style.height = `${newHeight}px`;
-                popoverElement.style.top = `${spaceAbove + buttonBounds.height + .25 * oneRem}px`;
-                popoverElement.style.bottom = `unset`;
+                setAnchorLocation({top: anchorBounds.top, left: anchorBounds.left});
             }
+
+            setTimeout(() => {
+                popoverElement.hidden = false;
+                
+                if (props.onRender) {
+                    props.onRender(popoverElement, anchorElement ?? undefined)
+                }
+            })
         } else {
             popoverElement.hidden = true;
         }
-    }, [handleSetOpen, props.open, props.children, popoverRoot, props.anchorRef, PopoverContextToBeProvided])
+    }, [props, popoverRoot, popoverContext])
 
     //close on click outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (!popoverRef.current?.contains(event.target as Node) && props.open) {
-                handleSetOpen(false);
+                props.setOpenOrClosed(false);
             }
         };
 
@@ -153,7 +129,7 @@ export default function Popover(props: Readonly<{
             document.addEventListener("click", handleClickOutside);
         })
         return () => document.removeEventListener("click", handleClickOutside);
-    }, [handleSetOpen, props.open]);
+    }, [props]);
 
     return <div ref={thisRef} />
 }
