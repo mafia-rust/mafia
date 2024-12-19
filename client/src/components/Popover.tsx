@@ -83,14 +83,6 @@ export default function Popover<T extends HTMLElement = HTMLElement>(props: Read
         }
     })
 
-    const popoverContext = useMemo(() => {
-        return {
-            popoverElement: popoverRef.current,
-            anchorElement: props.anchorRef?.current ?? undefined,
-            open: props.open
-        }
-    }, [props.anchorRef, props.open])
-
     //open and set position
     useEffect(() => {
         const popoverElement = popoverRef.current;
@@ -115,7 +107,7 @@ export default function Popover<T extends HTMLElement = HTMLElement>(props: Read
         } else {
             popoverElement.hidden = true;
         }
-    }, [props, popoverRoot, popoverContext])
+    }, [props, popoverRoot])
 
     //close on click outside
     useEffect(() => {
