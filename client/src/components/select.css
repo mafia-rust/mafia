@@ -9,10 +9,9 @@
 .custom-select-options {
     position: absolute;
     min-width: max-content;
-    max-height: min-content;
     overflow-y: scroll;
 
-    padding: .13rem .25rem;
+    padding: .13rem .13rem;
     background-color: var(--secondary-color);
     border-radius: .25rem;
     border: .13rem solid var(--primary-border-color);

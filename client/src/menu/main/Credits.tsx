@@ -13,7 +13,7 @@ export default function Credits(): ReactElement {
         <div>
             <h3>{translate("leadDevelopers")}</h3>
             <p>
-                <span>Jack Papel</span>
+                <span>Jack Papel (<a href="https://www.jackpapel.com">Website</a>)</span>
                 <span>Sammy</span>
             </p>
             <h3>{translate("otherContributors")}</h3>
