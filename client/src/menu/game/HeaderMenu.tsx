@@ -41,7 +41,10 @@ function Timer(): ReactElement {
         ["phaseTimeLeft", "tick"]
     )!
     const phaseLength = useGameState(
-        gameState => gameState.phaseTimes[gameState.phaseState.type],
+        gameState => {
+            if (gameState.phaseState.type === "recess") return 0;
+            return gameState.phaseTimes[gameState.phaseState.type]
+        },
         ["phase"]
     )!
 
@@ -87,6 +90,22 @@ function Information(): ReactElement {
         return myIndex === undefined ? undefined : players[myIndex]?.toString()
     }, [myIndex, players])
 
+
+    const timeLeftText = useMemo(() => {
+        if (timeLeftMs >= 1000000000000000000) {
+            return "∞"
+        } else {
+            return Math.floor(timeLeftMs/1000);
+        }
+    }, [timeLeftMs])
+
+    const dayNumberText = useMemo(() => {
+        if (phaseState.type === "recess") {
+            return "";
+        } else {
+            return ` ${dayNumber}`;
+        }
+    }, [dayNumber, phaseState.type])
     
 
     return <div className="information"> 
@@ -94,7 +113,7 @@ function Information(): ReactElement {
             <div>
                 <h3>
                     <div>
-                        {translate("phase."+phaseState.type)} {dayNumber}⏳{Math.floor(timeLeftMs/1000)}
+                        {translate("phase."+phaseState.type)}{dayNumberText}⏳{timeLeftText}
                     </div>
                 </h3>
                 {GAME_MANAGER.getMySpectator() 

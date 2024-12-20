@@ -4,7 +4,7 @@ use crate::{
     game::{
         attack_power::DefensePower, chat::{
             ChatGroup, ChatMessage, ChatMessageVariant
-        }, event::{on_fast_forward::OnFastForward, on_remove_role_label::OnRemoveRoleLabel}, grave::GraveKiller, modifiers::{ModifierType, Modifiers}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
+        }, event::{on_convert::OnConvert, on_fast_forward::OnFastForward, on_remove_role_label::OnRemoveRoleLabel}, grave::GraveKiller, modifiers::{ModifierType, Modifiers}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
     }, 
     packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet, 
 };
@@ -160,7 +160,10 @@ impl PlayerReference{
         &self.deref(game).win_condition
     }
     pub fn set_win_condition(&self, game: &mut Game, win_condition: WinCondition){
-        self.deref_mut(game).win_condition = win_condition;
+        let old_win_condition = self.win_condition(game).clone();
+        self.deref_mut(game).win_condition = win_condition.clone();
+
+        OnConvert::new(*self, old_win_condition, win_condition).invoke(game)
     }
 
     pub fn add_private_chat_message(&self, game: &mut Game, message: ChatMessageVariant) {

@@ -35,6 +35,7 @@ use components::detained::Detained;
 use components::insider_group::InsiderGroupID;
 use components::insider_group::InsiderGroups;
 use components::syndicate_gun_item::SyndicateGunItem;
+use components::synopsis::SynopsisTracker;
 use components::verdicts_today::VerdictsToday;
 use event::on_tick::OnTick;
 use modifiers::Modifiers;
@@ -113,6 +114,7 @@ pub struct Game {
     pub detained: Detained,
     pub confused: Confused,
     pub drunk_aura: DrunkAura,
+    pub synopsis_tracker: SynopsisTracker
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -182,8 +184,10 @@ impl Game {
             }
             drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
+            let num_players = new_players.len() as u8;
+
             let game = Self{
-                pitchfork: Pitchfork::new(new_players.len() as u8),
+                pitchfork: Pitchfork::new(num_players),
 
                 roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
                 ticking: true,
@@ -211,6 +215,7 @@ impl Game {
                 detained: Detained::default(),
                 confused: Confused::default(),
                 drunk_aura: DrunkAura::default(),
+                synopsis_tracker: SynopsisTracker::new(num_players)
             };
 
             if !game.game_is_over() {
@@ -387,12 +392,14 @@ impl Game {
 
         if !self.ticking { return }
 
-        if self.game_is_over() {
-            OnGameEnding::invoke(self);
+        if let Some(conclusion) = GameConclusion::game_is_over(self) {
+            OnGameEnding::new(conclusion).invoke(self);
         }
 
         if self.phase_machine.day_number == u8::MAX {
-            self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::GameOver);
+            self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::GameOver { 
+                synopsis: SynopsisTracker::get(self, GameConclusion::Draw)
+            });
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
             self.ticking = false;
             return;
@@ -473,11 +480,7 @@ pub mod test {
     use super::{
         ability_input::saved_controllers_map::SavedControllersMap,
         components::{
-            arsonist_doused::ArsonistDoused, cult::Cult,
-            insider_group::InsiderGroupID, love_linked::LoveLinked,
-            mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits,
-            pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette,
-            syndicate_gun_item::SyndicateGunItem, verdicts_today::VerdictsToday
+            arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, verdicts_today::VerdictsToday
         }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine, player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -519,7 +522,7 @@ pub mod test {
         drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
         let mut game = Game{
-            pitchfork: Pitchfork::new(players.len() as u8),
+            pitchfork: Pitchfork::new(number_of_players as u8),
             
             roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
             ticking: true,
@@ -546,6 +549,7 @@ pub mod test {
             detained: Default::default(),
             confused: Default::default(),
             drunk_aura: Default::default(),
+            synopsis_tracker: SynopsisTracker::new(number_of_players as u8)
         };
 
         //set wincons and revealed groups

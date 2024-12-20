@@ -133,6 +133,9 @@ pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: Pla
 }
 
 pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference, mut night_chat_groups: Vec<ChatGroup>) -> HashSet<ChatGroup> {
+    if game.current_phase().phase() == PhaseType::Recess {
+        return vec![ChatGroup::All].into_iter().collect()
+    }
     if 
         !actor_ref.alive(game) && 
         !Modifiers::modifier_is_enabled(game, ModifierType::DeadCanChat)
@@ -182,7 +185,8 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         | PhaseState::Nomination {..}
         | PhaseState::Judgement {..}
         | PhaseState::FinalWords {..}
-        | PhaseState::Dusk => vec![ChatGroup::All].into_iter().collect(),
+        | PhaseState::Dusk 
+        | PhaseState::Recess => vec![ChatGroup::All].into_iter().collect(),
         &PhaseState::Testimony { player_on_trial, .. } => {
             if player_on_trial == actor_ref {
                 vec![ChatGroup::All].into_iter().collect()

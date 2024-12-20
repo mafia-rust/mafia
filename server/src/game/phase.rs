@@ -21,6 +21,7 @@ pub enum PhaseType {
     FinalWords,
     Dusk,
     Night,
+    Recess
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
@@ -39,6 +40,7 @@ pub enum PhaseState {
     FinalWords { player_on_trial: PlayerReference },
     Dusk,
     Night,
+    Recess
 }
 
 pub struct PhaseStateMachine {
@@ -103,6 +105,7 @@ impl PhaseState {
             PhaseState::FinalWords {..} => PhaseType::FinalWords,
             PhaseState::Dusk => PhaseType::Dusk,
             PhaseState::Night => PhaseType::Night,
+            PhaseState::Recess => PhaseType::Recess
         }
     }
 
@@ -165,7 +168,8 @@ impl PhaseState {
             | PhaseState::Discussion
             | PhaseState::Judgement { .. } 
             | PhaseState::FinalWords { .. }
-            | PhaseState::Dusk => {}
+            | PhaseState::Dusk
+            | PhaseState::Recess => {}
         }
         
     }
@@ -257,6 +261,7 @@ impl PhaseState {
 
                 Self::Obituary
             },
+            PhaseState::Recess => Self::Recess
         };
         next
     }

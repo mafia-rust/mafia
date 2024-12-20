@@ -757,9 +757,18 @@
     "phase.night:var.0": "Nighttime",
     "phase.night.subtitle": "Use your abilities to help your team.",
 
+    "phase.recess": "Recess",
+    "phase.recess:var.0": "Intermission",
+    "phase.recess:var.1": "Aftermath",
+
     "night.icon": "🌙",
     "day.icon": "☀️",
 
+    "winCondition.loser": "Loser",
+    "winCondition.draw": "Draw-monger",
+    "winCondition.evil": "Evil",
+    "winCondition.many": "Complex",
+    "winCondition.independent": "Independent",
 
 
     "chatMessage.whisper":"\\0 whispered to \\1: \\2",
@@ -775,7 +784,16 @@
     "chatMessage.phaseChange":"\\0 \\1",
     "chatMessage.phaseChange.nomination":"\\0 \\1\n\\2 nominations left",
     "chatMessage.phaseChange.trial":"\\0 \\1\n\\2 is on trial",
-    "chatMessage.gameOver": "Game Over",
+    "chatMessage.phaseChange.recess":"Recess",
+    "chatMessage.gameOver.conclusion.town": "The town has expelled the evil!",
+    "chatMessage.gameOver.conclusion.mafia": "The syndicate has taken over!",
+    "chatMessage.gameOver.conclusion.cult": "The cult has indoctrinated everyone!",
+    "chatMessage.gameOver.conclusion.fiends": "The fiends have won!",
+    "chatMessage.gameOver.conclusion.politician": "The politician has taken control!",
+    "chatMessage.gameOver.conclusion.draw": "The game has ended in a draw!",
+    "chatMessage.gameOver.player.won.true": "\\0 won! (\\1)",
+    "chatMessage.gameOver.player.won.false": "\\0 lost! (\\1)",
+    "chatMessage.gameOver.player.crumb": "\\0 \\1",
     "chatMessage.playerWon":"\\0 won! They were the \\1.",
     "chatMessage.playerLost":"\\0 lost! They were the \\1.",
     "chatMessage.playerQuit": "\\0 has quit the game and will certainly die at the end of the next night.",
