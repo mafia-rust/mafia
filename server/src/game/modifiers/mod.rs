@@ -4,15 +4,29 @@ pub mod dead_can_chat;
 pub mod no_abstaining;
 pub mod no_death_cause;
 pub mod role_set_grave_killers;
+pub mod no_due_process;
+pub mod two_thirds_majority;
+pub mod no_trial;
+pub mod no_whispers;
+pub mod no_block_messages;
+pub mod no_night_chat;
+pub mod no_chat;
 
 use dead_can_chat::DeadCanChat;
 use no_abstaining::NoAbstaining;
+use no_block_messages::NoBlockMessages;
+use no_chat::NoChat;
+use no_due_process::NoDueProcess;
+use no_night_chat::NoNightChat;
+use no_trial::NoTrial;
+use no_whispers::NoWhispers;
 use obscured_graves::ObscuredGraves;
 use random_love_links::RandomLoveLinks;
 use no_death_cause::NoDeathCause;
 use role_set_grave_killers::RoleSetGraveKillers;
 
 use serde::{Deserialize, Serialize};
+use two_thirds_majority::TwoThirdsMajority;
 
 use crate::{vec_map::VecMap, vec_set::VecSet};
 
@@ -24,6 +38,7 @@ pub trait ModifierTrait where Self: Clone + Sized{
     fn on_ability_input_received(self, _game: &mut Game, _actor_ref: crate::game::player::PlayerReference, _input: crate::game::ability_input::AbilityInput) {}
     fn on_night_priority(self, _game: &mut Game, _priority: crate::game::role::Priority) {}
     fn before_phase_end(self, _game: &mut Game, _phase: super::phase::PhaseType) {}
+    fn on_phase_start(self, _game: &mut Game, _phase: super::phase::PhaseState) {}
     fn on_grave_added(self, _game: &mut Game, _event: GraveReference) {}
     fn on_game_start(self, _game: &mut Game) {}
     fn on_any_death(self, _game: &mut Game, _player: crate::game::player::PlayerReference) {}
@@ -39,6 +54,13 @@ pub enum ModifierState{
     NoAbstaining(NoAbstaining),
     NoDeathCause(NoDeathCause),
     RoleSetGraveKillers(RoleSetGraveKillers),
+    NoDueProcess(NoDueProcess),
+    TwoThirdsMajority(TwoThirdsMajority),
+    NoTrial(NoTrial),
+    NoWhispers(NoWhispers),
+    NoBlockMessages(NoBlockMessages),
+    NoNightChat(NoNightChat),
+    NoChat(NoChat),
 }
 #[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Debug, Hash)]
 #[serde(rename_all = "camelCase")]
@@ -49,6 +71,13 @@ pub enum ModifierType{
     NoAbstaining,
     NoDeathCause,
     RoleSetGraveKillers,
+    NoDueProcess,
+    TwoThirdsMajority,
+    NoTrial,
+    NoWhispers,
+    NoBlockMessages,
+    NoNightChat,
+    NoChat,
 }
 impl ModifierType{
     pub fn default_state(&self)->ModifierState{
@@ -59,6 +88,13 @@ impl ModifierType{
             Self::NoAbstaining => ModifierState::NoAbstaining(NoAbstaining::default()),
             Self::NoDeathCause => ModifierState::NoDeathCause(NoDeathCause::default()),
             Self::RoleSetGraveKillers => ModifierState::RoleSetGraveKillers(RoleSetGraveKillers::default()),
+            Self::NoDueProcess => ModifierState::NoDueProcess(NoDueProcess::default()),
+            Self::TwoThirdsMajority => ModifierState::TwoThirdsMajority(TwoThirdsMajority::default()),
+            Self::NoTrial => ModifierState::NoTrial(NoTrial::default()),
+            Self::NoWhispers => ModifierState::NoWhispers(NoWhispers::default()),
+            Self::NoBlockMessages => ModifierState::NoBlockMessages(NoBlockMessages::default()),
+            Self::NoNightChat => ModifierState::NoNightChat(NoNightChat::default()),
+            Self::NoChat => ModifierState::NoChat(NoChat::default()),
         }
     }
 }
@@ -71,6 +107,13 @@ impl From<&ModifierState> for ModifierType{
             ModifierState::NoAbstaining(_) => Self::NoAbstaining,
             ModifierState::NoDeathCause(_) => Self::NoDeathCause,
             ModifierState::RoleSetGraveKillers(_) => Self::RoleSetGraveKillers,
+            ModifierState::NoDueProcess(_) => Self::NoDueProcess,
+            ModifierState::TwoThirdsMajority(_) => Self::TwoThirdsMajority,
+            ModifierState::NoTrial(_) => Self::NoTrial,
+            ModifierState::NoWhispers(_) => Self::NoWhispers,
+            ModifierState::NoBlockMessages(_) => Self::NoBlockMessages,
+            ModifierState::NoNightChat(_) => Self::NoNightChat,
+            ModifierState::NoChat(_) => Self::NoChat,
         }
     }
 }
