@@ -1,16 +1,10 @@
 use crate::{log, packet::ToServerPacket, strings::TidyableString};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender}, 
-    event::on_fast_forward::OnFastForward, 
-    phase::{PhaseState, PhaseType},
-    player::{PlayerIndex, PlayerReference},
-    role::{
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, event::on_fast_forward::OnFastForward, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
         mayor::Mayor, politician::Politician,
         Role, RoleState
-    },
-    spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
-    Game
+    }, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
 
@@ -60,6 +54,20 @@ impl Game {
                 sender_player_ref.set_verdict(self, verdict);
             },
             ToServerPacket::SendChatMessage { text, block } => {
+                if Modifiers::modifier_is_enabled(self, ModifierType::NoChat) {
+                    break 'packet_match
+                }
+
+                if Modifiers::modifier_is_enabled(self, ModifierType::NoBlockMessages) && block {
+                    break 'packet_match
+                }
+
+                if Modifiers::modifier_is_enabled(self, ModifierType::NoNightChat) &&
+                    sender_player_ref.alive(self) 
+                    && matches!(self.current_phase().phase(), PhaseType::Night | PhaseType::Obituary)
+                {
+                    break 'packet_match
+                }
 
                 if text.replace(['\n', '\r'], "").trim().is_empty() {
                     break 'packet_match;
@@ -104,6 +112,11 @@ impl Game {
                 }
             },
             ToServerPacket::SendWhisper { player_index: whispered_to_player_index, text } => {
+                if Modifiers::modifier_is_enabled(self, ModifierType::NoWhispers) 
+                    || Modifiers::modifier_is_enabled(self, ModifierType::NoChat)
+                {
+                    break 'packet_match
+                }
 
                 let whisperee_ref = match PlayerReference::new(self, whispered_to_player_index){
                     Ok(whisperee_ref) => whisperee_ref,
