@@ -3,7 +3,7 @@ import React, { ReactElement } from "react";
 import GAME_MANAGER, { find, replaceMentions } from "..";
 import StyledText, { KeywordDataMap, PLAYER_SENDER_KEYWORD_DATA } from "./StyledText";
 import "./chatMessage.css"
-import { ChatGroup, PhaseState, PlayerIndex, Tag, Verdict } from "../game/gameState.d";
+import { ChatGroup, Conclusion, PhaseState, PlayerIndex, Tag, translateWinCondition, Verdict, WinCondition } from "../game/gameState.d";
 import { Role, RoleState } from "../game/roleState.d";
 import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
@@ -409,6 +409,8 @@ export function translateChatMessage(
                         message.dayNumber,
                         playerNames[message.phase.playerOnTrial]
                     );
+                case "recess":
+                    return translate("chatMessage.phaseChange.recess");
                 default:
                     return translate("chatMessage.phaseChange",
                         translate("phase."+message.phase.type),
@@ -661,12 +663,21 @@ export function translateChatMessage(
             return translate("chatMessage.playerDiedOfBrokenHeart", playerNames[message.player], playerNames[message.lover]);
         case "chronokaiserSpeedUp":
             return translate("chatMessage.chronokaiserSpeedUp", message.percent);
+        case "gameOver":
+            return translate(`chatMessage.gameOver.conclusion.${message.synopsis.conclusion}`) + '\n'
+                + message.synopsis.playerSynopses.map((synopsis, index) => 
+                    translate(`chatMessage.gameOver.player.won.${synopsis.won}`, playerNames![index],
+                        synopsis.crumbs.map(crumb => translate("chatMessage.gameOver.player.crumb",
+                            translateWinCondition(crumb.winCondition), 
+                            translate(`role.${crumb.role}.name`)
+                        )).join(" → ")
+                    ),
+                ).join('\n');
         case "deputyShotYou":
         case "mediumExists":
         case "targetWasAttacked":
         case "youWereProtected":
         case "revolutionaryWon":
-        case "gameOver":
         case "jesterWon":
         case "wardblocked":
         case "yourConvertFailed":
@@ -745,6 +756,17 @@ export type ChatMessageVariant = {
     tag: Tag
 } | {
     type: "gameOver"
+    synopsis: {
+        playerSynopses: {
+            crumbs: {
+                night: number | null,
+                role: Role,
+                winCondition: WinCondition
+            }[],
+            won: boolean
+        }[],
+        conclusion: Conclusion
+    }
 } | {
     type: "playerWonOrLost",
     player: PlayerIndex,

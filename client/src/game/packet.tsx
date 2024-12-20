@@ -81,7 +81,7 @@ export type ToClientPacket = {
     roleOutline: RoleOutline
 } | {
     type: "phaseTime",
-    phase: PhaseState, 
+    phase: Exclude<PhaseState, { type: "recess" }>, 
     time: number
 } | {
     type: "phaseTimes",

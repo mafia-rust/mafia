@@ -1,6 +1,9 @@
+use serde::Serialize;
+
 use super::{player::PlayerReference, role::Role, role_list::RoleSet, win_condition::WinCondition, Game};
 
-#[derive(Debug, PartialEq, Eq, Clone, Hash)]
+#[derive(Clone, Debug, Serialize, PartialEq, Eq, Hash)]
+#[serde(rename_all = "camelCase")]
 pub enum GameConclusion {
     Town,
     Mafia,
