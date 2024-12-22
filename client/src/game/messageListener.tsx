@@ -78,10 +78,8 @@ export default function messageListener(packet: ToClientPacket){
 
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
                 GAME_MANAGER.state.roomCode = packet.roomCode;
-            }
-            if(GAME_MANAGER.state.stateType === "lobby")
                 GAME_MANAGER.state.myId = packet.playerId;
-        
+            }        
 
             saveReconnectData(packet.roomCode, packet.playerId);
             sendDefaultName();
@@ -150,6 +148,8 @@ export default function messageListener(packet: ToClientPacket){
                     }
                 }
                 GAME_MANAGER.state.players = new Map(GAME_MANAGER.state.players.entries());
+            }else if(GAME_MANAGER.state.stateType === "game"){
+                GAME_MANAGER.state.host = packet.hosts.includes(GAME_MANAGER.state.myId===null?-1:GAME_MANAGER.state.myId)
             }
         break;
         case "playersReady":

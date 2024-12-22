@@ -56,6 +56,8 @@ type GameState = {
     roomCode: number,
     lobbyName: string,
 
+    myId: number | null,
+
     chatMessages : ChatMessage[],
     graves: Grave[],
     players: Player[],

@@ -261,7 +261,7 @@ export function ChatTextInput(props: Readonly<{
 
 
     const sendChatField = useCallback(() => {
-        let text = chatBoxText.replace("\n", "").replace("\r", "").trim();
+        let text = chatBoxText.trim();
         setWhispering(null);
         setChatBoxText("");
         if (text === "") return;
@@ -291,17 +291,17 @@ export function ChatTextInput(props: Readonly<{
                 setChatBoxText(text);
             }
         } else {
-            setChatBoxText(
-                text
-                    .replace(/  +/g, ' ')
-                    .replace(/\t/g, ' ')
-                    .replace(/\n/g, ' ')
-            );
+            setChatBoxText(text);
         }
     }, [gamePlayers, myIndex, whispering]);
 
     const handleInputKeyDown = useCallback((event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (event.key === "Enter") {
+        
+        //if press enter while holding shift
+        if(event.key === "Enter" && event.shiftKey){
+            event.preventDefault();
+            setChatBoxText(chatBoxText+"\n");
+        } else if (event.key === "Enter") {
             event.preventDefault();
             sendChatField();
         } else if (event.key === "ArrowUp") {
@@ -317,7 +317,7 @@ export function ChatTextInput(props: Readonly<{
             event.preventDefault();
             setWhispering(null);
         }
-    }, [sendChatField, history, historyPoller]);
+    }, [sendChatField, history, historyPoller, chatBoxText]);
 
     return <>
         {whisperingPlayer !== null && <div className="chat-whisper-notification">

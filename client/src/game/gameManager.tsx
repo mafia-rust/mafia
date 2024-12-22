@@ -79,6 +79,7 @@ export function createGameManager(): GameManager {
                 GAME_MANAGER.state.phaseTimes = lobbyState.phaseTimes;
                 GAME_MANAGER.state.enabledRoles = lobbyState.enabledRoles;
                 GAME_MANAGER.state.host = lobbyState.players.get(lobbyState.myId!)?.ready === "host";
+                GAME_MANAGER.state.myId = lobbyState.myId
             }
         },
         setSpectatorGameState() {

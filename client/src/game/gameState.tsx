@@ -39,6 +39,8 @@ export function createGameState(): GameState {
         roomCode: 0,
         lobbyName: "",
 
+        myId: null,
+
         chatMessages : [],
         graves: [],
         players: [],

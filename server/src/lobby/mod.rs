@@ -277,7 +277,15 @@ impl Lobby {
     
                     send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id: lobby_client_id, spectator: false});
                     player_ref.connect(game, send.clone());
-                    
+
+                    send.send(ToClientPacket::PlayersHost{hosts:
+                        players
+                            .iter()
+                            .filter(|p|p.1.host)
+                            .map(|p|*p.0)
+                            .collect()
+                    });
+
                     Ok(())
                 }else{
                     send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
