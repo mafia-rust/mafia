@@ -76,7 +76,8 @@ impl PlayerReference{
                     
                     self.set_night_grave_killers(game, vec![GraveKiller::Quit]);
                 }
-            }
+            },
+            PhaseType::Recess => {}
         }
 
         self.set_fast_forward_vote(game, false);

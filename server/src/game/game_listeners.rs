@@ -1,7 +1,7 @@
 use crate::packet::ToClientPacket;
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant}, grave::GraveReference, phase::PhaseType, player::PlayerReference, role::Role, Game, GameOverReason
+    chat::{ChatGroup, ChatMessageVariant}, components::synopsis::SynopsisTracker, game_conclusion::GameConclusion, grave::GraveReference, phase::{PhaseState, PhaseStateMachine, PhaseType}, player::PlayerReference, role::Role, Game, GameOverReason
 };
 
 //Event listerner functions for game defined here
@@ -25,24 +25,14 @@ impl Game{
             });
         }
     }
-    pub fn on_game_ending(&mut self){
-        if self.game_is_over() {
-            self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::GameOver);
-            self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::Draw });
+    pub fn on_game_ending(&mut self, conclusion: GameConclusion){
+        let synopsis = SynopsisTracker::get(self, conclusion);
 
-            for player_ref in PlayerReference::all_players(self){
-                self.add_message_to_chat_group(ChatGroup::All,
-                    ChatMessageVariant::PlayerWonOrLost{ 
-                        player: player_ref.index(), 
-                        won: player_ref.get_won_game(self), 
-                        role: player_ref.role_state(self).role() 
-                    }
-                );
-            }
-
-            
-            self.ticking = false;
-        }
+        PhaseStateMachine::next_phase(self, Some(PhaseState::Recess));
+        self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::GameOver { synopsis });
+        self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::Draw });
+        
+        self.ticking = false;
     }
     pub fn on_fast_forward(&mut self){
         self.phase_machine.time_remaining = std::time::Duration::from_secs(0);

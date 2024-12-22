@@ -106,7 +106,7 @@ impl RoleStateImpl for Politician {
             //for skipping phases
             match phase {
                 PhaseType::Briefing | PhaseType::Nomination | PhaseType::Testimony | 
-                PhaseType::Judgement | PhaseType::FinalWords  => {}
+                PhaseType::Judgement | PhaseType::FinalWords | PhaseType::Recess => {}
 
                 PhaseType::Obituary | PhaseType::Discussion | PhaseType::Dusk | PhaseType::Night => {
                     game.phase_machine.time_remaining = Duration::from_secs(0);
