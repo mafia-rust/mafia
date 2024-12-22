@@ -1,13 +1,14 @@
-import React, { useContext } from "react";
+import React, { ReactElement, useCallback, useContext } from "react";
 import "./outlineSelector.css";
 import translate from "../../game/lang";
-import { ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, simplifyRoleOutline, translateRoleOutlineOption} from "../../game/roleListState.d";
-import { Role, roleJsonData } from "../../game/roleState.d";
+import { getAllRoles, getRolesFromRoleSet, ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, simplifyRoleOutline, translateRoleOutlineOption} from "../../game/roleListState.d";
+import { Role } from "../../game/roleState.d";
 import Icon from "../Icon";
 import { DragAndDrop } from "../DragAndDrop";
 import { GameModeContext } from "./GameModesEditor";
 import Select, { SelectOptionsSearch } from "../Select";
 import StyledText from "../StyledText";
+import { useLobbyOrGameState } from "../useHooks";
 
 type RoleOutlineSelectorProps = {
     roleOutline: RoleOutline,
@@ -113,7 +114,13 @@ export default class RoleOutlineSelector extends React.Component<RoleOutlineSele
     }
 }
 
-type RoleOutlineOptionSelectorProps = {
+function translateRoleOutlineOptionOrAny(roleOutlineOption: RoleOutlineOption | "any"): string {
+    if(roleOutlineOption === "any") {
+        return translate("any");
+    }else
+        return translateRoleOutlineOption(roleOutlineOption);
+}
+export function RoleOutlineOptionSelector(props: Readonly<{
     disabled?: boolean
 } & ({
     excludeAny: true
@@ -123,65 +130,66 @@ type RoleOutlineOptionSelectorProps = {
     excludeAny?: false
     roleOutlineOption: RoleOutlineOption | "any",
     onChange: (value: RoleOutlineOption | "any") => void,
-})
+})>): ReactElement {
+    const enabledRoles = useLobbyOrGameState(
+        state => state.enabledRoles,
+        ["enabledRoles"],
+        getAllRoles()
+    )!;
 
-function translateRoleOutlineOptionOrAny(roleOutlineOption: RoleOutlineOption | "any"): string {
-    if(roleOutlineOption === "any") {
-        return translate("any");
-    }else
-        return translateRoleOutlineOption(roleOutlineOption);
-}
-export class RoleOutlineOptionSelector extends React.Component<RoleOutlineOptionSelectorProps> {
+    const isRoleEnabled = useCallback((role: Role) => {
+        return enabledRoles.includes(role)
+    }, [enabledRoles])
 
-    
-    render(): React.ReactNode {
+    const optionsSearch: SelectOptionsSearch<string> = new Map();
 
+    optionsSearch.set("any", [
+        <StyledText
+            key={0}
+            noLinks={!props.disabled}
+        >
+            {translate("any")}
+        </StyledText>, 
+        translate("any")
+    ]);
 
-        const optionsSearch: SelectOptionsSearch<string> = new Map();
-
-        optionsSearch.set("any", [
+    ROLE_SETS.forEach((roleSet) => {
+        optionsSearch.set(JSON.stringify({type: "roleSet", roleSet: roleSet}), [
             <StyledText
-                noLinks={!this.props.disabled}
+                key={0}
+                noLinks={!props.disabled}
+                className={getRolesFromRoleSet(roleSet).every(role => !isRoleEnabled(role)) ? "keyword-disabled" : ""}
             >
-                {translate("any")}
+                {translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})}
             </StyledText>, 
-            translate("any")
+            translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})]
+        );
+    });
+    
+    getAllRoles().forEach((role) => {
+        optionsSearch.set(JSON.stringify({type: "role", role: role}), [
+            <StyledText
+                key={0}
+                noLinks={!props.disabled}
+                className={!isRoleEnabled(role) ? "keyword-disabled" : ""}
+            >
+                {translateRoleOutlineOptionOrAny({type: "role", role})}
+            </StyledText>,
+            translateRoleOutlineOptionOrAny({type: "role", role})
         ]);
+    });
 
-        ROLE_SETS.forEach((roleSet) => {
-            optionsSearch.set(JSON.stringify({type: "roleSet", roleSet: roleSet}), [
-                <StyledText
-                    noLinks={!this.props.disabled}
-                >
-                    {translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})}
-                </StyledText>, 
-                translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})]
+    return <Select
+        className="role-outline-option-selector"
+        disabled={props.disabled}
+        value={props.roleOutlineOption==="any"?"any":JSON.stringify(props.roleOutlineOption)}
+        onChange={(value) => {
+            props.onChange(
+                value === "any" ? "any" : JSON.parse(value)
             );
-        });
-        
-        Object.keys(roleJsonData()).forEach((role) => {
-            optionsSearch.set(JSON.stringify({type: "role", role: role}), [
-                <StyledText
-                    noLinks={!this.props.disabled}
-                >
-                    {translateRoleOutlineOptionOrAny({type: "role", role: role as Role})}
-                </StyledText>,
-                translateRoleOutlineOptionOrAny({type: "role", role: role as Role})
-            ]);
-        });
-
-        return <Select
-            className="role-outline-option-selector"
-            disabled={this.props.disabled}
-            value={this.props.roleOutlineOption==="any"?"any":JSON.stringify(this.props.roleOutlineOption)}
-            onChange={(value) => {
-                this.props.onChange(
-                    value === "any" ? "any" : JSON.parse(value)
-                );
-            }}
-            optionsSearch={optionsSearch}
-        />
-    }
+        }}
+        optionsSearch={optionsSearch}
+    />
 }
 
 export function OutlineListSelector(props: {

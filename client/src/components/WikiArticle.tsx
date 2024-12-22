@@ -1,16 +1,18 @@
-import { ReactElement } from "react";
+import { ReactElement, ReactNode } from "react";
 import { Role, roleJsonData } from "../game/roleState.d";
 import React from "react";
 import translate, { langText, translateChecked } from "../game/lang";
 import StyledText, { DUMMY_NAMES_KEYWORD_DATA, DUMMY_NAMES_SENDER_KEYWORD_DATA, StyledTextProps } from "./StyledText";
-import { ROLE_SETS, getRolesFromRoleSet } from "../game/roleListState.d";
+import { ROLE_SETS, getAllRoles, getRolesFromRoleSet } from "../game/roleListState.d";
 import ChatElement, { ChatMessageVariant } from "./ChatMessage";
 import DUMMY_NAMES from "../resources/dummyNames.json";
-import { GeneratedArticle, WikiArticleLink } from "./WikiArticleLink";
+import { ARTICLES, GeneratedArticle, getArticleTitle, WikiArticleLink, wikiPageIsEnabled } from "./WikiArticleLink";
 import "./wiki.css";
 import GAME_MANAGER, { replaceMentions } from "..";
 import { useLobbyOrGameState } from "./useHooks";
 import DetailsSummary from "./DetailsSummary";
+import { partitionWikiPages, WikiCategory } from "./Wiki";
+import { MODIFIERS, ModifierType } from "../game/gameState.d";
 
 function WikiStyledText(props: Omit<StyledTextProps, 'markdown' | 'playerKeywordData'>): ReactElement {
     return <StyledText {...props} markdown={true} playerKeywordData={DUMMY_NAMES_KEYWORD_DATA} />
@@ -23,7 +25,7 @@ export default function WikiArticle(props: {
     const path = props.article.split('/');
 
     switch (path[0]) {
-        case "role":
+        case "role": {
             const role = path[1] as Role;
             const roleData = roleJsonData()[role];
             const chatMessages = roleData.chatMessages as ChatMessageVariant[];
@@ -94,14 +96,20 @@ export default function WikiArticle(props: {
                         {"### "+translate("wiki.article.standard.aura.title")+": "+(roleData.aura?translate(roleData.aura+"Aura"):translate("none"))+"\n"}
                     </WikiStyledText>
                 </DetailsSummary>
-            </section>;
+            </section>
+        }
+        case "category": 
+            return <CategoryArticle category={path[1] as WikiCategory}/>
         case "standard":
+        case "modifier": {
+            const articleType = path[0];
             return <section className="wiki-article">
                 <WikiStyledText className="wiki-article-standard">
-                    {"# "+translate(`wiki.article.standard.${props.article.split("/")[1]}.title`)+"\n"}
-                    {replaceMentions(translate(`wiki.article.standard.${props.article.split("/")[1]}.text`))}
+                    {"# "+translate(`wiki.article.${articleType}.${props.article.split("/")[1]}.title`)+"\n"}
+                    {replaceMentions(translate(`wiki.article.${articleType}.${props.article.split("/")[1]}.text`))}
                 </WikiStyledText>
             </section>
+        }
         case "generated":
             return <section className="wiki-article">
                 <GeneratedArticleElement article={path[1] as GeneratedArticle}/>
@@ -109,6 +117,58 @@ export default function WikiArticle(props: {
     }
 
     return <></>;
+}
+
+function CategoryArticle(props: Readonly<{ category: WikiCategory }>): ReactElement {
+    const title = translate(`wiki.category.${props.category}`);
+    const description = translateChecked(`wiki.category.${props.category}.text`);
+
+    const enabledRoles = useLobbyOrGameState(
+        state => state.enabledRoles,
+        ["enabledRoles"],
+        getAllRoles()
+    )!;
+
+    const enabledModifiers = useLobbyOrGameState(
+        state => state.enabledModifiers,
+        ["enabledModifiers"],
+        MODIFIERS as any as ModifierType[]
+    )!;
+
+    return <section className="wiki-article">
+        <WikiStyledText className="wiki-article-standard">
+            {"# "+title+"\n"}
+            {description ? replaceMentions(description) : ""}
+        </WikiStyledText>
+        <PageCollection 
+            title={title}
+            pages={partitionWikiPages(ARTICLES, enabledRoles, enabledModifiers).categories[props.category] ?? []}
+            enabledRoles={enabledRoles}
+            enabledModifiers={enabledModifiers}
+        />
+    </section>
+}
+
+export function PageCollection(props: Readonly<{
+    title: string,
+    pages: WikiArticleLink[],
+    enabledRoles: Role[],
+    enabledModifiers: ModifierType[],
+    children?: ReactNode
+}>): ReactElement {
+    return <>
+        <h3 className="wiki-search-divider">
+            <StyledText>{props.title}</StyledText>
+        </h3>
+        {props.children}
+        {props.pages.map((page) => {
+            return <button key={page} className={wikiPageIsEnabled(page, props.enabledRoles, props.enabledModifiers) ? "" : "keyword-disabled"} 
+                onClick={() => GAME_MANAGER.setWikiArticle(page)}
+            >
+                <StyledText noLinks={true}>{getArticleTitle(page)}</StyledText>
+            </button>
+        })}
+    </>
 }
 
 
@@ -127,8 +187,9 @@ function GeneratedArticleElement(props: Readonly<{ article: GeneratedArticle }>)
 function RoleSetArticle(): ReactElement {
     const enabledRoles = useLobbyOrGameState(
         state => state.enabledRoles,
-        ["enabledRoles"]
-    );
+        ["enabledRoles"],
+        getAllRoles()
+    )!;
 
     return <div>
         <section key="title">
@@ -136,24 +197,15 @@ function RoleSetArticle(): ReactElement {
         </section>
         {ROLE_SETS.map(set => {
             const description = translateChecked(`${set}.description`);
-            return <>
-                <h3 key={set+"title"} className="wiki-search-divider">
-                    <StyledText>{translate(set)}</StyledText>
-                </h3>
+            return <PageCollection
+                key={set}
+                title={translate(set)}
+                pages={getRolesFromRoleSet(set).map(role => `role/${role}` as WikiArticleLink)}
+                enabledRoles={enabledRoles}
+                enabledModifiers={[]}
+            >
                 {description && <p><StyledText>{description}</StyledText></p>}
-                {getRolesFromRoleSet(set).map((role)=>{
-                    let className = "";
-                    if(enabledRoles !== undefined && !enabledRoles.includes(role)) {
-                        className = "keyword-disabled";
-                    }
-
-                    return <button key={role} className={className} 
-                        onClick={() => GAME_MANAGER.setWikiArticle(`role/${role}`)}
-                    >
-                        <StyledText noLinks={true}>{translate("role."+role+".name")}</StyledText>
-                    </button>
-                })}
-            </>
+            </PageCollection>
         })}
         <WikiStyledText key={"extra"}>
             {translate("wiki.article.generated.roleSet.extra", Object.keys(roleJsonData()).length)}
@@ -163,12 +215,13 @@ function RoleSetArticle(): ReactElement {
 
 function getSearchStringsGenerated(article: GeneratedArticle): string[]{
     switch(article){
-        case "roleSet":
+        case "roleSet": {
             let out = [translate("wiki.article.generated.roleSet.title")];
             for(let set of ROLE_SETS){
                 out.push(translate(set));
             }
             return out;
+        }
         case "all_text":
             return [];
     }
@@ -178,8 +231,7 @@ export function getSearchStrings(article: WikiArticleLink): string[]{
     const path = article.split('/');
 
     switch (path[0]) {
-        case "role":
-
+        case "role": {
             const role = path[1] as Role;
             const roleData = roleJsonData()[role];
             let out = [];
@@ -211,15 +263,17 @@ export function getSearchStrings(article: WikiArticleLink): string[]{
                 out.push(translate("wiki.article.standard.roleLimit.title"));
 
             return out;            
-            
-        case "standard":
+        }
+        case "modifiers":
+        case "standard": {
             return [
-                translate(`wiki.article.standard.${path[1]}.title`),
-                translate(`wiki.article.standard.${path[1]}.text`),
+                translate(`wiki.article.${path[0]}.${path[1]}.title`),
+                translate(`wiki.article.${path[0]}.${path[1]}.text`),
             ]
+        }
         case "generated":
             return getSearchStringsGenerated(path[1] as GeneratedArticle);
-        default:
+        default: // Categories don't show up in search results
             return [];
     }
 }

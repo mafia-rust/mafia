@@ -5,7 +5,7 @@ import StyledText, { computeKeywordData } from "../components/StyledText";
 import Icon from "../components/Icon";
 import { loadSettingsParsed, RoleSpecificMenuType, saveSettings } from "../game/localStorage";
 import { MobileContext, AnchorControllerContext, ANCHOR_CONTROLLER } from "./Anchor";
-import { Role, roleJsonData } from "../game/roleState.d";
+import { Role } from "../game/roleState.d";
 import AudioController from "./AudioController";
 import { getAllRoles } from "../game/roleListState.d";
 import CheckBox from "../components/CheckBox";
@@ -113,7 +113,7 @@ export default function SettingsMenu(): ReactElement {
                             {translate("menu.settings.roleSpecificMenus")}
                         </summary>
                         {
-                            Object.entries(roleJsonData()).map(([role, roleJsonData]) => {
+                            getAllRoles().map(role => {
                                 // const roleSpecificMenuExists = type.roleSpecificMenu;
                                 const menuType: RoleSpecificMenuType = roleSpecificMenuSettings.includes(role as Role) ? "standalone" : "playerList";
 
