@@ -229,6 +229,8 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.setGameState();
                 ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
             }
+
+            AudioController.queueFile("audio/start_game.mp3");
         }
         break;
         case "gameInitializationComplete": {
