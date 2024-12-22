@@ -5,7 +5,7 @@ import { RoleList } from "./roleListState.d";
 import { LobbyPreviewData } from "./packet";
 import { ChatFilter } from "../menu/game/gameScreenContent/ChatMenu";
 import { ControllerID, SavedController } from "./abilityInput";
-import { ListMapData } from "../ListMap";
+import ListMap, { ListMapData } from "../ListMap";
 
 
 export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;
@@ -35,7 +35,7 @@ export type LobbyState = {
     enabledRoles: Role[],
     enabledModifiers: ModifierType[],
 
-    players: Map<LobbyClientID, LobbyClient>,
+    players: ListMap<LobbyClientID, LobbyClient>,
     chatMessages: ChatMessage[],
 }
 export type LobbyClient = {

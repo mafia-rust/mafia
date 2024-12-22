@@ -1,3 +1,4 @@
+import ListMap from "../ListMap"
 import GameState, { LobbyClient, LobbyState, PhaseTimes, Player, LobbyClientID, PlayerGameState } from "./gameState.d"
 
 
@@ -28,7 +29,7 @@ export function createLobbyState(): LobbyState {
         enabledRoles: [],
         enabledModifiers: [],
 
-        players: new Map<LobbyClientID, LobbyClient>(),
+        players: new ListMap<LobbyClientID, LobbyClient>(),
         chatMessages: [],
     }
 }

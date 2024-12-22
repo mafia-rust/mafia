@@ -111,7 +111,7 @@ export function createGameManager(): GameManager {
         getMyName() {
             if (gameManager.state.stateType === "lobby"){
                 let client = gameManager.state.players.get(gameManager.state.myId!);
-                if(client === undefined) return undefined;
+                if(client === undefined || client === null) return undefined;
                 if(client.clientType.type === "spectator") return undefined;
                 return client.clientType.name;
             }
