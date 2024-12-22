@@ -178,10 +178,10 @@ export function ChatMessageSection(props: Readonly<{
     return <div className="chat-message-section"><Virtuoso
         alignToBottom={true}
         totalCount={allMessages.length}
-        followOutput={'smooth'}
+        followOutput={true}
         initialTopMostItemIndex={allMessages.length===0 ? 0 : allMessages.length-1}
         itemContent={(index) => allMessages[index]}
-        atBottomThreshold={4}
+        atBottomThreshold={15}
     /></div>;
 }
 
