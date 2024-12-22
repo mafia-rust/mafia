@@ -601,7 +601,7 @@
     "chatMessage.targeted": "\\0 eecsledt \\1.",
     "chatMessage.targeted.cleared": "\\0 leercad itreh eslteocni.",
     "chatMessage.mayorRevealed": "Hte mraoy, \\0, is singu nemeryecg ixuceetve nvoitg wpoer!",
-    "chatMessage.mayorCantWhisper": "A Mraoy t'cna eswirhp aetfr cvnaigaitt ixuceetve nvoitg wpoer.",
+    "chatMessage.invalidWhisper": "A Mraoy t'cna eswirhp aetfr cvnaigaitt ixuceetve nvoitg wpoer.",
     "chatMessage.martyrRevealed": "Iasrpe hte Mtyrra \\0, ofr yteh lliw elad su to amrhoyn!",
     "chatMessage.reporterReport": "Hte wont unljroa testas hsit: \\0",
     "chatMessage.playerIsBeingInterviewed": "\\0 is igneb wdeeievntir yb a rjlatisonu",

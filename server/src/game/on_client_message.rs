@@ -116,23 +116,24 @@ impl Game {
                     !sender_player_ref.get_current_send_chat_groups(self).contains(&ChatGroup::All) ||
                     text.replace(['\n', '\r'], "").trim().is_empty()
                 {
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
                     break 'packet_match;
                 }
 
                 if let RoleState::Mayor(Mayor{revealed: true}) = whisperee_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
                     break 'packet_match;
                 }
                 if let RoleState::Mayor(Mayor{revealed: true}) = sender_player_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
                     break 'packet_match;
                 }
                 if let RoleState::Politician(Politician{revealed: true, ..}) = whisperee_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
                     break 'packet_match;
                 }
                 if let RoleState::Politician(Politician{revealed: true, ..}) = sender_player_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
                     break 'packet_match;
                 }
 

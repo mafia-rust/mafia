@@ -99,7 +99,7 @@
     "menu.will.subtract": "Subtract",
 
     "menu.wiki.title": "Encyclopedia",
-    "menu.wiki.icon": "🔎",
+    "menu.wiki.icon": "📖",
     "menu.wiki.search.placeholder": "Search the encyclopedia...",
 
     "menu.playerList.title": "Players",
@@ -799,7 +799,7 @@
     "chatMessage.abilityUsed.selection.integer":" set to \\0",
 
     "chatMessage.mayorRevealed":"\\0 has enfranchised!",
-    "chatMessage.mayorCantWhisper":"You can not whisper with an enfranchised player.",
+    "chatMessage.invalidWhisper":"This whisper couldn't be sent.",
     "chatMessage.politicianCountdownStarted":"The politician is about to seize control of the town! This is your last chance to execute them before they take over!",
     "chatMessage.martyrRevealed":"Praise the Martyr \\0, for they will lead us to harmony!",
     "chatMessage.reporterReport":"The town report states this:\n\\0",
@@ -825,8 +825,8 @@
     "chatMessage.youAttackedSomeone": "You attacked someone.",
     "chatMessage.youWereAttacked": "You were attacked by someone",
     
-    "chatMessage.targetWasAttacked":"Your target was attacked.",
-    "chatMessage.youWereProtected": "Someone protected you.",
+    "chatMessage.targetWasAttacked":"You protected someone from at least one attack.",
+    "chatMessage.youWereProtected": "You were protected from at least one attack.",
 
     "chatMessage.wardblocked":"You were wardblocked, some of your targets were warded",
     "chatMessage.roleBlocked.immune": "Someone tried to roleblock you but you are immune.",
@@ -937,7 +937,7 @@
     "wiki.article.standard.whisper.title:var.0": "Whispers",
     "wiki.article.standard.whisper.title:var.1": "Whispering",
     "wiki.article.standard.whisper.title:var.2": "Whispered",
-    "wiki.article.standard.whisper.text":"During the day, as long as you can speak in all chat, you can whisper to any other living player\n- Whispering sends a private chat message to the player you chose\n- To whisper someone, use the whisper command or open the whisper channel using the button in the playerlist\n   - The whisper command is \"\\w#\" where \"#\" is replaced with the player number of the player you want to whisper, so \"\\w2 Hey, my role is witch!\" whispers to player @2\n- When you whisper someone, a message is sent in all chat saying that you whispered to the player you chose, so everyone knows that you whispered that player",
+    "wiki.article.standard.whisper.text":"During the day, as long as you can speak in all chat, you can whisper to any other living player\n- Whispering sends a private chat message to the player you chose\n- To whisper someone, use the whisper command or open the whisper channel using the button in the playerlist\n   - The whisper command is \"\\w#\" where \"#\" is replaced with the player number of the player you want to whisper, so \"\\w2 Hey, my role is witch!\" whispers to player @2\n- When you whisper someone, a message is sent in all chat saying that you whispered to the player you chose, so everyone knows that you whispered that player\n - You can't whisper to an enfranchised player\n - If you try to send an invalid whisper you are sent a chat message saying that you cant whisper.",
     "wiki.article.standard.tag.title": "Tag",
     "wiki.article.standard.tag.title:var.0": "Tags",
     "wiki.article.standard.tag.title:var.1": "Tagged",
@@ -1320,8 +1320,8 @@
     "wiki.article.role.gossip.reminder": "At night, select a player to eavesdrop on, and learn if they visited a player who is enemies with town.",
     "wiki.article.role.gossip.guide": "- At night, select a player. You are told if they visited a player who is enemies with town\n- If they visited a friend, or nobody, they did not visit an enemy",
     "wiki.article.role.gossip.abilities":"- Visit a player to eavesdrop on\n    - If your target visited a player who is enemies with town, you are told so\n    - If your target visited nobody, then they didn't visit an enemy of the town",
-    "wiki.article.role.gossip.attributes":"- If any of your targets targets have a suspicious aura, then you are told they visited an enemy",
-    "wiki.article.role.gossip.extra":"- Suspicious aura overrides innocent aura\n- If your target visits multiple other players, you learn if at least one of them is an enemy with your target\n- False appeared visits can mess with your results\n- Your target having an aura does not mess with the results, however, their targets having an aura does",
+    "wiki.article.role.gossip.attributes":"- If any player your target visits has a suspicious aura, then you are told they visited a town enemy",
+    "wiki.article.role.gossip.extra":"- Suspicious aura overrides innocent aura\n- If your target visits multiple other players, you learn if at least one of them is a town enemy\n- False appeared visits can mess with your results, depending on who your target appears to visit\n- Your target having an aura does not mess with the results, however, their targets having an aura does",
     
     "wiki.article.role.tallyClerk.reminder": "At night, you are told how many players are not town loyalists from the players who voted guilty today.",
     "wiki.article.role.tallyClerk.guide": "- At night, you are told how many players are not town loyalists from the players who voted guilty during any of the trials today\n- If any player has innocent aura, they register as a town loyalist\n- If any player has suspicious aura, they register as not a town loyalist",

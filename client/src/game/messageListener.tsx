@@ -78,10 +78,8 @@ export default function messageListener(packet: ToClientPacket){
 
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
                 GAME_MANAGER.state.roomCode = packet.roomCode;
-            }
-            if(GAME_MANAGER.state.stateType === "lobby")
                 GAME_MANAGER.state.myId = packet.playerId;
-        
+            }        
 
             saveReconnectData(packet.roomCode, packet.playerId);
             sendDefaultName();
@@ -142,35 +140,34 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "playersHost":
             if(GAME_MANAGER.state.stateType === "lobby"){
-                for(let [playerId, player] of GAME_MANAGER.state.players){
+                for(let [playerId, player] of GAME_MANAGER.state.players.entries()){
                     if (packet.hosts.includes(playerId)) {
                         player.ready = "host";
                     } else {
                         player.ready = player.ready === "host" ? "ready" : player.ready
                     }
                 }
-                GAME_MANAGER.state.players = new Map(GAME_MANAGER.state.players.entries());
+            }else if(GAME_MANAGER.state.stateType === "game"){
+                GAME_MANAGER.state.host = packet.hosts.includes(GAME_MANAGER.state.myId===null?-1:GAME_MANAGER.state.myId)
             }
         break;
         case "playersReady":
             if(GAME_MANAGER.state.stateType === "lobby"){
-                for(let [playerId, player] of GAME_MANAGER.state.players){
+                for(let [playerId, player] of GAME_MANAGER.state.players.entries()){
                     if (packet.ready.includes(playerId)) {
                         player.ready = "ready";
                     } else {
                         player.ready = player.ready === "host" ? "host" : "notReady"
                     }
                 }
-                GAME_MANAGER.state.players = new Map(GAME_MANAGER.state.players.entries());
             }
         break;
         case "playersLostConnection":
             if(GAME_MANAGER.state.stateType === "lobby"){
-                for(let [playerId, player] of GAME_MANAGER.state.players){
+                for(let [playerId, player] of GAME_MANAGER.state.players.entries()){
                     if(packet.lostConnection.includes(playerId))
                         player.connection = "couldReconnect";
                 }
-                GAME_MANAGER.state.players = new Map(GAME_MANAGER.state.players.entries());
             }
         break;
         /*
@@ -195,9 +192,10 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "lobby"){
 
                 let oldMySpectator = GAME_MANAGER.getMySpectator();
-                GAME_MANAGER.state.players = new Map();
-                for(let [clientId, lobbyClient] of Object.entries(packet.clients)){
-                    GAME_MANAGER.state.players.set(Number.parseInt(clientId), lobbyClient);
+
+                GAME_MANAGER.state.players = new ListMap();
+                for(let [clientId, lobbyClient] of packet.clients){
+                    GAME_MANAGER.state.players.insert(clientId, lobbyClient);
                 }
                 let newMySpectator = GAME_MANAGER.getMySpectator();
 
