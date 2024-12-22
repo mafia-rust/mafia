@@ -10,7 +10,7 @@ import Icon from "./Icon";
 import { ContentMenu, MenuController } from "../menu/game/GameScreen";
 import { AnchorController } from "../menu/Anchor";
 import WikiCoverCard from "./WikiCoverCard";
-import { getAllRoles, RoleSet } from "../game/roleListState.d";
+import { getAllRoles } from "../game/roleListState.d";
 import { useLobbyOrGameState } from "./useHooks";
 import { MODIFIERS, ModifierType } from "../game/gameState.d";
 import Masonry from "react-responsive-masonry";
@@ -102,12 +102,12 @@ export default function Wiki(props: Readonly<{
     </div>
 }
 
-function WikiSearchBar(props: {
+function WikiSearchBar(props: Readonly<{
     searchQuery: string,
     onSearchChange: (search: string) => void,
     onBack: () => void,
     onClear: () => void,
-}): ReactElement {
+}>): ReactElement {
     return <div className="wiki-search-bar">
         <button tabIndex={-1} onClick={() => props.onBack()}>
             <Icon>arrow_back</Icon>
@@ -211,9 +211,6 @@ function WikiMainPage(props: Readonly<{
     return <div ref={ref} className="wiki-main-page">
         <Masonry columnsCount={columnCount}>
             {Object.entries(articlePartitions.categories).map(([category, pages]) => {
-                const enabled = pages.filter((page) => wikiPageIsEnabled(page, props.enabledRoles, props.enabledModifiers));
-                const disabled = pages.filter((page) => !enabled.includes(page));
-
                 return <div className="category-pages" key={category}>
                     <PageCollection 
                         title={translate(`wiki.category.${category}`)}
