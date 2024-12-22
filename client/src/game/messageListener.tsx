@@ -147,6 +147,7 @@ export default function messageListener(packet: ToClientPacket){
                         player.ready = player.ready === "host" ? "ready" : player.ready
                     }
                 }
+                GAME_MANAGER.state.players = new ListMap(GAME_MANAGER.state.players.entries());
             }else if(GAME_MANAGER.state.stateType === "game"){
                 GAME_MANAGER.state.host = packet.hosts.includes(GAME_MANAGER.state.myId===null?-1:GAME_MANAGER.state.myId)
             }
@@ -160,6 +161,7 @@ export default function messageListener(packet: ToClientPacket){
                         player.ready = player.ready === "host" ? "host" : "notReady"
                     }
                 }
+                GAME_MANAGER.state.players = new ListMap(GAME_MANAGER.state.players.entries());
             }
         break;
         case "playersLostConnection":
@@ -168,6 +170,7 @@ export default function messageListener(packet: ToClientPacket){
                     if(packet.lostConnection.includes(playerId))
                         player.connection = "couldReconnect";
                 }
+                GAME_MANAGER.state.players = new ListMap(GAME_MANAGER.state.players.entries());
             }
         break;
         /*
