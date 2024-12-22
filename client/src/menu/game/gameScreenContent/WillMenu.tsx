@@ -35,14 +35,10 @@ export default function WillMenu(): ReactElement {
         playerState => playerState.deathNote,
         ["yourDeathNote"]
     )!;
-    const blockMessagesDisabled = useGameState(
-        gameState => gameState.enabledModifiers.includes("noBlockMessages"),
-        ["enabledModifiers"]
-    )!;
 
     const cantPost = useMemo(() => {
-        return cantChat || blockMessagesDisabled
-    }, [cantChat, blockMessagesDisabled])
+        return cantChat
+    }, [cantChat])
     
     return <div className="will-menu will-menu-colors">
         <ContentTab

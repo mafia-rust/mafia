@@ -56,10 +56,6 @@ impl Game {
                 sender_player_ref.set_verdict(self, verdict);
             },
             ToServerPacket::SendChatMessage { text, block } => {
-                if Modifiers::modifier_is_enabled(self, ModifierType::NoBlockMessages) && block {
-                    break 'packet_match
-                }
-
                 if text.replace(['\n', '\r'], "").trim().is_empty() {
                     break 'packet_match;
                 }

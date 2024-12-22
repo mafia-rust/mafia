@@ -8,14 +8,12 @@ pub mod no_due_process;
 pub mod two_thirds_majority;
 pub mod no_trial;
 pub mod no_whispers;
-pub mod no_block_messages;
 pub mod no_night_chat;
 pub mod no_chat;
 pub mod scheduled_nominations;
 
 use dead_can_chat::DeadCanChat;
 use no_abstaining::NoAbstaining;
-use no_block_messages::NoBlockMessages;
 use no_chat::NoChat;
 use no_due_process::NoDueProcess;
 use no_night_chat::NoNightChat;
@@ -60,7 +58,6 @@ pub enum ModifierState{
     TwoThirdsMajority(TwoThirdsMajority),
     NoTrial(NoTrial),
     NoWhispers(NoWhispers),
-    NoBlockMessages(NoBlockMessages),
     NoNightChat(NoNightChat),
     NoChat(NoChat),
     ScheduledNominations(ScheduledNominations),
@@ -78,7 +75,6 @@ pub enum ModifierType{
     TwoThirdsMajority,
     NoTrial,
     NoWhispers,
-    NoBlockMessages,
     NoNightChat,
     NoChat,
     ScheduledNominations,
@@ -96,7 +92,6 @@ impl ModifierType{
             Self::TwoThirdsMajority => ModifierState::TwoThirdsMajority(TwoThirdsMajority::default()),
             Self::NoTrial => ModifierState::NoTrial(NoTrial::default()),
             Self::NoWhispers => ModifierState::NoWhispers(NoWhispers::default()),
-            Self::NoBlockMessages => ModifierState::NoBlockMessages(NoBlockMessages::default()),
             Self::NoNightChat => ModifierState::NoNightChat(NoNightChat::default()),
             Self::NoChat => ModifierState::NoChat(NoChat::default()),
             Self::ScheduledNominations => ModifierState::ScheduledNominations(ScheduledNominations::default()),
@@ -116,7 +111,6 @@ impl From<&ModifierState> for ModifierType{
             ModifierState::TwoThirdsMajority(_) => Self::TwoThirdsMajority,
             ModifierState::NoTrial(_) => Self::NoTrial,
             ModifierState::NoWhispers(_) => Self::NoWhispers,
-            ModifierState::NoBlockMessages(_) => Self::NoBlockMessages,
             ModifierState::NoNightChat(_) => Self::NoNightChat,
             ModifierState::NoChat(_) => Self::NoChat,
             ModifierState::ScheduledNominations(_) => Self::ScheduledNominations,
