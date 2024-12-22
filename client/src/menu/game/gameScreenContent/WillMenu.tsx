@@ -3,7 +3,7 @@ import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import "./willMenu.css";
-import { useGameState, usePlayerState } from "../../../components/useHooks";
+import { usePlayerState } from "../../../components/useHooks";
 import { getSingleRoleJsonData } from "../../../game/roleState.d";
 import { TextDropdownArea } from "../../../components/TextAreaDropdown";
 
