@@ -27,7 +27,6 @@ export default function LobbyNamePane(): ReactElement {
                     : <><Icon>visibility</Icon> {translate("switchToSpectator")}</>}
             </Button>
             {ready !== "host" && <Button
-                highlighted={ready === "notReady"}
                 onClick={() => {GAME_MANAGER.sendReadyUpPacket(ready === "notReady")}}
             >
                 {ready === "ready"

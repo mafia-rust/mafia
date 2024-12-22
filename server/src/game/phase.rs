@@ -1,11 +1,11 @@
-use std::time::Duration;
+use std::{ops::DivAssign, time::Duration};
 
 use serde::{Serialize, Deserialize};
 
 use crate::packet::ToClientPacket;
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant}, event::{before_phase_end::BeforePhaseEnd, on_any_death::OnAnyDeath, on_night_priority::OnNightPriority, on_phase_start::OnPhaseStart}, grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
+    chat::{ChatGroup, ChatMessageVariant}, event::{before_phase_end::BeforePhaseEnd, on_any_death::OnAnyDeath, on_night_priority::OnNightPriority, on_phase_start::OnPhaseStart}, grave::Grave, modifiers::{ModifierType, Modifiers}, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
 };
 
 
@@ -77,18 +77,26 @@ impl PhaseStateMachine {
         }
 
         game.phase_machine.current_state = new_phase;
-        game.phase_machine.time_remaining = PhaseStateMachine::get_start_time(game, game.current_phase().phase());
+        game.phase_machine.time_remaining = PhaseStateMachine::get_phase_time_length(game, game.current_phase().phase());
 
         PhaseState::start(game);
         OnPhaseStart::new(game.current_phase().phase()).invoke(game);
     }
 
-    pub fn get_start_time(game: &Game, phase: PhaseType) -> Duration {
+    pub fn get_phase_time_length(game: &Game, phase: PhaseType) -> Duration {
         let mut time = game.settings.phase_times.get_time_for(phase);
         //if there are less than 3 players alive then the game is sped up by 2x
         if PlayerReference::all_players(game).filter(|p|p.alive(game)).count() <= 3{
             time /= 2;
         }
+
+        if
+            phase == PhaseType::Nomination &&
+            Modifiers::modifier_is_enabled(game, ModifierType::ScheduledNominations)
+        {
+            time.div_assign(3);
+        }
+
         time
     }
 }
@@ -176,7 +184,7 @@ impl PhaseState {
     
     /// Returns what phase should come next
     pub fn end(game: &mut Game) -> PhaseState {
-        let next = match game.current_phase() {
+        let next = match *game.current_phase() {
             PhaseState::Briefing => {
                 Self::Dusk
             },
@@ -186,16 +194,40 @@ impl PhaseState {
             PhaseState::Discussion => {
                 Self::Nomination {
                     trials_left: 3,
-                    nomination_time_remaining: PhaseStateMachine::get_start_time(game, PhaseType::Nomination)
+                    nomination_time_remaining: PhaseStateMachine::get_phase_time_length(game, PhaseType::Nomination)
                 }
             },
-            PhaseState::Nomination {..} => {                
-                Self::Dusk
+            PhaseState::Nomination {trials_left, ..} => {
+
+
+                if Modifiers::modifier_is_enabled(game, ModifierType::ScheduledNominations){
+                    
+                    if let Some(player_on_trial) = game.count_nomination_and_start_trial(false){    
+
+                        game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
+    
+                        Self::Testimony{
+                            trials_left: trials_left.saturating_sub(1), 
+                            player_on_trial, 
+                            nomination_time_remaining: PhaseStateMachine::get_phase_time_length(game, PhaseType::Nomination)
+                        }
+                    }else if trials_left > 1  {
+                        Self::Nomination {
+                            trials_left: trials_left.saturating_sub(1),
+                            nomination_time_remaining: PhaseStateMachine::get_phase_time_length(game, PhaseType::Nomination)
+                        }
+                    }else{
+                        Self::Dusk
+                    }
+
+                }else{
+                    Self::Dusk
+                }
             },
-            &PhaseState::Testimony { trials_left, player_on_trial, nomination_time_remaining } => {
+            PhaseState::Testimony { trials_left, player_on_trial, nomination_time_remaining } => {
                 Self::Judgement { trials_left, player_on_trial, nomination_time_remaining }
             },
-            &PhaseState::Judgement { trials_left, player_on_trial, nomination_time_remaining } => {
+            PhaseState::Judgement { trials_left, player_on_trial, nomination_time_remaining } => {
 
                 game.add_messages_to_chat_group(ChatGroup::All, 
                 PlayerReference::all_players(game)
@@ -225,7 +257,7 @@ impl PhaseState {
                     Self::Nomination { trials_left, nomination_time_remaining }
                 }
             },
-            &PhaseState::FinalWords { player_on_trial } => {
+            PhaseState::FinalWords { player_on_trial } => {
                 let (guilty, innocent) = game.count_verdict_votes(player_on_trial);
                 
                 if innocent < guilty {

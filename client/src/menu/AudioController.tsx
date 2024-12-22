@@ -1,3 +1,5 @@
+import { AudioFilePath } from "./Anchor";
+
 export default class AudioController {
     private static audio = new Audio();
     private static queue: string[] = []
@@ -21,7 +23,7 @@ export default class AudioController {
     public static clearQueue() {
         this.queue = [];
     }
-    public static queueFile(src: string) {
+    public static queueFile(src: AudioFilePath) {
         this.queue.push(src);
         if (this.autoplay) {
             this.unpauseQueue();

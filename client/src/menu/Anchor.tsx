@@ -333,7 +333,8 @@ export type AudioFile =
     "vine_boom.mp3" | 
     "sniper_shot.mp3" | 
     "normal_message.mp3" | 
-    "whisper_broadcast.mp3";
+    "whisper_broadcast.mp3" | 
+    "start_game.mp3";
 
 export type AudioFilePath = `audio/${AudioFile}`;
 

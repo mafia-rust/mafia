@@ -601,7 +601,7 @@
     "chatMessage.targeted": "\\0 slctd \\1.",
     "chatMessage.targeted.cleared": "\\0 clrd thr slctn.",
     "chatMessage.mayorRevealed": "Th myr, \\0, s sng mrgncy xctv vtng pwr!",
-    "chatMessage.mayorCantWhisper": " Myr cn't whspr ftr ctvtng xctv vtng pwr.",
+    "chatMessage.invalidWhisper": " Myr cn't whspr ftr ctvtng xctv vtng pwr.",
     "chatMessage.martyrRevealed": "Prs th Mrtyr \\0, fr thy wll ld s t hrmny!",
     "chatMessage.reporterReport": "Th twn jrnl stts ths: \\0",
     "chatMessage.playerIsBeingInterviewed": "\\0 s bng ntrvwd by  jrnlst",

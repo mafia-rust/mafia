@@ -104,6 +104,9 @@ impl<K, V> VecMap<K, V> where K: Eq {
     pub fn values(&self) -> impl Iterator<Item = &V> {
         self.vec.iter().map(|(_, v)| v)
     }
+    pub fn values_mut(&mut self) -> impl Iterator<Item = &mut V> {
+        self.vec.iter_mut().map(|(_, v)| v)
+    }
 
     pub fn contains(&self, key: &K) -> bool {
         self.vec.iter().any(|(k, _)| k == key)

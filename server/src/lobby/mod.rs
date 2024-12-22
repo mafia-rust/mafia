@@ -4,7 +4,7 @@ pub mod game_client;
 pub mod on_client_message;
 mod name_validation;
 
-use std::{collections::HashMap, time::Duration,};
+use std::time::Duration;
 
 use lobby_client::Ready;
 
@@ -14,7 +14,7 @@ use crate::{
     }, listener::RoomCode, lobby::game_client::GameClientLocation, packet::{
         RejectJoinReason,
         ToClientPacket,
-    }, websocket_connections::connection::ClientSender
+    }, vec_map::VecMap, websocket_connections::connection::ClientSender
 };
 
 
@@ -29,11 +29,11 @@ pub struct Lobby {
 enum LobbyState {
     Lobby {
         settings: Settings,
-        clients: HashMap<LobbyClientID, LobbyClient>,
+        clients: VecMap<LobbyClientID, LobbyClient>,
     },
     Game {
         game: Game,
-        clients: HashMap<LobbyClientID, GameClient>,
+        clients: VecMap<LobbyClientID, GameClient>,
     },
     Closed
 }
@@ -50,7 +50,7 @@ impl Lobby {
             name: name_validation::DEFAULT_SERVER_NAME.to_string(),
             lobby_state: LobbyState::Lobby{
                 settings: Settings::default(),
-                clients: HashMap::new()
+                clients: VecMap::new()
             }
         }
     }
@@ -59,7 +59,7 @@ impl Lobby {
         matches!(self.lobby_state, LobbyState::Game { .. })
     }
 
-    pub fn set_rolelist_length(settings: &mut Settings, clients: &HashMap<LobbyClientID, LobbyClient>) {
+    pub fn set_rolelist_length(settings: &mut Settings, clients: &VecMap<LobbyClientID, LobbyClient>) {
         let length = clients.iter()
             .filter(|p| matches!(p.1.client_type, LobbyClientType::Player{..}))
             .count();
@@ -277,7 +277,15 @@ impl Lobby {
     
                     send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id: lobby_client_id, spectator: false});
                     player_ref.connect(game, send.clone());
-                    
+
+                    send.send(ToClientPacket::PlayersHost{hosts:
+                        players
+                            .iter()
+                            .filter(|p|p.1.host)
+                            .map(|p|*p.0)
+                            .collect()
+                    });
+
                     Ok(())
                 }else{
                     send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
@@ -307,7 +315,7 @@ impl Lobby {
             LobbyState::Lobby { settings: _settings, clients: players } => {
                 let mut to_remove = vec![];
 
-                for player in players {
+                for player in players.iter_mut() {
                     if let ClientConnection::CouldReconnect { disconnect_timer } = &mut player.1.connection {
                         if let Some(time_remaining) = disconnect_timer.checked_sub(time_passed) {
                             *disconnect_timer = time_remaining;
@@ -385,7 +393,7 @@ impl Lobby {
     }
 
     //send the list of players to all players while in the lobby
-    fn send_players_lobby(clients: &HashMap<LobbyClientID, LobbyClient>){
+    fn send_players_lobby(clients: &VecMap<LobbyClientID, LobbyClient>){
         let packet = ToClientPacket::LobbyClients { 
             clients: clients.clone()
         };
