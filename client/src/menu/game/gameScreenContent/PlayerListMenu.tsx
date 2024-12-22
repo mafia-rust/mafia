@@ -177,7 +177,7 @@ function PlayerCard(props: Readonly<{
                 }}
                 pressedChildren={() => <Icon>done</Icon>}
             >
-                <Icon>chat</Icon>
+                {whisperChatOpen?<Icon>close</Icon>:<Icon>chat</Icon>}
             </Button>
         }
         {GAME_MANAGER.getMySpectator() || (() => {

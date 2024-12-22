@@ -46,7 +46,9 @@ impl Game {
 
                 sender_player_ref.set_chosen_vote(self, player_voted_ref, true);
 
-                self.count_votes_and_start_trial();
+                self.count_nomination_and_start_trial(
+                    !Modifiers::modifier_is_enabled(self, ModifierType::ScheduledNominations)
+                );
             },
             ToServerPacket::Judgement { verdict } => {
                 if self.current_phase().phase() != PhaseType::Judgement {break 'packet_match;}
@@ -116,23 +118,24 @@ impl Game {
                     !sender_player_ref.get_current_send_chat_groups(self).contains(&ChatGroup::All) ||
                     text.replace(['\n', '\r'], "").trim().is_empty()
                 {
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
                     break 'packet_match;
                 }
 
                 if let RoleState::Mayor(Mayor{revealed: true}) = whisperee_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
                     break 'packet_match;
                 }
                 if let RoleState::Mayor(Mayor{revealed: true}) = sender_player_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
                     break 'packet_match;
                 }
                 if let RoleState::Politician(Politician{revealed: true, ..}) = whisperee_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
                     break 'packet_match;
                 }
                 if let RoleState::Politician(Politician{revealed: true, ..}) = sender_player_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::MayorCantWhisper);
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
                     break 'packet_match;
                 }
 

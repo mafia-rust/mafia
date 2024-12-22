@@ -3,10 +3,10 @@
 }
 .text-area-dropdown .textarea, .text-area-dropdown textarea {
     text-align: left;
-    height: 19em;
-    resize: none;
+    height: 20rem;
     width: 100%;
     margin: 0;
+    text-wrap: wrap;
 }
 .text-area-dropdown .textarea > * {
     text-wrap: pretty;
@@ -27,8 +27,4 @@
     flex-wrap: wrap;
     gap: 0.25rem;
     align-items: center;
-}
-.text-area-dropdown > summary {
-    /* margin: 0;
-    padding: 0 .25rem; */
 }

@@ -115,7 +115,8 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "psychicEvil", "players": [19,27,3]},
-            {"type": "psychicGood", "players": [24,25]}
+            {"type": "psychicGood", "players": [24,25]},
+            {"type": "psychicFailed"}
         ]
     },
     "spy": {
@@ -428,7 +429,7 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "mayorRevealed","playerIndex": 3},
-            {"type": "mayorCantWhisper"}
+            {"type": "invalidWhisper"}
         ]
     },
     "reporter": {
@@ -840,7 +841,7 @@
         "chatMessages":[
             {"type": "politicianCountdownStarted"},
             {"type": "mayorRevealed","playerIndex": 1},
-            {"type": "mayorCantWhisper"},
+            {"type": "invalidWhisper"},
             {"type": "youSurvivedAttack"}
         ]
     },
