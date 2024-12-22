@@ -177,27 +177,29 @@ export type WinCondition = {
     type: "roleStateWon"
 }
 
+export function translateConclusion(conclusion: Conclusion): string {
+    switch (conclusion) {
+        case "politician":
+            return translate("role.politician.name")
+        case "draw":
+            return translate("winCondition.draw")
+        default:
+            return translate(conclusion)
+    }
+}
+
 export function translateWinCondition(winCondition: WinCondition): string {
     if (winCondition.type === "gameConclusionReached") {
         if (winCondition.winIfAny.length === 0) {
             return translate("winCondition.loser")
         } else if (winCondition.winIfAny.length === 1) {
-            const winningTeam = winCondition.winIfAny[0];
-            switch (winningTeam) {
-                case "politician":
-                    return translate("role.politician.name")
-                case "draw":
-                    return translate("winCondition.draw")
-                default:
-                    return translate(winningTeam)
-            }
+            return translateConclusion(winCondition.winIfAny[0])
+        } else if (winCondition.winIfAny.length === 4 && 
+            (["mafia", "fiends", "cult", "politician"] as const).every(team => winCondition.winIfAny.includes(team))
+        ) {
+            return translate(`winCondition.evil`)
         } else {
-            if (winCondition.winIfAny.length === 4 && 
-                (["mafia", "fiends", "cult", "politician"] as const).every(team => winCondition.winIfAny.includes(team))
-            ) {
-                return translate(`winCondition.evil`)
-            }
-            return translate(`winCondition.many`)
+            return winCondition.winIfAny.map(conclusion => translateConclusion(conclusion)).join(` ${translate('union')} `)
         }
     } else {
         return translate("winCondition.independent");

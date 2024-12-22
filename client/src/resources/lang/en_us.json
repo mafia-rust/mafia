@@ -759,8 +759,6 @@
     "phase.night.subtitle": "Use your abilities to help your team.",
 
     "phase.recess": "Recess",
-    "phase.recess:var.0": "Intermission",
-    "phase.recess:var.1": "Aftermath",
 
     "night.icon": "🌙",
     "day.icon": "☀️",
@@ -768,7 +766,6 @@
     "winCondition.loser": "Loser",
     "winCondition.draw": "Draw-monger",
     "winCondition.evil": "Evil",
-    "winCondition.many": "Complex",
     "winCondition.independent": "Independent",
 
 
@@ -792,8 +789,9 @@
     "chatMessage.gameOver.conclusion.fiends": "The fiends have won!",
     "chatMessage.gameOver.conclusion.politician": "The politician has taken control!",
     "chatMessage.gameOver.conclusion.draw": "The game has ended in a draw!",
-    "chatMessage.gameOver.player.won.true": "\\0 won! (\\1)",
-    "chatMessage.gameOver.player.won.false": "\\0 lost! (\\1)",
+    "chatMessage.gameOver.conclusion.unknown": "The game has ended with conclusion \\0!",
+    "chatMessage.gameOver.player.won.true": "\\0 won!",
+    "chatMessage.gameOver.player.won.false": "\\0 lost!",
     "chatMessage.gameOver.player.crumb": "\\0 \\1",
     "chatMessage.playerWon":"\\0 won! They were the \\1.",
     "chatMessage.playerLost":"\\0 lost! They were the \\1.",
