@@ -150,7 +150,7 @@ export const MODIFIERS = [
     "obscuredGraves", "randomLoveLinks",
     "deadCanChat", "noAbstaining",
     "noDeathCause",
-    "roleSetGraveKillers"
+    "roleSetGraveKillers", "scheduledNominations"
 ] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 

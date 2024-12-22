@@ -49,6 +49,7 @@ use crate::game::event::on_game_start::OnGameStart;
 use crate::game::player::PlayerIndex;
 use crate::packet::ToClientPacket;
 use crate::vec_map::VecMap;
+use crate::vec_set::VecSet;
 use chat::{ChatMessageVariant, ChatGroup, ChatMessage};
 use player::PlayerReference;
 use player::Player;
@@ -301,10 +302,9 @@ impl Game {
         }
         (guilty, innocent)
     }
-    pub fn count_votes_and_start_trial(&mut self){
-
-        let &PhaseState::Nomination { trials_left, .. } = self.current_phase() else {return};
-
+    
+    /// this is sent to the players whenever this function is called
+    fn create_voted_player_map(&self) -> VecMap<PlayerReference, u8> {
         let mut voted_player_votes: VecMap<PlayerReference, u8> = VecMap::new();
 
         for player in PlayerReference::all_players(self){
@@ -330,32 +330,56 @@ impl Game {
                 voted_player_votes.insert(voted_player, voting_power);
             }
         }
-        
+
         self.send_packet_to_all(
             ToClientPacket::PlayerVotes { votes_for_player: 
                 PlayerReference::ref_vec_map_to_index(voted_player_votes.clone())
             }
         );
 
+        voted_player_votes
+    }
+    /// Returns the player who is meant to be put on trial
+    /// None if its not nomination
+    /// None if nobody has enough votes
+    /// None if there is a tie
+    pub fn count_nomination_and_start_trial(&mut self, start_trial_instantly: bool)->Option<PlayerReference>{
 
-        let mut next_player_on_trial = None;
-        for (player, votes) in voted_player_votes.iter(){
-            if self.nomination_votes_is_enough(*votes){
-                next_player_on_trial = Some(*player);
-                break;
+        let &PhaseState::Nomination { trials_left, .. } = self.current_phase() else {return None};
+
+        let voted_player_votes = self.create_voted_player_map();
+
+        let mut voted_player = None;
+
+        if let Some(maximum_votes) = voted_player_votes.values().max() {
+            if self.nomination_votes_is_enough(*maximum_votes){
+                let max_votes_players: VecSet<PlayerReference> = voted_player_votes.iter()
+                    .filter(|(_, votes)| **votes == *maximum_votes)
+                    .map(|(player, _)| *player)
+                    .collect();
+
+                if max_votes_players.len() == 1 {
+                    voted_player = max_votes_players.iter().next().cloned();
+                }
             }
         }
         
-        if let Some(player_on_trial) = next_player_on_trial {
-            self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
-            
-            PhaseStateMachine::next_phase(self, Some(PhaseState::Testimony {
-                trials_left: trials_left-1, 
-                player_on_trial, 
-                nomination_time_remaining: self.phase_machine.get_time_remaining()
-            }));
+        if start_trial_instantly {
+            if let Some(player_on_trial) = voted_player {
+                self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
+                
+                PhaseStateMachine::next_phase(self, Some(PhaseState::Testimony {
+                    trials_left: trials_left.saturating_sub(1), 
+                    player_on_trial, 
+                    nomination_time_remaining: self.phase_machine.get_time_remaining()
+                }));
+            }
         }
+
+        voted_player
     }
+
+    
     pub fn nomination_votes_is_enough(&self, votes: u8)->bool{
         votes >= self.nomination_votes_required()
     }
@@ -366,6 +390,10 @@ impl Game {
                 .count() / 2
         ) as u8
     }
+
+
+
+
 
     pub fn game_is_over(&self) -> bool {
         if let Some(_) = GameConclusion::game_is_over(self){

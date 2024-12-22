@@ -1,16 +1,10 @@
 use crate::{log, packet::ToServerPacket, strings::TidyableString};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender}, 
-    event::on_fast_forward::OnFastForward, 
-    phase::{PhaseState, PhaseType},
-    player::{PlayerIndex, PlayerReference},
-    role::{
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, event::on_fast_forward::OnFastForward, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
         mayor::Mayor, politician::Politician,
         Role, RoleState
-    },
-    spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
-    Game
+    }, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
 
@@ -52,7 +46,9 @@ impl Game {
 
                 sender_player_ref.set_chosen_vote(self, player_voted_ref, true);
 
-                self.count_votes_and_start_trial();
+                self.count_nomination_and_start_trial(
+                    !Modifiers::modifier_is_enabled(self, ModifierType::ScheduledNominations)
+                );
             },
             ToServerPacket::Judgement { verdict } => {
                 if self.current_phase().phase() != PhaseType::Judgement {break 'packet_match;}

@@ -4,6 +4,7 @@ pub mod dead_can_chat;
 pub mod no_abstaining;
 pub mod no_death_cause;
 pub mod role_set_grave_killers;
+pub mod scheduled_nominations;
 
 use dead_can_chat::DeadCanChat;
 use no_abstaining::NoAbstaining;
@@ -11,6 +12,7 @@ use obscured_graves::ObscuredGraves;
 use random_love_links::RandomLoveLinks;
 use no_death_cause::NoDeathCause;
 use role_set_grave_killers::RoleSetGraveKillers;
+use scheduled_nominations::ScheduledNominations;
 
 use serde::{Deserialize, Serialize};
 
@@ -39,6 +41,7 @@ pub enum ModifierState{
     NoAbstaining(NoAbstaining),
     NoDeathCause(NoDeathCause),
     RoleSetGraveKillers(RoleSetGraveKillers),
+    ScheduledNominations(ScheduledNominations),
 }
 #[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Debug, Hash)]
 #[serde(rename_all = "camelCase")]
@@ -49,6 +52,7 @@ pub enum ModifierType{
     NoAbstaining,
     NoDeathCause,
     RoleSetGraveKillers,
+    ScheduledNominations,
 }
 impl ModifierType{
     pub fn default_state(&self)->ModifierState{
@@ -59,6 +63,7 @@ impl ModifierType{
             Self::NoAbstaining => ModifierState::NoAbstaining(NoAbstaining::default()),
             Self::NoDeathCause => ModifierState::NoDeathCause(NoDeathCause::default()),
             Self::RoleSetGraveKillers => ModifierState::RoleSetGraveKillers(RoleSetGraveKillers::default()),
+            Self::ScheduledNominations => ModifierState::ScheduledNominations(ScheduledNominations::default()),
         }
     }
 }
@@ -71,6 +76,7 @@ impl From<&ModifierState> for ModifierType{
             ModifierState::NoAbstaining(_) => Self::NoAbstaining,
             ModifierState::NoDeathCause(_) => Self::NoDeathCause,
             ModifierState::RoleSetGraveKillers(_) => Self::RoleSetGraveKillers,
+            ModifierState::ScheduledNominations(_) => Self::ScheduledNominations,
         }
     }
 }

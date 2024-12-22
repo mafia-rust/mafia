@@ -40,7 +40,9 @@ impl PlayerReference{
             alive_players.push(player.deref(game).alive);
         }
         game.send_packet_to_all(ToClientPacket::PlayerAlive { alive: alive_players });
-        game.count_votes_and_start_trial();
+        game.count_nomination_and_start_trial(
+            !Modifiers::modifier_is_enabled(game, crate::game::modifiers::ModifierType::ScheduledNominations)
+        );
     }
 
     pub fn will<'a>(&self, game: &'a Game) -> &'a String {
