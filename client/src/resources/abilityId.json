@@ -1,0 +1,221 @@
+{
+    "role/jailor/0": {
+        "midnight": false
+    },
+    "role/jailor/1": {
+        "midnight": true
+    },
+    "role/detective/0": {
+        "midnight": true
+    },
+    "role/lookout/0": {
+        "midnight": true
+    },
+    "role/philosopher/0": {
+        "midnight": true
+    },
+    "role/tracker/0": {
+        "midnight": true
+    },
+    "role/spy/0": {
+        "midnight": true
+    },
+    "role/psychic/0": {
+        "midnight": true
+    },
+    "role/snoop/0": {
+        "midnight": true
+    },
+    "role/gossip/0": {
+        "midnight": true
+    },
+    "role/bouncer/0": {
+        "midnight": true
+    },
+    "role/armorsmith/0": {
+        "midnight": true
+    },
+    "role/vigilante/0": {
+        "midnight": true
+    },
+    "role/veteran/0": {
+        "midnight": true
+    },
+    "role/deputy/0": {
+        "midnight": false
+    },
+    "role/escort/0": {
+        "midnight": true
+    },
+    "role/mayor/0": {
+        "midnight": false
+    },
+    "role/medium/0": {
+        "midnight": false
+    },
+    "role/transporter/0": {
+        "midnight": true
+    },
+    "role/retributionist/0": {
+        "midnight": true
+    },
+    "role/reporter/0": {
+        "midnight": false
+    },
+    "role/reporter/1": {
+        "midnight": true
+    },
+    "role/reporter/2": {
+        "midnight": true
+    },
+    "role/godfather/0": {
+        "midnight": true
+    },
+    "role/impostor/0": {
+        "midnight": true
+    },
+    "role/counterfeiter/0": {
+        "midnight": true
+    },
+    "role/counterfeiter/1": {
+        "midnight": true
+    },
+    "role/counterfeiter/2": {
+        "midnight": true
+    },
+    "role/counterfeiter/3": {
+        "midnight": true
+    },
+    "role/recruiter/0": {
+        "midnight": true
+    },
+    "role/recruiter/1": {
+        "midnight": true
+    },
+    "role/mafiaKillingWildcard/0": {
+        "midnight": false
+    },
+    "role/framer/0": {
+        "midnight": true
+    },
+    "role/framer/1": {
+        "midnight": true
+    },
+    "role/informant/0": {
+        "midnight": true
+    },
+    "role/hypnotist/0": {
+        "midnight": true
+    },
+    "role/mortician/0": {
+        "midnight": true
+    },
+    "role/forger/0": {
+        "midnight": true
+    },
+    "role/forger/1": {
+        "midnight": true
+    },
+    "role/forger/2": {
+        "midnight": true
+    },
+    "role/disguiser/0": {
+        "midnight": true
+    },
+    "role/disguiser/1": {
+        "midnight": false
+    },
+    "role/reeducator/0": {
+        "midnight": true
+    },
+    "role/reeducator/1": {
+        "midnight": true
+    },
+    "role/blackmailer/0": {
+        "midnight": true
+    },
+    "role/consort/0": {
+        "midnight": true
+    },
+    "role/necromancer/0": {
+        "midnight": true
+    },
+    "role/ambusher/0": {
+        "midnight": true
+    },
+    "role/cupid/0": {
+        "midnight": true
+    },
+    "role/mafiaSupportWildcard/0": {
+        "midnight": false
+    },
+    "role/jester/0": {
+        "midnight": true
+    },
+    "role/politician/0": {
+        "midnight": false
+    },
+    "role/scarecrow/0": {
+        "midnight": true
+    },
+    "role/witch/0": {
+        "midnight": true
+    },
+    "role/warper/0": {
+        "midnight": true
+    },
+    "role/kidnapper/0": {
+        "midnight": false
+    },
+    "role/kidnapper/1": {
+        "midnight": true
+    },
+    "role/serialKiller/0": {
+        "midnight": true
+    },
+    "role/arsonist/0": {
+        "midnight": true
+    },
+    "role/werewolf/0": {
+        "midnight": true
+    },
+    "role/puppeteer/0": {
+        "midnight": true
+    },
+    "role/puppeteer/1": {
+        "midnight": true
+    },
+    "role/pyrolisk/0": {
+        "midnight": true
+    },
+    "role/spiral/0": {
+        "midnight": true
+    },
+    "role/kira/0": {
+        "midnight": true
+    },
+    "role/fiendsWildcard/0": {
+        "midnight": false
+    },
+    "role/apostle/0": {
+        "midnight": true
+    },
+    "role/zealot/0": {
+        "midnight": true
+    },
+    "role/wildcard/0": {
+        "midnight": false
+    },
+    "role/trueWildcard/0": {
+        "midnight": false
+    },
+    "pitchforkVote": {
+        "midnight": true
+    },
+    "syndicateGunItemShoot": {
+        "midnight": true
+    },
+    "syndicateBackupAttack": {
+        "midnight": true
+    }
+}

@@ -27,6 +27,8 @@ export type AnchorController = {
     pushErrorCard: (error: ErrorData) => void,
     openGlobalMenu: () => void,
     closeGlobalMenu: () => void,
+    setFontSize: (fontSize: number) => void,
+    setAccessibilityFontEnabled: (accessibilityFontEnabled: boolean) => void
 }
 
 const AnchorControllerContext = createContext<AnchorController | undefined>(undefined);
@@ -100,12 +102,26 @@ export default function Anchor(props: Readonly<{
 
     const [touchStart, setTouchStart] = useState<[number, number] | null>(null);
     const [touchCurrent, setTouchCurrent] = useState<[number, number] | null>(null);
+    const setFontSize = (n: number) => {
+        document.documentElement.style.fontSize = `${n}em`;
+    }
+    const setAccessibilityFontEnabled = (enabled: boolean) => {
+        const font = enabled ? 'game-accessible' : 'game-base';
+        const iconFactor = enabled ? '1.2' : '1';
+
+        document.documentElement.style.setProperty('--game-font', font);
+        document.documentElement.style.setProperty('--kira-font', font === `game-base` ? `game-kira` : font);
+        document.documentElement.style.setProperty('--spiral-font', font === `game-base` ? `game-spiral` : font);
+        document.documentElement.style.setProperty('--icon-factor', iconFactor);
+    }
 
     // Load settings
     useEffect(() => {
         const settings = loadSettingsParsed();
 
         AudioController.setVolume(settings.volume);
+        setFontSize(settings.fontSize);
+        setAccessibilityFontEnabled(settings.accessibilityFont);
         switchLanguage(settings.language)
     }, [])
 
@@ -167,6 +183,12 @@ export default function Anchor(props: Readonly<{
         },
         openGlobalMenu: () => setGlobalMenuOpen(true),
         closeGlobalMenu: () => setGlobalMenuOpen(false),
+        setFontSize: (fontSize: number) => {
+            setFontSize(fontSize);
+        },
+        setAccessibilityFontEnabled: (enabled: boolean) => {
+            setAccessibilityFontEnabled(enabled);
+        }
     }), [reload, children, coverCard])
 
     useEffect(() => {
@@ -178,6 +200,7 @@ export default function Anchor(props: Readonly<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props])
     
+
     return <MobileContext.Provider value={mobile} >
         <AnchorControllerContext.Provider value={anchorController}>
             <div

@@ -1,12 +1,14 @@
 use serde::Serialize;
 
+use crate::game::components::detained::Detained;
 use crate::game::{attack_power::DefensePower, components::love_linked::LoveLinked};
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{InsiderGroupID, Priority, RoleStateImpl};
+use crate::vec_set;
+use super::{common_role, AvailableAbilitySelection, ControllerID, ControllerParametersMap, InsiderGroupID, Priority, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -21,7 +23,7 @@ impl RoleStateImpl for Cupid {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Cupid => {
-                let visits = actor_ref.night_visits(game);
+                let visits = actor_ref.untagged_night_visits_cloned(game);
 
                 let Some(first_visit) = visits.get(0) else {return};
                 let Some(second_visit) = visits.get(1) else {return};
@@ -34,30 +36,41 @@ impl RoleStateImpl for Cupid {
             _ => ()
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        let selection = actor_ref.selection(game);
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
 
-        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
-        actor_ref != target_ref &&
-        ((
-            selection.is_empty()
-        ) || (
-            selection.len() == 1 &&
-            Some(target_ref) != selection.first().copied()
-        )) &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game) &&
-        !InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref)
+        let available_players: vec_set::VecSet<PlayerReference> = PlayerReference::all_players(game)
+            .into_iter()
+            .filter(|p|
+                p.alive(game) &&
+                *p != actor_ref &&
+                !InsiderGroupID::in_same_revealed_group(game, actor_ref, *p)
+            )
+            .collect();
+
+        ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Cupid, 0),
+            AvailableAbilitySelection::new_two_player_option(
+                available_players.clone(), 
+                available_players,
+                false,
+                true
+            ),
+            super::AbilitySelection::new_two_player_option(None),
+            !actor_ref.alive(game) ||
+            Detained::is_detained(game, actor_ref),
+            Some(crate::game::phase::PhaseType::Obituary),
+            false,
+            vec_set![actor_ref]
+        )
     }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        if target_refs.len() == 2 {
-            vec![
-                Visit{ target: target_refs[0], attack: false },
-                Visit{ target: target_refs[1], attack: false }
-            ]
-        } else {
-            Vec::new()
-        }
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
+        common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Cupid, 0),
+            false
+        )
     }
      fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![

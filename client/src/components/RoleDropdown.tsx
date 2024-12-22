@@ -1,7 +1,10 @@
 import { ReactElement } from "react"
-import { Role, roleJsonData } from "../game/roleState.d"
+import { Role } from "../game/roleState.d"
 import React from "react"
 import translate from "../game/lang"
+import Select, { SelectOptionsSearch } from "./Select"
+import StyledText from "./StyledText"
+import { getAllRoles } from "../game/roleListState.d"
 
 
 type RoleDropdownProps = {
@@ -17,22 +20,43 @@ type RoleDropdownProps = {
 })
 
 export default function RoleDropdown(props: RoleDropdownProps): ReactElement {
-    return <select
-        value={props.value??"none"}
-        onChange={e => 
-            props.canChooseNone===true?props.onChange(e.target.value==="none"?null:e.target.value as Role | null):
-            props.onChange(e.target.value as Role)
+
+    const optionMap: SelectOptionsSearch<Role | "none"> = new Map();
+
+    if (props.canChooseNone){
+        optionMap.set(
+            "none", 
+            [<StyledText noLinks={true}>{translate("none")}</StyledText>, translate("none")]
+        );
+    }
+    
+    for (const role of getAllRoles()) {
+        if (props.enabledRoles === undefined || props.enabledRoles.includes(role)) {
+            optionMap.set(
+                role, 
+                [<StyledText noLinks={true}>{translate("role."+role+".name")}</StyledText>, translate("role."+role+".name")]
+            );
         }
-    >{
-        (props.canChooseNone ? [<option value={"none"} key="none">{translate("none")}</option>] : []).concat(
-            Object.keys(roleJsonData())
-                .filter((role)=>
-                    props.enabledRoles === undefined ||
-                    props.enabledRoles.includes(role as Role)
-                )
-                .map((role)=>{
-                    return <option value={role} key={role}>{translate("role."+role+".name")}</option>
-                })
-        )
-    }</select>
+    }
+
+
+    return <Select
+        value={convertToLowerValue(props.value)}
+        onChange={value => {
+            if(props.canChooseNone){
+                const newRole: Role | null = convertToHigherValue(value);
+                props.onChange(newRole)
+            }else{
+                props.onChange(value as Role)
+            }
+        }}
+        optionsSearch={optionMap}
+    />
+}
+
+function convertToLowerValue(value: Role | null): Role | "none" {
+    return value === null ? "none" : value;
+}
+function convertToHigherValue(value: Role | "none"): Role | null {
+    return value === "none" ? null : value;
 }

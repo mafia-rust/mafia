@@ -3,6 +3,9 @@ import { ChatMessage } from "../components/ChatMessage";
 import { Role, RoleState } from "./roleState.d";
 import { RoleList } from "./roleListState.d";
 import { LobbyPreviewData } from "./packet";
+import { ChatFilter } from "../menu/game/gameScreenContent/ChatMenu";
+import { ControllerID, SavedController } from "./abilityInput";
+import { ListMapData } from "../ListMap";
 
 
 export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;
@@ -86,15 +89,15 @@ export type PlayerGameState = {
     will: string,
     notes: string[],
     crossedOutOutlines: number[],
-    chatFilter: PlayerIndex | null,
+    chatFilter: ChatFilter,
     deathNote: string,
     targets: PlayerIndex[],
     voted: PlayerIndex | null,
     judgement: Verdict,
-    
-    forfeitVote: boolean,
-    pitchforkVote: PlayerIndex | null,
-    hitOrderVote: PlayerIndex | null,
+
+    savedControllers: ListMapData<ControllerID, SavedController>,
+
+    fellowInsiders: PlayerIndex[],
 
     sendChatGroups: ChatGroup[],
     insiderGroups: InsiderGroup[],
@@ -127,17 +130,32 @@ export type InsiderGroup = (typeof INSIDER_GROUPS)[number];
 export const INSIDER_GROUPS = ["mafia", "cult", "puppeteer"] as const;
 export type PhaseTimes = Record<PhaseType, number>;
 
-export type Tag = | "godfatherBackup" | "werewolfTracked" | "doused" | "revolutionaryTarget" | "morticianTagged" | "puppeteerMarionette" | "loveLinked" | "forfeitVote";
+export type Tag = 
+    "disguise" |
+    "syndicateGun" |
+    "godfatherBackup" |
+    "werewolfTracked" |
+    "doused" |
+    "revolutionaryTarget" |
+    "morticianTagged" |
+    "puppeteerMarionette" |
+    "loveLinked" |
+    "frame" |
+    "forfeitVote" |
+    "spiraling";
 
-export const MODIFIERS = ["obscuredGraves", "randomLoveLinks", "deadCanChat", "noAbstaining", "noDeathCause", "mafiaHitOrders"] as const;
+export const MODIFIERS = [
+    "obscuredGraves", "randomLoveLinks",
+    "deadCanChat", "noAbstaining",
+    "noDeathCause",
+    "roleSetGraveKillers"
+] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 
 export type Player = {
     name: string,
     index: number
     buttons: {
-        dayTarget: boolean,
-        target: boolean,
         vote: boolean,
     },
     numVoted: number,

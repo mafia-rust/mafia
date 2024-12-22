@@ -14,9 +14,7 @@ impl Lobby {
         match incoming_packet {
             ToServerPacket::Vote { .. } |
             ToServerPacket::Judgement { .. } |
-            ToServerPacket::Target { .. } |
-            ToServerPacket::DayTarget { .. } |
-            ToServerPacket::SendMessage { .. } |
+            ToServerPacket::SendChatMessage { .. } |
             ToServerPacket::SendLobbyMessage { .. } |
             ToServerPacket::SendWhisper { .. } => {
 

@@ -1,7 +1,14 @@
 use std::time::Duration;
 
 use crate::{
-    client_connection::ClientConnection, game::{available_buttons::AvailableButtons, chat::ChatMessageVariant, components::insider_group::InsiderGroupID, phase::PhaseState, Game, GameOverReason}, lobby::GAME_DISCONNECT_TIMER_SECS, packet::ToClientPacket, websocket_connections::connection::ClientSender
+    client_connection::ClientConnection, 
+    game::{
+        available_buttons::AvailableButtons,
+        chat::ChatMessageVariant, components::insider_group::InsiderGroupID,
+        phase::PhaseState, Game, GameOverReason
+    },
+    lobby::GAME_DISCONNECT_TIMER_SECS,
+    packet::ToClientPacket, websocket_connections::connection::ClientSender
 };
 
 use super::PlayerReference;
@@ -87,6 +94,7 @@ impl PlayerReference{
         self.send_chat_messages(game);
         self.send_available_buttons(game);
         InsiderGroupID::send_player_insider_groups(game, *self);
+        InsiderGroupID::send_fellow_insiders(game, *self);
 
         self.send_packets(game, vec![
             ToClientPacket::YourSendChatGroups {
@@ -99,16 +107,16 @@ impl PlayerReference{
                 role_state: self.role_state(game).clone().get_client_role_state(game, *self)
             },
             ToClientPacket::YourRoleLabels { 
-                role_labels: PlayerReference::ref_map_to_index(self.role_label_map(game)) 
+                role_labels: PlayerReference::ref_vec_map_to_index(self.role_label_map(game)) 
             },
             ToClientPacket::YourPlayerTags { 
-                player_tags: PlayerReference::ref_map_to_index(self.player_tags(game).clone())
-            },
-            ToClientPacket::YourSelection{
-                player_indices: PlayerReference::ref_vec_to_index(self.selection(game))
+                player_tags: PlayerReference::ref_vec_map_to_index(self.player_tags(game).clone())
             },
             ToClientPacket::YourJudgement{
                 verdict: self.verdict(game)
+            },
+            ToClientPacket::YourAllowedControllers { 
+                save: game.saved_controllers.controllers_allowed_to_player(*self).all_controllers().clone(),
             },
             ToClientPacket::YourVoting{ 
                 player_index: PlayerReference::ref_option_to_index(&self.chosen_vote(game))

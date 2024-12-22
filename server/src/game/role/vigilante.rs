@@ -9,7 +9,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{Priority, RoleStateImpl, Role, RoleState};
+use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -51,22 +51,22 @@ impl RoleStateImpl for Vigilante {
             
                 match self.state {
                     VigilanteState::Loaded { bullets } if bullets > 0 => {
-
-                        if let Some(visit) = actor_ref.night_visits(game).first(){
+                        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                        if let Some(visit) = actor_visits.first(){
 
                             let target_ref = visit.target;
 
                             let killed = target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Vigilante), AttackPower::Basic, false);
                             self.state = VigilanteState::Loaded { bullets: bullets.saturating_sub(1) };
 
-                            if killed && target_ref.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) {
+                            if killed && target_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) {
                                 self.state = VigilanteState::WillSuicide;
                             }                            
                         }
                     }       
 
                     VigilanteState::NotLoaded => {
-                        self.state = VigilanteState::Loaded { bullets:3 };
+                        self.state = VigilanteState::Loaded { bullets: game.num_players().div_ceil(5) };
                     }
 
                     _ => {},
@@ -77,15 +77,27 @@ impl RoleStateImpl for Vigilante {
         }
     actor_ref.set_role_state(game, RoleState::Vigilante(self));
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref) && 
-        if let VigilanteState::Loaded { bullets } = &self.state {
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        let can_shoot = if let VigilanteState::Loaded { bullets } = &self.state {
             *bullets >=1
         } else {
             false
-        }
+        };
+        
+        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
+            game,
+            actor_ref,
+            false,
+            !can_shoot,
+            ControllerID::role(actor_ref, Role::Vigilante, 0)
+        )
     }
-    fn convert_selection_to_visits(self,  game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Vigilante, 0),
+            true
+        )
     }
 }

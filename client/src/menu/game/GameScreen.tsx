@@ -8,24 +8,34 @@ import GAME_MANAGER, { modulus } from "../..";
 import WikiMenu from "./gameScreenContent/WikiMenu";
 import "../../index.css";
 import "./gameScreen.css";
-import RoleSpecificMenu from "./gameScreenContent/RoleSpecificMenu";
+import AbilityMenu from "./gameScreenContent/AbilityMenu/AbilityMenu";
 import { addSwipeEventListener, MobileContext, removeSwipeEventListener } from "../Anchor";
 import StyledText from "../../components/StyledText";
 import { WikiArticleLink } from "../../components/WikiArticleLink";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import translate from "../../game/lang";
-import { roleSpecificMenuType } from "../Settings";
-import { useGameState, usePlayerState } from "../../components/useHooks";
+import { useGameState } from "../../components/useHooks";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
-    PlayerListMenu = "PlayerListMenu",
     RoleSpecificMenu = "RoleSpecificMenu",
     WillMenu = "WillMenu",
+    PlayerListMenu = "PlayerListMenu",
     GraveyardMenu = "GraveyardMenu",
     WikiMenu = "WikiMenu",
 }
+
+export const MENU_ELEMENTS = {
+    [ContentMenu.ChatMenu]: ChatMenu,
+    [ContentMenu.PlayerListMenu]: PlayerListMenu,
+    [ContentMenu.RoleSpecificMenu]: AbilityMenu,
+    [ContentMenu.WillMenu]: WillMenu,
+    [ContentMenu.GraveyardMenu]: GraveyardMenu,
+    [ContentMenu.WikiMenu]: WikiMenu
+}
+
 const ALL_CONTENT_MENUS = Object.values(ContentMenu);
 
 export interface MenuController {
@@ -133,36 +143,20 @@ const MenuControllerContext = createContext<MenuController | undefined>(undefine
 export { MenuControllerContext }
 
 export default function GameScreen(): ReactElement {
-    const roleState = usePlayerState(
-        playerState => playerState.roleState,
-        ["yourRoleState"]
-    )!;
     const mobile = useContext(MobileContext)!;
 
     const menuController = useMenuController(
         mobile ? 2 : Infinity, 
         {
-            ChatMenu: true,
-            PlayerListMenu: true,
-            RoleSpecificMenu: !mobile && roleSpecificMenuType(roleState.type) === "standalone",
-            WillMenu: !mobile,
-            GraveyardMenu: !mobile,
             WikiMenu: false,
+            GraveyardMenu: !mobile,
+            PlayerListMenu: true,
+            ChatMenu: true,
+            WillMenu: !mobile,
+            RoleSpecificMenu: !mobile,
         },
         () => MENU_CONTROLLER_HOLDER.controller!,
         menuController => MENU_CONTROLLER_HOLDER.controller = menuController
-    );
-    
-    usePlayerState(
-        playerState => {
-            if (
-                roleSpecificMenuType(playerState.roleState.type) !== "standalone" 
-                && menuController.menuOpen(ContentMenu.RoleSpecificMenu)
-            ) {
-                menuController.closeMenu(ContentMenu.RoleSpecificMenu)
-            }
-        },
-        ["yourRoleState"]
     );
 
     const chatMenuNotification = useGameState(
@@ -179,11 +173,8 @@ export default function GameScreen(): ReactElement {
                 return;
             }
 
-            const allowedMenus = ALL_CONTENT_MENUS.filter(menu => {
-                //not open and 
-                return !menusOpen.includes(menu) && (menu === ContentMenu.RoleSpecificMenu ?
-                    roleSpecificMenuType(roleState.type) === "standalone"
-                    : true);
+            const allowedMenus = ALL_CONTENT_MENUS.filter(menu => { 
+                return !menusOpen.includes(menu)
             });
 
             const rightMostMenu = menusOpen[menusOpen.length - 1];
@@ -201,26 +192,44 @@ export default function GameScreen(): ReactElement {
         return () => removeSwipeEventListener(swipeEventListener);
     })
 
-    const allMenusClosed = menuController.menusOpen().length === 0;
-
     return <MenuControllerContext.Provider value={menuController}>
         <div className="game-screen">
             <div className="header">
                 <HeaderMenu chatMenuNotification={chatMenuNotification}/>
             </div>
-            <div className="content">
-                {menuController.menuOpen(ContentMenu.ChatMenu) && <ChatMenu/>}
-                {menuController.menuOpen(ContentMenu.PlayerListMenu) && <PlayerListMenu/>}
-                {menuController.menuOpen(ContentMenu.WillMenu) && <WillMenu/>}
-                {menuController.menuOpen(ContentMenu.RoleSpecificMenu) && <RoleSpecificMenu/>}
-                {menuController.menuOpen(ContentMenu.GraveyardMenu) && <GraveyardMenu/>}
-                {menuController.menuOpen(ContentMenu.WikiMenu) && <WikiMenu/>}
-                {allMenusClosed && <div className="no-content">
-                    {translate("menu.gameScreen.noContent")}
-                </div>}
-            </div>
+            <GameScreenMenus />
         </div>
     </MenuControllerContext.Provider>
+}
+
+export function GameScreenMenus(): ReactElement {
+    const menuController = useContext(MenuControllerContext)!;
+    const minSize = 10; // Percentage
+
+    // These don't add up to 100, but the panel group will fix it
+    const defaultSizes = {
+        [ContentMenu.ChatMenu]: 35,
+        [ContentMenu.RoleSpecificMenu]: 15,
+        [ContentMenu.WillMenu]: 15,
+        [ContentMenu.PlayerListMenu]: 25,
+        [ContentMenu.GraveyardMenu]: 10,
+        [ContentMenu.WikiMenu]: 15,
+    }
+
+    return <PanelGroup direction="horizontal" className="content">
+        {menuController.menusOpen().map((menu, index, menusOpen) => {
+            const MenuElement = MENU_ELEMENTS[menu];
+            return <>
+                <Panel className="panel" minSize={minSize} defaultSize={defaultSizes[menu]} key={index}>
+                    <MenuElement />
+                </Panel>
+                {menusOpen.some((_, i) => i > index) && <PanelResizeHandle key={index+".handle"} className="panel-handle"/>}
+            </>
+        })}
+        {menuController.menusOpen().length === 0 && <Panel><div className="no-content">
+            {translate("menu.gameScreen.noContent")}
+        </div></Panel>}
+    </PanelGroup>
 }
 
 export function ContentTab(props: Readonly<{

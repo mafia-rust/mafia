@@ -1,13 +1,11 @@
 import { PlayerIndex } from "./gameState.d"
 import { RoleSet } from "./roleListState.d"
 import ROLES from "./../resources/roles.json";
-import { Doomsayer } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
-import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
-import { Hypnotist } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeHypnotistMenu";
-import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
-import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
-import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
 import { ChatMessageVariant } from "../components/ChatMessage";
+import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
+import { Hypnotist } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeHypnotistMenu";
+import { Doomsayer } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
+import { TwoRoleOptionSelection } from "./abilityInput";
 
 export type RoleState = {
     type: "jailor",
@@ -28,6 +26,8 @@ export type RoleState = {
 } | {
     type: "pyrolisk"
 } | {
+    type: "spiral"
+} | {
     type: "tracker"
 } | {
     type: "philosopher"
@@ -35,7 +35,6 @@ export type RoleState = {
     type: "psychic"
 } | {
     type: "auditor",
-    chosenOutline: number | null,
     previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "snoop",
@@ -62,8 +61,7 @@ export type RoleState = {
 } | {
     type: "steward",
     stewardProtectsRemaining: number,
-    roleChosen: Role | null,
-    previousRoleChosen: Role | null
+    previousRoleChosen: TwoRoleOptionSelection
 } | {
     type: "vigilante",
     state: {type:"notLoaded"} | {type:"willSuicide"} | {type:"loaded",bullets:number} | {type:"suicided"}
@@ -72,7 +70,7 @@ export type RoleState = {
     alertsRemaining: number,
 } | {
     type: "marksman"
-    state: {type:"notLoaded"} | {type:"shotTownie"} | {type: "marks", marks: PlayerIndex[]}
+    state: {type:"notLoaded"} | {type:"shotTownie"} | {type: "loaded"}
 } | {
     type: "deputy"
 } | {
@@ -92,28 +90,13 @@ export type RoleState = {
     interviewedTarget: PlayerIndex | null
 } | {
     type: "godfather"
-    backup: PlayerIndex | null
-} | {
-    type: "retrainer"
-    backup: PlayerIndex | null,
-    retrainsRemaining: number
 } | {
     type: "impostor"
-    backup: PlayerIndex | null,
-    fakeRole: Role
-} | {
-    type: "eros"
-    action: "loveLink" | "kill"
 } | {
     type: "counterfeiter",
-    action: "forge" | "noForge",
-    fakeRole: Role,
-    fakeWill: string
     forgesRemaining: number,
-    backup: PlayerIndex | null
 } | {
     type: "recruiter",
-    action: RecruiterAction,
     recruitsRemaining: number
     backup: PlayerIndex | null
 } | {
@@ -137,9 +120,15 @@ export type RoleState = {
     cremationsRemaining: number
 } | {
     type: "forger",
-    fakeRole: Role,
-    fakeWill: string,
     forgesRemaining: number,
+} | {
+    type: "disguiser",
+    currentTarget: PlayerIndex | null,
+    disguisedRole: Role,
+} | {
+    type: "reeducator",
+    convertChargesRemaining: boolean,
+    convertRole: Role,
 } | {
     type: "framer"
 } | {
@@ -168,9 +157,6 @@ Doomsayer
     executionsRemaining: number,
     jailedTargetRef: number | null
 } | {
-    type: "death",
-    souls: number
-} | {
     type: "wildcard"
     role: Role
 } | {
@@ -192,25 +178,22 @@ Doomsayer
     type: "werewolf",
 } | {
     type: "ojo"
-    roleChosen: Role | null,
-    chosenOutline: number | null,
     previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "puppeteer"
-    action: PuppeteerAction,
     marionettesRemaining: number
 } | {
     type: "kira"
-    guesses: Record<PlayerIndex, KiraGuess>
 } | {
     type: "fiendsWildcard"
-    role: Role
 } | {
     type: "apostle"
 } | {
     type: "disciple"
 } | {
     type: "zealot"
+} | {
+    type: "serialKiller"
 }
 
 
@@ -221,7 +204,6 @@ export type SingleRoleJsonData = {
     armor: boolean,
     aura: null | "innocent" | "suspicious",
     maxCount: null | number,
-    roleSpecificMenu: boolean,
     canWriteDeathNote: boolean,
     canBeConvertedTo: Role[],
     chatMessages: ChatMessageVariant[] 

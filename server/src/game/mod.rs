@@ -19,20 +19,24 @@ pub mod attack_power;
 pub mod modifiers;
 pub mod win_condition;
 pub mod role_outline_reference;
+pub mod ability_input;
 
-use std::collections::HashMap;
 use std::time::Duration;
+use ability_input::saved_controllers_map::SavedControllersMap;
 use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
 use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
+use components::night_visits::NightVisits;
 use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
 use components::poison::Poison;
 use components::detained::Detained;
 use components::insider_group::InsiderGroupID;
 use components::insider_group::InsiderGroups;
+use components::syndicate_gun_item::SyndicateGunItem;
 use components::verdicts_today::VerdictsToday;
+use event::on_tick::OnTick;
 use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
 use rand::seq::SliceRandom;
@@ -44,6 +48,7 @@ use crate::client_connection::ClientConnection;
 use crate::game::event::on_game_start::OnGameStart;
 use crate::game::player::PlayerIndex;
 use crate::packet::ToClientPacket;
+use crate::vec_map::VecMap;
 use chat::{ChatMessageVariant, ChatGroup, ChatMessage};
 use player::PlayerReference;
 use player::Player;
@@ -85,11 +90,15 @@ pub struct Game {
 
     phase_machine : PhaseStateMachine,
 
+    
     /// Whether the game is still updating phase times
     pub ticking: bool,
-
-
+    
+    
     //components with data
+    pub saved_controllers: SavedControllersMap,
+    night_visits: NightVisits,
+    syndicate_gun_item: SyndicateGunItem,
     pub cult: Cult,
     pub mafia: Mafia,
     pub arsonist_doused: ArsonistDoused,
@@ -174,6 +183,8 @@ impl Game {
             drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
             let game = Self{
+                pitchfork: Pitchfork::new(new_players.len() as u8),
+
                 roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
                 ticking: true,
                 spectators: spectators.clone().into_iter().map(Spectator::new).collect(),
@@ -184,6 +195,9 @@ impl Game {
                 modifiers: Modifiers::default_from_settings(settings.enabled_modifiers.clone()),
                 settings,
 
+                saved_controllers: SavedControllersMap::default(),
+                night_visits: NightVisits::default(),
+                syndicate_gun_item: SyndicateGunItem::default(),
                 cult: Cult::default(),
                 mafia: Mafia,
                 arsonist_doused: ArsonistDoused::default(),
@@ -191,7 +205,6 @@ impl Game {
                 mafia_recruits: MafiaRecruits::default(),
                 love_linked: LoveLinked::default(),
                 verdicts_today: VerdictsToday::default(),
-                pitchfork: Pitchfork::default(),
                 poison: Poison::default(),
 
                 revealed_groups: InsiderGroups::default(),
@@ -214,7 +227,7 @@ impl Game {
 
         //set wincons and revealed groups
         for player in PlayerReference::all_players(&game){
-            let role_data = player.role_state(&game).clone();
+            let role_data = player.role(&game).new_state(&game);
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         
@@ -256,6 +269,9 @@ impl Game {
         roles.into_iter().zip(player_indices).collect()
     }
 
+    pub fn num_players(&self) -> u8 {
+        self.players.len() as u8
+    }
 
     /// Returns a tuple containing the number of guilty votes and the number of innocent votes
     pub fn count_verdict_votes(&self, player_on_trial: PlayerReference)->(u8,u8){
@@ -268,6 +284,11 @@ impl Game {
             let mut voting_power = 1;
             if let RoleState::Mayor(mayor) = player_ref.role_state(self).clone(){
                 if mayor.revealed {
+                    voting_power += 2;
+                }
+            }
+            if let RoleState::Politician(politician) = player_ref.role_state(self).clone(){
+                if politician.revealed {
                     voting_power += 2;
                 }
             }
@@ -284,7 +305,7 @@ impl Game {
 
         let &PhaseState::Nomination { trials_left, .. } = self.current_phase() else {return};
 
-        let mut voted_player_votes: HashMap<PlayerReference, u8> = HashMap::new();
+        let mut voted_player_votes: VecMap<PlayerReference, u8> = VecMap::new();
 
         for player in PlayerReference::all_players(self){
             if !player.alive(self) { continue }
@@ -294,6 +315,11 @@ impl Game {
             let mut voting_power = 1;
             if let RoleState::Mayor(mayor) = player.role_state(self).clone() {
                 if mayor.revealed {
+                    voting_power = 3;
+                }
+            }
+            else if let RoleState::Politician(politician) = player.role_state(self).clone() {
+                if politician.revealed {
                     voting_power = 3;
                 }
             }
@@ -307,7 +333,7 @@ impl Game {
         
         self.send_packet_to_all(
             ToClientPacket::PlayerVotes { votes_for_player: 
-                PlayerReference::ref_map_to_index(voted_player_votes.clone())
+                PlayerReference::ref_vec_map_to_index(voted_player_votes.clone())
             }
         );
 
@@ -379,11 +405,19 @@ impl Game {
         SpectatorPointer::all_spectators(self).for_each(|s|s.tick(self, time_passed));
 
         self.phase_machine.time_remaining = self.phase_machine.time_remaining.saturating_sub(time_passed);
+
+        OnTick::new().invoke(self);
     }
 
     pub fn add_grave(&mut self, grave: Grave){
         self.graves.push(grave.clone());
-        if let Some(grave_ref) = GraveReference::new(self, self.graves.len() as u8 - 1){
+        if let Some(grave_ref) = GraveReference::new(
+            self, 
+            self.graves.len()
+                .saturating_sub(1)
+                .try_into()
+                .expect("There can not be more than u8::MAX graves"))
+        {
             OnGraveAdded::new(grave_ref).invoke(self);
         }
     }
@@ -437,14 +471,17 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, insider_group::InsiderGroupID, verdicts_today::VerdictsToday},
+        ability_input::saved_controllers_map::SavedControllersMap,
+        components::{
+            arsonist_doused::ArsonistDoused, cult::Cult,
+            insider_group::InsiderGroupID, love_linked::LoveLinked,
+            mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits,
+            pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette,
+            syndicate_gun_item::SyndicateGunItem, verdicts_today::VerdictsToday
+        }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
-        phase::PhaseStateMachine,
-        player::{test::mock_player, PlayerIndex, PlayerReference},
-        role::Role,
-        settings::Settings, 
-        Game,
-        RejectStartReason
+        phase::PhaseStateMachine, player::{test::mock_player, PlayerIndex, PlayerReference},
+        role::Role, settings::Settings, Game, RejectStartReason
     };
 
 
@@ -482,6 +519,8 @@ pub mod test {
         drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
         let mut game = Game{
+            pitchfork: Pitchfork::new(players.len() as u8),
+            
             roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
             ticking: true,
             spectators: Vec::new(),
@@ -491,6 +530,9 @@ pub mod test {
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
 
+            saved_controllers: SavedControllersMap::default(),
+            night_visits: NightVisits::default(),
+            syndicate_gun_item: SyndicateGunItem::default(),
             cult: Cult::default(),
             mafia: Mafia,
             arsonist_doused: ArsonistDoused::default(),
@@ -498,7 +540,6 @@ pub mod test {
             mafia_recruits: MafiaRecruits::default(),
             love_linked: LoveLinked::default(),
             verdicts_today: VerdictsToday::default(),
-            pitchfork: Pitchfork::default(),
             poison: Poison::default(),
             modifiers: Default::default(),
             revealed_groups: Default::default(),
@@ -509,7 +550,7 @@ pub mod test {
 
         //set wincons and revealed groups
         for player in PlayerReference::all_players(&game){
-            let role_data = player.role_state(&game).clone();
+            let role_data = player.role(&game).new_state(&game);
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         

@@ -1,8 +1,6 @@
 import { WikiArticleLink } from "../components/WikiArticleLink";
-import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
-import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
-import { RecruiterAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/RecruiterMenu";
-import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
+import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
+import { AbilityInput } from "./abilityInput";
 import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player, ModifierType } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleList, RoleOutline } from "./roleListState.d";
@@ -86,26 +84,21 @@ export type GameManager = {
     
     sendJudgementPacket(judgement: Verdict): void;
     sendVotePacket(voteeIndex: PlayerIndex| null): void;
-    sendTargetPacket(targetIndexList: number[]): void;
-    sendDayTargetPacket(targetIndex: number): void;
     sendSaveWillPacket(will: string): void;
     sendSaveNotesPacket(notes: string[]): void;
     sendSaveCrossedOutOutlinesPacket(crossedOutOutlines: number[]): void;
     sendSaveDeathNotePacket(notes: string): void;
-    sendSendMessagePacket(text: string): void;
+    sendSendChatMessagePacket(text: string, block: boolean): void;
     sendSendWhisperPacket(playerIndex: number, text: string): void;
     sendEnabledRolesPacket(roles: Role[]): void;
     sendEnabledModifiersPacket(modifiers: ModifierType[]): void;
 
+    sendAbilityInput(input: AbilityInput): void;
     sendSetDoomsayerGuess(guesses: [
         [number, DoomsayerGuess],
         [number, DoomsayerGuess],
         [number, DoomsayerGuess]
     ]): void;
-    sendSetKiraGuess(guesses: Record<PlayerIndex, KiraGuess>): void;
-    sendSetWildcardRoleOutline(roleOutline: Role): void;
-    sendSetReporterReport(report: string): void;
-    sendSetReporterReportPublic(isPublic: boolean): void;
     sendSetConsortOptions(
         roleblock: boolean, 
         youWereRoleblockedMessage: boolean, 
@@ -115,20 +108,8 @@ export type GameManager = {
         youWerePossessedMessage: boolean, 
         yourTargetWasJailedMessage: boolean
     ): void
-    sendSetForgerWill(role: Role | null, will: string): void;
-    sendSetCounterfeiterAction(action: "forge" | "noForge"): void;
-    sendSetAuditorChosenOutline(index: number): void;
-    sendSetPuppeteerAction(action: PuppeteerAction): void;
-    sendSetRecruiterAction(action: RecruiterAction): void;
-    sendSetErosAction(action: "loveLink" | "kill"): void;
-    sendRetrainerRetrain(role: Role): void;
-    sendSetRoleChosen(role: Role | null): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
-    sendForfeitVotePacket(forfeit: boolean): void;
-    sendPitchforkVotePacket(player: PlayerIndex | null): void;
-    sendHitOrderVotePacket(player: PlayerIndex | null): void;
-    sendHitOrderSwitchMafiosoPacket(): void;
 
     messageListener(serverMessage: ToClientPacket): void;
 

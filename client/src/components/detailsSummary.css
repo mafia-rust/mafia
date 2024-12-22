@@ -1,0 +1,23 @@
+.details-summary-summary-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+
+    background-color: var(--primary-color);
+    border: .13rem solid var(--primary-border-color);
+    border-bottom-color: var(--primary-border-shadow-color);
+    border-right-color: var(--primary-border-shadow-color);
+    margin: .13rem;
+    padding: .13rem;
+    border-radius: .5rem;
+}
+.details-summary-container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    /* justify-content: left;
+    align-items: center; */
+}

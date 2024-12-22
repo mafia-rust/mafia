@@ -9,3 +9,8 @@
     border-radius: .25rem;
     border: .13rem solid var(--primary-border-color);
 }
+
+button {
+    /* margin: 0;
+    padding: .13rem .13rem; */
+}

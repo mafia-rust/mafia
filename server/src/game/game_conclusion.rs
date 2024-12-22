@@ -8,7 +8,6 @@ pub enum GameConclusion {
 
     Fiends,
 
-    Death,
     Politician,
 
     Draw
@@ -20,7 +19,6 @@ impl GameConclusion {
             GameConclusion::Mafia,
             GameConclusion::Cult,
             GameConclusion::Fiends,
-            GameConclusion::Death,
             GameConclusion::Politician,
             GameConclusion::Draw
         ]
@@ -76,6 +74,7 @@ impl GameConclusion {
 
         match role {
             Role::Drunk => true,
+            Role::Politician => true,
             _ => if 
                 RoleSet::Neutral.get_roles().contains(&role) || 
                 RoleSet::Minions.get_roles().contains(&role){

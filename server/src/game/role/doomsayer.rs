@@ -65,25 +65,27 @@ impl DoomsayerGuess{
             Role::Transporter => Some(DoomsayerGuess::Transporter),
 
             //Mafia
-            Role::Godfather | Role::Mafioso | Role::Eros |
-            Role::Counterfeiter | Role::Retrainer | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
+            Role::Godfather | Role::Mafioso | 
+            Role::Counterfeiter | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
             Role::Goon |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 
             Role::MafiaWitch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
-            Role::Cupid | Role::MafiaSupportWildcard => Some(DoomsayerGuess::NonTown),
+            Role::Disguiser | Role::Reeducator |
+            Role::Cupid | Role::Ambusher | Role::MafiaSupportWildcard => Some(DoomsayerGuess::NonTown),
 
             //Neutral
             Role::Jester | Role::Revolutionary | Role::Politician |
-            Role::Doomsayer | Role::Death | 
+            Role::Doomsayer |
             Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | Role::Chronokaiser |
-            Role::Wildcard | Role::TrueWildcard | Role::Drunk => Some(DoomsayerGuess::NonTown),
+            Role::Wildcard | Role::TrueWildcard | Role::Drunk | Role::Spiral => Some(DoomsayerGuess::NonTown),
             Role::Martyr => None,
            
 
             //Fiends
             Role::Arsonist | Role::Werewolf | 
             Role::Ojo | Role::Puppeteer | Role::Pyrolisk | Role::Kira |
+            Role:: SerialKiller |
             Role::FiendsWildcard => Some(DoomsayerGuess::NonTown),
             
             //Cult

@@ -1,22 +1,56 @@
+use std::time::Duration;
+
 use serde::Serialize;
 
-use crate::game::attack_power::{AttackPower, DefensePower};
-use crate::game::chat::ChatMessageVariant;
+use crate::game::attack_power::DefensePower;
+use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::game_conclusion::GameConclusion;
-use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
+use crate::game::grave::Grave;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 
+use crate::game::tag::Tag;
 use crate::game::win_condition::WinCondition;
 use crate::game::Game;
-use super::jester::Jester;
-use super::{GetClientRoleState, Role, RoleState, RoleStateImpl};
+use crate::vec_set;
+
+use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Role, RoleState, RoleStateImpl};
 
 
 #[derive(Debug, Clone, Default)]
 pub struct Politician{
-    won: bool,
+    pub revealed: bool,
+    state: PoliticianState,
+}
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub enum PoliticianState{
+    #[default]
+    None,
+    CountdownStarted,
+    FinalNomination,
+    Finished
+}
+impl PoliticianState {
+    pub fn is_none(&self) -> bool {
+        matches!(self, Self::None)
+    }
+    pub fn countdown_started(&self) -> bool {
+        match self {
+            PoliticianState::None => false,
+            PoliticianState::CountdownStarted => true,
+            PoliticianState::FinalNomination => true,
+            PoliticianState::Finished => false,
+        }
+    }
+    pub fn final_nomination(&self) -> bool {
+        match self {
+            PoliticianState::None => false,
+            PoliticianState::CountdownStarted => false,
+            PoliticianState::FinalNomination => true,
+            PoliticianState::Finished => false,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -28,86 +62,144 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Politician {
     type ClientRoleState = ClientRoleState;
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
-        if self.should_suicide(game, actor_ref) {
-            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
+    fn on_validated_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, ability_input: super::AbilityInput) {
+        if actor_ref != input_player {return;}
+        if ability_input.id() != ControllerID::role(actor_ref, Role::Mayor, 0) {
+            return;
         }
-    }
-    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
-        if self.should_suicide(game, actor_ref) {
-            actor_ref.set_role_and_win_condition_and_revealed_group(game, RoleState::Jester(Jester::default()));
-        }
-    }
-    fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
-        if self.should_suicide(game, actor_ref){
-            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
-        }
-    }
-    fn on_game_ending(self, game: &mut Game, actor_ref: PlayerReference){
-        if !actor_ref.alive(game) {return}
+        
 
-        let mut won = false;
-        //kill all townies who won
-        for player_ref in PlayerReference::all_players(game) {
-            if
-                player_ref.alive(game) && 
-                player_ref.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) &&
-                player_ref.get_won_game(game)
-            {
-                
-                if !player_ref.defense(game).can_block(AttackPower::ProtectionPiercing) {
+        game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::MayorRevealed { player_index: actor_ref.index() });
 
-                    let mut grave = Grave::from_player_lynch(game, player_ref);
-                    if let GraveInformation::Normal {death_cause, ..} = &mut grave.information {
-                        *death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Politician)]);
+        actor_ref.set_role_state(game, Politician{
+            revealed: true,
+            ..self
+        });
+        for player in PlayerReference::all_players(game){
+            player.push_player_tag(game, actor_ref, Tag::Enfranchised);
+        }
+        game.count_votes_and_start_trial();
+    }
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Politician, 0),
+            super::AvailableAbilitySelection::Unit,
+            super::AbilitySelection::new_unit(),
+            !actor_ref.alive(game) ||
+            self.revealed || 
+            PhaseType::Night == game.current_phase().phase() ||
+            PhaseType::Briefing == game.current_phase().phase(),
+            None,
+            true,
+            vec_set![actor_ref]
+        )
+    }
+
+    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
+        Self::check_and_leave_town(&self, game, actor_ref);
+
+        if self.state.countdown_started() && actor_ref.alive(game) {
+            //for skipping phases
+            match phase {
+                PhaseType::Briefing | PhaseType::Nomination | PhaseType::Testimony | 
+                PhaseType::Judgement | PhaseType::FinalWords  => {}
+
+                PhaseType::Obituary | PhaseType::Discussion | PhaseType::Dusk | PhaseType::Night => {
+                    game.phase_machine.time_remaining = Duration::from_secs(0);
+                }
+            }
+
+            match phase {
+                PhaseType::Nomination => {
+                    self.state = PoliticianState::FinalNomination;
+                    actor_ref.set_role_state(game, self);
+                },
+                PhaseType::Dusk => {
+                    if self.state == PoliticianState::FinalNomination {
+                        Politician::kill_all(game);
                     }
-                    player_ref.die(game, grave);
-                }else{
-                    player_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
-                    actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
-                }
-                won = true;
-            }
-        }
-
-        if 
-            won ||
-            PlayerReference::all_players(game).filter(|p|p.alive(game))
-                .all(|player_ref| player_ref.role(game) == Role::Politician)
-        {
-            //kill all politicians because they all won
-            for player_ref in PlayerReference::all_players(game) {
-                if
-                    player_ref.alive(game) && 
-                    player_ref.role(game) == Role::Politician
-                {
-                    player_ref.set_role_state(game, RoleState::Politician(Politician{won: true}));
-                    player_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
-                }
+                },
+                _ => {}
             }
         }
     }
+    
+    fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
+        self.check_and_start_countdown(game, actor_ref);
+    }
+
+    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
+        self.check_and_start_countdown(game, actor_ref);
+    }
+
     fn default_win_condition(self) -> crate::game::win_condition::WinCondition where RoleState: From<Self> {
         WinCondition::GameConclusionReached{win_if_any: vec![GameConclusion::Politician].into_iter().collect()}
     }
 }
+
 impl GetClientRoleState<ClientRoleState> for Politician {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState
     }
 }
 
-pub fn is_town_remaining(game: &Game) -> bool {
-    PlayerReference::all_players(game).any(|player|
-        player.alive(game) && player.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town)
-    )
-}
-
 impl Politician {
-    pub fn should_suicide(&self, game: &Game, actor_ref: PlayerReference) -> bool {
-        !self.won && actor_ref.alive(game) && !is_town_remaining(game)
+    fn check_and_leave_town(&self, game: &mut Game, actor_ref: PlayerReference){
+        if
+            !self.state.countdown_started() &&
+            actor_ref.alive(game) &&
+            PlayerReference::all_players(game)
+                .filter(|p|p.alive(game))
+                .filter(|p|p.keeps_game_running(game))
+                .all(|p|
+                    !p.win_condition(game).is_loyalist_for(GameConclusion::Town)
+                )
+
+        {
+            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
+        }
     }
-    pub fn won(&self)->bool{
-        self.won
+
+    fn check_and_start_countdown(mut self, game: &mut Game, actor_ref: PlayerReference){
+        if !actor_ref.alive(game) || self.state.countdown_started() {
+            return; 
+        }
+        
+        if Self::should_start_countdown(&self, game, actor_ref) {
+            Politician::start_countdown(&mut self, game);
+        }
+
+        actor_ref.set_role_state(game, self);
+    }
+
+
+    fn should_start_countdown(&self, game: &Game, actor_ref: PlayerReference)->bool{
+        !self.state.countdown_started() &&
+        actor_ref.alive(game) &&
+            PlayerReference::all_players(game)
+            .filter(|p|*p != actor_ref)
+            .filter(|p|p.keeps_game_running(game))
+            .filter(|p|p.alive(game))
+            .all(|player| {
+                player.win_condition(game).is_loyalist_for(GameConclusion::Town)
+            })
+    }
+
+    fn start_countdown(&mut self, game: &mut Game){
+        game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::PoliticianCountdownStarted);
+        
+        if game.current_phase().phase() != PhaseType::Nomination {
+            game.phase_machine.time_remaining = Duration::from_secs(0);
+        }
+        self.state = PoliticianState::CountdownStarted;
+    }
+
+    fn kill_all(game: &mut Game){
+        for player in PlayerReference::all_players(game){
+            if player.alive(game) && !player.win_condition(game).is_loyalist_for(GameConclusion::Politician) {
+                player.die(game, Grave::from_player_leave_town(game, player));
+            }
+        }
     }
 }

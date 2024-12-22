@@ -11,10 +11,8 @@ import { RoleOutline } from "./roleListState.d";
 import translate from "./lang";
 import PlayMenu from "../menu/main/PlayMenu";
 import { createGameState, createLobbyState } from "./gameState";
-import { Role } from "./roleState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
-import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import AudioController from "../menu/AudioController";
 
 export function createGameManager(): GameManager {
@@ -163,7 +161,10 @@ export function createGameManager(): GameManager {
         },
         updateChatFilter(filter: PlayerIndex | null) {
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
-                GAME_MANAGER.state.clientState.chatFilter = filter;
+                GAME_MANAGER.state.clientState.chatFilter = filter===null?null:{
+                    type: "playerNameInMessage",
+                    player: filter
+                };
                 GAME_MANAGER.invokeStateListeners("filterUpdate");
             }
         },
@@ -400,18 +401,6 @@ export function createGameManager(): GameManager {
                 playerIndex: voteeIndex
             });
         },
-        sendTargetPacket(targetIndexList) {
-            this.server.sendPacket({
-                type: "target",
-                playerIndexList: targetIndexList
-            });
-        },
-        sendDayTargetPacket(targetIndex) {
-            this.server.sendPacket({
-                type: "dayTarget",
-                playerIndex: targetIndex
-            });
-        },
 
         sendSaveWillPacket(will) {
             this.server.sendPacket({
@@ -437,10 +426,11 @@ export function createGameManager(): GameManager {
                 deathNote: notes.trim().length === 0 ? null : notes
             });
         },
-        sendSendMessagePacket(text) {
+        sendSendChatMessagePacket(text, block) {
             this.server.sendPacket({
-                type: "sendMessage",
-                text: text
+                type: "sendChatMessage",
+                text: text,
+                block: block
             });
         },
         sendSendWhisperPacket(playerIndex, text) {
@@ -463,40 +453,16 @@ export function createGameManager(): GameManager {
             });
         },
 
+        sendAbilityInput(input) {
+            this.server.sendPacket({
+                type: "abilityInput",
+                abilityInput: input
+            });
+        },
         sendSetDoomsayerGuess(guesses) {
             this.server.sendPacket({
                 type: "setDoomsayerGuess",
                 guesses: guesses
-            });
-        },
-        sendSetKiraGuess(guessesRecord) {
-
-            let guesses: [PlayerIndex, KiraGuess][] = [];
-            for(let [player, guess] of Object.entries(guessesRecord)){
-                guesses.push([Number.parseInt(player), guess]);
-            }
-
-            this.server.sendPacket({
-                type: "setKiraGuess",
-                guesses: guesses
-            });
-        },
-        sendSetWildcardRoleOutline(role) {
-            this.server.sendPacket({
-                type: "setWildcardRole",
-                role: role
-            });
-        },
-        sendSetReporterReport(report: string) {
-            this.server.sendPacket({
-                type: "setReporterReport",
-                report: report,
-            });
-        },
-        sendSetReporterReportPublic(isPublic: boolean) {
-            this.server.sendPacket({
-                type: "setReporterReportPublic",
-                public: isPublic,
             });
         },
         sendSetConsortOptions(
@@ -520,83 +486,11 @@ export function createGameManager(): GameManager {
                 yourTargetWasJailedMessage: yourTargetWasJailedMessage ?? false
             });
         },
-        sendSetForgerWill(role: Role | null, will: string) {
-            this.server.sendPacket({
-                type: "setForgerWill",
-                role: role,
-                will: will
-            });
-        },
-        sendSetCounterfeiterAction(action: "forge" | "noForge") {
-            this.server.sendPacket({
-                type: "setCounterfeiterAction",
-                action: action
-            });
-        },
-        sendSetAuditorChosenOutline(index) {
-            this.server.sendPacket({
-                type: "setAuditorChosenOutline",
-                index: index
-            });
-        },
-        sendSetPuppeteerAction(action) {
-            this.server.sendPacket({
-                type: "setPuppeteerAction",
-                action: action
-            });
-        },
-        sendSetRecruiterAction(action) {
-            this.server.sendPacket({
-                type: "setRecruiterAction",
-                action: action
-            });
-        },
-        sendSetErosAction(action) {
-            this.server.sendPacket({
-                type: "setErosAction",
-                action: action
-            });
-        },
-        sendRetrainerRetrain(role) {
-            this.server.sendPacket({
-                type: "retrainerRetrain",
-                role: role
-            });
-        },
-        sendSetRoleChosen(role: Role | null) {
-            this.server.sendPacket({
-                type: "setRoleChosen",
-                role: role
-            });
-        },
 
         sendVoteFastForwardPhase(fastForward: boolean) {
             this.server.sendPacket({
                 type: "voteFastForwardPhase",
                 fastForward: fastForward
-            });
-        },
-        sendForfeitVotePacket(forfeit: boolean) {
-            this.server.sendPacket({
-                type: "forfeitVote",
-                forfeit
-            });
-        },
-        sendPitchforkVotePacket(player: PlayerIndex | null) {
-            this.server.sendPacket({
-                type: "pitchforkVote",
-                player: player
-            });
-        },
-        sendHitOrderVotePacket(player: PlayerIndex | null) {
-            this.server.sendPacket({
-                type: "hitOrderVote",
-                player: player
-            });
-        },
-        sendHitOrderSwitchMafiosoPacket() {
-            this.server.sendPacket({
-                type: "hitOrderSwitchToMafioso",
             });
         },
 

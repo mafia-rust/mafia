@@ -1,17 +1,12 @@
 use std::collections::HashSet;
 
-use crate::game::{
-    attack_power::AttackPower, chat::ChatMessageVariant,
-    player::PlayerReference, game_conclusion::GameConclusion, 
+use crate::{game::{
+    attack_power::AttackPower, chat::ChatMessageVariant, game_conclusion::GameConclusion,
+    player::PlayerReference,
     role::{
         Priority, Role
-    }, 
-    role_list::RoleSet, 
-    tag::Tag, 
-    win_condition::WinCondition, 
-    Game,
-    InsiderGroupID
-};
+    }, role_list::RoleSet, tag::Tag, win_condition::WinCondition, Game, InsiderGroupID
+}, vec_set::VecSet};
 
 impl Game{
     pub fn mafia_recruits<'a>(&'a self)->&'a MafiaRecruits{
@@ -59,7 +54,7 @@ impl MafiaRecruits{
     }
     fn attack_players(game: &mut Game, players: Vec<PlayerReference>, attack_power: AttackPower){
         
-        let recruiters: HashSet<_> = PlayerReference::all_players(game)
+        let recruiters: VecSet<_> = PlayerReference::all_players(game)
             .filter(|p|p.role(game)==Role::Recruiter)
             .map(|p|p.clone())
             .collect();
