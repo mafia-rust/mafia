@@ -130,7 +130,7 @@ function outlineOptionCompare(optionA: RoleOutlineOption, optionB: RoleOutlineOp
 
 export function getAllRoles(): Role[] {
     return Object.entries(roleJsonData())
-        .sort((a, b) => a[0].localeCompare(b[0]))
+        .sort((a, b) => translate(`role.${a[0]}.name`).localeCompare(translate(`role.${b[0]}.name`)))
         .sort((a, b) => ROLE_SETS.indexOf(a[1].mainRoleSet) - ROLE_SETS.indexOf(b[1].mainRoleSet))
         .map((a) => a[0]) as Role[];
 }

@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode } from "react";
+import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 import { Role, roleJsonData } from "../game/roleState.d";
 import React from "react";
 import translate, { langText, translateChecked } from "../game/lang";
@@ -13,6 +13,7 @@ import { useLobbyOrGameState } from "./useHooks";
 import DetailsSummary from "./DetailsSummary";
 import { partitionWikiPages, WikiCategory } from "./Wiki";
 import { MODIFIERS, ModifierType } from "../game/gameState.d";
+import Masonry from "react-responsive-masonry";
 
 function WikiStyledText(props: Omit<StyledTextProps, 'markdown' | 'playerKeywordData'>): ReactElement {
     return <StyledText {...props} markdown={true} playerKeywordData={DUMMY_NAMES_KEYWORD_DATA} />
@@ -191,22 +192,46 @@ function RoleSetArticle(): ReactElement {
         getAllRoles()
     )!;
 
-    return <div>
+    const ref = useRef<HTMLDivElement>(null);
+
+    const [columnCount, setColumnCount] = useState(1);
+
+    useEffect(() => {
+        const redetermineColumnWidths = () => {
+            if (ref.current) {
+                setColumnCount(Math.max(Math.floor(ref.current.clientWidth / 300), 1))
+            }
+        }
+
+        const resizeObserver = new ResizeObserver(redetermineColumnWidths)
+
+        redetermineColumnWidths()
+
+        setTimeout(() => {
+            resizeObserver.observe(ref.current!);
+        })
+        return resizeObserver.unobserve(ref.current!)
+    }, [ref])
+
+    return <div ref={ref} className="role-set-article">
         <section key="title">
             <WikiStyledText>{"# "+translate("wiki.article.generated.roleSet.title")}</WikiStyledText>
         </section>
-        {ROLE_SETS.map(set => {
-            const description = translateChecked(`${set}.description`);
-            return <PageCollection
-                key={set}
-                title={translate(set)}
-                pages={getRolesFromRoleSet(set).map(role => `role/${role}` as WikiArticleLink)}
-                enabledRoles={enabledRoles}
-                enabledModifiers={[]}
-            >
-                {description && <p><StyledText>{description}</StyledText></p>}
-            </PageCollection>
-        })}
+        <Masonry columnsCount={columnCount}>
+            {ROLE_SETS.map(set => {
+                const description = translateChecked(`${set}.description`);
+                return <div key={set} className="masonry-item">
+                    <PageCollection
+                        title={translate(set)}
+                        pages={getRolesFromRoleSet(set).map(role => `role/${role}` as WikiArticleLink)}
+                        enabledRoles={enabledRoles}
+                        enabledModifiers={[]}
+                    >
+                        {description && <p><StyledText>{description}</StyledText></p>}
+                    </PageCollection>
+                </div>
+            })}
+        </Masonry>
         <WikiStyledText key={"extra"}>
             {translate("wiki.article.generated.roleSet.extra", Object.keys(roleJsonData()).length)}
         </WikiStyledText>

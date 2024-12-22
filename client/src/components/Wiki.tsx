@@ -211,7 +211,7 @@ function WikiMainPage(props: Readonly<{
     return <div ref={ref} className="wiki-main-page">
         <Masonry columnsCount={columnCount}>
             {Object.entries(articlePartitions.categories).map(([category, pages]) => {
-                return <div className="category-pages" key={category}>
+                return <div className="masonry-item" key={category}>
                     <PageCollection 
                         title={translate(`wiki.category.${category}`)}
                         pages={pages}
@@ -230,11 +230,11 @@ function WikiMainPage(props: Readonly<{
     </div>
 }
 
-export const WIKI_CATEGORIES = ["categories", "town", "mafia", "cult", "neutral", "minions", "fiends", "modifiers"] as const;
+export const WIKI_CATEGORIES = ["categories", "town", "mafia", "cult", "neutral", "minions", "fiends", "modifiers", "abilities"] as const;
 export type WikiCategory = (typeof WIKI_CATEGORIES)[number]
 
 type WikiPagePartitions = {
-    categories: Partial<Record<WikiCategory, WikiArticleLink[]>>,
+    categories: Record<WikiCategory, WikiArticleLink[]>,
     uncategorized: WikiArticleLink[]
 }
 
@@ -244,36 +244,39 @@ export function partitionWikiPages(
     enabledModifiers: ModifierType[]
 ): WikiPagePartitions {
     const partitions: WikiPagePartitions = {
-        categories: Object.fromEntries(WIKI_CATEGORIES.map(a => [a, []])),
+        categories: Object.fromEntries(WIKI_CATEGORIES.map(a => [a, []])) as any as Record<WikiCategory, WikiArticleLink[]>,
         uncategorized: []
     };
 
     for (const wikiPage of wikiPages) {
         const articleType = wikiPage.split("/")[0];
 
+        let category: WikiCategory | null = null;
+
         if (articleType === "role") {
             const role = wikiPage.split("/")[1] as Role;
-            const category = getCategoryForRole(role);
+            category = getCategoryForRole(role);
 
-            if (partitions.categories[category]) {
-                partitions.categories[category]!.push(wikiPage)
-            } else {
-                partitions.categories[category] = [wikiPage];
-            }
         } else if (articleType === "modifier") {
-            if (partitions.categories["modifiers"]) {
-                partitions.categories["modifiers"]!.push(wikiPage)
-            } else {
-                partitions.categories["modifiers"] = [wikiPage];
-            }
+            category = "modifiers"
         } else if (articleType === "category") {
-            if (partitions.categories["categories"]) {
-                partitions.categories["categories"]!.push(wikiPage)
-            } else {
-                partitions.categories["categories"] = [wikiPage];
-            }
+            category = "categories"
+        }
+        
+        if ([
+            "standard/backup", "standard/block", "standard/convert", "standard/douse", "standard/forged",
+            "standard/frame", "standard/haunt", "standard/hypnotize", "standard/interview", "standard/jail",
+            "standard/loveLinked", "standard/marionette", "standard/obscured", "standard/possess", 
+            "standard/protect", "standard/rampage", "standard/report", "standard/roleblock", "standard/silenced",
+            "standard/spiral", "standard/syndicateGunItem", "standard/tag", "standard/transport", "standard/ward",
+        ].includes(wikiPage)) {
+            category = "abilities"
+        }
+
+        if (category) {
+            partitions.categories[category].push(wikiPage)
         } else {
-            partitions.uncategorized.push(wikiPage);
+            partitions.uncategorized.push(wikiPage)
         }
     }
 
