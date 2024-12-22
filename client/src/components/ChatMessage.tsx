@@ -442,13 +442,21 @@ export function translateChatMessage(
                 playerNames[message.voterPlayerIndex],
                 translate("verdict."+message.verdict.toLowerCase())
             );
-        case "trialVerdict":
+        case "trialVerdict":{
+            let hang;
+            // Damn
+            if (GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.enabledModifiers.includes("twoThirdsMajority")) {
+                hang = message.innocent <= 2 * message.guilty
+            } else {
+                hang = message.innocent < message.guilty
+            }
             return translate("chatMessage.trialVerdict",
                 playerNames[message.playerOnTrial],
-                message.innocent>=message.guilty?translate("verdict.innocent"):translate("verdict.guilty"),
+                hang?translate("verdict.innocent"):translate("verdict.guilty"),
                 message.innocent,
                 message.guilty
             );
+        }
         case "abilityUsed":
 
             let out;

@@ -78,7 +78,7 @@ impl PhaseStateMachine {
         game.phase_machine.time_remaining = PhaseStateMachine::get_start_time(game, game.current_phase().phase());
 
         PhaseState::start(game);
-        OnPhaseStart::new(game.current_phase().phase()).invoke(game);
+        OnPhaseStart::new(game.current_phase().clone()).invoke(game);
     }
 
     pub fn get_start_time(game: &Game, phase: PhaseType) -> Duration {

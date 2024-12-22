@@ -123,6 +123,10 @@ function PlayerCard(props: Readonly<{
     const [alibiOpen, setAlibiOpen] = React.useState(false);
     const [graveOpen, setGraveOpen] = React.useState(false);
     const [whisperChatOpen, setWhisperChatOpen] = React.useState(false);
+    const whispersDisabled = useGameState(
+        gameState => gameState.enabledModifiers.includes("noWhispers"),
+        ["enabledModifiers"]
+    )!;
 
     const grave = useGameState(
         gameState => {
@@ -166,7 +170,7 @@ function PlayerCard(props: Readonly<{
         <VoteButton playerIndex={props.playerIndex} />
         {GAME_MANAGER.getMySpectator() ||
             <Button 
-                disabled={isPlayerSelf}
+                disabled={isPlayerSelf || whispersDisabled}
                 onClick={()=>{
                     // GAME_MANAGER.prependWhisper(props.playerIndex); return true;
                     setWhisperChatOpen(!whisperChatOpen);

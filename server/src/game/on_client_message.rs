@@ -54,18 +54,7 @@ impl Game {
                 sender_player_ref.set_verdict(self, verdict);
             },
             ToServerPacket::SendChatMessage { text, block } => {
-                if Modifiers::modifier_is_enabled(self, ModifierType::NoChat) {
-                    break 'packet_match
-                }
-
                 if Modifiers::modifier_is_enabled(self, ModifierType::NoBlockMessages) && block {
-                    break 'packet_match
-                }
-
-                if Modifiers::modifier_is_enabled(self, ModifierType::NoNightChat) &&
-                    sender_player_ref.alive(self) 
-                    && matches!(self.current_phase().phase(), PhaseType::Night | PhaseType::Obituary)
-                {
                     break 'packet_match
                 }
 
@@ -112,9 +101,7 @@ impl Game {
                 }
             },
             ToServerPacket::SendWhisper { player_index: whispered_to_player_index, text } => {
-                if Modifiers::modifier_is_enabled(self, ModifierType::NoWhispers) 
-                    || Modifiers::modifier_is_enabled(self, ModifierType::NoChat)
-                {
+                if Modifiers::modifier_is_enabled(self, ModifierType::NoWhispers) {
                     break 'packet_match
                 }
 

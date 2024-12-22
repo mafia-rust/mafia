@@ -182,6 +182,11 @@ impl Modifiers{
             modifier.1.before_phase_end(game, phase);
         }
     }
+    pub fn on_phase_start(game: &mut Game, phase: super::phase::PhaseState){
+        for modifier in game.modifiers.modifiers.clone(){
+            modifier.1.on_phase_start(game, phase.clone());
+        }
+    }
     pub fn on_any_death(game: &mut Game, player: crate::game::player::PlayerReference){
         for modifier in game.modifiers.modifiers.clone(){
             modifier.1.on_any_death(game, player);

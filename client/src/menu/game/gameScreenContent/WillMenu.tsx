@@ -1,9 +1,9 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useMemo } from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import "./willMenu.css";
-import { usePlayerState } from "../../../components/useHooks";
+import { useGameState, usePlayerState } from "../../../components/useHooks";
 import { getSingleRoleJsonData } from "../../../game/roleState.d";
 import { TextDropdownArea } from "../../../components/TextAreaDropdown";
 
@@ -13,7 +13,7 @@ export function defaultAlibi(): string {
 const DEFAULT_ALIBI = "ROLE\nNight 1: \nNight 2:";
 
 export default function WillMenu(): ReactElement {
-    const cantPost = usePlayerState(
+    const cantChat = usePlayerState(
         playerState => playerState.sendChatGroups.length === 0,
         ["yourSendChatGroups"]
     )!;
@@ -35,6 +35,14 @@ export default function WillMenu(): ReactElement {
         playerState => playerState.deathNote,
         ["yourDeathNote"]
     )!;
+    const blockMessagesDisabled = useGameState(
+        gameState => gameState.enabledModifiers.includes("noBlockMessages"),
+        ["enabledModifiers"]
+    )!;
+
+    const cantPost = useMemo(() => {
+        return cantChat || blockMessagesDisabled
+    }, [cantChat, blockMessagesDisabled])
     
     return <div className="will-menu will-menu-colors">
         <ContentTab
