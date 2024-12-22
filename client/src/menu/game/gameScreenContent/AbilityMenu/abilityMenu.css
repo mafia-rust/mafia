@@ -1,3 +1,11 @@
 .ability-menu {
     overflow-y: auto;
 }
+.game-screen .content > .ability-menu {
+    width: 10%;
+}
+@media only screen and (max-width: 600px) {
+    .game-screen .content > .ability-menu {
+        width: 100%;
+    }
+}
