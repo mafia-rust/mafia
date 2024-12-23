@@ -15,9 +15,9 @@ pub mod scheduled_nominations;
 use dead_can_chat::DeadCanChat;
 use no_abstaining::NoAbstaining;
 use no_chat::NoChat;
-use no_due_process::NoDueProcess;
+use no_due_process::AutoGuilty;
 use no_night_chat::NoNightChat;
-use no_trial::NoTrial;
+use no_trial::NoTrialPhases;
 use no_whispers::NoWhispers;
 use obscured_graves::ObscuredGraves;
 use random_love_links::RandomLoveLinks;
@@ -54,9 +54,9 @@ pub enum ModifierState{
     NoAbstaining(NoAbstaining),
     NoDeathCause(NoDeathCause),
     RoleSetGraveKillers(RoleSetGraveKillers),
-    NoDueProcess(NoDueProcess),
+    AutoGuilty(AutoGuilty),
     TwoThirdsMajority(TwoThirdsMajority),
-    NoTrial(NoTrial),
+    NoTrialPhases(NoTrialPhases),
     NoWhispers(NoWhispers),
     NoNightChat(NoNightChat),
     NoChat(NoChat),
@@ -71,9 +71,9 @@ pub enum ModifierType{
     NoAbstaining,
     NoDeathCause,
     RoleSetGraveKillers,
-    NoDueProcess,
+    AutoGuilty,
     TwoThirdsMajority,
-    NoTrial,
+    NoTrialPhases,
     NoWhispers,
     NoNightChat,
     NoChat,
@@ -88,9 +88,9 @@ impl ModifierType{
             Self::NoAbstaining => ModifierState::NoAbstaining(NoAbstaining::default()),
             Self::NoDeathCause => ModifierState::NoDeathCause(NoDeathCause::default()),
             Self::RoleSetGraveKillers => ModifierState::RoleSetGraveKillers(RoleSetGraveKillers::default()),
-            Self::NoDueProcess => ModifierState::NoDueProcess(NoDueProcess::default()),
+            Self::AutoGuilty => ModifierState::AutoGuilty(AutoGuilty::default()),
             Self::TwoThirdsMajority => ModifierState::TwoThirdsMajority(TwoThirdsMajority::default()),
-            Self::NoTrial => ModifierState::NoTrial(NoTrial::default()),
+            Self::NoTrialPhases => ModifierState::NoTrialPhases(NoTrialPhases::default()),
             Self::NoWhispers => ModifierState::NoWhispers(NoWhispers::default()),
             Self::NoNightChat => ModifierState::NoNightChat(NoNightChat::default()),
             Self::NoChat => ModifierState::NoChat(NoChat::default()),
@@ -107,9 +107,9 @@ impl From<&ModifierState> for ModifierType{
             ModifierState::NoAbstaining(_) => Self::NoAbstaining,
             ModifierState::NoDeathCause(_) => Self::NoDeathCause,
             ModifierState::RoleSetGraveKillers(_) => Self::RoleSetGraveKillers,
-            ModifierState::NoDueProcess(_) => Self::NoDueProcess,
+            ModifierState::AutoGuilty(_) => Self::AutoGuilty,
             ModifierState::TwoThirdsMajority(_) => Self::TwoThirdsMajority,
-            ModifierState::NoTrial(_) => Self::NoTrial,
+            ModifierState::NoTrialPhases(_) => Self::NoTrialPhases,
             ModifierState::NoWhispers(_) => Self::NoWhispers,
             ModifierState::NoNightChat(_) => Self::NoNightChat,
             ModifierState::NoChat(_) => Self::NoChat,

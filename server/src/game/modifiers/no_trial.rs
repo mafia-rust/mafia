@@ -3,15 +3,15 @@ use crate::game::{phase::{PhaseState, PhaseStateMachine}, Game};
 use super::{ModifierTrait, ModifierType};
 
 #[derive(Clone, Default, PartialEq, Eq, Hash)]
-pub struct NoTrial;
+pub struct NoTrialPhases;
 
-impl From<&NoTrial> for ModifierType{
-    fn from(_: &NoTrial) -> Self {
-        ModifierType::NoTrial
+impl From<&NoTrialPhases> for ModifierType{
+    fn from(_: &NoTrialPhases) -> Self {
+        ModifierType::NoTrialPhases
     }
 }
 
-impl ModifierTrait for NoTrial{
+impl ModifierTrait for NoTrialPhases{
     fn on_phase_start(self, game: &mut Game, phase: PhaseState) {
         match phase {
             PhaseState::Nomination { .. }

@@ -150,8 +150,8 @@ export const MODIFIERS = [
     "obscuredGraves", "randomLoveLinks",
     "deadCanChat", "noAbstaining",
     "noDeathCause",
-    "roleSetGraveKillers", "noDueProcess", 
-    "twoThirdsMajority", "noTrial", 
+    "roleSetGraveKillers", "autoGuilty", 
+    "twoThirdsMajority", "noTrialPhases", 
     "noWhispers", "noNightChat",
     "noChat", "scheduledNominations"
 ] as const;
