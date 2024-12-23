@@ -69,7 +69,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourId{player_id: LobbyClientID},
     #[serde(rename_all = "camelCase")]
-    LobbyClients{clients: HashMap<LobbyClientID, LobbyClient>},
+    LobbyClients{clients: VecMap<LobbyClientID, LobbyClient>},
     LobbyName{name: String},
     #[serde(rename_all = "camelCase")]
     RejectStart{reason: RejectStartReason},

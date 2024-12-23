@@ -3,7 +3,7 @@ import React, { ReactElement } from "react";
 import GAME_MANAGER, { find, replaceMentions } from "..";
 import StyledText, { KeywordDataMap, PLAYER_SENDER_KEYWORD_DATA } from "./StyledText";
 import "./chatMessage.css"
-import { ChatGroup, PhaseState, PlayerIndex, Tag, Verdict } from "../game/gameState.d";
+import { ChatGroup, Conclusion, PhaseState, PlayerIndex, Tag, translateConclusion, translateWinCondition, Verdict, WinCondition } from "../game/gameState.d";
 import { Role, RoleState } from "../game/roleState.d";
 import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
@@ -409,6 +409,8 @@ export function translateChatMessage(
                         message.dayNumber,
                         playerNames[message.phase.playerOnTrial]
                     );
+                case "recess":
+                    return translate("chatMessage.phaseChange.recess");
                 default:
                     return translate("chatMessage.phaseChange",
                         translate("phase."+message.phase.type),
@@ -442,13 +444,21 @@ export function translateChatMessage(
                 playerNames[message.voterPlayerIndex],
                 translate("verdict."+message.verdict.toLowerCase())
             );
-        case "trialVerdict":
+        case "trialVerdict":{
+            let hang;
+            // Damn
+            if (GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.enabledModifiers.includes("twoThirdsMajority")) {
+                hang = message.innocent <= 2 * message.guilty
+            } else {
+                hang = message.innocent < message.guilty
+            }
             return translate("chatMessage.trialVerdict",
                 playerNames[message.playerOnTrial],
-                message.innocent>=message.guilty?translate("verdict.innocent"):translate("verdict.guilty"),
+                hang?translate("verdict.innocent"):translate("verdict.guilty"),
                 message.innocent,
                 message.guilty
             );
+        }
         case "abilityUsed":
 
             let out;
@@ -661,12 +671,27 @@ export function translateChatMessage(
             return translate("chatMessage.playerDiedOfBrokenHeart", playerNames[message.player], playerNames[message.lover]);
         case "chronokaiserSpeedUp":
             return translate("chatMessage.chronokaiserSpeedUp", message.percent);
+        case "gameOver": {
+            const conclusionString = 
+                translateChecked(`chatMessage.gameOver.conclusion.${message.synopsis.conclusion}`)
+                ?? translate(`chatMessage.gameOver.conclusion.unknown`, translateConclusion(message.synopsis.conclusion))
+            
+            return conclusionString + '\n'
+                + message.synopsis.playerSynopses.map((synopsis, index) => 
+                    translate(`chatMessage.gameOver.player.won.${synopsis.won}`, playerNames![index])
+                        + ` (${
+                            synopsis.crumbs.map(crumb => translate("chatMessage.gameOver.player.crumb",
+                                translateWinCondition(crumb.winCondition), 
+                                translate(`role.${crumb.role}.name`)
+                            )).join(" → ")
+                        })`
+                ).join('\n');
+        }
         case "deputyShotYou":
         case "mediumExists":
         case "targetWasAttacked":
         case "youWereProtected":
         case "revolutionaryWon":
-        case "gameOver":
         case "jesterWon":
         case "wardblocked":
         case "yourConvertFailed":
@@ -684,7 +709,7 @@ export function translateChatMessage(
         case "targetsMessage":
         case "psychicFailed":
         case "phaseFastForwarded":
-        case "mayorCantWhisper":
+        case "invalidWhisper":
         case "politicianCountdownStarted":
         case "youAttackedSomeone":
         case "youWereAttacked":
@@ -745,6 +770,17 @@ export type ChatMessageVariant = {
     tag: Tag
 } | {
     type: "gameOver"
+    synopsis: {
+        playerSynopses: {
+            crumbs: {
+                night: number | null,
+                role: Role,
+                winCondition: WinCondition
+            }[],
+            won: boolean
+        }[],
+        conclusion: Conclusion
+    }
 } | {
     type: "playerWonOrLost",
     player: PlayerIndex,
@@ -796,7 +832,7 @@ export type ChatMessageVariant = {
     type: "mayorRevealed", 
     playerIndex: PlayerIndex
 } | {
-    type: "mayorCantWhisper"
+    type: "invalidWhisper"
 } | {
     type: "politicianCountdownStarted"
 } | {

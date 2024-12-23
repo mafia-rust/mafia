@@ -205,6 +205,7 @@ export default function GameScreen(): ReactElement {
 export function GameScreenMenus(): ReactElement {
     const menuController = useContext(MenuControllerContext)!;
     const minSize = 10; // Percentage
+    const mobile = useContext(MobileContext)!;
 
     // These don't add up to 100, but the panel group will fix it
     const defaultSizes = {
@@ -220,7 +221,12 @@ export function GameScreenMenus(): ReactElement {
         {menuController.menusOpen().map((menu, index, menusOpen) => {
             const MenuElement = MENU_ELEMENTS[menu];
             return <>
-                <Panel className="panel" minSize={minSize} defaultSize={defaultSizes[menu]} key={index}>
+                <Panel
+                    className="panel"
+                    minSize={minSize}
+                    defaultSize={mobile===false?defaultSizes[menu]:undefined}
+                    key={index}
+                    >
                     <MenuElement />
                 </Panel>
                 {menusOpen.some((_, i) => i > index) && <PanelResizeHandle key={index+".handle"} className="panel-handle"/>}

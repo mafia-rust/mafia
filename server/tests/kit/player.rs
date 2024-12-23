@@ -1,4 +1,4 @@
-use mafia_server::{game::{ability_input::*, chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, Game}, packet::ToServerPacket, vec_map::VecMap};
+use mafia_server::{game::{ability_input::*, chat::ChatMessageVariant, modifiers::{ModifierType, Modifiers}, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, Game}, packet::ToServerPacket, vec_map::VecMap};
 use vec1::Vec1;
 
 #[derive(Clone, Copy, Debug)]
@@ -99,7 +99,9 @@ impl TestPlayer {
 
         self.0.set_chosen_vote(game!(self), player_voted_ref, true);
 
-        game!(self).count_votes_and_start_trial();
+        game!(self).count_nomination_and_start_trial(
+            !Modifiers::modifier_is_enabled(game!(self), ModifierType::ScheduledNominations)
+        );
     }
     pub fn set_verdict(&self, verdict: Verdict) {
         self.0.set_verdict(game!(self), verdict);

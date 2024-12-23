@@ -270,7 +270,7 @@ function parseRoleOutlineOption(json: NonNullable<any>): ParseResult<InitialRole
 
 export function parsePhaseTimes(json: NonNullable<any>): ParseResult<PhaseTimes> {
     for (const phase of PHASES) {
-        if (!Object.keys(json).includes(phase)) {
+        if (phase !== "recess" && !Object.keys(json).includes(phase)) {
             return Failure(`${phase}KeyMissingFromPhaseTimes`, json);
         }
     }
