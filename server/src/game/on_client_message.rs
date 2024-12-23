@@ -56,7 +56,6 @@ impl Game {
                 sender_player_ref.set_verdict(self, verdict);
             },
             ToServerPacket::SendChatMessage { text, block } => {
-
                 if text.replace(['\n', '\r'], "").trim().is_empty() {
                     break 'packet_match;
                 }
@@ -100,10 +99,17 @@ impl Game {
                 }
             },
             ToServerPacket::SendWhisper { player_index: whispered_to_player_index, text } => {
+                if Modifiers::modifier_is_enabled(self, ModifierType::NoWhispers) {
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
+                    break 'packet_match
+                }
 
                 let whisperee_ref = match PlayerReference::new(self, whispered_to_player_index){
                     Ok(whisperee_ref) => whisperee_ref,
-                    Err(_) => break 'packet_match,
+                    Err(_) => {
+                        sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
+                        break 'packet_match
+                    },
                 };
 
                 if !self.current_phase().is_day() || 

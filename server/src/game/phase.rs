@@ -2,10 +2,10 @@ use std::{ops::DivAssign, time::Duration};
 
 use serde::{Serialize, Deserialize};
 
-use crate::packet::ToClientPacket;
+use crate::{game::modifiers::{ModifierType, Modifiers}, packet::ToClientPacket};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant}, event::{before_phase_end::BeforePhaseEnd, on_any_death::OnAnyDeath, on_night_priority::OnNightPriority, on_phase_start::OnPhaseStart}, grave::Grave, modifiers::{ModifierType, Modifiers}, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
+    chat::{ChatGroup, ChatMessageVariant}, event::{before_phase_end::BeforePhaseEnd, on_any_death::OnAnyDeath, on_night_priority::OnNightPriority, on_phase_start::OnPhaseStart}, grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
 };
 
 
@@ -80,7 +80,7 @@ impl PhaseStateMachine {
         game.phase_machine.time_remaining = PhaseStateMachine::get_phase_time_length(game, game.current_phase().phase());
 
         PhaseState::start(game);
-        OnPhaseStart::new(game.current_phase().phase()).invoke(game);
+        OnPhaseStart::new(game.current_phase().clone()).invoke(game);
     }
 
     pub fn get_phase_time_length(game: &Game, phase: PhaseType) -> Duration {
@@ -248,8 +248,14 @@ impl PhaseState {
                     player_on_trial: player_on_trial.index(), 
                     innocent, guilty 
                 });
+
+                let hang = if Modifiers::modifier_is_enabled(game, ModifierType::TwoThirdsMajority) {
+                    innocent <= 2 * guilty
+                } else {
+                    innocent < guilty
+                };
                 
-                if innocent < guilty {
+                if hang {
                     Self::FinalWords { player_on_trial }
                 } else if trials_left == 0 {
                     Self::Dusk
@@ -258,12 +264,7 @@ impl PhaseState {
                 }
             },
             PhaseState::FinalWords { player_on_trial } => {
-                let (guilty, innocent) = game.count_verdict_votes(player_on_trial);
-                
-                if innocent < guilty {
-                    let new_grave = Grave::from_player_lynch(game, player_on_trial);
-                    player_on_trial.die(game, new_grave);
-                }
+                player_on_trial.die(game, Grave::from_player_lynch(game, player_on_trial));
 
                 Self::Dusk
             },

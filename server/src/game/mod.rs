@@ -38,6 +38,7 @@ use components::syndicate_gun_item::SyndicateGunItem;
 use components::synopsis::SynopsisTracker;
 use components::verdicts_today::VerdictsToday;
 use event::on_tick::OnTick;
+use modifiers::ModifierType;
 use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
 use rand::seq::SliceRandom;
@@ -389,11 +390,15 @@ impl Game {
         votes >= self.nomination_votes_required()
     }
     pub fn nomination_votes_required(&self)->u8{
-        1 + (
-            PlayerReference::all_players(self)
-                .filter(|p| p.alive(self) && !p.forfeit_vote(self))
-                .count() / 2
-        ) as u8
+        let eligible_voters = PlayerReference::all_players(self)
+            .filter(|p| p.alive(self) && !p.forfeit_vote(self))
+            .count() as u8;
+
+        if Modifiers::modifier_is_enabled(self, ModifierType::TwoThirdsMajority) {
+            (eligible_voters + 1) * 2 / 3
+        } else {
+            1 + eligible_voters / 2
+        }
     }
 
 
