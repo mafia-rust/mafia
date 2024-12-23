@@ -473,10 +473,8 @@ fn psychic_auras(){
         let messages: Vec<_> = 
             messages.into_iter()
             .filter(|msg|match msg {
-                ChatMessageVariant::PsychicEvil { players } => {
-                    players.contains(&maf.index()) &&
-                    !players.contains(&god.index()) &&
-                    !players.contains(&psy.index())
+                ChatMessageVariant::PsychicEvil { first, second } => {
+                    !vec![first.index(), second.index()].contains(&god.index())
                 }
                 _ => false
             }).collect();
@@ -486,18 +484,16 @@ fn psychic_auras(){
         }
 
         game.skip_to(Night, 2);
-        maf.send_ability_input_player_list_typical(town1);
-        psy.send_ability_input_player_list_typical(town2);
+        maf.send_ability_input_player_list_typical(town2);
+        psy.send_ability_input_player_list_typical(maf);
         game.next_phase();
         let messages = psy.get_messages_after_night(2);
         let messages: Vec<_> = 
             messages.into_iter()
             .filter(|msg|match msg {
-                ChatMessageVariant::PsychicGood { players } => {
-                    players.contains(&town2.index()) &&
-                    !players.contains(&town1.index()) &&
-                    !players.contains(&psy.index())
-                }
+                ChatMessageVariant::PsychicGood { player } => {
+                    player.index() == town1.index()
+                },
                 _ => false
             }).collect();
 

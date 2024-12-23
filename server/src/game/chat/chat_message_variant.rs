@@ -161,8 +161,8 @@ pub enum ChatMessageVariant {
     SeerResult{enemies: bool},
     SpyMafiaVisit{players: Vec<PlayerIndex>},
     SpyBug{bug: SpyBug},
-    PsychicGood{players: [PlayerIndex; 2]},
-    PsychicEvil{players: [PlayerIndex; 3]},
+    PsychicGood{player: PlayerReference},
+    PsychicEvil{first: PlayerReference, second: PlayerReference},
     PsychicFailed,
     #[serde(rename_all = "camelCase")]
     AuditorResult{role_outline: RoleOutline, result: AuditorResult},
