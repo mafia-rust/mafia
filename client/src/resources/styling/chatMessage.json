@@ -69,6 +69,8 @@
     "yourConvertFailed": "result",
     "cultConvertsNext": "special",
     "cultKillsNext": "special",
+    "nextSantaAbility": "special",
+    "addedToNiceList": "special",
     "transported": "result",
     "youAttackedSomeone": "result",
     "youWereAttacked": "result",

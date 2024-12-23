@@ -66,17 +66,34 @@
     font-style: italic;
     color: gray;
 }
-.keyword-pride, .keyword-trans {
+.keyword-pride, .keyword-trans, .keyword-christmas {
     background-clip: text;
     color: rgba(255,255,255,.2);
     -webkit-background-clip: text;
     -webkit-text-fill-color: rgba(255,255,255,.2);
+    text-shadow: none;
+    filter: drop-shadow(.1rem .1rem .1rem rgb(0, 0, 0));
 }
 .keyword-pride {
     background-image: linear-gradient(to left, red, violet, rgb(103, 0, 177), rgb(0, 202, 202), green, rgb(216, 216, 0), orange, red);
     background-size: 100px;
     animation: scrolling-rainbow 3s linear infinite;
-    text-shadow: -.05rem -.05rem .1rem #ffffff66, .1rem .1rem .1rem rgb(0, 0, 0);
+    filter: drop-shadow(-.05rem -.05rem .1rem #ffffffaa)
+            drop-shadow(.1rem .1rem .1rem rgb(0, 0, 0));
+}
+.keyword-christmas {
+    background-image: linear-gradient(115deg, 
+        #FF615D 0px, #FF615D 9px, white 9px, white 18px,
+        #FF615D 18px, #FF615D 27px, white 27px, white 36px,
+        #FF615D 36px, #FF615D 45px, white 45px, white 54px,
+        #FF615D 54px, #FF615D 63px, white 63px, white 72px,
+        #FF615D 72px, #FF615D 81px, white 81px, white 90px,
+        #FF615D 90px, #FF615D 99px, white 99px, white 100px
+    );
+    animation: scrolling-rainbow 3s linear infinite;
+    background-size: 100px;
+    filter: drop-shadow(0 0 .2rem #FF615D)
+            drop-shadow(.1rem .1rem .1rem rgb(0, 0, 0));
 }
 .keyword-kira {
     font-family: var(--kira-font, Arial);

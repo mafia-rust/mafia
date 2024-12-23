@@ -2,8 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::game::{
     ability_input::*, components::synopsis::Synopsis, grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
-        auditor::AuditorResult, engineer::TrapState, kira::KiraResult,
-        spy::SpyBug, Role
+        auditor::AuditorResult, engineer::TrapState, kira::KiraResult, santa_claus::SantaAbility, spy::SpyBug, Role
     }, role_list::RoleOutline, tag::Tag, verdict::Verdict
 };
 
@@ -137,6 +136,9 @@ pub enum ChatMessageVariant {
     YourConvertFailed,
     CultConvertsNext,
     CultKillsNext,
+
+    NextSantaAbility { ability: SantaAbility },
+    AddedToNiceList,
 
     SomeoneSurvivedYourAttack,
     YouSurvivedAttack,

@@ -534,6 +534,13 @@
     "role.martyr.target": "Shoot",
     "role.martyr.roleDataText": "\\0 bullets remaining.",
     "role.martyr.roleDataText.eccentric": "The heavens smile at you.",
+
+    "role.santaClaus.name": "Santa Claus",
+    "role.santaClaus.name:var.0": "Santa",
+    "role.santaClaus.name:var.1": "Santas",
+    "role.santaClaus.name:var.2": "Santa Clauses",
+    "controllerId.role.santaClaus.0.name": "Nice List",
+    "controllerId.role.santaClaus.1.name": "Naughty List",
     
     "obscured": "Obscured",
     "grave.deathCause.execution": "Execution",
@@ -565,6 +572,10 @@
     "minions:var.0": "Minion",
     "fiends": "Fiends",
     "fiends:var.0": "Fiend",
+    "niceList": "Nice List",
+    "niceList:var.0": "Nice",
+    "naughtyList": "Naughty List",
+    "naughtyList:var.0": "Naughty",
 
     "townCommon":"Town Common",
     "townCommon:var.0":"TC",
@@ -796,6 +807,8 @@
     "chatMessage.gameOver.conclusion.fiends": "The fiends have won!",
     "chatMessage.gameOver.conclusion.politician": "The politician has taken control!",
     "chatMessage.gameOver.conclusion.draw": "The game has ended in a draw!",
+    "chatMessage.gameOver.conclusion.niceList": "Christmas has been saved!",
+    "chatMessage.gameOver.conclusion.naughtyList": "The south pole elves have seized Santa's workshop!",
     "chatMessage.gameOver.conclusion.unknown": "The game has ended with conclusion \\0!",
     "chatMessage.gameOver.player.won.true": "\\0 won!",
     "chatMessage.gameOver.player.won.false": "\\0 lost!",
@@ -914,6 +927,9 @@
     "chatMessage.kiraSelection": "Kira selection",
     "chatMessage.cultConvertsNext": "The cult will attempt to indoctrinate and convert someone tonight.",
     "chatMessage.cultKillsNext": "The cult will attempt to sacrifice and kill someone tonight.",
+    "chatMessage.addedToNiceList": "You've been good this year, so you have been added to the nice list.",
+    "chatMessage.nextSantaAbility.nice": "Tonight you will add up to two people to the nice list.",
+    "chatMessage.nextSantaAbility.naughty": "Tonight you will add a player to the naughty list.",
     "chatMessage.phaseFastForwarded": "The phase has been fast forwarded.",
     "chatMessage.doomsayerFailed": "At least one of your guesses was incorrect or invalid.",
     "chatMessage.doomsayerWon": "Your guesses were correct. You win!",
@@ -1471,12 +1487,18 @@
     "wiki.article.role.recruiter.abilities":"- You may choose to do one of the following\n    - Visit a player to attack them\n    - Visit a player to recruit to join the syndicate\n        - They are told they are recruited, and they now win with syndicate, but their role doesn't change\n        - They will be indirectly hit with a protection-piercing attack every night by all recruiters until they die, if there are no recruiters they are still attacked\n- For every time you successfully kill someone, you can gain one use to your recruit ability\n- If a recruiter is randomly generated, a non recruiter syndicate member has their role switched to a random town role before the game starts, they never know of this",
     "wiki.article.role.recruiter.attributes":"- The syndicate and the recruits are shown who all syndicate and recruits are, and their role labels\n- Recruiting someone is attack power basic, if a player has defense attempt to recruit, nothing happens",
     "wiki.article.role.recruiter.extra":"- You can't select anybody who is a recruit, or syndicate\n- A syndicate member can't be recruited\n- A recruited player can't be recruited again",
-     
+    
     "wiki.article.role.mafioso.reminder": "Each night, select a player to attack.",
     "wiki.article.role.mafioso.guide": "- At night select a player to attack them\n- You can't use your ability night 1\n\nYou should try to kill townies who are likely to stop you from winning.",
     "wiki.article.role.mafioso.abilities":"* Visit a player to attack",
     "wiki.article.role.mafioso.attributes":"* None",
     "wiki.article.role.mafioso.extra":"* You can't target other syndicate members",
+    
+    "wiki.article.role.santaClaus.reminder": "Add players to the nice and naughty lists. You win when only nice players remain alive.",
+    "wiki.article.role.santaClaus.guide": "On odd nights: Select up to two people to add to the nice list\n* This player retains their original win condition and gains the Nice List win condition.\n* Players on the nice list cannot be put on the naughty list.\n\nOn even nights: Select a player to add to the naughty list\n* This player retains their original win condition, and gains the Naughty List win condition.\n* Players on the Naughty list cannot be put on the nice list.",
+    "wiki.article.role.santaClaus.abilities":"* On odd nights you can select up to two people to add to the nice list - This player retains their original win condition and gains the Nice List win condition. Players on the nice list cannot be put on the naughty list.\n* On even nights, select a player to add to the naughty list - This player retains their original win condition, and gains the Naughty List win condition. Players on the Naughty list cannot be put on the nice list.",
+    "wiki.article.role.santaClaus.attributes":"* You are roleblock immune.\n* You are wardblock immune.\n* You have innocent aura.",
+    "wiki.article.role.santaClaus.extra":"* You can't add a player to both lists.",
 
     "wiki.article.role.serialKiller.reminder": "Each night, select a player to attack.",
     "wiki.article.role.serialKiller.guide": "- At night select a player to attack them\n- You can't use your ability night 1.",

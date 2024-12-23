@@ -671,6 +671,10 @@ export function translateChatMessage(
             return translate("chatMessage.playerDiedOfBrokenHeart", playerNames[message.player], playerNames[message.lover]);
         case "chronokaiserSpeedUp":
             return translate("chatMessage.chronokaiserSpeedUp", message.percent);
+        case "addedToNiceList":
+            return translate("chatMessage.addedToNiceList");
+        case "nextSantaAbility":
+            return translate(`chatMessage.nextSantaAbility.${message.ability}`);
         case "gameOver": {
             const conclusionString = 
                 translateChecked(`chatMessage.gameOver.conclusion.${message.synopsis.conclusion}`)
@@ -1025,6 +1029,11 @@ export type ChatMessageVariant = {
 } | {
     type: "martyrRevealed",
     martyr: PlayerIndex
+} | {
+    type: "addedToNiceList"
+} | {
+    type: "nextSantaAbility"
+    ability: "nice" | "naughty"
 }
 
 export type MessageSender = {

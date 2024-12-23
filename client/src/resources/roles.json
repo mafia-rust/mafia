@@ -872,6 +872,20 @@
             {"type": "chronokaiserSpeedUp", "percent": "180"}
         ]
     },
+    "santaClaus": {
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
+        "armor": true,
+        "aura": "innocent",
+        "maxCount": 1,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "nextSantaAbility", "ability": "nice"},
+            {"type": "nextSantaAbility", "ability": "naughty"},
+            {"type": "addedToNiceList"}
+        ]
+    },
     "martyr": {
         "mainRoleSet": "neutral",
         "roleSets": ["neutral"],
