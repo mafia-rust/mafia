@@ -27,7 +27,7 @@ impl RoleStateImpl for Apostle {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         match (priority, Cult::next_ability(game)) {
-            (Priority::Kill, CultAbility::Kill) if game.cult().ordered_nice_listers.len() == 1 => {
+            (Priority::Kill, CultAbility::Kill) if game.cult().ordered_cultists.len() == 1 => {
 
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
@@ -69,7 +69,7 @@ impl RoleStateImpl for Apostle {
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         let grayed_out =
-            game.cult().ordered_nice_listers.len() != 1 &&
+            game.cult().ordered_cultists.len() != 1 &&
             Cult::next_ability(game) == CultAbility::Kill;
         
         common_role::controller_parameters_map_player_list_night_typical(

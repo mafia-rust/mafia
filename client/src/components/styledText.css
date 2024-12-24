@@ -76,24 +76,28 @@
 }
 .keyword-pride {
     background-image: linear-gradient(to left, red, violet, rgb(103, 0, 177), rgb(0, 202, 202), green, rgb(216, 216, 0), orange, red);
-    background-size: 100px;
+    background-size: 6em;
     animation: scrolling-rainbow 3s linear infinite;
-    filter: drop-shadow(-.05rem -.05rem .1rem #ffffffaa)
+    filter: drop-shadow(-.05rem -.05rem .1rem #ffffff88)
             drop-shadow(.1rem .1rem .1rem rgb(0, 0, 0));
 }
 .keyword-christmas {
-    background-image: linear-gradient(115deg, 
-        #FF615D 0px, #FF615D 9px, white 9px, white 18px,
-        #FF615D 18px, #FF615D 27px, white 27px, white 36px,
-        #FF615D 36px, #FF615D 45px, white 45px, white 54px,
-        #FF615D 54px, #FF615D 63px, white 63px, white 72px,
-        #FF615D 72px, #FF615D 81px, white 81px, white 90px,
-        #FF615D 90px, #FF615D 99px, white 99px, white 100px
+    --spiral-color: #ff817e;
+    --spiral-shine: #FF615D;
+    --spiral-background-color: #ffdcdc;
+    background-image: repeating-linear-gradient(115deg,
+        var(--spiral-color) 0em, var(--spiral-color) 0.55em, 
+        var(--spiral-background-color) 0.55em, var(--spiral-background-color) 1.10em
     );
     animation: scrolling-rainbow 3s linear infinite;
-    background-size: 100px;
-    filter: drop-shadow(0 0 .2rem #FF615D)
+    background-size: 6em;
+    font-weight: bold;
+    filter: drop-shadow(0 0 .2em var(--spiral-shine))
             drop-shadow(.1rem .1rem .1rem rgb(0, 0, 0));
+}
+.keyword-christmas.keyword-naughty {
+    --spiral-color: #47a850;
+    --spiral-background-color: #a4e6a4;
 }
 .keyword-kira {
     font-family: var(--kira-font, Arial);
@@ -108,20 +112,22 @@
 }
 .keyword-disabled * {
     color: gray;
-    background-color: gray;
-    background-clip: text;
+    background-clip: unset;
     background-image: unset;
+    background-size: unset;
+    animation: none;
+    -webkit-text-fill-color: unset;
     text-shadow: none;
-    
+    filter: none;
 }
 @keyframes scrolling-rainbow {
     0% {
         background-position: 0;
     }
     50% {
-        background-position: 50px;
+        background-position: 3em;
     }
     100% {
-        background-position: 100px;
+        background-position: 6em;
     }
 }

@@ -144,6 +144,7 @@ macros::roles! {
     TrueWildcard : true_wildcard,
     Martyr : martyr,
     SantaClaus : santa_claus,
+    Krampus : krampus,
 
     Witch : witch,
     Scarecrow : scarecrow,

@@ -12,7 +12,7 @@ impl Game {
 }
 #[derive(Default, Debug, Clone)]
 pub struct Cult {
-    pub ordered_nice_listers: Vec<PlayerReference>,
+    pub ordered_cultists: Vec<PlayerReference>,
     pub next_ability: CultAbility,
     pub ability_used_last_night: Option<CultAbility>,
 }
@@ -67,7 +67,7 @@ impl Cult{
         let mut cult = game.cult().clone();
 
         // Remove dead
-        cult.ordered_nice_listers = cult.ordered_nice_listers.iter().cloned().filter(|p|
+        cult.ordered_cultists = cult.ordered_cultists.iter().cloned().filter(|p|
             RoleSet::Cult.get_roles().contains(&p.role(game)) &&
             InsiderGroupID::Cult.is_player_in_revealed_group(game, *p) &&
             p.alive(game)
@@ -79,16 +79,16 @@ impl Cult{
                 RoleSet::Cult.get_roles().contains(&player.role(game)) &&
                 InsiderGroupID::Cult.is_player_in_revealed_group(game, player) &&
                 player.alive(game) &&
-                !cult.ordered_nice_listers.contains(&player)
+                !cult.ordered_cultists.contains(&player)
             {
-                cult.ordered_nice_listers.push(player);
+                cult.ordered_cultists.push(player);
             }
         }
 
-        for (i, player_ref) in cult.ordered_nice_listers.iter().enumerate(){
+        for (i, player_ref) in cult.ordered_cultists.iter().enumerate(){
             let role = if i == 0 {
                 RoleState::Apostle(Apostle)
-            }else if i == cult.ordered_nice_listers.len() - 1 {
+            }else if i == cult.ordered_cultists.len() - 1 {
                 RoleState::Zealot(Zealot)
             }else{
                 RoleState::Disciple(Disciple)

@@ -658,6 +658,8 @@ export function translateChatMessage(
             return translate("chatMessage.youWerePossessed" + (message.immune ? ".immune" : ""));
         case "targetHasRole":
             return translate("chatMessage.targetHasRole", translate("role."+message.role+".name"));
+        case "targetHasWinCondition":
+            return translate("chatMessage.targetHasWinCondition", translateWinCondition(message.winCondition));
         case "werewolfTrackingResult":
             return translate("chatMessage.werewolfTrackingResult", 
                 playerNames[message.trackedPlayer],
@@ -675,6 +677,12 @@ export function translateChatMessage(
             return translate("chatMessage.addedToNiceList");
         case "nextSantaAbility":
             return translate(`chatMessage.nextSantaAbility.${message.ability}`);
+        case "nextKrampusAbility":
+            return translate(`chatMessage.nextKrampusAbility.${message.ability}`);
+        case "addedToNaughtyList":
+            return translate("chatMessage.addedToNaughtyList");
+        case "santaAddedPlayerToNaughtyList":
+            return translate("chatMessage.santaAddedPlayerToNaughtyList", playerNames[message.player]);
         case "gameOver": {
             const conclusionString = 
                 translateChecked(`chatMessage.gameOver.conclusion.${message.synopsis.conclusion}`)
@@ -997,6 +1005,9 @@ export type ChatMessageVariant = {
     type: "targetHasRole",
     role: Role
 } | {
+    type: "targetHasWinCondition",
+    winCondition: WinCondition
+} | {
     type: "targetsMessage",
     message: ChatMessageVariant
 } | {
@@ -1034,6 +1045,14 @@ export type ChatMessageVariant = {
 } | {
     type: "nextSantaAbility"
     ability: "nice" | "naughty"
+} | {
+    type: "nextKrampusAbility",
+    ability: "doNothing" | "killOrConvert"
+} | {
+    type: "addedToNaughtyList"
+} | {
+    type: "santaAddedPlayerToNaughtyList",
+    player: PlayerIndex
 }
 
 export type MessageSender = {

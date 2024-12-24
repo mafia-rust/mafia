@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use super::{player::PlayerReference, role::Role, role_list::RoleSet, win_condition::WinCondition, Game};
 
-#[derive(Clone, Debug, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Serialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum GameConclusion {
     Town,
@@ -52,7 +52,7 @@ impl GameConclusion {
         }
         
         //if nobody is left to hold game hostage
-        if !PlayerReference::all_players(game).any(|player|player.keeps_game_running(game)){
+        if !PlayerReference::all_players(game).any(|player| player.alive(game) && player.keeps_game_running(game)){
             return Some(GameConclusion::Draw);
         }
 
@@ -81,6 +81,7 @@ impl GameConclusion {
             Role::Drunk => true,
             Role::Politician => true,
             Role::SantaClaus => true,
+            Role::Krampus => true,
             _ => !(RoleSet::Neutral.get_roles().contains(&role) || RoleSet::Minions.get_roles().contains(&role))
         }
 

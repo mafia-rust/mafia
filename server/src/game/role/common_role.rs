@@ -342,6 +342,9 @@ pub(super) fn default_win_condition(role: Role) -> WinCondition {
     if role == Role::SantaClaus {
         return WinCondition::GameConclusionReached { win_if_any: vec![GameConclusion::NiceList].into_iter().collect() }
     }
+    if role == Role::Krampus {
+        return WinCondition::GameConclusionReached { win_if_any: vec![GameConclusion::NaughtyList].into_iter().collect() }
+    }
 
     if RoleSet::Mafia.get_roles().contains(&role) {
         WinCondition::GameConclusionReached{win_if_any: vec![GameConclusion::Mafia].into_iter().collect()}

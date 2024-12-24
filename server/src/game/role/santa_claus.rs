@@ -19,13 +19,13 @@ use super::{AbilitySelection, ControllerID, ControllerParametersMap, Priority, R
 #[derive(Clone, Debug, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SantaClaus {
-    pub next_ability: SantaAbility,
-    pub ability_used_last_night: Option<SantaAbility>,
+    pub next_ability: SantaListKind,
+    pub ability_used_last_night: Option<SantaListKind>,
 }
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub enum SantaAbility{
+pub enum SantaListKind{
     Naughty,
     #[default] Nice,
 }
@@ -43,19 +43,21 @@ impl RoleStateImpl for SantaClaus {
         if priority != Priority::Convert { return }
 
         match self.next_ability {
-            SantaAbility::Nice => {
+            SantaListKind::Nice => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game).into_iter();
                 let targets = actor_visits.map(|v| v.target);
 
                 for target_ref in targets {
+                    if !get_eligible_players(game, actor_ref).contains(&target_ref) { continue }
+
                     match target_ref.win_condition(game).clone() {
                         WinCondition::GameConclusionReached { mut win_if_any } => {
                             win_if_any.insert(GameConclusion::NiceList);
                             target_ref.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any });
-    
+
                             target_ref.add_private_chat_message(game, ChatMessageVariant::AddedToNiceList);
                             actor_ref.set_role_state(game, Self {
-                                ability_used_last_night: Some(SantaAbility::Nice),
+                                ability_used_last_night: Some(SantaListKind::Nice),
                                 ..self
                             });
                         }
@@ -63,28 +65,46 @@ impl RoleStateImpl for SantaClaus {
                     }
                 }
             }
-            SantaAbility::Naughty => {
+            SantaListKind::Naughty => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-                let Some(target_ref) = (
+                let Some(target_ref) = ({
+                    let backup_option = get_eligible_players(game, actor_ref)
+                        .into_iter()
+                        .collect::<Vec<PlayerReference>>()
+                        .choose(&mut thread_rng())
+                        .cloned();
+                    
                     if let Some(visit) = actor_visits.first() {
-                        Some(visit.target)
+                        if get_eligible_players(game, actor_ref).contains(&visit.target) {
+                            Some(visit.target)
+                        } else {
+                            backup_option
+                        }
                     } else {
-                        get_unlisted_living_players(game, actor_ref)
-                            .into_iter()
-                            .collect::<Vec<PlayerReference>>()
-                            .choose(&mut thread_rng())
-                            .cloned()
+                        backup_option
                     }
-                ) else { return };
+                }) else { return };
 
                 match target_ref.win_condition(game).clone() {
                     WinCondition::GameConclusionReached { mut win_if_any } => {
                         win_if_any.insert(GameConclusion::NaughtyList);
                         target_ref.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any });
 
-                        target_ref.add_private_chat_message(game, ChatMessageVariant::AddedToNiceList);
+
+                        let krampus_list: Vec<PlayerReference> = PlayerReference::all_players(game)
+                            .filter(|player| player.role(game) == Role::Krampus)
+                            .collect();
+
+                        if !krampus_list.is_empty() {
+                            target_ref.add_private_chat_message(game, ChatMessageVariant::AddedToNaughtyList);
+                        }
+                        for krampus in krampus_list {
+                            krampus.add_private_chat_message(game, 
+                                ChatMessageVariant::SantaAddedPlayerToNaughtyList { player: target_ref }
+                            );
+                        }
                         actor_ref.set_role_state(game, Self {
-                            ability_used_last_night: Some(SantaAbility::Naughty),
+                            ability_used_last_night: Some(SantaListKind::Naughty),
                             ..self
                         });
                     }
@@ -96,12 +116,12 @@ impl RoleStateImpl for SantaClaus {
 
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         match self.next_ability {
-            SantaAbility::Nice => {
+            SantaListKind::Nice => {
                 ControllerParametersMap::new_controller_fast(
                     game,
                     ControllerID::role(actor_ref, Role::SantaClaus, 0),
                     super::AvailableAbilitySelection::new_player_list(
-                        get_unlisted_living_players(game, actor_ref),
+                        get_selectable_players(game, actor_ref),
                         false,
                         Some(2)
                     ),
@@ -112,12 +132,12 @@ impl RoleStateImpl for SantaClaus {
                     vec_set!(actor_ref),
                 )
             }
-            SantaAbility::Naughty => {
+            SantaListKind::Naughty => {
                 ControllerParametersMap::new_controller_fast(
                     game,
                     ControllerID::role(actor_ref, Role::SantaClaus, 1),
                     super::AvailableAbilitySelection::new_player_list(
-                        get_unlisted_living_players(game, actor_ref),
+                        get_selectable_players(game, actor_ref),
                         false,
                         Some(1)
                     ),
@@ -132,8 +152,8 @@ impl RoleStateImpl for SantaClaus {
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         let ability_id = match self.next_ability {
-            SantaAbility::Nice => ControllerID::role(actor_ref, Role::SantaClaus, 0),
-            SantaAbility::Naughty => ControllerID::role(actor_ref, Role::SantaClaus, 1)
+            SantaListKind::Nice => ControllerID::role(actor_ref, Role::SantaClaus, 0),
+            SantaListKind::Naughty => ControllerID::role(actor_ref, Role::SantaClaus, 1)
         };
 
         crate::game::role::common_role::convert_controller_selection_to_visits(
@@ -144,13 +164,13 @@ impl RoleStateImpl for SantaClaus {
         )
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
-        if phase == PhaseType::Night {
+        if phase == PhaseType::Obituary || phase == PhaseType::Night {
             let mut new_state = self.clone();
             
             if let Some(ability) = self.ability_used_last_night {
                 new_state.next_ability = match ability {
-                    SantaAbility::Naughty => SantaAbility::Nice,
-                    SantaAbility::Nice => SantaAbility::Naughty,
+                    SantaListKind::Naughty => SantaListKind::Nice,
+                    SantaListKind::Nice => SantaListKind::Naughty,
                 };
                 new_state.ability_used_last_night = None;
             }
@@ -161,7 +181,16 @@ impl RoleStateImpl for SantaClaus {
     }
 }
 
-fn get_unlisted_living_players(game: &Game, actor_ref: PlayerReference) -> VecSet<PlayerReference> {
+fn get_selectable_players(game: &Game, actor_ref: PlayerReference) -> VecSet<PlayerReference> {
+    PlayerReference::all_players(game)
+        .filter(|&p|
+            actor_ref != p &&
+            p.alive(game)
+        )
+        .collect()
+}
+
+fn get_eligible_players(game: &Game, actor_ref: PlayerReference) -> VecSet<PlayerReference> {
     PlayerReference::all_players(game)
         .filter(|&p|
             actor_ref != p &&

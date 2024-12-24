@@ -886,6 +886,27 @@
             {"type": "addedToNiceList"}
         ]
     },
+    "krampus": {
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "canWriteDeathNote": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "nextKrampusAbility", "ability": "killOrConvert"},
+            {"type": "youAttackedSomeone"},
+            {"type": "addedToNaughtyList"},
+            {"type": "nextKrampusAbility", "ability": "doNothing"},
+            {"type": "targetHasRole", "role": "godfather"},
+            {"type": "targetHasWinCondition", "winCondition": { 
+                "type": "gameConclusionReached",
+                "winIfAny": ["mafia", "niceList"]
+            }},
+            {"type": "santaAddedPlayerToNaughtyList", "player": 38}
+        ]
+    },
     "martyr": {
         "mainRoleSet": "neutral",
         "roleSets": ["neutral"],
