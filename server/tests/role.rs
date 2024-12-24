@@ -1706,7 +1706,7 @@ fn cult_alternates() {
     //zealot kills, apostle waits
     game.skip_to(Night, 2);
     assert!(game.cult().next_ability == CultAbility::Kill);
-    assert!(game.cult().ordered_nice_listers.len() == 2);
+    assert!(game.cult().ordered_cultists.len() == 2);
     assert!(b.send_ability_input_player_list_typical(c));
     game.next_phase();
     assert!(!c.alive());
@@ -1715,7 +1715,7 @@ fn cult_alternates() {
 
     //zealot waits, apostle converts
     game.skip_to(Night, 3);
-    assert!(game.cult().ordered_nice_listers.len() == 2);
+    assert!(game.cult().ordered_cultists.len() == 2);
     assert!(apostle.send_ability_input_player_list_typical(d));
     game.next_phase();
     assert!(e.alive());
@@ -1724,7 +1724,7 @@ fn cult_alternates() {
 
     //zealot kills, apostle waits
     game.skip_to(Night, 4);
-    assert!(game.cult().ordered_nice_listers.len() == 3);
+    assert!(game.cult().ordered_cultists.len() == 3);
     assert!(d.send_ability_input_player_list_typical(g));
     game.next_phase();
     assert!(f.alive());
