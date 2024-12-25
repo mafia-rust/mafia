@@ -2624,3 +2624,24 @@ fn krampus_kills_and_converts_correctly() {
             )
     );
 }
+
+#[test]
+fn only_santa_and_krampus_ends_instantly() {
+    kit::scenario!(game in Nomination 2 where
+        santa: SantaClaus,
+        krampus: Krampus,
+        town: Villager
+    );
+
+    santa.vote_for_player(town);
+    krampus.vote_for_player(town);
+
+    game.skip_to(Judgement, 2);
+
+    santa.set_verdict(Verdict::Guilty);
+    krampus.set_verdict(Verdict::Guilty);
+
+    game.skip_to(Dusk, 2);
+
+    assert!(game.game_is_over());
+}
