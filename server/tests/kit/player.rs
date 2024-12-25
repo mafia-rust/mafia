@@ -59,11 +59,11 @@ impl TestPlayer {
         true
     }
 
-    pub fn send_ability_input_player_list_typical(&self, selection: TestPlayer)->bool{
+    pub fn send_ability_input_player_list_typical(&self, selection: impl Into<Vec<TestPlayer>>)->bool{
         self.send_ability_input(
             AbilityInput::new(
                 ControllerID::role(self.player_ref(), self.role(), 0),
-                AbilitySelection::new_player_list(vec![selection.player_ref()])
+                AbilitySelection::new_player_list(selection.into().iter().map(TestPlayer::player_ref).collect())
             )
         );
         true
@@ -163,5 +163,11 @@ impl TestPlayer {
 
     pub fn get_won_game(&self) -> bool {
         self.0.get_won_game(game!(self))
+    }
+}
+
+impl From<TestPlayer> for Vec<TestPlayer> {
+    fn from(value: TestPlayer) -> Self {
+        vec![value]
     }
 }

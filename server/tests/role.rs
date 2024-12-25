@@ -3,7 +3,7 @@ use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::ability_input::{ability_selection::AbilitySelection, ControllerID};
+use mafia_server::game::{ability_input::{ability_selection::AbilitySelection, ControllerID}, game_conclusion::GameConclusion};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*,
@@ -79,6 +79,8 @@ pub use mafia_server::game::{
         doomsayer::{Doomsayer, DoomsayerGuess},
         wild_card::Wildcard,
         martyr::Martyr,
+        santa_claus::SantaClaus,
+        krampus::Krampus,
 
         apostle::Apostle,
         zealot::Zealot,
@@ -2461,4 +2463,164 @@ fn killed_player_is_not_spiraling() {
     game.skip_to(Obituary, 3);
     assert!(!townie.alive());
     assert!(spiral.get_player_tags().get(&townie.player_ref()).is_none())
+}
+
+#[test]
+fn santa_cannot_convert_naughty_player() {
+    kit::scenario!(game in Night 1 where
+        santa: SantaClaus,
+        nice: Villager,
+        naughty: Villager,
+        nice2: Villager
+    );
+    santa.send_ability_input_player_list_typical(nice);
+
+    game.skip_to(Night, 2);
+
+    assert_contains!(
+        nice.player_ref().win_condition(&*game).required_resolution_states_for_win().unwrap(),
+        GameConclusion::NiceList
+    );
+
+    assert_contains!(santa.get_messages_after_night(2), 
+        ChatMessageVariant::NextSantaAbility { ability: mafia_server::game::role::santa_claus::SantaListKind::Naughty }
+    );
+    santa.send_ability_input_player_list(naughty, 1);
+
+    game.skip_to(Night, 3);
+
+    assert_contains!(
+        naughty.player_ref().win_condition(&*game).required_resolution_states_for_win().unwrap(),
+        GameConclusion::NaughtyList
+    );
+
+    santa.send_ability_input_player_list_typical([naughty, nice2]);
+
+    game.skip_to(Obituary, 4);
+
+    assert_contains!(
+        nice2.player_ref().win_condition(&*game).required_resolution_states_for_win().unwrap(),
+        GameConclusion::NiceList
+    );
+
+    assert_contains!(
+        naughty.player_ref().win_condition(&*game).required_resolution_states_for_win().unwrap(),
+        GameConclusion::NaughtyList
+    );
+
+    assert_not_contains!(
+        naughty.player_ref().win_condition(&*game).required_resolution_states_for_win().unwrap(),
+        GameConclusion::NiceList
+    );
+}
+
+#[test]
+fn krampus_obeys_ability_order() {
+    kit::scenario!(game in Night 1 where
+        krampus: Krampus,
+        town1: Villager,
+        town2: Villager,
+        town3: Villager
+    );
+
+    use mafia_server::game::role::krampus::KrampusAbility;
+
+    let expect_ability = |night: u8, ability: KrampusAbility| {
+        assert_contains!(krampus.get_messages_after_night(night), ChatMessageVariant::NextKrampusAbility { ability });
+    };
+
+    expect_ability(1, KrampusAbility::KillOrConvert);
+    krampus.send_ability_input_player_list_typical(town1);
+
+    game.skip_to(Obituary, 2);
+    assert_contains!(town1.get_messages_after_night(1), ChatMessageVariant::AddedToNaughtyList);
+
+    game.skip_to(Night, 2);
+    expect_ability(2, KrampusAbility::DoNothing);
+    krampus.send_ability_input_player_list_typical(town2);
+
+    game.skip_to(Obituary, 3);
+    assert_not_contains!(town2.get_messages_after_night(2), ChatMessageVariant::AddedToNaughtyList);
+
+    game.skip_to(Night, 3);
+    expect_ability(3, KrampusAbility::KillOrConvert);
+
+    game.skip_to(Night, 4);
+    expect_ability(4, KrampusAbility::KillOrConvert);
+    krampus.send_ability_input_player_list_typical(town3);
+
+    game.skip_to(Obituary, 5);
+    assert_contains!(town3.get_messages_after_night(4), ChatMessageVariant::AddedToNaughtyList);
+
+    game.skip_to(Night, 5);
+    expect_ability(5, KrampusAbility::DoNothing);
+
+    game.skip_to(Night, 6);
+    expect_ability(6, KrampusAbility::KillOrConvert);
+}
+
+#[test]
+fn krampus_kills_and_converts_correctly() {
+    kit::scenario!(game in Night 1 where
+        santa: SantaClaus,
+        krampus: Krampus,
+        nice: Villager,
+        naughty: Villager,
+        neither: Villager
+    );
+    santa.send_ability_input_player_list_typical(nice);
+
+    game.skip_to(Night, 2);
+    santa.send_ability_input_player_list_typical(naughty);
+
+    game.skip_to(Night, 3);
+    krampus.send_ability_input_player_list_typical(nice);
+
+    game.skip_to(Night, 4);
+    assert!(!nice.alive());
+    assert!(
+        nice.player_ref()
+            .win_condition(&*game)
+            .required_resolution_states_for_win()
+            .is_some_and(|states| 
+                states.contains(&GameConclusion::NiceList)
+                && !states.contains(&GameConclusion::NaughtyList)
+            )
+    );
+    krampus.send_ability_input_player_list_typical(nice); // Have to select somebody
+
+    game.skip_to(Night, 5);
+    krampus.send_ability_input_player_list_typical(neither);
+
+    game.skip_to(Night, 6);
+    krampus.send_ability_input_player_list_typical(neither);
+
+    game.skip_to(Night, 7);
+    assert!(neither.alive());
+
+    assert!( 
+        neither.player_ref()
+            .win_condition(&*game)
+            .required_resolution_states_for_win()
+            .is_some_and(|states| 
+                states.contains(&GameConclusion::NaughtyList)
+                && !states.contains(&GameConclusion::NiceList)
+            )
+    );
+
+    krampus.send_ability_input_player_list_typical(naughty);
+
+    game.skip_to(Night, 8);
+
+    assert!(naughty.alive());
+
+    assert!(
+        naughty.player_ref()
+            .win_condition(&*game)
+            .required_resolution_states_for_win()
+            .is_some_and(|states|
+                states.contains(&GameConclusion::NaughtyList)
+                && !states.contains(&GameConclusion::NiceList)
+            )
+    );
 }

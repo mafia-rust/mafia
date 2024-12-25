@@ -98,7 +98,7 @@ impl RoleStateImpl for Krampus {
 
         if self.ability == KrampusAbility::DoNothing {
             actor_ref.set_role_state(game, Krampus {
-                last_used_ability: Some(KrampusAbility::KillOrConvert),
+                last_used_ability: Some(KrampusAbility::DoNothing),
                 ..self
             });
         }
