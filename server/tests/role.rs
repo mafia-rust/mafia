@@ -2470,8 +2470,9 @@ fn santa_cannot_convert_naughty_player() {
     kit::scenario!(game in Night 1 where
         santa: SantaClaus,
         nice: Villager,
+        nice2: Villager,
         naughty: Villager,
-        nice2: Villager
+        naughty2: Villager
     );
     santa.send_ability_input_player_list_typical(nice);
 
@@ -2485,7 +2486,7 @@ fn santa_cannot_convert_naughty_player() {
     assert_contains!(santa.get_messages_after_night(2), 
         ChatMessageVariant::NextSantaAbility { ability: mafia_server::game::role::santa_claus::SantaListKind::Naughty }
     );
-    santa.send_ability_input_player_list(naughty, 1);
+    santa.send_ability_input_player_list([naughty, naughty2], 1);
 
     game.skip_to(Night, 3);
 
@@ -2529,100 +2530,35 @@ fn krampus_obeys_ability_order() {
         assert_contains!(krampus.get_messages_after_night(night), ChatMessageVariant::NextKrampusAbility { ability });
     };
 
-    expect_ability(1, KrampusAbility::KillOrConvert);
+    expect_ability(1, KrampusAbility::Kill);
     krampus.send_ability_input_player_list_typical(town1);
 
+    assert_not_contains!(town2.get_messages_after_night(2), ChatMessageVariant::YouDied);
     game.skip_to(Obituary, 2);
-    assert_contains!(town1.get_messages_after_night(1), ChatMessageVariant::AddedToNaughtyList);
+    assert!(!town1.alive());
 
     game.skip_to(Night, 2);
     expect_ability(2, KrampusAbility::DoNothing);
     krampus.send_ability_input_player_list_typical(town2);
 
     game.skip_to(Obituary, 3);
-    assert_not_contains!(town2.get_messages_after_night(2), ChatMessageVariant::AddedToNaughtyList);
+    assert!(town2.alive());
 
     game.skip_to(Night, 3);
-    expect_ability(3, KrampusAbility::KillOrConvert);
+    expect_ability(3, KrampusAbility::Kill);
 
     game.skip_to(Night, 4);
-    expect_ability(4, KrampusAbility::KillOrConvert);
+    expect_ability(4, KrampusAbility::Kill);
     krampus.send_ability_input_player_list_typical(town3);
 
     game.skip_to(Obituary, 5);
-    assert_contains!(town3.get_messages_after_night(4), ChatMessageVariant::AddedToNaughtyList);
+    assert!(!town3.alive());
 
     game.skip_to(Night, 5);
     expect_ability(5, KrampusAbility::DoNothing);
 
     game.skip_to(Night, 6);
-    expect_ability(6, KrampusAbility::KillOrConvert);
-}
-
-#[test]
-fn krampus_kills_and_converts_correctly() {
-    kit::scenario!(game in Night 1 where
-        santa: SantaClaus,
-        krampus: Krampus,
-        nice: Villager,
-        naughty: Villager,
-        neither: Villager
-    );
-    santa.send_ability_input_player_list_typical(nice);
-
-    game.skip_to(Night, 2);
-    santa.send_ability_input_player_list_typical(naughty);
-
-    game.skip_to(Night, 3);
-    krampus.send_ability_input_player_list_typical(nice);
-
-    game.skip_to(Night, 4);
-    assert!(!nice.alive());
-    assert!(
-        nice.player_ref()
-            .win_condition(&*game)
-            .required_resolution_states_for_win()
-            .is_some_and(|states| 
-                states.contains(&GameConclusion::NiceList)
-                && !states.contains(&GameConclusion::NaughtyList)
-            )
-    );
-    krampus.send_ability_input_player_list_typical(nice); // Have to select somebody
-
-    game.skip_to(Night, 5);
-    krampus.send_ability_input_player_list_typical(neither);
-
-    game.skip_to(Night, 6);
-    krampus.send_ability_input_player_list_typical(neither);
-
-    game.skip_to(Night, 7);
-    assert!(neither.alive());
-
-    assert!( 
-        neither.player_ref()
-            .win_condition(&*game)
-            .required_resolution_states_for_win()
-            .is_some_and(|states| 
-                states.contains(&GameConclusion::NaughtyList)
-                && !states.contains(&GameConclusion::NiceList)
-            )
-    );
-
-    krampus.send_ability_input_player_list_typical(naughty);
-
-    game.skip_to(Night, 8);
-
-    assert!(naughty.alive());
-
-    assert!(
-        naughty.player_ref()
-            .win_condition(&*game)
-            .required_resolution_states_for_win()
-            .is_some_and(|states|
-                states.contains(&GameConclusion::NaughtyList)
-                && !states.contains(&GameConclusion::NiceList)
-            )
-    );
+    expect_ability(6, KrampusAbility::Kill);
 }
 
 #[test]

@@ -4,10 +4,8 @@ use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::Grave;
 use crate::game::phase::PhaseType;
-use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::player::PlayerReference;
 
@@ -29,7 +27,7 @@ pub struct Krampus {
 #[serde(rename_all = "camelCase")]
 pub enum KrampusAbility {
     DoNothing,
-    #[default] KillOrConvert
+    #[default] Kill
 }
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -41,44 +39,14 @@ impl RoleStateImpl for Krampus {
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
 
         match (priority, self.ability) {
-            (Priority::Kill, KrampusAbility::KillOrConvert) => {
+            (Priority::Kill, KrampusAbility::Kill) => {
                 if let Some(visit) = actor_visits.first() {
                     let target_ref = visit.target;
 
-                    if target_ref.win_condition(game)
-                        .required_resolution_states_for_win()
-                        .is_some_and(|states| states.contains(&GameConclusion::NiceList))
-                    {
-                        target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Krampus), AttackPower::Basic, true);
-                    }
+                    target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Krampus), AttackPower::Basic, true);
 
                     actor_ref.set_role_state(game, Krampus {
-                        last_used_ability: Some(KrampusAbility::KillOrConvert),
-                        ..self
-                    });
-                }
-            }
-            (Priority::Convert, KrampusAbility::KillOrConvert) => {
-                if let Some(visit) = actor_visits.first() {
-                    let target_ref = visit.target;
-
-                    let target_win_condition = target_ref.win_condition(game).required_resolution_states_for_win();
-
-                    if target_win_condition.clone()
-                        .is_some_and(|states| 
-                            !states.contains(&GameConclusion::NiceList) && 
-                            !states.contains(&GameConclusion::NaughtyList)
-                        )
-                    {
-                        let mut new_win_condition = target_win_condition.unwrap();
-                        new_win_condition.insert(GameConclusion::NaughtyList);
-
-                        target_ref.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any: new_win_condition });
-                        target_ref.add_private_chat_message(game, ChatMessageVariant::AddedToNaughtyList);
-                    }
-
-                    actor_ref.set_role_state(game, Krampus {
-                        last_used_ability: Some(KrampusAbility::KillOrConvert),
+                        last_used_ability: Some(KrampusAbility::Kill),
                         ..self
                     });
                 }
@@ -118,8 +86,8 @@ impl RoleStateImpl for Krampus {
             
             if let Some(ability) = self.last_used_ability {
                 new_state.ability = match ability {
-                    KrampusAbility::KillOrConvert => KrampusAbility::DoNothing,
-                    KrampusAbility::DoNothing => KrampusAbility::KillOrConvert,
+                    KrampusAbility::Kill => KrampusAbility::DoNothing,
+                    KrampusAbility::DoNothing => KrampusAbility::Kill,
                 };
                 new_state.last_used_ability = None;
             }
@@ -130,7 +98,7 @@ impl RoleStateImpl for Krampus {
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         let ability_index = match self.ability {
-            KrampusAbility::KillOrConvert => 0,
+            KrampusAbility::Kill => 0,
             KrampusAbility::DoNothing => 1
         };
 
@@ -144,7 +112,7 @@ impl RoleStateImpl for Krampus {
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         let ability_index = match self.ability {
-            KrampusAbility::KillOrConvert => 0,
+            KrampusAbility::Kill => 0,
             KrampusAbility::DoNothing => 1
         };
 
@@ -152,7 +120,7 @@ impl RoleStateImpl for Krampus {
             game,
             actor_ref,
             ControllerID::role(actor_ref, Role::Krampus, ability_index),
-            false // This is sometimes wrong - but there's no way to know at this point.
+            true
         )
     }
 }

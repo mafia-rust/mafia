@@ -79,11 +79,11 @@ impl TestPlayer {
         true
     }
 
-    pub fn send_ability_input_player_list(&self, selection: TestPlayer, id: RoleControllerID)->bool{
+    pub fn send_ability_input_player_list(&self, selection: impl Into<Vec<TestPlayer>>, id: RoleControllerID)->bool{
         self.send_ability_input(
             AbilityInput::new(
                 ControllerID::role(self.player_ref(), self.role(), id),
-                AbilitySelection::new_player_list(vec![selection.player_ref()])
+                AbilitySelection::new_player_list(selection.into().iter().map(|p| p.player_ref()).collect())
             )
         );
         true

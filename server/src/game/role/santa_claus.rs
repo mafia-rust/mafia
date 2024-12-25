@@ -67,48 +67,58 @@ impl RoleStateImpl for SantaClaus {
             }
             SantaListKind::Naughty => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-                let Some(target_ref) = ({
-                    let backup_option = get_eligible_players(game, actor_ref)
+                let Some(targets) = ({
+                    let mut options = get_eligible_players(game, actor_ref)
                         .into_iter()
-                        .collect::<Vec<PlayerReference>>()
-                        .choose(&mut thread_rng())
-                        .cloned();
-                    
-                    if let Some(visit) = actor_visits.first() {
-                        if get_eligible_players(game, actor_ref).contains(&visit.target) {
-                            Some(visit.target)
-                        } else {
-                            backup_option
-                        }
+                        .collect::<Vec<PlayerReference>>();
+
+                    options.shuffle(&mut thread_rng());
+
+                    let backup_option = if options.len() >= 2 {
+                        Some(vec![options[0], options[1]])
+                    } else if options.len() == 1 {
+                        Some(vec![options[0]])
                     } else {
+                        None
+                    };
+
+                    let mut targets = actor_visits.iter().map(|v| v.target).collect::<Vec<PlayerReference>>();
+
+                    targets.truncate(2);
+
+                    if targets.iter().any(|t| !get_eligible_players(game, actor_ref).contains(t)) {
                         backup_option
+                    } else {
+                        Some(targets)
                     }
                 }) else { return };
 
-                match target_ref.win_condition(game).clone() {
-                    WinCondition::GameConclusionReached { mut win_if_any } => {
-                        win_if_any.insert(GameConclusion::NaughtyList);
-                        target_ref.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any });
-
-
-                        let krampus_list: Vec<PlayerReference> = PlayerReference::all_players(game)
-                            .filter(|player| player.role(game) == Role::Krampus)
-                            .collect();
-
-                        if !krampus_list.is_empty() {
-                            target_ref.add_private_chat_message(game, ChatMessageVariant::AddedToNaughtyList);
+                for target_ref in targets {
+                    match target_ref.win_condition(game).clone() {
+                        WinCondition::GameConclusionReached { mut win_if_any } => {
+                            win_if_any.insert(GameConclusion::NaughtyList);
+                            target_ref.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any });
+    
+    
+                            let krampus_list: Vec<PlayerReference> = PlayerReference::all_players(game)
+                                .filter(|player| player.role(game) == Role::Krampus)
+                                .collect();
+    
+                            if !krampus_list.is_empty() {
+                                target_ref.add_private_chat_message(game, ChatMessageVariant::AddedToNaughtyList);
+                            }
+                            for krampus in krampus_list {
+                                krampus.add_private_chat_message(game, 
+                                    ChatMessageVariant::SantaAddedPlayerToNaughtyList { player: target_ref }
+                                );
+                            }
+                            actor_ref.set_role_state(game, Self {
+                                ability_used_last_night: Some(SantaListKind::Naughty),
+                                ..self
+                            });
                         }
-                        for krampus in krampus_list {
-                            krampus.add_private_chat_message(game, 
-                                ChatMessageVariant::SantaAddedPlayerToNaughtyList { player: target_ref }
-                            );
-                        }
-                        actor_ref.set_role_state(game, Self {
-                            ability_used_last_night: Some(SantaListKind::Naughty),
-                            ..self
-                        });
+                        WinCondition::RoleStateWon => {}
                     }
-                    WinCondition::RoleStateWon => {}
                 }
             }
         }
@@ -139,7 +149,7 @@ impl RoleStateImpl for SantaClaus {
                     super::AvailableAbilitySelection::new_player_list(
                         get_selectable_players(game, actor_ref),
                         false,
-                        Some(1)
+                        Some(2)
                     ),
                     AbilitySelection::new_player_list(vec![]),
                     Detained::is_detained(game, actor_ref) || !actor_ref.alive(game),

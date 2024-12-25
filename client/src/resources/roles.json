@@ -895,7 +895,7 @@
         "canWriteDeathNote": true,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "nextKrampusAbility", "ability": "killOrConvert"},
+            {"type": "nextKrampusAbility", "ability": "kill"},
             {"type": "youAttackedSomeone"},
             {"type": "addedToNaughtyList"},
             {"type": "nextKrampusAbility", "ability": "doNothing"},

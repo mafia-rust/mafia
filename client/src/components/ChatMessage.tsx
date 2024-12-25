@@ -1055,7 +1055,7 @@ export type ChatMessageVariant = {
     ability: "nice" | "naughty"
 } | {
     type: "nextKrampusAbility",
-    ability: "doNothing" | "killOrConvert"
+    ability: "doNothing" | "kill"
 } | {
     type: "addedToNaughtyList"
 } | {
