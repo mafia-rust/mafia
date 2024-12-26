@@ -48,7 +48,8 @@ impl Detained{
         InsiderGroupID::send_message_in_available_insider_chat_or_private(
             game,
             player,
-            ChatMessageVariant::JailedSomeone { player_index: player.index() }
+            ChatMessageVariant::JailedSomeone { player_index: player.index() },
+            true
         );
         game.detained.players.insert(player);
     }

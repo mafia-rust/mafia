@@ -194,7 +194,8 @@ impl InsiderGroupID{
     pub fn send_message_in_available_insider_chat_or_private(
         game: &mut Game,
         player: PlayerReference,
-        message: ChatMessageVariant
+        message: ChatMessageVariant,
+        send_private_backup: bool
     ){
         let mut message_sent = false;
         for chat_group in player.get_current_send_chat_groups(game){
@@ -202,7 +203,7 @@ impl InsiderGroupID{
             game.add_message_to_chat_group(chat_group, message.clone());
             message_sent = true;
         }
-        if !message_sent {
+        if !message_sent && send_private_backup {
             player.add_private_chat_message(game, message);
         }
     }

@@ -503,7 +503,8 @@
     
     "role.warden.name": "Warden",
     "role.warden.name:var.0": "Wardens",
-    "controllerId.role.warden.0.name": "Choose Experiment Subjects",
+    "controllerId.role.warden.0.name": "Imprison",
+    "controllerId.role.warden.1.name": "Self Ward",
 
     "role.serialKiller.name": "Serial Killer",
     "role.serialKiller.name:var.0": "Serial Killers",
@@ -678,6 +679,9 @@
     "controllerId.syndicateBackupAttack.name": "Backup Attack",
     "controllerId.pitchforkVote.name": "Pitchfork Vote",
     "controllerId.forfeitVote.name": "Forfeit Nomination Vote",
+    "controllerId.wardenLiveOrDie.name": "Warden, Live or Die",
+    "controllerId.wardenLiveOrDie.boolean.true": "Live",
+    "controllerId.wardenLiveOrDie.boolean.false": "Die",
 
 
     "standard":"Standard",
@@ -860,6 +864,7 @@
 
     "chatMessage.abilityUsed": "\\0 uses \\1\\2.",
     "chatMessage.abilityUsed.selection.unit":"",
+    "chatMessage.abilityUsed.selection.boolean":" set to \\0",
     "chatMessage.abilityUsed.selection.playerList":" selecting \\0",
     "chatMessage.abilityUsed.selection.twoPlayerOption":" selecting \\0",
     "chatMessage.abilityUsed.selection.roleOption":" selecting \\0",
@@ -884,9 +889,9 @@
     "chatMessage.chronokaiserSpeedUp":"The Chronokaiser speeds up time. Each phase is \\0% faster.",
     "chatMessage.deputyKilled":"The Deputy killed \\0!",
     "chatMessage.deputyShotYou":"A Deputy shot you!",
-    "chatMessage.puppeteerPlayerIsNowMarionette":"\\0 is being strung up into a marionette. They are now a Fiends Loyalist and Puppeteer Insider. They will be attacked every night.",
-    "chatMessage.recruiterPlayerIsNowRecruit":"\\0 is recruited into the syndicate. They are now a Syndicate Loyalist and Syndicate Insider. They will be attacked every night.",
-
+    "chatMessage.puppeteerPlayerIsNowMarionette":"The puppeteer strung up \\0 into a marionette. They are now a Fiends Loyalist and Puppeteer Insider. They will be attacked every night.",
+    "chatMessage.recruiterPlayerIsNowRecruit":"The recruiter recruited \\0 into the syndicate. They are now a Syndicate Loyalist and Syndicate Insider. They will be attacked every night.",
+    "chatMessage.wardenPlayersImprisoned": "The warden has forced these players into a choice of live or die: \\0.",
     "chatMessage.yourConvertFailed": "You failed to convert your target.",
 
     "chatMessage.youDied":"You died!",
@@ -1763,11 +1768,11 @@
     "wiki.article.role.spiral.attributes":"- Players are not told when they start to spiral\n* If you are blocked, spiraling players still die\n* Your attack is armor piercing",
     "wiki.article.role.spiral.extra":"- You can't cause yourself to spiral\n- If a dead player is spiraling, they stay spiraling, and you attack them again, even while they are dead. Although they cannot die after already dead.",
     
-    "wiki.article.role.warden.reminder": "",
-    "wiki.article.role.warden.guide":"",
-    "wiki.article.role.warden.abilities":"",
-    "wiki.article.role.warden.attributes":"",
-    "wiki.article.role.warden.extra":"",
+    "wiki.article.role.warden.reminder": "Each night*, put up to 3 players in your prison who each must choose to either live or die, but if they all choose to live, they all die instead.",
+    "wiki.article.role.warden.guide":"- Each night except the first, choose up to 3 players to put in prison\n    - The prisoners must choose to live or die\n        - If a player chooses die, you attack them (armor-piercing)\n        - If all of the players in your prison choose live, you attack all of them (armor-piercing)\n    - The players in your prison can talk in a private chat group at night\n        - You can always read from the private prisoner chat group\n    - The players in your prison are roleblocked\n    - You can put yourself in your prison, but you can't ever die or be roleblocked by your own ability\n - Each night, you may choose to ward yourself",
+    "wiki.article.role.warden.abilities":"- Each night except the first, choose up to 3 players to put in prison\n    - The prisoners must choose to live or die\n        - If a player chooses die, you attack them (armor-piercing)\n        - If all of the players in your prison choose live, you attack all of them (armor-piercing)\n    - The players in your prison can talk in a private chat group at night\n        - You can always read from the private prisoner chat group\n    - The players in your prison are roleblocked\n    - You can put yourself in your prison, but you can't ever die or be roleblocked by your own ability\n - Each night, you may choose to ward yourself",
+    "wiki.article.role.warden.attributes":" - You can't die to your own ability, but the logic of your ability doesn't change. For example:\n\n You imprison yourself and @3. You both choose live, you survive and @3 dies because all players in prison chose to live.",
+    "wiki.article.role.warden.extra":" - You don't visit anybody due to your own ability",
     
     "wiki.article.role.fiendsWildcard.reminder": "Choose a fiends role to become at start of night.",
     "wiki.article.role.fiendsWildcard.guide": "* Choose a fiends role to become that role\n    * You become that role when night starts\n* You can't become a role that has exceeded its role limit",
