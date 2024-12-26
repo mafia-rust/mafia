@@ -1183,8 +1183,12 @@
         "canWriteDeathNote": true,
         "canBeConvertedTo": [],
         "chatMessages":[
+            {"type": "wardenPlayersImprisoned", "players": [5,2,10]},
             {"type": "youAttackedSomeone"},
-            {"type": "someoneSurvivedYourAttack"}
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "roleBlocked", "immune": true},
+            {"type": "roleBlocked", "immune": false},
+            {"type": "wardblocked"}
         ]
     },
     "fiendsWildcard": {
