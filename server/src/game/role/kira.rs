@@ -85,7 +85,7 @@ impl KiraGuess{
             //Fiends
             Role::Arsonist | Role::Werewolf | 
             Role::Ojo | Role::Puppeteer | Role::Pyrolisk | Role::Kira | 
-            Role::SerialKiller |
+            Role::SerialKiller | Role::Warden |
             Role::FiendsWildcard => Some(Self::NonTown),
             
             //Cult

@@ -46,7 +46,7 @@ impl Detained{
         let mut message_sent = false;
         for chat_group in player.get_current_send_chat_groups(game){
             match chat_group {
-                ChatGroup::All | ChatGroup::Jail | ChatGroup::Kidnapped | ChatGroup::Interview | ChatGroup::Dead => {},
+                ChatGroup::All | ChatGroup::Jail | ChatGroup::Kidnapped | ChatGroup::Interview | ChatGroup::Warden | ChatGroup::Dead => {},
                 ChatGroup::Mafia | ChatGroup::Cult | ChatGroup::Puppeteer => {
                     game.add_message_to_chat_group(
                         chat_group,

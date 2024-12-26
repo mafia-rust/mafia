@@ -1139,6 +1139,19 @@
             {"type": "someoneSurvivedYourAttack"}
         ]
     },
+    "warden": {
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
+        "armor": true,
+        "aura": null,
+        "maxCount": 1,
+        "canWriteDeathNote": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "youAttackedSomeone"},
+            {"type": "someoneSurvivedYourAttack"}
+        ]
+    },
     "fiendsWildcard": {
         "mainRoleSet": "fiends",
         "roleSets": ["fiends"],
