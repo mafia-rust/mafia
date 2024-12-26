@@ -4,8 +4,10 @@ use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
+use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::Grave;
 use crate::game::phase::PhaseType;
+use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::player::PlayerReference;
 
@@ -122,6 +124,9 @@ impl RoleStateImpl for Krampus {
             ControllerID::role(actor_ref, Role::Krampus, ability_index),
             true
         )
+    }
+    fn default_win_condition(self) -> WinCondition where super::RoleState: From<Self> {
+        WinCondition::GameConclusionReached { win_if_any: vec![GameConclusion::NaughtyList].into_iter().collect() }
     }
 }
 
