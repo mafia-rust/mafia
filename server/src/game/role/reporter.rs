@@ -4,6 +4,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
@@ -121,32 +122,12 @@ impl RoleStateImpl for Reporter {
                 self.interviewed_target = Some(*target);
                 
                 actor_ref.set_role_state(game, self);
-                actor_ref.add_private_chat_message(game, 
-                    ChatMessageVariant::PlayerIsBeingInterviewed{
-                        player_index: target.index()
-                    }
+
+                InsiderGroupID::send_message_in_available_insider_chat_or_private(
+                    game,
+                    *target,
+                    ChatMessageVariant::PlayerIsBeingInterviewed { player_index: target.index() }
                 );
-
-
-                //send to teammates
-                let mut message_sent = false;
-                for chat_group in target.get_current_send_chat_groups(game){
-                    match chat_group {
-                        ChatGroup::All | ChatGroup::Jail | ChatGroup::Kidnapped | ChatGroup::Interview | ChatGroup::Warden | ChatGroup::Dead => {},
-                        ChatGroup::Mafia | ChatGroup::Cult | ChatGroup::Puppeteer  => {
-                            game.add_message_to_chat_group(
-                                chat_group,
-                                ChatMessageVariant::PlayerIsBeingInterviewed { player_index: target.index() }
-                            );
-                            message_sent = true;
-                        },
-                    }
-                }
-                if !message_sent {
-                    target.add_private_chat_message(game, 
-                        ChatMessageVariant::PlayerIsBeingInterviewed { player_index: target.index() }
-                    );
-                }
             },
             PhaseType::Obituary => {
                 self.interviewed_target = None;

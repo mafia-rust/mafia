@@ -115,7 +115,6 @@ pub enum ChatMessageVariant {
     ReporterReport{report: String},
     #[serde(rename_all = "camelCase")]
     PlayerIsBeingInterviewed{player_index: PlayerIndex},
-
     #[serde(rename_all = "camelCase")]
     JailedTarget{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]

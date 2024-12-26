@@ -19,7 +19,7 @@ use super::{
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Warden{
-    players_in_prison: VecSet<PlayerReference>,
+    pub players_in_prison: VecSet<PlayerReference>,
 }
 
 
@@ -106,9 +106,10 @@ impl RoleStateImpl for Warden {
 
                 game.add_message_to_chat_group(
                     crate::game::chat::ChatGroup::Warden,
-                    ChatMessageVariant::WardenPlayersImprisoned{players: players_in_prison.iter().cloned().collect()}
+                    ChatMessageVariant::WardenPlayersImprisoned{
+                        players: players_in_prison.iter().cloned().collect()
+                    }
                 );
-
                 for player in players_in_prison {
                     Detained::add_detain(game, player);    
                 }

@@ -303,6 +303,16 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
         ) {
             out.push(ChatGroup::Kidnapped);
         }
+        if PlayerReference::all_players(game).any(|detainer|
+            match detainer.role_state(game) {
+                RoleState::Warden(warden) => {
+                    warden.players_in_prison.contains(&actor_ref)
+                },
+                _ => false
+            }
+        ) {
+            out.push(ChatGroup::Warden);
+        }
     }
     
     if 
