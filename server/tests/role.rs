@@ -2581,3 +2581,36 @@ fn only_santa_and_krampus_ends_instantly() {
 
     assert!(game.game_is_over());
 }
+
+#[test]
+fn santa_always_gets_their_naughty_selection() {
+    for _ in 0..20 {
+        kit::scenario!(game in Night 1 where
+            santa: SantaClaus,
+            nice: Villager,
+            naughty: Villager,
+            _potential1: Villager,
+            _potential2: Villager,
+            _potential3: Villager,
+            _potential4: Villager,
+            _potential5: Villager
+        );
+        santa.send_ability_input_player_list_typical(nice);
+    
+        game.skip_to(Night, 2);
+    
+        santa.send_ability_input_player_list(naughty, 1);
+    
+        game.skip_to(Obituary, 3);
+    
+        assert_contains!(
+            santa.player_ref().untagged_night_visits_cloned(&*game).iter().map(|v| v.target).collect::<Vec<PlayerReference>>(),
+            naughty.player_ref()
+        );
+    
+        assert_contains!(
+            naughty.player_ref().win_condition(&*game).required_resolution_states_for_win().unwrap(),
+            GameConclusion::NaughtyList
+        );
+    }
+}

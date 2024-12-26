@@ -10,7 +10,7 @@ use crate::game::win_condition::WinCondition;
 use crate::game::attack_power::DefensePower;
 use crate::game::player::PlayerReference;
 
-use crate::game::visit::Visit;
+use crate::game::visit::{Visit, VisitTag};
 use crate::game::Game;
 use crate::vec_set::{vec_set, VecSet};
 
@@ -66,32 +66,8 @@ impl RoleStateImpl for SantaClaus {
                 }
             }
             SantaListKind::Naughty => {
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-                let Some(targets) = ({
-                    let mut options = get_eligible_players(game, actor_ref)
-                        .into_iter()
-                        .collect::<Vec<PlayerReference>>();
-
-                    options.shuffle(&mut thread_rng());
-
-                    let backup_option = if options.len() >= 2 {
-                        Some(vec![options[0], options[1]])
-                    } else if options.len() == 1 {
-                        Some(vec![options[0]])
-                    } else {
-                        None
-                    };
-
-                    let mut targets = actor_visits.iter().map(|v| v.target).collect::<Vec<PlayerReference>>();
-
-                    targets.truncate(2);
-
-                    if targets.iter().any(|t| !get_eligible_players(game, actor_ref).contains(t)) {
-                        backup_option
-                    } else {
-                        Some(targets)
-                    }
-                }) else { return };
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game).into_iter();
+                let targets = actor_visits.map(|v| v.target);
 
                 for target_ref in targets {
                     match target_ref.win_condition(game).clone() {
@@ -161,17 +137,43 @@ impl RoleStateImpl for SantaClaus {
         }
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
-        let ability_id = match self.next_ability {
-            SantaListKind::Nice => ControllerID::role(actor_ref, Role::SantaClaus, 0),
-            SantaListKind::Naughty => ControllerID::role(actor_ref, Role::SantaClaus, 1)
-        };
+        match self.next_ability {
+            SantaListKind::Nice => {
+                crate::game::role::common_role::convert_controller_selection_to_visits(
+                    game,
+                    actor_ref,
+                    ControllerID::role(actor_ref, Role::SantaClaus, 0),
+                    false,
+                )
+            }
+            SantaListKind::Naughty => {
+                let visits = crate::game::role::common_role::convert_controller_selection_to_visits(
+                    game,
+                    actor_ref,
+                    ControllerID::role(actor_ref, Role::SantaClaus, 1),
+                    false,
+                );
+                let eligible_targets: Vec<PlayerReference> = visits.iter()
+                    .map(|v| v.target)
+                    .filter(|t| get_eligible_players(game, actor_ref).contains(t))
+                    .collect();
 
-        crate::game::role::common_role::convert_controller_selection_to_visits(
-            game,
-            actor_ref,
-            ability_id,
-            false,
-        )
+                let mut eligible_options = get_eligible_players(game, actor_ref)
+                    .into_iter()
+                    .filter(|e| !eligible_targets.contains(e))
+                    .collect::<Vec<PlayerReference>>();
+
+                eligible_options.shuffle(&mut thread_rng());
+
+                let mut targets: Vec<PlayerReference> = eligible_targets.into_iter().chain(eligible_options).collect();
+
+                targets.truncate(2);
+
+                targets.into_iter()
+                    .map(|target| Visit::new(actor_ref, target, false, VisitTag::Role))
+                    .collect()
+            }
+        }
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         if phase == PhaseType::Obituary || phase == PhaseType::Night {
