@@ -359,9 +359,6 @@ impl PlayerReference{
     pub fn keeps_game_running(&self, game: &Game) -> bool {
         if MafiaRecruits::is_recruited(game, *self) {return false;}
         if PuppeteerMarionette::is_marionette(game, *self) {return false;}
-        if matches!(self.role(game), Role::SantaClaus | Role::Krampus) {
-            return true
-        }
         GameConclusion::keeps_game_running(self.role(game))
     }
 
