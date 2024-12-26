@@ -2,9 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::game::{
     ability_input::*, components::synopsis::Synopsis, grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
-        auditor::AuditorResult, engineer::TrapState, kira::KiraResult,
-        spy::SpyBug, Role
-    }, role_list::RoleOutline, tag::Tag, verdict::Verdict
+        auditor::AuditorResult, engineer::TrapState, kira::KiraResult, krampus::KrampusAbility, santa_claus::SantaListKind, spy::SpyBug, Role
+    }, role_list::RoleOutline, tag::Tag, verdict::Verdict, win_condition::WinCondition
 };
 
 
@@ -138,6 +137,12 @@ pub enum ChatMessageVariant {
     CultConvertsNext,
     CultKillsNext,
 
+    NextSantaAbility { ability: SantaListKind },
+    AddedToNiceList,
+    NextKrampusAbility { ability: KrampusAbility },
+    AddedToNaughtyList,
+    SantaAddedPlayerToNaughtyList { player: PlayerReference },
+
     SomeoneSurvivedYourAttack,
     YouSurvivedAttack,
     TargetWasAttacked,
@@ -161,8 +166,8 @@ pub enum ChatMessageVariant {
     SeerResult{enemies: bool},
     SpyMafiaVisit{players: Vec<PlayerIndex>},
     SpyBug{bug: SpyBug},
-    PsychicGood{players: [PlayerIndex; 2]},
-    PsychicEvil{players: [PlayerIndex; 3]},
+    PsychicGood{player: PlayerReference},
+    PsychicEvil{first: PlayerReference, second: PlayerReference},
     PsychicFailed,
     #[serde(rename_all = "camelCase")]
     AuditorResult{role_outline: RoleOutline, result: AuditorResult},
@@ -202,6 +207,8 @@ pub enum ChatMessageVariant {
     YouWerePossessed { immune: bool },
     TargetsMessage{message: Box<ChatMessageVariant>},
     TargetHasRole { role: Role },
+    #[serde(rename_all = "camelCase")]
+    TargetHasWinCondition { win_condition: WinCondition },
 
     #[serde(rename_all = "camelCase")]
     WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},

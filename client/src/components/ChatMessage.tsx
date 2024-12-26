@@ -597,9 +597,16 @@ export function translateChatMessage(
         case "seerResult":
             return translate("chatMessage.seerResult." + (message.enemies ? "enemies" : "friends"));
         case "psychicEvil":
-            return translate("chatMessage.psychicEvil", playerListToString(message.players, playerNames));
+            return translate(
+                "chatMessage.psychicEvil",
+                playerNames[message.first],
+                playerNames[message.second]
+            );
         case "psychicGood":
-            return translate("chatMessage.psychicGood", playerListToString(message.players, playerNames));
+            return translate(
+                "chatMessage.psychicGood",
+                playerNames[message.player]
+            );
         case "auditorResult":
             if(message.result.type === "one"){
                 return translate("chatMessage.auditorResult.one", 
@@ -658,6 +665,8 @@ export function translateChatMessage(
             return translate("chatMessage.youWerePossessed" + (message.immune ? ".immune" : ""));
         case "targetHasRole":
             return translate("chatMessage.targetHasRole", translate("role."+message.role+".name"));
+        case "targetHasWinCondition":
+            return translate("chatMessage.targetHasWinCondition", translateWinCondition(message.winCondition));
         case "werewolfTrackingResult":
             return translate("chatMessage.werewolfTrackingResult", 
                 playerNames[message.trackedPlayer],
@@ -671,6 +680,16 @@ export function translateChatMessage(
             return translate("chatMessage.playerDiedOfBrokenHeart", playerNames[message.player], playerNames[message.lover]);
         case "chronokaiserSpeedUp":
             return translate("chatMessage.chronokaiserSpeedUp", message.percent);
+        case "addedToNiceList":
+            return translate("chatMessage.addedToNiceList");
+        case "nextSantaAbility":
+            return translate(`chatMessage.nextSantaAbility.${message.ability}`);
+        case "nextKrampusAbility":
+            return translate(`chatMessage.nextKrampusAbility.${message.ability}`);
+        case "addedToNaughtyList":
+            return translate("chatMessage.addedToNaughtyList");
+        case "santaAddedPlayerToNaughtyList":
+            return translate("chatMessage.santaAddedPlayerToNaughtyList", playerNames[message.player]);
         case "gameOver": {
             const conclusionString = 
                 translateChecked(`chatMessage.gameOver.conclusion.${message.synopsis.conclusion}`)
@@ -916,10 +935,11 @@ export type ChatMessageVariant = {
     enemies: boolean
 } | {
     type: "psychicGood",
-    players: PlayerIndex[]
+    player: PlayerIndex
 } | {
     type: "psychicEvil",
-    players: PlayerIndex[]
+    first: PlayerIndex,
+    second: PlayerIndex
 } | {
     type: "psychicFailed"
 } | {
@@ -993,6 +1013,9 @@ export type ChatMessageVariant = {
     type: "targetHasRole",
     role: Role
 } | {
+    type: "targetHasWinCondition",
+    winCondition: WinCondition
+} | {
     type: "targetsMessage",
     message: ChatMessageVariant
 } | {
@@ -1025,6 +1048,19 @@ export type ChatMessageVariant = {
 } | {
     type: "martyrRevealed",
     martyr: PlayerIndex
+} | {
+    type: "addedToNiceList"
+} | {
+    type: "nextSantaAbility"
+    ability: "nice" | "naughty"
+} | {
+    type: "nextKrampusAbility",
+    ability: "doNothing" | "kill"
+} | {
+    type: "addedToNaughtyList"
+} | {
+    type: "santaAddedPlayerToNaughtyList",
+    player: PlayerIndex
 }
 
 export type MessageSender = {
