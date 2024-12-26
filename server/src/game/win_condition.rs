@@ -16,6 +16,18 @@ pub enum WinCondition{
     RoleStateWon,
 }
 
+impl PartialOrd for WinCondition {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for WinCondition {
+    fn cmp(&self, _: &Self) -> std::cmp::Ordering {
+        std::cmp::Ordering::Equal
+    }
+}
+
 
 
 impl WinCondition{

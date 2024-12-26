@@ -59,11 +59,11 @@ impl TestPlayer {
         true
     }
 
-    pub fn send_ability_input_player_list_typical(&self, selection: TestPlayer)->bool{
+    pub fn send_ability_input_player_list_typical(&self, selection: impl Into<Vec<TestPlayer>>)->bool{
         self.send_ability_input(
             AbilityInput::new(
                 ControllerID::role(self.player_ref(), self.role(), 0),
-                AbilitySelection::new_player_list(vec![selection.player_ref()])
+                AbilitySelection::new_player_list(selection.into().iter().map(TestPlayer::player_ref).collect())
             )
         );
         true
@@ -79,20 +79,20 @@ impl TestPlayer {
         true
     }
 
-    pub fn send_ability_input_player_list(&self, selection: TestPlayer, id: RoleControllerID)->bool{
+    pub fn send_ability_input_player_list(&self, selection: impl Into<Vec<TestPlayer>>, id: RoleControllerID)->bool{
         self.send_ability_input(
             AbilityInput::new(
                 ControllerID::role(self.player_ref(), self.role(), id),
-                AbilitySelection::new_player_list(vec![selection.player_ref()])
+                AbilitySelection::new_player_list(selection.into().iter().map(|p| p.player_ref()).collect())
             )
         );
         true
     }
 
-    pub fn vote_for_player(&self, target: Option<TestPlayer>) {
+    pub fn vote_for_player(&self, target: impl Into<Option<TestPlayer>>) {
         let &PhaseState::Nomination { .. } = game!(self).current_phase() else {return};
 
-        let player_voted_ref = match PlayerReference::index_option_to_ref(game!(self), &target.map(|f|f.0.index())){
+        let player_voted_ref = match PlayerReference::index_option_to_ref(game!(self), &target.into().map(|f|f.0.index())){
             Ok(player_voted_ref) => player_voted_ref,
             Err(_) => return,
         };
@@ -163,5 +163,11 @@ impl TestPlayer {
 
     pub fn get_won_game(&self) -> bool {
         self.0.get_won_game(game!(self))
+    }
+}
+
+impl From<TestPlayer> for Vec<TestPlayer> {
+    fn from(value: TestPlayer) -> Self {
+        vec![value]
     }
 }
