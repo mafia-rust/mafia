@@ -36,9 +36,6 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for SantaClaus {
     type ClientRoleState = SantaClaus;
-    fn new_state(_: &Game) -> Self {
-        Self::default()
-    }
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Convert { return }
 
@@ -190,6 +187,9 @@ impl RoleStateImpl for SantaClaus {
             actor_ref.add_private_chat_message(game, ChatMessageVariant::NextSantaAbility { ability: new_state.next_ability });
             actor_ref.set_role_state(game, new_state);
         }
+    }
+    fn default_win_condition(self) -> WinCondition where super::RoleState: From<Self> {
+        WinCondition::GameConclusionReached { win_if_any: vec![GameConclusion::NiceList].into_iter().collect() }
     }
 }
 
