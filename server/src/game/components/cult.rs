@@ -61,14 +61,6 @@ impl Cult{
     pub fn on_role_switch(game: &mut Game, _old: Role, _new: Role) {
         Cult::set_ordered_cultists(game);
     }
-    
-    
-    pub fn get_members(game: &Game)->Vec<PlayerReference>{
-        PlayerReference::all_players(game).filter(|p| 
-            RoleSet::Cult.get_roles().contains(&p.role(game)) &&
-            InsiderGroupID::Cult.is_player_in_revealed_group(game, *p)
-        ).collect()
-    }
 
     pub fn set_ordered_cultists(game: &mut Game){
 
