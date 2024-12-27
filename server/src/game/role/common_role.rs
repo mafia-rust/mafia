@@ -14,7 +14,7 @@ use crate::{game::{
     Game
 }, vec_set};
 
-use super::{reporter::Reporter, medium::Medium, InsiderGroupID, Role, RoleState};
+use super::{medium::Medium, reporter::Reporter, warden::Warden, InsiderGroupID, Role, RoleState};
 
 pub fn controller_parameters_map_player_list_night_typical(
     game: &Game,
@@ -210,8 +210,8 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
                 out.push(ChatGroup::Dead);
             }
             //reporter interview
-            if PlayerReference::all_players(game)
-                .any(|p|
+            if 
+                PlayerReference::all_players(game).any(|p|
                     match p.role_state(game) {
                         RoleState::Reporter(Reporter{interviewed_target: Some(interviewed_target_ref), ..}) => {
                             *interviewed_target_ref == actor_ref
@@ -221,6 +221,18 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
                 )
             {
                 out.push(ChatGroup::Interview);
+            }
+            if
+                PlayerReference::all_players(game).any(|p|
+                    match p.role_state(game) {
+                        RoleState::Warden(Warden{players_in_prison}) => {
+                            players_in_prison.contains(&actor_ref)
+                        },
+                        _ => false
+                    }
+                )
+            {
+                out.push(ChatGroup::Warden);
             }
 
 
@@ -321,17 +333,29 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
     }
     if 
         game.current_phase().phase() == PhaseType::Night && 
-        PlayerReference::all_players(game)
-            .any(|p|
-                match p.role_state(game) {
-                    RoleState::Reporter(Reporter{interviewed_target: Some(interviewed_target_ref), ..}) => {
-                        *interviewed_target_ref == actor_ref
-                    },
-                    _ => false
-                }
-            )
+        PlayerReference::all_players(game).any(|p|
+            match p.role_state(game) {
+                RoleState::Reporter(Reporter{interviewed_target: Some(interviewed_target_ref), ..}) => {
+                    *interviewed_target_ref == actor_ref
+                },
+                _ => false
+            }
+        )
     {
         out.push(ChatGroup::Interview);
+    }
+    if 
+        game.current_phase().phase() == PhaseType::Night && 
+        PlayerReference::all_players(game).any(|detainer|
+            match detainer.role_state(game) {
+                RoleState::Warden(warden) => {
+                    warden.players_in_prison.contains(&actor_ref)
+                },
+                _ => false
+            }
+        )
+    {
+        out.push(ChatGroup::Warden);
     }
 
     out.into_iter().collect()

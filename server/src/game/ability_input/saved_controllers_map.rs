@@ -277,6 +277,18 @@ impl SavedControllersMap{
             )
     }
 
+    pub fn get_controller_current_selection_two_player_option(&self,id: ControllerID)->Option<TwoPlayerOptionSelection>{
+        self
+            .get_controller_current_selection(id)
+            .and_then(|selection| 
+                if let AbilitySelection::TwoPlayerOption { selection } = selection {
+                    Some(selection)
+                }else{
+                    None
+                }
+            )
+    }
+
     pub fn get_controller_current_selection_role_option(&self,id: ControllerID)->Option<RoleOptionSelection>{
         self
             .get_controller_current_selection(id)
