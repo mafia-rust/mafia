@@ -1,8 +1,9 @@
 .play-menu {
     display: flex;
+    justify-content: center;
     height: 100%;
     width: 100%;
-    padding: 2rem;
+    padding: 1rem;
 }
 
 .play-menu-browser {
@@ -18,6 +19,7 @@
     gap: 1rem;
     
     width: 100%;
+    max-width: 100rem;
     height: 100%;
 }
 
