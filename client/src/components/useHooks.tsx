@@ -91,7 +91,10 @@ export function useLobbyOrGameState<T>(
             (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") 
             && (events ?? []).includes(type as StateEventType)
         ) {
-            setState(getValue(GAME_MANAGER.state));
+            const value = getValue(GAME_MANAGER.state);
+            if (value !== state) {
+                setState(value);
+            }
         }
     });
 
