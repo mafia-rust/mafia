@@ -159,6 +159,7 @@ macros::roles! {
     Pyrolisk : pyrolisk,
     Spiral : spiral,
     Kira : kira,
+    Warden : warden,
     FiendsWildcard : fiends_wildcard,
     SerialKiller : serial_killer,
 

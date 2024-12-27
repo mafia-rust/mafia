@@ -86,7 +86,7 @@ impl DoomsayerGuess{
             //Fiends
             Role::Arsonist | Role::Werewolf | 
             Role::Ojo | Role::Puppeteer | Role::Pyrolisk | Role::Kira |
-            Role:: SerialKiller |
+            Role:: SerialKiller | Role::Warden |
             Role::FiendsWildcard => Some(DoomsayerGuess::NonTown),
             
             //Cult
