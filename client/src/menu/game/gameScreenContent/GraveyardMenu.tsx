@@ -7,17 +7,20 @@ import StyledText from "../../../components/StyledText";
 import { EnabledRolesDisplay } from "../../../components/gameModeSettings/EnabledRoleSelector";
 import { useGameState, usePlayerState } from "../../../components/useHooks";
 import { translateRoleOutline } from "../../../game/roleListState.d";
-import { EnabledModifiersDisplay } from "../../../components/gameModeSettings/EnabledModifiersDisplay";
 import { Button } from "../../../components/Button";
 import DetailsSummary from "../../../components/DetailsSummary";
+import { EnabledModifiersDisplay } from "../../../components/gameModeSettings/EnabledModifiersSelector";
 
 export default function GraveyardMenu(): ReactElement {
     return <div className="graveyard-menu graveyard-menu-colors">
         <ContentTab close={ContentMenu.GraveyardMenu} helpMenu={"standard/gameMode"}>{translate("menu.gameMode.title")}</ContentTab>
             
-        <div className="graveyard-menu-role-list">
+        <DetailsSummary
+            summary={translate("menu.lobby.roleList")}
+            defaultOpen={true}
+        >
             <RoleListDisplay />
-        </div>
+        </DetailsSummary>
         <EnabledRoles/>
         <EnabledModifiers/>
     </div>
@@ -38,7 +41,7 @@ function RoleListDisplay(): ReactElement {
             const roleOutlineName = translateRoleOutline(entry);
 
             return <Button 
-                className="role-list-button"
+                className="role-list-button placard"
                 style={{ gridRow: index + 1 }} 
                 key={roleOutlineName + crossedOutOutlines?.includes(index) + index}
                 onClick={()=>{

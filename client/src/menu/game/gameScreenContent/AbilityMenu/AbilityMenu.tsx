@@ -17,10 +17,10 @@ export default function AbilityMenu(): ReactElement {
             {translate("menu.ability.title")}
         </ContentTab>
         {!mySpectator &&
-            <>
+            <div className="abilities">
                 <RoleSpecificSection/>
                 <GenericAbilityMenu/>
-            </>
+            </div>
         }
     </div>
     

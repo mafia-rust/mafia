@@ -1,5 +1,5 @@
 import React, { createContext, ReactElement, useCallback, useContext, useEffect, useState } from "react";
-import HeaderMenu from "./HeaderMenu";
+import HeaderMenu, { MenuButtons } from "./HeaderMenu";
 import GraveyardMenu from "./gameScreenContent/GraveyardMenu";
 import ChatMenu from "./gameScreenContent/ChatMenu";
 import PlayerListMenu from "./gameScreenContent/PlayerListMenu";
@@ -198,6 +198,7 @@ export default function GameScreen(): ReactElement {
                 <HeaderMenu chatMenuNotification={chatMenuNotification}/>
             </div>
             <GameScreenMenus />
+            {mobile && <MenuButtons chatMenuNotification={chatMenuNotification}/>}
         </div>
     </MenuControllerContext.Provider>
 }
@@ -225,11 +226,11 @@ export function GameScreenMenus(): ReactElement {
                     className="panel"
                     minSize={minSize}
                     defaultSize={mobile===false?defaultSizes[menu]:undefined}
-                    key={index}
-                    >
+                    key={menu}
+                >
                     <MenuElement />
                 </Panel>
-                {menusOpen.some((_, i) => i > index) && <PanelResizeHandle key={index+".handle"} className="panel-handle"/>}
+                {!mobile && menusOpen.some((_, i) => i > index) && <PanelResizeHandle key={index+".handle"} className="panel-handle"/>}
             </>
         })}
         {menuController.menusOpen().length === 0 && <Panel><div className="no-content">

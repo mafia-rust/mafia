@@ -177,8 +177,8 @@ button, select, summary {
     user-select: none;
 }
 input, option, textarea, .textarea {
-    border-top-color: var(--background-border-shadow-color);
-    border-left-color: var(--background-border-shadow-color);
+    border-top-color: var(--primary-border-shadow-color);
+    border-left-color: var(--primary-border-shadow-color);
 }
 
 :has(input):focus-within > button.clear {

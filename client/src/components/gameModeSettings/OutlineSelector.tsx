@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import "./outlineSelector.css";
 import translate from "../../game/lang";
-import { ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, simplifyRoleOutline, translateRoleOutlineOption} from "../../game/roleListState.d";
+import { ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, simplifyRoleOutline, translateRoleOutline, translateRoleOutlineOption} from "../../game/roleListState.d";
 import { Role, roleJsonData } from "../../game/roleState.d";
 import Icon from "../Icon";
 import { DragAndDrop } from "../DragAndDrop";
@@ -199,9 +199,9 @@ export function OutlineListSelector(props: {
 
     return <section className="graveyard-menu-colors selector-section">
         <h2>{translate("menu.lobby.roleList")}: {roleList.length}</h2>
-        <button disabled={props.disabled} onClick={simplify}>
+        {!props.disabled && <button onClick={simplify}>
             <Icon>filter_list</Icon> {translate("simplify")}
-        </button>
+        </button>}
         <div className="role-list-setter-list">
             <DragAndDrop 
                 items={roleList}
@@ -210,17 +210,24 @@ export function OutlineListSelector(props: {
                 render={(outline, index) => {
                     return <div key={index} className="role-list-setter-outline-div">
                         {props.disabled === true || <Icon>drag_indicator</Icon>}
-                        <RoleOutlineSelector
-                            disabled={props.disabled}
-                            roleOutline={outline}
-                            onChange={(value: RoleOutline) => {props.onChangeRolePicker(value, index);}}
-                            key={index}
-                        />
-                        {props.onRemoveOutline ? 
+                        {props.disabled === true
+                            ? <div className="placard">
+                                <StyledText>
+                                    {translateRoleOutline(outline)}
+                                </StyledText>
+                            </div>
+                            : <RoleOutlineSelector
+                                disabled={props.disabled}
+                                roleOutline={outline}
+                                onChange={(value: RoleOutline) => {props.onChangeRolePicker(value, index);}}
+                                key={index}
+                            />
+                        }
+                        {props.onRemoveOutline &&
                             <button disabled={props.disabled} onClick={() => {
                                 if(props.onRemoveOutline)
                                     props.onRemoveOutline(index)
-                        }}><Icon>delete</Icon></button> : null}
+                        }}><Icon>delete</Icon></button>}
                     </div>
                 }}
             />

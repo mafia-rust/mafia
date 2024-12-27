@@ -18,7 +18,7 @@ import { GameModeSelector } from "../../components/gameModeSettings/GameModeSele
 import LobbyChatMenu from "./LobbyChatMenu";
 import { useLobbyState } from "../../components/useHooks";
 import { Button } from "../../components/Button";
-import { EnabledModifiersDisplay } from "../../components/gameModeSettings/EnabledModifiersDisplay";
+import { EnabledModifiersSelector } from "../../components/gameModeSettings/EnabledModifiersSelector";
 
 export default function LobbyMenu(): ReactElement {
     const isSpectator = useLobbyState(
@@ -42,26 +42,28 @@ export default function LobbyMenu(): ReactElement {
     }, [mobile, isHost])
 
     return <div className="lm">
-        <LobbyMenuHeader isHost={isHost} advancedView={advancedView} setAdvancedView={setAdvancedView}/>
-        {advancedView 
-            ? <main>
-                <div>
-                    <LobbyPlayerList />
-                    <LobbyChatMenu spectator={isSpectator}/>
-                </div>
-                <div>
-                    <LobbyMenuSettings isHost={isHost}/>
-                </div>
-            </main>
-            : <main>
-                <div>
-                    <LobbyPlayerList />
-                </div>
-                <div>
-                    <LobbyChatMenu spectator={isSpectator}/>
-                </div>
-            </main>
-        }
+        <div>
+            <LobbyMenuHeader isHost={isHost} advancedView={advancedView} setAdvancedView={setAdvancedView}/>
+            {advancedView 
+                ? <main>
+                    <div>
+                        <LobbyPlayerList />
+                        <LobbyChatMenu spectator={isSpectator}/>
+                    </div>
+                    <div>
+                        <LobbyMenuSettings isHost={isHost}/>
+                    </div>
+                </main>
+                : <main>
+                    <div>
+                        <LobbyPlayerList />
+                    </div>
+                    <div>
+                        <LobbyChatMenu spectator={isSpectator}/>
+                    </div>
+                </main>
+            }
+        </div>
     </div>
 }
 
@@ -125,7 +127,7 @@ function LobbyMenuSettings(props: Readonly<{
                 GAME_MANAGER.sendEnabledModifiersPacket(gameMode.enabledModifiers);
             }}
         />}
-        <EnabledModifiersDisplay
+        <EnabledModifiersSelector
             disabled={!props.isHost}
             onChange={modifiers => GAME_MANAGER.sendEnabledModifiersPacket(modifiers)}
         />
@@ -211,7 +213,7 @@ function LobbyMenuHeader(props: Readonly<{
                     GAME_MANAGER.sendSetLobbyNamePacket(newLobbyName);
                 }}
             /> : 
-            <h1>{lobbyName}</h1>
+            <h3>{lobbyName}</h3>
         }
         
     </header>

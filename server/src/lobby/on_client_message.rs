@@ -68,7 +68,7 @@ impl Lobby {
                     return
                 };
 
-                let text = text.trim_newline().trim_whitespace().truncate(100).truncate_lines(1);
+                let text = text.trim_newline().trim_whitespace().truncate(100);
                 if text.is_empty() {return}
                 
                 let name = if let Some(

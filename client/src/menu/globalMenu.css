@@ -3,8 +3,8 @@
     position: fixed;
     display: flex;
     flex-direction: column;
-    right: 1rem;
-    top: 2.5rem;
+    right: 0.38rem;
+    top: 2.75rem;
     height: fit-content;
     min-width: fit-content;
     box-shadow: 0 0 .5rem #0007;
