@@ -1,6 +1,6 @@
 import React, { ReactElement, useContext } from "react";
 import "../game/gameScreen.css"
-import HeaderMenu from "../game/HeaderMenu";
+import HeaderMenu, { MenuButtons } from "../game/HeaderMenu";
 import { MenuController, useMenuController, MenuControllerContext, GameScreenMenus } from "../game/GameScreen";
 import { MobileContext } from "../Anchor";
 
@@ -38,6 +38,7 @@ export default function SpectatorGameScreen(): ReactElement {
                     <HeaderMenu chatMenuNotification={false}/>
                 </div>
                 <GameScreenMenus />
+                {mobile && <MenuButtons chatMenuNotification={false}/>}
             </div>
         </MenuControllerContext.Provider>
     );

@@ -24,6 +24,7 @@ pub struct LobbyClient{
 }
 
 #[derive(Clone, Debug, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
 pub enum Ready {
     Host,
     Ready,

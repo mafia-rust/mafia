@@ -27,8 +27,8 @@ export default function LobbyMenu(): ReactElement {
     )!;
     const isHost = useLobbyState(
         lobbyState => {
-            let myClient = lobbyState.players.get(lobbyState.myId!);
-            if (myClient === undefined || myClient === null) return true;
+            const myClient = lobbyState.players.get(lobbyState.myId!);
+            if (myClient === null) return true;
             return myClient.ready === "host";
         },
         ["playersHost", "lobbyClients", "yourId"]
