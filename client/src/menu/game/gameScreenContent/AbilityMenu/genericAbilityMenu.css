@@ -15,6 +15,7 @@
     border-color: var(--primary-border-color);
     border-radius: .4rem;
     border-width: .13rem;
+    margin-top: 0.25rem;
 }
 .generic-ability-menu-tab-no-summary > span{
     display: inline-flex;
