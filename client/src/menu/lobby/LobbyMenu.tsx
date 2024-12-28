@@ -41,6 +41,13 @@ export default function LobbyMenu(): ReactElement {
         setAdvancedView(isHost || mobile)
     }, [mobile, isHost])
 
+    useEffect(() => {
+        const onBeforeUnload = (e: BeforeUnloadEvent) => e.preventDefault();
+
+        window.addEventListener("beforeunload", onBeforeUnload);
+        return () => window.removeEventListener("beforeunload", onBeforeUnload);
+    }, [])
+
     return <div className="lm">
         <div>
             <LobbyMenuHeader isHost={isHost} advancedView={advancedView} setAdvancedView={setAdvancedView}/>

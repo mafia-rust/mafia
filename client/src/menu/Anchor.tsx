@@ -159,8 +159,6 @@ export default function Anchor(props: Readonly<{
             let coverCardTheme: Theme | null = null;
             if (coverCard.type === WikiCoverCard || coverCard.type === WikiArticle) {
                 coverCardTheme = "wiki-menu-colors"
-            } else if (coverCard.type === SettingsMenu) {
-                coverCardTheme = "graveyard-menu-colors"
             }
 
             if (callback) {

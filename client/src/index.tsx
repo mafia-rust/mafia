@@ -6,7 +6,7 @@ import { GameManager, createGameManager } from './game/gameManager';
 import LoadingScreen from './menu/LoadingScreen';
 import route from './routing';
 
-export type Theme = "player-list-menu-colors" | "will-menu-colors" | "role-specific-colors" | "graveyard-menu-colors" | "wiki-menu-colors"
+export type Theme = "chat-menu-colors" | "player-list-menu-colors" | "will-menu-colors" | "role-specific-colors" | "graveyard-menu-colors" | "wiki-menu-colors"
 
 const THEME_CSS_ATTRIBUTES = [
     'background-color', 'fade-color', 'primary-color', 'secondary-color', 

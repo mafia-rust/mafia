@@ -4,7 +4,7 @@ import GraveyardMenu from "./gameScreenContent/GraveyardMenu";
 import ChatMenu from "./gameScreenContent/ChatMenu";
 import PlayerListMenu from "./gameScreenContent/PlayerListMenu";
 import WillMenu from "./gameScreenContent/WillMenu";
-import GAME_MANAGER, { modulus } from "../..";
+import GAME_MANAGER, { modulus, Theme } from "../..";
 import WikiMenu from "./gameScreenContent/WikiMenu";
 import "../../index.css";
 import "./gameScreen.css";
@@ -17,6 +17,7 @@ import { Button } from "../../components/Button";
 import translate from "../../game/lang";
 import { useGameState } from "../../components/useHooks";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { loadSettingsParsed } from "../../game/localStorage";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
@@ -36,6 +37,24 @@ export const MENU_ELEMENTS = {
     [ContentMenu.WikiMenu]: WikiMenu
 }
 
+export const MENU_THEMES: Record<ContentMenu, Theme | null> = {
+    [ContentMenu.ChatMenu]: "chat-menu-colors",
+    [ContentMenu.PlayerListMenu]: "player-list-menu-colors",
+    [ContentMenu.RoleSpecificMenu]: "role-specific-colors",
+    [ContentMenu.WillMenu]: "will-menu-colors",
+    [ContentMenu.GraveyardMenu]: "graveyard-menu-colors",
+    [ContentMenu.WikiMenu]: "wiki-menu-colors"
+}
+
+export const MENU_TRANSLATION_KEYS: Record<ContentMenu, string> = {
+    [ContentMenu.ChatMenu]: "menu.chat",
+    [ContentMenu.PlayerListMenu]: "menu.playerList",
+    [ContentMenu.RoleSpecificMenu]: "menu.ability",
+    [ContentMenu.WillMenu]: "menu.will",
+    [ContentMenu.GraveyardMenu]: "menu.gameMode",
+    [ContentMenu.WikiMenu]: "menu.wiki"
+}
+
 const ALL_CONTENT_MENUS = Object.values(ContentMenu);
 
 export interface MenuController {
@@ -45,6 +64,8 @@ export interface MenuController {
     menusOpen(): ContentMenu[];
     menuOpen(menu: ContentMenu): boolean;
     canOpen(menu: ContentMenu): boolean;
+    menus(): ContentMenu[]
+    maxMenus: number
 }
 
 export function useMenuController<C extends Partial<Record<ContentMenu, boolean>>>(
@@ -121,7 +142,11 @@ export function useMenuController<C extends Partial<Record<ContentMenu, boolean>
             },
             canOpen(menu): boolean {
                 return contentMenus[menu] !== undefined
-            }
+            },
+            menus(): ContentMenu[] {
+                return Object.keys(contentMenus).filter(menu => contentMenus[menu as ContentMenu] !== undefined) as ContentMenu[];
+            },
+            maxMenus: maxContent
         })
     }, [contentMenus, getMenuController, maxContent, setMenuController]);
 
@@ -144,17 +169,22 @@ export { MenuControllerContext }
 
 export default function GameScreen(): ReactElement {
     const mobile = useContext(MobileContext)!;
+    const { maxMenus, menuOrder } = loadSettingsParsed();
+
+    const menusOpen: [ContentMenu, boolean | undefined][] = [
+        [ContentMenu.WikiMenu, mobile ? undefined : false ],
+        [ContentMenu.GraveyardMenu, maxMenus > 4 ],
+        [ContentMenu.PlayerListMenu, maxMenus > 1 ],
+        [ContentMenu.ChatMenu, true ],
+        [ContentMenu.WillMenu, maxMenus > 3 ],
+        [ContentMenu.RoleSpecificMenu, maxMenus > 2 ],
+    ];
+
+    menusOpen.sort((a, b) => menuOrder.indexOf(a[0]) - menuOrder.indexOf(b[0]))
 
     const menuController = useMenuController(
-        mobile ? 2 : Infinity, 
-        {
-            WikiMenu: mobile ? undefined : false,
-            GraveyardMenu: !mobile,
-            PlayerListMenu: true,
-            ChatMenu: true,
-            WillMenu: !mobile,
-            RoleSpecificMenu: !mobile,
-        },
+        maxMenus, 
+        Object.fromEntries(menusOpen),
         () => MENU_CONTROLLER_HOLDER.controller!,
         menuController => MENU_CONTROLLER_HOLDER.controller = menuController
     );
@@ -163,6 +193,13 @@ export default function GameScreen(): ReactElement {
         () => !menuController.menusOpen().includes(ContentMenu.ChatMenu),
         ["addChatMessages"]
     )!;
+
+    useEffect(() => {
+        const onBeforeUnload = (e: BeforeUnloadEvent) => e.preventDefault();
+
+        window.addEventListener("beforeunload", onBeforeUnload);
+        return () => window.removeEventListener("beforeunload", onBeforeUnload);
+    }, [])
 
     useEffect(() => {
         const swipeEventListener = (right: boolean) => {
@@ -174,7 +211,7 @@ export default function GameScreen(): ReactElement {
             }
 
             const allowedMenus = ALL_CONTENT_MENUS.filter(menu => { 
-                return !menusOpen.includes(menu)
+                return !menusOpen.includes(menu) && menuController.menus().includes(menu)
             });
 
             const rightMostMenu = menusOpen[menusOpen.length - 1];

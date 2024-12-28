@@ -135,3 +135,6 @@
 .kira-guess-result.notInGame{
     border-color: red;
 }
+.chat-message-div .details-summary-container {
+    width: 100%;
+}
