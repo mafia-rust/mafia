@@ -504,6 +504,11 @@
     "role.kira.name": "Kira",
     "role.kira.name:var.0": "Kiras",
     "controllerId.role.kira.0.name": "Guess",
+    
+    "role.warden.name": "Warden",
+    "role.warden.name:var.0": "Wardens",
+    "controllerId.role.warden.0.name": "Imprison",
+    "controllerId.role.warden.1.name": "Self Ward",
 
     "role.serialKiller.name": "Serial Killer",
     "role.serialKiller.name:var.0": "Serial Killers",
@@ -668,6 +673,7 @@
     "chatGroup.interview.icon": "📝",
     "chatGroup.dead.icon": "💀",
     "chatGroup.puppeteer.icon": "🧵",
+    "chatGroup.warden.icon": "🕹️",
 
     "messageSender.livingToDead.icon": "🔮",
 
@@ -677,6 +683,9 @@
     "controllerId.syndicateBackupAttack.name": "Backup Attack",
     "controllerId.pitchforkVote.name": "Pitchfork Vote",
     "controllerId.forfeitVote.name": "Forfeit Nomination Vote",
+    "controllerId.wardenLiveOrDie.name": "Warden, Live or Die",
+    "controllerId.wardenLiveOrDie.boolean.true": "Live",
+    "controllerId.wardenLiveOrDie.boolean.false": "Die",
 
 
     "standard":"Standard",
@@ -859,6 +868,7 @@
 
     "chatMessage.abilityUsed": "\\0 uses \\1\\2.",
     "chatMessage.abilityUsed.selection.unit":"",
+    "chatMessage.abilityUsed.selection.boolean":" set to \\0",
     "chatMessage.abilityUsed.selection.playerList":" selecting \\0",
     "chatMessage.abilityUsed.selection.twoPlayerOption":" selecting \\0",
     "chatMessage.abilityUsed.selection.roleOption":" selecting \\0",
@@ -883,9 +893,9 @@
     "chatMessage.chronokaiserSpeedUp":"The Chronokaiser speeds up time. Each phase is \\0% faster.",
     "chatMessage.deputyKilled":"The Deputy killed \\0!",
     "chatMessage.deputyShotYou":"A Deputy shot you!",
-    "chatMessage.puppeteerPlayerIsNowMarionette":"\\0 is being strung up into a marionette. They are now a Fiends Loyalist and Puppeteer Insider. They will be attacked every night.",
-    "chatMessage.recruiterPlayerIsNowRecruit":"\\0 is recruited into the syndicate. They are now a Syndicate Loyalist and Syndicate Insider. They will be attacked every night.",
-
+    "chatMessage.puppeteerPlayerIsNowMarionette":"The puppeteer strung up \\0 into a marionette. They are now a Fiends Loyalist and Puppeteer Insider. They will be attacked every night.",
+    "chatMessage.recruiterPlayerIsNowRecruit":"The recruiter recruited \\0 into the syndicate. They are now a Syndicate Loyalist and Syndicate Insider. They will be attacked every night.",
+    "chatMessage.wardenPlayersImprisoned": "The warden has forced these players into a choice of live or die: \\0.",
     "chatMessage.yourConvertFailed": "You failed to convert your target.",
 
     "chatMessage.youDied":"You died!",
@@ -1086,7 +1096,13 @@
     "wiki.article.standard.possess.title:var.6": "Possessee",
     "wiki.article.standard.possess.text": "A player who is possessed was forced into visiting someone.\n- Roles like Witch, and Retributionist, have the ability to possess players\n- Some roles are immune to being possessed, like witch, and retributionist\n- If a role visits multiple people, only the first visit is changed when possessed\n- You can't be possessed into someone if your role doesn't allow you to select them. If a medium is possessed, they still don't visit anyone\n\n__For Example__:\n\n@1 the vigilante selects @7 in hopes of shooting them.\nWhen night ends @1 gets a message saying they were possessed.\nThe next obituary, they see that @2 was shot instead.\nThis is because @4 is the witch, who possessed @1 into shooting @2.\n\n__For Example__:\n\nThe philosopher selects @8 and @12, but they are possessed into @15\nThe philosopher actually visited @15 and @12, only the first visit was changed",
     "wiki.article.standard.defense.title": "Defense",
-    "wiki.article.standard.defense.title:var.0": "Protection-piercing",
+    "wiki.article.standard.defense.title:var.0": "Basic",
+    "wiki.article.standard.defense.title:var.1": "Armor-piercing",
+    "wiki.article.standard.defense.title:var.2": "Protection-piercing",
+    "wiki.article.standard.defense.title:var.3": "Armor",
+    "wiki.article.standard.defense.title:var.4": "Protection",
+    "wiki.article.standard.defense.title:var.5": "Armored",
+    "wiki.article.standard.defense.title:var.6": "Protected",
     "wiki.article.standard.defense.text": "Attacks and defense have 3 tiers each. An attack can either be basic, armor-piercing, or protection-piercing.\n\nA defense can either be armored, protected, or invincible.\n\nA basic attack can not kill a player who is armored, and an armor-piercing attack can not kill a player who is protected. A protection-piercing attack can overpower armor as well as protection.\n\n Some roles have armor by default, usually evil ones. Protection can be granted to players through abilities like the Doctor's ability to protect their target. A player with invincible defense can only die by getting executed or leaving the game.\n\nUnless otherwise indicated, attacks are basic by default and will not be able to kill players who are armored or protected. Indirect is not a tier of attack.",
     "wiki.article.standard.protect.title": "Protect",
     "wiki.article.standard.protect.title:var.0": "Protected",
@@ -1697,10 +1713,10 @@
     "wiki.article.role.witch.extra":"* You are immune to getting roleblocked and possession\n* Your second target gets erased after you change your targets visit, so no other roles can interact with it\n    * A tracker will only see you visit your first target",
     
     "wiki.article.role.scarecrow.reminder": "Each night, select a player to ward them, everyone you wardblock is revealed to you.",
-    "wiki.article.role.scarecrow.guide": "- You win if town loses, when town loses you leave town\n- At night, select a player to ward them, stopping almost all abilities from working on them.\n    - You are told who you wardblocked, and their roles are revealed to you\n\n_For Example_\n- A detective attempts to investigate @11 but you warded @11, so the detective gets wardblocked and doesn't learn anything, but you learn that you stopped the @11\n\nYou aren't told players who are wardblock immune because you can't wardblock them",
-    "wiki.article.role.scarecrow.abilities":"* Visit a player to ward them\n    - Everyone visitor to your target has their visits erased, and receives a chat message informing them they are wardblocked\n- You are told who you wardblocked, and they are revealed\n- If there are no living townies, you win, and leave town at the start of the next phase",
+    "wiki.article.role.scarecrow.guide": "- You win if town loses, when town loses you leave town\n- At night, select a player to ward them, stopping almost all abilities from working on them.\n    - The players you ward and wardblock are revealed to you\n\n_For Example_\n- A detective attempts to investigate @11 but you warded @11, so the detective gets wardblocked and doesn't learn anything, but you learn that you stopped the @11\n\nYou aren't told players who are wardblock immune because you can't wardblock them",
+    "wiki.article.role.scarecrow.abilities":"* Visit a player to ward them\n    - Everyone visitor to your target has their visits erased, and receives a chat message informing them they are wardblocked\n- The players you ward and wardblock are revealed to you\n- If there are no living townies, you win, and leave town at the start of the next phase",
     "wiki.article.role.scarecrow.attributes":"* Your target isn't told they are warded",
-    "wiki.article.role.scarecrow.extra":"* You can't select yourself\n* You are immune to roleblocks, wardblocks, and possession\n- You aren't told the names of players who aren't wardblocked, even if they still somehow visit your target, for example, a bouncer is wardblock immune",
+    "wiki.article.role.scarecrow.extra":"* You can't select yourself\n* You are immune to roleblocks, wardblocks, and possession\n- A Bouncer is wardblock immune so you can't ward them, and rarely will have a bouncer revealed to you",
     
     "wiki.article.role.kidnapper.reminder": "Each day, choose a player to detain. At night, talk to your prisoner, and decide weather or not kill them, with a max of 1 attack use. You appear the same as a jailor to your prisoner.",
     "wiki.article.role.kidnapper.guide": "- Each day, choose a player to kidnap. At night, you interrogate them in text chat\n- You can kill your prisoner one time\n- You can talk to your prisoner during the night, and they are not told who you are\n- The players you kidnap are warded and roleblocked.",
@@ -1761,7 +1777,13 @@
     "wiki.article.role.spiral.abilities":"- Each night except the first, select a player to attack and spiral all visitors to them\n    - Players die the night after they begin to spiral\n    - The night a player dies to spiraling, all visitors to them begin to spiral, causing a potential chain reaction\n- You can't spiral a player if any player is still spiraling",
     "wiki.article.role.spiral.attributes":"- Players are not told when they start to spiral\n* If you are blocked, spiraling players still die\n* Your attack is armor piercing",
     "wiki.article.role.spiral.extra":"- You can't cause yourself to spiral\n- If a dead player is spiraling, they stay spiraling, and you attack them again, even while they are dead. Although they cannot die after already dead.",
-
+    
+    "wiki.article.role.warden.reminder": "Each night*, put up to 3 players in your prison who each must choose to either live or die, but if they all choose to live, they all die instead.",
+    "wiki.article.role.warden.guide":"- Each night except the first, choose up to 3 players to put in prison\n    - The prisoners must choose to live or die\n        - If a player chooses die, you attack them (armor-piercing)\n        - If all of the players in your prison choose live, you attack all of them (armor-piercing)\n    - The players in your prison can talk in a private chat group at night\n        - You can always read from the private prisoner chat group\n    - The players in your prison are roleblocked\n    - You can put yourself in your prison, but you can't ever die or be roleblocked by your own ability\n - Each night, you may choose to ward yourself",
+    "wiki.article.role.warden.abilities":"- Each night except the first, choose up to 3 players to put in prison\n    - The prisoners must choose to live or die\n        - If a player chooses die, you attack them (armor-piercing)\n        - If all of the players in your prison choose live, you attack all of them (armor-piercing)\n    - The players in your prison can talk in a private chat group at night\n        - You can always read from the private prisoner chat group\n    - The players in your prison are roleblocked\n    - You can put yourself in your prison, but you can't ever die or be roleblocked by your own ability\n - Each night, you may choose to ward yourself",
+    "wiki.article.role.warden.attributes":" - You can't die to your own ability, but the logic of your ability doesn't change. _For example_:\n You imprison yourself and another player. You both choose live. You survive and the other player dies. All players in prison chose to live so both players should die, but you can't die to your own ability.",
+    "wiki.article.role.warden.extra":" - You don't visit anybody due to your own ability",
+    
     "wiki.article.role.fiendsWildcard.reminder": "Choose a fiends role to become at start of night.",
     "wiki.article.role.fiendsWildcard.guide": "* Choose a fiends role to become that role\n    * You become that role when night starts\n* You can't become a role that has exceeded its role limit",
     "wiki.article.role.fiendsWildcard.abilities":"* Become a role you choose at the start of night",

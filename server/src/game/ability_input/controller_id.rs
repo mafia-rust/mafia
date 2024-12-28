@@ -23,6 +23,11 @@ pub enum ControllerID{
     SyndicateGunItemGive,
     SyndicateChooseBackup,
     SyndicateBackupAttack,
+
+    WardenLiveOrDie{
+        warden: PlayerReference,
+        player: PlayerReference,
+    }
 }
 impl ControllerID{
     pub fn role(player: PlayerReference, role: Role, id: RoleControllerID)->Self{

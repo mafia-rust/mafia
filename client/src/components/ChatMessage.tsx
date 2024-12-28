@@ -465,13 +465,24 @@ export function translateChatMessage(
                 case "unit":
                     out = translate("chatMessage.abilityUsed.selection.unit");
                     break;
-                case "boolean":
-                    if(message.selection.selection){
-                        out = " "+translate("on");
+                case "boolean":{
+                    let text = null;
+                    if(message.selection.selection===true){
+                        text = translateChecked("controllerId."+controllerIdToLink(message.abilityId).replace(/\//g, ".") + ".boolean.true");
+                        if(text===null)
+                            text = " "+translate("on");
+                        else
+                            text = " "+text;
                     }else{
-                        out = " "+translate("off");
+                        text = translateChecked("controllerId."+controllerIdToLink(message.abilityId).replace(/\//g, ".") + ".boolean.false");
+                        if(text===null)
+                            text = " "+translate("off");
+                        else
+                            text = " "+text;
                     }
+                    out = translate("chatMessage.abilityUsed.selection.boolean", text);
                     break;
+                }
                 case "playerList":
                     out = translate("chatMessage.abilityUsed.selection.playerList",
                         playerListToString(message.selection.selection, playerNames)
@@ -553,6 +564,10 @@ export function translateChatMessage(
             return translate("chatMessage.jailedSomeone",
                 playerNames[message.playerIndex]
             );
+        case "wardenPlayersImprisoned":
+            return translate("chatMessage.wardenPlayersImprisoned",
+                playerListToString(message.players, playerNames)
+            )
         case "deputyKilled":
             return translate("chatMessage.deputyKilled",
                 playerNames[message.shotIndex]
@@ -864,6 +879,9 @@ export type ChatMessageVariant = {
 } | {
     type: "jailedSomeone",
     playerIndex: PlayerIndex
+} | {
+    type: "wardenPlayersImprisoned",
+    players: PlayerIndex[]
 } | {
     type: "yourConvertFailed"
 } | {

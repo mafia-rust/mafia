@@ -25,6 +25,7 @@
     "playerIsBeingInterviewed": "special",
     "jailedTarget": "special",
     "jailedSomeone": "special",
+    "wardenPlayersImprisoned": "special",
     "deputyKilled": "special",
     "deputyShotYou": "special",
     "playerNominated": "trial",
