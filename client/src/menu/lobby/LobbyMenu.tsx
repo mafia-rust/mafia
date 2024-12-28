@@ -1,5 +1,5 @@
 import React, { ReactElement, useContext, useEffect, useMemo, useState } from "react";
-import GAME_MANAGER from "../../index";
+import GAME_MANAGER, { DEV_ENV } from "../../index";
 import LobbyPlayerList from "./LobbyPlayerList";
 import "./lobbyMenu.css";
 import translate from "../../game/lang";
@@ -42,7 +42,9 @@ export default function LobbyMenu(): ReactElement {
     }, [mobile, isHost])
 
     useEffect(() => {
-        const onBeforeUnload = (e: BeforeUnloadEvent) => e.preventDefault();
+        const onBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (!DEV_ENV) e.preventDefault()
+        };
 
         window.addEventListener("beforeunload", onBeforeUnload);
         return () => window.removeEventListener("beforeunload", onBeforeUnload);

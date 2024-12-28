@@ -4,7 +4,7 @@ import GraveyardMenu from "./gameScreenContent/GraveyardMenu";
 import ChatMenu from "./gameScreenContent/ChatMenu";
 import PlayerListMenu from "./gameScreenContent/PlayerListMenu";
 import WillMenu from "./gameScreenContent/WillMenu";
-import GAME_MANAGER, { modulus, Theme } from "../..";
+import GAME_MANAGER, { DEV_ENV, modulus, Theme } from "../..";
 import WikiMenu from "./gameScreenContent/WikiMenu";
 import "../../index.css";
 import "./gameScreen.css";
@@ -195,7 +195,9 @@ export default function GameScreen(): ReactElement {
     )!;
 
     useEffect(() => {
-        const onBeforeUnload = (e: BeforeUnloadEvent) => e.preventDefault();
+        const onBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (!DEV_ENV) e.preventDefault()
+        };
 
         window.addEventListener("beforeunload", onBeforeUnload);
         return () => window.removeEventListener("beforeunload", onBeforeUnload);
