@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useMemo } from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import { ContentMenu, ContentTab } from "../GameScreen";
@@ -13,7 +13,7 @@ export function defaultAlibi(): string {
 const DEFAULT_ALIBI = "ROLE\nNight 1: \nNight 2:";
 
 export default function WillMenu(): ReactElement {
-    const cantPost = usePlayerState(
+    const cantChat = usePlayerState(
         playerState => playerState.sendChatGroups.length === 0,
         ["yourSendChatGroups"]
     )!;
@@ -35,6 +35,10 @@ export default function WillMenu(): ReactElement {
         playerState => playerState.deathNote,
         ["yourDeathNote"]
     )!;
+
+    const cantPost = useMemo(() => {
+        return cantChat
+    }, [cantChat])
     
     return <div className="will-menu will-menu-colors">
         <ContentTab

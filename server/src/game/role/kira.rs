@@ -79,13 +79,14 @@ impl KiraGuess{
             Role::Jester | Role::Revolutionary | Role::Politician |
             Role::Doomsayer |
             Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | Role::Chronokaiser |
-            Role::Wildcard | Role::TrueWildcard | Role::Drunk | Role::Spiral => Some(Self::NonTown),
+            Role::Wildcard | Role::TrueWildcard | Role::Drunk | Role::Spiral |
+            Role::SantaClaus | Role::Krampus => Some(Self::NonTown),
             Role::Martyr => None,
 
             //Fiends
             Role::Arsonist | Role::Werewolf | 
             Role::Ojo | Role::Puppeteer | Role::Pyrolisk | Role::Kira | 
-            Role::SerialKiller |
+            Role::SerialKiller | Role::Warden |
             Role::FiendsWildcard => Some(Self::NonTown),
             
             //Cult

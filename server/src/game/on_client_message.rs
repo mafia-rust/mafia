@@ -1,16 +1,10 @@
 use crate::{log, packet::ToServerPacket, strings::TidyableString};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender}, 
-    event::on_fast_forward::OnFastForward, 
-    phase::{PhaseState, PhaseType},
-    player::{PlayerIndex, PlayerReference},
-    role::{
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, event::on_fast_forward::OnFastForward, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
         mayor::Mayor, politician::Politician,
         Role, RoleState
-    },
-    spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer},
-    Game
+    }, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
 };
 
 
@@ -52,7 +46,9 @@ impl Game {
 
                 sender_player_ref.set_chosen_vote(self, player_voted_ref, true);
 
-                self.count_votes_and_start_trial();
+                self.count_nomination_and_start_trial(
+                    !Modifiers::modifier_is_enabled(self, ModifierType::ScheduledNominations)
+                );
             },
             ToServerPacket::Judgement { verdict } => {
                 if self.current_phase().phase() != PhaseType::Judgement {break 'packet_match;}
@@ -60,7 +56,6 @@ impl Game {
                 sender_player_ref.set_verdict(self, verdict);
             },
             ToServerPacket::SendChatMessage { text, block } => {
-
                 if text.replace(['\n', '\r'], "").trim().is_empty() {
                     break 'packet_match;
                 }
@@ -104,10 +99,17 @@ impl Game {
                 }
             },
             ToServerPacket::SendWhisper { player_index: whispered_to_player_index, text } => {
+                if Modifiers::modifier_is_enabled(self, ModifierType::NoWhispers) {
+                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
+                    break 'packet_match
+                }
 
                 let whisperee_ref = match PlayerReference::new(self, whispered_to_player_index){
                     Ok(whisperee_ref) => whisperee_ref,
-                    Err(_) => break 'packet_match,
+                    Err(_) => {
+                        sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
+                        break 'packet_match
+                    },
                 };
 
                 if !self.current_phase().is_day() || 

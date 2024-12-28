@@ -6,6 +6,7 @@ use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::Grave;
+use crate::game::modifiers::Modifiers;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
@@ -78,7 +79,9 @@ impl RoleStateImpl for Politician {
         for player in PlayerReference::all_players(game){
             player.push_player_tag(game, actor_ref, Tag::Enfranchised);
         }
-        game.count_votes_and_start_trial();
+        game.count_nomination_and_start_trial(
+            !Modifiers::modifier_is_enabled(game, crate::game::modifiers::ModifierType::ScheduledNominations)
+        );
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::new_controller_fast(
@@ -103,7 +106,7 @@ impl RoleStateImpl for Politician {
             //for skipping phases
             match phase {
                 PhaseType::Briefing | PhaseType::Nomination | PhaseType::Testimony | 
-                PhaseType::Judgement | PhaseType::FinalWords  => {}
+                PhaseType::Judgement | PhaseType::FinalWords | PhaseType::Recess => {}
 
                 PhaseType::Obituary | PhaseType::Discussion | PhaseType::Dusk | PhaseType::Night => {
                     game.phase_machine.time_remaining = Duration::from_secs(0);

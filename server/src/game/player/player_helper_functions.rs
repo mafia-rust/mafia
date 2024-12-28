@@ -7,7 +7,7 @@ use crate::{game::{
         arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura, insider_group::InsiderGroupID, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch
-    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, win_condition::WinCondition, Game
+    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, win_condition::WinCondition, Game
 }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
 use super::PlayerReference;
@@ -376,6 +376,15 @@ impl PlayerReference{
         self.role_state(game).clone().on_role_creation(game, *self)
     }
     pub fn get_current_send_chat_groups(&self, game: &Game) -> HashSet<ChatGroup> {
+        if Modifiers::modifier_is_enabled(game, ModifierType::NoChat)
+            || (
+                Modifiers::modifier_is_enabled(game, ModifierType::NoNightChat) 
+                && self.alive(game)
+                && matches!(game.current_phase().phase(), PhaseType::Night | PhaseType::Obituary)
+            )
+        {
+            return HashSet::new()
+        }
         self.role_state(game).clone().get_current_send_chat_groups(game, *self)
     }
     pub fn get_current_receive_chat_groups(&self, game: &Game) -> HashSet<ChatGroup> {

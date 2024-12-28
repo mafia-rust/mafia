@@ -25,6 +25,8 @@
     "cult": { "style": "keyword-cult", "link": "standard/cult"},
     "wiki.article.standard.cult.title": { "style": "keyword-cult", "link": "standard/cult" },
     "fiends": { "style": "keyword-fiends", "link": "standard/fiends"},
+    "niceList": { "style": "keyword-christmas", "link": "role/santaClaus" },
+    "naughtyList": { "style": "keyword-christmas keyword-naughty", "link": "role/santaClaus" },
     "any": { "style": "keyword-info"},
     "none": { "style": "keyword-info"},
     "nonTown": { "style": "keyword-info"},
@@ -53,6 +55,8 @@
     "role.trueWildcard.name": { "style": "keyword-pride", "replacement": "role.trueWildcard.name", "link":"role/trueWildcard"},
     "role.kira.name": { "style": "keyword-kira keyword-fiends", "replacement": "role.kira.name", "link":"role/kira"},
     "role.spiral.name": { "style": "keyword-spiral keyword-fiends", "replacement": "role.spiral.name", "link":"role/spiral"},
+    "role.santaClaus.name": { "style": "keyword-christmas", "replacement": "role.santaClaus.name", "link": "role/santaClaus" },
+    "role.krampus.name": { "style": "keyword-christmas keyword-naughty", "replacement": "role.krampus.name", "link": "role/krampus" },
 
 
     "noAll.icon": {"link":"standard/chatGroup"},
