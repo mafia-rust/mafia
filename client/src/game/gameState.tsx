@@ -1,17 +1,18 @@
+import ListMap from "../ListMap"
 import GameState, { LobbyClient, LobbyState, PhaseTimes, Player, LobbyClientID, PlayerGameState } from "./gameState.d"
 
 
 export function defaultPhaseTimes(): PhaseTimes {
     return {
-        briefing: 20,
-        obituary: 10,
-        discussion: 100,
-        nomination: 60,
+        briefing: 45,
+        obituary: 60,
+        discussion: 120,
+        nomination: 120,
         testimony: 30,
-        judgement: 30,
-        finalWords: 7,
-        dusk: 7,
-        night: 45,
+        judgement: 60,
+        finalWords: 30,
+        dusk: 30,
+        night: 60,
     }
 }
 
@@ -24,10 +25,11 @@ export function createLobbyState(): LobbyState {
         myId: null,
 
         roleList: [],
-        enabledRoles: [],
         phaseTimes: defaultPhaseTimes(),
+        enabledRoles: [],
+        enabledModifiers: [],
 
-        players: new Map<LobbyClientID, LobbyClient>(),
+        players: new ListMap<LobbyClientID, LobbyClient>(),
         chatMessages: [],
     }
 }
@@ -37,6 +39,8 @@ export function createGameState(): GameState {
         stateType: "game",
         roomCode: 0,
         lobbyName: "",
+
+        myId: null,
 
         chatMessages : [],
         graves: [],
@@ -51,6 +55,7 @@ export function createGameState(): GameState {
         roleList: [],
         enabledRoles: [],
         phaseTimes: defaultPhaseTimes(),
+        enabledModifiers: [],
 
         ticking: true,
 
@@ -68,8 +73,10 @@ export function createPlayerGameState(): PlayerGameState {
         
         roleState: { type: "detective" },
 
+        savedControllers: [],
+
         will: "",
-        notes: "",
+        notes: [],
         crossedOutOutlines: [],
         chatFilter: null,
         deathNote: "",
@@ -77,9 +84,10 @@ export function createPlayerGameState(): PlayerGameState {
         voted: null,
         judgement: "abstain",
 
-        forfeitVote: false,
+        fellowInsiders: [],
 
         sendChatGroups: [],
+        insiderGroups: [],
     }
 }
 
@@ -88,8 +96,6 @@ export function createPlayer(name: string, index: number): Player {
         name: name,
         index: index,
         buttons: {
-            dayTarget: false,
-            target: false,
             vote: false,
         },
         numVoted: 0,

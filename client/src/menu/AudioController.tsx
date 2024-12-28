@@ -1,3 +1,5 @@
+import { AudioFilePath } from "./Anchor";
+
 export default class AudioController {
     private static audio = new Audio();
     private static queue: string[] = []
@@ -21,7 +23,7 @@ export default class AudioController {
     public static clearQueue() {
         this.queue = [];
     }
-    public static queueFile(src: string) {
+    public static queueFile(src: AudioFilePath) {
         this.queue.push(src);
         if (this.autoplay) {
             this.unpauseQueue();
@@ -31,8 +33,13 @@ export default class AudioController {
     private static playQueue() {
         if(this.queue.length > 0) {
             this.currentlyPlaying = true;
-            console.log(`Playing ${this.queue[0]}`);
+            console.log(`Audio: Playing ${this.queue[0]}`);
             this.playFile(this.queue[0], () => {
+                this.queue = this.queue.slice(1)
+                this.currentlyPlaying = false;
+                if (this.autoplay)
+                    this.playQueue();
+            }, () => {
                 this.queue = this.queue.slice(1)
                 this.currentlyPlaying = false;
                 if (this.autoplay)
@@ -40,7 +47,7 @@ export default class AudioController {
             });
         }
     }
-    private static playFile(src: string, onEnd?: () => void){
+    private static playFile(src: string, onEnd?: () => void, onError?: () => void) {
         this.audio.pause();
         this.audio.src = src;
         this.audio.load();
@@ -50,16 +57,19 @@ export default class AudioController {
             this.audio.removeEventListener("ended", onEnded);
         }
 
-        this.playAudio();
+        this.playAudio(()=>{
+            if(onError !== undefined) onError();
+        });
         this.audio.addEventListener("ended", onEnded);
     }
-    private static playAudio() {
+    private static playAudio(onError?: () => void) {
         this.audio.play()
             .then(() => {
                 this.audio.currentTime = 0;
                 this.audio.playbackRate = 1;
             }).catch((error) => {
                 console.log("Audio failed to play: " + error);
+                if(onError !== undefined) onError();
             }); 
     }
 }

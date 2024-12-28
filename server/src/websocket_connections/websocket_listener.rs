@@ -7,9 +7,9 @@ use futures_util::{future::{self, Either}, StreamExt, SinkExt};
 use tokio::sync::{mpsc, broadcast};
 use tokio::net::{TcpListener, TcpStream};
 
-pub async fn create_ws_server(address: &str) {
-    let tcp_listener = TcpListener::bind(&address).await.unwrap_or_else(|err| {
-        panic!("Failed to bind websocket server to address {address}: {err}")
+pub async fn create_ws_server(server_address: &str) {
+    let tcp_listener = TcpListener::bind(&server_address).await.unwrap_or_else(|err| {
+        panic!("Failed to bind websocket server to address {server_address}: {err}")
     });
     
     let mut crash_signal = broadcast::channel(1);
@@ -29,14 +29,14 @@ pub async fn create_ws_server(address: &str) {
     let event_listener = Arc::new(Mutex::new(Listener::new()));
     Listener::start(event_listener.clone());
 
-    log!(important "Server"; "Started listening on {address}");
+    log!(important "Server"; "Started listening on {server_address}");
 
     loop {
-        let (stream, addr) = match future::select(
+        let (stream, client_address) = match future::select(
             pin!(tcp_listener.accept()), 
             pin!(crash_signal.1.recv())
         ).await {
-            Either::Left((Ok((stream, addr)), _)) => (stream, addr),
+            Either::Left((Ok((stream, client_address)), _)) => (stream, client_address),
             Either::Left((Err(_), _)) => continue, // TCP connection failed
             Either::Right(_) => break // Received crash signal
         };
@@ -45,10 +45,10 @@ pub async fn create_ws_server(address: &str) {
         let crash_signal = (crash_signal.0.clone(), crash_signal.1.resubscribe());
 
         tokio::spawn(async move {
-            if let Ok(connection) = handle_connection(stream, addr, event_listener.clone(), crash_signal).await {
+            if let Ok(connection) = handle_connection(stream, client_address, event_listener.clone(), crash_signal).await {
                 match event_listener.force_lock().on_disconnect(connection) {
-                    Ok(()) => log!(important "Connection"; "Disconnected {}", addr),
-                    Err(reason) => log!(error "Connection"; "Failed to disconnect {}: {}", addr, reason)
+                    Ok(()) => log!(important "Connection"; "Disconnected {}", client_address),
+                    Err(reason) => log!(error "Connection"; "Failed to disconnect {}: {}", client_address, reason)
                 };
             } 
         });
@@ -65,14 +65,14 @@ struct ConnectionError;
 /// This runs until the connection is closed. It does not remove the connection from the listener.
 async fn handle_connection(
     raw_stream: TcpStream, 
-    addr: SocketAddr, 
+    client_address: SocketAddr, 
     listener: Arc<Mutex<Listener>>,
     mut crash_signal: (broadcast::Sender<()>, broadcast::Receiver<()>)
 ) -> Result<Connection, ConnectionError> {
     let ws_stream = match tokio_tungstenite::accept_async(raw_stream).await {
         Ok(ws_stream) => ws_stream,
         Err(error) => {
-            log!(info "Connection"; "Failed to accept websocket handshake with {}: {}", addr, error);
+            log!(info "Connection"; "Failed to accept websocket handshake with {}: {}", client_address, error);
             return Err(ConnectionError);
         }
     };
@@ -88,8 +88,8 @@ async fn handle_connection(
             let _ = tcp_sender.close().await;
             return Err(ConnectionError)
         };
-        let connection = Connection::new(mpsc_sender, addr);
-        log!(important "Connection"; "Connected: {}", addr);
+        let connection = Connection::new(mpsc_sender, client_address);
+        log!(important "Connection"; "Connected: {}", client_address);
         listener.on_connect(&connection);
         connection
     };

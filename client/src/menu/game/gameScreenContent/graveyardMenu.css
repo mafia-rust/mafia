@@ -1,51 +1,18 @@
-.game-screen .content > .graveyard-menu {
-    width: 20%;
-}
 @media only screen and (max-width: 600px) {
     .game-screen .content > .graveyard-menu {
         width: 100%;
     }
 }
-
-.graveyard-menu > .grid {
-    display: grid;
-    padding: .13rem;
-    gap: .13rem .25rem;
+.graveyard-menu-role-list {
+    display: flex;
+    flex-direction: column;
     margin-bottom: 1rem;
-    width: 100%;
-    grid-template-columns: [role-list-start] 50% [role-list-end graves-start] 50% [graves-end];
+    user-select: none;
 }
-.graveyard-menu > .grid button {
-    text-align: left;
+.graveyard-menu-role-list > .role-list-button{
     margin: 0;
+    text-align: left;
     text-wrap: wrap;
-}
-.graveyard-menu > .grid button.role-list-button {
-    grid-column: role-list-start / role-list-end;
-}
-.graveyard-menu > .grid button.grave-list-button {
-    grid-column: graves-start / graves-end;
-}
-.graveyard-menu > .grid button > *{
-    width: 100%;
-    text-align: left;
-}
-.graveyard-menu .grave-label {
-    position: relative;
-    background-color: var(--primary-color);
-    margin: 0;
-    padding: .25rem;
-    border-top: .13rem solid var(--primary-border-color);
-    border-bottom: .13rem solid var(--primary-border-shadow-color);
-    border-left: 0;
-    border-right: 0;
-}
-.graveyard-menu .grave-label > button{
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 0;
-    font-size: 1em;
 }
 .graveyard-menu .graveyard-menu-enabledRoles{
     display: flex;

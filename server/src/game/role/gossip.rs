@@ -1,58 +1,71 @@
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
-use crate::game::resolution_state::ResolutionState;
+use crate::game::components::confused::Confused;
+use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{Priority, RoleStateImpl};
+use super::detective::Detective;
+use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Gossip;
 
 impl RoleStateImpl for Gossip {
+    type ClientRoleState = Gossip;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 
-        if let Some(visit) = actor_ref.night_visits(game).first(){
+        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        if let Some(visit) = actor_visits.first(){
             
-            let message = ChatMessageVariant::GossipResult {
-                enemies: Gossip::enemies(game, visit.target)
+            let enemies = if Confused::is_confused(game, actor_ref){
+                false
+            }else{
+                Gossip::enemies(game, visit.target)
             };
+
+            let message = ChatMessageVariant::GossipResult{ enemies };
             
             actor_ref.push_night_message(game, message);
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
+            game,
+            actor_ref,
+            false,
+            false,
+            ControllerID::role(actor_ref, Role::Gossip, 0)
+        )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Gossip, 0),
+            false
+        )
     }
 }
 
 impl Gossip {
     pub fn enemies(game: &Game, player_ref: PlayerReference) -> bool {
+
         match player_ref.night_appeared_visits(game) {
-            Some(x) => x,
-            None => player_ref.night_visits(game),
+            Some(x) => x.clone(),
+            None => player_ref.all_night_visits_cloned(game),
         }
             .iter()
             .map(|v|v.target.clone())
-            .any(|visited_player|
-                if visited_player.has_suspicious_aura(game){
-                    true
-                }else if visited_player.has_innocent_aura(game){
-                    false
-                }else{
-                    !ResolutionState::can_win_together(game, player_ref, visited_player)
-                }
+            .any(|targets_target|
+                Detective::player_is_suspicious(game, targets_target)
             )
     }
 }

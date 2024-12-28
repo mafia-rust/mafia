@@ -1,10 +1,7 @@
 import { WikiArticleLink } from "../components/WikiArticleLink";
-import { MenuController } from "../menu/game/GameScreen";
-import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
-import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
-import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
-import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
-import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player } from "./gameState.d";
+import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
+import { AbilityInput } from "./abilityInput";
+import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player, ModifierType } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleList, RoleOutline } from "./roleListState.d";
 import { Role } from "./roleState.d";
@@ -74,6 +71,7 @@ export type GameManager = {
     sendKickPlayerPacket(playerId: number): void;
     sendSetSpectatorPacket(spectator: boolean): void;
     sendSetNamePacket(name: string): void;
+    sendReadyUpPacket(ready: boolean): void;
     sendSendLobbyMessagePacket(text: string): void;
     sendSetLobbyNamePacket(name: string): void;
     sendStartGamePacket(): Promise<boolean>;
@@ -86,25 +84,21 @@ export type GameManager = {
     
     sendJudgementPacket(judgement: Verdict): void;
     sendVotePacket(voteeIndex: PlayerIndex| null): void;
-    sendTargetPacket(targetIndexList: number[]): void;
-    sendDayTargetPacket(targetIndex: number): void;
     sendSaveWillPacket(will: string): void;
-    sendSaveNotesPacket(notes: string): void;
+    sendSaveNotesPacket(notes: string[]): void;
     sendSaveCrossedOutOutlinesPacket(crossedOutOutlines: number[]): void;
     sendSaveDeathNotePacket(notes: string): void;
-    sendSendMessagePacket(text: string): void;
+    sendSendChatMessagePacket(text: string, block: boolean): void;
     sendSendWhisperPacket(playerIndex: number, text: string): void;
     sendEnabledRolesPacket(roles: Role[]): void;
+    sendEnabledModifiersPacket(modifiers: ModifierType[]): void;
 
+    sendAbilityInput(input: AbilityInput): void;
     sendSetDoomsayerGuess(guesses: [
         [number, DoomsayerGuess],
         [number, DoomsayerGuess],
         [number, DoomsayerGuess]
     ]): void;
-    sendSetKiraGuess(guesses: Record<PlayerIndex, KiraGuess>): void;
-    sendSetWildcardRoleOutline(roleOutline: Role): void;
-    sendSetJournalistJournal(journal: string): void;
-    sendSetJournalistJournalPublic(isPublic: boolean): void;
     sendSetConsortOptions(
         roleblock: boolean, 
         youWereRoleblockedMessage: boolean, 
@@ -114,21 +108,11 @@ export type GameManager = {
         youWerePossessedMessage: boolean, 
         yourTargetWasJailedMessage: boolean
     ): void
-    sendSetForgerWill(role: Role | null, will: string): void;
-    sendSetCounterfeiterAction(action: "forge" | "noForge"): void;
-    sendSetAuditorChosenOutline(index: number): void;
-    sendSetOjoAction(action: OjoAction): void;
-    sendSetPuppeteerAction(action: PuppeteerAction): void;
-    sendSetErosAction(action: "loveLink" | "kill"): void;
-    sendRetrainerRetrain(role: Role): void;
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
-    sendForfeitVotePacket(forfeit: boolean): void;
 
     messageListener(serverMessage: ToClientPacket): void;
 
-    lastPingTime: number,
-    pingCalculation: number,
     tick(timePassedMs: number): void;
 
 }

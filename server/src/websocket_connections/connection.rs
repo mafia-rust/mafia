@@ -7,7 +7,7 @@ use crate::packet::ToClientPacket;
 #[derive(Debug, Clone)]
 pub struct Connection {
     tx: ClientSender,
-    address: SocketAddr,
+    address: SocketAddr
 }
 
 impl Connection {

@@ -1,39 +1,58 @@
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
-use crate::game::resolution_state::ResolutionState;
+use crate::game::ability_input::ControllerID;
+use crate::game::components::confused::Confused;
+use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
+use crate::game::game_conclusion::GameConclusion;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 use crate::game::Game;
+use super::{ControllerParametersMap, Priority, Role, RoleStateImpl};
 
-use super::{Priority, RoleStateImpl};
 
-pub(super) const FACTION: Faction = Faction::Town;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Detective;
 
 impl RoleStateImpl for Detective {
+    type ClientRoleState = Detective;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
+        
+        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        if let Some(visit) = actor_visits.first(){
+            let suspicious = if Confused::is_confused(game, actor_ref) {
+                false
+            }else{
+                Detective::player_is_suspicious(game, visit.target)
+            };
 
-        if let Some(visit) = actor_ref.night_visits(game).first(){
-            
             let message = ChatMessageVariant::SheriffResult {
-                suspicious: Detective::player_is_suspicious(game, visit.target)
+                suspicious
             };
             
             actor_ref.push_night_message(game, message);
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
+            game,
+            actor_ref,
+            false,
+            false,
+            ControllerID::role(actor_ref, Role::Detective, 0)
+        )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Detective, 0),
+            false
+        )
     }
 }
 
@@ -45,7 +64,7 @@ impl Detective {
         }else if player_ref.has_innocent_aura(game){
             false
         }else{
-            !ResolutionState::can_win_with(game, player_ref, ResolutionState::Town)
+            !player_ref.win_condition(game).friends_with_resolution_state(GameConclusion::Town)
         }
     }
 }

@@ -1,8 +1,7 @@
 
-.game-screen .content > .chat-menu {
+.game-screen .content .chat-menu {
     display: flex;
     flex-direction: column;
-    width: 60%;
 }
 @media only screen and (max-width: 600px) {
     .game-screen .content > .chat-menu {
@@ -23,6 +22,7 @@
 .chat-message-section {
     height: 100%;
     overflow-y: auto;
+    background-color: var(--background-color);
 }
 .chat-message-list {
     width: 100%;
@@ -53,10 +53,13 @@
     display: flex;
     flex-direction: row;
     border-top: .13rem solid var(--primary-border-color);
+    background-color: var(--background-color);
     align-items: stretch;
+    height: max-content;
 }
 .chat-send-section textarea {
     resize: none;
     width: 100%;
     text-align: left;
+    text-wrap: wrap;
 }

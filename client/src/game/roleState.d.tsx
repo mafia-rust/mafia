@@ -1,12 +1,11 @@
 import { PlayerIndex } from "./gameState.d"
-import { Faction } from "./roleListState.d"
+import { RoleSet } from "./roleListState.d"
 import ROLES from "./../resources/roles.json";
-import { Doomsayer } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu";
-import { AuditorResult } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeAuditorMenu";
-import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu";
-import { Hypnotist } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeHypnotistMenu";
-import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu";
-import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
+import { ChatMessageVariant } from "../components/ChatMessage";
+import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
+import { Hypnotist } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeHypnotistMenu";
+import { Doomsayer } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
+import { TwoRoleOptionSelection } from "./abilityInput";
 
 export type RoleState = {
     type: "jailor",
@@ -15,8 +14,7 @@ export type RoleState = {
 } | {
     type: "villager"
 } | {
-    type: "mayor",
-    revealed: boolean
+    type: "mayor"
 } | {
     type: "transporter"
 } | {
@@ -26,6 +24,10 @@ export type RoleState = {
 } | {
     type: "spy"
 } | {
+    type: "pyrolisk"
+} | {
+    type: "spiral"
+} | {
     type: "tracker"
 } | {
     type: "philosopher"
@@ -33,14 +35,13 @@ export type RoleState = {
     type: "psychic"
 } | {
     type: "auditor",
-    chosenOutline: number,
     previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "snoop",
 } | {
     type: "gossip",
 } | {
-    type: "flowerGirl"
+    type: "tallyClerk"
 } | {
     type: "doctor",
     selfHealsRemaining: number,
@@ -53,13 +54,14 @@ export type RoleState = {
     type: "bouncer"
 } | {
     type: "engineer",
-    trap: {type: "dismantled"} | {type: "ready"} | {type: "set", target: PlayerIndex, shouldUnset: boolean}
+    trap: {type: "dismantled"} | {type: "ready"} | {type: "set"}
 } | {
     type: "armorsmith",
     openShopsRemaining: number,
-    // nightOpenShop: boolean,
-    // nightProtectedPlayers: Vec<PlayerReference>,
-    // playersArmor: Vec<PlayerReference>
+} | {
+    type: "steward",
+    stewardProtectsRemaining: number,
+    previousRoleChosen: TwoRoleOptionSelection
 } | {
     type: "vigilante",
     state: {type:"notLoaded"} | {type:"willSuicide"} | {type:"loaded",bullets:number} | {type:"suicided"}
@@ -68,9 +70,11 @@ export type RoleState = {
     alertsRemaining: number,
 } | {
     type: "marksman"
-    state: {type:"notLoaded"} | {type:"shotTownie"} | {type: "marks", marks: PlayerIndex[]}
+    state: {type:"notLoaded"} | {type:"shotTownie"} | {type: "loaded"}
 } | {
     type: "deputy"
+} | {
+    type: "rabblerouser"
 } | {
     type: "escort"
 } | {
@@ -80,30 +84,29 @@ export type RoleState = {
 } | {
     type: "retributionist"
 } | {
-    type: "journalist",
+    type: "reporter",
     public: boolean,
-    journal: string,
+    report: string,
     interviewedTarget: PlayerIndex | null
 } | {
     type: "godfather"
-    backup: PlayerIndex | null
 } | {
-    type: "retrainer"
-    backup: PlayerIndex | null,
-    retrainsRemaining: number
-} | {
-    type: "eros"
-    action: "loveLink" | "kill"
+    type: "impostor"
 } | {
     type: "counterfeiter",
-    action: "forge" | "noForge",
-    fakeRole: Role,
-    fakeWill: string
     forgesRemaining: number,
+} | {
+    type: "recruiter",
+    recruitsRemaining: number
     backup: PlayerIndex | null
 } | {
     type: "mafioso"
-} | 
+} | {
+    type: "mafiaKillingWildcard"
+    role: Role
+} | {
+    type: "goon"
+} |
 (Hypnotist & {type: "hypnotist"})
  | {
     type: "consort"
@@ -112,36 +115,47 @@ export type RoleState = {
 } | {
     type: "informant",
 } | {
-    type: "mortician"
-    obscuredPlayers: PlayerIndex[]
+    type: "mortician",
+    obscuredPlayers: PlayerIndex[],
+    cremationsRemaining: number
 } | {
     type: "forger",
-    fakeRole: Role,
-    fakeWill: string,
     forgesRemaining: number,
-    // forgedRef
+} | {
+    type: "disguiser",
+    currentTarget: PlayerIndex | null,
+    disguisedRole: Role,
+} | {
+    type: "reeducator",
+    convertChargesRemaining: boolean,
+    convertRole: Role,
 } | {
     type: "framer"
 } | {
-    type: "witch"
+    type: "mafiaWitch"
+} | {
+    type: "necromancer"
 } | {
     type: "mafiaSupportWildcard"
     role: Role
 } | {
     type: "jester"
 } | {
-    type: "rabbleRouser"
+    type: "revolutionary"
 } | 
 Doomsayer 
 | {
     type: "politician"
 } | {
-    type: "minion"
+    type: "witch"
 } | {
     type: "scarecrow"
 } | {
-    type: "death",
-    souls: number
+    type: "warper"
+} | {
+    type: "kidnapper"
+    executionsRemaining: number,
+    jailedTargetRef: number | null
 } | {
     type: "wildcard"
     role: Role
@@ -162,30 +176,48 @@ Doomsayer
     type: "arsonist"
 } | {
     type: "werewolf",
-    trackedPlayers: PlayerIndex[]
 } | {
     type: "ojo"
-    chosenAction: OjoAction
+    previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "puppeteer"
-    action: PuppeteerAction,
     marionettesRemaining: number
 } | {
     type: "kira"
-    guesses: Record<PlayerIndex, KiraGuess>
 } | {
     type: "fiendsWildcard"
-    role: Role
 } | {
     type: "apostle"
 } | {
     type: "disciple"
 } | {
     type: "zealot"
+} | {
+    type: "serialKiller"
 }
 
 
 export type Role = keyof typeof ROLES;
-export function getFactionFromRole(role: Role): Faction {
-    return ROLES[role].faction as Faction;
+export type SingleRoleJsonData = {
+    mainRoleSet: RoleSet,
+    roleSets: RoleSet[],
+    armor: boolean,
+    aura: null | "innocent" | "suspicious",
+    maxCount: null | number,
+    canWriteDeathNote: boolean,
+    canBeConvertedTo: Role[],
+    chatMessages: ChatMessageVariant[] 
+}
+export type RoleJsonData = Record<Role, SingleRoleJsonData>
+
+export function getMainRoleSetFromRole(role: Role): RoleSet {
+    return roleJsonData()[role].mainRoleSet as RoleSet;
+}
+
+export function roleJsonData(): RoleJsonData {
+    return ROLES as RoleJsonData;
+}
+
+export function getSingleRoleJsonData(role: Role): SingleRoleJsonData {
+    return roleJsonData()[role];
 }

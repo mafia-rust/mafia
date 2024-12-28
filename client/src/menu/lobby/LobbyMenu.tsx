@@ -18,6 +18,7 @@ import { GameModeSelector } from "../../components/gameModeSettings/GameModeSele
 import LobbyChatMenu from "./LobbyChatMenu";
 import { useLobbyState } from "../../components/useHooks";
 import { Button } from "../../components/Button";
+import { EnabledModifiersDisplay } from "../../components/gameModeSettings/EnabledModifiersDisplay";
 
 export default function LobbyMenu(): ReactElement {
     const isSpectator = useLobbyState(
@@ -25,7 +26,11 @@ export default function LobbyMenu(): ReactElement {
         ["playersHost", "lobbyClients"]
     )!;
     const isHost = useLobbyState(
-        lobbyState => lobbyState.players.get(lobbyState.myId!)?.host,
+        lobbyState => {
+            let myClient = lobbyState.players.get(lobbyState.myId!);
+            if (myClient === undefined || myClient === null) return true;
+            return myClient.ready === "host";
+        },
         ["playersHost", "lobbyClients", "yourId"]
     )!;
     const mobile = useContext(MobileContext)!;
@@ -37,7 +42,7 @@ export default function LobbyMenu(): ReactElement {
     }, [mobile, isHost])
 
     return <div className="lm">
-        <LobbyMenuHeader advancedView={advancedView} setAdvancedView={setAdvancedView}/>
+        <LobbyMenuHeader isHost={isHost} advancedView={advancedView} setAdvancedView={setAdvancedView}/>
         {advancedView 
             ? <main>
                 <div>
@@ -75,6 +80,10 @@ function LobbyMenuSettings(props: Readonly<{
         lobbyState => lobbyState.phaseTimes,
         ["phaseTimes"]
     )!;
+    const enabledModifiers = useLobbyState(
+        lobbyState => lobbyState.enabledModifiers,
+        ["enabledModifiers"]
+    )!;
 
     const mobile = useContext(MobileContext)!;
     const { setContent: setAnchorContent } = useContext(AnchorControllerContext)!;
@@ -102,8 +111,8 @@ function LobbyMenuSettings(props: Readonly<{
     };
 
     const context = useMemo(() => {
-        return {roleList, enabledRoles, phaseTimes};
-    }, [enabledRoles, phaseTimes, roleList]);
+        return {roleList, enabledRoles, phaseTimes, enabledModifiers};
+    }, [enabledRoles, phaseTimes, roleList, enabledModifiers]);
 
     return <GameModeContext.Provider value={context}>
         {mobile && <h1>{translate("menu.lobby.settings")}</h1>}
@@ -113,8 +122,13 @@ function LobbyMenuSettings(props: Readonly<{
                 GAME_MANAGER.sendSetPhaseTimesPacket(gameMode.phaseTimes);
                 GAME_MANAGER.sendEnabledRolesPacket(gameMode.enabledRoles);
                 GAME_MANAGER.sendSetRoleListPacket(gameMode.roleList);
+                GAME_MANAGER.sendEnabledModifiersPacket(gameMode.enabledModifiers);
             }}
         />}
+        <EnabledModifiersDisplay
+            disabled={!props.isHost}
+            onChange={modifiers => GAME_MANAGER.sendEnabledModifiersPacket(modifiers)}
+        />
         <PhaseTimesSelector 
             disabled={!props.isHost}
             onChange={pts => GAME_MANAGER.sendSetPhaseTimesPacket(pts)}
@@ -137,14 +151,11 @@ function LobbyMenuSettings(props: Readonly<{
 
 // There's probably a better way to do this that doesn't need the mobile check.
 function LobbyMenuHeader(props: Readonly<{
+    isHost: boolean,
     advancedView: boolean,
     setAdvancedView: (advancedView: boolean) => void
 }>): JSX.Element {
     const [lobbyName, setLobbyName] = useState<string>(GAME_MANAGER.state.stateType === "lobby" ? GAME_MANAGER.state.lobbyName : "Mafia Lobby");
-    const host = useLobbyState(
-        lobbyState => lobbyState.players.get(lobbyState.myId!)?.host,
-        ["lobbyClients", "yourId", "playersHost"]
-    )!;
     const mobile = useContext(MobileContext)!;
     const { setContent: setAnchorContent } = useContext(AnchorControllerContext)!;
 
@@ -164,22 +175,22 @@ function LobbyMenuHeader(props: Readonly<{
 
     return <header>
         <div>
-            <button disabled={!host} className="start" onClick={async ()=>{
+            <Button disabled={!props.isHost} className="start" onClick={async ()=>{
                 setAnchorContent(<LoadingScreen type="default"/>);
                 if (!await GAME_MANAGER.sendStartGamePacket()) {
                     setAnchorContent(<LobbyMenu/>)
                 }
             }}>
                 <Icon>play_arrow</Icon>{translate("menu.lobby.button.start")}
-            </button>
+            </Button>
             <RoomLinkButton/>
-            {mobile || host || <Button
+            {mobile || props.isHost || <Button
                 onClick={() => props.setAdvancedView(!props.advancedView)}
             >
                 <Icon>settings</Icon>{translate(`menu.lobby.button.advanced.${props.advancedView}`)}
             </Button>}
         </div>
-        { host ? 
+        {props.isHost ? 
             <input 
                 type="text" 
                 value={lobbyName}

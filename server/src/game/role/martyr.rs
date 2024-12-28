@@ -1,20 +1,25 @@
 use serde::Serialize;
 
+use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::components::detained::Detained;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
+use crate::game::role::BooleanSelection;
 use crate::game::visit::Visit;
 use crate::game::Game;
+use crate::vec_set;
 
-use super::{Priority, RoleStateImpl, Role, RoleState};
+use super::{AbilitySelection, ControllerID, ControllerParametersMap, Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(PartialEq, Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Martyr {
     pub state: MartyrState
 }
+
 
 #[derive(PartialEq, Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -30,52 +35,66 @@ pub enum MartyrState {
 impl Default for Martyr {
     fn default() -> Self {
         Self{
-            state: MartyrState::StillPlaying { bullets: 2 }
+            state: MartyrState::StillPlaying { bullets: 3 }
         }
     }
 }
 
-pub(super) const FACTION: Faction = Faction::Neutral;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Martyr {
+    // More information is being sent than needed by the client.
+    // This should be fixed later
+    type ClientRoleState = Martyr;
+    fn new_state(game: &Game) -> Self {
+        Self{
+            state: MartyrState::StillPlaying { bullets: game.num_players().div_ceil(5) }
+        }
+    }
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return}
         let MartyrState::StillPlaying { bullets } = self.state else {return};
         if bullets == 0 {return}
-
-        if let Some(visit) = actor_ref.night_visits(game).first() {
+        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        if let Some(visit) = actor_visits.first() {
             let target_ref = visit.target;
 
             self.state = MartyrState::StillPlaying { bullets: bullets.saturating_sub(1) };
 
             if target_ref == actor_ref {
-                if target_ref.try_night_kill(actor_ref, game, GraveKiller::Suicide, 1, true) {
+                if target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Suicide, AttackPower::Basic, true) {
                     self.state = MartyrState::Won;
                 }
             } else {
-                target_ref.try_night_kill(actor_ref, game, GraveKiller::Role(Role::Martyr), 1, true);
+                target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Martyr), AttackPower::Basic, true);
             }
         };
 
-        actor_ref.set_role_state(game, RoleState::Martyr(self));
+        actor_ref.set_role_state(game, self);
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        actor_ref == target_ref &&
-        !actor_ref.night_jailed(game) &&
-        actor_ref.selection(game).is_empty() &&
-        actor_ref.alive(game) && 
-        match self.state {
-            MartyrState::StillPlaying { bullets } => bullets != 0,
-            _ => false
-        }
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
+        ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Martyr, 0),
+            super::AvailableAbilitySelection::Boolean,
+            AbilitySelection::new_boolean(false),
+            match self.state {
+                MartyrState::StillPlaying { bullets } => bullets == 0,
+                _ => true
+            } ||
+            !actor_ref.alive(game) || 
+            Detained::is_detained(game, actor_ref) ||
+            game.day_number() <= 1,
+            Some(PhaseType::Obituary),
+            false,
+            vec_set!(actor_ref)
+        )
     }
-    fn convert_selection_to_visits(self,  game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, true)
-    }
-    fn get_won_game(self, _game: &Game, _actor_ref: PlayerReference) -> bool {
-        self.state == MartyrState::Won
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
+        let Some(AbilitySelection::Boolean {selection: BooleanSelection(true)}) = game.saved_controllers.get_controller_current_selection(ControllerID::role(actor_ref, Role::Martyr, 0)) else {return Vec::new()};
+        vec![Visit::new_none(actor_ref, actor_ref, true)]
     }
     fn on_phase_start(self,  game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         if phase == PhaseType::Obituary && matches!(self.state, MartyrState::StillPlaying {..}) {
@@ -106,7 +125,7 @@ impl RoleStateImpl for Martyr {
             for player in PlayerReference::all_players(game) {
                 if player == actor_ref {continue}
                 if !player.alive(game) {continue}
-                if player.defense(game) >= 3 {continue}
+                if player.defense(game).can_block(AttackPower::ProtectionPiercing) {continue}
                 player.die(game, Grave::from_player_suicide(game, player));
             }
     
@@ -114,5 +133,11 @@ impl RoleStateImpl for Martyr {
                 state: MartyrState::Won
             }));
         }
+    }
+}
+
+impl Martyr{
+    pub fn won(&self)->bool{
+        self.state == MartyrState::Won
     }
 }

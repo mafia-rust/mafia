@@ -1,13 +1,12 @@
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 
 use crate::game::visit::Visit;
 use crate::game::Game;
-use super::{Priority, RoleState, RoleStateImpl};
-
+use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -20,6 +19,8 @@ pub struct Hypnotist{
     pub you_were_possessed_message: bool,
     pub your_target_was_jailed_message: bool,
 }
+
+
 impl Default for Hypnotist {
     fn default() -> Self {
         Self {
@@ -33,13 +34,15 @@ impl Default for Hypnotist {
         }
     }
 }
-pub(super) const FACTION: Faction = Faction::Mafia;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Hypnotist {
+    type ClientRoleState = Hypnotist;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        let Some(visit) = actor_ref.night_visits(game).first() else {
+        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        let Some(visit) = actor_visits.first() else {
             return;
         };
         let target_ref = visit.target;
@@ -87,11 +90,27 @@ impl RoleStateImpl for Hypnotist {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
+            game,
+            actor_ref,
+            false,
+            false,
+            ControllerID::role(actor_ref, Role::Hypnotist, 0)
+        )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Hypnotist, 0),
+            false
+        )
+    }
+     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+        vec![
+            crate::game::components::insider_group::InsiderGroupID::Mafia
+        ].into_iter().collect()
     }
 }
 impl Hypnotist {

@@ -1,0 +1,18 @@
+.large-forger-menu {
+    padding-top: .2rem;
+}
+.large-forger-menu > div {
+    margin: .2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.large-forger-menu .counter {
+    width: 100%;
+}
+.large-forger-menu-option {
+    display: flex;
+    flex-direction: row;
+}

@@ -1,11 +1,12 @@
-import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, LobbyClientID, ChatGroup, PhaseState, LobbyClient } from "./gameState.d"
+import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, LobbyClientID, ChatGroup, PhaseState, LobbyClient, ModifierType, InsiderGroup } from "./gameState.d"
 import { Grave } from "./graveState"
 import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
 import { Role, RoleState } from "./roleState.d"
-import { DoomsayerGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeDoomsayerMenu"
-import { OjoAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallOjoMenu"
-import { PuppeteerAction } from "../menu/game/gameScreenContent/RoleSpecificMenus/SmallPuppeteerMenu"
+import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu"
+import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu"
+import { AbilityInput, ControllerID, SavedController } from "./abilityInput"
+import { ListMapData } from "../ListMap"
 
 export type LobbyPreviewData = {
     name: string,
@@ -17,6 +18,10 @@ export type ToClientPacket = {
     type: "pong",
 } | {
     type: "rateLimitExceeded",
+} | {
+    type: "forcedOutsideLobby"
+} | {
+    type: "forcedDisconnect"
 } | {
     type: "lobbyList",
     lobbies: Record<number, LobbyPreviewData>,
@@ -36,7 +41,7 @@ export type ToClientPacket = {
     playerId: LobbyClientID
 } | {
     type: "lobbyClients",
-    clients: Record<LobbyClientID, LobbyClient>
+    clients: ListMapData<LobbyClientID, LobbyClient>
 } | {
     type: "lobbyName",
     name: string
@@ -44,11 +49,17 @@ export type ToClientPacket = {
     type: "yourPlayerIndex",
     playerIndex: PlayerIndex
 } | {
+    type: "yourFellowInsiders",
+    fellowInsiders: PlayerIndex[]
+} | {
     type: "rejectStart",
     reason: string
 } | {
     type: "playersHost",
     hosts: LobbyClientID[],
+} | {
+    type: "playersReady",
+    ready: LobbyClientID[],
 } | {
     type: "playersLostConnection",
     lostConnection: LobbyClientID[],
@@ -70,7 +81,7 @@ export type ToClientPacket = {
     roleOutline: RoleOutline
 } | {
     type: "phaseTime",
-    phase: PhaseState, 
+    phase: Exclude<PhaseState, { type: "recess" }>, 
     time: number
 } | {
     type: "phaseTimes",
@@ -78,7 +89,10 @@ export type ToClientPacket = {
 } | {
     type: "enabledRoles",
     roles: Role[]
-} | 
+} | {
+    type: "enabledModifiers",
+    modifiers: ModifierType[]
+} |
 // Game
 {
     type: "phase",
@@ -95,29 +109,33 @@ export type ToClientPacket = {
     alive: [boolean]
 } | {
     type: "playerVotes",
-    votesForPlayer: Record<number, number> 
+    votesForPlayer: ListMapData<number, number> 
 } | {
     type: "yourSendChatGroups",
     sendChatGroups: ChatGroup[]
 } | {
+    type: "yourInsiderGroups",
+    insiderGroups: InsiderGroup[]
+} | {
+    type: "yourAllowedControllers",
+    save: ListMapData<ControllerID, SavedController>,
+} | {
     type: "yourButtons", 
     buttons: [{
-        dayTarget: boolean,
-        target: boolean,
         vote: boolean,
     }]
 } | {
     type: "yourRoleLabels",
-    roleLabels: Record<PlayerIndex, Role> 
+    roleLabels: ListMapData<PlayerIndex, Role> 
 } | {
     type: "yourPlayerTags",
-    playerTags: Record<PlayerIndex, Tag[]> 
+    playerTags: ListMapData<PlayerIndex, Tag[]> 
 } | {
     type: "yourWill",
     will: string
 } | {
     type: "yourNotes",
-    notes: string
+    notes: string[]
 } | {
     type: "yourCrossedOutOutlines",
     crossedOutOutlines: number[]
@@ -143,14 +161,17 @@ export type ToClientPacket = {
     type: "addChatMessages",
     chatMessages: ChatMessage[]
 } | {
+    type: "nightMessages",
+    chatMessages: ChatMessage[]
+} | {
     type: "addGrave",
     grave: Grave
 } | {
     type: "gameOver",
     reason: string
 } | {
-    type: "yourForfeitVote",
-    forfeit: boolean
+    type: "yourPitchforkVote",
+    player: PlayerIndex | null
 }
 
 export type ToServerPacket = {
@@ -177,6 +198,9 @@ export type ToServerPacket = {
 } | {
     type: "setName", 
     name: string
+} | {
+    type: "readyUp", 
+    ready: boolean
 } | {
     type: "sendLobbyMessage",
     text: string
@@ -205,6 +229,9 @@ export type ToServerPacket = {
     type: "setEnabledRoles", 
     roles: Role[], 
 } | {
+    type: "setEnabledModifiers",
+    modifiers: ModifierType[]
+} | {
     type: "backToLobby",
 } |
 // Game
@@ -215,14 +242,9 @@ export type ToServerPacket = {
     type: "judgement", 
     verdict: Verdict
 } | {
-    type: "target", 
-    playerIndexList: PlayerIndex[]
-} | {
-    type: "dayTarget", 
-    playerIndex:  PlayerIndex
-} | {
-    type: "sendMessage", 
-    text: string
+    type: "sendChatMessage", 
+    text: string,
+    block: boolean,
 } | {
     type: "sendWhisper", 
     playerIndex: PlayerIndex, 
@@ -232,7 +254,7 @@ export type ToServerPacket = {
     will: string
 } | {
     type: "saveNotes", 
-    notes: string
+    notes: string[]
 } | {
     type: "saveCrossedOutOutlines",
     crossedOutOutlines: number[]
@@ -242,15 +264,11 @@ export type ToServerPacket = {
 } | {
     type: "leave",
 } | {
-    type: "setForgerWill",
-    role: Role,
-    will: string
-} | {
-    type: "setCounterfeiterAction",
-    action: "forge" | "noForge"
+    type: "abilityInput",
+    abilityInput: AbilityInput
 } | {
     type: "setKiraGuess",
-    guesses: [PlayerIndex, DoomsayerGuess][]
+    guesses: [PlayerIndex, KiraGuess][]
 } | {
     type: "setDoomsayerGuess",
     guesses: [
@@ -258,15 +276,6 @@ export type ToServerPacket = {
         [number, DoomsayerGuess],
         [number, DoomsayerGuess]
     ]
-} | {
-    type: "setWildcardRole",
-    role: Role
-} | {
-    type: "setJournalistJournal",
-    journal: string
-} | {
-    type: "setJournalistJournalPublic",
-    public: boolean
 } | {
     type: "setConsortOptions",
     roleblock: boolean,
@@ -278,28 +287,6 @@ export type ToServerPacket = {
     youWerePossessedMessage: boolean,
     yourTargetWasJailedMessage: boolean
 } | {
-    type: "setForgerWill",
-    role: Role | null,
-    will: string
-} | {
-    type: "setAuditorChosenOutline",
-    index: number
-} | {
-    type: "setOjoAction",
-    action: OjoAction
-} | {
-    type: "setPuppeteerAction",
-    action: PuppeteerAction
-} | {
-    type: "setErosAction",
-    action: "loveLink" | "kill"
-} | {
-    type: "retrainerRetrain",
-    role: Role
-} | {
     type: "voteFastForwardPhase",
     fastForward: boolean
-} | {
-    type: "forfeitVote",
-    forfeit: boolean
 }

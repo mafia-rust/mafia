@@ -1,0 +1,24 @@
+.custom-select {
+    position: relative; /* Position relative to contain absolute children */
+    overflow: visible;
+    
+    display: inline-flex;
+    flex-direction: row;
+}
+
+.custom-select-options {
+    position: absolute;
+    min-width: max-content;
+    max-height: min-content;
+    overflow-y: scroll;
+
+    padding: .13rem .25rem;
+    background-color: var(--secondary-color);
+    border-radius: .25rem;
+    border: .13rem solid var(--primary-border-color);
+}
+
+.custom-select-options > div {
+    display: flex;
+    flex-direction: column;
+}

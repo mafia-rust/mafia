@@ -21,9 +21,22 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 use vec1::Vec1;
 
-use crate::{game::{
-    available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, grave::Grave, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{counterfeiter::CounterfeiterAction, doomsayer::DoomsayerGuess, eros::ErosAction, kira::KiraGuess, ojo::OjoAction, puppeteer::PuppeteerAction, Role, RoleState}, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
-}, listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log};
+use crate::{
+    game::{
+        ability_input::*,
+        available_buttons::AvailableButtons,
+        chat::{ChatGroup, ChatMessage},
+        components::insider_group::InsiderGroupID,
+        grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType},
+        player::{PlayerIndex, PlayerReference}, 
+        role::{
+            doomsayer::DoomsayerGuess,
+            ClientRoleStateEnum, Role
+        },
+        role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings,
+        tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
+    }, listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log, vec_map::VecMap, vec_set::VecSet
+};
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -41,6 +54,9 @@ pub enum ToClientPacket{
     
     #[serde(rename_all = "camelCase")]
     RateLimitExceeded,
+    
+    ForcedDisconnect,
+    ForcedOutsideLobby,
 
     // Pre lobby
     #[serde(rename_all = "camelCase")]
@@ -53,11 +69,12 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourId{player_id: LobbyClientID},
     #[serde(rename_all = "camelCase")]
-    LobbyClients{clients: HashMap<LobbyClientID, LobbyClient>},
+    LobbyClients{clients: VecMap<LobbyClientID, LobbyClient>},
     LobbyName{name: String},
     #[serde(rename_all = "camelCase")]
     RejectStart{reason: RejectStartReason},
     PlayersHost{hosts: Vec<LobbyClientID>},
+    PlayersReady{ready: Vec<LobbyClientID>},
     #[serde(rename_all = "camelCase")]
     PlayersLostConnection{lost_connection: Vec<LobbyClientID>},
     StartGame,
@@ -75,11 +92,15 @@ pub enum ToClientPacket{
     PhaseTimes{phase_time_settings: PhaseTimeSettings},
     #[serde(rename_all = "camelCase")]
     EnabledRoles{roles: Vec<Role>},
+    #[serde(rename_all = "camelCase")]
+    EnabledModifiers{modifiers: Vec<ModifierType>},
 
     // Game
     
     #[serde(rename_all = "camelCase")]
     YourPlayerIndex{player_index: PlayerIndex},
+    #[serde(rename_all = "camelCase")]
+    YourFellowInsiders{fellow_insiders: VecSet<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
     Phase{phase: PhaseState, day_number: u8},
     #[serde(rename_all = "camelCase")]
@@ -89,24 +110,31 @@ pub enum ToClientPacket{
 
     PlayerAlive{alive: Vec<bool>},
     #[serde(rename_all = "camelCase")]
-    PlayerVotes{votes_for_player: HashMap<PlayerIndex, u8>},
+    PlayerVotes{votes_for_player: VecMap<PlayerIndex, u8>},
 
     #[serde(rename_all = "camelCase")]
     YourSendChatGroups{send_chat_groups: Vec<ChatGroup>},
+    #[serde(rename_all = "camelCase")]
+    YourInsiderGroups{insider_groups: VecSet<InsiderGroupID>},
+
+    #[serde(rename_all = "camelCase")]
+    YourAllowedControllers{
+        save: VecMap<ControllerID, SavedController>
+    },
 
     YourButtons{buttons: Vec<AvailableButtons>},
     #[serde(rename_all = "camelCase")]
-    YourRoleLabels{role_labels: HashMap<PlayerIndex, Role>},
+    YourRoleLabels{role_labels: VecMap<PlayerIndex, Role>},
     #[serde(rename_all = "camelCase")]
-    YourPlayerTags{player_tags: HashMap<PlayerIndex, Vec1<Tag>>},
+    YourPlayerTags{player_tags: VecMap<PlayerIndex, Vec1<Tag>>},
     YourWill{will: String},
-    YourNotes{notes: String},
+    YourNotes{notes: Vec<String>},
     #[serde(rename_all = "camelCase")]
     YourCrossedOutOutlines{crossed_out_outlines: Vec<u8>},
     #[serde(rename_all = "camelCase")]
     YourDeathNote{death_note: Option<String>},
     #[serde(rename_all = "camelCase")]
-    YourRoleState{role_state: RoleState},
+    YourRoleState{role_state: ClientRoleStateEnum},
     #[serde(rename_all = "camelCase")]
     YourSelection{player_indices: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
@@ -115,11 +143,13 @@ pub enum ToClientPacket{
     YourJudgement{verdict: Verdict},
     #[serde(rename_all = "camelCase")]
     YourVoteFastForwardPhase{fast_forward: bool},
-    YourForfeitVote{forfeit: bool},
 
     #[serde(rename_all = "camelCase")]
     AddChatMessages{chat_messages: Vec<ChatMessage>},
     AddGrave{grave: Grave},
+
+    #[serde(rename_all = "camelCase")]
+    NightMessages{chat_messages: Vec<ChatMessage>},
 
     GameOver{reason: GameOverReason},
 }
@@ -131,7 +161,7 @@ impl ToClientPacket {
         })
     }
     pub fn new_player_votes(game: &mut Game)->ToClientPacket{
-        let mut voted_for_player: HashMap<PlayerIndex, u8> = HashMap::new();
+        let mut voted_for_player: VecMap<PlayerIndex, u8> = VecMap::new();
 
 
         for player_ref in PlayerReference::all_players(game){
@@ -181,6 +211,7 @@ pub enum ToServerPacket{
     SendLobbyMessage{text: String},
     SetSpectator{spectator: bool},
     SetName{name: String},
+    ReadyUp{ready: bool},
     SetLobbyName{name: String},
     StartGame,
     #[serde(rename_all = "camelCase")]
@@ -195,38 +226,32 @@ pub enum ToServerPacket{
     SetPhaseTimes{phase_time_settings: PhaseTimeSettings},
     #[serde(rename_all = "camelCase")]
     SetEnabledRoles{roles: Vec<Role>},
+    #[serde(rename_all = "camelCase")]
+    SetEnabledModifiers{modifiers: Vec<ModifierType>},
+
     BackToLobby,
 
     // Game
     #[serde(rename_all = "camelCase")]
     Vote{player_index: Option<PlayerIndex>},
     Judgement{verdict: Verdict},
-    #[serde(rename_all = "camelCase")]
-    Target{player_index_list: Vec<PlayerIndex>},
-    #[serde(rename_all = "camelCase")]
-    DayTarget{player_index:  PlayerIndex},
 
-    SendMessage{text: String},
+    SendChatMessage{text: String, block: bool},
     #[serde(rename_all = "camelCase")]
     SendWhisper{player_index: PlayerIndex, text: String},
     SaveWill{will: String},
-    SaveNotes{notes: String},
+    SaveNotes{notes: Vec<String>},
     #[serde(rename_all = "camelCase")]
     SaveCrossedOutOutlines{crossed_out_outlines: Vec<u8>},
     #[serde(rename_all = "camelCase")]
     SaveDeathNote{death_note: Option<String>},
 
+    // AbilityInput
+    #[serde(rename_all = "camelCase")]
+    AbilityInput{ability_input: AbilityInput},
     // Role-specific
     #[serde(rename_all = "camelCase")]
     SetDoomsayerGuess{ guesses: [(PlayerReference, DoomsayerGuess); 3] },
-    #[serde(rename_all = "camelCase")]
-    SetKiraGuess{ guesses: Vec<(PlayerReference, KiraGuess)> },
-    #[serde(rename_all = "camelCase")]
-    SetWildcardRole{ role: Role },
-    #[serde(rename_all = "camelCase")]
-    SetJournalistJournal{ journal: String},
-    #[serde(rename_all = "camelCase")]
-    SetJournalistJournalPublic{ public: bool},
     #[serde(rename_all = "camelCase")]
     SetConsortOptions{
         roleblock: bool,
@@ -238,18 +263,7 @@ pub enum ToServerPacket{
         you_were_possessed_message: bool,
         your_target_was_jailed_message: bool,
     },
-    #[serde(rename_all = "camelCase")]
-    SetForgerWill{ role: Role, will: String },
-    SetCounterfeiterAction{action: CounterfeiterAction},
-    SetAuditorChosenOutline{index: u8},
-    SetOjoAction{action: OjoAction},
-    SetPuppeteerAction{action: PuppeteerAction},
-    SetErosAction{action: ErosAction},
-    RetrainerRetrain{role: Role},
-
 
     #[serde(rename_all = "camelCase")]
     VoteFastForwardPhase{fast_forward: bool},
-    #[serde(rename_all = "camelCase")]
-    ForfeitVote{forfeit: bool},
 }

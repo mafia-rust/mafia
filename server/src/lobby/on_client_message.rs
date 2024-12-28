@@ -1,11 +1,11 @@
-use std::{collections::{HashMap, VecDeque}, time::{Duration, Instant}};
+use std::{collections::VecDeque, time::{Duration, Instant}};
 
-use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, strings::TidyableString, websocket_connections::connection::ClientSender};
+use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
 
-use super::{lobby_client::{LobbyClient, LobbyClientID, LobbyClientType}, name_validation::{self, sanitize_server_name}, Lobby, LobbyState};
+use super::{lobby_client::{LobbyClient, LobbyClientID, LobbyClientType, Ready}, name_validation::{self, sanitize_server_name}, Lobby, LobbyState};
 
-pub const MESSAGE_PER_SECOND_LIMIT: u64 = 2;
-pub const MESSAGE_PER_SECOND_LIMIT_TIME: Duration = Duration::from_secs(2);
+pub const MESSAGE_PER_SECOND_LIMIT: u64 = 1;
+pub const MESSAGE_PER_SECOND_LIMIT_TIME: Duration = Duration::from_secs(10);
 
 impl Lobby {
     pub fn on_client_message(&mut self, send: &ClientSender, lobby_client_id: LobbyClientID, incoming_packet: ToServerPacket){
@@ -14,32 +14,46 @@ impl Lobby {
         match incoming_packet {
             ToServerPacket::Vote { .. } |
             ToServerPacket::Judgement { .. } |
-            ToServerPacket::Target { .. } |
-            ToServerPacket::DayTarget { .. } |
-            ToServerPacket::SendMessage { .. } |
+            ToServerPacket::SendChatMessage { .. } |
+            ToServerPacket::SendLobbyMessage { .. } |
             ToServerPacket::SendWhisper { .. } => {
-                let LobbyState::Game { clients, .. } = &mut self.lobby_state else {
-                    return;
-                };
 
-                let Some(game_player) = clients.get_mut(&lobby_client_id) else {
-                    log!(error "LobbyState::Game"; "{} {:?}", "Message recieved from player not in game", incoming_packet);
-                    return;
+                let last_message_times = match &mut self.lobby_state {
+                    LobbyState::Game { clients, .. } => {
+                        if let Some(game_player) = clients.get_mut(&lobby_client_id) {
+                            &mut game_player.last_message_times
+                        } else {
+                            log!(error "LobbyState::Game"; "{} {:?}", "Message recieved from player not in game", incoming_packet);
+                            return;
+                        }
+                    },
+                    LobbyState::Lobby { clients, .. } => {
+                        if let Some(lobby_client) = clients.get_mut(&lobby_client_id) {
+                            &mut lobby_client.last_message_times
+                        } else {
+                            log!(error "LobbyState::Lobby"; "{} {:?}", "Message recieved from player not in lobby", incoming_packet);
+                            return;
+                        }
+                    }
+                    LobbyState::Closed => {
+                        log!(error "LobbyState::Closed"; "{} {:?}", "Message recieved from player in closed lobby", incoming_packet);
+                        return;
+                    }
                 };
 
                 let now = Instant::now();
-                while let Some(time) = game_player.last_message_times.front() {
+                while let Some(time) = last_message_times.front() {
                     if now.duration_since(*time) > MESSAGE_PER_SECOND_LIMIT_TIME {
-                        game_player.last_message_times.pop_front();
+                        last_message_times.pop_front();
                     } else {
                         break;
                     }
                 }
-                if game_player.last_message_times.len() >= (MESSAGE_PER_SECOND_LIMIT_TIME.as_secs() * MESSAGE_PER_SECOND_LIMIT) as usize {
+                if last_message_times.len() >= (MESSAGE_PER_SECOND_LIMIT_TIME.as_secs() * MESSAGE_PER_SECOND_LIMIT) as usize {
                     send.send(ToClientPacket::RateLimitExceeded);
                     return;
                 }
-                game_player.last_message_times.push_back(now);
+                last_message_times.push_back(now);
                 
             },
             _ => {}
@@ -117,6 +131,27 @@ impl Lobby {
 
                 Self::send_players_lobby(clients);
             },
+            ToServerPacket::ReadyUp{ ready } => {
+                let LobbyState::Lobby { clients, .. } = &mut self.lobby_state else {
+                    log!(error "Lobby"; "{} {}", "ToServerPacket::ReadyUp can not be used outside of LobbyState::Lobby", lobby_client_id);
+                    return
+                };
+
+                if let Some(player) = clients.get_mut(&lobby_client_id){
+                    if player.ready != Ready::Host {
+                        player.ready = if ready { Ready::Ready } else { Ready::NotReady }
+                    }
+                }
+
+
+                let mut ready = Vec::new();
+                for client in clients.iter() {
+                    if client.1.ready == Ready::Ready {
+                        ready.push(client.0.clone());
+                    }
+                }
+                Self::send_to_all(&self, ToClientPacket::PlayersReady { ready });
+            },
             ToServerPacket::SetLobbyName{ name } => {
                 let LobbyState::Lobby { .. } = self.lobby_state else {
                     log!(error "Lobby"; "{} {}", "ToServerPacket::SetLobbyName can not be used outside of LobbyState::Lobby", lobby_client_id);
@@ -142,7 +177,7 @@ impl Lobby {
                     return
                 };
                 if let Some(player) = clients.get(&lobby_client_id){
-                    if !player.host {return}
+                    if !player.is_host() {return}
                 }
 
                 settings.role_list.simplify();
@@ -150,7 +185,7 @@ impl Lobby {
                 
                 self.send_to_all(ToClientPacket::RoleList { role_list });
 
-                let mut game_clients: HashMap<LobbyClientID, GameClient> = HashMap::new();
+                let mut game_clients: VecMap<LobbyClientID, GameClient> = VecMap::new();
                 let mut game_player_params = Vec::new();
                 let mut game_spectator_params = Vec::new();
 
@@ -168,31 +203,31 @@ impl Lobby {
                         if let LobbyClientType::Spectator = lobby_client.client_type {
                             GameClient {
                                 client_location: GameClientLocation::Spectator(next_spectator_index),
-                                host: lobby_client.host,
+                                host: lobby_client.is_host(),
                                 last_message_times: VecDeque::new(),
                             }
                         } else {
                             GameClient {
                                 client_location: GameClientLocation::Player(next_player_index),
-                                host: lobby_client.host,
+                                host: lobby_client.is_host(),
                                 last_message_times: VecDeque::new(),
                             }
                         }
                     );
                     
                     match lobby_client.client_type {
-                        LobbyClientType::Player { name } => {
+                        LobbyClientType::Player { ref name } => {
                             game_player_params.push(PlayerInitializeParameters{
+                                host: lobby_client.is_host(),
                                 connection: lobby_client.connection,
-                                name,
-                                host: lobby_client.host,
+                                name: name.clone(),
                             });
                             next_player_index += 1;
                         },
                         LobbyClientType::Spectator => {
                             game_spectator_params.push(SpectatorInitializeParameters{
+                                host: lobby_client.is_host(),
                                 connection: lobby_client.connection,
-                                host: lobby_client.host,
                             });
                             next_spectator_index += 1;
                         }
@@ -228,7 +263,7 @@ impl Lobby {
                     return;
                 };
                 if let Some(player) = clients.get(&lobby_client_id){
-                    if !player.host {return}
+                    if !player.is_host() {return}
                 }
 
                 match phase {
@@ -241,6 +276,7 @@ impl Lobby {
                     PhaseType::Night => { settings.phase_times.night = time; }
                     PhaseType::Testimony => { settings.phase_times.testimony = time; }
                     PhaseType::Nomination => { settings.phase_times.nomination = time; }
+                    PhaseType::Recess => { }
                 };
                 
                 self.send_to_all(ToClientPacket::PhaseTime { phase, time });
@@ -251,7 +287,7 @@ impl Lobby {
                     return;
                 };
                 if let Some(player) = clients.get(&lobby_client_id){
-                    if !player.host {return}
+                    if !player.is_host() {return}
                 }
 
                 settings.phase_times = phase_time_settings.clone();
@@ -264,7 +300,7 @@ impl Lobby {
                     return;
                 };
                 if let Some(player) = clients.get(&lobby_client_id){
-                    if !player.host {return}
+                    if !player.is_host() {return}
                 }
 
                 settings.role_list = role_list;
@@ -280,7 +316,7 @@ impl Lobby {
                     return;
                 };
                 if let Some(player) = clients.get(&lobby_client_id){
-                    if !player.host {return}
+                    if !player.is_host() {return}
                 }
 
                 if settings.role_list.0.len() <= index as usize {return}
@@ -295,7 +331,7 @@ impl Lobby {
                     return;
                 };
                 if let Some(player) = clients.get(&lobby_client_id){
-                    if !player.host {return}
+                    if !player.is_host() {return}
                 }
 
                 settings.role_list.simplify();
@@ -314,6 +350,16 @@ impl Lobby {
                 let roles = settings.enabled_roles.clone().into_iter().collect();
                 self.send_to_all(ToClientPacket::EnabledRoles { roles });
             }
+            ToServerPacket::SetEnabledModifiers {modifiers } => {
+                let LobbyState::Lobby{ settings, .. } = &mut self.lobby_state else {
+                    log!(error "Lobby"; "{} {}", "Can't modify game settings outside of the lobby menu", lobby_client_id);
+                    return;
+                };
+
+                settings.enabled_modifiers = modifiers.into_iter().collect();
+                let modifiers = settings.enabled_modifiers.clone().into_iter().collect();
+                self.send_to_all(ToClientPacket::EnabledModifiers { modifiers });
+            }
             ToServerPacket::Leave => {
                 self.remove_player(lobby_client_id);
             }
@@ -326,7 +372,7 @@ impl Lobby {
                     if !player.host {return;}
                 }
 
-                let mut new_clients = HashMap::new();
+                let mut new_clients = VecMap::new();
                 for (lobby_client_id, game_client) in clients.clone().into_iter() {
                     new_clients.insert(lobby_client_id, LobbyClient::new_from_game_client(&game, game_client));
                 }
@@ -341,7 +387,7 @@ impl Lobby {
 
                 match &self.lobby_state {
                     LobbyState::Lobby { clients, settings } => {
-                        for (id, client) in clients {
+                        for (id, client) in clients.iter() {
                             client.send(ToClientPacket::YourId { player_id: id.clone() });
                             Self::send_settings(client, settings, self.name.clone());
                         }
@@ -355,15 +401,18 @@ impl Lobby {
                     log!(error "Lobby"; "{} {:?}", "ToServerPacket not implemented for lobby was sent during lobby: ", incoming_packet);
                     return;
                 };
-                
-                match clients[&lobby_client_id].client_location {
-                    GameClientLocation::Player(player_index) => {
-                        game.on_client_message(player_index, incoming_packet)
-                    }
-                    GameClientLocation::Spectator(spectator_index) => {
-                        game.on_spectator_message(spectator_index, incoming_packet)
+
+                if let Some(client) = clients.get(&lobby_client_id) {
+                    match client.client_location {
+                        GameClientLocation::Player(player_index) => {
+                            game.on_client_message(player_index, incoming_packet)
+                        }
+                        GameClientLocation::Spectator(spectator_index) => {
+                            game.on_spectator_message(spectator_index, incoming_packet)
+                        }
                     }
                 }
+                
             }
         }
     }

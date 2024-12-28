@@ -27,9 +27,7 @@ impl PlayerReference{
     pub fn on_phase_start(&self, game: &mut Game, phase: PhaseType){
         match phase {
             PhaseType::Briefing => {},
-            PhaseType::Obituary => {
-                self.set_night_jailed(game, false);
-            },
+            PhaseType::Obituary => {},
             PhaseType::Discussion => {},
             PhaseType::Nomination => {
                 if self.night_silenced(game) {
@@ -62,9 +60,8 @@ impl PlayerReference{
                 self.set_night_upgraded_defense(game, None);
                 self.set_night_appeared_visits(game, None);
                 self.set_night_framed(game, false);
+                self.set_night_convert_role_to(game, None);
                 self.set_night_silenced(game, false);
-                self.set_selection(game, vec![]);
-                self.set_night_visits(game, vec![]);
                 self.set_night_messages(game, vec![]);
                 
                 self.set_night_grave_role(game, None);
@@ -79,7 +76,8 @@ impl PlayerReference{
                     
                     self.set_night_grave_killers(game, vec![GraveKiller::Quit]);
                 }
-            }
+            },
+            PhaseType::Recess => {}
         }
 
         self.set_fast_forward_vote(game, false);

@@ -1,7 +1,7 @@
 use crate::game::{
-    components::{cult::Cult, love_linked::LoveLinked, mafia::Mafia}, 
-    player::PlayerReference, 
-    Game
+    components::{cult::Cult, love_linked::LoveLinked, mafia::Mafia, syndicate_gun_item::SyndicateGunItem}, 
+    modifiers::Modifiers,
+    player::PlayerReference, Game
 };
 
 #[must_use = "Event must be invoked"]
@@ -20,6 +20,8 @@ impl OnAnyDeath{
         Mafia::on_any_death(game, self.dead_player);
         Cult::on_any_death(game, self.dead_player);
         LoveLinked::on_any_death(game, self.dead_player);
+        Modifiers::on_any_death(game, self.dead_player);
+        SyndicateGunItem::on_any_death(game, self.dead_player);
 
         game.on_any_death(self.dead_player);
     }

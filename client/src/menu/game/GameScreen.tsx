@@ -8,24 +8,35 @@ import GAME_MANAGER, { modulus } from "../..";
 import WikiMenu from "./gameScreenContent/WikiMenu";
 import "../../index.css";
 import "./gameScreen.css";
-import RoleSpecificMenu from "./gameScreenContent/RoleSpecificMenu";
+import AbilityMenu from "./gameScreenContent/AbilityMenu/AbilityMenu";
 import { addSwipeEventListener, MobileContext, removeSwipeEventListener } from "../Anchor";
 import StyledText from "../../components/StyledText";
 import { WikiArticleLink } from "../../components/WikiArticleLink";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import translate from "../../game/lang";
-import { roleSpecificMenuType } from "../Settings";
-import { useGameState, usePlayerState } from "../../components/useHooks";
+import { useGameState } from "../../components/useHooks";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
-    GraveyardMenu = "GraveyardMenu",
-    PlayerListMenu = "PlayerListMenu",
+    RoleSpecificMenu = "RoleSpecificMenu",
     WillMenu = "WillMenu",
+    PlayerListMenu = "PlayerListMenu",
+    GraveyardMenu = "GraveyardMenu",
     WikiMenu = "WikiMenu",
-    RoleSpecificMenu = "RoleSpecificMenu"
 }
+
+export const MENU_ELEMENTS = {
+    [ContentMenu.ChatMenu]: ChatMenu,
+    [ContentMenu.PlayerListMenu]: PlayerListMenu,
+    [ContentMenu.RoleSpecificMenu]: AbilityMenu,
+    [ContentMenu.WillMenu]: WillMenu,
+    [ContentMenu.GraveyardMenu]: GraveyardMenu,
+    [ContentMenu.WikiMenu]: WikiMenu
+}
+
+const ALL_CONTENT_MENUS = Object.values(ContentMenu);
 
 export interface MenuController {
     closeOrOpenMenu(menu: ContentMenu): void;
@@ -74,7 +85,7 @@ export function useMenuController<C extends Partial<Record<ContentMenu, boolean>
             const newMenus = setAndGetContentMenus(menu, open)
 
             const menusOpen = getMenuController().menusOpen();
-            if(menusOpen.length + 1 > maxContent && menusOpen.length > 0){
+            if(menusOpen.length + 1 > maxContent && menusOpen.length > 0 && open) {
                 const menuToClose = menusOpen[menusOpen.length - 1];
                 newMenus[menuToClose] = false;
             }
@@ -132,36 +143,20 @@ const MenuControllerContext = createContext<MenuController | undefined>(undefine
 export { MenuControllerContext }
 
 export default function GameScreen(): ReactElement {
-    const roleState = usePlayerState(
-        playerState => playerState.roleState,
-        ["yourRoleState"]
-    )!;
     const mobile = useContext(MobileContext)!;
 
     const menuController = useMenuController(
         mobile ? 2 : Infinity, 
         {
-            ChatMenu: true,
-            PlayerListMenu: true,
-            WillMenu: !mobile,
-            GraveyardMenu: !mobile,
             WikiMenu: false,
-            RoleSpecificMenu: !mobile && roleSpecificMenuType(roleState.type) === "standalone"
+            GraveyardMenu: !mobile,
+            PlayerListMenu: true,
+            ChatMenu: true,
+            WillMenu: !mobile,
+            RoleSpecificMenu: !mobile,
         },
         () => MENU_CONTROLLER_HOLDER.controller!,
         menuController => MENU_CONTROLLER_HOLDER.controller = menuController
-    );
-    
-    usePlayerState(
-        playerState => {
-            if (
-                roleSpecificMenuType(playerState.roleState.type) !== "standalone" 
-                && menuController.menuOpen(ContentMenu.RoleSpecificMenu)
-            ) {
-                menuController.closeMenu(ContentMenu.RoleSpecificMenu)
-            }
-        },
-        ["yourRoleState"]
     );
 
     const chatMenuNotification = useGameState(
@@ -171,66 +166,76 @@ export default function GameScreen(): ReactElement {
 
     useEffect(() => {
         const swipeEventListener = (right: boolean) => {
-            const allowedToOpenRoleSpecific = roleSpecificMenuType(roleState.type) === "standalone"
-    
-            //close this menu and open the next one
-            const menusOpen = menuController.menusOpen();
-            const lastOpenMenu = menusOpen[menusOpen.length - 1];
-
-            const ALL_MENUS: Readonly<ContentMenu[]> = [
-                ContentMenu.ChatMenu,
-                ContentMenu.PlayerListMenu,
-                ContentMenu.WillMenu,
-                ContentMenu.RoleSpecificMenu,
-                ContentMenu.GraveyardMenu,
-                ContentMenu.WikiMenu
-            ];
-    
-            const indexOfLastOpenMenu = ALL_MENUS.indexOf(lastOpenMenu);
-    
-            let nextIndex = modulus(
-                indexOfLastOpenMenu + (right?-1:1), 
-                ALL_MENUS.length
-            );
-    
-            if(
-                (nextIndex === ALL_MENUS.indexOf(ContentMenu.RoleSpecificMenu) && !allowedToOpenRoleSpecific) ||
-                (menuController.menusOpen().includes(ALL_MENUS[nextIndex]))
-            ){
-                nextIndex = modulus(
-                    nextIndex + (right?-1:1),
-                    ALL_MENUS.length
-                );
-            }
+            // Close the furthest right menu, open the next one to the left or right
             
-            menuController.closeMenu(lastOpenMenu);
-            menuController.openMenu(ALL_MENUS[nextIndex]);
+            const menusOpen = menuController.menusOpen();
+            if (menusOpen.length === 0) {
+                return;
+            }
+
+            const allowedMenus = ALL_CONTENT_MENUS.filter(menu => { 
+                return !menusOpen.includes(menu)
+            });
+
+            const rightMostMenu = menusOpen[menusOpen.length - 1];
+            const index = ALL_CONTENT_MENUS.indexOf(rightMostMenu);
+            let nextMenu = ALL_CONTENT_MENUS[modulus(index + (right ? -1 : 1), ALL_CONTENT_MENUS.length)];
+            while (!allowedMenus.includes(nextMenu)) {
+                nextMenu = ALL_CONTENT_MENUS[modulus(ALL_CONTENT_MENUS.indexOf(nextMenu) + (right ? -1 : 1), ALL_CONTENT_MENUS.length)];
+            }
+
+            menuController.closeMenu(rightMostMenu);
+            menuController.openMenu(nextMenu);
         }
 
         addSwipeEventListener(swipeEventListener);
         return () => removeSwipeEventListener(swipeEventListener);
     })
 
-    const allMenusClosed = menuController.menusOpen().length === 0;
-
     return <MenuControllerContext.Provider value={menuController}>
         <div className="game-screen">
             <div className="header">
                 <HeaderMenu chatMenuNotification={chatMenuNotification}/>
             </div>
-            <div className="content">
-                {menuController.menuOpen(ContentMenu.ChatMenu) && <ChatMenu/>}
-                {menuController.menuOpen(ContentMenu.PlayerListMenu) && <PlayerListMenu/>}
-                {menuController.menuOpen(ContentMenu.WillMenu) && <WillMenu/>}
-                {menuController.menuOpen(ContentMenu.RoleSpecificMenu) && <RoleSpecificMenu/>}
-                {menuController.menuOpen(ContentMenu.GraveyardMenu) && <GraveyardMenu/>}
-                {menuController.menuOpen(ContentMenu.WikiMenu) && <WikiMenu/>}
-                {allMenusClosed && <div className="no-content">
-                    {translate("menu.gameScreen.noContent")}
-                </div>}
-            </div>
+            <GameScreenMenus />
         </div>
     </MenuControllerContext.Provider>
+}
+
+export function GameScreenMenus(): ReactElement {
+    const menuController = useContext(MenuControllerContext)!;
+    const minSize = 10; // Percentage
+    const mobile = useContext(MobileContext)!;
+
+    // These don't add up to 100, but the panel group will fix it
+    const defaultSizes = {
+        [ContentMenu.ChatMenu]: 35,
+        [ContentMenu.RoleSpecificMenu]: 15,
+        [ContentMenu.WillMenu]: 15,
+        [ContentMenu.PlayerListMenu]: 25,
+        [ContentMenu.GraveyardMenu]: 10,
+        [ContentMenu.WikiMenu]: 15,
+    }
+
+    return <PanelGroup direction="horizontal" className="content">
+        {menuController.menusOpen().map((menu, index, menusOpen) => {
+            const MenuElement = MENU_ELEMENTS[menu];
+            return <>
+                <Panel
+                    className="panel"
+                    minSize={minSize}
+                    defaultSize={mobile===false?defaultSizes[menu]:undefined}
+                    key={index}
+                    >
+                    <MenuElement />
+                </Panel>
+                {menusOpen.some((_, i) => i > index) && <PanelResizeHandle key={index+".handle"} className="panel-handle"/>}
+            </>
+        })}
+        {menuController.menusOpen().length === 0 && <Panel><div className="no-content">
+            {translate("menu.gameScreen.noContent")}
+        </div></Panel>}
+    </PanelGroup>
 }
 
 export function ContentTab(props: Readonly<{

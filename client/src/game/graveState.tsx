@@ -1,5 +1,5 @@
 import { PlayerIndex } from "./gameState.d";
-import { Faction } from "./roleListState.d";
+import { RoleSet } from "./roleListState.d";
 import { Role } from "./roleState.d";
 
 export type Grave = {
@@ -21,14 +21,14 @@ export type GraveInformation ={
 }
 
 export type GraveDeathCause = {
-    type: "execution" | "leftTown" | "brokenHeart"
+    type: "execution" | "leftTown" | "brokenHeart" | "none"
 } | {
     type: "killers"
     killers: GraveKiller[]
 }
 export type GraveKiller = {
-    type: "faction"
-    value: Faction
+    type: "roleSet"
+    value: RoleSet
 } | {
     type: "suicide"
 } | {

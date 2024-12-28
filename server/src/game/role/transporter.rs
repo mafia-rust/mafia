@@ -1,25 +1,28 @@
 use serde::Serialize;
 
-use crate::game::chat::ChatMessageVariant;
+use crate::game::components::detained::Detained;
+use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
-use crate::game::role_list::Faction;
+
 use crate::game::visit::Visit;
 use crate::game::Game;
+use crate::vec_set;
 
-use super::{Priority, RoleStateImpl, Role};
+use super::{common_role, AvailableAbilitySelection, ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Transporter;
 
-pub(super) const FACTION: Faction = Faction::Town;
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: u8 = 0;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Transporter {
+    type ClientRoleState = Transporter;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Transporter {return;}
     
-        let transporter_visits = actor_ref.night_visits(game).clone();
+        let transporter_visits = actor_ref.untagged_night_visits_cloned(game).clone();
         let Some(first_visit) = transporter_visits.get(0) else {return};
         let Some(second_visit) = transporter_visits.get(1) else {return};
         
@@ -31,7 +34,8 @@ impl RoleStateImpl for Transporter {
             if player_ref == actor_ref {continue;}
             if player_ref.role(game) == Role::Transporter {continue;}
 
-            let new_visits = player_ref.night_visits(game).clone().into_iter().map(|mut v|{
+
+            let new_visits = player_ref.all_night_visits_cloned(game).clone().into_iter().map(|mut v|{
                 if v.target == first_visit.target {
                     v.target = second_visit.target;
                 } else if v.target == second_visit.target{
@@ -42,27 +46,36 @@ impl RoleStateImpl for Transporter {
             player_ref.set_night_visits(game, new_visits);
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        let chosen_targets = actor_ref.selection(game);
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
 
-        !actor_ref.night_jailed(game) &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game) && 
-        ((
-            chosen_targets.is_empty()
-        ) || (
-            chosen_targets.len() == 1 &&
-            Some(target_ref) != chosen_targets.first().copied()
-        ))
+        let available_players: vec_set::VecSet<PlayerReference> = PlayerReference::all_players(game)
+            .into_iter()
+            .filter(|p| p.alive(game))
+            .collect();
+
+        ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Transporter, 0),
+            AvailableAbilitySelection::new_two_player_option(
+                available_players.clone(), 
+                available_players,
+                false,
+                true
+            ),
+            super::AbilitySelection::new_two_player_option(None),
+            !actor_ref.alive(game) ||
+            Detained::is_detained(game, actor_ref),
+            Some(crate::game::phase::PhaseType::Obituary),
+            false,
+            vec_set![actor_ref]
+        )
     }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        if target_refs.len() == 2 {
-            vec![
-                Visit{ target: target_refs[0], attack: false },
-                Visit{ target: target_refs[1], attack: false }
-            ]
-        } else {
-            Vec::new()
-        }
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
+        common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Transporter, 0),
+            false
+        )
     }
 }

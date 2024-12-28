@@ -1,16 +1,16 @@
 import { ReactElement } from "react";
-import { Role } from "../game/roleState.d";
-import ROLES from "../resources/roles.json";
+import { Role, roleJsonData } from "../game/roleState.d";
 import React from "react";
 import translate, { langText, translateChecked } from "../game/lang";
 import StyledText, { DUMMY_NAMES_KEYWORD_DATA, DUMMY_NAMES_SENDER_KEYWORD_DATA, StyledTextProps } from "./StyledText";
-import { FACTIONS, ROLE_SETS, getRolesFromOutlineOption, getRolesFromRoleSet } from "../game/roleListState.d";
+import { ROLE_SETS, getRolesFromRoleSet } from "../game/roleListState.d";
 import ChatElement, { ChatMessageVariant } from "./ChatMessage";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { GeneratedArticle, WikiArticleLink } from "./WikiArticleLink";
 import "./wiki.css";
 import { replaceMentions } from "..";
 import { useLobbyOrGameState } from "./useHooks";
+import DetailsSummary from "./DetailsSummary";
 
 function WikiStyledText(props: Omit<StyledTextProps, 'markdown' | 'playerKeywordData'>): ReactElement {
     return <StyledText {...props} markdown={true} playerKeywordData={DUMMY_NAMES_KEYWORD_DATA} />
@@ -25,20 +25,20 @@ export default function WikiArticle(props: {
     switch (path[0]) {
         case "role":
             const role = path[1] as Role;
-            const roleData = ROLES[role];
+            const roleData = roleJsonData()[role];
             const chatMessages = roleData.chatMessages as ChatMessageVariant[];
 
             return <section className="wiki-article">
                 <div>
                     <WikiStyledText>
                         {"# "+translate("role."+role+".name")+"\n"}
-                        {roleData.roleSet!==null?("### "+translateChecked(roleData.roleSet)+"\n"):"### "+translate(roleData.faction)+"\n"}
-                    </WikiStyledText>
-                </div>
-                <div>
-                    <WikiStyledText>
+                        {"### "+roleData.roleSets.map((roleSet)=>{return translate(roleSet)}).join(" | ")+"\n"}
+
+                        {"### "+translate("wiki.article.role.reminder")+"\n"}
+                        {replaceMentions(translateChecked("wiki.article.role."+role+".reminder") ?? translate("wiki.article.role.noReminder"), DUMMY_NAMES)+"\n"}
+
                         {"### "+translate("wiki.article.role.guide")+"\n"}
-                        {replaceMentions(translateChecked("wiki.article.role."+role+".guide") ?? translate("wiki.article.role.noGuide"), DUMMY_NAMES)}
+                        {replaceMentions(translateChecked("wiki.article.role."+role+".guide") ?? translate("wiki.article.role.noGuide"), DUMMY_NAMES)+"\n"}
                     </WikiStyledText>
                 </div>
                 <div>
@@ -76,25 +76,24 @@ export default function WikiArticle(props: {
                         />
                     )}
                 </div>}
-                <details>
-                    <summary>{translate("wiki.article.role.details")}</summary>
-                    <div>
-                        <WikiStyledText>
-                            {"### "+translate("wiki.article.role.abilities")+"\n"}
-                            {(translateChecked("wiki.article.role."+role+".abilities") ?? translate("wiki.article.role.noAbilities"))+"\n"}
+                <DetailsSummary 
+                    summary={translate("wiki.article.role.details")}
+                >
+                    <WikiStyledText>
+                        {"### "+translate("wiki.article.role.abilities")+"\n"}
+                        {(translateChecked("wiki.article.role."+role+".abilities") ?? translate("wiki.article.role.noAbilities"))+"\n"}
 
-                            {"### "+translate("wiki.article.role.attributes")+"\n"}
-                            {(translateChecked("wiki.article.role."+role+".attributes") ?? translate("wiki.article.role.noAttributes"))+"\n"}
+                        {"### "+translate("wiki.article.role.attributes")+"\n"}
+                        {(translateChecked("wiki.article.role."+role+".attributes") ?? translate("wiki.article.role.noAttributes"))+"\n"}
 
-                            {"### "+translate("wiki.article.role.extra")+"\n"}
-                            {(translateChecked("wiki.article.role."+role+".extra") ?? translate("wiki.article.role.noExtra"))+"\n"}
+                        {"### "+translate("wiki.article.role.extra")+"\n"}
+                        {(translateChecked("wiki.article.role."+role+".extra") ?? translate("wiki.article.role.noExtra"))+"\n"}
 
-                            {"### "+translate("wiki.article.standard.roleLimit.title")+": "+(roleData.maxCount === null ? translate("none") : roleData.maxCount)+"\n"}
-                            {"### "+translate("defense")+": "+translate("defense."+(roleData.armor ? "1" : "0"))+"\n"}
-                            {"### "+translate("wiki.article.standard.aura.title")+": "+(roleData.aura?translate(roleData.aura+"Aura"):translate("none"))+"\n"}
-                        </WikiStyledText>
-                    </div>
-                </details>
+                        {"### "+translate("wiki.article.standard.roleLimit.title")+": "+(roleData.maxCount === null ? translate("none") : roleData.maxCount)+"\n"}
+                        {"### "+translate("defense")+": "+translate("defense."+(roleData.armor ? "1" : "0"))+"\n"}
+                        {"### "+translate("wiki.article.standard.aura.title")+": "+(roleData.aura?translate(roleData.aura+"Aura"):translate("none"))+"\n"}
+                    </WikiStyledText>
+                </DetailsSummary>
             </section>;
         case "standard":
             return <section className="wiki-article">
@@ -160,40 +159,10 @@ function RoleSetArticle(): ReactElement {
         </blockquote>);
     }
     mainElements.push(
-        <section key="title"><WikiStyledText>
-            {"# "+translate("other")}
-        </WikiStyledText></section>
+        <WikiStyledText key={"extra"}>
+            {translate("wiki.article.generated.roleSet.extra", Object.keys(roleJsonData()).length)}
+        </WikiStyledText>
     );
-    for(let faction of FACTIONS){
-        
-        let elements = getRolesFromOutlineOption({
-            type: "faction",
-            faction: faction,
-        })
-        .filter((role)=>ROLES[role].roleSet === null)
-        .map((role)=>{
-
-            let className = "";
-            if(enabledRoles !== undefined && !enabledRoles.includes(role)) {
-                className = "keyword-disabled";
-            }
-
-            return <button key={role} className={className}>
-                <StyledText>
-                    {translate("role."+role+".name")}
-                </StyledText>
-            </button>
-        });
-        
-        if(elements.length !== 0){
-            mainElements.push(<section key={faction+"title"}><WikiStyledText>
-                {"### "+translate(faction)}
-            </WikiStyledText></section>);
-            mainElements.push(<blockquote key={faction}>
-                {elements}
-            </blockquote>);
-        }
-    }
 
     return <div>{mainElements}</div>;
 }
@@ -218,14 +187,14 @@ export function getSearchStrings(article: WikiArticleLink): string[]{
         case "role":
 
             const role = path[1] as Role;
-            const roleData = ROLES[role];
+            const roleData = roleJsonData()[role];
             let out = [];
 
             out.push(translate("role."+role+".name"));
-            out.push(translate(roleData.faction));
 
-            if(roleData.roleSet!==null)
-                out.push(translate(roleData.roleSet));
+            for(let roleSet of roleData.roleSets){
+                out.push(translate(roleSet));
+            }
 
             let guide = translateChecked("wiki.article.role."+role+".guide");
             if(guide)

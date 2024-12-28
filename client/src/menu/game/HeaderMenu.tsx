@@ -9,15 +9,25 @@ import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import { useGameState, usePlayerState } from "../../components/useHooks";
 import { MobileContext } from "../Anchor";
-import { roleSpecificMenuType } from "../Settings";
 
 
 export default function HeaderMenu(props: Readonly<{
     chatMenuNotification: boolean
 }>): ReactElement {
     const mobile = useContext(MobileContext)!;
+    
+    const phaseState = useGameState(
+        gameState => gameState.phaseState,
+        ["phase", "playerOnTrial"]
+    )!
 
-    return <div className="header-menu">
+    const backgroundStyle = 
+        phaseState.type === "briefing" ? "background-none" :
+        (phaseState.type === "night" || phaseState.type === "obituary") ? "background-night" : 
+        "background-day";
+
+
+    return <div className={"header-menu " + backgroundStyle}>
         {!(GAME_MANAGER.getMySpectator() && !GAME_MANAGER.getMyHost()) && <FastForwardButton />}
         <Information />
         {!(GAME_MANAGER.getMySpectator() && !mobile) && <MenuButtons chatMenuNotification={props.chatMenuNotification}/>}
@@ -31,7 +41,10 @@ function Timer(): ReactElement {
         ["phaseTimeLeft", "tick"]
     )!
     const phaseLength = useGameState(
-        gameState => gameState.phaseTimes[gameState.phaseState.type],
+        gameState => {
+            if (gameState.phaseState.type === "recess") return 0;
+            return gameState.phaseTimes[gameState.phaseState.type]
+        },
         ["phase"]
     )!
 
@@ -77,18 +90,38 @@ function Information(): ReactElement {
         return myIndex === undefined ? undefined : players[myIndex]?.toString()
     }, [myIndex, players])
 
-    return <div className="information">
-        <div>
-            <h3>
-                <div>
-                    {translate("phase."+phaseState.type)} {dayNumber}⏳{Math.floor(timeLeftMs/1000)}
-                </div>
-            </h3>
-            {GAME_MANAGER.getMySpectator() 
-                || <StyledText>
-                    {myName + " (" + translate("role."+(roleState!.type)+".name") + ")"}
-                </StyledText>
-            }
+
+    const timeLeftText = useMemo(() => {
+        if (timeLeftMs >= 1000000000000000000) {
+            return "∞"
+        } else {
+            return Math.floor(timeLeftMs/1000);
+        }
+    }, [timeLeftMs])
+
+    const dayNumberText = useMemo(() => {
+        if (phaseState.type === "recess") {
+            return "";
+        } else {
+            return ` ${dayNumber}`;
+        }
+    }, [dayNumber, phaseState.type])
+    
+
+    return <div className="information"> 
+        <div className="my-information">
+            <div>
+                <h3>
+                    <div>
+                        {translate("phase."+phaseState.type)}{dayNumberText}⏳{timeLeftText}
+                    </div>
+                </h3>
+                {GAME_MANAGER.getMySpectator() 
+                    || <StyledText>
+                        {myName + " (" + translate("role."+(roleState!.type)+".name") + ")"}
+                    </StyledText>
+                }
+            </div>
         </div>
         <PhaseSpecificInformation players={players} myIndex={myIndex} phaseState={phaseState}/>
     </div>
@@ -99,6 +132,10 @@ export function PhaseSpecificInformation(props: Readonly<{
     players: Player[],
     myIndex: number | undefined
 }>): ReactElement | null {
+    const enabledModifiers = useGameState(
+        gameState => gameState.enabledModifiers,
+        ["enabledModifiers"]
+    )!
     if (
         props.phaseState.type === "testimony"
         || props.phaseState.type === "finalWords"
@@ -116,7 +153,13 @@ export function PhaseSpecificInformation(props: Readonly<{
                         } else if (!props.players[props.myIndex!].alive) {
                             return translate("judgement.cannotVote.dead");
                         } else {
-                            return (["guilty", "abstain", "innocent"] as const).map((verdict) => {
+                            return (["guilty", "abstain", "innocent"] as const)
+                                    .filter((verdict)=>{
+                                        if(enabledModifiers.includes("noAbstaining") && verdict === "abstain"){
+                                            return false;
+                                        }
+                                        return true
+                                    }).map((verdict) => {
                                 return <VerdictButton key={verdict} verdict={verdict}/>
                             })
                         }
@@ -146,22 +189,23 @@ function VerdictButton(props: Readonly<{ verdict: Verdict }>) {
     </Button>
 }
 
-function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactElement {
-    const roleState = usePlayerState(
-        clientState => clientState.roleState,
-        ["yourRoleState"]
-    )
-
+function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactElement | null {
     const menuController = useContext(MenuControllerContext)!;
 
     return <div className="menu-buttons">
-        <Button className="chat-menu-colors"
-            highlighted={menuController.menusOpen().includes(ContentMenu.ChatMenu)}
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.ChatMenu)}
+        <Button className="wiki-menu-colors"
+            highlighted={menuController.menusOpen().includes(ContentMenu.WikiMenu)} 
+            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.WikiMenu)}
         >
-            {props.chatMenuNotification && <div className="chat-notification highlighted">!</div>}
-            {translate("menu.chat.icon")}
-            <span className="mobile-hidden">{translate("menu.chat.title")}</span>
+            {translate("menu.wiki.icon")}
+            <span className="mobile-hidden">{translate("menu.wiki.title")}</span>
+        </Button>
+        <Button className="graveyard-menu-colors" 
+            highlighted={menuController.menusOpen().includes(ContentMenu.GraveyardMenu)}
+            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.GraveyardMenu)}
+        >
+            {translate("menu.gameMode.icon")}
+            <span className="mobile-hidden">{translate("menu.gameMode.title")}</span>
         </Button>
         <Button className="player-list-menu-colors"
             highlighted={menuController.menusOpen().includes(ContentMenu.PlayerListMenu)}
@@ -170,6 +214,14 @@ function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactE
             {translate("menu.playerList.icon")}
             <span className="mobile-hidden">{translate("menu.playerList.title")}</span>
         </Button>
+        <Button className="chat-menu-colors"
+            highlighted={menuController.menusOpen().includes(ContentMenu.ChatMenu)}
+            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.ChatMenu)}
+        >
+            {props.chatMenuNotification && <div className="chat-notification highlighted">!</div>}
+            {translate("menu.chat.icon")}
+            <span className="mobile-hidden">{translate("menu.chat.title")}</span>
+        </Button>
         {GAME_MANAGER.getMySpectator() || <Button className="will-menu-colors" 
             highlighted={menuController.menusOpen().includes(ContentMenu.WillMenu)}
             onClick={()=>menuController.closeOrOpenMenu(ContentMenu.WillMenu)}
@@ -177,29 +229,16 @@ function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactE
             {translate("menu.will.icon")}
             <span className="mobile-hidden">{translate("menu.will.title")}</span>
         </Button>}
-        {!GAME_MANAGER.getMySpectator() && roleSpecificMenuType(roleState!.type) === "standalone"
-            && <Button className="role-specific-colors" 
+        {!GAME_MANAGER.getMySpectator() && <Button className="role-specific-colors" 
                 highlighted={menuController.menusOpen().includes(ContentMenu.RoleSpecificMenu)}
                 onClick={()=>menuController.closeOrOpenMenu(ContentMenu.RoleSpecificMenu)}
             >
-                <StyledText noLinks={true}>
-                    {translate("role."+roleState?.type+".name")}
-                </StyledText>
-            </Button>}
-        <Button className="graveyard-menu-colors" 
-            highlighted={menuController.menusOpen().includes(ContentMenu.GraveyardMenu)}
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.GraveyardMenu)}
-        >
-            {translate("menu.graveyard.icon")}
-            <span className="mobile-hidden">{translate("menu.graveyard.title")}</span>
-        </Button>
-        {GAME_MANAGER.getMySpectator() || <Button className="wiki-menu-colors"
-            highlighted={menuController.menusOpen().includes(ContentMenu.WikiMenu)} 
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.WikiMenu)}
-        >
-            {translate("menu.wiki.icon")}
-            <span className="mobile-hidden">{translate("menu.wiki.title")}</span>
-        </Button>}
+                {translate("menu.ability.icon")}
+                <span className="mobile-hidden">
+                    {translate("menu.ability.title")}
+                </span>
+            </Button>
+        }
     </div>
 }
 

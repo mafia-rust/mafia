@@ -19,35 +19,28 @@
 }
 
 .game-screen .content {
-    display: flex;
-    flex-direction: row;
-
-    flex-grow: 1;
-    flex-shrink: 0;
-    flex-basis: auto;
-
     height: 1vh;
-    overflow-x: hidden;
 }
-.game-screen .content > div {
-    overflow-x: hidden;
-    resize: horizontal;
-
+.game-screen .content > div > div{
     height: 100%;
     max-height: 100%;
-
-    max-width: 100%;
-    width: 15%;
-    min-width: 10%;
     
     background-color: var(--background-color);
     border: .13rem solid var(--background-border-color);
     border-bottom-color: var(--background-border-shadow-color);
     border-right-color: var(--background-border-shadow-color);
+
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.game-screen .content > .panel-handle[data-resize-handle-state="hover"],
+.game-screen .content > .panel-handle[data-resize-handle-state="drag"] {
+    outline: .13rem solid var(--focus-outline-color);
 }
 
 @media only screen and (max-width: 600px) {
-    .game-screen .content > div {
+    .game-screen .content > div > div {
         width: 100%;
         resize: none;
     }
@@ -86,6 +79,9 @@
     margin: 0 .30rem;
     padding: 0;
     height: 1.2em;
+}
+.content-tab > button > .icon-small {
+    vertical-align: super;
 }
 .content-tab > .close {
     position: absolute;

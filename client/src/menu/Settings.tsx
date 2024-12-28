@@ -3,26 +3,28 @@ import "./settings.css";
 import translate, { Language, languageName, LANGUAGES, switchLanguage } from "../game/lang";
 import StyledText, { computeKeywordData } from "../components/StyledText";
 import Icon from "../components/Icon";
-import { loadSettings, RoleSpecificMenuType, saveSettings } from "../game/localStorage";
-import { MobileContext, AnchorControllerContext } from "./Anchor";
-import { Role } from "../game/roleState.d";
-import ROLES from "../resources/roles.json";
+import { loadSettingsParsed, RoleSpecificMenuType, saveSettings } from "../game/localStorage";
+import { MobileContext, AnchorControllerContext, ANCHOR_CONTROLLER } from "./Anchor";
+import { Role, roleJsonData } from "../game/roleState.d";
 import AudioController from "./AudioController";
-
-export function roleSpecificMenuType(role: Role): RoleSpecificMenuType | null {
-    return ROLES[role].roleSpecificMenu === false ? null : loadSettings().roleSpecificMenus[role]
-}
+import { getAllRoles } from "../game/roleListState.d";
+import CheckBox from "../components/CheckBox";
 
 export default function SettingsMenu(): ReactElement {
-    const [volume, setVolume] = useState<number>(loadSettings().volume);
-    const [roleSpecificMenuSettings, setRoleSpecificMenuSettings] = useState(loadSettings().roleSpecificMenus);
+    const [volume, setVolume] = useState<number>(loadSettingsParsed().volume);
+    const [fontSizeState, setFontSize] = useState<number>(loadSettingsParsed().fontSize);
+    const [defaultName, setDefaultName] = useState<string | null>(loadSettingsParsed().defaultName);
+    const [roleSpecificMenuSettings, setRoleSpecificMenuSettings] = useState(loadSettingsParsed().roleSpecificMenus);
+    const [accessibilityFontEnabled, setAccessibilityFontEnabled] = useState(loadSettingsParsed().accessibilityFont);
     const mobile = useContext(MobileContext)!;
     const anchorController = useContext(AnchorControllerContext)!;
 
     useEffect(() => {
         AudioController.setVolume(volume);
-    }, [volume]);
-    
+        ANCHOR_CONTROLLER?.setFontSize(fontSizeState);
+        ANCHOR_CONTROLLER?.setAccessibilityFontEnabled(accessibilityFontEnabled);
+    }, [volume, fontSizeState, accessibilityFontEnabled]);
+
     return <div className="settings-menu-card">
         <header>
             <h1>{translate("menu.settings.title")}</h1>
@@ -43,10 +45,23 @@ export default function SettingsMenu(): ReactElement {
                         }/>
                     </section>
                     <section className="standout">
+                        <h2>{translate("menu.settings.fontSize")}</h2>
+                        <input type="number" min="0.5" max="2" step="0.1"
+                            value={fontSizeState}
+                            onChange={(e)=>{
+                                if(e.target.value === "") return;
+                                const fontSize = parseFloat(e.target.value);
+                                if(fontSize < 0.5 || fontSize > 2) return;
+                                saveSettings({fontSize});
+                                setFontSize(fontSize);
+                            }}
+                        />
+                    </section>
+                    <section className="standout">
                         <h2><Icon size="small">language</Icon> {translate("menu.settings.language")}</h2>
                         <select 
                             name="lang-select" 
-                            defaultValue={loadSettings().language}
+                            defaultValue={loadSettingsParsed().language}
                             onChange={e => {
                                 const language = e.target.options[e.target.selectedIndex].value as Language;
                                 switchLanguage(language);
@@ -69,30 +84,63 @@ export default function SettingsMenu(): ReactElement {
                 </section>
             </div>
             <div>
-                {mobile && <h2>{translate("menu.settings.advanced")}</h2>}
-                <details className="standout role-specific-menu-settings">
-                    <summary>
-                        {translate("menu.settings.roleSpecificMenus")}
-                    </summary>
+                <section className="standout">
+                    <h2>{translate("menu.settings.defaultName")}</h2>
+                    <input type="text"
+                        value={defaultName===null?"":defaultName} 
+                        placeholder={translate("menu.lobby.field.namePlaceholder")}
+                        onChange={(e) => {
+                            const defaultName = e.target.value === "" ? null : e.target.value;
+                            saveSettings({defaultName});
+                            setDefaultName(defaultName);
+                        }
+                    }/>
+                </section>
+                <section className="standout">
+                    <h2>{translate("menu.settings.accessibility")}</h2>
+                    <label>
+                        {translate("menu.settings.font")}
+                        <CheckBox checked={accessibilityFontEnabled} onChange={(checked: boolean) => {
+                            setAccessibilityFontEnabled(checked);
+                            saveSettings({accessibilityFont: checked});
+                        }}></CheckBox>
+                    </label>
+                </section>
+                <section>
+                    {mobile && <h2>{translate("menu.settings.advanced")}</h2>}
+                    <details className="standout role-specific-menu-settings">
+                        <summary>
+                            {translate("menu.settings.roleSpecificMenus")}
+                        </summary>
+                        {
+                            Object.entries(roleJsonData()).map(([role, roleJsonData]) => {
+                                // const roleSpecificMenuExists = type.roleSpecificMenu;
+                                const menuType: RoleSpecificMenuType = roleSpecificMenuSettings.includes(role as Role) ? "standalone" : "playerList";
 
-                    {Object.entries(roleSpecificMenuSettings).map(([key, type]) => {
-                        return <div className="role-specific-menu-settings-selector" key={key} >
-                            <StyledText>{translate(`role.${key}.name`)}</StyledText>
-                            <select defaultValue={type} onChange={e => {
-                                const newRoleSpecificMenuSettings = {
-                                    ...roleSpecificMenuSettings, 
-                                    [key]: e.target.options[e.target.selectedIndex].value as RoleSpecificMenuType
-                                };
 
-                                setRoleSpecificMenuSettings(newRoleSpecificMenuSettings);
-                                saveSettings({ roleSpecificMenus: newRoleSpecificMenuSettings })
-                            }}>
-                                <option value="playerList">{translate("menu.settings.roleSpecificMenus.playerList")}</option>
-                                <option value="standalone">{translate("menu.settings.roleSpecificMenus.standalone")}</option>
-                            </select>
-                        </div>
-                    })}
-                </details>
+                                return <div className="role-specific-menu-settings-selector" key={role} >
+                                    <StyledText>{translate(`role.${role}.name`)}</StyledText>
+                                    <select defaultValue={menuType} onChange={e => {
+                                        let newRoleSpecificMenuSettings = [...roleSpecificMenuSettings].filter(x => 
+                                            getAllRoles().includes(x)
+                                        );
+
+                                        if(e.target.options[e.target.selectedIndex].value === "playerList") {
+                                            newRoleSpecificMenuSettings = [...newRoleSpecificMenuSettings].filter(x => x !== role);
+                                        } else {
+                                            newRoleSpecificMenuSettings = [...newRoleSpecificMenuSettings, role as Role];
+                                        }
+                                        setRoleSpecificMenuSettings(newRoleSpecificMenuSettings);
+                                        saveSettings({ roleSpecificMenus: newRoleSpecificMenuSettings });
+                                    }}>
+                                        <option value="playerList">{translate("menu.settings.roleSpecificMenus.playerList")}</option>
+                                        <option value="standalone">{translate("menu.settings.roleSpecificMenus.standalone")}</option>
+                                    </select>
+                                </div>
+                            })
+                        }
+                    </details>
+                </section>
             </div>
         </main>
     </div>

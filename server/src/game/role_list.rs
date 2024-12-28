@@ -7,32 +7,14 @@ use vec1::{
     Vec1
 };
 
-use super::role::Role;
+use crate::vec_set::VecSet;
 
-macro_rules! make_faction_enum {
-    ($($name:ident),*)=>{
-        #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord)]
-        #[serde(rename_all = "camelCase")]
-        pub enum Faction { $($name,)*}
-        impl Faction {
-            pub fn values() -> Vec<Self> {
-                return vec![$(Self::$name),*];
-            }
-        }
-    }
-}
-make_faction_enum!{
-    Mafia,
-    Cult,
-    Town,
-    Neutral,
-    Fiends
-}
+use super::role::Role;
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RoleList(pub Vec<RoleOutline>);
 impl RoleList {
-    pub fn create_random_roles(&self, enabled_roles: &HashSet<Role>) -> Option<Vec<Role>> {
+    pub fn create_random_roles(&self, enabled_roles: &VecSet<Role>) -> Option<Vec<Role>> {
         let mut taken_roles = Vec::new();
         for entry in self.0.iter(){
             if let Some(role) = entry.get_random_role(enabled_roles, &taken_roles){
@@ -76,7 +58,7 @@ impl RoleOutline{
                 Role::values(),
         }
     }
-    pub fn get_random_role(&self, enabled_roles: &HashSet<Role>, taken_roles: &[Role]) -> Option<Role> {
+    pub fn get_random_role(&self, enabled_roles: &VecSet<Role>, taken_roles: &[Role]) -> Option<Role> {
         let options = self.get_roles().into_iter().filter(|r|role_can_generate(*r, enabled_roles, taken_roles)).collect::<Vec<_>>();
         options.choose(&mut rand::thread_rng()).cloned()
     }
@@ -113,8 +95,6 @@ pub enum RoleOutlineOption {
     RoleSet{role_set: RoleSet},
     #[serde(rename_all = "camelCase")]
     Role{role: Role},
-    #[serde(rename_all = "camelCase")]
-    Faction{faction: Faction}
 }
 impl RoleOutlineOption{
     pub fn get_roles(&self) -> Vec<Role> {
@@ -123,9 +103,7 @@ impl RoleOutlineOption{
                 role_set.get_roles()
             }
             RoleOutlineOption::Role { role } => 
-                vec![*role],
-            RoleOutlineOption::Faction { faction } => 
-                Role::values().into_iter().filter(|r|r.faction() == *faction).collect()
+                vec![*role]
         }
     }
     pub fn is_subset(&self, other: &RoleOutlineOption) -> bool {
@@ -144,50 +122,104 @@ impl Ord for RoleOutlineOption {
 }
 
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum RoleSet {
-    TownSupport,
-    TownKilling,
-    TownProtective,
+    Town,
+    TownCommon,
     TownInvestigative,
+    TownProtective,
+    TownKilling,
+    TownSupport,
 
+    Mafia,
     MafiaSupport,
     MafiaKilling,
 
-    NeutralEvil,
+    Cult,
+    Fiends,
+    
+    Neutral,
+    Minions
 }
 impl RoleSet{
     pub fn get_roles(&self) -> Vec<Role> {
         match self {
-            RoleSet::TownSupport => 
-                vec![Role::Medium, Role::Retributionist, Role::Transporter, Role::Escort, Role::Mayor, Role::Journalist],
-            RoleSet::TownKilling => 
-                vec![Role::Vigilante, Role::Veteran, Role::Deputy, Role::Marksman],
-            RoleSet::TownProtective => 
-                vec![Role::Bodyguard, Role::Cop, Role::Doctor, Role::Bouncer, Role::Engineer, Role::Armorsmith],
+            RoleSet::Town => 
+                vec![
+                    Role::Jailor, Role::Villager, Role::Drunk
+                ].into_iter().chain(
+                    RoleSet::TownCommon.get_roles().into_iter()
+                ).collect(),
+            RoleSet::TownCommon => {
+                RoleSet::TownInvestigative.get_roles().into_iter()
+                .chain(
+                    RoleSet::TownProtective.get_roles().into_iter()
+                ).chain(
+                    RoleSet::TownKilling.get_roles().into_iter()
+                ).chain(
+                    RoleSet::TownSupport.get_roles().into_iter()
+                ).collect()
+            },
             RoleSet::TownInvestigative => 
                 vec![
                     Role::Detective, Role::Philosopher, Role::Gossip, 
                     Role::Psychic, Role::Auditor, Role::Spy, 
                     Role::Lookout, Role::Tracker, Role::Snoop,
-                    Role::FlowerGirl
+                    Role::TallyClerk
+                ],
+            RoleSet::TownProtective => 
+                vec![
+                    Role::Bodyguard, Role::Cop, Role::Doctor,
+                    Role::Bouncer, Role::Engineer, Role::Armorsmith,
+                    Role::Steward
+                ],
+            RoleSet::TownKilling => 
+                vec![
+                    Role::Vigilante, Role::Veteran, Role::Deputy, Role::Marksman, Role::Rabblerouser
+                ],
+            RoleSet::TownSupport => 
+                vec![Role::Medium, Role::Retributionist, Role::Transporter, Role::Escort, Role::Mayor, Role::Reporter],
+            RoleSet::Mafia =>
+                vec![
+                    Role::Goon, Role::MafiaSupportWildcard, Role::MafiaKillingWildcard
+                ].into_iter().chain(
+                    RoleSet::MafiaKilling.get_roles().into_iter()
+                ).chain(
+                    RoleSet::MafiaSupport.get_roles().into_iter()
+                ).collect(),
+            RoleSet::MafiaKilling => 
+                vec![
+                    Role::Godfather, Role::Counterfeiter,
+                    Role::Impostor, Role::Recruiter,
+                    Role::Mafioso
                 ],
             RoleSet::MafiaSupport => 
                 vec![
                     Role::Blackmailer, Role::Informant, Role::Hypnotist, Role::Consort,
-                    Role::Forger, Role::Framer, Role::Mortician, 
-                    Role::Witch, Role::Necromancer, Role::Cupid
+                    Role::Forger, Role::Framer, Role::Mortician, Role::Disguiser,
+                    Role::MafiaWitch, Role::Necromancer, Role::Cupid, Role::Reeducator,
+                    Role::Ambusher,
                 ],
-            RoleSet::MafiaKilling => 
+            RoleSet::Minions => 
                 vec![
-                    Role::Godfather, Role::Eros, Role::Counterfeiter, Role::Retrainer, Role::Mafioso
+                    Role::Witch, Role::Scarecrow, Role::Warper, Role::Kidnapper
                 ],
-            RoleSet::NeutralEvil => 
+            RoleSet::Neutral =>
                 vec![
-                    Role::Jester, Role::RabbleRouser, 
-                    Role::Politician, Role::Doomsayer, 
-                    Role::Minion, Role::Scarecrow
+                    Role::Jester, Role::Revolutionary, Role::Politician, Role::Doomsayer,
+                    Role::Martyr, Role::Chronokaiser
+                ],
+            RoleSet::Fiends =>
+                vec![
+                    Role::Arsonist, Role::Werewolf, Role::Ojo,
+                    Role::Puppeteer, Role::Pyrolisk, Role::Kira,
+                    Role::SerialKiller, Role::FiendsWildcard,
+                    Role::Spiral, Role::Warden
+                ],
+            RoleSet::Cult =>
+                vec![
+                    Role::Apostle, Role::Disciple, Role::Zealot
                 ],
         }
     }
@@ -195,7 +227,7 @@ impl RoleSet{
 
 
 
-pub fn role_can_generate(role: Role, enabled_roles: &HashSet<Role>, taken_roles: &[Role]) -> bool {
+pub fn role_can_generate(role: Role, enabled_roles: &VecSet<Role>, taken_roles: &[Role]) -> bool {
     if !enabled_roles.contains(&role) {
         return false;
     }

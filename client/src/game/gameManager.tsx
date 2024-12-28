@@ -11,11 +11,10 @@ import { RoleOutline } from "./roleListState.d";
 import translate from "./lang";
 import PlayMenu from "../menu/main/PlayMenu";
 import { createGameState, createLobbyState } from "./gameState";
-import { Role } from "./roleState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
-import { KiraGuess } from "../menu/game/gameScreenContent/RoleSpecificMenus/LargeKiraMenu";
 import AudioController from "../menu/AudioController";
+
 export function createGameManager(): GameManager {
 
     console.log("Game manager created.");
@@ -79,7 +78,8 @@ export function createGameManager(): GameManager {
                 GAME_MANAGER.state.roleList = lobbyState.roleList;
                 GAME_MANAGER.state.phaseTimes = lobbyState.phaseTimes;
                 GAME_MANAGER.state.enabledRoles = lobbyState.enabledRoles;
-                GAME_MANAGER.state.host = lobbyState.players.get(lobbyState.myId!)?.host ?? false;
+                GAME_MANAGER.state.host = lobbyState.players.get(lobbyState.myId!)?.ready === "host";
+                GAME_MANAGER.state.myId = lobbyState.myId
             }
         },
         setSpectatorGameState() {
@@ -111,7 +111,7 @@ export function createGameManager(): GameManager {
         getMyName() {
             if (gameManager.state.stateType === "lobby"){
                 let client = gameManager.state.players.get(gameManager.state.myId!);
-                if(client === undefined) return undefined;
+                if(client === undefined || client === null) return undefined;
                 if(client.clientType.type === "spectator") return undefined;
                 return client.clientType.name;
             }
@@ -121,7 +121,7 @@ export function createGameManager(): GameManager {
         },
         getMyHost() {
             if (gameManager.state.stateType === "lobby")
-                return gameManager.state.players.get(gameManager.state.myId!)?.host;
+                return gameManager.state.players.get(gameManager.state.myId!)?.ready === "host";
             if (gameManager.state.stateType === "game")
                 return gameManager.state.host;
             return undefined;
@@ -162,7 +162,10 @@ export function createGameManager(): GameManager {
         },
         updateChatFilter(filter: PlayerIndex | null) {
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
-                GAME_MANAGER.state.clientState.chatFilter = filter;
+                GAME_MANAGER.state.clientState.chatFilter = filter===null?null:{
+                    type: "playerNameInMessage",
+                    player: filter
+                };
                 GAME_MANAGER.invokeStateListeners("filterUpdate");
             }
         },
@@ -212,7 +215,7 @@ export function createGameManager(): GameManager {
                 this.server.sendPacket({ type: "leave" });
             }
             deleteReconnectData();
-            this.setOutsideLobbyState();
+            this.setDisconnectedState();
             ANCHOR_CONTROLLER?.setContent(<PlayMenu/>);
         },
 
@@ -306,6 +309,13 @@ export function createGameManager(): GameManager {
                 name: name
             });
         },
+
+        sendReadyUpPacket(ready) {
+            this.server.sendPacket({
+                type: "readyUp",
+                ready: ready
+            });
+        },
         sendSendLobbyMessagePacket(text) {
             this.server.sendPacket({
                 type: "sendLobbyMessage",
@@ -392,18 +402,6 @@ export function createGameManager(): GameManager {
                 playerIndex: voteeIndex
             });
         },
-        sendTargetPacket(targetIndexList) {
-            this.server.sendPacket({
-                type: "target",
-                playerIndexList: targetIndexList
-            });
-        },
-        sendDayTargetPacket(targetIndex) {
-            this.server.sendPacket({
-                type: "dayTarget",
-                playerIndex: targetIndex
-            });
-        },
 
         sendSaveWillPacket(will) {
             this.server.sendPacket({
@@ -429,10 +427,11 @@ export function createGameManager(): GameManager {
                 deathNote: notes.trim().length === 0 ? null : notes
             });
         },
-        sendSendMessagePacket(text) {
+        sendSendChatMessagePacket(text, block) {
             this.server.sendPacket({
-                type: "sendMessage",
-                text: text
+                type: "sendChatMessage",
+                text: text,
+                block: block
             });
         },
         sendSendWhisperPacket(playerIndex, text) {
@@ -448,41 +447,23 @@ export function createGameManager(): GameManager {
                 roles: roles
             });
         },
+        sendEnabledModifiersPacket(modifiers) {
+            this.server.sendPacket({
+                type: "setEnabledModifiers",
+                modifiers: modifiers
+            });
+        },
 
+        sendAbilityInput(input) {
+            this.server.sendPacket({
+                type: "abilityInput",
+                abilityInput: input
+            });
+        },
         sendSetDoomsayerGuess(guesses) {
             this.server.sendPacket({
                 type: "setDoomsayerGuess",
                 guesses: guesses
-            });
-        },
-        sendSetKiraGuess(guessesRecord) {
-
-            let guesses: [PlayerIndex, KiraGuess][] = [];
-            for(let [player, guess] of Object.entries(guessesRecord)){
-                guesses.push([Number.parseInt(player), guess]);
-            }
-
-            this.server.sendPacket({
-                type: "setKiraGuess",
-                guesses: guesses
-            });
-        },
-        sendSetWildcardRoleOutline(role) {
-            this.server.sendPacket({
-                type: "setWildcardRole",
-                role: role
-            });
-        },
-        sendSetJournalistJournal(journal: string) {
-            this.server.sendPacket({
-                type: "setJournalistJournal",
-                journal: journal,
-            });
-        },
-        sendSetJournalistJournalPublic(isPublic: boolean) {
-            this.server.sendPacket({
-                type: "setJournalistJournalPublic",
-                public: isPublic,
             });
         },
         sendSetConsortOptions(
@@ -506,49 +487,6 @@ export function createGameManager(): GameManager {
                 yourTargetWasJailedMessage: yourTargetWasJailedMessage ?? false
             });
         },
-        sendSetForgerWill(role: Role | null, will: string) {
-            this.server.sendPacket({
-                type: "setForgerWill",
-                role: role,
-                will: will
-            });
-        },
-        sendSetCounterfeiterAction(action: "forge" | "noForge") {
-            this.server.sendPacket({
-                type: "setCounterfeiterAction",
-                action: action
-            });
-        },
-        sendSetAuditorChosenOutline(index) {
-            this.server.sendPacket({
-                type: "setAuditorChosenOutline",
-                index: index
-            });
-        },
-        sendSetOjoAction(action) {
-            this.server.sendPacket({
-                type: "setOjoAction",
-                action: action
-            });
-        },
-        sendSetPuppeteerAction(action) {
-            this.server.sendPacket({
-                type: "setPuppeteerAction",
-                action: action
-            });
-        },
-        sendSetErosAction(action) {
-            this.server.sendPacket({
-                type: "setErosAction",
-                action: action
-            });
-        },
-        sendRetrainerRetrain(role) {
-            this.server.sendPacket({
-                type: "retrainerRetrain",
-                role: role
-            });
-        },
 
         sendVoteFastForwardPhase(fastForward: boolean) {
             this.server.sendPacket({
@@ -556,28 +494,12 @@ export function createGameManager(): GameManager {
                 fastForward: fastForward
             });
         },
-        sendForfeitVotePacket(forfeit: boolean) {
-            this.server.sendPacket({
-                type: "forfeitVote",
-                forfeit
-            });
-        },
 
         messageListener(serverMessage) {
             messageListener(serverMessage);
         },
 
-        lastPingTime: 0,
-        pingCalculation: 0,
         tick(timePassedMs) {
-            if (gameManager.state.stateType !== "disconnected") {
-                if(gameManager.lastPingTime + (30 * 1000) < Date.now()){
-                    gameManager.lastPingTime = Date.now();
-                    this.server.sendPacket({
-                        type: "ping"
-                    });
-                }
-            }
             if (gameManager.state.stateType === "game") {
                 if (!gameManager.state.ticking) return;
 
