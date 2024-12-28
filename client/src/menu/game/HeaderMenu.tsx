@@ -15,7 +15,6 @@ export default function HeaderMenu(props: Readonly<{
     chatMenuNotification: boolean
 }>): ReactElement {
     const mobile = useContext(MobileContext)!;
-    const menuController = useContext(MenuControllerContext)!;
     
     const phaseState = useGameState(
         gameState => gameState.phaseState,

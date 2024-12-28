@@ -25,7 +25,7 @@
     gap: 1rem;
     overflow-y: scroll;
     scrollbar-width: none;
-    align-items: start;
+    align-items: flex-start;
 }
 
 .settings-menu-card > main > div {

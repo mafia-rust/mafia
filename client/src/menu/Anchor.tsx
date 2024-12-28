@@ -3,7 +3,6 @@ import "../index.css";
 import "./anchor.css";
 import translate, { switchLanguage } from "../game/lang";
 import GlobalMenu from "./GlobalMenu";
-import SettingsMenu from './Settings';
 import { loadSettingsParsed } from "../game/localStorage";
 import LoadingScreen from "./LoadingScreen";
 import { Theme } from "..";

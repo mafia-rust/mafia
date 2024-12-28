@@ -3,14 +3,12 @@ import "./settings.css";
 import translate, { Language, languageName, LANGUAGES, switchLanguage } from "../game/lang";
 import StyledText, { computeKeywordData } from "../components/StyledText";
 import Icon from "../components/Icon";
-import { loadSettingsParsed, RoleSpecificMenuType, saveSettings } from "../game/localStorage";
-import { MobileContext, AnchorControllerContext, ANCHOR_CONTROLLER } from "./Anchor";
-import { Role, roleJsonData } from "../game/roleState.d";
+import { loadSettingsParsed, saveSettings } from "../game/localStorage";
+import { AnchorControllerContext, ANCHOR_CONTROLLER } from "./Anchor";
 import AudioController from "./AudioController";
-import { getAllRoles } from "../game/roleListState.d";
 import CheckBox from "../components/CheckBox";
 import { DragAndDrop } from "../components/DragAndDrop";
-import { MENU_ELEMENTS, MENU_THEMES, MENU_TRANSLATION_KEYS } from "./game/GameScreen";
+import { MENU_THEMES, MENU_TRANSLATION_KEYS } from "./game/GameScreen";
 
 export default function SettingsMenu(): ReactElement {
     const [volume, setVolume] = useState<number>(loadSettingsParsed().volume);
