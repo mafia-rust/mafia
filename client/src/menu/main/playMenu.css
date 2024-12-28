@@ -54,7 +54,7 @@
 }
 
 .play-menu-browser > header button {
-    padding: 0.5rem;
+    padding: 0.25rem;
 }
 
 .play-menu-browser > .play-menu-center {
@@ -66,29 +66,6 @@
     border-radius: 0.5rem;
 
     overflow: hidden;
-}
-
-@media only screen and (max-width: 600px) {
-    .play-menu {
-        padding: 0;
-    }
-    .play-menu-browser {
-        border-radius: 0;
-        padding: 2rem 0 1rem 0;
-        border: none;
-    }
-    .play-menu-browser > .play-menu-center {
-        border-left: none;
-        border-right: none;
-        border-radius: 0;
-    }
-    .play-menu-browser > header {
-        padding: 0 1rem 0 1rem;
-    }
-    
-    .play-menu-browser > footer {
-        padding: 0 1rem 0 1rem;
-    }
 }
 
 .play-menu-browser > .play-menu-center > table {

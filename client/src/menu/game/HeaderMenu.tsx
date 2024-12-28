@@ -191,15 +191,16 @@ function VerdictButton(props: Readonly<{ verdict: Verdict }>) {
 
 export function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactElement | null {
     const menuController = useContext(MenuControllerContext)!;
+    const mobile = useContext(MobileContext);
 
     return <div className="menu-buttons">
-        <Button className="wiki-menu-colors"
+        {!mobile && <Button className="wiki-menu-colors"
             highlighted={menuController.menusOpen().includes(ContentMenu.WikiMenu)} 
             onClick={()=>menuController.closeOrOpenMenu(ContentMenu.WikiMenu)}
         >
             {translate("menu.wiki.icon")}
             <span className="mobile-hidden">{translate("menu.wiki.title")}</span>
-        </Button>
+        </Button>}
         <Button className="graveyard-menu-colors" 
             highlighted={menuController.menusOpen().includes(ContentMenu.GraveyardMenu)}
             onClick={()=>menuController.closeOrOpenMenu(ContentMenu.GraveyardMenu)}

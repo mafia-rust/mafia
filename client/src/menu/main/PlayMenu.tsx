@@ -45,9 +45,9 @@ export default function PlayMenu(): ReactElement {
     return <div className="play-menu">
         <div className="play-menu-browser graveyard-menu-colors">
             <header>
-                <h1>
+                <h2>
                     {translate("menu.play.title")}
-                </h1>
+                </h2>
                 <div>
                     <button onClick={async () => {
                         setAnchorContent(<LoadingScreen type="host"/>);
