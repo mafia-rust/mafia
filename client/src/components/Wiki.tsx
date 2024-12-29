@@ -210,7 +210,7 @@ function WikiMainPage(props: Readonly<{
 
     return <div ref={ref} className="wiki-main-page">
         <Masonry columnsCount={columnCount}>
-            {Object.entries(articlePartitions.categories).map(([category, pages]) => {
+            {Object.entries(articlePartitions).filter(([category]) => category !== "uncategorized").map(([category, pages]) => {
                 return <div className="masonry-item" key={category}>
                     <PageCollection 
                         title={translate(`wiki.category.${category}`)}
@@ -222,36 +222,35 @@ function WikiMainPage(props: Readonly<{
             })}
         </Masonry>
         <PageCollection 
-            title={translate("standard")}
-            pages={articlePartitions.uncategorized}
+            title={translate(`wiki.category.uncategorized`)}
+            pages={articlePartitions["uncategorized"]}
             enabledRoles={props.enabledRoles}
             enabledModifiers={props.enabledModifiers}
         />
     </div>
 }
 
-export const WIKI_CATEGORIES = ["categories", "town", "mafia", "cult", "neutral", "minions", "fiends", "modifiers", "abilities"] as const;
+export const WIKI_CATEGORIES = [
+    "categories", "town", "mafia", "cult", "neutral", "minions", "fiends", "modifiers", "abilities", "strategies"
+] as const;
 export type WikiCategory = (typeof WIKI_CATEGORIES)[number]
 
-type WikiPagePartitions = {
-    categories: Record<WikiCategory, WikiArticleLink[]>,
-    uncategorized: WikiArticleLink[]
-}
+type WikiPagePartitions = Record<WikiCategory | "uncategorized", WikiArticleLink[]>;
 
 export function partitionWikiPages(
     wikiPages: WikiArticleLink[],
     enabledRoles: Role[],
     enabledModifiers: ModifierType[]
 ): WikiPagePartitions {
-    const partitions: WikiPagePartitions = {
-        categories: Object.fromEntries(WIKI_CATEGORIES.map(a => [a, []])) as any as Record<WikiCategory, WikiArticleLink[]>,
-        uncategorized: []
-    };
+    const partitions: WikiPagePartitions = Object.fromEntries([
+        ...WIKI_CATEGORIES.map(a => [a, []]),
+        ["uncategorized", []]
+    ]) as WikiPagePartitions;
 
     for (const wikiPage of wikiPages) {
         const articleType = wikiPage.split("/")[0];
 
-        let category: WikiCategory | null = null;
+        let category: WikiCategory | "uncategorized" | null = null;
 
         if (articleType === "role") {
             const role = wikiPage.split("/")[1] as Role;
@@ -262,31 +261,43 @@ export function partitionWikiPages(
         } else if (articleType === "category") {
             category = "categories"
         }
+
+        if (wikiPage === "standard/mafia") {
+            category = "mafia"
+        } else if (wikiPage === "standard/cult") {
+            category = "cult"
+        }
         
         if ([
             "standard/backup", "standard/block", "standard/convert", "standard/douse", "standard/forged",
             "standard/frame", "standard/haunt", "standard/hypnotize", "standard/interview", "standard/jail",
             "standard/loveLinked", "standard/marionette", "standard/obscured", "standard/possess", 
             "standard/protect", "standard/rampage", "standard/report", "standard/roleblock", "standard/silenced",
-            "standard/spiral", "standard/syndicateGunItem", "standard/tag", "standard/transport", "standard/ward",
+            "standard/spiral", "standard/syndicateGunItem", "standard/transport", "standard/ward",
+            "standard/forfeitVote", "standard/aura", "standard/fastForward", "standard/appearedVisit", 
+            "standard/defense", "standard/confused"
         ].includes(wikiPage)) {
             category = "abilities"
         }
-
-        if (category) {
-            partitions.categories[category].push(wikiPage)
-        } else {
-            partitions.uncategorized.push(wikiPage)
+        
+        if ([
+            "standard/claim", "standard/claimswap", "standard/vfr"
+        ].includes(wikiPage)) {
+            category = "strategies"
         }
+
+        if (category === null) {
+            category = "uncategorized"
+        }
+
+        partitions[category].push(wikiPage)
     }
 
     const sortFunction = getWikiPageSortFunction(enabledRoles, enabledModifiers);
 
-    for (const category of Object.keys(partitions.categories) as WikiCategory[]) {
-        partitions.categories[category]!.sort(sortFunction);
+    for (const category of Object.keys(partitions) as WikiCategory[]) {
+        partitions[category].sort(sortFunction);
     }
-
-    partitions.uncategorized.sort(sortFunction);
 
     return partitions;
 }

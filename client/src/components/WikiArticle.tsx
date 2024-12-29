@@ -143,7 +143,7 @@ function CategoryArticle(props: Readonly<{ category: WikiCategory }>): ReactElem
         </WikiStyledText>
         <PageCollection 
             title={title}
-            pages={partitionWikiPages(ARTICLES, enabledRoles, enabledModifiers).categories[props.category] ?? []}
+            pages={partitionWikiPages(ARTICLES, enabledRoles, enabledModifiers)[props.category] ?? []}
             enabledRoles={enabledRoles}
             enabledModifiers={enabledModifiers}
         />
