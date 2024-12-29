@@ -156,9 +156,7 @@ const ChatElement = React.memo((
                     }
                     defaultOpen={GAME_MANAGER.getMySpectator()}
                 >
-                    <div className="grave-message">
-                        <GraveComponent grave={message.variant.grave} playerNames={playerNames}/>
-                    </div>
+                    <GraveComponent grave={message.variant.grave} playerNames={playerNames}/>
                 </DetailsSummary>
             </div>;
     }

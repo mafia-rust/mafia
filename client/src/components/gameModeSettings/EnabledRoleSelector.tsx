@@ -13,12 +13,12 @@ import { GameModeContext } from "./GameModesEditor";
 
 
 
-export default function EnabledRoleSelector(props: {
+export default function EnabledRoleSelector(props: Readonly<{
     disabled?: boolean,
     onDisableRoles: (role: Role[]) => void,
     onEnableRoles: (role: Role[]) => void,
     onIncludeAll: () => void
-}): ReactElement {
+}>): ReactElement {
     const {enabledRoles} = useContext(GameModeContext);
 
     const [roleOutlineOption, setRoleOutlineOption] = useState<RoleOutlineOption>({ type: "roleSet", roleSet: "town" });
@@ -37,7 +37,7 @@ export default function EnabledRoleSelector(props: {
 
     return <div className="role-specific-colors selector-section">
         <h2>{translate("menu.lobby.enabledRoles")}</h2>
-        <div>
+        {(props.disabled !== true) && <div>
             <Button
                 onClick={props.onIncludeAll}
                 disabled={props.disabled}
@@ -63,7 +63,7 @@ export default function EnabledRoleSelector(props: {
                     onChange={setRoleOutlineOption}
                 />
             </div>
-        </div>
+        </div>}
 
         <EnabledRolesDisplay 
             enabledRoles={enabledRoles}
@@ -111,7 +111,7 @@ export function EnabledRolesDisplay(props: EnabledRolesDisplayProps): ReactEleme
                 >
                     {roleTextElement(role)}
                 </Button> 
-                : <div key={i} className={"disabled-role-element" + (!isEnabled(role) ? " disabled" : "")}>
+                : <div key={i} className={"placard" + (!isEnabled(role) ? " disabled" : "")}>
                     {roleTextElement(role)}
                 </div>
             

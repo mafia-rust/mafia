@@ -1,17 +1,19 @@
-import { ReactElement, useEffect, useMemo, useState } from "react";
+import React, { ReactElement, useEffect, useMemo, useState } from "react";
 import StyledText from "./StyledText";
 import { sanitizePlayerMessage } from "./ChatMessage";
 import GAME_MANAGER, { replaceMentions } from "..";
-import React from "react";
 import { Button } from "./Button";
 import Icon from "./Icon";
 import translate from "../game/lang";
 import "./textAreaDropdown.css";
+import DetailsSummary from "./DetailsSummary";
 
 export function TextDropdownArea(props: Readonly<{
     titleString: string,
     savedText: string,
+    defaultOpen?: boolean,
     open?: boolean,
+    dropdownArrow?: boolean,
     onAdd?: () => void,
     onSubtract?: () => void,
     onSave: (text: string) => void,
@@ -37,18 +39,21 @@ export function TextDropdownArea(props: Readonly<{
     }
 
     return (
-        <details className="text-area-dropdown" open={props.open ?? false}>
-            <summary>
-                <TextDropdownLabel
-                    titleString={props.titleString}
-                    savedText={props.savedText}
-                    field={field}
-                    onAdd={props.onAdd}
-                    onSubtract={props.onSubtract}
-                    onSave={save}
-                    cantPost={props.cantPost}
-                />
-            </summary>
+        <DetailsSummary
+            className="text-area-dropdown"
+            dropdownArrow={props.dropdownArrow}
+            defaultOpen={props.defaultOpen}
+            open={props.open}
+            summary={<TextDropdownLabel
+                titleString={props.titleString}
+                savedText={props.savedText}
+                field={field}
+                onAdd={props.onAdd}
+                onSubtract={props.onSubtract}
+                onSave={save}
+                cantPost={props.cantPost}
+            />}
+        >
             {unsaved ? "Unsaved" : ""}
             <PrettyTextArea
                 field={field}
@@ -56,7 +61,7 @@ export function TextDropdownArea(props: Readonly<{
                 save={save}
                 send={send}
             />
-        </details>
+        </DetailsSummary>
     )
 }
 
@@ -144,11 +149,12 @@ function PrettyTextArea(props: Readonly<{
     const [writing, setWriting] = useState<boolean>(false);
     const [hover, setHover] = useState<boolean>(false);
 
-    return <div
+    return <div className="pretty-text-area"
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
+        onTouchEnd={() => setWriting(true)}
         onFocus={() => setWriting(true)}
-        onBlur={() => setWriting(false)}
+        onBlur={() => {setWriting(false); setHover(false)}}
     >
         {(!writing && !hover)
             ? <div className="textarea">

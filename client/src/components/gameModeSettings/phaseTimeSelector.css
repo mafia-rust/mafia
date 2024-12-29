@@ -2,7 +2,6 @@
     max-height: 50vh;
     overflow-y: auto;
     display: flex;
-    gap: .25rem;
     flex-direction: row;
     flex-wrap: wrap;
     margin-bottom: 0.25rem;
@@ -12,20 +11,15 @@
     display: flex;
     flex-basis: 11rem;
     flex-grow: 1;
-    border: .13rem solid var(--primary-border-color);
     background-color: var(--secondary-color);
-    border-radius: 0.5rem;
     align-items: center;
     justify-content: space-between;
 }
 .phase-times-selector > .phase-times > div > span {
-    margin: 0 .25rem;
     white-space: pre;
 }
 .phase-times-selector > .phase-times > div > input {
-    border-top-color: var(--primary-border-shadow-color);
-    border-left-color: var(--primary-border-shadow-color);
-    border-bottom-color: var(--primary-border-color);
-    border-right-color: var(--primary-border-color);
     width: 3rem;
+    margin: 0;
+    padding: 0;
 }

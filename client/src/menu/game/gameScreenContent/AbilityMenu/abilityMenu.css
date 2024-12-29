@@ -1,6 +1,10 @@
 .ability-menu {
     overflow-y: auto;
 }
+.ability-menu .abilities {
+    display: flex;
+    flex-direction: column;
+}
 .game-screen .content > .ability-menu {
     width: 10%;
 }

@@ -39,26 +39,29 @@ function PhaseTimeSelector(props: Readonly<{
 }>): ReactElement {
     const phaseKey = "phase." + props.phase;
     
-    return <div>
+    return <div className="placard">
         <span>{translate(phaseKey)}</span>
-        <input
-            disabled={props.disabled ?? false}
-            name={phaseKey}
-            type="text"
-            value={props.time}
-            onChange={(e)=>{
-                const value = Number(e.target.value);
+        {props.disabled
+            ? props.time
+            : <input
+                disabled={props.disabled ?? false}
+                name={phaseKey}
+                type="text"
+                value={props.time}
+                onChange={(e)=>{
+                    const value = Number(e.target.value);
 
-                if (!isValidPhaseTime(value)) return
-                
-                props.onChange(props.phase, value);
-                
-            }}
-            onKeyUp={(e)=>{
-                if(e.key !== 'Enter') return;
-                
-                props.onChange(props.phase, props.time);
-            }}
-        />
+                    if (!isValidPhaseTime(value)) return
+                    
+                    props.onChange(props.phase, value);
+                    
+                }}
+                onKeyUp={(e)=>{
+                    if(e.key !== 'Enter') return;
+                    
+                    props.onChange(props.phase, props.time);
+                }}
+            /> 
+        }
     </div>
 }

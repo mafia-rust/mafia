@@ -3,20 +3,20 @@ import "./settings.css";
 import translate, { Language, languageName, LANGUAGES, switchLanguage } from "../game/lang";
 import StyledText, { computeKeywordData } from "../components/StyledText";
 import Icon from "../components/Icon";
-import { loadSettingsParsed, RoleSpecificMenuType, saveSettings } from "../game/localStorage";
-import { MobileContext, AnchorControllerContext, ANCHOR_CONTROLLER } from "./Anchor";
-import { Role, roleJsonData } from "../game/roleState.d";
+import { loadSettingsParsed, saveSettings } from "../game/localStorage";
+import { AnchorControllerContext, ANCHOR_CONTROLLER } from "./Anchor";
 import AudioController from "./AudioController";
-import { getAllRoles } from "../game/roleListState.d";
 import CheckBox from "../components/CheckBox";
+import { DragAndDrop } from "../components/DragAndDrop";
+import { MENU_THEMES, MENU_TRANSLATION_KEYS } from "./game/GameScreen";
 
 export default function SettingsMenu(): ReactElement {
     const [volume, setVolume] = useState<number>(loadSettingsParsed().volume);
     const [fontSizeState, setFontSize] = useState<number>(loadSettingsParsed().fontSize);
     const [defaultName, setDefaultName] = useState<string | null>(loadSettingsParsed().defaultName);
-    const [roleSpecificMenuSettings, setRoleSpecificMenuSettings] = useState(loadSettingsParsed().roleSpecificMenus);
     const [accessibilityFontEnabled, setAccessibilityFontEnabled] = useState(loadSettingsParsed().accessibilityFont);
-    const mobile = useContext(MobileContext)!;
+    const [menuOrder, setMenuOrder] = useState(loadSettingsParsed().menuOrder);
+    const [maxMenus, setMaxMenus] = useState(loadSettingsParsed().maxMenus);
     const anchorController = useContext(AnchorControllerContext)!;
 
     useEffect(() => {
@@ -31,21 +31,23 @@ export default function SettingsMenu(): ReactElement {
         </header>
         
         <main className="settings-menu">
-            <div>
-                <section className="horizontal">
-                    <section className="standout">
-                        <h2><Icon size="small">volume_up</Icon> {translate("menu.settings.volume")}</h2>
-                        <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
-                            value={volume} 
-                            onChange={(e) => {
-                                const volume = parseFloat(e.target.value);
-                                saveSettings({volume});
-                                setVolume(volume);
-                            }
-                        }/>
-                    </section>
-                    <section className="standout">
-                        <h2>{translate("menu.settings.fontSize")}</h2>
+            <div className="graveyard-menu-colors">
+                <h2>{translate("menu.settings.general")}</h2>
+                <section>
+                    <h2><Icon size="small">volume_up</Icon> {translate("menu.settings.volume")}</h2>
+                    <input className="settings-volume" type="range" min="0" max="1" step="0.01" 
+                        value={volume} 
+                        onChange={(e) => {
+                            const volume = parseFloat(e.target.value);
+                            saveSettings({volume});
+                            setVolume(volume);
+                        }
+                    }/>
+                </section>
+                <section>
+                    <h2>{translate("menu.settings.font")}</h2>
+                    <label>
+                        {translate("menu.settings.fontSize")}
                         <input type="number" min="0.5" max="2" step="0.1"
                             value={fontSizeState}
                             onChange={(e)=>{
@@ -56,35 +58,66 @@ export default function SettingsMenu(): ReactElement {
                                 setFontSize(fontSize);
                             }}
                         />
-                    </section>
-                    <section className="standout">
-                        <h2><Icon size="small">language</Icon> {translate("menu.settings.language")}</h2>
-                        <select 
-                            name="lang-select" 
-                            defaultValue={loadSettingsParsed().language}
-                            onChange={e => {
-                                const language = e.target.options[e.target.selectedIndex].value as Language;
-                                switchLanguage(language);
-                                saveSettings({language});
-                                computeKeywordData()
-                                anchorController.reload();
-                            }}
-                        >
-                            {LANGUAGES.map(lang => <option key={lang} value={lang}>{languageName(lang)}</option>)}
-                        </select>
-                    </section>
+                    </label>
+                    <label>
+                        {translate("menu.settings.accessibilityFont")}
+                        <CheckBox checked={accessibilityFontEnabled} onChange={(checked: boolean) => {
+                            setAccessibilityFontEnabled(checked);
+                            saveSettings({accessibilityFont: checked});
+                        }}></CheckBox>
+                    </label>
                 </section>
                 <section>
-                    <h2><StyledText className="keyword-evil">{translate("menu.settings.dangerZone")}</StyledText></h2>
-                    <button onClick={()=>{
-                        if(!window.confirm(translate("confirmDelete"))) return;
-                        localStorage.clear();
-                        anchorController.clearCoverCard();
-                    }}><Icon>delete_forever</Icon> {translate('menu.settings.eraseSaveData')}</button>
+                    <h2><Icon size="small">language</Icon> {translate("menu.settings.language")}</h2>
+                    <select 
+                        name="lang-select" 
+                        defaultValue={loadSettingsParsed().language}
+                        onChange={e => {
+                            const language = e.target.options[e.target.selectedIndex].value as Language;
+                            switchLanguage(language);
+                            saveSettings({language});
+                            computeKeywordData()
+                            anchorController.reload();
+                        }}
+                    >
+                        {LANGUAGES.map(lang => <option key={lang} value={lang}>{languageName(lang)}</option>)}
+                    </select>
                 </section>
             </div>
-            <div>
-                <section className="standout">
+            <div className="chat-menu-colors">
+                <h2>{translate("menu.settings.gameplay")}</h2>
+                <section>
+                    <h2>{translate("menu.settings.menus")}</h2>
+                    <label>
+                        {translate("menu.settings.maxMenus")}
+                        <input type="number" min="1" max="6" step="1"
+                            value={maxMenus}
+                            onChange={(e)=>{
+                                if(e.target.value === "") return;
+                                const maxMenus = parseFloat(e.target.value);
+                                if(Math.floor(maxMenus) !== maxMenus || maxMenus < 1 || maxMenus > 6) return;
+                                saveSettings({maxMenus});
+                                setMaxMenus(maxMenus);
+                            }}
+                        />
+                    </label>
+                    <div>
+                        {translate("menu.settings.menuOrder")}
+                        <div className="menu-list">
+                            <DragAndDrop
+                                items={menuOrder}
+                                render={menu => <div className={"placard " + (MENU_THEMES[menu] ?? "")}>
+                                    {translate(MENU_TRANSLATION_KEYS[menu] + ".icon")}
+                                </div>}
+                                onDragEnd={newItems => {
+                                    saveSettings({menuOrder: [...newItems]})
+                                    setMenuOrder([...newItems])
+                                }}
+                            />
+                        </div>
+                    </div>
+                </section>
+                <section>
                     <h2>{translate("menu.settings.defaultName")}</h2>
                     <input type="text"
                         value={defaultName===null?"":defaultName} 
@@ -96,50 +129,13 @@ export default function SettingsMenu(): ReactElement {
                         }
                     }/>
                 </section>
-                <section className="standout">
-                    <h2>{translate("menu.settings.accessibility")}</h2>
-                    <label>
-                        {translate("menu.settings.font")}
-                        <CheckBox checked={accessibilityFontEnabled} onChange={(checked: boolean) => {
-                            setAccessibilityFontEnabled(checked);
-                            saveSettings({accessibilityFont: checked});
-                        }}></CheckBox>
-                    </label>
-                </section>
                 <section>
-                    {mobile && <h2>{translate("menu.settings.advanced")}</h2>}
-                    <details className="standout role-specific-menu-settings">
-                        <summary>
-                            {translate("menu.settings.roleSpecificMenus")}
-                        </summary>
-                        {
-                            Object.entries(roleJsonData()).map(([role, roleJsonData]) => {
-                                // const roleSpecificMenuExists = type.roleSpecificMenu;
-                                const menuType: RoleSpecificMenuType = roleSpecificMenuSettings.includes(role as Role) ? "standalone" : "playerList";
-
-
-                                return <div className="role-specific-menu-settings-selector" key={role} >
-                                    <StyledText>{translate(`role.${role}.name`)}</StyledText>
-                                    <select defaultValue={menuType} onChange={e => {
-                                        let newRoleSpecificMenuSettings = [...roleSpecificMenuSettings].filter(x => 
-                                            getAllRoles().includes(x)
-                                        );
-
-                                        if(e.target.options[e.target.selectedIndex].value === "playerList") {
-                                            newRoleSpecificMenuSettings = [...newRoleSpecificMenuSettings].filter(x => x !== role);
-                                        } else {
-                                            newRoleSpecificMenuSettings = [...newRoleSpecificMenuSettings, role as Role];
-                                        }
-                                        setRoleSpecificMenuSettings(newRoleSpecificMenuSettings);
-                                        saveSettings({ roleSpecificMenus: newRoleSpecificMenuSettings });
-                                    }}>
-                                        <option value="playerList">{translate("menu.settings.roleSpecificMenus.playerList")}</option>
-                                        <option value="standalone">{translate("menu.settings.roleSpecificMenus.standalone")}</option>
-                                    </select>
-                                </div>
-                            })
-                        }
-                    </details>
+                    <h2><StyledText className="keyword-evil">{translate("menu.settings.dangerZone")}</StyledText></h2>
+                    <button onClick={()=>{
+                        if(!window.confirm(translate("confirmDelete"))) return;
+                        localStorage.clear();
+                        anchorController.clearCoverCard();
+                    }}><Icon>delete_forever</Icon> {translate('menu.settings.eraseSaveData')}</button>
                 </section>
             </div>
         </main>
