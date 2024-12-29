@@ -117,6 +117,11 @@ export function useMenuController<C extends Partial<Record<ContentMenu, boolean>
         setMenuController({
             closeMenu(menu) {
                 setContentMenu(menu, false)
+
+                if (GAME_MANAGER.state.stateType === "game" && menu === ContentMenu.ChatMenu){
+                    GAME_MANAGER.state.missedChatMessages = false;
+                }
+                GAME_MANAGER.invokeStateListeners("closeGameMenu");
             },
             closeOrOpenMenu(menu) {
                 if (getMenuController().menusOpen().includes(menu)) {
@@ -127,10 +132,16 @@ export function useMenuController<C extends Partial<Record<ContentMenu, boolean>
             },
             openMenu(menu, callback) {
                 setContentMenu(menu, true);
-                
+
+                if (GAME_MANAGER.state.stateType === "game" && menu === ContentMenu.ChatMenu){
+                    GAME_MANAGER.state.missedChatMessages = false;
+                }
+
                 if (callback) {
                     setCallbacks(callbacks => callbacks.concat(callback))
                 }
+
+                GAME_MANAGER.invokeStateListeners("openGameMenu");
             },
             menusOpen(): ContentMenu[] {
                 return Object.entries(contentMenus)
@@ -190,9 +201,10 @@ export default function GameScreen(): ReactElement {
     );
 
     const chatMenuNotification = useGameState(
-        () => !menuController.menusOpen().includes(ContentMenu.ChatMenu),
-        ["addChatMessages"]
+        (game) => game.missedChatMessages && !menuController.menuOpen(ContentMenu.ChatMenu),
+        ["addChatMessages", "openGameMenu", "closeGameMenu"]
     )!;
+    
 
     useEffect(() => {
         const onBeforeUnload = (e: BeforeUnloadEvent) => {

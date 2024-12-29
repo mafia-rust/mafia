@@ -52,7 +52,7 @@ impl RoleStateImpl for SantaClaus {
                             win_if_any.insert(GameConclusion::NiceList);
                             target_ref.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any });
 
-                            target_ref.add_private_chat_message(game, ChatMessageVariant::AddedToNiceList);
+                            target_ref.push_night_message(game, ChatMessageVariant::AddedToNiceList);
                             actor_ref.set_role_state(game, Self {
                                 ability_used_last_night: Some(SantaListKind::Nice),
                                 ..self
@@ -78,10 +78,10 @@ impl RoleStateImpl for SantaClaus {
                                 .collect();
     
                             if !krampus_list.is_empty() {
-                                target_ref.add_private_chat_message(game, ChatMessageVariant::AddedToNaughtyList);
+                                target_ref.push_night_message(game, ChatMessageVariant::AddedToNaughtyList);
                             }
                             for krampus in krampus_list {
-                                krampus.add_private_chat_message(game, 
+                                krampus.push_night_message(game, 
                                     ChatMessageVariant::SantaAddedPlayerToNaughtyList { player: target_ref }
                                 );
                             }

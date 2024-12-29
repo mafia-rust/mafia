@@ -60,8 +60,10 @@ export function createGameState(): GameState {
         ticking: true,
 
         clientState: createPlayerGameState(),
-        host: false
+        host: false,
 
+        missedChatMessages: false,
+        missedWhispers: [],
     }
 }
 
