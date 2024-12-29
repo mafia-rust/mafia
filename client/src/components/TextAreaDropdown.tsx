@@ -1,8 +1,7 @@
-import { ReactElement, useEffect, useMemo, useState } from "react";
+import React, { ReactElement, useEffect, useMemo, useState } from "react";
 import StyledText from "./StyledText";
 import { sanitizePlayerMessage } from "./ChatMessage";
 import GAME_MANAGER, { replaceMentions } from "..";
-import React from "react";
 import { Button } from "./Button";
 import Icon from "./Icon";
 import translate from "../game/lang";
@@ -12,6 +11,7 @@ import DetailsSummary from "./DetailsSummary";
 export function TextDropdownArea(props: Readonly<{
     titleString: string,
     savedText: string,
+    defaultOpen?: boolean,
     open?: boolean,
     dropdownArrow?: boolean,
     onAdd?: () => void,
@@ -42,6 +42,7 @@ export function TextDropdownArea(props: Readonly<{
         <DetailsSummary
             className="text-area-dropdown"
             dropdownArrow={props.dropdownArrow}
+            defaultOpen={props.defaultOpen}
             open={props.open}
             summary={<TextDropdownLabel
                 titleString={props.titleString}
