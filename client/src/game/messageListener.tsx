@@ -467,6 +467,17 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game" || GAME_MANAGER.state.stateType === "lobby"){
                 GAME_MANAGER.state.chatMessages = GAME_MANAGER.state.chatMessages.concat(packet.chatMessages);
 
+                // Chat notification icon state
+                if(GAME_MANAGER.state.stateType === "game" && packet.chatMessages.length !== 0){
+                    GAME_MANAGER.state.missedChatMessages = true;
+                    
+                    for(let chatMessage of packet.chatMessages){
+                        if(chatMessage.variant.type === "whisper"){
+                            GAME_MANAGER.state.missedWhispers.push(chatMessage.variant.fromPlayerIndex);
+                        }
+                    }
+                }
+
                 for(let chatMessage of packet.chatMessages){
                     let audioSrc = chatMessageToAudio(chatMessage);
                     if(audioSrc)

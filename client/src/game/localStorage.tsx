@@ -4,6 +4,8 @@ import { Language } from "./lang";
 import { Role } from "./roleState.d";
 import parseFromJson from "../components/gameModeSettings/gameMode/dataFixer";
 import { ContentMenu } from "../menu/game/GameScreen";
+import { ParseResult, Success } from "../components/gameModeSettings/gameMode/parse";
+
 
 export function saveReconnectData(roomCode: number, playerId: number) {
     localStorage.setItem(
@@ -67,7 +69,26 @@ export function loadSettingsParsed(): Settings {
         return result.value;
     }
 }
-
+export function getDefaultSettings(): Readonly<Settings> {
+    return {
+        format: "v3",
+        volume: 0.5,
+        fontSize: 1,
+        accessibilityFont: false,
+        language: "en_us",
+        defaultName: null,
+        maxMenus: window.innerWidth < 600 ? 1 : 6,
+        menuOrder: [
+            ContentMenu.WikiMenu, 
+            ContentMenu.GraveyardMenu, 
+            ContentMenu.PlayerListMenu, 
+            ContentMenu.ChatMenu, 
+            ContentMenu.WillMenu, 
+            ContentMenu.RoleSpecificMenu
+        ],
+        roleSpecificMenus: []
+    }
+}
 export function loadSettings(): unknown {
     const data = localStorage.getItem("settings");
     if (data !== null) {
@@ -96,13 +117,21 @@ export function saveSettings(newSettings: Partial<Settings>) {
     }
 }
 
+let cachedGameModes: ParseResult<GameModeStorage> | null = null;
 
+export function loadGameModesParsed(): ParseResult<GameModeStorage> {
+
+    if(cachedGameModes !== null) return cachedGameModes;
+
+    cachedGameModes = parseFromJson("GameModeStorage", loadGameModes());
+    return cachedGameModes;
+}
 export function defaultGameModes(): unknown {
     // Typescript is a Division One tweaker
     return DEFAULT_GAME_MODES;
 }
-
 export function saveGameModes(gameModes: GameModeStorage) {
+    cachedGameModes = Success(gameModes);
     localStorage.setItem("savedGameModes", JSON.stringify(gameModes));
 }
 export function loadGameModes(): unknown {
@@ -120,23 +149,3 @@ export function deleteGameModes() {
     localStorage.removeItem("savedGameModes");
 }
 
-export function getDefaultSettings(): Readonly<Settings> {
-    return {
-        format: "v3",
-        volume: 0.5,
-        fontSize: 1,
-        accessibilityFont: false,
-        language: "en_us",
-        defaultName: null,
-        maxMenus: window.innerWidth < 600 ? 1 : 6,
-        menuOrder: [
-            ContentMenu.WikiMenu, 
-            ContentMenu.GraveyardMenu, 
-            ContentMenu.PlayerListMenu, 
-            ContentMenu.ChatMenu, 
-            ContentMenu.WillMenu, 
-            ContentMenu.RoleSpecificMenu
-        ],
-        roleSpecificMenus: []
-    }
-}

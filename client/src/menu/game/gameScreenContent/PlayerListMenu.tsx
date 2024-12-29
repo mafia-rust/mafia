@@ -136,6 +136,14 @@ function PlayerCard(props: Readonly<{
         ["addGrave"]
     )!
 
+    const whisperNotification = useGameState(
+        gameState =>
+            gameState.missedWhispers.some(player => player === props.playerIndex) &&
+            !isPlayerSelf &&
+            !whisperChatOpen,
+        ["addChatMessages", "whisperChatOpenOrClose"]
+    );
+
     return <><div 
         className={`player-card`}
         key={props.playerIndex}
@@ -174,10 +182,16 @@ function PlayerCard(props: Readonly<{
                 onClick={()=>{
                     // GAME_MANAGER.prependWhisper(props.playerIndex); return true;
                     setWhisperChatOpen(!whisperChatOpen);
+                    if(GAME_MANAGER.state.stateType === 'game'){
+                        GAME_MANAGER.state.missedWhispers = 
+                            GAME_MANAGER.state.missedWhispers.filter(player => player !== props.playerIndex);
+                    }
+                    GAME_MANAGER.invokeStateListeners("whisperChatOpenOrClose");
                 }}
                 pressedChildren={() => <Icon>done</Icon>}
             >
-                {whisperChatOpen?<Icon>close</Icon>:<Icon>chat</Icon>}
+                {whisperChatOpen===true?<Icon>close</Icon>:<Icon>chat</Icon>}
+                {whisperNotification===true && <div className="chat-notification highlighted">!</div>}
             </Button>
         }
         {GAME_MANAGER.getMySpectator() || (() => {

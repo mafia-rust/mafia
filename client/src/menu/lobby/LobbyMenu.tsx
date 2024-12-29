@@ -127,7 +127,7 @@ function LobbyMenuSettings(props: Readonly<{
 
     return <GameModeContext.Provider value={context}>
         {mobile && <h1>{translate("menu.lobby.settings")}</h1>}
-        {props.isHost && <GameModeSelector 
+        {props.isHost === true && <GameModeSelector 
             canModifySavedGameModes={false}
             loadGameMode={gameMode => {
                 GAME_MANAGER.sendSetPhaseTimesPacket(gameMode.phaseTimes);

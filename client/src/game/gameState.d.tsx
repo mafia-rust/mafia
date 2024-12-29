@@ -78,6 +78,8 @@ type GameState = {
     clientState: PlayerGameState | {type: "spectator"},
     host: boolean,
 
+    missedChatMessages: boolean,
+    missedWhispers: PlayerIndex[]
 }
 export default GameState;
 

@@ -57,10 +57,12 @@ impl RoleStateImpl for Krampus {
                 if let Some(visit) = actor_visits.first() {
                     let target_ref = visit.target;
 
-                    actor_ref.add_private_chat_messages(game, vec![
-                        ChatMessageVariant::TargetHasRole { role: target_ref.role(game) },
+                    actor_ref.push_night_message(game, 
+                        ChatMessageVariant::TargetHasRole { role: target_ref.role(game) }
+                    );
+                    actor_ref.push_night_message(game, 
                         ChatMessageVariant::TargetHasWinCondition { win_condition: target_ref.win_condition(game).clone() }
-                    ]);
+                    );
                 }
             }
             _ => {}

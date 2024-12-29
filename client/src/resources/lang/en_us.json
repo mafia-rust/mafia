@@ -333,6 +333,7 @@
     "role.impostor.name:var.0": "Impostors",
     "role.impostor.name:var.1": "Imposter",
     "role.impostor.name:var.2": "Imposters",
+    "role.impostor.name:var.3": "ඞ",
     "controllerId.role.impostor.0.name": "Attack",
     "controllerId.role.impostor.1.name": "Disguise",
     
