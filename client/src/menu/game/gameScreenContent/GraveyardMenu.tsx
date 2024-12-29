@@ -33,37 +33,30 @@ function RoleListDisplay(): ReactElement {
     )!
     const crossedOutOutlines = usePlayerState(
         clientState => clientState.crossedOutOutlines,
-        ["yourCrossedOutOutlines"]
-    )
+        ["yourCrossedOutOutlines"],
+        []
+    )!
 
     return <>
-        { roleList.map((entry, index)=>{
-            const roleOutlineName = translateRoleOutline(entry);
-
-            return <Button 
+        {roleList.map((entry, index)=>{
+            return <Button
                 className="role-list-button placard"
-                style={{ gridRow: index + 1 }} 
-                key={roleOutlineName + crossedOutOutlines?.includes(index) + index}
+                style={{ gridRow: index + 1 }}
+                key={index}
                 onClick={()=>{
                     if (GAME_MANAGER.getMySpectator()) return;
 
-                    let newCrossedOutOutlines = crossedOutOutlines!;
-                    if(newCrossedOutOutlines.includes(index))
-                        newCrossedOutOutlines = newCrossedOutOutlines.filter(x=>x!==index);
+                    let newCrossedOutOutlines;
+                    if(crossedOutOutlines.includes(index))
+                        newCrossedOutOutlines = crossedOutOutlines.filter(x=>x!==index);
                     else
-                        newCrossedOutOutlines.push(index);
+                        newCrossedOutOutlines = crossedOutOutlines.concat(index);
 
                     GAME_MANAGER.sendSaveCrossedOutOutlinesPacket(newCrossedOutOutlines);
                 }}
-                onMouseDown={(e)=>{
-                    // on right click, show a list of all roles that can be in this bucket
-                    // if(e.button === 2){
-                    //     e.preventDefault();
-                    // }
-                }}
             >
                 {
-                    crossedOutOutlines?.includes(index) ? 
+                    crossedOutOutlines.includes(index) ? 
                     <s><StyledText>
                         {translateRoleOutline(entry)}
                     </StyledText></s> : 
