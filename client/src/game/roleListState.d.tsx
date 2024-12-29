@@ -16,8 +16,7 @@ export function getRolesFromRoleList(roleList: RoleList): Role[] {
 }
 
 export function getRolesComplement(roleList: Role[]): Role[] {
-    let roles = Object.keys(roleJsonData()) as Role[];
-    return roles.filter((role) => {
+    return getAllRoles().filter((role) => {
         return !roleList.includes(role);
     });
 }
@@ -85,7 +84,7 @@ export function translateRoleOutlineOption(roleOutlineOption: RoleOutlineOption)
 export function getRolesFromOutline(roleOutline: RoleOutline): Role[] {
     switch(roleOutline.type){
         case "any":
-            return Object.keys(roleJsonData()) as Role[];
+            return getAllRoles();
         case "roleOutlineOptions":
             return roleOutline.options.flatMap((option) => getRolesFromOutlineOption(option));
     }
@@ -130,5 +129,8 @@ function outlineOptionCompare(optionA: RoleOutlineOption, optionB: RoleOutlineOp
 }
 
 export function getAllRoles(): Role[] {
-    return Object.keys(roleJsonData()) as Role[];
+    return Object.entries(roleJsonData())
+        .sort((a, b) => translate(`role.${a[0]}.name`).localeCompare(translate(`role.${b[0]}.name`)))
+        .sort((a, b) => ROLE_SETS.indexOf(a[1].mainRoleSet) - ROLE_SETS.indexOf(b[1].mainRoleSet))
+        .map((a) => a[0]) as Role[];
 }
