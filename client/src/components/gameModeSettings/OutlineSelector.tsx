@@ -1,13 +1,14 @@
 import React, { ReactElement, useCallback, useContext } from "react";
 import "./outlineSelector.css";
 import translate from "../../game/lang";
-import { getAllRoles, getRolesFromRoleSet, ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, simplifyRoleOutline, translateRoleOutlineOption} from "../../game/roleListState.d";
+import { getAllRoles, getRolesFromRoleSet, ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, simplifyRoleOutline, translateRoleOutline, translateRoleOutlineOption} from "../../game/roleListState.d";
 import { Role } from "../../game/roleState.d";
 import Icon from "../Icon";
 import { DragAndDrop } from "../DragAndDrop";
 import { GameModeContext } from "./GameModesEditor";
 import Select, { SelectOptionsSearch } from "../Select";
 import StyledText from "../StyledText";
+import { Button } from "../Button";
 import { useLobbyOrGameState } from "../useHooks";
 
 type RoleOutlineSelectorProps = {
@@ -207,28 +208,35 @@ export function OutlineListSelector(props: {
 
     return <section className="graveyard-menu-colors selector-section">
         <h2>{translate("menu.lobby.roleList")}: {roleList.length}</h2>
-        <button disabled={props.disabled} onClick={simplify}>
+        {(props.disabled !== true) && <Button onClick={simplify}>
             <Icon>filter_list</Icon> {translate("simplify")}
-        </button>
+        </Button>}
         <div className="role-list-setter-list">
             <DragAndDrop 
-                items={roleList}
+                items={structuredClone(roleList)}
                 onDragEnd={props.setRoleList}
                 disabled={props.disabled}
                 render={(outline, index) => {
                     return <div key={index} className="role-list-setter-outline-div">
                         {props.disabled === true || <Icon>drag_indicator</Icon>}
-                        <RoleOutlineSelector
-                            disabled={props.disabled}
-                            roleOutline={outline}
-                            onChange={(value: RoleOutline) => {props.onChangeRolePicker(value, index);}}
-                            key={index}
-                        />
-                        {props.onRemoveOutline ? 
+                        {props.disabled === true
+                            ? <div className="placard">
+                                <StyledText>
+                                    {translateRoleOutline(outline)}
+                                </StyledText>
+                            </div>
+                            : <RoleOutlineSelector
+                                disabled={props.disabled}
+                                roleOutline={outline}
+                                onChange={(value: RoleOutline) => {props.onChangeRolePicker(value, index);}}
+                                key={index}
+                            />
+                        }
+                        {props.onRemoveOutline &&
                             <button disabled={props.disabled} onClick={() => {
                                 if(props.onRemoveOutline)
                                     props.onRemoveOutline(index)
-                        }}><Icon>delete</Icon></button> : null}
+                        }}><Icon>delete</Icon></button>}
                     </div>
                 }}
             />

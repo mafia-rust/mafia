@@ -2,7 +2,6 @@ import React, { ReactElement, useMemo } from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import { ContentMenu, ContentTab } from "../GameScreen";
-import "./willMenu.css";
 import { usePlayerState } from "../../../components/useHooks";
 import { getSingleRoleJsonData } from "../../../game/roleState.d";
 import { TextDropdownArea } from "../../../components/TextAreaDropdown";
@@ -50,7 +49,7 @@ export default function WillMenu(): ReactElement {
         <section>
             <TextDropdownArea
                 titleString={translate("menu.will.will")}
-                open={true}
+                defaultOpen={true}
                 savedText={alibi}
                 cantPost={cantPost}
                 onSave={(text) => {

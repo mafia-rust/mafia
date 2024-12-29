@@ -43,12 +43,16 @@
     "menu.globalMenu.gameSettingsEditor": "Game Mode Editor",
 
     "menu.settings.title": "Settings",
-    "menu.settings.advanced": "Advanced Settings",
+    "menu.settings.general": "General",
+    "menu.settings.gameplay": "Gameplay",
+    "menu.settings.menus": "Menus",
+    "menu.settings.maxMenus": "Max Menus Open",
+    "menu.settings.menuOrder": "Menu Order",
     "menu.settings.dangerZone": "Danger zone",
     "menu.settings.volume": "Volume",
     "menu.settings.font": "Font",
     "menu.settings.fontSize": "Font Size",
-    "menu.settings.accessibility": "Accessibility",
+    "menu.settings.accessibilityFont": "Accessibility Font",
     "menu.settings.language": "Language",
     "menu.settings.defaultName": "Default Name",
     "menu.settings.eraseSaveData": "Erase Save Data",
@@ -124,7 +128,7 @@
     "menu.gameMode.icon": "⚙️",
     "killedBy": "Killed by",
 
-    "menu.gameScreen.noContent": "Click on one of the tabs above to open",
+    "menu.gameScreen.noContent": "Click on one of the tabs to open a menu",
 
     "notification.connectionFailed": "Connection failed",
     "notification.serverNotFound": "Server not found, it could be offline",

@@ -144,7 +144,7 @@ function GameModeSelectorPanel(props: {
         return true;
     }
 
-    const verbose = !props.canModifySavedGameModes;
+    const verbose = false;
 
     const shareableGameModeJsonString = JSON.stringify({
         format: LATEST_VERSION_STRING,

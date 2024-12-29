@@ -2,7 +2,7 @@ import React, { ReactElement, useContext, useMemo } from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import { PhaseState, Player, Verdict } from "../../game/gameState.d";
-import { MenuControllerContext, ContentMenu } from "./GameScreen";
+import { MenuControllerContext, ContentMenu, MENU_THEMES, MENU_TRANSLATION_KEYS } from "./GameScreen";
 import "./headerMenu.css";
 import StyledText from "../../components/StyledText";
 import Icon from "../../components/Icon";
@@ -30,7 +30,7 @@ export default function HeaderMenu(props: Readonly<{
     return <div className={"header-menu " + backgroundStyle}>
         {!(GAME_MANAGER.getMySpectator() && !GAME_MANAGER.getMyHost()) && <FastForwardButton />}
         <Information />
-        {!(GAME_MANAGER.getMySpectator() && !mobile) && <MenuButtons chatMenuNotification={props.chatMenuNotification}/>}
+        {!mobile && <MenuButtons chatMenuNotification={props.chatMenuNotification}/>}
         <Timer />
     </div>
 }
@@ -189,56 +189,23 @@ function VerdictButton(props: Readonly<{ verdict: Verdict }>) {
     </Button>
 }
 
-function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactElement | null {
+export function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactElement | null {
     const menuController = useContext(MenuControllerContext)!;
 
     return <div className="menu-buttons">
-        <Button className="wiki-menu-colors"
-            highlighted={menuController.menusOpen().includes(ContentMenu.WikiMenu)} 
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.WikiMenu)}
-        >
-            {translate("menu.wiki.icon")}
-            <span className="mobile-hidden">{translate("menu.wiki.title")}</span>
-        </Button>
-        <Button className="graveyard-menu-colors" 
-            highlighted={menuController.menusOpen().includes(ContentMenu.GraveyardMenu)}
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.GraveyardMenu)}
-        >
-            {translate("menu.gameMode.icon")}
-            <span className="mobile-hidden">{translate("menu.gameMode.title")}</span>
-        </Button>
-        <Button className="player-list-menu-colors"
-            highlighted={menuController.menusOpen().includes(ContentMenu.PlayerListMenu)}
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.PlayerListMenu)}
-        >
-            {translate("menu.playerList.icon")}
-            <span className="mobile-hidden">{translate("menu.playerList.title")}</span>
-        </Button>
-        <Button className="chat-menu-colors"
-            highlighted={menuController.menusOpen().includes(ContentMenu.ChatMenu)}
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.ChatMenu)}
-        >
-            {props.chatMenuNotification && <div className="chat-notification highlighted">!</div>}
-            {translate("menu.chat.icon")}
-            <span className="mobile-hidden">{translate("menu.chat.title")}</span>
-        </Button>
-        {GAME_MANAGER.getMySpectator() || <Button className="will-menu-colors" 
-            highlighted={menuController.menusOpen().includes(ContentMenu.WillMenu)}
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.WillMenu)}
-        >
-            {translate("menu.will.icon")}
-            <span className="mobile-hidden">{translate("menu.will.title")}</span>
-        </Button>}
-        {!GAME_MANAGER.getMySpectator() && <Button className="role-specific-colors" 
-                highlighted={menuController.menusOpen().includes(ContentMenu.RoleSpecificMenu)}
-                onClick={()=>menuController.closeOrOpenMenu(ContentMenu.RoleSpecificMenu)}
+        {menuController.menus().map(menu => {
+            return <Button key={menu} className={MENU_THEMES[menu] ?? ""}
+                highlighted={menuController.menusOpen().includes(menu)} 
+                onClick={()=>menuController.closeOrOpenMenu(menu)}
             >
-                {translate("menu.ability.icon")}
-                <span className="mobile-hidden">
-                    {translate("menu.ability.title")}
-                </span>
+                {menu === ContentMenu.ChatMenu
+                    && props.chatMenuNotification
+                    && <div className="chat-notification highlighted">!</div>
+                }
+                {translate(MENU_TRANSLATION_KEYS[menu] + ".icon")}
+                <span className="mobile-hidden">{translate(MENU_TRANSLATION_KEYS[menu] + ".title")}</span>
             </Button>
-        }
+        })}
     </div>
 }
 

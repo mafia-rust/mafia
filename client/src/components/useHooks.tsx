@@ -23,6 +23,22 @@ function usePacketListener(listener: (type?: StateEventType) => void) {
     });
 }
 
+// https://stackoverflow.com/a/77278013/9157590
+function deepEqual<T>(a: T, b: T): boolean {
+    if (a === b) {
+        return true;
+    }
+
+    const bothAreObjects =
+        a && b && typeof a === "object" && typeof b === "object";
+
+    return (
+        bothAreObjects &&
+            Object.keys(a).length === Object.keys(b).length &&
+            Object.entries(a).every(([k, v]) => deepEqual(v, b[k as keyof T]))
+    );
+};
+
 export function useGameState<T>(
     getValue: (gameState: GameState) => T, 
     events?: StateEventType[],
@@ -39,7 +55,7 @@ export function useGameState<T>(
     usePacketListener((type?: StateEventType) => {
         if (GAME_MANAGER.state.stateType === "game" && (events ?? []).includes(type as StateEventType)) {
             const value = getValue(GAME_MANAGER.state);
-            if (value !== state) {
+            if (!deepEqual(value, state)) {
                 setState(value);
             }
         }
@@ -63,7 +79,10 @@ export function useLobbyState<T>(
 
     usePacketListener((type?: StateEventType) => {
         if (GAME_MANAGER.state.stateType === "lobby" && (events ?? []).includes(type as StateEventType)) {
-            setState(getValue(GAME_MANAGER.state));
+            const value = getValue(GAME_MANAGER.state);
+            if (!deepEqual(value, state)) {
+                setState(value);
+            }
         }
     });
 
@@ -88,7 +107,10 @@ export function useLobbyOrGameState<T>(
             (GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") 
             && (events ?? []).includes(type as StateEventType)
         ) {
-            setState(getValue(GAME_MANAGER.state));
+            const value = getValue(GAME_MANAGER.state);
+            if (!deepEqual(value, state)) {
+                setState(value);
+            }
         }
     });
 
