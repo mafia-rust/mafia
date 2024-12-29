@@ -2,7 +2,7 @@ import React, { ReactElement, useCallback, useContext } from "react";
 import "./outlineSelector.css";
 import translate from "../../game/lang";
 import { getAllRoles, getRolesFromRoleSet, ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, simplifyRoleOutline, translateRoleOutline, translateRoleOutlineOption} from "../../game/roleListState.d";
-import { Role, roleJsonData } from "../../game/roleState.d";
+import { Role } from "../../game/roleState.d";
 import Icon from "../Icon";
 import { DragAndDrop } from "../DragAndDrop";
 import { GameModeContext } from "./GameModesEditor";
