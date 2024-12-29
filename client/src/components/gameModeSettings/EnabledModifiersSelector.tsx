@@ -6,17 +6,18 @@ import { GameModeContext } from "./GameModesEditor";
 import { Button } from "../Button";
 
 export function EnabledModifiersSelector(props: Readonly<{
-    disabled: boolean,
+    disabled?: boolean,
     enabledModifiers?: ModifierType[],
     onChange?: (modifiers: ModifierType[]) => void,
 }>): ReactElement {
     let { enabledModifiers } = useContext(GameModeContext);
     enabledModifiers = props.enabledModifiers ?? enabledModifiers;
+    
 
     return <div className="chat-menu-colors selector-section">
         <h2>{translate("modifiers")}</h2>
         <EnabledModifiersDisplay
-            disabled={props.disabled}
+            disabled={props.disabled===undefined ? false : props.disabled}
             modifiable={!props.disabled}
             enabledModifiers={enabledModifiers}
             onEnableModifiers={(modifiers: ModifierType[]) => {

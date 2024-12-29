@@ -1,5 +1,5 @@
 import React, { ReactElement, useCallback, useContext, useEffect, useState } from "react";
-import { deleteGameModes, loadGameModes, saveGameModes } from "../../game/localStorage";
+import { deleteGameModes, loadGameModes, loadGameModesParsed, saveGameModes } from "../../game/localStorage";
 import { AnchorControllerContext } from "../../menu/Anchor";
 import { CopyButton, PasteButton } from "../../components/ClipboardButtons";
 import Icon from "../Icon";
@@ -21,7 +21,7 @@ export function GameModeSelector(props: {
     canModifySavedGameModes?: boolean,
     loadGameMode: (gameMode: GameModeData) => void,
 }): ReactElement {
-    const [gameModeParseResult, setGameModeParseResult] = useState(parseFromJson("GameModeStorage", loadGameModes()));
+    const [gameModeParseResult, setGameModeParseResult] = useState(loadGameModesParsed());
 
     return <section className="chat-menu-colors selector-section">
         <h2>{translate("menu.lobby.gameModes")}</h2>
@@ -32,16 +32,16 @@ export function GameModeSelector(props: {
                     <br />
                     <code>{gameModeParseResult.toString()}</code>
                 </div>
-                <button onClick={() => {
+                <Button onClick={() => {
                     deleteGameModes();
-                    setGameModeParseResult(parseFromJson("GameModeStorage", loadGameModes()));
+                    setGameModeParseResult(loadGameModesParsed());
                 }}>
                     <Icon>delete</Icon>{translate("deleteOutdatedGameModeSaveData")}
-                </button>
+                </Button>
             </div>
             : <GameModeSelectorPanel {...props} 
                 gameModeStorage={gameModeParseResult.value}
-                reloadGameModeStorage={() => setGameModeParseResult(parseFromJson("GameModeStorage", loadGameModes()))}
+                reloadGameModeStorage={() => setGameModeParseResult(loadGameModesParsed())}
             />
         }
     </section>
