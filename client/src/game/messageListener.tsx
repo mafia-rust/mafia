@@ -279,6 +279,7 @@ export default function messageListener(packet: ToClientPacket){
         case "roleOutline":
             //role list entriy
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game") {
+                GAME_MANAGER.state.roleList = structuredClone(GAME_MANAGER.state.roleList);
                 GAME_MANAGER.state.roleList[packet.index] = packet.roleOutline;
                 GAME_MANAGER.state.roleList = [...GAME_MANAGER.state.roleList];
             }

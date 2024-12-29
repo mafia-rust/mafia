@@ -213,7 +213,7 @@ export function OutlineListSelector(props: {
         </Button>}
         <div className="role-list-setter-list">
             <DragAndDrop 
-                items={roleList}
+                items={structuredClone(roleList)}
                 onDragEnd={props.setRoleList}
                 disabled={props.disabled}
                 render={(outline, index) => {
