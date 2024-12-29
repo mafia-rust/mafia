@@ -1,5 +1,5 @@
 import React, { ReactElement, useCallback, useContext, useEffect, useState } from "react";
-import { deleteGameModes, loadGameModes, loadGameModesParsed, saveGameModes } from "../../game/localStorage";
+import { deleteGameModes, loadGameModesParsed, saveGameModes } from "../../game/localStorage";
 import { AnchorControllerContext } from "../../menu/Anchor";
 import { CopyButton, PasteButton } from "../../components/ClipboardButtons";
 import Icon from "../Icon";
