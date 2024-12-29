@@ -32,7 +32,7 @@ function deepEqual<T>(a: T, b: T): boolean {
     const bothAreObjects =
         a && b && typeof a === "object" && typeof b === "object";
 
-    return Boolean(
+    return (
         bothAreObjects &&
             Object.keys(a).length === Object.keys(b).length &&
             Object.entries(a).every(([k, v]) => deepEqual(v, b[k as keyof T]))

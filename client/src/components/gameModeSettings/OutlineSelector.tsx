@@ -8,6 +8,7 @@ import { DragAndDrop } from "../DragAndDrop";
 import { GameModeContext } from "./GameModesEditor";
 import Select, { SelectOptionsSearch } from "../Select";
 import StyledText from "../StyledText";
+import { Button } from "../Button";
 
 type RoleOutlineSelectorProps = {
     roleOutline: RoleOutline,
@@ -199,9 +200,9 @@ export function OutlineListSelector(props: {
 
     return <section className="graveyard-menu-colors selector-section">
         <h2>{translate("menu.lobby.roleList")}: {roleList.length}</h2>
-        {!props.disabled && <button onClick={simplify}>
+        {(props.disabled !== true) && <Button onClick={simplify}>
             <Icon>filter_list</Icon> {translate("simplify")}
-        </button>}
+        </Button>}
         <div className="role-list-setter-list">
             <DragAndDrop 
                 items={roleList}
