@@ -49,8 +49,7 @@ export default function WillMenu(): ReactElement {
         <section>
             <TextDropdownArea
                 titleString={translate("menu.will.will")}
-                open={true}
-                dropdownArrow={false}
+                defaultOpen={true}
                 savedText={alibi}
                 cantPost={cantPost}
                 onSave={(text) => {

@@ -41,7 +41,7 @@ export default function SpectatorGameScreen(): ReactElement {
                     <HeaderMenu chatMenuNotification={false}/>
                 </div>
                 <GameScreenMenus />
-                {mobile && <MenuButtons chatMenuNotification={false}/>}
+                {mobile === true && <MenuButtons chatMenuNotification={false}/>}
             </div>
         </MenuControllerContext.Provider>
     );

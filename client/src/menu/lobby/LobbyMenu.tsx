@@ -114,7 +114,7 @@ function LobbyMenuSettings(props: Readonly<{
     }, [setAnchorContent]);
 
     const sendRoleList = (newRoleList: RoleList) => {
-        const combinedRoleList = [...roleList];
+        const combinedRoleList = structuredClone(roleList);
         newRoleList.forEach((role, index) => {
             combinedRoleList[index] = role
         })
