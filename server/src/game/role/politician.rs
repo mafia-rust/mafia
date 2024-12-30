@@ -1,5 +1,3 @@
-use std::time::Duration;
-
 use serde::Serialize;
 
 use crate::game::attack_power::DefensePower;
@@ -104,14 +102,15 @@ impl RoleStateImpl for Politician {
 
         if self.state.countdown_started() && actor_ref.alive(game) {
             //for skipping phases
-            match phase {
-                PhaseType::Briefing | PhaseType::Nomination | PhaseType::Testimony | 
-                PhaseType::Judgement | PhaseType::FinalWords | PhaseType::Recess => {}
+            // this litterally causes the entire server to crash
+            // match phase {
+            //     PhaseType::Briefing | PhaseType::Nomination | PhaseType::Testimony | 
+            //     PhaseType::Judgement | PhaseType::FinalWords | PhaseType::Recess => {}
 
-                PhaseType::Obituary | PhaseType::Discussion | PhaseType::Dusk | PhaseType::Night => {
-                    game.phase_machine.time_remaining = Duration::from_secs(0);
-                }
-            }
+            //     PhaseType::Obituary | PhaseType::Discussion | PhaseType::Dusk | PhaseType::Night => {
+            //         game.phase_machine.time_remaining = Duration::from_secs(0);
+            //     }
+            // }
 
             match phase {
                 PhaseType::Nomination => {
@@ -125,6 +124,7 @@ impl RoleStateImpl for Politician {
                 },
                 _ => {}
             }
+
         }
     }
     
@@ -192,9 +192,10 @@ impl Politician {
     fn start_countdown(&mut self, game: &mut Game){
         game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::PoliticianCountdownStarted);
         
-        if game.current_phase().phase() != PhaseType::Nomination {
-            game.phase_machine.time_remaining = Duration::from_secs(0);
-        }
+        // causes the entire server to crash
+        // if game.current_phase().phase() != PhaseType::Nomination {
+        //     game.phase_machine.time_remaining = Duration::from_secs(0);
+        // }
         self.state = PoliticianState::CountdownStarted;
     }
 
