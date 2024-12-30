@@ -62,8 +62,7 @@ export function createGameState(): GameState {
         clientState: createPlayerGameState(),
         host: false,
 
-        missedChatMessages: false,
-        missedWhispers: [],
+        missedChatMessages: false
     }
 }
 
@@ -90,6 +89,8 @@ export function createPlayerGameState(): PlayerGameState {
 
         sendChatGroups: [],
         insiderGroups: [],
+
+        missedWhispers: []
     }
 }
 

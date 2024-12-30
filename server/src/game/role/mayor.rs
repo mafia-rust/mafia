@@ -46,6 +46,12 @@ impl RoleStateImpl for Mayor {
             !Modifiers::modifier_is_enabled(game, crate::game::modifiers::ModifierType::ScheduledNominations)
         );
     }
+    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _new: super::RoleState, _old: super::RoleState) {
+        if actor_ref != player {return;}
+        for player in PlayerReference::all_players(game){
+            player.remove_player_tag(game, actor_ref, Tag::Enfranchised);
+        }
+    }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::new_controller_fast(
             game,

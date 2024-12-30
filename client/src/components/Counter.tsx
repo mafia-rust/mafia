@@ -8,7 +8,7 @@ export default function Counter(props: Readonly<{
 }>): ReactElement {
     const circles = [];
 
-    for (let i = 0; i < props.max; i++) {
+    for (let i = 0; i < Math.max(props.max, props.current); i++) {
         const filled = i < props.current ? "filled" : "empty";
         
         circles.push(<div key={filled + i} className={`counter-circle counter-circle-${filled}`} />)

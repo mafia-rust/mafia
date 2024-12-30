@@ -95,9 +95,10 @@ function TextDropdownLabel(
         <StyledText>{replaceMentions(props.titleString)}</StyledText>
         <span>
             {props.onSubtract ? <Button
-                onClick={() => {
+                onClick={(e) => {
                     if(props.onSubtract)
                         props.onSubtract();
+                    stopBubblingUpDomEvent(e);
                 }}
                 pressedChildren={() => <Icon size="small">done</Icon>}
                 aria-label={translate("menu.will.subtract")}
@@ -105,9 +106,10 @@ function TextDropdownLabel(
                 <Icon size="small">remove</Icon>
             </Button> : null}
             {props.onAdd ? <Button
-                onClick={() => {
+                onClick={(e) => {
                     if(props.onAdd)
                         props.onAdd();
+                    stopBubblingUpDomEvent(e);
                 }}
                 pressedChildren={() => <Icon size="small">done</Icon>}
                 aria-label={translate("menu.will.add")}
@@ -116,8 +118,9 @@ function TextDropdownLabel(
             </Button> : null}
             <Button
                 highlighted={unsaved}
-                onClick={() => {
+                onClick={(e) => {
                     save(props.field);
+                    stopBubblingUpDomEvent(e);
                     return true;
                 }}
                 pressedChildren={() => <Icon size="small">done</Icon>}
@@ -127,8 +130,9 @@ function TextDropdownLabel(
             </Button>
             <Button
                 disabled={props.cantPost}
-                onClick={() => {
+                onClick={(e) => {
                     send(props.field);
+                    stopBubblingUpDomEvent(e);
                     return true;
                 }}
                 pressedChildren={() => <Icon size="small">done</Icon>}
@@ -175,4 +179,9 @@ function PrettyTextArea(props: Readonly<{
                 }}>
             </textarea>}
         </div>
+}
+
+
+function stopBubblingUpDomEvent(e: React.MouseEvent) {
+    e.stopPropagation();
 }

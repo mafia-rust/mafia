@@ -78,8 +78,7 @@ type GameState = {
     clientState: PlayerGameState | {type: "spectator"},
     host: boolean,
 
-    missedChatMessages: boolean,
-    missedWhispers: PlayerIndex[]
+    missedChatMessages: boolean
 }
 export default GameState;
 
@@ -105,6 +104,8 @@ export type PlayerGameState = {
 
     sendChatGroups: ChatGroup[],
     insiderGroups: InsiderGroup[],
+    
+    missedWhispers: PlayerIndex[]
 }
 
 export type PlayerIndex = number;
