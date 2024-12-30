@@ -96,7 +96,12 @@ impl RoleStateImpl for Politician {
             vec_set![actor_ref]
         )
     }
-
+    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _new: super::RoleState, _old: super::RoleState) {
+        if actor_ref != player {return;}
+        for player in PlayerReference::all_players(game){
+            player.remove_player_tag(game, actor_ref, Tag::Enfranchised);
+        }
+    }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         Self::check_and_leave_town(&self, game, actor_ref);
 
