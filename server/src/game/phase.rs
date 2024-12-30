@@ -124,7 +124,11 @@ impl PhaseState {
             ChatMessageVariant::PhaseChange { 
                 phase: game.current_phase().clone(),
                 //need this if statement because the day number should be increased for obituary phase
-                day_number: if game.current_phase().phase() != PhaseType::Obituary {game.phase_machine.day_number} else {game.phase_machine.day_number+1}
+                day_number: if game.current_phase().phase() != PhaseType::Obituary {
+                    game.phase_machine.day_number
+                } else {
+                    game.phase_machine.day_number.saturating_add(1)
+                }
             }
         );
         
@@ -147,7 +151,7 @@ impl PhaseState {
 
                 events.into_iter().for_each(|f| f.invoke(game));
 
-                game.phase_machine.day_number += 1;
+                game.phase_machine.day_number = game.phase_machine.day_number.saturating_add(1);
             },
             PhaseState::Nomination { trials_left, nomination_time_remaining } => {
                 game.phase_machine.set_time_remaining(nomination_time_remaining);
