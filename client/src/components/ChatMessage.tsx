@@ -452,7 +452,7 @@ export function translateChatMessage(
             }
             return translate("chatMessage.trialVerdict",
                 playerNames[message.playerOnTrial],
-                hang?translate("verdict.innocent"):translate("verdict.guilty"),
+                hang?translate("verdict.guilty"):translate("verdict.innocent"),
                 message.innocent,
                 message.guilty
             );
