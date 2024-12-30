@@ -134,6 +134,11 @@ impl RoleStateImpl for SantaClaus {
         }
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
+        // Note: Sam, fix this when you fix jester
+        if !actor_ref.alive(game) {
+            return vec![];
+        }
+        
         match self.next_ability {
             SantaListKind::Nice => {
                 crate::game::role::common_role::convert_controller_selection_to_visits(
@@ -144,10 +149,6 @@ impl RoleStateImpl for SantaClaus {
                 )
             }
             SantaListKind::Naughty => {
-                // Note: Sam, fix this when you fix jester
-                if !actor_ref.alive(game) {
-                    return vec![];
-                }
                 let visits = crate::game::role::common_role::convert_controller_selection_to_visits(
                     game,
                     actor_ref,
