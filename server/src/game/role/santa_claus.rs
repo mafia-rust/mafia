@@ -106,7 +106,7 @@ impl RoleStateImpl for SantaClaus {
                     super::AvailableAbilitySelection::new_player_list(
                         get_selectable_players(game, actor_ref),
                         false,
-                        Some(2)
+                        Some(1)
                     ),
                     AbilitySelection::new_player_list(vec![]),
                     Detained::is_detained(game, actor_ref) || !actor_ref.alive(game),
@@ -122,7 +122,7 @@ impl RoleStateImpl for SantaClaus {
                     super::AvailableAbilitySelection::new_player_list(
                         get_selectable_players(game, actor_ref),
                         false,
-                        Some(2)
+                        Some(1)
                     ),
                     AbilitySelection::new_player_list(vec![]),
                     Detained::is_detained(game, actor_ref) || !actor_ref.alive(game),
@@ -144,6 +144,10 @@ impl RoleStateImpl for SantaClaus {
                 )
             }
             SantaListKind::Naughty => {
+                // Note: Sam, fix this when you fix jester
+                if !actor_ref.alive(game) {
+                    return vec![];
+                }
                 let visits = crate::game::role::common_role::convert_controller_selection_to_visits(
                     game,
                     actor_ref,
@@ -164,7 +168,7 @@ impl RoleStateImpl for SantaClaus {
 
                 let mut targets: Vec<PlayerReference> = eligible_targets.into_iter().chain(eligible_options).collect();
 
-                targets.truncate(2);
+                targets.truncate(1);
 
                 targets.into_iter()
                     .map(|target| Visit::new(actor_ref, target, false, VisitTag::Role))

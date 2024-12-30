@@ -28,8 +28,8 @@ pub struct Krampus {
 #[derive(Debug, Clone, Copy, Serialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum KrampusAbility {
-    DoNothing,
-    #[default] Kill
+    #[default] DoNothing,
+    Kill
 }
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
