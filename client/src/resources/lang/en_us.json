@@ -1595,7 +1595,7 @@
     "wiki.article.role.serialKiller.reminder": "Each night, select a player to attack.",
     "wiki.article.role.serialKiller.guide": "- At night select a player to attack them\n- You can't use your ability night 1.",
     "wiki.article.role.serialKiller.abilities":"* Visit a player to attack",
-    "wiki.article.role.serialKiller.attributes":"",
+    "wiki.article.role.serialKiller.attributes":"- You have an armor-piercing attack",
     "wiki.article.role.serialKiller.extra":"",
     
     "wiki.article.role.mafiaKillingWildcard.reminder": "Choose a syndicate killing role to become that role when night starts.",
