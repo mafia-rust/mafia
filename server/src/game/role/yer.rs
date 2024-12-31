@@ -2,7 +2,6 @@ use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::player::PlayerReference;
@@ -15,6 +14,7 @@ use super::{Priority, Role, RoleState, RoleStateImpl};
 use crate::game::ability_input::*;
 
 #[derive(Debug, Clone, Serialize, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct Yer{
     star_passes_remaining: u8,
 }
@@ -57,21 +57,29 @@ impl RoleStateImpl for Yer {
                 if priority != Priority::Convert {return}
                 if self.star_passes_remaining <= 0 {return}
 
-                if target_ref.night_defense(game).can_block(AttackPower::Basic) {
+                if target_ref.night_defense(game).can_block(AttackPower::ArmorPiercing) {
                     actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
                     return
                 }
-                
+
                 self.star_passes_remaining = self.star_passes_remaining.saturating_sub(1);
+
+                //role switching stuff
+                let fake_role = if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
+                    ControllerID::role(actor_ref, Role::Yer, 2)
+                ){
+                    role
+                }else{Role::Yer};
+
+                actor_ref.set_night_grave_role(game, Some(fake_role));
                 
-                InsiderGroupID::Puppeteer.add_player_to_revealed_group(game, target_ref);
+                //convert & kill stuff
                 target_ref.set_win_condition(
                     game,
                     WinCondition::new_loyalist(crate::game::game_conclusion::GameConclusion::Fiends)
                 );
                 target_ref.set_night_convert_role_to(game, Some(RoleState::Yer(self.clone())));
 
-                actor_ref.set_role_state(game, self);
                 actor_ref.try_night_kill_single_attacker(
                     actor_ref,
                     game,
@@ -79,6 +87,8 @@ impl RoleStateImpl for Yer {
                     AttackPower::ProtectionPiercing,
                     true
                 );
+
+                actor_ref.set_role_state(game, self);
             }
         }
     }
@@ -106,7 +116,7 @@ impl RoleStateImpl for Yer {
                         .collect()
                 ),
                 AbilitySelection::new_role_option(Some(Role::Yer)),
-                !actor_ref.alive(game),
+                self.star_passes_remaining <= 0 || !actor_ref.alive(game) || game.day_number() <= 1,
                 None,
                 false,
                 vec_set!(actor_ref)
@@ -120,9 +130,6 @@ impl RoleStateImpl for Yer {
             ControllerID::role(actor_ref, Role::Yer, 1),
             true
         )
-    }
-    fn default_revealed_groups(self) -> vec_set::VecSet<InsiderGroupID> {
-        vec_set![InsiderGroupID::Puppeteer]
     }
 }
 

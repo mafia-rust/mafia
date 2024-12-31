@@ -511,9 +511,15 @@
     "controllerId.role.warden.0.name": "Imprison",
     "controllerId.role.warden.1.name": "Self Ward",
 
+    "role.yer.name": "Yer",
+    "role.yer.name:var.0": "Yers",
+    "role.yer.shapeshiftsRemaining": "Shapeshifts remaining",
+    "controllerId.role.yer.0.name": "Shapeshift",
+    "controllerId.role.yer.1.name": "Choose Target",
+    "controllerId.role.yer.2.name": "Disguise as Role",
+
     "role.serialKiller.name": "Serial Killer",
     "role.serialKiller.name:var.0": "Serial Killers",
-    "role.serialKiller.target": "Attack",
     "controllerId.role.serialKiller.0.name": "Attack",
 
     "role.fiendsWildcard.name": "Fiends Wildcard",
@@ -1791,13 +1797,13 @@
     "wiki.article.role.puppeteer.abilities":"- You may choose to do one of the following\n    - Visit a player to poison them\n        - They are told they are poisoned\n        - They are indirectly hit with an armor-piercing attack on the following night\n\n    - Visit a player to string up into a marionette\n        - They are told they are strung up, and they now win with fiends, regardless of their role\n        - They will be indirectly hit with a protection-piercing attack every night by all puppeteers until they die, if there are no puppeteers they are still attacked\n        - You can only use this X times (X = Total players ÷ 5 (round up))",
     "wiki.article.role.puppeteer.attributes":"- You and the marionettes are all puppeteer insiders\n- Stringing someone up is armor-piercing, if a player has higher defense than armor when you attempt to string them up, they are instead poisoned\n - At night all puppeteers and marionettes can chat in the puppeteer chat, even if dead\n    - The players in the puppeteer chat that are dead can chat during the day or night",
     "wiki.article.role.puppeteer.extra":"- You can't select anybody who is a puppeteer, marionette, or is being strung into a marionette\n- A puppeteer can't be stringed into a marionette\n- A marionette can't be stringed into a marionette twice, if 2 puppeteers choose a player to be turned into a marionette on the same night, they get the message only once",
-    
+
     "wiki.article.role.kira.reminder": "Each night, guess players roles, if all your guesses are correct, you attack all of the players you guessed.",
     "wiki.article.role.kira.guide":"- Each night, guess players roles, if all your guesses are correct, you attack all of the players you guessed.\n- You can choose not to guess a players role by selecting none, this doesn't count as a wrong guess\n- Each night you get a result, for each guess, you are told if your guess was correct, incorrect but someone has that role, or incorrect and nobody has that role\n- You can't attack night 1, but you can still make guesses\n\n_For Example_\n- You guess @1 is a lookout, @2 is a tracker, and don't guess anyone else by selecting none. If @1 is a lookout, @2 is a tracker, you attack @1 and @2, but nobody else.",
     "wiki.article.role.kira.abilities":"- Each night, make a guess for every living player\n    - Your options for guesses are, any specific town role, none, and non town. So if they aren't town, you don't need to know their exact role\n    - If all of your guesses are one of either correct or none, you attack all of the players you guessed correctly with an indirect armor-piercing attack\n- Every night, you get a result\n    - For each player you guessed as something non none, you learn one of three things\n        - Your guess is correct, that player has that role\n        - Your guess is incorrect, that player doesn't have that role, but someone else in the game does have that role\n        - Your guess is incorrect, that player doesn't have that role, and nobody else in the game has that role\n- If it is night 1, you don't attack anyone, but you still get your result",
     "wiki.article.role.kira.attributes":"- You don't visit anyone\n- Your attack is armor-piercing\n- You don't attack anyone night 1",
     "wiki.article.role.kira.extra":"- You can't guess dead players or yourself, nor can you attack them\n* If you are blocked, your ability does nothing",
-    
+
     "wiki.article.role.pyrolisk.reminder": "Each night*, select a player to attack them. You passively attack everyone who visits you. Everyone you kill is obscured.",
     "wiki.article.role.pyrolisk.guide":"- Each night except the first, select a player to attack them, and obscure them\n- You passively attack and obscure everyone who visits you\n- On night 1, you can't attack anyone, and you have innocent aura\n- You are told the players you obscures role and alibi",
     "wiki.article.role.pyrolisk.abilities":"* On night 1\n    * You can't attack\n    * You have innocent aura\n* On other nights\n    * Visit a player to attack them\n    * All players who visit you are attacked\n* All players you attacked and killed have their grave obscured and you are told their role and alibi",
@@ -1809,13 +1815,19 @@
     "wiki.article.role.spiral.abilities":"- Each night except the first, select a player to attack and spiral all visitors to them\n    - Players die the night after they begin to spiral\n    - The night a player dies to spiraling, all visitors to them begin to spiral, causing a potential chain reaction\n- You can't spiral a player if any player is still spiraling",
     "wiki.article.role.spiral.attributes":"- Players are not told when they start to spiral\n* If you are blocked, spiraling players still die\n* Your attack is armor piercing",
     "wiki.article.role.spiral.extra":"- You can't cause yourself to spiral\n- If a dead player is spiraling, they stay spiraling, and you attack them again, even while they are dead. Although they cannot die after already dead.",
-    
+
     "wiki.article.role.warden.reminder": "Each night*, put up to 3 players in your prison who each must choose to either live or die, but if they all choose to live, they all die instead.",
     "wiki.article.role.warden.guide":"- Each night except the first, choose up to 3 players to put in prison\n    - The prisoners must choose to live or die\n        - If a player chooses die, you attack them (armor-piercing)\n        - If all of the players in your prison choose live, you attack all of them (armor-piercing)\n    - The players in your prison can talk in a private chat group at night\n        - You can always read from the private prisoner chat group\n    - The players in your prison are roleblocked\n    - You can put yourself in your prison, but you can't ever die or be roleblocked by your own ability\n - Each night, you may choose to ward yourself",
     "wiki.article.role.warden.abilities":"- Each night except the first, choose up to 3 players to put in prison\n    - The prisoners must choose to live or die\n        - If a player chooses die, you attack them (armor-piercing)\n        - If all of the players in your prison choose live, you attack all of them (armor-piercing)\n    - The players in your prison can talk in a private chat group at night\n        - You can always read from the private prisoner chat group\n    - The players in your prison are roleblocked\n    - You can put yourself in your prison, but you can't ever die or be roleblocked by your own ability\n - Each night, you may choose to ward yourself",
     "wiki.article.role.warden.attributes":" - You can't die to your own ability, but the logic of your ability doesn't change. _For example_:\n You imprison yourself and another player. You both choose live. You survive and the other player dies. All players in prison chose to live so both players should die, but you can't die to your own ability.",
     "wiki.article.role.warden.extra":" - You don't visit anybody due to your own ability",
-    
+
+    "wiki.article.role.yer.reminder":"Each night*, either attack a player, or convert a player to be a yer, and attack yourself.",
+    "wiki.article.role.yer.guide":"- At night choose to either shapeshift or not\n    - If you don't shapeshift\n        - Choose a player to attack with an armor piercing attack\n    - If you shapeshift\n        - Choose a player to convert with an armor-piercing attack\n        - That player becomes a yer, and their win condition switches to be fiends loyalist\n        - You attack yourself with a protection piercing attack\n- You can only shapeshift X times (X = Total players ÷ 5 (round up))",
+    "wiki.article.role.yer.abilities":"",
+    "wiki.article.role.yer.attributes":"",
+    "wiki.article.role.yer.extra":"",
+
     "wiki.article.role.fiendsWildcard.reminder": "Choose a fiends role to become at start of night.",
     "wiki.article.role.fiendsWildcard.guide": "* Choose a fiends role to become that role\n    * You become that role when night starts\n* You can't become a role that has exceeded its role limit",
     "wiki.article.role.fiendsWildcard.abilities":"* Become a role you choose at the start of night",

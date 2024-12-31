@@ -1191,6 +1191,19 @@
             {"type": "wardblocked"}
         ]
     },
+    "yer": {
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "canWriteDeathNote": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "youAttackedSomeone"},
+            {"type": "someoneSurvivedYourAttack"}
+        ]
+    },
     "fiendsWildcard": {
         "mainRoleSet": "fiends",
         "roleSets": ["fiends"],
