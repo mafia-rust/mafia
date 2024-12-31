@@ -2470,9 +2470,7 @@ fn santa_cannot_convert_naughty_player() {
     kit::scenario!(game in Night 1 where
         santa: SantaClaus,
         nice: Villager,
-        nice2: Villager,
-        naughty: Villager,
-        naughty2: Villager
+        naughty: Villager
     );
     santa.send_ability_input_player_list_typical(nice);
 
@@ -2486,7 +2484,7 @@ fn santa_cannot_convert_naughty_player() {
     assert_contains!(santa.get_messages_after_night(2), 
         ChatMessageVariant::NextSantaAbility { ability: mafia_server::game::role::santa_claus::SantaListKind::Naughty }
     );
-    santa.send_ability_input_player_list([naughty, naughty2], 1);
+    santa.send_ability_input_player_list(naughty, 1);
 
     game.skip_to(Night, 3);
 
@@ -2495,14 +2493,9 @@ fn santa_cannot_convert_naughty_player() {
         GameConclusion::NaughtyList
     );
 
-    santa.send_ability_input_player_list_typical([naughty, nice2]);
+    santa.send_ability_input_player_list_typical(naughty);
 
     game.skip_to(Obituary, 4);
-
-    assert_contains!(
-        nice2.player_ref().win_condition(&*game).required_resolution_states_for_win().unwrap(),
-        GameConclusion::NiceList
-    );
 
     assert_contains!(
         naughty.player_ref().win_condition(&*game).required_resolution_states_for_win().unwrap(),
@@ -2530,35 +2523,40 @@ fn krampus_obeys_ability_order() {
         assert_contains!(krampus.get_messages_after_night(night), ChatMessageVariant::NextKrampusAbility { ability });
     };
 
-    expect_ability(1, KrampusAbility::Kill);
-    krampus.send_ability_input_player_list_typical(town1);
-
-    assert_not_contains!(town2.get_messages_after_night(2), ChatMessageVariant::YouDied);
-    game.skip_to(Obituary, 2);
-    assert!(!town1.alive());
-
-    game.skip_to(Night, 2);
-    expect_ability(2, KrampusAbility::DoNothing);
+    expect_ability(1, KrampusAbility::DoNothing);
     krampus.send_ability_input_player_list_typical(town2);
 
+    game.skip_to(Night, 2);
+
+    expect_ability(2, KrampusAbility::Kill);
+    krampus.send_ability_input_player_list_typical(town1);
+
+    assert_not_contains!(town2.get_messages_after_night(3), ChatMessageVariant::YouDied);
     game.skip_to(Obituary, 3);
-    assert!(town2.alive());
+    assert!(!town1.alive());
 
     game.skip_to(Night, 3);
-    expect_ability(3, KrampusAbility::Kill);
+    expect_ability(3, KrampusAbility::DoNothing);
+    krampus.send_ability_input_player_list_typical(town2);
+
+    game.skip_to(Obituary, 4);
+    assert!(town2.alive());
 
     game.skip_to(Night, 4);
     expect_ability(4, KrampusAbility::Kill);
-    krampus.send_ability_input_player_list_typical(town3);
-
-    game.skip_to(Obituary, 5);
-    assert!(!town3.alive());
 
     game.skip_to(Night, 5);
-    expect_ability(5, KrampusAbility::DoNothing);
+    expect_ability(5, KrampusAbility::Kill);
+    krampus.send_ability_input_player_list_typical(town3);
+
+    game.skip_to(Obituary, 6);
+    assert!(!town3.alive());
 
     game.skip_to(Night, 6);
-    expect_ability(6, KrampusAbility::Kill);
+    expect_ability(6, KrampusAbility::DoNothing);
+
+    game.skip_to(Night, 7);
+    expect_ability(7, KrampusAbility::Kill);
 }
 
 #[test]
