@@ -875,8 +875,8 @@
     "santaClaus": {
         "mainRoleSet": "neutral",
         "roleSets": ["neutral"],
-        "armor": true,
-        "aura": "innocent",
+        "armor": false,
+        "aura": null,
         "maxCount": 1,
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],

@@ -32,7 +32,7 @@ pub enum SantaListKind{
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for SantaClaus {
     type ClientRoleState = SantaClaus;
