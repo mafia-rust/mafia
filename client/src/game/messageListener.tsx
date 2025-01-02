@@ -472,8 +472,12 @@ export default function messageListener(packet: ToClientPacket){
                     GAME_MANAGER.state.missedChatMessages = true;
                     
                     for(let chatMessage of packet.chatMessages){
-                        if(chatMessage.variant.type === "whisper"){
-                            GAME_MANAGER.state.missedWhispers.push(chatMessage.variant.fromPlayerIndex);
+                        if(
+                            chatMessage.variant.type === "whisper" &&
+                            GAME_MANAGER.state.clientState.type === "player" &&
+                            chatMessage.variant.toPlayerIndex === GAME_MANAGER.state.clientState.myIndex
+                        ){
+                            GAME_MANAGER.state.clientState.missedWhispers.push(chatMessage.variant.fromPlayerIndex);
                         }
                     }
                 }
