@@ -39,10 +39,15 @@ impl RoleStateImpl for SantaClaus {
                 let targets = actor_visits.map(|v| v.target);
 
                 for target_ref in targets {
-                    let WinCondition::GameConclusionReached { mut win_if_any } = target_ref.win_condition(game).clone() else { continue };
-                    if !get_eligible_players(game, actor_ref).contains(&target_ref) { continue }
-                    
-                    if !AttackPower::ArmorPiercing.can_pierce(target_ref.defense(game)) {
+                    let WinCondition::GameConclusionReached { mut win_if_any } = target_ref.win_condition(game).clone() else {
+                        actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                        continue
+                    };
+
+                    if
+                        !AttackPower::ArmorPiercing.can_pierce(target_ref.defense(game)) ||
+                        !get_eligible_players(game, actor_ref).contains(&target_ref)
+                    {
                         actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
                         continue;
                     }
@@ -62,10 +67,15 @@ impl RoleStateImpl for SantaClaus {
                 let targets = actor_visits.map(|v| v.target);
 
                 for target_ref in targets {
-                    let WinCondition::GameConclusionReached { mut win_if_any } = target_ref.win_condition(game).clone() else { continue };
-                    if !get_eligible_players(game, actor_ref).contains(&target_ref) { continue };
+                    let WinCondition::GameConclusionReached { mut win_if_any } = target_ref.win_condition(game).clone() else {
+                        actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                        continue
+                    };
 
-                    if !AttackPower::ArmorPiercing.can_pierce(target_ref.defense(game)) {
+                    if
+                        !AttackPower::ArmorPiercing.can_pierce(target_ref.defense(game)) ||
+                        !get_eligible_players(game, actor_ref).contains(&target_ref)
+                    {
                         actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
                         continue;
                     }

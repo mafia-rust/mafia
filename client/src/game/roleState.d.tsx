@@ -147,6 +147,13 @@ Doomsayer
 | {
     type: "politician"
 } | {
+    type: "santaClaus",
+    abilityUsedLastNight: "naughty" | "nice" | null
+} | {
+    type: "krampus",
+    lastUsedAbility: "doNothing" | "kill" | null,
+    ability: "doNothing" | "kill"
+} | {
     type: "witch"
 } | {
     type: "scarecrow"

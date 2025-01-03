@@ -883,7 +883,9 @@
         "chatMessages":[
             {"type": "nextSantaAbility", "ability": "nice"},
             {"type": "nextSantaAbility", "ability": "naughty"},
-            {"type": "addedToNiceList"}
+            {"type": "addedToNiceList"},
+            {"type": "addedToNaughtyList"},
+            {"type": "yourConvertFailed"}
         ]
     },
     "krampus": {
