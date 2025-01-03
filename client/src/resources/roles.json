@@ -1092,7 +1092,7 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "puppeteerPlayerIsNowMarionette","player": 32},
-            {"type": "youArePoisoned"},
+            {"type": "yourConvertFailed"},
             {
                 "type": "normal", 
                 "messageSender": {
