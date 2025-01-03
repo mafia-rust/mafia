@@ -2,8 +2,10 @@ use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
 use crate::game::components::detained::Detained;
-use crate::game::components::poison::{Poison, PoisonAlert};
-use crate::game::{attack_power::DefensePower, components::puppeteer_marionette::PuppeteerMarionette};
+use crate::game::{
+    attack_power::DefensePower,
+    components::puppeteer_marionette::PuppeteerMarionette
+};
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
@@ -20,12 +22,9 @@ pub struct Puppeteer{
 
 impl Default for Puppeteer{
     fn default() -> Self {
-        Self {
-            marionettes_remaining: 3,
-        }
+        Self {marionettes_remaining: 3,}
     }
 }
-
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
@@ -39,8 +38,7 @@ impl RoleStateImpl for Puppeteer {
         }
     }
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Poison {return;}
-
+        if priority != Priority::Kill {return;}
 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
@@ -49,30 +47,24 @@ impl RoleStateImpl for Puppeteer {
             if game.saved_controllers.get_controller_current_selection_integer(
                 ControllerID::role(actor_ref, Role::Puppeteer, 1)
             ).unwrap_or(IntegerSelection(0)).0 == 1 {
-                if AttackPower::ArmorPiercing.can_pierce(target.defense(game)) {
+                if !AttackPower::ArmorPiercing.can_pierce(target.defense(game)) {
+                    actor_ref.push_night_message(game, crate::game::chat::ChatMessageVariant::YourConvertFailed);
+                }else{
                     if PuppeteerMarionette::string(game, target){
-                        self.marionettes_remaining -= 1;
+                        self.marionettes_remaining = self.marionettes_remaining.saturating_sub(1);
                     }
                     actor_ref.set_role_state(game, RoleState::Puppeteer(self));
-                }else{
-                    Poison::poison_player(game, 
-                        target, AttackPower::ArmorPiercing, 
-                        crate::game::grave::GraveKiller::Role(Role::Puppeteer), 
-                        vec![actor_ref].into_iter().collect(), true,
-                        PoisonAlert::Alert,
-                    );
                 }
             }else{
-                Poison::poison_player(game, 
-                    target, AttackPower::ArmorPiercing, 
-                    crate::game::grave::GraveKiller::Role(Role::Puppeteer), 
-                    vec![actor_ref].into_iter().collect(), true,
-                    PoisonAlert::Alert,
+                actor_ref.try_night_kill_single_attacker(
+                    actor_ref,
+                    game,
+                    crate::game::grave::GraveKiller::Role(Role::Puppeteer),
+                    AttackPower::ArmorPiercing,
+                    true
                 );
             }
         }
-
-        
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         ControllerParametersMap::new_controller_fast(
@@ -114,7 +106,7 @@ impl RoleStateImpl for Puppeteer {
             game,
             actor_ref,
             ControllerID::role(actor_ref, Role::Puppeteer, 0),
-            false,
+            true,
         )
     }
      fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
