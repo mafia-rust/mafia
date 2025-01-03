@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
 use crate::game::{
     attack_power::DefensePower,
@@ -113,5 +114,8 @@ impl RoleStateImpl for Puppeteer {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Puppeteer
         ].into_iter().collect()
+    }
+    fn on_any_death(self, game: &mut Game, _actor_ref: PlayerReference, dead_player_ref: PlayerReference) {
+        dead_player_ref.add_private_chat_message(game, ChatMessageVariant::MediumExists);
     }
 }

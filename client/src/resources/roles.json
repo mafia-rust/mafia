@@ -1100,7 +1100,8 @@
                 "text": "Erm... Guys? What do i do, they're gonna catch me!", 
                 "chatGroup": "puppeteer",
                 "block": false
-            }
+            },
+            {"type": "mediumExists"}
         ]
     },
     "pyrolisk": {
