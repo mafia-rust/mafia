@@ -64,7 +64,7 @@ impl RoleStateImpl for Apostle {
             game,
             actor_ref, 
             ControllerID::role(actor_ref, Role::Apostle, 0),
-            Cult::next_ability(game) == CultAbility::Kill
+            true
         )
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {

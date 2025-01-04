@@ -1731,7 +1731,7 @@ fn cult_alternates() {
 
 #[test]
 fn puppeteer_marionettes_philosopher(){
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         puppeteer: Puppeteer,
         philo: Philosopher,
         townie: Detective,
@@ -1752,7 +1752,7 @@ fn puppeteer_marionettes_philosopher(){
         ChatMessageVariant::SeerResult{ enemies: true }
     );
 
-    game.skip_to(Night, 2);
+    game.skip_to(Night, 3);
 
     assert!(philo.send_ability_input_two_player_typical(puppeteer, townie));
 
@@ -1765,7 +1765,7 @@ fn puppeteer_marionettes_philosopher(){
 
 #[test]
 fn puppeteer_marionettes_die(){
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         puppeteer: Puppeteer,
         townie: Detective,
         townie2: Detective,
@@ -1779,18 +1779,16 @@ fn puppeteer_marionettes_die(){
 
     assert!(puppeteer.send_ability_input_player_list_typical(townie));
 
-    game.skip_to(Night, 2);
+    game.skip_to(Night, 3);
+
+    puppeteer.send_ability_input(AbilityInput::new(
+        ControllerID::role(puppeteer.player_ref(), Role::Puppeteer, 1),
+        AbilitySelection::new_integer(0)
+    ));
 
     assert!(puppeteer.send_ability_input_player_list_typical(townie2));
 
     game.next_phase();
-
-    assert!(!townie.alive());
-    assert!(townie2.alive());
-    assert!(townie3.alive());
-    assert!(puppeteer.alive());
-
-    game.skip_to(Obituary, 4);
 
     assert!(!townie.alive());
     assert!(!townie2.alive());
@@ -1800,7 +1798,7 @@ fn puppeteer_marionettes_die(){
 
 #[test]
 fn puppeteer_marionettes_win(){
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         puppeteer: Puppeteer,
         townie: Detective,
         townie2: Detective
@@ -1813,16 +1811,16 @@ fn puppeteer_marionettes_win(){
 
     assert!(puppeteer.send_ability_input_player_list_typical(townie));
 
-    game.skip_to(Nomination, 2);
+    game.skip_to(Nomination, 3);
 
     puppeteer.vote_for_player(Some(townie2));
     townie.vote_for_player(Some(townie2));
 
-    game.skip_to(Judgement, 2);
+    game.skip_to(Judgement, 3);
 
     puppeteer.set_verdict(Verdict::Guilty);
 
-    game.skip_to(Dusk, 2);
+    game.skip_to(Dusk, 3);
 
     assert!(puppeteer.alive());
     assert!(townie.alive());
@@ -1835,7 +1833,7 @@ fn puppeteer_marionettes_win(){
 
 #[test]
 fn deputy_shoots_marionette(){
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         deputy: Deputy,
         puppeteer: Puppeteer,
         townie: Detective
@@ -1847,7 +1845,7 @@ fn deputy_shoots_marionette(){
     ));
     assert!(puppeteer.send_ability_input_player_list_typical(townie));
 
-    game.skip_to(Discussion, 2);
+    game.skip_to(Discussion, 3);
 
     deputy.send_ability_input_player_list_typical(townie);
 

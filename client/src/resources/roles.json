@@ -1090,7 +1090,7 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "puppeteerPlayerIsNowMarionette","player": 32},
-            {"type": "youArePoisoned"},
+            {"type": "yourConvertFailed"},
             {
                 "type": "normal", 
                 "messageSender": {
@@ -1100,7 +1100,8 @@
                 "text": "Erm... Guys? What do i do, they're gonna catch me!", 
                 "chatGroup": "puppeteer",
                 "block": false
-            }
+            },
+            {"type": "mediumExists"}
         ]
     },
     "pyrolisk": {
