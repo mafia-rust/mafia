@@ -155,6 +155,12 @@
     "role/politician/0": {
         "midnight": false
     },
+    "role/santaClaus/0": {
+        "midnight": true
+    },
+    "role/santaClaus/1": {
+        "midnight": true
+    },
     "role/scarecrow/0": {
         "midnight": true
     },

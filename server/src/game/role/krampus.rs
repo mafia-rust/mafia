@@ -18,12 +18,11 @@ use super::{GetClientRoleState, Priority, Role, RoleStateImpl};
 use crate::game::ability_input::*;
 
 #[derive(Debug, Clone, Serialize, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct Krampus {
     ability: KrampusAbility,
     last_used_ability: Option<KrampusAbility>
 }
-
-
 
 #[derive(Debug, Clone, Copy, Serialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]

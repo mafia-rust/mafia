@@ -383,38 +383,34 @@ mod macros {
 impl Role{
     pub fn possession_immune(&self)->bool{
         match self {
-            Role::TallyClerk
             | Role::Bouncer
             | Role::Veteran
             | Role::Transporter | Role::Retributionist
             | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper
-            | Role::MafiaWitch | Role::Necromancer
-            | Role::Ojo => true,
+            | Role::MafiaWitch | Role::Necromancer => true,
             _ => false,
         }
     }
     pub fn roleblock_immune(&self)->bool{
         match self {
+            Role::Veteran | Role::Jester | 
             Role::Bouncer |
-            Role::Veteran | 
             Role::Transporter | Role::Escort | Role::Retributionist | 
-            Role::Jester | Role::Witch | Role::Scarecrow | Role::Warper |
-            Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer |
-            Role::SantaClaus => true,
+            Role::Witch | Role::Scarecrow | Role::Warper |
+            Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer => true,
             _ => false,
         }
     }
     pub fn wardblock_immune(&self)->bool{
         match self {
             Role::Jailor | Role::Kidnapper |
-            Role::Bouncer | Role::Scarecrow | Role::SantaClaus => true,
+            Role::Bouncer | Role::Scarecrow => true,
             _ => false
         }
     }
     pub fn has_innocent_aura(&self, game: &Game)->bool{
         match self {
             Role::Godfather => true,
-            Role::SantaClaus => true,
             Role::Pyrolisk => {
                 game.day_number() == 1
             },
