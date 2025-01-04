@@ -208,14 +208,14 @@ impl RoleSet{
             RoleSet::Neutral =>
                 vec![
                     Role::Jester, Role::Revolutionary, Role::Politician, Role::Doomsayer,
-                    Role::Martyr, Role::Chronokaiser
+                    Role::Martyr, Role::Chronokaiser, Role::SantaClaus, Role::Krampus,
                 ],
             RoleSet::Fiends =>
                 vec![
                     Role::Arsonist, Role::Werewolf, Role::Ojo,
                     Role::Puppeteer, Role::Pyrolisk, Role::Kira,
                     Role::SerialKiller, Role::FiendsWildcard,
-                    Role::Spiral, Role::Warden
+                    Role::Spiral, Role::Warden, Role::Yer
                 ],
             RoleSet::Cult =>
                 vec![

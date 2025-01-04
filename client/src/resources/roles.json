@@ -875,15 +875,17 @@
     "santaClaus": {
         "mainRoleSet": "neutral",
         "roleSets": ["neutral"],
-        "armor": true,
-        "aura": "innocent",
+        "armor": false,
+        "aura": null,
         "maxCount": 1,
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "nextSantaAbility", "ability": "nice"},
             {"type": "nextSantaAbility", "ability": "naughty"},
-            {"type": "addedToNiceList"}
+            {"type": "addedToNiceList"},
+            {"type": "addedToNaughtyList"},
+            {"type": "yourConvertFailed"}
         ]
     },
     "krampus": {
@@ -1100,7 +1102,8 @@
                 "text": "Erm... Guys? What do i do, they're gonna catch me!", 
                 "chatGroup": "puppeteer",
                 "block": false
-            }
+            },
+            {"type": "mediumExists"}
         ]
     },
     "pyrolisk": {
@@ -1189,6 +1192,19 @@
             {"type": "roleBlocked", "immune": true},
             {"type": "roleBlocked", "immune": false},
             {"type": "wardblocked"}
+        ]
+    },
+    "yer": {
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "canWriteDeathNote": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "youAttackedSomeone"},
+            {"type": "someoneSurvivedYourAttack"}
         ]
     },
     "fiendsWildcard": {
