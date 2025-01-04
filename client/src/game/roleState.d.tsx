@@ -190,6 +190,11 @@ Doomsayer
     type: "puppeteer"
     marionettesRemaining: number
 } | {
+    type: "warden"
+} | {
+    type: "yer",
+    starPassesRemaining: number
+} | {
     type: "kira"
 } | {
     type: "fiendsWildcard"

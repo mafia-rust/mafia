@@ -160,6 +160,7 @@ macros::roles! {
     Spiral : spiral,
     Kira : kira,
     Warden : warden,
+    Yer : yer,
     FiendsWildcard : fiends_wildcard,
     SerialKiller : serial_killer,
 
@@ -184,7 +185,7 @@ macros::priorities! {
 
     Heal,
     Kill,
-    Convert,
+    Convert,    //role swap & win condition change
     Poison,
     Investigative,
 
