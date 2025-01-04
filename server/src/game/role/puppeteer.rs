@@ -13,7 +13,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_set;
 
-use super::{AbilitySelection, ControllerID, ControllerParametersMap, IntegerSelection, Priority, Role, RoleState, RoleStateImpl};
+use super::{AbilitySelection, ControllerID, ControllerParametersMap, IntegerSelection, Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -40,24 +40,27 @@ impl RoleStateImpl for Puppeteer {
     }
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return;}
+        if game.day_number() <= 1 {return;}
 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
             let target = visit.target;
             
-            if game.saved_controllers.get_controller_current_selection_integer(
-                ControllerID::role(actor_ref, Role::Puppeteer, 1)
-            ).unwrap_or(IntegerSelection(0)).0 == 1 {
+            if 
+                game.saved_controllers.get_controller_current_selection_integer(
+                    ControllerID::role(actor_ref, Role::Puppeteer, 1)
+                ).unwrap_or(IntegerSelection(0)).0 == 1
+            {
                 if !AttackPower::ArmorPiercing.can_pierce(target.defense(game)) {
                     actor_ref.push_night_message(game, crate::game::chat::ChatMessageVariant::YourConvertFailed);
                 }else{
                     if PuppeteerMarionette::string(game, target){
                         self.marionettes_remaining = self.marionettes_remaining.saturating_sub(1);
                     }
-                    actor_ref.set_role_state(game, RoleState::Puppeteer(self));
+                    actor_ref.set_role_state(game, self);
                 }
             }else{
-                actor_ref.try_night_kill_single_attacker(
+                target.try_night_kill_single_attacker(
                     actor_ref,
                     game,
                     crate::game::grave::GraveKiller::Role(Role::Puppeteer),
@@ -83,7 +86,7 @@ impl RoleStateImpl for Puppeteer {
                 Some(1)
             ),
             AbilitySelection::new_player_list(vec![]),
-            Detained::is_detained(game, actor_ref) || !actor_ref.alive(game),
+            Detained::is_detained(game, actor_ref) || !actor_ref.alive(game) || game.day_number() <= 1,
             None,
             false,
             vec_set!(actor_ref),
@@ -95,7 +98,7 @@ impl RoleStateImpl for Puppeteer {
                     if self.marionettes_remaining > 0 {1} else {0}
                 ),
                 AbilitySelection::new_integer(0),
-                false,
+                Detained::is_detained(game, actor_ref) || !actor_ref.alive(game) || game.day_number() <= 1,
                 None,
                 false,
                 vec_set!(actor_ref),

@@ -498,6 +498,7 @@
     "role.puppeteer.name:var.0": "Puppeteers",
     "role.puppeteer.smallRoleMenu.marionettesRemaining": "\\0 marionettes remaining.",
     "role.puppeteer.smallRoleMenu": "Tonight you will \\0.",
+    "controllerId.role.puppeteer.0.name": "Target",
     "controllerId.role.puppeteer.1.name": "Choose Ability",
     "controllerId.role.puppeteer.1.integer.0": "Kill",
     "controllerId.role.puppeteer.1.integer.1": "Marionette",
