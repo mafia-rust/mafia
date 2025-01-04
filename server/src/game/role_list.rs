@@ -215,7 +215,7 @@ impl RoleSet{
                     Role::Arsonist, Role::Werewolf, Role::Ojo,
                     Role::Puppeteer, Role::Pyrolisk, Role::Kira,
                     Role::SerialKiller, Role::FiendsWildcard,
-                    Role::Spiral, Role::Warden
+                    Role::Spiral, Role::Warden, Role::Yer
                 ],
             RoleSet::Cult =>
                 vec![
