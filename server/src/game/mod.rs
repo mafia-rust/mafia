@@ -35,8 +35,10 @@ use components::detained::Detained;
 use components::insider_group::InsiderGroupID;
 use components::insider_group::InsiderGroups;
 use components::syndicate_gun_item::SyndicateGunItem;
+use components::synopsis::SynopsisTracker;
 use components::verdicts_today::VerdictsToday;
 use event::on_tick::OnTick;
+use modifiers::ModifierType;
 use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
 use rand::seq::SliceRandom;
@@ -49,6 +51,7 @@ use crate::game::event::on_game_start::OnGameStart;
 use crate::game::player::PlayerIndex;
 use crate::packet::ToClientPacket;
 use crate::vec_map::VecMap;
+use crate::vec_set::VecSet;
 use chat::{ChatMessageVariant, ChatGroup, ChatMessage};
 use player::PlayerReference;
 use player::Player;
@@ -113,6 +116,7 @@ pub struct Game {
     pub detained: Detained,
     pub confused: Confused,
     pub drunk_aura: DrunkAura,
+    pub synopsis_tracker: SynopsisTracker
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -182,8 +186,10 @@ impl Game {
             }
             drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
+            let num_players = new_players.len() as u8;
+
             let game = Self{
-                pitchfork: Pitchfork::new(new_players.len() as u8),
+                pitchfork: Pitchfork::new(num_players),
 
                 roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
                 ticking: true,
@@ -211,6 +217,7 @@ impl Game {
                 detained: Detained::default(),
                 confused: Confused::default(),
                 drunk_aura: DrunkAura::default(),
+                synopsis_tracker: SynopsisTracker::new(num_players)
             };
 
             if !game.game_is_over() {
@@ -301,10 +308,9 @@ impl Game {
         }
         (guilty, innocent)
     }
-    pub fn count_votes_and_start_trial(&mut self){
-
-        let &PhaseState::Nomination { trials_left, .. } = self.current_phase() else {return};
-
+    
+    /// this is sent to the players whenever this function is called
+    fn create_voted_player_map(&self) -> VecMap<PlayerReference, u8> {
         let mut voted_player_votes: VecMap<PlayerReference, u8> = VecMap::new();
 
         for player in PlayerReference::all_players(self){
@@ -330,42 +336,74 @@ impl Game {
                 voted_player_votes.insert(voted_player, voting_power);
             }
         }
-        
+
         self.send_packet_to_all(
             ToClientPacket::PlayerVotes { votes_for_player: 
                 PlayerReference::ref_vec_map_to_index(voted_player_votes.clone())
             }
         );
 
+        voted_player_votes
+    }
+    /// Returns the player who is meant to be put on trial
+    /// None if its not nomination
+    /// None if nobody has enough votes
+    /// None if there is a tie
+    pub fn count_nomination_and_start_trial(&mut self, start_trial_instantly: bool)->Option<PlayerReference>{
 
-        let mut next_player_on_trial = None;
-        for (player, votes) in voted_player_votes.iter(){
-            if self.nomination_votes_is_enough(*votes){
-                next_player_on_trial = Some(*player);
-                break;
+        let &PhaseState::Nomination { trials_left, .. } = self.current_phase() else {return None};
+
+        let voted_player_votes = self.create_voted_player_map();
+
+        let mut voted_player = None;
+
+        if let Some(maximum_votes) = voted_player_votes.values().max() {
+            if self.nomination_votes_is_enough(*maximum_votes){
+                let max_votes_players: VecSet<PlayerReference> = voted_player_votes.iter()
+                    .filter(|(_, votes)| **votes == *maximum_votes)
+                    .map(|(player, _)| *player)
+                    .collect();
+
+                if max_votes_players.len() == 1 {
+                    voted_player = max_votes_players.iter().next().cloned();
+                }
             }
         }
         
-        if let Some(player_on_trial) = next_player_on_trial {
-            self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
-            
-            PhaseStateMachine::next_phase(self, Some(PhaseState::Testimony {
-                trials_left: trials_left-1, 
-                player_on_trial, 
-                nomination_time_remaining: self.phase_machine.get_time_remaining()
-            }));
+        if start_trial_instantly {
+            if let Some(player_on_trial) = voted_player {
+                self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
+                
+                PhaseStateMachine::next_phase(self, Some(PhaseState::Testimony {
+                    trials_left: trials_left.saturating_sub(1), 
+                    player_on_trial, 
+                    nomination_time_remaining: self.phase_machine.get_time_remaining()
+                }));
+            }
         }
+
+        voted_player
     }
+
+    
     pub fn nomination_votes_is_enough(&self, votes: u8)->bool{
         votes >= self.nomination_votes_required()
     }
     pub fn nomination_votes_required(&self)->u8{
-        1 + (
-            PlayerReference::all_players(self)
-                .filter(|p| p.alive(self) && !p.forfeit_vote(self))
-                .count() / 2
-        ) as u8
+        let eligible_voters = PlayerReference::all_players(self)
+            .filter(|p| p.alive(self) && !p.forfeit_vote(self))
+            .count() as u8;
+
+        if Modifiers::modifier_is_enabled(self, ModifierType::TwoThirdsMajority) {
+            (eligible_voters + 1) * 2 / 3
+        } else {
+            1 + eligible_voters / 2
+        }
     }
+
+
+
+
 
     pub fn game_is_over(&self) -> bool {
         if let Some(_) = GameConclusion::game_is_over(self){
@@ -387,12 +425,14 @@ impl Game {
 
         if !self.ticking { return }
 
-        if self.game_is_over() {
-            OnGameEnding::invoke(self);
+        if let Some(conclusion) = GameConclusion::game_is_over(self) {
+            OnGameEnding::new(conclusion).invoke(self);
         }
 
         if self.phase_machine.day_number == u8::MAX {
-            self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::GameOver);
+            self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::GameOver { 
+                synopsis: SynopsisTracker::get(self, GameConclusion::Draw)
+            });
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
             self.ticking = false;
             return;
@@ -473,11 +513,7 @@ pub mod test {
     use super::{
         ability_input::saved_controllers_map::SavedControllersMap,
         components::{
-            arsonist_doused::ArsonistDoused, cult::Cult,
-            insider_group::InsiderGroupID, love_linked::LoveLinked,
-            mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits,
-            pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette,
-            syndicate_gun_item::SyndicateGunItem, verdicts_today::VerdictsToday
+            arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, verdicts_today::VerdictsToday
         }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine, player::{test::mock_player, PlayerIndex, PlayerReference},
@@ -519,7 +555,7 @@ pub mod test {
         drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
         let mut game = Game{
-            pitchfork: Pitchfork::new(players.len() as u8),
+            pitchfork: Pitchfork::new(number_of_players as u8),
             
             roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
             ticking: true,
@@ -546,6 +582,7 @@ pub mod test {
             detained: Default::default(),
             confused: Default::default(),
             drunk_aura: Default::default(),
+            synopsis_tracker: SynopsisTracker::new(number_of_players as u8)
         };
 
         //set wincons and revealed groups

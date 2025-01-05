@@ -24,7 +24,7 @@ export default function DetailsSummary(props: Readonly<{
     }, [props.open, openState, props.disabled]);
 
     return <div className={"details-summary-container "+(props.className??"")}>
-        <div className="details-summary-summary-container"
+        <div className={"details-summary-summary-container"+(open ? " open" : "")}
             onClick={() => {
                 if(props.disabled) return;
                 setOpen(!open);
@@ -33,7 +33,7 @@ export default function DetailsSummary(props: Readonly<{
         >
             {(props.dropdownArrow === undefined || props.dropdownArrow === true) ? 
                 ((props.disabled === undefined || props.disabled===false) ? 
-                    <Icon>{open ? "expand_more" : "expand_less"}</Icon>
+                    <Icon>{open ? "keyboard_arrow_down" : "keyboard_arrow_right"}</Icon>
                  : 
                     <Icon>close</Icon>
                 ) : 

@@ -74,6 +74,7 @@ impl RoleStateImpl for Jester {
             Detained::is_detained(game, actor_ref) ||
             !self.lynched_yesterday;
 
+        // Note: Sam, when you fix this, don't forget to fix Santa Claus in the same manner
         ControllerParametersMap::new_controller_fast(
             game,
             ControllerID::role(actor_ref, Role::Jester, 0),

@@ -11,6 +11,7 @@ import WikiCoverCard from '../components/WikiCoverCard';
 import Icon from '../components/Icon';
 import SettingsMenu from './Settings';
 import { useLobbyOrGameState } from '../components/useHooks';
+import { Button } from '../components/Button';
 
 export default function GlobalMenu(): ReactElement {
     const lobbyName = useLobbyOrGameState(
@@ -70,9 +71,9 @@ export default function GlobalMenu(): ReactElement {
                 <section className="standout">
                     <h2>{lobbyName}</h2>
                     <RoomLinkButton/>
-                    {(stateType === "game" && host) && <button onClick={()=>GAME_MANAGER.sendBackToLobbyPacket()}>
+                    {(stateType === "game" && host) && <Button onClick={()=>GAME_MANAGER.sendBackToLobbyPacket()}>
                         {translate("backToLobby")}
-                    </button>}
+                    </Button>}
                 </section>
             }
             <section>

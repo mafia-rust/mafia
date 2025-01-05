@@ -79,6 +79,7 @@ export function createGameManager(): GameManager {
                 GAME_MANAGER.state.phaseTimes = lobbyState.phaseTimes;
                 GAME_MANAGER.state.enabledRoles = lobbyState.enabledRoles;
                 GAME_MANAGER.state.host = lobbyState.players.get(lobbyState.myId!)?.ready === "host";
+                GAME_MANAGER.state.myId = lobbyState.myId
             }
         },
         setSpectatorGameState() {
@@ -110,7 +111,7 @@ export function createGameManager(): GameManager {
         getMyName() {
             if (gameManager.state.stateType === "lobby"){
                 let client = gameManager.state.players.get(gameManager.state.myId!);
-                if(client === undefined) return undefined;
+                if(client === undefined || client === null) return undefined;
                 if(client.clientType.type === "spectator") return undefined;
                 return client.clientType.name;
             }

@@ -123,6 +123,10 @@ function PlayerCard(props: Readonly<{
     const [alibiOpen, setAlibiOpen] = React.useState(false);
     const [graveOpen, setGraveOpen] = React.useState(false);
     const [whisperChatOpen, setWhisperChatOpen] = React.useState(false);
+    const whispersDisabled = useGameState(
+        gameState => gameState.enabledModifiers.includes("noWhispers"),
+        ["enabledModifiers"]
+    )!;
 
     const grave = useGameState(
         gameState => {
@@ -131,6 +135,15 @@ function PlayerCard(props: Readonly<{
         },
         ["addGrave"]
     )!
+
+    const whisperNotification = usePlayerState(
+        gameState =>
+            gameState.missedWhispers.some(player => player === props.playerIndex) &&
+            !isPlayerSelf &&
+            !whisperChatOpen,
+        ["addChatMessages", "whisperChatOpenOrClose"],
+        false
+    );
 
     return <><div 
         className={`player-card`}
@@ -166,14 +179,20 @@ function PlayerCard(props: Readonly<{
         <VoteButton playerIndex={props.playerIndex} />
         {GAME_MANAGER.getMySpectator() ||
             <Button 
-                disabled={isPlayerSelf}
+                disabled={isPlayerSelf || whispersDisabled}
                 onClick={()=>{
                     // GAME_MANAGER.prependWhisper(props.playerIndex); return true;
                     setWhisperChatOpen(!whisperChatOpen);
+                    if(GAME_MANAGER.state.stateType === 'game' && GAME_MANAGER.state.clientState.type === 'player'){
+                        GAME_MANAGER.state.clientState.missedWhispers = 
+                            GAME_MANAGER.state.clientState.missedWhispers.filter(player => player !== props.playerIndex);
+                    }
+                    GAME_MANAGER.invokeStateListeners("whisperChatOpenOrClose");
                 }}
                 pressedChildren={() => <Icon>done</Icon>}
             >
-                <Icon>chat</Icon>
+                {whisperChatOpen===true?<Icon>close</Icon>:<Icon>chat</Icon>}
+                {whisperNotification===true && <div className="chat-notification highlighted">!</div>}
             </Button>
         }
         {GAME_MANAGER.getMySpectator() || (() => {

@@ -143,6 +143,8 @@ macros::roles! {
     Wildcard : wild_card,
     TrueWildcard : true_wildcard,
     Martyr : martyr,
+    SantaClaus : santa_claus,
+    Krampus : krampus,
 
     Witch : witch,
     Scarecrow : scarecrow,
@@ -157,6 +159,7 @@ macros::roles! {
     Pyrolisk : pyrolisk,
     Spiral : spiral,
     Kira : kira,
+    Warden : warden,
     FiendsWildcard : fiends_wildcard,
     SerialKiller : serial_killer,
 
@@ -396,20 +399,22 @@ impl Role{
             Role::Veteran | 
             Role::Transporter | Role::Escort | Role::Retributionist | 
             Role::Jester | Role::Witch | Role::Scarecrow | Role::Warper |
-            Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer => true,
+            Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer |
+            Role::SantaClaus => true,
             _ => false,
         }
     }
     pub fn wardblock_immune(&self)->bool{
         match self {
             Role::Jailor | Role::Kidnapper |
-            Role::Bouncer | Role::Scarecrow => true,
+            Role::Bouncer | Role::Scarecrow | Role::SantaClaus => true,
             _ => false
         }
     }
     pub fn has_innocent_aura(&self, game: &Game)->bool{
         match self {
             Role::Godfather => true,
+            Role::SantaClaus => true,
             Role::Pyrolisk => {
                 game.day_number() == 1
             },

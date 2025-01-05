@@ -97,7 +97,7 @@ s {
 *{
     user-select: none;
     
-    text-shadow: .0625rem .0625rem .13rem rgb(0, 0, 0);
+    /* text-shadow: .0625rem .0625rem .13rem rgb(0, 0, 0); */
     text-align: center;
     box-sizing: border-box;
 
@@ -177,8 +177,8 @@ button, select, summary {
     user-select: none;
 }
 input, option, textarea, .textarea {
-    border-top-color: var(--background-border-shadow-color);
-    border-left-color: var(--background-border-shadow-color);
+    border-top-color: var(--primary-border-shadow-color);
+    border-left-color: var(--primary-border-shadow-color);
 }
 
 :has(input):focus-within > button.clear {
@@ -342,17 +342,17 @@ code, .code {
 }
 
 .wiki-menu-colors {
-    --background-color: #301f1b;
-    --fade-color: #150e0b;
-    --primary-color: #412720;
-    --secondary-color: #422821;
+    --background-color: #2C2124;
+    --fade-color: #0F0D15;
+    --primary-color: #3A2A31;
+    --secondary-color: #3A2A31;
     --text-color: #ffffff;
-    --primary-border-color: #5a3b32;
-    --primary-border-shadow-color: #2b1b16;
-    --background-border-color: #503830;
-    --background-border-shadow-color: #251813;
-    --hover-color: #4c2d23;
-    --focus-outline-color: #a98e84;
+    --primary-border-color: #533C44;
+    --primary-border-shadow-color: #261C26;
+    --background-border-color: #493942;
+    --background-border-shadow-color: #201924;
+    --hover-color: #442F35;
+    --focus-outline-color: #A18E99;
 }
 
 

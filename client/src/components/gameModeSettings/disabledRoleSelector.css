@@ -12,7 +12,7 @@
     flex-grow: 1;
     width: 5rem;
 }
-.disabled-role-element {
+.placard {
     display: inline-block;
     background-color: var(--primary-color);
     border: .13rem solid var(--primary-border-color);
@@ -21,6 +21,6 @@
     border-radius: .25rem;
     white-space: pre;
 }
-.disabled-role-element.disabled {
+.placard.disabled {
     background-color: var(--secondary-color);
 }

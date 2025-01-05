@@ -41,7 +41,7 @@ export type ToClientPacket = {
     playerId: LobbyClientID
 } | {
     type: "lobbyClients",
-    clients: Record<LobbyClientID, LobbyClient>
+    clients: ListMapData<LobbyClientID, LobbyClient>
 } | {
     type: "lobbyName",
     name: string
@@ -81,7 +81,7 @@ export type ToClientPacket = {
     roleOutline: RoleOutline
 } | {
     type: "phaseTime",
-    phase: PhaseState, 
+    phase: Exclude<PhaseState, { type: "recess" }>, 
     time: number
 } | {
     type: "phaseTimes",

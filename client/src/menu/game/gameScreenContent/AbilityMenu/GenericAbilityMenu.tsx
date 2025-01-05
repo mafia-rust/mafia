@@ -24,7 +24,6 @@ import GAME_MANAGER from "../../../..";
 import TwoRoleOptionSelectionMenu from "./AbilitySelectionTypes/TwoRoleOptionSelectionMenu";
 import TwoPlayerOptionSelectionMenu from "./AbilitySelectionTypes/TwoPlayerOptionSelectionMenu";
 import StyledText from "../../../../components/StyledText";
-import CheckBox from "../../../../components/CheckBox";
 import KiraSelectionMenu, { KiraSelection } from "./AbilitySelectionTypes/KiraSelectionMenu";
 import RoleOptionSelectionMenu from "./AbilitySelectionTypes/RoleOptionSelectionMenu";
 import "./genericAbilityMenu.css";
@@ -37,6 +36,7 @@ import { PlayerIndex } from "../../../../game/gameState.d";
 import Icon from "../../../../components/Icon";
 import PlayerListSelectionMenu from "./AbilitySelectionTypes/PlayerListSelectionMenu";
 import IntegerSelectionMenu from "./AbilitySelectionTypes/IntegerSelectionMenu";
+import BooleanSelectionMenu from "./AbilitySelectionTypes/BooleanSelectionMenu";
 
 type GroupName = `${PlayerIndex}/${Role}` | "syndicateGunItem" | "backup" | ControllerID["type"];
 
@@ -258,15 +258,20 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
             }else{
                 bool = selected.selection;
             }
-            return <div><CheckBox checked={bool} onChange={(x)=>{
-                GAME_MANAGER.sendAbilityInput({
-                    id, 
-                    selection: {
-                        type: "boolean",
-                        selection: x
-                    }
-                });
-            }}/></div>;
+
+            return <BooleanSelectionMenu
+                id={id}
+                selection={bool}
+                onChoose={(x)=>{
+                    GAME_MANAGER.sendAbilityInput({
+                        id, 
+                        selection: {
+                            type: "boolean",
+                            selection: x
+                        }
+                    });
+                }}
+            />;
         }
         case "playerList":{
             let input: PlayerListSelection;

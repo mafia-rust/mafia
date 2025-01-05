@@ -114,8 +114,9 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "psychicEvil", "players": [19,27,3]},
-            {"type": "psychicGood", "players": [24,25]}
+            {"type": "psychicEvil", "first": 19, "second": 27},
+            {"type": "psychicGood", "player": 24},
+            {"type": "psychicFailed"}
         ]
     },
     "spy": {
@@ -428,7 +429,7 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "mayorRevealed","playerIndex": 3},
-            {"type": "mayorCantWhisper"}
+            {"type": "invalidWhisper"}
         ]
     },
     "reporter": {
@@ -840,7 +841,7 @@
         "chatMessages":[
             {"type": "politicianCountdownStarted"},
             {"type": "mayorRevealed","playerIndex": 1},
-            {"type": "mayorCantWhisper"},
+            {"type": "invalidWhisper"},
             {"type": "youSurvivedAttack"}
         ]
     },
@@ -869,6 +870,41 @@
             {"type": "chronokaiserSpeedUp", "percent": "60"},
             {"type": "chronokaiserSpeedUp", "percent": "120"},
             {"type": "chronokaiserSpeedUp", "percent": "180"}
+        ]
+    },
+    "santaClaus": {
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
+        "armor": true,
+        "aura": "innocent",
+        "maxCount": 1,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "nextSantaAbility", "ability": "nice"},
+            {"type": "nextSantaAbility", "ability": "naughty"},
+            {"type": "addedToNiceList"}
+        ]
+    },
+    "krampus": {
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "canWriteDeathNote": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "nextKrampusAbility", "ability": "kill"},
+            {"type": "youAttackedSomeone"},
+            {"type": "addedToNaughtyList"},
+            {"type": "nextKrampusAbility", "ability": "doNothing"},
+            {"type": "targetHasRole", "role": "godfather"},
+            {"type": "targetHasWinCondition", "winCondition": { 
+                "type": "gameConclusionReached",
+                "winIfAny": ["mafia", "niceList"]
+            }},
+            {"type": "santaAddedPlayerToNaughtyList", "player": 38}
         ]
     },
     "martyr": {
@@ -1136,6 +1172,23 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "someoneSurvivedYourAttack"}
+        ]
+    },
+    "warden": {
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
+        "armor": true,
+        "aura": null,
+        "maxCount": 1,
+        "canWriteDeathNote": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "wardenPlayersImprisoned", "players": [5,2,10]},
+            {"type": "youAttackedSomeone"},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "roleBlocked", "immune": true},
+            {"type": "roleBlocked", "immune": false},
+            {"type": "wardblocked"}
         ]
     },
     "fiendsWildcard": {

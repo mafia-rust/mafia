@@ -55,9 +55,11 @@
     border-top: .13rem solid var(--primary-border-color);
     background-color: var(--background-color);
     align-items: stretch;
+    height: max-content;
 }
 .chat-send-section textarea {
     resize: none;
     width: 100%;
     text-align: left;
+    text-wrap: wrap;
 }

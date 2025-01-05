@@ -191,6 +191,15 @@
     "role/spiral/0": {
         "midnight": true
     },
+    "role/warden/0": {
+        "midnight": false
+    },
+    "role/warden/1": {
+        "midnight": true
+    },
+    "wardenLiveOrDie": {
+        "midnight": true
+    },
     "role/kira/0": {
         "midnight": true
     },
