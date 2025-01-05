@@ -1,4 +1,5 @@
 
+import { Conclusion, InsiderGroup, translateWinCondition } from "./gameState.d";
 import translate from "./lang";
 import { Role, roleJsonData } from "./roleState.d";
 
@@ -24,6 +25,7 @@ export function getRolesComplement(roleList: Role[]): Role[] {
 
 
 export const ROLE_SETS = [
+    "any",
     "town", "townCommon", "townInvestigative", "townProtective", "townKilling", "townSupport", 
     "mafia", "mafiaKilling", "mafiaSupport",
     "neutral", "minions",
@@ -32,80 +34,95 @@ export const ROLE_SETS = [
 ] as const;
 export type RoleSet = typeof ROLE_SETS[number];
 export function getRolesFromRoleSet(roleSet: RoleSet): Role[] {
-    const ROLES = roleJsonData();
     return getAllRoles().filter((role) => {
-        return ROLES[role].roleSets.includes(roleSet);
+        return getRoleSetsFromRole(role).includes(roleSet);
     });
 }
 export function getRoleSetsFromRole(role: Role): RoleSet[] {
-    return ROLE_SETS.filter((roleSet) => {
-        return getRolesFromRoleSet(roleSet).includes(role);
-    })
+    const ROLES = roleJsonData();
+    return [...ROLES[role].roleSets, "any"]
 }
 
 
-export type RoleOutlineType = RoleOutline["type"];
-export type RoleOutline = ({
-    type: "any",
-} | {
-    type: "roleOutlineOptions",
-    options: RoleOutlineOption[],
-});
+export type RoleOutline = RoleOutlineOption[];
 
-
-export type RoleOutlineOptionType = RoleOutlineOption["type"];
 export type RoleOutlineOption = ({
+    roleSet: RoleSet
+    role?: undefined
+} | {
+    roleSet?: undefined
+    role: Role
+}) & {
+    winIfAny?: Conclusion[],
+    insiderGroups?: InsiderGroup[]
+}
+
+export type RoleOrRoleSet = ({
     type: "roleSet",
-    roleSet: RoleSet,
+    roleSet: RoleSet
 } | {
     type: "role",
-    role: Role,
-});
+    role: Role
+})
 
 
 
 
 export function translateRoleOutline(roleOutline: RoleOutline): string {
-    switch(roleOutline.type){
-        case "any":
-            return translate("any");
-        case "roleOutlineOptions":
-            return roleOutline.options.map(translateRoleOutlineOption).join(" "+translate("union")+" ");
-    }
+    return roleOutline.map(translateRoleOutlineOption).join(" "+translate("union")+" ")
 }
 export function translateRoleOutlineOption(roleOutlineOption: RoleOutlineOption): string {
-    switch(roleOutlineOption.type){
+    let out = "";
+    if (roleOutlineOption.insiderGroups) {
+        if (roleOutlineOption.insiderGroups.length === 0) {
+            out += translate("chatGroup.all.icon")
+        }
+        for (const insiderGroup of roleOutlineOption.insiderGroups) {
+            out += translate(`chatGroup.${insiderGroup}.icon`) + ' '
+        }
+    }
+    if (roleOutlineOption.winIfAny) {
+        out += `${translateWinCondition({ type: "gameConclusionReached", winIfAny: roleOutlineOption.winIfAny })} `
+    }
+    if (roleOutlineOption.roleSet) {
+        out += translate(roleOutlineOption.roleSet)
+    } else if (roleOutlineOption.role) {
+        out += translate("role."+roleOutlineOption.role+".name")
+    }
+    return out;
+}
+export function translateRoleOrRoleSet(roleOrRoleSet: RoleOrRoleSet): string {
+    switch (roleOrRoleSet.type) {
         case "roleSet":
-            return translate(roleOutlineOption.roleSet);
+            return translate(roleOrRoleSet.roleSet)
         case "role":
-            return translate("role."+roleOutlineOption.role+".name");
+            return translate("role."+roleOrRoleSet.role+".name")
     }
 }
 export function getRolesFromOutline(roleOutline: RoleOutline): Role[] {
-    switch(roleOutline.type){
-        case "any":
-            return getAllRoles();
-        case "roleOutlineOptions":
-            return roleOutline.options.flatMap((option) => getRolesFromOutlineOption(option));
-    }
+    return roleOutline.flatMap((option) => getRolesFromOutlineOption(option));
 }
 export function getRolesFromOutlineOption(roleOutlineOption: RoleOutlineOption): Role[] {
-    switch(roleOutlineOption.type){
+    if (roleOutlineOption.roleSet) {
+        return getRolesFromRoleSet(roleOutlineOption.roleSet)
+    } else {
+        return [roleOutlineOption.role]
+    }
+}
+export function getRolesFromRoleOrRoleSet(roleOrRoleSet: RoleOrRoleSet): Role[] {
+    switch (roleOrRoleSet.type) {
         case "roleSet":
-            return getRolesFromRoleSet(roleOutlineOption.roleSet);
+            return getRolesFromRoleSet(roleOrRoleSet.roleSet)
         case "role":
-            return [roleOutlineOption.role];
+            return [roleOrRoleSet.role]
     }
 }
 
 export function simplifyRoleOutline(roleOutline: RoleOutline): RoleOutline {
+    let newOptions = [...roleOutline];
 
-    if(roleOutline.type === "any") return roleOutline;
-
-    let newOptions = [...roleOutline.options];
-
-    for(let optionA of roleOutline.options){
-        for(let optionB of roleOutline.options){
+    for(let optionA of roleOutline){
+        for(let optionB of roleOutline){
             if(outlineOptionIsSubset(optionA, optionB) && optionA !== optionB){
                 newOptions = newOptions.filter((option) => option !== optionA);
             }
@@ -113,9 +130,7 @@ export function simplifyRoleOutline(roleOutline: RoleOutline): RoleOutline {
     }
 
     newOptions = newOptions.sort(outlineOptionCompare);
-    return {type: "roleOutlineOptions", options: newOptions};
-    
-    
+    return newOptions;
 }
 function outlineOptionIsSubset(optionA: RoleOutlineOption, optionB: RoleOutlineOption): boolean {
     let rolesA = getRolesFromOutlineOption(optionA);

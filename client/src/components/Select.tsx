@@ -134,33 +134,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
         <Popover className="custom-select-options"
             open={open}
             setOpenOrClosed={handleSetOpen}
-            onRender={(dropdownElement, buttonElement) => {
-                if (!buttonElement) return;
-
-                const buttonBounds = buttonElement.getBoundingClientRect();
-                dropdownElement.style.width = `${buttonBounds.width}px`;
-                dropdownElement.style.left = `${buttonBounds.left}px`;
-        
-                const spaceAbove = buttonBounds.top;
-                const spaceBelow = window.innerHeight - buttonBounds.bottom;
-        
-                const oneRem = parseFloat(getComputedStyle(buttonElement).fontSize);
-        
-                const maxHeight = (25 - .25) * oneRem;
-                const optionsHeight = 1 + .5 * oneRem + (dropdownElement.firstElementChild?.clientHeight ?? Infinity);
-        
-                if (spaceAbove > spaceBelow) {
-                    const newHeight = Math.min(maxHeight, spaceAbove - .25 * oneRem, optionsHeight);
-                    dropdownElement.style.height = `${newHeight}px`;
-                    dropdownElement.style.top = `unset`;
-                    dropdownElement.style.bottom = `${spaceBelow + buttonBounds.height + .25 * oneRem}px`;
-                } else {
-                    const newHeight = Math.min(maxHeight, spaceBelow - .25 * oneRem, optionsHeight);
-                    dropdownElement.style.height = `${newHeight}px`;
-                    dropdownElement.style.top = `${spaceAbove + buttonBounds.height + .25 * oneRem}px`;
-                    dropdownElement.style.bottom = `unset`;
-                }
-            }}
+            onRender={dropdownPlacementFunction}
             anchorRef={ref}
         >
             <SelectOptions 
@@ -174,6 +148,34 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
             />
         </Popover>
     </>
+}
+
+export function dropdownPlacementFunction(dropdownElement: HTMLElement, buttonElement: HTMLElement | undefined) {
+    if (!buttonElement) return;
+
+    const buttonBounds = buttonElement.getBoundingClientRect();
+    dropdownElement.style.width = `${buttonBounds.width}px`;
+    dropdownElement.style.left = `${buttonBounds.left}px`;
+
+    const spaceAbove = buttonBounds.top;
+    const spaceBelow = window.innerHeight - buttonBounds.bottom;
+
+    const oneRem = parseFloat(getComputedStyle(buttonElement).fontSize);
+
+    const maxHeight = (25 - .25) * oneRem;
+    const optionsHeight = 1 + .5 * oneRem + (dropdownElement.firstElementChild?.clientHeight ?? Infinity);
+
+    if (spaceAbove > spaceBelow) {
+        const newHeight = Math.min(maxHeight, spaceAbove - .25 * oneRem, optionsHeight);
+        dropdownElement.style.height = `${newHeight}px`;
+        dropdownElement.style.top = `unset`;
+        dropdownElement.style.bottom = `${spaceBelow + buttonBounds.height + .25 * oneRem}px`;
+    } else {
+        const newHeight = Math.min(maxHeight, spaceBelow - .25 * oneRem, optionsHeight);
+        dropdownElement.style.height = `${newHeight}px`;
+        dropdownElement.style.top = `${spaceAbove + buttonBounds.height + .25 * oneRem}px`;
+        dropdownElement.style.bottom = `unset`;
+    }
 }
 
 function SelectOptions<K extends { toString(): string}>(props: Readonly<{

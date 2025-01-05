@@ -149,10 +149,10 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "auditorResult", "roleOutline":{"type":"any"},"result": {"type":"two","roles":["godfather","jester"]}},
-            {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "options":[{"type":"role","role":"vigilante"},{"type":"role","role":"marksman"}]},"result": {"type":"one","role":["vigilante"]}},
-            {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "options":[{"type":"role","role":"fiendsWildcard"}]},"result": {"type":"one","role":["fiendsWildcard"]}},
-            {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "options":[{"type":"roleSet","roleSet":"townSupport"}]},"result": {"type":"two","roles":["escort","medium"]}}
+            {"type": "auditorResult", "roleOutline":[{"roleSet": "any"}],"result": {"type":"two","roles":["godfather","jester"]}},
+            {"type": "auditorResult", "roleOutline":[{"role":"vigilante"},{"role":"marksman"}],"result": {"type":"one","role":["vigilante"]}},
+            {"type": "auditorResult", "roleOutline":[{"role":"fiendsWildcard"}],"result": {"type":"one","role":["fiendsWildcard"]}},
+            {"type": "auditorResult", "roleOutline":[{"roleSet":"townSupport"}],"result": {"type":"two","roles":["escort","medium"]}}
         ]
     },
     "snoop": {
@@ -1077,7 +1077,7 @@
         "chatMessages":[
             {"type": "playersRoleRevealed","role": "veteran","player": 7},
             {"type": "playersRoleConcealed","player": 7},
-            {"type": "auditorResult", "roleOutline":{"type":"any"},"result": {"type":"one","role":["jester"]}},
+            {"type": "auditorResult", "roleOutline":[{"roleSet": "any"}],"result": {"type":"one","role":["jester"]}},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]

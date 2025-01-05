@@ -1,15 +1,17 @@
-import React, { ReactElement, useCallback, useContext } from "react";
+import React, { ReactElement, useCallback, useContext, useMemo, useRef, useState } from "react";
 import "./outlineSelector.css";
 import translate from "../../game/lang";
-import { getAllRoles, getRolesFromRoleSet, ROLE_SETS, RoleList, RoleOutline, RoleOutlineOption, simplifyRoleOutline, translateRoleOutline, translateRoleOutlineOption} from "../../game/roleListState.d";
+import { getAllRoles, getRolesFromRoleSet, ROLE_SETS, RoleList, RoleOrRoleSet, RoleOutline, simplifyRoleOutline, translateRoleOutline, translateRoleOrRoleSet} from "../../game/roleListState.d";
 import { Role } from "../../game/roleState.d";
 import Icon from "../Icon";
 import { DragAndDrop } from "../DragAndDrop";
 import { GameModeContext } from "./GameModesEditor";
-import Select, { SelectOptionsSearch } from "../Select";
+import Select, { dropdownPlacementFunction, SelectOptionsSearch } from "../Select";
 import StyledText from "../StyledText";
-import { Button } from "../Button";
+import { Button, RawButton } from "../Button";
 import { useLobbyOrGameState } from "../useHooks";
+import { Conclusion, CONCLUSIONS, INSIDER_GROUPS, InsiderGroup, translateConclusion, translateWinCondition } from "../../game/gameState.d";
+import Popover from "../Popover";
 
 type RoleOutlineSelectorProps = {
     roleOutline: RoleOutline,
@@ -17,121 +19,318 @@ type RoleOutlineSelectorProps = {
     disabled?: boolean,
 }
 
-export default class RoleOutlineSelector extends React.Component<RoleOutlineSelectorProps> {
-    
-    handleRoleOutlineOptionChange(
-        index: number,
-        value: RoleOutlineOption | "any"
-    ){
-        if(value === "any") {
-            this.props.onChange({
-                type: "any",
-            });
-            return
-        }
+export default function RoleOutlineSelector(props: RoleOutlineSelectorProps): ReactElement {
+    const handleAddUnion = () => {
+        props.onChange([...props.roleOutline, { role: "wildcard" }]);
+    }
 
-        if(this.props.roleOutline.type === "roleOutlineOptions") {
-            let options = [...this.props.roleOutline.options];
-            options[index] = value;
-            this.props.onChange({
-                type: "roleOutlineOptions",
-                options: options
-            });
+    return <div className="role-picker">
+        {props.roleOutline.map((option, index) => {
+            let roleOrRoleSet: RoleOrRoleSet;
+
+            if (option.role) {
+                roleOrRoleSet = {
+                    type: "role",
+                    role: option.role
+                }
+            } else {
+                roleOrRoleSet = {
+                    type: "roleSet",
+                    roleSet: option.roleSet
+                }
+            }
+
+            return (
+                <div key={index} className="role-picker-option">
+                    <InsiderGroupSelectorLabel
+                        disabled={props.disabled}
+                        insiderGroups={option.insiderGroups}
+                        onChange={groups => {
+                            const options = [...props.roleOutline];
+
+                            options[index].insiderGroups = groups
+
+                            props.onChange(options)
+                        }}
+                    />
+                    <ConclusionsSelectorLabel
+                        disabled={props.disabled}
+                        conclusions={option.winIfAny}
+                        onChange={concs => {
+                            const options = [...props.roleOutline];
+
+                            options[index].winIfAny = concs
+
+                            props.onChange(options)
+                        }}
+                    />
+                    <RoleOrRoleSetSelector
+                        disabled={props.disabled}
+                        roleOrRoleSet={roleOrRoleSet}
+                        onChange={(value) => {
+                            let options = [...props.roleOutline];
+                            switch (value.type) {
+                                case "role":
+                                    options[index].roleSet = undefined;
+                                    options[index].role = value.role;
+                                    break;
+                                case "roleSet":
+                                    options[index].roleSet = value.roleSet;
+                                    options[index].role = undefined;
+                                    break;
+                            }
+                            props.onChange(options);
+                        }}
+                    />
+                    <button
+                        disabled={props.disabled}
+                        onClick={() => {
+                            let options = [...props.roleOutline];
+                            options.splice(index, 1);
+                            if(options.length === 0) {
+                                props.onChange([{ roleSet: "any" }]);
+                                return
+                            }
+                            props.onChange(options);
+                        }}
+                    ><Icon size="tiny">remove</Icon></button>
+                </div>
+            )
+        })}
+        <button
+            disabled={props.disabled}
+            onClick={() => {
+                handleAddUnion();
+            }}
+        ><Icon size="tiny">add</Icon></button>
+    </div>
+}
+
+function ConclusionsSelector(props: Readonly<{
+    disabled?: boolean,
+    conclusions?: Conclusion[],
+    onChange: (newSet?: Conclusion[]) => void,
+}>): ReactElement {
+    if (props.conclusions === undefined) {
+        return <div className="conclusions-selector">
+            <Button
+                onClick={() => props.onChange(["town"])}
+            >
+                {translate("setNotDefault")}
+            </Button>
+        </div>
+    }
+
+    const conclusions = props.conclusions;
+    const conclusionsNotChosen = CONCLUSIONS.filter(conc => !conclusions.includes(conc));
+
+    const optionsSearch = new Map<Conclusion, [ReactElement, string]>(CONCLUSIONS.map(conclusion => [
+        conclusion, [
+            <StyledText noLinks={true}>{translateConclusion(conclusion)}</StyledText>, 
+            translateConclusion(conclusion)
+        ]
+    ]));
+
+    return <div className="conclusions-selector">
+        <div className="role-picker">
+            {conclusions.map((option, index) => {
+                return (
+                    <div key={index} className="role-picker-option">
+                        <Select 
+                            className="role-outline-option-selector"
+                            disabled={props.disabled}
+                            value={option}
+                            onChange={value => {
+                                const options = [...conclusions];
+                                options[index] = value;
+                                props.onChange(options);
+                            }}
+                            optionsSearch={optionsSearch}
+                        />
+                        <button
+                            disabled={props.disabled}
+                            onClick={() => {
+                                const options = [...conclusions];
+                                options.splice(index, 1);
+                                props.onChange(options);
+                            }}
+                        ><Icon size="tiny">remove</Icon></button>
+                    </div>
+                )
+            })}
+            {conclusionsNotChosen.length !== 0 && <button
+                disabled={props.disabled}
+                onClick={() => props.onChange([...conclusions, conclusionsNotChosen[0]])}
+            ><Icon size="tiny">add</Icon></button>}
+        </div>
+        <Button
+            disabled={props.disabled}
+            onClick={() => props.onChange()}
+        >
+            {translate("setDefault")}
+        </Button>
+    </div>
+}
+
+function ConclusionsSelectorLabel(props: Readonly<{
+    disabled?: boolean,
+    conclusions?: Conclusion[],
+    onChange: (value?: Conclusion[]) => void,
+}>): ReactElement {
+    const ref = useRef<HTMLButtonElement>(null);
+
+    const [popupOpen, setPopupOpen] = useState<boolean>(false);
+
+    const buttonDisplay = useMemo(() => {
+        if (props.conclusions === undefined) {
+            return <Icon>emoji_events</Icon>
         } else {
-            this.props.onChange({
-                type: "roleOutlineOptions",
-                options: [value]
-            });
+            return <StyledText noLinks={true}>
+                {translateWinCondition({ type: "gameConclusionReached", winIfAny: props.conclusions })}
+            </StyledText>
         }
-    }
-    handleAddUnion() {
-        if(this.props.roleOutline.type !== "roleOutlineOptions") {return}
-
-
-        this.props.onChange({
-            type: "roleOutlineOptions",
-            options: [...this.props.roleOutline.options, {
-                type: "role",
-                role: "wildcard"
-            }]
-        });
-        
-    }
-
-    render(): React.ReactNode {
-        if(this.props.roleOutline.type === "any") {
-            return <div className="role-picker">
-                <RoleOutlineOptionSelector
-                    disabled={this.props.disabled}
-                    roleOutlineOption={"any"}
-                    onChange={(o) => {
-                        this.handleRoleOutlineOptionChange(0, o);
-                    }}
-                />
-            </div>
-        }else{
-            return <div className="role-picker">
-                {this.props.roleOutline.options.map((option, index) => {
-                    return (
-                        <div key={index} className="role-picker-option">
-                            <RoleOutlineOptionSelector
-                                disabled={this.props.disabled}
-                                roleOutlineOption={option}
-                                onChange={(o) => {
-                                    this.handleRoleOutlineOptionChange(index, o);
-                                }}
-                            />
-                            <button
-                                disabled={this.props.disabled}
-                                onClick={() => {
-                                    if(this.props.roleOutline.type !== "roleOutlineOptions") {return}
-                                    let options = [...this.props.roleOutline.options];
-                                    options.splice(index, 1);
-                                    if(options.length === 0) {
-                                        this.props.onChange({
-                                            type: "any",
-                                        });
-                                        return
-                                    }
-                                    this.props.onChange({
-                                        type: "roleOutlineOptions",
-                                        options: options
-                                    });
-                                }}
-                            ><Icon size="tiny">remove</Icon></button>
-                        </div>
-                    )
-                })}
-                <button
-                    disabled={this.props.disabled}
-                    onClick={() => {
-                        this.handleAddUnion();
-                    }}
-                ><Icon size="tiny">add</Icon></button>
-            </div>
-            
-        }
-        
-    }
+    }, [props.conclusions])
+    
+    return <>
+        <RawButton
+            ref={ref}
+            disabled={props.disabled}
+            onClick={() => setPopupOpen(open => !open)}
+        >
+            {buttonDisplay}
+        </RawButton>
+        <Popover
+            open={popupOpen}
+            setOpenOrClosed={setPopupOpen}
+            anchorRef={ref}
+            onRender={dropdownPlacementFunction}
+        >
+            <ConclusionsSelector
+                disabled={props.disabled}
+                conclusions={props.conclusions}
+                onChange={props.onChange}
+            />
+        </Popover>
+    </>
 }
 
-function translateRoleOutlineOptionOrAny(roleOutlineOption: RoleOutlineOption | "any"): string {
-    if(roleOutlineOption === "any") {
-        return translate("any");
-    }else
-        return translateRoleOutlineOption(roleOutlineOption);
+function InsiderGroupSelector(props: Readonly<{
+    disabled?: boolean,
+    insiderGroups?: InsiderGroup[],
+    onChange: (newSet?: InsiderGroup[]) => void,
+}>): ReactElement {
+    if (props.insiderGroups === undefined) {
+        return <div className="conclusions-selector">
+            <Button
+                onClick={() => props.onChange(["mafia"])}
+            >
+                {translate("setNotDefault")}
+            </Button>
+        </div>
+    }
+
+    const insiderGroups = props.insiderGroups;
+    const insiderGroupsNotChosen = INSIDER_GROUPS.filter(conc => !insiderGroups.includes(conc));
+
+    const optionsSearch = new Map<InsiderGroup, [ReactElement, string]>(INSIDER_GROUPS.map(insiderGroup => [
+        insiderGroup, [
+            <StyledText noLinks={true}>{translate(`chatGroup.${insiderGroup}.name`)}</StyledText>,
+            translate(`chatGroup.${insiderGroup}.name`)
+        ]
+    ]));
+
+    return <div className="conclusions-selector">
+        <div className="role-picker">
+            {insiderGroups.map((option, index) => {
+                return (
+                    <div key={index} className="role-picker-option">
+                        <Select 
+                            className="role-outline-option-selector"
+                            disabled={props.disabled}
+                            value={option}
+                            onChange={value => {
+                                const options = [...insiderGroups];
+                                options[index] = value;
+                                props.onChange(options);
+                            }}
+                            optionsSearch={optionsSearch}
+                        />
+                        <button
+                            disabled={props.disabled}
+                            onClick={() => {
+                                const options = [...insiderGroups];
+                                options.splice(index, 1);
+                                props.onChange(options);
+                            }}
+                        ><Icon size="tiny">remove</Icon></button>
+                    </div>
+                )
+            })}
+            {insiderGroupsNotChosen.length !== 0 && <button
+                disabled={props.disabled}
+                onClick={() => props.onChange([...insiderGroups, insiderGroupsNotChosen[0]])}
+            ><Icon size="tiny">add</Icon></button>}
+        </div>
+        <Button
+            disabled={props.disabled}
+            onClick={() => props.onChange()}
+        >
+            {translate("setDefault")}
+        </Button>
+    </div>
 }
-export function RoleOutlineOptionSelector(props: Readonly<{
-    disabled?: boolean
-} & ({
-    excludeAny: true
-    roleOutlineOption: RoleOutlineOption,
-    onChange: (value: RoleOutlineOption) => void,
-} | {
-    excludeAny?: false
-    roleOutlineOption: RoleOutlineOption | "any",
-    onChange: (value: RoleOutlineOption | "any") => void,
-})>): ReactElement {
+
+function InsiderGroupSelectorLabel(props: Readonly<{
+    disabled?: boolean,
+    insiderGroups?: InsiderGroup[],
+    onChange: (value?: InsiderGroup[]) => void,
+}>): ReactElement {
+    const ref = useRef<HTMLButtonElement>(null);
+
+    const [popupOpen, setPopupOpen] = useState<boolean>(false);
+
+    const buttonDisplay = useMemo(() => {
+        if (props.insiderGroups === undefined) {
+            return <Icon>chat_bubble_outline</Icon>
+        } else if (props.insiderGroups.length === 0) {
+            return <StyledText noLinks={true}>
+                {translate("chatGroup.all.icon")}
+            </StyledText>
+        } else {
+            return <StyledText noLinks={true}>
+                {props.insiderGroups.map(g => translate(`chatGroup.${g}.icon`)).join()}
+            </StyledText>
+        }
+    }, [props.insiderGroups])
+    
+    return <>
+        <RawButton
+            ref={ref}
+            disabled={props.disabled}
+            onClick={() => setPopupOpen(open => !open)}
+        >
+            {buttonDisplay}
+        </RawButton>
+        <Popover
+            open={popupOpen}
+            setOpenOrClosed={setPopupOpen}
+            anchorRef={ref}
+            onRender={dropdownPlacementFunction}
+        >
+            <InsiderGroupSelector
+                disabled={props.disabled}
+                insiderGroups={props.insiderGroups}
+                onChange={props.onChange}
+            />
+        </Popover>
+    </>
+}
+
+export function RoleOrRoleSetSelector(props: Readonly<{
+    disabled?: boolean,
+    roleOrRoleSet: RoleOrRoleSet,
+    onChange: (value: RoleOrRoleSet) => void,
+}>): ReactElement {
     const enabledRoles = useLobbyOrGameState(
         state => state.enabledRoles,
         ["enabledRoles"],
@@ -144,16 +343,6 @@ export function RoleOutlineOptionSelector(props: Readonly<{
 
     const optionsSearch: SelectOptionsSearch<string> = new Map();
 
-    optionsSearch.set("any", [
-        <StyledText
-            key={0}
-            noLinks={!props.disabled}
-        >
-            {translate("any")}
-        </StyledText>, 
-        translate("any")
-    ]);
-
     ROLE_SETS.forEach((roleSet) => {
         optionsSearch.set(JSON.stringify({type: "roleSet", roleSet: roleSet}), [
             <StyledText
@@ -161,9 +350,9 @@ export function RoleOutlineOptionSelector(props: Readonly<{
                 noLinks={!props.disabled}
                 className={getRolesFromRoleSet(roleSet).every(role => !isRoleEnabled(role)) ? "keyword-disabled" : ""}
             >
-                {translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})}
+                {translateRoleOrRoleSet({type: "roleSet", roleSet: roleSet})}
             </StyledText>, 
-            translateRoleOutlineOptionOrAny({type: "roleSet", roleSet: roleSet})]
+            translateRoleOrRoleSet({type: "roleSet", roleSet: roleSet})]
         );
     });
     
@@ -174,16 +363,16 @@ export function RoleOutlineOptionSelector(props: Readonly<{
                 noLinks={!props.disabled}
                 className={!isRoleEnabled(role) ? "keyword-disabled" : ""}
             >
-                {translateRoleOutlineOptionOrAny({type: "role", role})}
+                {translateRoleOrRoleSet({type: "role", role})}
             </StyledText>,
-            translateRoleOutlineOptionOrAny({type: "role", role})
+            translateRoleOrRoleSet({type: "role", role})
         ]);
     });
 
     return <Select
         className="role-outline-option-selector"
         disabled={props.disabled}
-        value={props.roleOutlineOption==="any"?"any":JSON.stringify(props.roleOutlineOption)}
+        value={JSON.stringify(props.roleOrRoleSet)}
         onChange={(value) => {
             props.onChange(
                 value === "any" ? "any" : JSON.parse(value)
@@ -193,13 +382,13 @@ export function RoleOutlineOptionSelector(props: Readonly<{
     />
 }
 
-export function OutlineListSelector(props: {
+export function OutlineListSelector(props: Readonly<{
     disabled?: boolean,
     onChangeRolePicker: (value: RoleOutline, index: number) => void,
     onAddNewOutline?: (() => void),
     onRemoveOutline?: ((index: number) => void),
     setRoleList: (newRoleList: RoleList) => void,
-}) {
+}>) {
     const {roleList} = useContext(GameModeContext);
 
     const simplify = () => {

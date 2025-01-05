@@ -234,11 +234,6 @@ impl PlayerReference{
         if new_role_data.role() == self.role(game) {
             self.add_private_chat_message(game, ChatMessageVariant::RoleAssignment{role: self.role(game)});
         }
-        self.set_win_condition(game, self.role_state(game).clone().default_win_condition());
-        InsiderGroupID::set_player_revealed_groups(
-            self.role_state(game).clone().default_revealed_groups(), 
-            game, *self
-        );
     }
     pub fn set_role(&self, game: &mut Game, new_role_data: impl Into<RoleState>) {
         let new_role_data = new_role_data.into();

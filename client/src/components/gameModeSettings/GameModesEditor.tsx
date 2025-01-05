@@ -61,7 +61,7 @@ export default function GameModesEditor(props: Readonly<{
     }, [roleList]);
     
     const addOutline = () => {
-        setRoleList([...roleList, {type: "any"}]);
+        setRoleList([...roleList, [{ roleSet: "any" }]]);
     }
     const removeOutline = (index: number) => {
         let newRoleList = [...roleList];

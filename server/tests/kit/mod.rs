@@ -73,7 +73,7 @@ pub mod _init {
         let mut role_list = Vec::new();
         for role in roles.iter() {
             role_list.push(RoleOutline::RoleOutlineOptions { options: 
-                vec1![mafia_server::game::role_list::RoleOutlineOption::Role { role: role.role() }]
+                vec1![mafia_server::game::role_list::RoleOutlineOptionRoles::Role { role: role.role() }]
             });
         }
     
