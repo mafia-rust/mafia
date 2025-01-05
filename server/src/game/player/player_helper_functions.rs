@@ -182,8 +182,6 @@ impl PlayerReference{
                         AbilitySelection::Integer { .. } => {},
                         AbilitySelection::Kira { .. } => {},
                     }
-                    
-                    
                 }
 
                 possessed_visit.target.set_night_visits(game,
