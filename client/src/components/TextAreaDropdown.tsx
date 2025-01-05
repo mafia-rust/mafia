@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useMemo, useState } from "react";
+import React, { ReactElement, useEffect, useMemo, useRef, useState } from "react";
 import StyledText from "./StyledText";
 import { sanitizePlayerMessage } from "./ChatMessage";
 import GAME_MANAGER, { replaceMentions } from "..";
@@ -153,18 +153,37 @@ function PrettyTextArea(props: Readonly<{
     const [writing, setWriting] = useState<boolean>(false);
     const [hover, setHover] = useState<boolean>(false);
 
-    return <div className="pretty-text-area"
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    // Function to adjust textarea height
+    const adjustHeight = () => {
+        if (textareaRef.current) {
+            textareaRef.current.style.height = "auto"; // Reset height
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Adjust to fit content
+        }
+    };
+
+    // Adjust height when the `props.field` value changes
+    useEffect(() => {
+        adjustHeight();
+    }, [props.field, writing, hover]);
+
+    return <div
+        className="pretty-text-area"
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
         onTouchEnd={() => setWriting(true)}
         onFocus={() => setWriting(true)}
         onBlur={() => {setWriting(false); setHover(false)}}
     >
-        {(!writing && !hover)
-            ? <div className="textarea">
+        {(!writing && !hover) ?
+            <div className="textarea">
                 <StyledText noLinks={true}>{sanitizePlayerMessage(replaceMentions(props.field))}</StyledText>
             </div>
-            : <textarea
+            :
+            <textarea
+                className="textarea"
+                ref={textareaRef}
                 value={props.field}
                 onChange={e => props.setField(e.target.value)}
                 onKeyDown={(e) => {
@@ -177,8 +196,9 @@ function PrettyTextArea(props: Readonly<{
                         }
                     }
                 }}>
-            </textarea>}
-        </div>
+            </textarea>
+        }
+    </div>
 }
 
 
