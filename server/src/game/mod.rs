@@ -43,7 +43,7 @@ use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
-use role_list::PlayerInitializationData;
+use role_list::RoleAssignment;
 use role_list::RoleOutlineOptionInsiderGroups;
 use role_list::RoleOutlineOptionWinCondition;
 use role_outline_reference::OriginallyGeneratedRoleAndPlayer;
@@ -153,7 +153,7 @@ impl Game {
 
         let mut role_generation_tries = 0;
         const MAX_ROLE_GENERATION_TRIES: u8 = 250;
-        let (mut game, player_data) = loop {
+        let (mut game, assignments) = loop {
 
             if role_generation_tries >= MAX_ROLE_GENERATION_TRIES {
                 return Err(RejectStartReason::RoleListCannotCreateRoles);
@@ -163,14 +163,14 @@ impl Game {
             let role_list = settings.role_list.clone();
 
 
-            let roles_to_players = Self::assign_players_to_initialization_data(match role_list.create_random_player_initialization_data(&settings.enabled_roles){
+            let roles_to_players = Self::assign_players_to_assignments(match role_list.create_random_role_assignments(&settings.enabled_roles){
                 Some(roles) => {roles},
                 None => {return Err(RejectStartReason::RoleListCannotCreateRoles);}
             });
 
             let mut roles_to_players_clone = roles_to_players.clone();
             roles_to_players_clone.sort_by(|(_, i), (_,j)| i.cmp(j));
-            let shuffled_data = roles_to_players_clone.into_iter().map(|(r,_)|r).collect::<Vec<PlayerInitializationData>>();            
+            let assignments = roles_to_players_clone.into_iter().map(|(r,_)|r).collect::<Vec<RoleAssignment>>();            
 
 
             let mut new_players = Vec::new();
@@ -178,16 +178,17 @@ impl Game {
                 let ClientConnection::Connected(ref sender) = player.connection else {
                     return Err(RejectStartReason::PlayerDisconnected)
                 };
-                let Some(player_data) = shuffled_data.get(player_index) else {
+                let Some(assignment) = assignments.get(player_index) else {
                     return Err(RejectStartReason::RoleListTooSmall)
                 };
                 let mut new_player = Player::new(
                     player.name.clone(),
                     sender.clone(),
-                    player_data.role
+                    assignment.role
                 );
-                new_player.win_condition = match &player_data.win_condition {
-                    RoleOutlineOptionWinCondition::RoleDefault => player_data.role.default_state().default_win_condition(),
+                // Set win condition here so we can check if game ends
+                new_player.win_condition = match &assignment.win_condition {
+                    RoleOutlineOptionWinCondition::RoleDefault => assignment.role.default_state().default_win_condition(),
                     RoleOutlineOptionWinCondition::GameConclusionReached { win_if_any } => {
                         WinCondition::GameConclusionReached { 
                             win_if_any: win_if_any.iter().cloned().collect()
@@ -232,7 +233,7 @@ impl Game {
             };
 
             if !game.game_is_over() {
-                break (game, shuffled_data);
+                break (game, assignments);
             }
             role_generation_tries += 1;
         };
@@ -251,7 +252,7 @@ impl Game {
             let win_condition = player.win_condition(&game).clone();
             player.set_win_condition(&mut game, win_condition);
 
-            let insider_groups = match &player_data[player.index() as usize].insider_groups {
+            let insider_groups = match &assignments[player.index() as usize].insider_groups {
                 RoleOutlineOptionInsiderGroups::RoleDefault => role_data.clone().default_revealed_groups(),
                 RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().cloned().collect(),
             };
@@ -288,7 +289,7 @@ impl Game {
 
         Ok(game)
     }
-    fn assign_players_to_initialization_data(initialization_data: Vec<PlayerInitializationData>)->Vec<(PlayerInitializationData, PlayerIndex)>{
+    fn assign_players_to_assignments(initialization_data: Vec<RoleAssignment>)->Vec<(RoleAssignment, PlayerIndex)>{
         let mut player_indices: Vec<PlayerIndex> = (0..initialization_data.len() as PlayerIndex).collect();
         player_indices.shuffle(&mut thread_rng());
         initialization_data.into_iter().zip(player_indices).collect()
@@ -549,7 +550,7 @@ pub mod test {
         let settings = settings.clone();
         let role_list = settings.role_list.clone();
         
-        let data_to_players = assign_players_to_roles(match role_list.create_random_player_initialization_data(&settings.enabled_roles){
+        let data_to_players = assign_players_to_roles(match role_list.create_random_role_assignments(&settings.enabled_roles){
             Some(data) => {data.into_iter().map(|datum| datum.role).collect()},
             None => {return Err(RejectStartReason::RoleListCannotCreateRoles);}
         });

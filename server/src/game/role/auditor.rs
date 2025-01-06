@@ -116,11 +116,11 @@ impl Auditor{
         
         let outline = chosen_outline.deref(game);
 
-        if outline.get_possibilities().len() == 1 || outline.get_possibilities().len() == 2 {
+        if outline.get_role_assignments().len() == 1 || outline.get_role_assignments().len() == 2 {
             AuditorResult::One{role}
         }else{
             let fake_role = outline
-                .get_possibilities()
+                .get_role_assignments()
                 .into_iter()
                 .map(|data| data.role)
                 .filter(|x|game.settings.enabled_roles.contains(x))
@@ -142,11 +142,11 @@ impl Auditor{
     pub fn get_confused_result(game: &Game, chosen_outline: RoleOutlineReference) -> AuditorResult {        
         let outline = chosen_outline.deref(game);
 
-        if outline.get_possibilities().len() == 1 || outline.get_possibilities().len() == 2 {
+        if outline.get_role_assignments().len() == 1 || outline.get_role_assignments().len() == 2 {
             let fake_role = outline
-                .get_possibilities()
+                .get_role_assignments()
                 .into_iter()
-                .map(|data| data.role)
+                .map(|assignment| assignment.role)
                 .filter(|x|game.settings.enabled_roles.contains(x))
                 .collect::<Vec<Role>>()
                 .choose(&mut rand::thread_rng())
@@ -159,9 +159,9 @@ impl Auditor{
             }
         }else{
             let mut fake_roles = outline
-                .get_possibilities()
+                .get_role_assignments()
                 .into_iter()
-                .map(|data| data.role)
+                .map(|assignment| assignment.role)
                 .filter(|x|game.settings.enabled_roles.contains(x))
                 .collect::<Vec<Role>>();
             

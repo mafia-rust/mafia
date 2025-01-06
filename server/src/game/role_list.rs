@@ -12,10 +12,10 @@ use super::{components::insider_group::InsiderGroupID, game_conclusion::GameConc
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RoleList(pub Vec<RoleOutline>);
 impl RoleList {
-    pub fn create_random_player_initialization_data(&self, enabled_roles: &VecSet<Role>) -> Option<Vec<PlayerInitializationData>> {
-        let mut generated_data = Vec::<PlayerInitializationData>::new();
+    pub fn create_random_role_assignments(&self, enabled_roles: &VecSet<Role>) -> Option<Vec<RoleAssignment>> {
+        let mut generated_data = Vec::<RoleAssignment>::new();
         for entry in self.0.iter(){
-            if let Some(player_initialization_data) = entry.get_random_player_initialization_data(
+            if let Some(player_initialization_data) = entry.get_random_role_assignments(
                 enabled_roles, &generated_data.iter().map(|datum| datum.role).collect::<Vec<Role>>()
             ){
                 generated_data.push(player_initialization_data);
@@ -31,12 +31,12 @@ impl RoleList {
         }
     }
     pub fn sort(&mut self){
-        self.0.sort_by_key(|r| r.get_possibilities().len());
+        self.0.sort_by_key(|r| r.get_role_assignments().len());
     }
 }
 
 #[derive(Clone)]
-pub struct PlayerInitializationData {
+pub struct RoleAssignment {
     pub role: Role,
     pub insider_groups: RoleOutlineOptionInsiderGroups,
     pub win_condition: RoleOutlineOptionWinCondition
@@ -82,19 +82,19 @@ impl RoleOutline{
             roles: RoleOutlineOptionRoles::Role{role}
         }]}
     }
-    pub fn get_possibilities(&self) -> Vec<PlayerInitializationData> {
+    pub fn get_role_assignments(&self) -> Vec<RoleAssignment> {
         self.options.iter()
             .flat_map(|r| 
                 r.roles.get_roles().into_iter()
-                    .map(|role| PlayerInitializationData{
+                    .map(|role| RoleAssignment{
                         role,
                         insider_groups: r.insider_groups.clone(),
                         win_condition: r.win_condition.clone()
                     })
             ).collect()
     }
-    pub fn get_random_player_initialization_data(&self, enabled_roles: &VecSet<Role>, taken_roles: &[Role]) -> Option<PlayerInitializationData> {
-        let options = self.get_possibilities()
+    pub fn get_random_role_assignments(&self, enabled_roles: &VecSet<Role>, taken_roles: &[Role]) -> Option<RoleAssignment> {
+        let options = self.get_role_assignments()
             .into_iter()
             .filter(|r|role_can_generate(r.role, enabled_roles, taken_roles))
             .collect::<Vec<_>>();
