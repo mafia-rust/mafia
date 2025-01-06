@@ -3,15 +3,15 @@ mod player_reference;
 mod player_send_packet;
 mod player_reset;
 mod player_helper_functions;
+mod player_event_listeners;
 
 pub use player_reference::PlayerIndex;
 pub use player_reference::PlayerReference;
 use vec1::Vec1;
 
-use std::collections::HashMap;
-use std::collections::HashSet;
-
 use crate::client_connection::ClientConnection;
+use crate::vec_map::VecMap;
+use crate::vec_set::VecSet;
 use crate::{
     game::{
         role::{Role, RoleState}, 
@@ -44,15 +44,15 @@ pub struct Player {
     crossed_out_outlines: Vec<u8>,
     death_note: Option<String>,
 
-    role_labels: HashSet<PlayerReference>,
-    player_tags: HashMap<PlayerReference, Vec1<Tag>>,
+    role_labels: VecSet<PlayerReference>,
+    player_tags: VecMap<PlayerReference, Vec1<Tag>>,
 
 
     chat_messages: Vec<ChatMessage>,
     queued_chat_messages: Vec<ChatMessage>, // Not yet sent to the client
 
     win_condition: WinCondition,
-
+ 
     last_sent_buttons: Vec<AvailableButtons>,
 
 
@@ -72,13 +72,12 @@ struct PlayerNightVariables{
     roleblocked: bool,
     upgraded_defense: Option<DefensePower>,
 
+    convert_role_to: Option<RoleState>,
+
     appeared_visits: Option<Vec<Visit>>,
     framed: bool,
 
     silenced: bool,
-
-    selection: Vec<PlayerReference>,
-    visits: Vec<Visit>,
 
     messages: Vec<ChatMessageVariant>,
 
@@ -100,8 +99,8 @@ impl Player {
             crossed_out_outlines: vec![],
             death_note: None,
 
-            role_labels: HashSet::new(),
-            player_tags: HashMap::new(),
+            role_labels: VecSet::new(),
+            player_tags: VecMap::new(),
 
             win_condition: role.default_state().default_win_condition(),
 
@@ -118,19 +117,18 @@ impl Player {
                 verdict : Verdict::Abstain,
             },
             night_variables: PlayerNightVariables{
-                died:               false,
-                attacked:           false,
-                roleblocked:        false,
-                upgraded_defense:   None,
-                appeared_visits:    None,
+                died: false,
+                attacked: false,
+                roleblocked: false,
+                upgraded_defense: None,
+                appeared_visits: None,
                 framed: false,
 
-                silenced:           false,
+                convert_role_to: None,
 
-                selection:     vec![],
-                visits:             vec![],
+                silenced: false,
 
-                messages:           vec![],
+                messages: vec![],
 
                 grave_role: None,
                 grave_killers: vec![],
@@ -142,9 +140,9 @@ impl Player {
 }
 
 pub mod test {
-    use std::{collections::{HashMap, HashSet}, time::Duration};
+    use std::time::Duration;
 
-    use crate::{client_connection::ClientConnection, game::{role::Role, verdict::Verdict}};
+    use crate::{client_connection::ClientConnection, game::{role::Role, verdict::Verdict}, vec_map::VecMap, vec_set::VecSet};
 
     use super::{Player, PlayerVotingVariables, PlayerNightVariables};
 
@@ -161,8 +159,8 @@ pub mod test {
             crossed_out_outlines: vec![],
             death_note: None,
 
-            role_labels: HashSet::new(),
-            player_tags: HashMap::new(),
+            role_labels: VecSet::new(),
+            player_tags: VecMap::new(),
 
             win_condition: role.default_state().default_win_condition(),
 
@@ -179,19 +177,18 @@ pub mod test {
                 verdict : Verdict::Abstain,
             },
             night_variables: PlayerNightVariables{
-                died:               false,
-                attacked:           false,
-                roleblocked:        false,
-                upgraded_defense:   None,
-                appeared_visits:    None,
-                framed:      false,
+                died: false,
+                attacked: false,
+                roleblocked: false,
+                upgraded_defense: None,
+                appeared_visits: None,
+                framed: false,
 
-                silenced:           false,
+                convert_role_to: None,
 
-                selection:     vec![],
-                visits:             vec![],
+                silenced: false,
 
-                messages:           vec![],
+                messages: vec![],
 
                 grave_role: None,
                 grave_killers: vec![],

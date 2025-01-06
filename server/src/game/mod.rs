@@ -19,20 +19,26 @@ pub mod attack_power;
 pub mod modifiers;
 pub mod win_condition;
 pub mod role_outline_reference;
+pub mod ability_input;
 
-use std::collections::HashMap;
 use std::time::Duration;
+use ability_input::saved_controllers_map::SavedControllersMap;
 use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
 use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
+use components::night_visits::NightVisits;
 use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
 use components::poison::Poison;
 use components::detained::Detained;
 use components::insider_group::InsiderGroupID;
 use components::insider_group::InsiderGroups;
+use components::syndicate_gun_item::SyndicateGunItem;
+use components::synopsis::SynopsisTracker;
 use components::verdicts_today::VerdictsToday;
+use event::on_tick::OnTick;
+use modifiers::ModifierType;
 use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
 use rand::seq::SliceRandom;
@@ -44,6 +50,8 @@ use crate::client_connection::ClientConnection;
 use crate::game::event::on_game_start::OnGameStart;
 use crate::game::player::PlayerIndex;
 use crate::packet::ToClientPacket;
+use crate::vec_map::VecMap;
+use crate::vec_set::VecSet;
 use chat::{ChatMessageVariant, ChatGroup, ChatMessage};
 use player::PlayerReference;
 use player::Player;
@@ -85,11 +93,15 @@ pub struct Game {
 
     phase_machine : PhaseStateMachine,
 
+    
     /// Whether the game is still updating phase times
     pub ticking: bool,
-
-
+    
+    
     //components with data
+    pub saved_controllers: SavedControllersMap,
+    night_visits: NightVisits,
+    syndicate_gun_item: SyndicateGunItem,
     pub cult: Cult,
     pub mafia: Mafia,
     pub arsonist_doused: ArsonistDoused,
@@ -104,6 +116,7 @@ pub struct Game {
     pub detained: Detained,
     pub confused: Confused,
     pub drunk_aura: DrunkAura,
+    pub synopsis_tracker: SynopsisTracker
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -173,7 +186,11 @@ impl Game {
             }
             drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
+            let num_players = new_players.len() as u8;
+
             let game = Self{
+                pitchfork: Pitchfork::new(num_players),
+
                 roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
                 ticking: true,
                 spectators: spectators.clone().into_iter().map(Spectator::new).collect(),
@@ -184,6 +201,9 @@ impl Game {
                 modifiers: Modifiers::default_from_settings(settings.enabled_modifiers.clone()),
                 settings,
 
+                saved_controllers: SavedControllersMap::default(),
+                night_visits: NightVisits::default(),
+                syndicate_gun_item: SyndicateGunItem::default(),
                 cult: Cult::default(),
                 mafia: Mafia,
                 arsonist_doused: ArsonistDoused::default(),
@@ -191,13 +211,13 @@ impl Game {
                 mafia_recruits: MafiaRecruits::default(),
                 love_linked: LoveLinked::default(),
                 verdicts_today: VerdictsToday::default(),
-                pitchfork: Pitchfork::default(),
                 poison: Poison::default(),
 
                 revealed_groups: InsiderGroups::default(),
                 detained: Detained::default(),
                 confused: Confused::default(),
                 drunk_aura: DrunkAura::default(),
+                synopsis_tracker: SynopsisTracker::new(num_players)
             };
 
             if !game.game_is_over() {
@@ -214,7 +234,7 @@ impl Game {
 
         //set wincons and revealed groups
         for player in PlayerReference::all_players(&game){
-            let role_data = player.role_state(&game).clone();
+            let role_data = player.role(&game).new_state(&game);
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         
@@ -256,6 +276,9 @@ impl Game {
         roles.into_iter().zip(player_indices).collect()
     }
 
+    pub fn num_players(&self) -> u8 {
+        self.players.len() as u8
+    }
 
     /// Returns a tuple containing the number of guilty votes and the number of innocent votes
     pub fn count_verdict_votes(&self, player_on_trial: PlayerReference)->(u8,u8){
@@ -271,6 +294,11 @@ impl Game {
                     voting_power += 2;
                 }
             }
+            if let RoleState::Politician(politician) = player_ref.role_state(self).clone(){
+                if politician.revealed {
+                    voting_power += 2;
+                }
+            }
             
             match player_ref.verdict(self) {
                 Verdict::Innocent => innocent += voting_power,
@@ -280,11 +308,10 @@ impl Game {
         }
         (guilty, innocent)
     }
-    pub fn count_votes_and_start_trial(&mut self){
-
-        let &PhaseState::Nomination { trials_left, .. } = self.current_phase() else {return};
-
-        let mut voted_player_votes: HashMap<PlayerReference, u8> = HashMap::new();
+    
+    /// this is sent to the players whenever this function is called
+    fn create_voted_player_map(&self) -> VecMap<PlayerReference, u8> {
+        let mut voted_player_votes: VecMap<PlayerReference, u8> = VecMap::new();
 
         for player in PlayerReference::all_players(self){
             if !player.alive(self) { continue }
@@ -297,6 +324,11 @@ impl Game {
                     voting_power = 3;
                 }
             }
+            else if let RoleState::Politician(politician) = player.role_state(self).clone() {
+                if politician.revealed {
+                    voting_power = 3;
+                }
+            }
 
             if let Some(num_votes) = voted_player_votes.get_mut(&voted_player) {
                 *num_votes += voting_power;
@@ -304,42 +336,74 @@ impl Game {
                 voted_player_votes.insert(voted_player, voting_power);
             }
         }
-        
+
         self.send_packet_to_all(
             ToClientPacket::PlayerVotes { votes_for_player: 
-                PlayerReference::ref_map_to_index(voted_player_votes.clone())
+                PlayerReference::ref_vec_map_to_index(voted_player_votes.clone())
             }
         );
 
+        voted_player_votes
+    }
+    /// Returns the player who is meant to be put on trial
+    /// None if its not nomination
+    /// None if nobody has enough votes
+    /// None if there is a tie
+    pub fn count_nomination_and_start_trial(&mut self, start_trial_instantly: bool)->Option<PlayerReference>{
 
-        let mut next_player_on_trial = None;
-        for (player, votes) in voted_player_votes.iter(){
-            if self.nomination_votes_is_enough(*votes){
-                next_player_on_trial = Some(*player);
-                break;
+        let &PhaseState::Nomination { trials_left, .. } = self.current_phase() else {return None};
+
+        let voted_player_votes = self.create_voted_player_map();
+
+        let mut voted_player = None;
+
+        if let Some(maximum_votes) = voted_player_votes.values().max() {
+            if self.nomination_votes_is_enough(*maximum_votes){
+                let max_votes_players: VecSet<PlayerReference> = voted_player_votes.iter()
+                    .filter(|(_, votes)| **votes == *maximum_votes)
+                    .map(|(player, _)| *player)
+                    .collect();
+
+                if max_votes_players.len() == 1 {
+                    voted_player = max_votes_players.iter().next().cloned();
+                }
             }
         }
         
-        if let Some(player_on_trial) = next_player_on_trial {
-            self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
-            
-            PhaseStateMachine::next_phase(self, Some(PhaseState::Testimony {
-                trials_left: trials_left-1, 
-                player_on_trial, 
-                nomination_time_remaining: self.phase_machine.get_time_remaining()
-            }));
+        if start_trial_instantly {
+            if let Some(player_on_trial) = voted_player {
+                self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
+                
+                PhaseStateMachine::next_phase(self, Some(PhaseState::Testimony {
+                    trials_left: trials_left.saturating_sub(1), 
+                    player_on_trial, 
+                    nomination_time_remaining: self.phase_machine.get_time_remaining()
+                }));
+            }
         }
+
+        voted_player
     }
+
+    
     pub fn nomination_votes_is_enough(&self, votes: u8)->bool{
         votes >= self.nomination_votes_required()
     }
     pub fn nomination_votes_required(&self)->u8{
-        1 + (
-            PlayerReference::all_players(self)
-                .filter(|p| p.alive(self) && !p.forfeit_vote(self))
-                .count() / 2
-        ) as u8
+        let eligible_voters = PlayerReference::all_players(self)
+            .filter(|p| p.alive(self) && !p.forfeit_vote(self))
+            .count() as u8;
+
+        if Modifiers::modifier_is_enabled(self, ModifierType::TwoThirdsMajority) {
+            (eligible_voters + 1) * 2 / 3
+        } else {
+            1 + eligible_voters / 2
+        }
     }
+
+
+
+
 
     pub fn game_is_over(&self) -> bool {
         if let Some(_) = GameConclusion::game_is_over(self){
@@ -361,12 +425,14 @@ impl Game {
 
         if !self.ticking { return }
 
-        if self.game_is_over() {
-            OnGameEnding::invoke(self);
+        if let Some(conclusion) = GameConclusion::game_is_over(self) {
+            OnGameEnding::new(conclusion).invoke(self);
         }
 
         if self.phase_machine.day_number == u8::MAX {
-            self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::GameOver);
+            self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::GameOver { 
+                synopsis: SynopsisTracker::get(self, GameConclusion::Draw)
+            });
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
             self.ticking = false;
             return;
@@ -379,11 +445,19 @@ impl Game {
         SpectatorPointer::all_spectators(self).for_each(|s|s.tick(self, time_passed));
 
         self.phase_machine.time_remaining = self.phase_machine.time_remaining.saturating_sub(time_passed);
+
+        OnTick::new().invoke(self);
     }
 
     pub fn add_grave(&mut self, grave: Grave){
         self.graves.push(grave.clone());
-        if let Some(grave_ref) = GraveReference::new(self, self.graves.len() as u8 - 1){
+        if let Some(grave_ref) = GraveReference::new(
+            self, 
+            self.graves.len()
+                .saturating_sub(1)
+                .try_into()
+                .expect("There can not be more than u8::MAX graves"))
+        {
             OnGraveAdded::new(grave_ref).invoke(self);
         }
     }
@@ -437,14 +511,13 @@ impl Game {
 pub mod test {
 
     use super::{
-        components::{arsonist_doused::ArsonistDoused, cult::Cult, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, insider_group::InsiderGroupID, verdicts_today::VerdictsToday},
+        ability_input::saved_controllers_map::SavedControllersMap,
+        components::{
+            arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, verdicts_today::VerdictsToday
+        }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
-        phase::PhaseStateMachine,
-        player::{test::mock_player, PlayerIndex, PlayerReference},
-        role::Role,
-        settings::Settings, 
-        Game,
-        RejectStartReason
+        phase::PhaseStateMachine, player::{test::mock_player, PlayerIndex, PlayerReference},
+        role::Role, settings::Settings, Game, RejectStartReason
     };
 
 
@@ -482,6 +555,8 @@ pub mod test {
         drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
         let mut game = Game{
+            pitchfork: Pitchfork::new(number_of_players as u8),
+            
             roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
             ticking: true,
             spectators: Vec::new(),
@@ -491,6 +566,9 @@ pub mod test {
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
 
+            saved_controllers: SavedControllersMap::default(),
+            night_visits: NightVisits::default(),
+            syndicate_gun_item: SyndicateGunItem::default(),
             cult: Cult::default(),
             mafia: Mafia,
             arsonist_doused: ArsonistDoused::default(),
@@ -498,18 +576,18 @@ pub mod test {
             mafia_recruits: MafiaRecruits::default(),
             love_linked: LoveLinked::default(),
             verdicts_today: VerdictsToday::default(),
-            pitchfork: Pitchfork::default(),
             poison: Poison::default(),
             modifiers: Default::default(),
             revealed_groups: Default::default(),
             detained: Default::default(),
             confused: Default::default(),
             drunk_aura: Default::default(),
+            synopsis_tracker: SynopsisTracker::new(number_of_players as u8)
         };
 
         //set wincons and revealed groups
         for player in PlayerReference::all_players(&game){
-            let role_data = player.role_state(&game).clone();
+            let role_data = player.role(&game).new_state(&game);
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         

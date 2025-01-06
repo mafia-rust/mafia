@@ -1,6 +1,6 @@
 import { VersionConverter } from ".";
 import { GameMode, GameModeData, GameModeStorage, ShareableGameMode } from "..";
-import { Settings } from "../../../../game/localStorage";
+import { getDefaultSettings, Settings } from "../../../../game/localStorage";
 import { RoleOutline, RoleOutlineOption } from "../../../../game/roleListState.d";
 import { Role } from "../../../../game/roleState.d";
 import { Failure, ParseResult, ParseSuccess, Success, isFailure } from "../parse";
@@ -21,9 +21,16 @@ function parseSettings(json: NonNullable<any>): ParseResult<Settings> {
         return Failure("settingsNotObject", json);
     }
 
-    for(const key of ['format', 'volume', 'defaultName', 'language', 'roleSpecificMenus']) {
+    for(const key of ['format', 'volume', 'fontSize', 'accessibilityFont', 'defaultName', 'language', 'roleSpecificMenus']) {
         if (!Object.keys(json).includes(key)) {
             return Failure(`${key as keyof Settings}KeyMissingFromSettings`, json);
+        }
+    }
+
+    for(const key of ['maxMenus', 'menuOrder']) {
+        if (!Object.keys(json).includes(key)) {
+            json.maxMenus = getDefaultSettings().maxMenus
+            json.menuOrder = getDefaultSettings().menuOrder
         }
     }
 

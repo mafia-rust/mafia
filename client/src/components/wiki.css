@@ -23,6 +23,9 @@
     flex: 1 1;
     padding-bottom: 1rem;
 }
+.wiki-search .masonry-item {
+    width: 100%;
+}
 .wiki-message-section {
     display: flex;
     flex-direction: column;
@@ -45,19 +48,12 @@
 .wiki-article * {
     text-align: left;
 }
-.wiki-article summary {
-    padding: 0.5rem;
-    margin: .25rem;
+.wiki-article .details-summary-container {
+    padding: 0.12rem;
+    margin: .25rem 0;
     border: .13rem solid var(--primary-border-color);
     border-radius: 0.5rem;
     text-align: center;
-}
-.wiki-article details > div{
-    margin-top: 0;
-    padding: 0.5rem;
-    border: .13rem solid var(--primary-border-color);
-    border-radius: 0.5rem;
-    
 }
 .wiki-article blockquote {
     width: 100%;
@@ -104,4 +100,7 @@
 }
 .wiki-cover-card, .anchor-cover-card .wiki-article {
     max-width: 50rem;
+}
+.role-set-article .masonry-item {
+    text-align: center;
 }

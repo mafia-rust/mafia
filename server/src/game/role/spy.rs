@@ -3,14 +3,13 @@ use serde::Serialize;
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{Priority, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Spy;
@@ -40,16 +39,21 @@ impl RoleStateImpl for Spy {
 
                 let mut mafia_visits = vec![];
                 for other_player in PlayerReference::all_players(game){
-                    if InsiderGroupID::Mafia.is_player_in_revealed_group(game, other_player) {
-                        mafia_visits.append(&mut other_player.night_visits(game).iter().map(|v|v.target.index()).collect());
-                    }
+                    if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, other_player) {continue}
+                    mafia_visits.append(
+                        &mut other_player.tracker_seen_visits(game)
+                            .iter()
+                            .map(|v|v.target.index())
+                            .collect()
+                    );
                 }
                 mafia_visits.shuffle(&mut rand::thread_rng());
                 
                 actor_ref.push_night_message(game, ChatMessageVariant::SpyMafiaVisit { players: mafia_visits });               
             },
             Priority::SpyBug => {
-                let Some(visit) = actor_ref.night_visits(game).first()else{return};
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let Some(visit) = actor_visits.first() else {return};
 
                 for message in visit.target.night_messages(game).clone(){
                     if let Some(message) = match message{
@@ -64,34 +68,25 @@ impl RoleStateImpl for Spy {
                         actor_ref.push_night_message(game, message);
                     }
                 };
-            },
-            Priority::FinalPriority => {
-                if actor_ref.night_blocked(game) {return;}
-
-                let count = PlayerReference::all_players(game).filter(|p|
-                    p.alive(game) && InsiderGroupID::Cult.is_player_in_revealed_group(game, *p)
-                ).count() as u8;
-
-                if count > 0 {
-                    match Cult::next_ability(game) {
-                        CultAbility::Convert => {
-                            actor_ref.push_night_message(game, ChatMessageVariant::CultConvertsNext);
-                        }
-                        CultAbility::Kill => {
-                            actor_ref.push_night_message(game, ChatMessageVariant::CultKillsNext);
-                        }
-                    }
-
-                    actor_ref.push_night_message(game, ChatMessageVariant::SpyCultistCount { count });
-                }
             }
             _=>{}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
+            game,
+            actor_ref,
+            false,
+            false,
+            ControllerID::role(actor_ref, Role::Spy, 0)
+        )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Spy, 0),
+            false
+        )
     }
 }

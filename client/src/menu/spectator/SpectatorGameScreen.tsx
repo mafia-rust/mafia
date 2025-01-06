@@ -1,17 +1,9 @@
 import React, { ReactElement, useContext } from "react";
-import "./spectatorGameScreen.css";
-import PhaseStartedScreen from "./PhaseStartedScreen";
-import { useGameState } from "../../components/useHooks";
 import "../game/gameScreen.css"
-import ChatMenu from "../game/gameScreenContent/ChatMenu";
-import PlayerListMenu from "../game/gameScreenContent/PlayerListMenu";
-import GraveyardMenu from "../game/gameScreenContent/GraveyardMenu";
-import HeaderMenu from "../game/HeaderMenu";
-import { MenuController, ContentMenu, useMenuController, MenuControllerContext } from "../game/GameScreen";
+import HeaderMenu, { MenuButtons } from "../game/HeaderMenu";
+import { MenuController, useMenuController, MenuControllerContext, GameScreenMenus, ContentMenu } from "../game/GameScreen";
 import { MobileContext } from "../Anchor";
-
-
-const DEFAULT_START_PHASE_SCREEN_TIME = 3;
+import { loadSettingsParsed } from "../../game/localStorage";
 
 let CONTENT_CONTROLLER: MenuController | undefined;
 
@@ -19,37 +11,24 @@ export function getSpectatorScreenContentController(): MenuController | undefine
     return CONTENT_CONTROLLER;
 }
 
-type SpectatorContentMenus = {
-    ChatMenu: boolean,
-    PlayerListMenu: boolean,
-    GraveyardMenu: boolean
-}
-
 export default function SpectatorGameScreen(): ReactElement {
-    const showStartedScreen = useGameState(
-        gameState => {
-            if (
-                gameState.phaseState.type === "briefing"
-                || gameState.phaseState.type === "obituary"
-            ) return true;
-
-            const maxTime = gameState.phaseTimes[gameState.phaseState.type];
-            const timePassed = Math.floor(maxTime - gameState.timeLeftMs/1000);
-            return timePassed < DEFAULT_START_PHASE_SCREEN_TIME;
-        },
-        ["phase", "phaseTimeLeft", "tick"],
-        true
-    )!
-
     const mobile = useContext(MobileContext)!;
+    const { maxMenus, menuOrder } = loadSettingsParsed();
 
-    const contentController = useMenuController<SpectatorContentMenus>(
-        mobile ? 2 : Infinity,
-        {
-            ChatMenu: true,
-            PlayerListMenu: true,
-            GraveyardMenu: !mobile
-        },
+    const menusOpen: [ContentMenu, boolean | undefined][] = [
+        [ContentMenu.WikiMenu, undefined ],
+        [ContentMenu.GraveyardMenu, maxMenus > 2 ],
+        [ContentMenu.PlayerListMenu, maxMenus > 1 ],
+        [ContentMenu.ChatMenu, true ],
+        [ContentMenu.WillMenu, undefined ],
+        [ContentMenu.RoleSpecificMenu, undefined ],
+    ];
+
+    menusOpen.sort((a, b) => menuOrder.indexOf(a[0]) - menuOrder.indexOf(b[0]))
+
+    const contentController = useMenuController(
+        maxMenus,
+        Object.fromEntries(menusOpen),
         () => CONTENT_CONTROLLER!,
         contentController => CONTENT_CONTROLLER = contentController
     );
@@ -61,13 +40,8 @@ export default function SpectatorGameScreen(): ReactElement {
                 <div className="header">
                     <HeaderMenu chatMenuNotification={false}/>
                 </div>
-                {showStartedScreen 
-                    ? <PhaseStartedScreen/>
-                    : <div className="content">
-                        {contentController.menuOpen(ContentMenu.ChatMenu) && <ChatMenu/>}
-                        {contentController.menuOpen(ContentMenu.PlayerListMenu) && <PlayerListMenu/>}
-                        {contentController.menuOpen(ContentMenu.GraveyardMenu) && <GraveyardMenu/>}
-                    </div>}
+                <GameScreenMenus />
+                {mobile === true && <MenuButtons chatMenuNotification={false}/>}
             </div>
         </MenuControllerContext.Provider>
     );

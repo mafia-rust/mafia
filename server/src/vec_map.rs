@@ -1,6 +1,6 @@
-use serde::{ser::SerializeMap, Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug)]
 pub struct VecMap<K, V> where K: Eq {
     vec: Vec<(K, V)>,
 }
@@ -54,6 +54,10 @@ impl<K, V> VecMap<K, V> where K: Eq {
         None
     }
 
+    pub fn contains_key(&self, key: &K) -> bool {
+        self.vec.iter().any(|(k, _)| k == key)
+    }
+
     pub fn remove(&mut self, key: &K) -> Option<(K, V)> {
         let mut index = None;
         for (i, (k, _)) in self.vec.iter().enumerate() {
@@ -100,11 +104,24 @@ impl<K, V> VecMap<K, V> where K: Eq {
     pub fn values(&self) -> impl Iterator<Item = &V> {
         self.vec.iter().map(|(_, v)| v)
     }
+    pub fn values_mut(&mut self) -> impl Iterator<Item = &mut V> {
+        self.vec.iter_mut().map(|(_, v)| v)
+    }
 
     pub fn contains(&self, key: &K) -> bool {
         self.vec.iter().any(|(k, _)| k == key)
     }
 }
+
+impl<K, V> PartialEq for VecMap<K, V> where K: Eq, V: Eq {
+    fn eq(&self, other: &Self) -> bool {
+        self.vec.iter().all(|(k, v)| other.get(k) == Some(v))
+            && other.vec.iter().all(|(k, v)| self.get(k) == Some(v))
+    }
+}
+impl<K, V> Eq for VecMap<K, V> where K: Eq, V: Eq {}
+
+
 impl<K, V> IntoIterator for VecMap<K, V> where K: Eq {
     type Item = (K, V);
     type IntoIter = std::vec::IntoIter<(K, V)>;
@@ -125,35 +142,30 @@ impl<K,  V> FromIterator<(K, V)> for VecMap<K, V> where K: Eq {
 
 impl<K, V> Serialize for VecMap<K, V> where K: Eq, K: Serialize, V: Serialize {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
-        let mut map = serializer.serialize_map(Some(self.len()))?;
-        for (k, v) in self.iter() {
-            map.serialize_entry(k, v)?;
-        }
-        map.end()
+        self.vec.serialize(serializer)
     }
 }
 impl<'de, K, V> Deserialize<'de> for VecMap<K, V> where K: Eq, K: Deserialize<'de>, V: Deserialize<'de> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error> where D: serde::Deserializer<'de> {
-        struct MapVisitor<K, V> where K: Eq {
-            marker: std::marker::PhantomData<VecMap<K, V>>,
-        }
-
-        impl <'de, K, V> serde::de::Visitor<'de> for MapVisitor<K, V> where K: Eq, K: Deserialize<'de>, V: Deserialize<'de> {
-            type Value = VecMap<K, V>;
-
-            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-                formatter.write_str("a map")
-            }
-
-            fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error> where A: serde::de::MapAccess<'de> {
-                let mut vec = Vec::new();
-                while let Some((k, v)) = map.next_entry()? {
-                    vec.push((k, v));
-                }
-                Ok(VecMap { vec })
-            }
-        }
-
-        deserializer.deserialize_map(MapVisitor { marker: std::marker::PhantomData })
+        let vec = Vec::deserialize(deserializer)?;
+        Ok(VecMap { vec })
     }
+}
+
+
+
+
+
+pub use macros::vec_map;
+mod macros {
+    #[macro_export]
+    macro_rules! vec_map {
+        ($(($key:expr, $value:expr)),*) => {{
+            let mut map = VecMap::new();
+            $(map.insert($key, $value);)*
+            map
+        }};
+    }
+
+    pub use vec_map;
 }

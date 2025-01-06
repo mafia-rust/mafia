@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::components::night_visits::NightVisits;
 use crate::game::grave::GraveKiller;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
@@ -9,7 +10,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
+use super::{common_role, BooleanSelection, ControllerID, ControllerParametersMap, GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Default, Clone, Debug)]
 pub struct Engineer {
@@ -78,17 +79,20 @@ impl RoleStateImpl for Engineer {
                 if !actor_ref.night_blocked(game) {
                     match self.trap {
                         Trap::Dismantled => {
-                            actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}));
+                            actor_ref.set_role_state(game, Engineer {trap: Trap::Ready});
                         },
                         Trap::Ready => {
-                            if let Some(visit) = actor_ref.night_visits(game).first(){
-                                actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Set{target: visit.target}}));
+                            if let Some(visit) = actor_ref.untagged_night_visits_cloned(game).first(){
+                                actor_ref.set_role_state(game, Engineer {trap: Trap::Set{target: visit.target}});
                             }
                         },
-                        Trap::Set { .. } if actor_ref.night_visits(game).first().is_some() => {
-                            actor_ref.set_role_state(game, RoleState::Engineer(Engineer {trap: Trap::Ready}));
-                        },
-                        _ => {}
+                        Trap::Set { .. } => {
+                            if let Some(BooleanSelection(true)) = game.saved_controllers.get_controller_current_selection_boolean(
+                                ControllerID::role(actor_ref, Role::Engineer, 1)
+                            ){
+                                actor_ref.set_role_state(game, Engineer {trap: Trap::Ready});
+                            }
+                        }
                     }
                 }
     
@@ -98,12 +102,13 @@ impl RoleStateImpl for Engineer {
             }
             Priority::Kill => {
                 if let Trap::Set { target, .. } = self.trap {
-                    for attacker in PlayerReference::all_players(game) {
+                    for visit in NightVisits::all_visits(game).into_iter().cloned().collect::<Vec<_>>() {
                         if 
-                            attacker.night_visits(game).iter().any(|visit| visit.target == target && visit.attack) &&
-                            attacker != actor_ref
+                            visit.attack &&
+                            visit.target == target &&
+                            visit.visitor != actor_ref
                         {
-                            attacker.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Engineer), AttackPower::ArmorPiercing, false);
+                            visit.visitor.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Engineer), AttackPower::ArmorPiercing, false);
                         }
                     }
                 }
@@ -118,11 +123,8 @@ impl RoleStateImpl for Engineer {
                         target.push_night_message(game, ChatMessageVariant::YouWereProtected);
                     }
 
-                    for visitor in PlayerReference::all_players(game) {
-                        if 
-                            visitor.night_visits(game).iter().any(|visit|visit.target == target) &&
-                            visitor != actor_ref
-                        {
+                    for visitor in target.all_night_visitors_cloned(game) {
+                        if visitor != actor_ref{
                             actor_ref.push_night_message(game, ChatMessageVariant::EngineerVisitorsRole { role: visitor.role(game) });
                             should_dismantle = true;
                         }
@@ -138,19 +140,37 @@ impl RoleStateImpl for Engineer {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        (match self.trap {
-            Trap::Dismantled => false,
-            Trap::Ready => actor_ref != target_ref,
-            Trap::Set { .. } => actor_ref == target_ref,
-        }) &&
-        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
-        actor_ref.selection(game).is_empty() &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game)
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
+        match self.trap {
+            Trap::Ready => {
+                common_role::controller_parameters_map_player_list_night_typical(
+                    game,
+                    actor_ref,
+                    false,
+                    false,
+                    ControllerID::role(actor_ref, Role::Engineer, 0)
+                )
+            },
+            Trap::Set { .. } => {
+                common_role::controller_parameters_map_boolean(
+                    game,
+                    actor_ref,
+                    false,
+                    ControllerID::role(actor_ref, Role::Engineer, 1)
+                )
+            }
+            _ => {
+                ControllerParametersMap::default()
+            }
+        }
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
+        common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref, 
+            ControllerID::role(actor_ref, Role::Engineer, 0),
+            false
+        )
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {

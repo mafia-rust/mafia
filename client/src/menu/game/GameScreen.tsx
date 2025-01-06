@@ -1,31 +1,60 @@
 import React, { createContext, ReactElement, useCallback, useContext, useEffect, useState } from "react";
-import HeaderMenu from "./HeaderMenu";
+import HeaderMenu, { MenuButtons } from "./HeaderMenu";
 import GraveyardMenu from "./gameScreenContent/GraveyardMenu";
 import ChatMenu from "./gameScreenContent/ChatMenu";
 import PlayerListMenu from "./gameScreenContent/PlayerListMenu";
 import WillMenu from "./gameScreenContent/WillMenu";
-import GAME_MANAGER, { modulus } from "../..";
+import GAME_MANAGER, { DEV_ENV, modulus, Theme } from "../..";
 import WikiMenu from "./gameScreenContent/WikiMenu";
 import "../../index.css";
 import "./gameScreen.css";
-import RoleSpecificMenu from "./gameScreenContent/RoleSpecificMenu";
+import AbilityMenu from "./gameScreenContent/AbilityMenu/AbilityMenu";
 import { addSwipeEventListener, MobileContext, removeSwipeEventListener } from "../Anchor";
 import StyledText from "../../components/StyledText";
 import { WikiArticleLink } from "../../components/WikiArticleLink";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import translate from "../../game/lang";
-import { roleSpecificMenuType } from "../Settings";
-import { useGameState, usePlayerState } from "../../components/useHooks";
+import { useGameState } from "../../components/useHooks";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { loadSettingsParsed } from "../../game/localStorage";
 
 export enum ContentMenu {
     ChatMenu = "ChatMenu",
-    PlayerListMenu = "PlayerListMenu",
     RoleSpecificMenu = "RoleSpecificMenu",
     WillMenu = "WillMenu",
+    PlayerListMenu = "PlayerListMenu",
     GraveyardMenu = "GraveyardMenu",
     WikiMenu = "WikiMenu",
 }
+
+export const MENU_ELEMENTS = {
+    [ContentMenu.ChatMenu]: ChatMenu,
+    [ContentMenu.PlayerListMenu]: PlayerListMenu,
+    [ContentMenu.RoleSpecificMenu]: AbilityMenu,
+    [ContentMenu.WillMenu]: WillMenu,
+    [ContentMenu.GraveyardMenu]: GraveyardMenu,
+    [ContentMenu.WikiMenu]: WikiMenu
+}
+
+export const MENU_THEMES: Record<ContentMenu, Theme | null> = {
+    [ContentMenu.ChatMenu]: "chat-menu-colors",
+    [ContentMenu.PlayerListMenu]: "player-list-menu-colors",
+    [ContentMenu.RoleSpecificMenu]: "role-specific-colors",
+    [ContentMenu.WillMenu]: "will-menu-colors",
+    [ContentMenu.GraveyardMenu]: "graveyard-menu-colors",
+    [ContentMenu.WikiMenu]: "wiki-menu-colors"
+}
+
+export const MENU_TRANSLATION_KEYS: Record<ContentMenu, string> = {
+    [ContentMenu.ChatMenu]: "menu.chat",
+    [ContentMenu.PlayerListMenu]: "menu.playerList",
+    [ContentMenu.RoleSpecificMenu]: "menu.ability",
+    [ContentMenu.WillMenu]: "menu.will",
+    [ContentMenu.GraveyardMenu]: "menu.gameMode",
+    [ContentMenu.WikiMenu]: "menu.wiki"
+}
+
 const ALL_CONTENT_MENUS = Object.values(ContentMenu);
 
 export interface MenuController {
@@ -35,6 +64,8 @@ export interface MenuController {
     menusOpen(): ContentMenu[];
     menuOpen(menu: ContentMenu): boolean;
     canOpen(menu: ContentMenu): boolean;
+    menus(): ContentMenu[]
+    maxMenus: number
 }
 
 export function useMenuController<C extends Partial<Record<ContentMenu, boolean>>>(
@@ -86,6 +117,11 @@ export function useMenuController<C extends Partial<Record<ContentMenu, boolean>
         setMenuController({
             closeMenu(menu) {
                 setContentMenu(menu, false)
+
+                if (GAME_MANAGER.state.stateType === "game" && menu === ContentMenu.ChatMenu){
+                    GAME_MANAGER.state.missedChatMessages = false;
+                }
+                GAME_MANAGER.invokeStateListeners("closeGameMenu");
             },
             closeOrOpenMenu(menu) {
                 if (getMenuController().menusOpen().includes(menu)) {
@@ -96,10 +132,16 @@ export function useMenuController<C extends Partial<Record<ContentMenu, boolean>
             },
             openMenu(menu, callback) {
                 setContentMenu(menu, true);
-                
+
+                if (GAME_MANAGER.state.stateType === "game" && menu === ContentMenu.ChatMenu){
+                    GAME_MANAGER.state.missedChatMessages = false;
+                }
+
                 if (callback) {
                     setCallbacks(callbacks => callbacks.concat(callback))
                 }
+
+                GAME_MANAGER.invokeStateListeners("openGameMenu");
             },
             menusOpen(): ContentMenu[] {
                 return Object.entries(contentMenus)
@@ -111,7 +153,11 @@ export function useMenuController<C extends Partial<Record<ContentMenu, boolean>
             },
             canOpen(menu): boolean {
                 return contentMenus[menu] !== undefined
-            }
+            },
+            menus(): ContentMenu[] {
+                return Object.keys(contentMenus).filter(menu => contentMenus[menu as ContentMenu] !== undefined) as ContentMenu[];
+            },
+            maxMenus: maxContent
         })
     }, [contentMenus, getMenuController, maxContent, setMenuController]);
 
@@ -133,42 +179,41 @@ const MenuControllerContext = createContext<MenuController | undefined>(undefine
 export { MenuControllerContext }
 
 export default function GameScreen(): ReactElement {
-    const roleState = usePlayerState(
-        playerState => playerState.roleState,
-        ["yourRoleState"]
-    )!;
     const mobile = useContext(MobileContext)!;
+    const { maxMenus, menuOrder } = loadSettingsParsed();
+
+    const menusOpen: [ContentMenu, boolean | undefined][] = [
+        [ContentMenu.WikiMenu, mobile ? undefined : false ],
+        [ContentMenu.GraveyardMenu, maxMenus > 4 ],
+        [ContentMenu.PlayerListMenu, maxMenus > 1 ],
+        [ContentMenu.ChatMenu, true ],
+        [ContentMenu.WillMenu, maxMenus > 3 ],
+        [ContentMenu.RoleSpecificMenu, maxMenus > 2 ],
+    ];
+
+    menusOpen.sort((a, b) => menuOrder.indexOf(a[0]) - menuOrder.indexOf(b[0]))
 
     const menuController = useMenuController(
-        mobile ? 2 : Infinity, 
-        {
-            ChatMenu: true,
-            PlayerListMenu: true,
-            RoleSpecificMenu: !mobile && roleSpecificMenuType(roleState.type) === "standalone",
-            WillMenu: !mobile,
-            GraveyardMenu: !mobile,
-            WikiMenu: false,
-        },
+        maxMenus, 
+        Object.fromEntries(menusOpen),
         () => MENU_CONTROLLER_HOLDER.controller!,
         menuController => MENU_CONTROLLER_HOLDER.controller = menuController
     );
-    
-    usePlayerState(
-        playerState => {
-            if (
-                roleSpecificMenuType(playerState.roleState.type) !== "standalone" 
-                && menuController.menuOpen(ContentMenu.RoleSpecificMenu)
-            ) {
-                menuController.closeMenu(ContentMenu.RoleSpecificMenu)
-            }
-        },
-        ["yourRoleState"]
-    );
 
     const chatMenuNotification = useGameState(
-        () => !menuController.menusOpen().includes(ContentMenu.ChatMenu),
-        ["addChatMessages"]
+        (game) => game.missedChatMessages && !menuController.menuOpen(ContentMenu.ChatMenu),
+        ["addChatMessages", "openGameMenu", "closeGameMenu"]
     )!;
+    
+
+    useEffect(() => {
+        const onBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (!DEV_ENV) e.preventDefault()
+        };
+
+        window.addEventListener("beforeunload", onBeforeUnload);
+        return () => window.removeEventListener("beforeunload", onBeforeUnload);
+    }, [])
 
     useEffect(() => {
         const swipeEventListener = (right: boolean) => {
@@ -179,11 +224,8 @@ export default function GameScreen(): ReactElement {
                 return;
             }
 
-            const allowedMenus = ALL_CONTENT_MENUS.filter(menu => {
-                //not open and 
-                return !menusOpen.includes(menu) && (menu === ContentMenu.RoleSpecificMenu ?
-                    roleSpecificMenuType(roleState.type) === "standalone"
-                    : true);
+            const allowedMenus = ALL_CONTENT_MENUS.filter(menu => { 
+                return !menusOpen.includes(menu) && menuController.menus().includes(menu)
             });
 
             const rightMostMenu = menusOpen[menusOpen.length - 1];
@@ -201,26 +243,51 @@ export default function GameScreen(): ReactElement {
         return () => removeSwipeEventListener(swipeEventListener);
     })
 
-    const allMenusClosed = menuController.menusOpen().length === 0;
-
     return <MenuControllerContext.Provider value={menuController}>
         <div className="game-screen">
             <div className="header">
                 <HeaderMenu chatMenuNotification={chatMenuNotification}/>
             </div>
-            <div className="content">
-                {menuController.menuOpen(ContentMenu.ChatMenu) && <ChatMenu/>}
-                {menuController.menuOpen(ContentMenu.PlayerListMenu) && <PlayerListMenu/>}
-                {menuController.menuOpen(ContentMenu.WillMenu) && <WillMenu/>}
-                {menuController.menuOpen(ContentMenu.RoleSpecificMenu) && <RoleSpecificMenu/>}
-                {menuController.menuOpen(ContentMenu.GraveyardMenu) && <GraveyardMenu/>}
-                {menuController.menuOpen(ContentMenu.WikiMenu) && <WikiMenu/>}
-                {allMenusClosed && <div className="no-content">
-                    {translate("menu.gameScreen.noContent")}
-                </div>}
-            </div>
+            <GameScreenMenus />
+            {mobile && <MenuButtons chatMenuNotification={chatMenuNotification}/>}
         </div>
     </MenuControllerContext.Provider>
+}
+
+export function GameScreenMenus(): ReactElement {
+    const menuController = useContext(MenuControllerContext)!;
+    const minSize = 10; // Percentage
+    const mobile = useContext(MobileContext)!;
+
+    // These don't add up to 100, but the panel group will fix it
+    const defaultSizes = {
+        [ContentMenu.ChatMenu]: 35,
+        [ContentMenu.RoleSpecificMenu]: 15,
+        [ContentMenu.WillMenu]: 15,
+        [ContentMenu.PlayerListMenu]: 25,
+        [ContentMenu.GraveyardMenu]: 10,
+        [ContentMenu.WikiMenu]: 15,
+    }
+
+    return <PanelGroup direction="horizontal" className="content">
+        {menuController.menusOpen().map((menu, index, menusOpen) => {
+            const MenuElement = MENU_ELEMENTS[menu];
+            return <>
+                <Panel
+                    className="panel"
+                    minSize={minSize}
+                    defaultSize={mobile===false?defaultSizes[menu]:undefined}
+                    key={menu}
+                >
+                    <MenuElement />
+                </Panel>
+                {!mobile && menusOpen.some((_, i) => i > index) && <PanelResizeHandle key={index+".handle"} className="panel-handle"/>}
+            </>
+        })}
+        {menuController.menusOpen().length === 0 && <Panel><div className="no-content">
+            {translate("menu.gameScreen.noContent")}
+        </div></Panel>}
+    </PanelGroup>
 }
 
 export function ContentTab(props: Readonly<{

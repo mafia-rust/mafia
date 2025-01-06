@@ -16,6 +16,12 @@
     display: flex;
     align-items: center;
 }
+.chat-message.block {
+    background-color: var(--primary-color);
+    border: .13rem solid var(--primary-border-color);
+    border-radius: .5rem;
+    padding: .25rem;
+}
 .chat-message {
     width: 100%;
     text-align: left;
@@ -95,14 +101,6 @@
 .chat-message.warning {
     background-color: #660000;
 }
-.grave-message {
-    border: .13rem solid var(--background-border-color);
-    border-bottom-color: var(--background-border-shadow-color);
-    border-right-color: var(--background-border-shadow-color);
-    border-radius: .5rem;
-    margin: .13rem;
-    padding: .25rem;
-}
 
 .kira-guess-results {
     display: flex;
@@ -128,4 +126,7 @@
 }
 .kira-guess-result.notInGame{
     border-color: red;
+}
+.chat-message-div .details-summary-container {
+    width: 100%;
 }

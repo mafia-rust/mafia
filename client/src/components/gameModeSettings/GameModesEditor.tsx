@@ -13,7 +13,7 @@ import { defaultPhaseTimes } from "../../game/gameState";
 import { GameModeSelector } from "./GameModeSelector";
 import { Helmet } from "react-helmet";
 import { ShareableGameMode } from "./gameMode";
-import { EnabledModifiersDisplay } from "./EnabledModifiersDisplay";
+import { EnabledModifiersSelector } from "./EnabledModifiersSelector";
 
 const GameModeContext = createContext({
     roleList: [] as RoleList,
@@ -118,7 +118,7 @@ export default function GameModesEditor(props: Readonly<{
                     />
                 </div>
                 <div>
-                    <EnabledModifiersDisplay
+                    <EnabledModifiersSelector
                         disabled={false}
                         onChange={onSetEnabledModifiers}
                     />

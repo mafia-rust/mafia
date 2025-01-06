@@ -3,6 +3,9 @@ import { CurrentFormat, GameModeStorage } from "../components/gameModeSettings/g
 import { Language } from "./lang";
 import { Role } from "./roleState.d";
 import parseFromJson from "../components/gameModeSettings/gameMode/dataFixer";
+import { ContentMenu } from "../menu/game/GameScreen";
+import { ParseResult, Success } from "../components/gameModeSettings/gameMode/parse";
+
 
 export function saveReconnectData(roomCode: number, playerId: number) {
     localStorage.setItem(
@@ -45,8 +48,12 @@ export function loadReconnectData(): {
 export type Settings = {
     format: CurrentFormat;
     volume: number;
+    fontSize: number;
+    accessibilityFont: boolean;
     defaultName: string | null;
     language: Language;
+    maxMenus: number;
+    menuOrder: ContentMenu[]
     roleSpecificMenus: Role[] // RoleSpecificMenuType=standalone for all listed roles, otherwise it should be playerlist
 };
 
@@ -57,12 +64,31 @@ export type RoleSpecificMenuType = "playerList" | "standalone";
 export function loadSettingsParsed(): Settings {
     const result = parseFromJson("Settings", loadSettings());
     if(result.type === "failure") {
-        return DEFAULT_SETTINGS;
+        return getDefaultSettings();
     }else{
         return result.value;
     }
 }
-
+export function getDefaultSettings(): Readonly<Settings> {
+    return {
+        format: "v3",
+        volume: 0.5,
+        fontSize: 1,
+        accessibilityFont: false,
+        language: "en_us",
+        defaultName: null,
+        maxMenus: window.innerWidth < 600 ? 1 : 6,
+        menuOrder: [
+            ContentMenu.WikiMenu, 
+            ContentMenu.GraveyardMenu, 
+            ContentMenu.PlayerListMenu, 
+            ContentMenu.ChatMenu, 
+            ContentMenu.WillMenu, 
+            ContentMenu.RoleSpecificMenu
+        ],
+        roleSpecificMenus: []
+    }
+}
 export function loadSettings(): unknown {
     const data = localStorage.getItem("settings");
     if (data !== null) {
@@ -72,7 +98,7 @@ export function loadSettings(): unknown {
             return null;
         }
     }
-    return DEFAULT_SETTINGS;
+    return getDefaultSettings();
 }
 export function saveSettings(newSettings: Partial<Settings>) {
     const currentSettings = parseFromJson("Settings", loadSettings());
@@ -80,7 +106,7 @@ export function saveSettings(newSettings: Partial<Settings>) {
 
     if(currentSettings.type === "failure") {
         localStorage.setItem("settings", JSON.stringify({
-            ...DEFAULT_SETTINGS,
+            ...getDefaultSettings(),
             ...newSettings,
         }));
     }else{
@@ -91,13 +117,21 @@ export function saveSettings(newSettings: Partial<Settings>) {
     }
 }
 
+let cachedGameModes: ParseResult<GameModeStorage> | null = null;
 
+export function loadGameModesParsed(): ParseResult<GameModeStorage> {
+
+    if(cachedGameModes !== null) return cachedGameModes;
+
+    cachedGameModes = parseFromJson("GameModeStorage", loadGameModes());
+    return cachedGameModes;
+}
 export function defaultGameModes(): unknown {
     // Typescript is a Division One tweaker
     return DEFAULT_GAME_MODES;
 }
-
 export function saveGameModes(gameModes: GameModeStorage) {
+    cachedGameModes = Success(gameModes);
     localStorage.setItem("savedGameModes", JSON.stringify(gameModes));
 }
 export function loadGameModes(): unknown {
@@ -115,11 +149,3 @@ export function deleteGameModes() {
     localStorage.removeItem("savedGameModes");
 }
 
-
-export const DEFAULT_SETTINGS: Readonly<Settings> = {
-    format: "v3",
-    volume: 0.5,
-    language: "en_us",
-    defaultName: null,
-    roleSpecificMenus: []
-};

@@ -1,6 +1,9 @@
+use serde::Serialize;
+
 use super::{player::PlayerReference, role::Role, role_list::RoleSet, win_condition::WinCondition, Game};
 
-#[derive(Debug, PartialEq, Eq, Clone, Hash)]
+#[derive(Clone, Debug, Serialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[serde(rename_all = "camelCase")]
 pub enum GameConclusion {
     Town,
     Mafia,
@@ -8,8 +11,10 @@ pub enum GameConclusion {
 
     Fiends,
 
-    Death,
     Politician,
+
+    NiceList,
+    NaughtyList,
 
     Draw
 }
@@ -19,9 +24,14 @@ impl GameConclusion {
             GameConclusion::Town,
             GameConclusion::Mafia,
             GameConclusion::Cult,
+
             GameConclusion::Fiends,
-            GameConclusion::Death,
+
             GameConclusion::Politician,
+
+            GameConclusion::NiceList,
+            GameConclusion::NaughtyList,
+
             GameConclusion::Draw
         ]
     }
@@ -42,29 +52,22 @@ impl GameConclusion {
         }
         
         //if nobody is left to hold game hostage
-        if !PlayerReference::all_players(game).any(|player|player.keeps_game_running(game)){
+        if !PlayerReference::all_players(game).any(|player| player.alive(game) && player.keeps_game_running(game)){
             return Some(GameConclusion::Draw);
         }
 
         //find one end game condition that everyone agrees on
-        for resolution in GameConclusion::all() {
-            //if everyone who keeps the game running agrees on this end game condition, return it
-            if
-                PlayerReference::all_players(game)
-                    .filter(|p|p.alive(game))
-                    .filter(|p|p.keeps_game_running(game))
-                    .all(|p|
-                        match p.win_condition(game){
-                            WinCondition::GameConclusionReached{win_if_any} => win_if_any.contains(&resolution),
-                            WinCondition::RoleStateWon => true,
-                        }
-                    )
-            {
-                return Some(resolution);
-            }
-        }
-
-        None
+        GameConclusion::all().into_iter().find(|resolution| 
+            PlayerReference::all_players(game)
+                .filter(|p|p.alive(game))
+                .filter(|p|p.keeps_game_running(game))
+                .all(|p|
+                    match p.win_condition(game){
+                        WinCondition::GameConclusionReached{win_if_any} => win_if_any.contains(resolution),
+                        WinCondition::RoleStateWon => true,
+                    }
+                )
+        )
     }
     
 
@@ -76,13 +79,10 @@ impl GameConclusion {
 
         match role {
             Role::Drunk => true,
-            _ => if 
-                RoleSet::Neutral.get_roles().contains(&role) || 
-                RoleSet::Minions.get_roles().contains(&role){
-                false
-            }else{
-                true  
-            }
+            Role::Politician => true,
+            Role::SantaClaus => true,
+            Role::Krampus => true,
+            _ => !(RoleSet::Neutral.get_roles().contains(&role) || RoleSet::Minions.get_roles().contains(&role))
         }
 
 

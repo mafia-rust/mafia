@@ -190,15 +190,16 @@ impl RoleSet{
                 ).collect(),
             RoleSet::MafiaKilling => 
                 vec![
-                    Role::Godfather, Role::Eros, Role::Counterfeiter,
-                    Role::Retrainer, Role::Impostor, Role::Recruiter,
+                    Role::Godfather, Role::Counterfeiter,
+                    Role::Impostor, Role::Recruiter,
                     Role::Mafioso
                 ],
             RoleSet::MafiaSupport => 
                 vec![
                     Role::Blackmailer, Role::Informant, Role::Hypnotist, Role::Consort,
-                    Role::Forger, Role::Framer, Role::Mortician, 
-                    Role::MafiaWitch, Role::Necromancer, Role::Cupid
+                    Role::Forger, Role::Framer, Role::Mortician, Role::Disguiser,
+                    Role::MafiaWitch, Role::Necromancer, Role::Cupid, Role::Reeducator,
+                    Role::Ambusher,
                 ],
             RoleSet::Minions => 
                 vec![
@@ -207,13 +208,14 @@ impl RoleSet{
             RoleSet::Neutral =>
                 vec![
                     Role::Jester, Role::Revolutionary, Role::Politician, Role::Doomsayer,
-                    Role::Martyr, Role::Death, Role::Chronokaiser
+                    Role::Martyr, Role::Chronokaiser, Role::SantaClaus, Role::Krampus,
                 ],
             RoleSet::Fiends =>
                 vec![
                     Role::Arsonist, Role::Werewolf, Role::Ojo,
                     Role::Puppeteer, Role::Pyrolisk, Role::Kira,
-                    Role::FiendsWildcard
+                    Role::SerialKiller, Role::FiendsWildcard,
+                    Role::Spiral, Role::Warden, Role::Yer
                 ],
             RoleSet::Cult =>
                 vec![

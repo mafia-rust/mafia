@@ -1,0 +1,15 @@
+.ability-menu {
+    overflow-y: auto;
+}
+.ability-menu .abilities {
+    display: flex;
+    flex-direction: column;
+}
+.game-screen .content > .ability-menu {
+    width: 10%;
+}
+@media only screen and (max-width: 600px) {
+    .game-screen .content > .ability-menu {
+        width: 100%;
+    }
+}

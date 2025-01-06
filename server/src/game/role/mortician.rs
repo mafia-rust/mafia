@@ -5,16 +5,20 @@ use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
 use crate::game::components::insider_group::InsiderGroupID;
-use crate::game::event::before_role_switch::BeforeRoleSwitch;
 use crate::game::grave::GraveInformation;
 use crate::game::grave::GraveReference;
+use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
+use crate::vec_set;
 use crate::vec_set::VecSet;
+use super::AbilitySelection;
+use super::ControllerID;
+use super::ControllerParametersMap;
 use super::Role;
 use super::{Priority, RoleState, RoleStateImpl};
 
@@ -25,12 +29,11 @@ pub struct Mortician {
     obscured_players: VecSet<PlayerReference>,
     cremations_remaining: u8,
 }
-const MAX_CREMATIONS: u8 = 3;
 impl Default for Mortician {
     fn default() -> Self {
         Self {
             obscured_players: VecSet::new(),
-            cremations_remaining: MAX_CREMATIONS,
+            cremations_remaining: 3,
         }
     }
 }
@@ -42,10 +45,17 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Mortician {
     type ClientRoleState = Mortician;
+    fn new_state(game: &Game) -> Self {
+        Self{
+            cremations_remaining: game.num_players().div_ceil(5),
+            ..Self::default()
+        }
+    }
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Deception=>{
-                let Some(visit) = actor_ref.night_visits(game).first() else{return};
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let Some(visit) = actor_visits.first() else{return};
 
                 let target_ref = visit.target;
                 
@@ -61,19 +71,43 @@ impl RoleStateImpl for Mortician {
             _ => {}
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        !Detained::is_detained(game, actor_ref) &&
-        actor_ref != target_ref &&
-        actor_ref.selection(game).is_empty() &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game) &&
-        !self.obscured_players.contains(&target_ref)
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        let grayed_out = 
+            !actor_ref.alive(game) || 
+            Detained::is_detained(game, actor_ref);
+
+        ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Mortician, 0),
+            super::AvailableAbilitySelection::new_player_list(
+                PlayerReference::all_players(game)
+                    .into_iter()
+                    .filter(|p| *p != actor_ref)
+                    .filter(|player| 
+                        player.alive(game) &&
+                        !self.obscured_players.contains(&player)
+                    )
+                    .collect(),
+                false,
+                Some(1)
+            ),
+            AbilitySelection::new_player_list(vec![]),
+            grayed_out,
+            Some(PhaseType::Obituary),
+            false,
+            vec_set![actor_ref]
+        )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Mortician, 0),
+            false
+        )
     }
-    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, event: BeforeRoleSwitch) {
-        if event.player() == actor_ref && event.new_role().role() != Role::Mortician {
+    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _old: RoleState, new: RoleState){
+        if player == actor_ref && new.role() != Role::Mortician {
             actor_ref.remove_player_tag_on_all(game, Tag::MorticianTagged);
         }
     }

@@ -1,10 +1,8 @@
-use std::collections::HashSet;
-
-use crate::game::{
+use crate::{game::{
     attack_power::AttackPower, chat::ChatMessageVariant,
     grave::GraveKiller, player::PlayerReference,
     role::Priority, Game
-};
+}, vec_set::VecSet};
 
 impl Game {
     pub fn poison(&self)->&Poison{
@@ -25,7 +23,7 @@ struct PlayerPoison{
     player: PlayerReference,
     attack_power: AttackPower,
     grave_killer: GraveKiller,
-    attackers: HashSet<PlayerReference>,
+    attackers: VecSet<PlayerReference>,
     leave_death_note: bool,
 }
 impl PlayerPoison{
@@ -33,7 +31,7 @@ impl PlayerPoison{
         player: PlayerReference,
         attack_power: AttackPower,
         grave_killer: GraveKiller,
-        attackers: HashSet<PlayerReference>,
+        attackers: VecSet<PlayerReference>,
         leave_death_note: bool,
     )->Self{
         Self{
@@ -46,6 +44,12 @@ impl PlayerPoison{
     }
 }
 
+#[derive(PartialEq)]
+pub enum PoisonAlert {
+    NoAlert,
+    Alert
+}
+
 impl Poison{
     /// run this at night
     pub fn poison_player(
@@ -53,16 +57,19 @@ impl Poison{
         player: PlayerReference,
         attack_power: AttackPower,
         grave_killer: GraveKiller,
-        attackers: HashSet<PlayerReference>,
+        attackers: VecSet<PlayerReference>,
         death_note: bool,
+        alert: PoisonAlert,
     ){
         let mut poison = game.poison().clone();
         poison.poisons.push(PlayerPoison::new(
             player, attack_power, grave_killer, attackers, death_note
         ));
 
-        for poison in poison.poisons.iter(){
-            poison.player.push_night_message(game, ChatMessageVariant::YouArePoisoned);
+        if alert == PoisonAlert::Alert {
+            for poison in poison.poisons.iter(){
+                poison.player.push_night_message(game, ChatMessageVariant::YouArePoisoned);
+            }
         }
 
         game.set_poison(poison);

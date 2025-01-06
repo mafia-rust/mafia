@@ -8,7 +8,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{Priority, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -22,13 +22,15 @@ impl RoleStateImpl for Snoop {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 
-        if let Some(visit) = actor_ref.night_visits(game).first(){
+
+        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        if let Some(visit) = actor_visits.first(){
 
             let townie = if Confused::is_confused(game, actor_ref) {
                 false
             }else{
-                visit.target.win_condition(game).requires_only_this_resolution_state(GameConclusion::Town) &&
-                    actor_ref.all_visitors(game).len() == 0 &&
+                visit.target.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
+                    actor_ref.all_night_visitors_cloned(game).len() == 0 &&
                     !visit.target.has_suspicious_aura(game)
             };
 
@@ -37,10 +39,21 @@ impl RoleStateImpl for Snoop {
             );
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        crate::game::role::common_role::can_night_select(game, actor_ref, target_ref)
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
+            game,
+            actor_ref,
+            false,
+            false,
+            ControllerID::role(actor_ref, Role::Snoop, 0)
+        )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        crate::game::role::common_role::convert_selection_to_visits(game, actor_ref, target_refs, false)
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
+        crate::game::role::common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Snoop, 0),
+            false
+        )
     }
 }

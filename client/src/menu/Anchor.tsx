@@ -3,7 +3,6 @@ import "../index.css";
 import "./anchor.css";
 import translate, { switchLanguage } from "../game/lang";
 import GlobalMenu from "./GlobalMenu";
-import SettingsMenu from './Settings';
 import { loadSettingsParsed } from "../game/localStorage";
 import LoadingScreen from "./LoadingScreen";
 import { Theme } from "..";
@@ -27,6 +26,8 @@ export type AnchorController = {
     pushErrorCard: (error: ErrorData) => void,
     openGlobalMenu: () => void,
     closeGlobalMenu: () => void,
+    setFontSize: (fontSize: number) => void,
+    setAccessibilityFontEnabled: (accessibilityFontEnabled: boolean) => void
 }
 
 const AnchorControllerContext = createContext<AnchorController | undefined>(undefined);
@@ -100,12 +101,26 @@ export default function Anchor(props: Readonly<{
 
     const [touchStart, setTouchStart] = useState<[number, number] | null>(null);
     const [touchCurrent, setTouchCurrent] = useState<[number, number] | null>(null);
+    const setFontSize = (n: number) => {
+        document.documentElement.style.fontSize = `${n}em`;
+    }
+    const setAccessibilityFontEnabled = (enabled: boolean) => {
+        const font = enabled ? 'game-accessible' : 'game-base';
+        const iconFactor = enabled ? '1.2' : '1';
+
+        document.documentElement.style.setProperty('--game-font', font);
+        document.documentElement.style.setProperty('--kira-font', font === `game-base` ? `game-kira` : font);
+        document.documentElement.style.setProperty('--spiral-font', font === `game-base` ? `game-spiral` : font);
+        document.documentElement.style.setProperty('--icon-factor', iconFactor);
+    }
 
     // Load settings
     useEffect(() => {
         const settings = loadSettingsParsed();
 
         AudioController.setVolume(settings.volume);
+        setFontSize(settings.fontSize);
+        setAccessibilityFontEnabled(settings.accessibilityFont);
         switchLanguage(settings.language)
     }, [])
 
@@ -143,8 +158,6 @@ export default function Anchor(props: Readonly<{
             let coverCardTheme: Theme | null = null;
             if (coverCard.type === WikiCoverCard || coverCard.type === WikiArticle) {
                 coverCardTheme = "wiki-menu-colors"
-            } else if (coverCard.type === SettingsMenu) {
-                coverCardTheme = "graveyard-menu-colors"
             }
 
             if (callback) {
@@ -167,6 +180,12 @@ export default function Anchor(props: Readonly<{
         },
         openGlobalMenu: () => setGlobalMenuOpen(true),
         closeGlobalMenu: () => setGlobalMenuOpen(false),
+        setFontSize: (fontSize: number) => {
+            setFontSize(fontSize);
+        },
+        setAccessibilityFontEnabled: (enabled: boolean) => {
+            setAccessibilityFontEnabled(enabled);
+        }
     }), [reload, children, coverCard])
 
     useEffect(() => {
@@ -178,6 +197,7 @@ export default function Anchor(props: Readonly<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props])
     
+
     return <MobileContext.Provider value={mobile} >
         <AnchorControllerContext.Provider value={anchorController}>
             <div
@@ -310,7 +330,8 @@ export type AudioFile =
     "vine_boom.mp3" | 
     "sniper_shot.mp3" | 
     "normal_message.mp3" | 
-    "whisper_broadcast.mp3";
+    "whisper_broadcast.mp3" | 
+    "start_game.mp3";
 
 export type AudioFilePath = `audio/${AudioFile}`;
 

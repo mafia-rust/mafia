@@ -18,7 +18,7 @@ impl ModifierTrait for NoDeathCause{
                 grave.deref_mut(game).information = GraveInformation::Normal{
                     role,
                     will,
-                    death_cause: crate::game::grave::GraveDeathCause::Execution,
+                    death_cause: crate::game::grave::GraveDeathCause::None,
                     death_notes
                 }
             },

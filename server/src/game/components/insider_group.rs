@@ -1,8 +1,6 @@
-use std::collections::HashSet;
-
 use serde::{Deserialize, Serialize};
 
-use crate::{game::{player::PlayerReference, Game}, packet::ToClientPacket, vec_set::VecSet};
+use crate::{game::{chat::{ChatGroup, ChatMessageVariant}, player::PlayerReference, Game}, packet::ToClientPacket, vec_set::VecSet};
 
 #[derive(Default)]
 pub struct InsiderGroups{
@@ -45,12 +43,28 @@ impl<'a> From<&'a mut InsiderGroup> for &'a mut VecSet<PlayerReference> {
 }
 
 impl InsiderGroupID{
-    pub fn all()->HashSet<InsiderGroupID>{
+    //const
+    pub fn all()->VecSet<InsiderGroupID>{
         vec![
             InsiderGroupID::Mafia,
             InsiderGroupID::Cult,
             InsiderGroupID::Puppeteer
         ].into_iter().collect()
+    }
+    pub const fn get_insider_chat_group(&self)->ChatGroup{
+        match self{
+            InsiderGroupID::Mafia=>ChatGroup::Mafia,
+            InsiderGroupID::Cult=>ChatGroup::Cult,
+            InsiderGroupID::Puppeteer=>ChatGroup::Puppeteer
+        }
+    }
+    pub fn get_insider_group_from_chat_group(chat: &ChatGroup)->Option<InsiderGroupID>{
+        for inside in Self::all() {
+            if inside.get_insider_chat_group() == *chat {
+                return Some(inside)
+            }
+        }
+        None
     }
     fn revealed_group<'a>(&self, game: &'a Game)->&'a InsiderGroup{
         match self{
@@ -102,8 +116,8 @@ impl InsiderGroupID{
             }
         }
         Self::send_player_insider_groups(game, player);
+        
     }
-
     // non related mutations
     pub fn send_player_insider_groups(game: &Game, player: PlayerReference){
         let mut groups = VecSet::new();
@@ -119,6 +133,7 @@ impl InsiderGroupID{
             into(self.revealed_group(game)).clone();
 
         for a in players.clone() {
+            Self::send_fellow_insiders(game, a);
             for b in players.clone() {
                 a.insert_role_label(game, b);
             }
@@ -155,5 +170,41 @@ impl InsiderGroupID{
             }
         }
         players
+    }
+    pub fn all_insider_groups_with_player(game: &Game, player_ref: PlayerReference)->VecSet<InsiderGroupID>{
+        InsiderGroupID::all()
+            .into_iter()
+            .filter(|group| 
+                group.is_player_in_revealed_group(game, player_ref)
+            ).collect()
+    }
+    
+
+    // packets
+    pub fn send_fellow_insiders(game: &Game, player: PlayerReference){
+        let fellow_insiders = PlayerReference::all_players(game)
+            .filter(|p| Self::in_same_revealed_group(game, *p, player))
+            .map(|p| p.index())
+            .collect();
+
+        player.send_packet(game, ToClientPacket::YourFellowInsiders{fellow_insiders});
+    }
+
+    //other
+    pub fn send_message_in_available_insider_chat_or_private(
+        game: &mut Game,
+        player: PlayerReference,
+        message: ChatMessageVariant,
+        send_private_backup: bool
+    ){
+        let mut message_sent = false;
+        for chat_group in player.get_current_send_chat_groups(game){
+            if Self::get_insider_group_from_chat_group(&chat_group).is_none() {continue};
+            game.add_message_to_chat_group(chat_group, message.clone());
+            message_sent = true;
+        }
+        if !message_sent && send_private_backup {
+            player.add_private_chat_message(game, message);
+        }
     }
 }

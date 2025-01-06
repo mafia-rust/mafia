@@ -1,0 +1,22 @@
+.generic-ability-menu-tab-summary {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+.generic-ability-menu-tab-no-summary {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background-color: var(--secondary-color);
+    border-style: solid;
+    border-color: var(--primary-border-color);
+    border-radius: .4rem;
+    border-width: .13rem;
+    margin-top: 0.25rem;
+}
+.generic-ability-menu-tab-no-summary > span{
+    display: inline-flex;
+}

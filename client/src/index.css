@@ -1,4 +1,69 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@font-face {
+    font-family: game-base;
+    src: url('resources/fonts/Roboto/Roboto-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: game-base;
+    src: url('resources/fonts/Roboto/Roboto-Bold.ttf');
+    font-weight: bold;
+    font-style: normal;
+}
+@font-face {
+    font-family: game-base;
+    src: url('resources/fonts/Roboto/Roboto-Italic.ttf');
+    font-weight: normal;
+    font-style: italic;
+}
+@font-face {
+    font-family: game-base;
+    src: url('resources/fonts/Roboto/Roboto-BoldItalic.ttf');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: game-accessible;
+    src: url('resources/fonts/opendyslexic/OpenDyslexic-Regular.woff2');
+    font-weight: normal;
+    font-style: normal;
+    size-adjust: 80%;
+}
+@font-face {
+    font-family: game-accessible;
+    src: url('resources/fonts/opendyslexic/OpenDyslexic-Bold.woff2');
+    font-weight: bold;
+    font-style: normal;
+    size-adjust: 80%;
+}
+@font-face {
+    font-family: game-accessible;
+    src: url('resources/fonts/opendyslexic/OpenDyslexic-Italic.woff2');
+    font-weight: normal;
+    font-style: italic;
+    size-adjust: 80%;
+}
+@font-face {
+    font-family: game-accessible;
+    src: url('resources/fonts/opendyslexic/OpenDyslexic-Bold-Italic.woff2');
+    font-weight: bold;
+    font-style: italic;
+    size-adjust: 80%;
+}
+
+@font-face {
+    font-family: game-kira;
+    src: url(resources/fonts/canterbury.regular.ttf) format('truetype');
+    size-adjust: 120%;
+}
+
+@font-face {
+    font-family: game-spiral;
+    src: url(resources/fonts/oswald/Oswald-Regular.ttf) format('truetype');
+    size-adjust: 90%;
+}
+
 
 :root{
     --background-color: #0E1026;
@@ -18,6 +83,10 @@
     --focus-outline-color: #929ccc;
 
     font-size: 1em;
+    
+    --game-font: game-base;
+    --kira-font: game-kira;
+    --spiral-font: game-spiral;
 }
 
 s {
@@ -28,19 +97,19 @@ s {
 *{
     user-select: none;
     
-    text-shadow: .0625rem .0625rem .13rem rgb(0, 0, 0);
+    /* text-shadow: .0625rem .0625rem .13rem rgb(0, 0, 0); */
     text-align: center;
     box-sizing: border-box;
 
     margin: 0;
     padding: 0;
-    /* font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
-    font-family: 'Roboto', sans-serif;
     
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
     color: white;
+
+    font-family: var(--game-font, Arial);
 }
 .timer-box{
     width: 100%;
@@ -108,8 +177,8 @@ button, select, summary {
     user-select: none;
 }
 input, option, textarea, .textarea {
-    border-top-color: var(--background-border-shadow-color);
-    border-left-color: var(--background-border-shadow-color);
+    border-top-color: var(--primary-border-shadow-color);
+    border-left-color: var(--primary-border-shadow-color);
 }
 
 :has(input):focus-within > button.clear {
@@ -194,9 +263,26 @@ code, .code {
 }
 
 .chat-menu-colors {
+
+    --fade-color: #161b34;
+
+    --primary-color: #1c244e;
+    --secondary-color: #232754;
+    --text-color: #ffffff;
+
+    --primary-border-color: #3c4675;
+    --primary-border-shadow-color: #111836;
+
+    --hover-color: #232c57;
+    --focus-outline-color: #929ccc;
+
+
     --background-color: #151a41;
     --background-border-color: #2b3162;
     --background-border-shadow-color: #0e1024;
+
+    --primary-color: #1c244e;
+    --secondary-color: #232754;
 }
 
 .player-list-menu-colors {
@@ -256,17 +342,17 @@ code, .code {
 }
 
 .wiki-menu-colors {
-    --background-color: #301f1b;
-    --fade-color: #150e0b;
-    --primary-color: #412720;
-    --secondary-color: #422821;
+    --background-color: #2C2124;
+    --fade-color: #0F0D15;
+    --primary-color: #3A2A31;
+    --secondary-color: #3A2A31;
     --text-color: #ffffff;
-    --primary-border-color: #5a3b32;
-    --primary-border-shadow-color: #2b1b16;
-    --background-border-color: #503830;
-    --background-border-shadow-color: #251813;
-    --hover-color: #4c2d23;
-    --focus-outline-color: #a98e84;
+    --primary-border-color: #533C44;
+    --primary-border-shadow-color: #261C26;
+    --background-border-color: #493942;
+    --background-border-shadow-color: #201924;
+    --hover-color: #442F35;
+    --focus-outline-color: #A18E99;
 }
 
 

@@ -1,6 +1,8 @@
 use std::collections::HashSet;
 
-use crate::game::{chat::{ChatGroup, ChatMessageVariant}, phase::PhaseType, player::PlayerReference, role::Priority, Game};
+use crate::game::{chat::ChatMessageVariant, phase::PhaseType, player::PlayerReference, role::Priority, Game};
+
+use super::insider_group::InsiderGroupID;
 
 #[derive(Default)]
 pub struct Detained{
@@ -28,7 +30,7 @@ impl Detained{
             Priority::Roleblock => {
                 for player in PlayerReference::all_players(game){
                     if Self::is_detained(game, player){
-                        player.roleblock(game, false);
+                        player.roleblock(game, true);
                     }
                 }
             }
@@ -43,25 +45,12 @@ impl Detained{
     }
 
     pub fn add_detain(game: &mut Game, player: PlayerReference){
-        let mut message_sent = false;
-        for chat_group in player.get_current_send_chat_groups(game){
-            match chat_group {
-                ChatGroup::All | ChatGroup::Jail | ChatGroup::Kidnapped | ChatGroup::Interview | ChatGroup::Dead => {},
-                ChatGroup::Mafia | ChatGroup::Cult | ChatGroup::Puppeteer => {
-                    game.add_message_to_chat_group(
-                        chat_group,
-                        ChatMessageVariant::JailedSomeone { player_index: player.index() }
-                    );
-                    message_sent = true;
-                },
-            }
-        }
-        if !message_sent {
-            player.add_private_chat_message(game,
-                ChatMessageVariant::JailedSomeone { player_index: player.index() }
-            );
-        }
-    
+        InsiderGroupID::send_message_in_available_insider_chat_or_private(
+            game,
+            player,
+            ChatMessageVariant::JailedSomeone { player_index: player.index() },
+            true
+        );
         game.detained.players.insert(player);
     }
     pub fn remove_detain(game: &mut Game, player: PlayerReference){

@@ -38,7 +38,8 @@ impl PhaseTimeSettings {
             PhaseType::Obituary => Duration::from_secs(self.obituary),
             PhaseType::Night => Duration::from_secs(self.night),
             PhaseType::Testimony => Duration::from_secs(self.testimony),
-            PhaseType::Nomination => Duration::from_secs(self.nomination)
+            PhaseType::Nomination => Duration::from_secs(self.nomination),
+            PhaseType::Recess => Duration::MAX
         }
     }
     pub fn game_ends_instantly(&self)->bool{

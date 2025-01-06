@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::components::detained::Detained;
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, grave::Grave};
 use crate::game::phase::PhaseType;
@@ -7,7 +8,13 @@ use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
-use super::{GetClientRoleState, Priority, RoleState, RoleStateImpl};
+use crate::vec_set;
+use super::{
+    common_role, AbilitySelection,
+    AvailableAbilitySelection, ControllerID,
+    ControllerParametersMap, GetClientRoleState,
+    Priority, Role, RoleStateImpl
+};
 
 
 #[derive(Clone, Debug, Default)]
@@ -26,31 +33,40 @@ impl RoleStateImpl for Witch {
     type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
-            actor_ref.set_role_state(game, RoleState::Witch(Witch{
+            actor_ref.set_role_state(game, Witch{
                 currently_used_player: Some(currently_used_player)
-            }))
+            })
         }
     }
-    fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        !crate::game::components::detained::Detained::is_detained(game, actor_ref) &&
-        actor_ref.alive(game) &&
-        target_ref.alive(game) &&
-        ((
-            actor_ref != target_ref &&
-            actor_ref.selection(game).is_empty()
-        ) || (
-            actor_ref.selection(game).len() == 1
-        ))
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
+        ControllerParametersMap::new_controller_fast(
+            game,
+            ControllerID::role(actor_ref, Role::Witch, 0),
+            AvailableAbilitySelection::new_two_player_option(
+                PlayerReference::all_players(game)
+                    .filter(|p|p.alive(game))
+                    .filter(|p|*p != actor_ref)
+                    .collect(),
+                PlayerReference::all_players(game)
+                    .filter(|p|p.alive(game))
+                    .collect(),
+                true,
+                true
+            ),
+            AbilitySelection::new_two_player_option(None),
+            !actor_ref.alive(game) || Detained::is_detained(game, actor_ref),
+            Some(PhaseType::Obituary),
+            false, 
+            vec_set!(actor_ref)
+        )
     }
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit> {
-        if target_refs.len() == 2 {
-            vec![
-                Visit{target: target_refs[0], attack: false}, 
-                Visit{target: target_refs[1], attack: false},
-            ]
-        }else{
-            Vec::new()
-        }
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
+        common_role::convert_controller_selection_to_visits(
+            game,
+            actor_ref,
+            ControllerID::role(actor_ref, Role::Witch, 0),
+            false
+        )
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         if
@@ -59,14 +75,14 @@ impl RoleStateImpl for Witch {
                 .filter(|p|p.alive(game))
                 .filter(|p|p.keeps_game_running(game))
                 .all(|p|
-                    WinCondition::can_win_together(&p.win_condition(game), actor_ref.win_condition(game))
+                    WinCondition::are_friends(&p.win_condition(game), actor_ref.win_condition(game))
                 )
 
         {
             actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
         }
         if phase == PhaseType::Night {
-            actor_ref.set_role_state(game, RoleState::Witch(Witch { currently_used_player: None }));
+            actor_ref.set_role_state(game, Witch { currently_used_player: None });
         }
     }
 }

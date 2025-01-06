@@ -24,6 +24,7 @@ pub struct LobbyClient{
 }
 
 #[derive(Clone, Debug, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
 pub enum Ready {
     Host,
     Ready,
@@ -56,7 +57,7 @@ impl LobbyClient {
                 let player_ref = PlayerReference::new_unchecked(index);
                 LobbyClient{
                     connection: player_ref.connection(game).clone(),
-                    ready: if game_client.host { Ready::Host } else { Ready::Ready },
+                    ready: if game_client.host { Ready::Host } else { Ready::NotReady },
                     client_type: LobbyClientType::Player{name: player_ref.name(game).to_string()},
                     last_message_times: VecDeque::new()
                 }
