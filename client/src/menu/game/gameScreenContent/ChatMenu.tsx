@@ -12,6 +12,7 @@ import Icon from "../../../components/Icon";
 import StyledText, { KeywordDataMap, PLAYER_KEYWORD_DATA, PLAYER_SENDER_KEYWORD_DATA } from "../../../components/StyledText";
 import { useGameState, useLobbyOrGameState, usePlayerState } from "../../../components/useHooks";
 import { Virtuoso } from 'react-virtuoso';
+import Select from "../../../components/Select";
 
 
 export default function ChatMenu(): ReactElement {
@@ -217,7 +218,7 @@ export function ChatTextInput(props: Readonly<{
     const playerStrings = useLobbyOrGameState(
         state => {
             if (state.stateType === "game") {
-                return state.players.map(player => player.name)
+                return state.players.map(player => player.toString())
             } else if (state.stateType === "lobby") {
                 return Array.from(state.players.values())
                     .filter(player => player.clientType.type === "player")

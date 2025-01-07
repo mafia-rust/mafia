@@ -386,7 +386,7 @@ export function translateChatMessage(
                 );
             }
         case "playerQuit":
-            return translate("chatMessage.playerQuit",
+            return translate(`chatMessage.playerQuit${message.gameOver ? ".gameOver" : ""}`,
                 playerNames[message.playerIndex]
             );
         case "youDied":
@@ -821,6 +821,7 @@ export type ChatMessageVariant = {
 } | {
     type: "playerQuit",
     playerIndex: PlayerIndex
+    gameOver: boolean,
 } | {
     type: "phaseChange", 
     phase: PhaseState,
