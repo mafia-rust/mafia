@@ -235,6 +235,9 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "gameInitializationComplete": {
             const isSpectator = GAME_MANAGER.getMySpectator();
+            if(GAME_MANAGER.state.stateType === "game"){
+                GAME_MANAGER.state.initialized = true;
+            }
             if(isSpectator){
                 ANCHOR_CONTROLLER?.setContent(<SpectatorGameScreen/>);
             }else{
@@ -482,10 +485,12 @@ export default function messageListener(packet: ToClientPacket){
                     }
                 }
 
-                for(let chatMessage of packet.chatMessages){
-                    let audioSrc = chatMessageToAudio(chatMessage);
-                    if(audioSrc)
-                        AudioController.queueFile(audioSrc);
+                if (GAME_MANAGER.state.stateType !== "game" || GAME_MANAGER.state.initialized === true) {
+                    for(let chatMessage of packet.chatMessages){
+                        let audioSrc = chatMessageToAudio(chatMessage);
+                        if(audioSrc)
+                            AudioController.queueFile(audioSrc);
+                    }
                 }
             }
         break;
