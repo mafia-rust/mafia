@@ -234,16 +234,6 @@ export default function messageListener(packet: ToClientPacket){
                 AudioController.queueFile("audio/start_game.mp3");
             }
             break;
-        case "gameInitializationComplete": {
-            const isSpectator = GAME_MANAGER.getMySpectator();
-            if(GAME_MANAGER.state.stateType === "game"){
-                GAME_MANAGER.state.initialized = true;
-            }
-            if(isSpectator){
-                ANCHOR_CONTROLLER?.setContent(<SpectatorGameScreen/>);
-            }else{
-                ANCHOR_CONTROLLER?.setContent(<GameScreen/>);
-            break;
         case "gameInitializationComplete":
             if (GAME_MANAGER.state.stateType === "game") {
                 const isSpectator = GAME_MANAGER.state.clientState.type === "spectator";
