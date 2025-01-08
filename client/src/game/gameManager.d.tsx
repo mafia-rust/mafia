@@ -9,12 +9,12 @@ import { Role } from "./roleState.d";
 export type Server = {
     ws: WebSocket | null,
 
-    open(): Promise<void>;
+    open(): Promise<boolean>;
     sendPacket(packets: ToServerPacket): void;
     close(): void;
 }
 
-export type StateEventType = ToClientPacket["type"] | "tick" | "filterUpdate" | "openGameMenu" | "closeGameMenu" | "whisperChatOpenOrClose";
+export type StateEventType = ToClientPacket["type"] | "tick" | "filterUpdate" | "openGameMenu" | "closeGameMenu" | "whisperChatOpenOrClose" | "connectionClosed";
 export type StateListener = (type?: StateEventType) => void;
 
 export type GameManager = {
@@ -23,7 +23,7 @@ export type GameManager = {
     setLobbyState(): void;
     setGameState(): void;
     setSpectatorGameState(): void;
-    setOutsideLobbyState(): Promise<void>;
+    setOutsideLobbyState(): Promise<boolean>;
     
 
     state: State,

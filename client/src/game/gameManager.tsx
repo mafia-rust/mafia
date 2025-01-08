@@ -92,8 +92,9 @@ export function createGameManager(): GameManager {
             AudioController.clearQueue();
             AudioController.pauseQueue();
             
-            if (!GAME_MANAGER.server.ws?.OPEN) {
-                await GAME_MANAGER.server.open();
+            if (!GAME_MANAGER.server.ws?.OPEN && !await GAME_MANAGER.server.open()) {
+                await this.setDisconnectedState();
+                return false;
             }
 
             GAME_MANAGER.state = {
@@ -101,6 +102,8 @@ export function createGameManager(): GameManager {
                 selectedRoomCode: null,
                 lobbies: new Map<number, LobbyPreviewData>()
             };
+
+            return true;
         },
 
         state: {
@@ -193,11 +196,14 @@ export function createGameManager(): GameManager {
             const promise = new Promise<boolean>((resolver) => {
                 completePromise = resolver;
             });
-            let onJoined: StateListener = (type) => {
+            const onJoined: StateListener = (type) => {
                 if (type === "acceptJoin") {
                     completePromise(true);
                     GAME_MANAGER.removeStateListener(onJoined);
                 } else if (type === "rejectJoin") {
+                    completePromise(false);
+                    GAME_MANAGER.removeStateListener(onJoined);
+                } else if (type === "connectionClosed") {
                     completePromise(false);
                     GAME_MANAGER.removeStateListener(onJoined);
                 }
@@ -215,14 +221,17 @@ export function createGameManager(): GameManager {
         },
         sendJoinPacket(roomCode: number) {
             let completePromise: (success: boolean) => void;
-            let promise = new Promise<boolean>((resolver) => {
+            const promise = new Promise<boolean>((resolver) => {
                 completePromise = resolver;
             });
-            let onJoined: StateListener = (type) => {
+            const onJoined: StateListener = (type) => {
                 if (type === "acceptJoin") {
                     completePromise(true);
                     GAME_MANAGER.removeStateListener(onJoined);
                 } else if (type === "rejectJoin") {
+                    completePromise(false);
+                    GAME_MANAGER.removeStateListener(onJoined);
+                } else if (type === "connectionClosed") {
                     completePromise(false);
                     GAME_MANAGER.removeStateListener(onJoined);
                 }
@@ -470,20 +479,34 @@ function createServer(){
 
         open : () => {
             let address = CONFIG.address;
-            Server.ws = new WebSocket(address);
+            try {
+                Server.ws = new WebSocket(address);
+            } catch {
+                return Promise.resolve(false);
+            }
 
-            let completePromise: () => void;
-            let promise = new Promise<void>((resolver) => {
-                completePromise = resolver;
-            });
+            let completePromise: (value: boolean) => void;
+            const promise = Promise.race([
+                new Promise<boolean>((resolver) => {
+                    completePromise = resolver;
+                }),
+                new Promise<boolean>((resolver) => {
+                    setTimeout(() => {
+                        resolver(false)
+                    }, 3000)
+                })
+            ]);
 
             Server.ws.onopen = (event: Event)=>{
-                completePromise();
+                completePromise(true);
                 console.log("Connected to server.");
             };
             Server.ws.onclose = (event: CloseEvent)=>{
                 console.log("Disconnected from server.");
+                completePromise(false);
+                GAME_MANAGER.invokeStateListeners("connectionClosed");
                 if (Server.ws === null) return; // We closed it ourselves
+                Server.ws = null;
 
                 ANCHOR_CONTROLLER?.pushErrorCard({
                     title: translate("notification.connectionFailed"), 
@@ -498,6 +521,7 @@ function createServer(){
             };
             Server.ws.onerror = (event: Event) => {
                 Server.close();
+                completePromise(false);
                 ANCHOR_CONTROLLER?.pushErrorCard({
                     title: translate("notification.connectionFailed"), 
                     body: translate("notification.serverNotFound")
