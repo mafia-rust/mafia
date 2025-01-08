@@ -5,7 +5,7 @@ import { ContentMenu, ContentTab } from "../GameScreen";
 import "./graveyardMenu.css";
 import StyledText from "../../../components/StyledText";
 import { EnabledRolesDisplay } from "../../../components/gameModeSettings/EnabledRoleSelector";
-import { useGameState, usePlayerState } from "../../../components/useHooks";
+import { useGameState, usePlayerState, useSpectator } from "../../../components/useHooks";
 import { translateRoleOutline } from "../../../game/roleListState.d";
 import { Button } from "../../../components/Button";
 import DetailsSummary from "../../../components/DetailsSummary";
@@ -37,6 +37,8 @@ function RoleListDisplay(): ReactElement {
         []
     )!
 
+    const spectator = useSpectator();
+
     return <>
         {roleList.map((entry, index)=>{
             return <Button
@@ -44,7 +46,7 @@ function RoleListDisplay(): ReactElement {
                 style={{ gridRow: index + 1 }}
                 key={index}
                 onClick={()=>{
-                    if (GAME_MANAGER.getMySpectator()) return;
+                    if (spectator) return;
 
                     let newCrossedOutOutlines;
                     if(crossedOutOutlines.includes(index))
