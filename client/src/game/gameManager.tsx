@@ -11,7 +11,6 @@ import { RoleOutline } from "./roleListState.d";
 import translate from "./lang";
 import PlayMenu from "../menu/main/PlayMenu";
 import { createGameState, createLobbyState } from "./gameState";
-import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
 import AudioController from "../menu/AudioController";
 
@@ -108,58 +107,6 @@ export function createGameManager(): GameManager {
             stateType: "disconnected"
         },
 
-        getMyName() {
-            if (gameManager.state.stateType === "lobby"){
-                let client = gameManager.state.players.get(gameManager.state.myId!);
-                if(client === undefined || client === null) return undefined;
-                if(client.clientType.type === "spectator") return undefined;
-                return client.clientType.name;
-            }
-            if (gameManager.state.stateType === "game" && gameManager.state.clientState.type === "player")
-                return gameManager.state.players[gameManager.state.clientState.myIndex!]?.name;
-            return undefined;
-        },
-        getMyHost() {
-            if (gameManager.state.stateType === "lobby")
-                return gameManager.state.players.get(gameManager.state.myId!)?.ready === "host";
-            if (gameManager.state.stateType === "game")
-                return gameManager.state.host;
-            return undefined;
-        },
-        getMySpectator() {
-            if (gameManager.state.stateType === "lobby")
-                return gameManager.state.players.get(gameManager.state.myId!)?.clientType.type === "spectator";
-            if (gameManager.state.stateType === "game")
-                return gameManager.state.clientState.type === "spectator";
-            return false;
-        },
-        getPlayerNames(): string[] {
-            switch (GAME_MANAGER.state.stateType) {
-                case "game":
-                    return GAME_MANAGER.state.players.map((player) => player.toString());
-                case "lobby":
-                    return [];
-                default:
-                    return DUMMY_NAMES;
-            }
-        },
-        getLivingPlayers(): Player[] | null{
-            if(GAME_MANAGER.state.stateType !== "game") return null;
-            return GAME_MANAGER.state.players.filter(player => player.alive)
-        },
-        getVotesRequired(): number | null{            
-            let count = 1;
-            let livingPlayers = GAME_MANAGER.getLivingPlayers();
-            if(livingPlayers === null) return null;
-            for (let player of livingPlayers) {
-                if (player.alive && !player.playerTags.includes("forfeitVote")) {
-                    count += 1;
-                }
-            }
-
-
-            return Math.ceil(count / 2);
-        },
         updateChatFilter(filter: PlayerIndex | null) {
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 GAME_MANAGER.state.clientState.chatFilter = filter===null?null:{

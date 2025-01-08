@@ -1,7 +1,7 @@
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
 import { AbilityInput } from "./abilityInput";
-import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player, ModifierType } from "./gameState.d";
+import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, ModifierType } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleList, RoleOutline } from "./roleListState.d";
 import { Role } from "./roleState.d";
@@ -27,12 +27,6 @@ export type GameManager = {
     
 
     state: State,
-    getMyName(): string | undefined,
-    getMyHost(): boolean | undefined,
-    getMySpectator(): boolean,
-    getPlayerNames(): string[],
-    getLivingPlayers(): Player[] | null,
-    getVotesRequired(): number | null,
     updateChatFilter(filter: PlayerIndex | null): void,
 
     server: Server,

@@ -10,7 +10,7 @@ import DOMPurify from "dompurify";
 import GraveComponent from "./grave";
 import { RoleOutline, translateRoleOutline } from "../game/roleListState.d";
 import { CopyButton } from "./ClipboardButtons";
-import { useGameState, useLobbyOrGameState, usePlayerState } from "./useHooks";
+import { useGameState, useLobbyOrGameState, usePlayerNames, usePlayerState, useSpectator } from "./useHooks";
 import { KiraResult, KiraResultDisplay } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
 import { ControllerID, AbilitySelection, translateControllerID, controllerIdToLink } from "../game/abilityInput";
@@ -37,7 +37,8 @@ const ChatElement = React.memo((
     const [mouseHovering, setMouseHovering] = React.useState(false); 
 
     const message = props.message;
-    const playerNames = props.playerNames ?? GAME_MANAGER.getPlayerNames();
+    const realPlayerNames = usePlayerNames();
+    const playerNames = props.playerNames ?? realPlayerNames;
     const chatMessageStyles = require("../resources/styling/chatMessage.json");
     if(message.variant === undefined){
         console.error("ChatElement message with undefined variant:");
@@ -132,33 +133,13 @@ const ChatElement = React.memo((
                 />
             </div>
         case "playerDied":
-
-            let graveRoleString: string;
-            switch (message.variant.grave.information.type) {
-                case "obscured":
-                    graveRoleString = translate("obscured");
-                    break;
-                case "normal":
-                    graveRoleString = translate("role."+message.variant.grave.information.role+".name");
-                    break;
-            }
-
-            return <div className={"chat-message-div"}>
-                <DetailsSummary
-                    summary={
-                        <StyledText className={"chat-message " + style}
-                            playerKeywordData={props.playerKeywordData}
-                        >
-                            {(chatGroupIcon??"")} {translate("chatMessage.playerDied",
-                                playerNames[message.variant.grave.player], graveRoleString
-                            )}
-                        </StyledText>
-                    }
-                    defaultOpen={GAME_MANAGER.getMySpectator()}
-                >
-                    <GraveComponent grave={message.variant.grave} playerNames={playerNames}/>
-                </DetailsSummary>
-            </div>;
+            return <PlayerDiedChatMessage
+                playerKeywordData={props.playerKeywordData}
+                style={style}
+                chatGroupIcon={chatGroupIcon}
+                playerNames={playerNames}
+                message={message as any}
+            />
     }
 
     return <div
@@ -178,6 +159,43 @@ const ChatElement = React.memo((
         }
     </div>;
 });
+
+function PlayerDiedChatMessage(props: Readonly<{
+    playerKeywordData?: KeywordDataMap,
+    style: string,
+    chatGroupIcon: string | null,
+    playerNames: string[],
+    message: ChatMessage & { variant: { type: "playerDied" } }
+}>): ReactElement {
+    let graveRoleString: string;
+    switch (props.message.variant.grave.information.type) {
+        case "obscured":
+            graveRoleString = translate("obscured");
+            break;
+        case "normal":
+            graveRoleString = translate("role."+props.message.variant.grave.information.role+".name");
+            break;
+    }
+
+    const spectator = useSpectator();
+
+    return <div className={"chat-message-div"}>
+        <DetailsSummary
+            summary={
+                <StyledText className={"chat-message " + props.style}
+                    playerKeywordData={props.playerKeywordData}
+                >
+                    {(props.chatGroupIcon ?? "")} {translate("chatMessage.playerDied",
+                        props.playerNames[props.message.variant.grave.player], graveRoleString
+                    )}
+                </StyledText>
+            }
+            defaultOpen={spectator}
+        >
+            <GraveComponent grave={props.message.variant.grave} playerNames={props.playerNames}/>
+        </DetailsSummary>
+    </div>;
+}
 
 function LobbyChatMessage(props: Readonly<{
     message: ChatMessage & { variant: { type: "lobbyMessage" } }
@@ -326,14 +344,9 @@ export function sanitizePlayerMessage(text: string): string {
 
 export function translateChatMessage(
     message: ChatMessageVariant,
-    playerNames?: string[],
+    playerNames: string[],
     roleList?: RoleOutline[]
 ): string {
-
-    if (playerNames === undefined) {
-        playerNames = GAME_MANAGER.getPlayerNames();
-    }
-
     switch (message.type) {
         case "lobbyMessage":
             return sanitizePlayerMessage(replaceMentions(message.text, playerNames));
@@ -522,7 +535,7 @@ export function translateChatMessage(
                     out = translate("chatMessage.abilityUsed.selection.twoRoleOutlineOption", first, second);
                     break;
                 case "string":
-                    out = translate("chatMessage.abilityUsed.selection.string", sanitizePlayerMessage(replaceMentions(message.selection.selection)));
+                    out = translate("chatMessage.abilityUsed.selection.string", sanitizePlayerMessage(replaceMentions(message.selection.selection, playerNames)));
                     break;
                 case "integer":
                     let text = translateChecked("controllerId."+controllerIdToLink(message.abilityId).replace(/\//g, ".") + ".integer." + message.selection.selection);
