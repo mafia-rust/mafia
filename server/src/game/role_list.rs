@@ -103,11 +103,11 @@ impl RoleOutline{
     pub fn simplify(&mut self){
         let mut new_options = self.options.to_vec();
 
-        new_options = new_options.into_iter().collect::<Vec<_>>().into_iter().collect();
+        new_options = new_options.into_iter().collect::<VecSet<_>>().into_iter().collect();
 
         for option_a in self.options.iter(){
             for option_b in self.options.iter(){
-                if option_a.roles.is_subset(&option_b.roles) && option_a != option_b{
+                if option_a.roles.is_subset(&option_b.roles) && option_a != option_b {
                     new_options.retain(|r| r != option_a);
                 }
             }

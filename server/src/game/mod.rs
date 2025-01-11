@@ -181,13 +181,9 @@ impl Game {
                 let Some(assignment) = assignments.get(player_index) else {
                     return Err(RejectStartReason::RoleListTooSmall)
                 };
-                let mut new_player = Player::new(
-                    player.name.clone(),
-                    sender.clone(),
-                    assignment.role
-                );
+
                 // Set win condition here so we can check if game ends
-                new_player.win_condition = match &assignment.win_condition {
+                let win_condition = match &assignment.win_condition {
                     RoleOutlineOptionWinCondition::RoleDefault => assignment.role.default_state().default_win_condition(),
                     RoleOutlineOptionWinCondition::GameConclusionReached { win_if_any } => {
                         WinCondition::GameConclusionReached { 
@@ -195,6 +191,14 @@ impl Game {
                         }
                     },
                 };
+
+                let new_player = Player::new(
+                    player.name.clone(),
+                    sender.clone(),
+                    assignment.role,
+                    win_condition
+                );
+                
                 new_players.push(new_player);
             }
 

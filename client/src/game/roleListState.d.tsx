@@ -121,9 +121,13 @@ export function getRolesFromRoleOrRoleSet(roleOrRoleSet: RoleOrRoleSet): Role[] 
 export function simplifyRoleOutline(roleOutline: RoleOutline): RoleOutline {
     let newOptions = [...roleOutline];
 
+    newOptions = newOptions.filter((item, index, self) => {
+        return index === self.findIndex((t) => deepEqual(item, t));
+    });
+
     for(let optionA of roleOutline){
         for(let optionB of roleOutline){
-            if(outlineOptionIsSubset(optionA, optionB) && optionA !== optionB){
+            if(outlineOptionIsSubset(optionA, optionB) && !deepEqual(optionA, optionB)){
                 newOptions = newOptions.filter((option) => option !== optionA);
             }
         }
@@ -148,4 +152,40 @@ export function getAllRoles(): Role[] {
         .sort((a, b) => translate(`role.${a[0]}.name`).localeCompare(translate(`role.${b[0]}.name`)))
         .sort((a, b) => ROLE_SETS.indexOf(a[1].mainRoleSet) - ROLE_SETS.indexOf(b[1].mainRoleSet))
         .map((a) => a[0]) as Role[];
+}
+
+
+function deepEqual(obj1: any, obj2: any): boolean {
+    // Check if the objects are strictly equal
+    if (obj1 === obj2) {
+        return true;
+    }
+  
+    // if both are null or undefined then return true
+    if (obj1 == null && obj2 == null) {
+        return true;
+    }
+
+
+    // Check if both objects are objects and not null
+    if (typeof obj1 !== "object" || obj1 === null ||
+        typeof obj2 !== "object" || obj2 === null) {
+        return false;
+    }
+  
+    // Check if the objects have the same number of keys
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+    if (keys1.length !== keys2.length) {
+        return false;
+    }
+  
+    // Recursively compare each key-value pair
+    for (const key of keys1) {
+        if (!deepEqual(obj1[key], obj2[key])) {
+            return false;
+        }
+    }
+  
+    return true;
 }

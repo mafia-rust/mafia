@@ -71,18 +71,19 @@ export default function RoleOutlineSelector(props: RoleOutlineSelectorProps): Re
                             let options = [...props.roleOutline];
                             switch (value.type) {
                                 case "role":
-                                    options[index].roleSet = undefined;
+                                    delete options[index].roleSet;
                                     options[index].role = value.role;
                                     break;
                                 case "roleSet":
                                     options[index].roleSet = value.roleSet;
-                                    options[index].role = undefined;
+                                    delete options[index].role;
                                     break;
                             }
+
                             props.onChange(options);
                         }}
                     />
-                    <button
+                    <Button
                         disabled={props.disabled}
                         onClick={() => {
                             let options = [...props.roleOutline];
@@ -93,16 +94,16 @@ export default function RoleOutlineSelector(props: RoleOutlineSelectorProps): Re
                             }
                             props.onChange(options);
                         }}
-                    ><Icon size="tiny">remove</Icon></button>
+                    ><Icon size="tiny">remove</Icon></Button>
                 </div>
             )
         })}
-        <button
+        <Button
             disabled={props.disabled}
             onClick={() => {
                 handleAddUnion();
             }}
-        ><Icon size="tiny">add</Icon></button>
+        ><Icon size="tiny">add</Icon></Button>
     </div>
 }
 
@@ -147,21 +148,21 @@ function ConclusionsSelector(props: Readonly<{
                             }}
                             optionsSearch={optionsSearch}
                         />
-                        <button
+                        <Button
                             disabled={props.disabled}
                             onClick={() => {
                                 const options = [...conclusions];
                                 options.splice(index, 1);
                                 props.onChange(options);
                             }}
-                        ><Icon size="tiny">remove</Icon></button>
+                        ><Icon size="tiny">remove</Icon></Button>
                     </div>
                 )
             })}
-            {conclusionsNotChosen.length !== 0 && <button
+            {conclusionsNotChosen.length !== 0 && <Button
                 disabled={props.disabled}
                 onClick={() => props.onChange([...conclusions, conclusionsNotChosen[0]])}
-            ><Icon size="tiny">add</Icon></button>}
+            ><Icon size="tiny">add</Icon></Button>}
         </div>
         <Button
             disabled={props.disabled}
