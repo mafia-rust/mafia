@@ -10,7 +10,7 @@ import { HistoryPoller, HistoryQueue } from "../../../history";
 import { Button } from "../../../components/Button";
 import Icon from "../../../components/Icon";
 import StyledText, { KeywordDataMap, PLAYER_KEYWORD_DATA, PLAYER_SENDER_KEYWORD_DATA } from "../../../components/StyledText";
-import { useGameState, useLobbyOrGameState, usePlayerState } from "../../../components/useHooks";
+import { useGameState, useLobbyOrGameState, usePlayerNames, usePlayerState } from "../../../components/useHooks";
 import { Virtuoso } from 'react-virtuoso';
 
 
@@ -25,17 +25,19 @@ export default function ChatMenu(): ReactElement {
         ["yourSendChatGroups"]
     );
 
+    const playerNames = usePlayerNames();
+
     const filterString = useMemo(() => {
         if (filter === undefined || filter === null) {
             return "";
         } else if (filter.type === "playerNameInMessage") {
-            return GAME_MANAGER.getPlayerNames()[filter.player];
+            return playerNames[filter.player];
         } else if (filter.type === "myWhispersWithPlayer") {
-            return GAME_MANAGER.getPlayerNames()[filter.player];
+            return playerNames[filter.player];
         }else{
             return "";
         }
-    }, [filter]);
+    }, [filter, playerNames]);
 
     return <div className="chat-menu chat-menu-colors">
         <ContentTab close={ContentMenu.ChatMenu} helpMenu={"standard/chat"}>{translate("menu.chat.title")}</ContentTab>
@@ -108,13 +110,13 @@ export function ChatMessageSection(props: Readonly<{
                             }
                             break;
                         case "targetsMessage":
-                            msgTxt = translateChatMessage(msg.variant.message, GAME_MANAGER.getPlayerNames());
+                            msgTxt = translateChatMessage(msg.variant.message, players.map(player => player.toString()));
                             break;
                     }
 
-                    msgTxt += translateChatMessage(msg.variant, GAME_MANAGER.getPlayerNames());
+                    msgTxt += translateChatMessage(msg.variant, players.map(player => player.toString()));
                     
-                    return msgTxt.includes(GAME_MANAGER.getPlayerNames()[filter.player]);
+                    return msgTxt.includes(players[filter.player].toString());
                 case "myWhispersWithPlayer":
                     switch (msg.variant.type) {
                         //translateChatMessage errors for playerDied type.

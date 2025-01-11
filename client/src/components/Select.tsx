@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { Button, RawButton } from "./Button";
 import "./select.css";
 import Icon from "./Icon";
-import ReactDOM from "react-dom/client";
-import { THEME_CSS_ATTRIBUTES } from "..";
+import Popover from "./Popover";
 
 export type SelectOptionsNoSearch<K extends { toString(): string}> = Map<K, React.ReactNode>;
 export type SelectOptionsSearch<K extends { toString(): string}> = Map<K, [React.ReactNode, string]>;
@@ -45,7 +44,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
         }
     }, [props]);
 
-    const [open, setOpen]= React.useState(false);
+    const [open, setOpen] = React.useState(false);
     const [searchString, setSearchString] = React.useState("");
     
 
@@ -101,157 +100,80 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
         }
     }
 
-    const buttonRef = useRef<HTMLButtonElement>(null);
-    const dropdownRef = useRef<HTMLDivElement>(document.createElement('div'));
-
-    const dropdownRoot = useMemo(() => {
-        const dropdownElement = dropdownRef.current;
-        dropdownElement.style.position = "absolute";
-
-        document.body.appendChild(dropdownElement);
-        return ReactDOM.createRoot(dropdownElement);
-    }, [])
-
-    //set ref
-    useEffect(() => {
-        const initialDropdown = dropdownRef.current;
-        return () => {
-            setTimeout(() => {
-                dropdownRoot.unmount();
-            })
-            initialDropdown.remove();
-            
-            dropdownRef.current = document.createElement('div');
-        }
-    }, [dropdownRoot])
-
-    //match css styles
-    useEffect(() => {
-        const buttonElement = buttonRef.current;
-        const dropdownElement = dropdownRef.current;
-        
-        if (buttonElement) {
-            // Match styles
-            THEME_CSS_ATTRIBUTES.forEach(prop => {
-                dropdownElement.style.setProperty(`--${prop}`, getComputedStyle(buttonElement).getPropertyValue(`--${prop}`))
-            })
-
-            dropdownElement.className = 'custom-select-options'
-        }
-    }, [])
-
-    const [buttonLocation, setButtonLocation] = React.useState({top: 0, left: 0});
-
-    //close on scroll
-    useEffect(() => {
-        const listener = (ev: Event) => {
-            const bounds = buttonRef.current?.getBoundingClientRect();
-            if (
-                open &&
-                (
-                    buttonLocation.top !== bounds?.top || 
-                    buttonLocation.left !== bounds?.left
-                )
-            )
-                handleSetOpen(false);
-        };
-        
-        window.addEventListener("scroll", listener, true);
-        window.addEventListener("resize", listener);
-        return () => {
-            window.removeEventListener("scroll", listener, true);
-            window.removeEventListener("resize", listener);
-        }
-    })
-
-    //open and set position
-    useEffect(() => {
-        const buttonElement = buttonRef.current;
-        const dropdownElement = dropdownRef.current;
-
-        if (buttonElement && open) {
-            dropdownRoot.render(<SelectOptions
-                searchString={searchString===""?undefined:searchString.substring(0, 20)}
-                options={optionsNoSearch}
-                onChange={(value)=>{
-                    if(props.disabled) return;
-                    handleSetOpen(false);
-                    handleOnChange(value);
-                }}
-            />);
-
-
-            dropdownElement.hidden = false;
-
-            const buttonBounds = buttonElement.getBoundingClientRect();
-            // Position
-            dropdownElement.style.width = `${buttonBounds.width}px`;
-            dropdownElement.style.left = `${buttonBounds.left}px`;
-            setButtonLocation({top: buttonBounds.top, left: buttonBounds.left});
-
-            const spaceAbove = buttonBounds.top;
-            const spaceBelow = window.innerHeight - buttonBounds.bottom;
-
-            const oneRem = parseFloat(getComputedStyle(buttonElement).fontSize);
-
-            if (spaceAbove > spaceBelow) {
-                const newHeight = Math.min((25 - .25) * oneRem, spaceAbove - .25 * oneRem);
-                dropdownElement.style.height = `${newHeight}px`;
-                dropdownElement.style.top = `unset`;
-                dropdownElement.style.bottom = `${spaceBelow + buttonBounds.height + .25 * oneRem}px`;
-            } else {
-                const newHeight = Math.min((25 - .25) * oneRem, spaceBelow - .25 * oneRem);
-                dropdownElement.style.height = `${newHeight}px`;
-                dropdownElement.style.top = `${spaceAbove + buttonBounds.height + .25 * oneRem}px`;
-                dropdownElement.style.bottom = `unset`;
-            }
-        } else {
-            dropdownElement.hidden = true;
-        }
-    }, [handleOnChange, handleSetOpen, open, props.disabled, optionsNoSearch, dropdownRoot, searchString])
-
-    //close on click outside
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (!dropdownRef.current?.contains(event.target as Node) && open) {
-                handleSetOpen(false);
-            }
-        };
-
-        setTimeout(() => {
-            document.addEventListener("click", handleClickOutside);
-        })
-        return () => document.removeEventListener("click", handleClickOutside);
-    }, [handleSetOpen, open]);
+    const ref = useRef<HTMLButtonElement>(null);
 
     const value = optionsSearch.get(props.value);
     if(value === undefined) {
         console.error(`Value not found in options ${props.value}`);
     }
 
-    return <RawButton
-        ref={buttonRef}
-        disabled={props.disabled}
-        onClick={()=>{handleSetOpen(!open)}}
-        className={"custom-select "+(props.className?props.className:"")}
-        onKeyDown={(e)=>{
-            if(props.disabled) return;
-            if(e.key === "Enter" && !open) {
-                e.preventDefault();
-                handleSetOpen(true);
-            }else if(e.key === "Tab") {
-                handleSetOpen(false);
-            }else{
-                e.preventDefault();
-                handleKeyInput(e.key);
-            }
-        }}
-    >
-        {open === true ? 
-            <Icon>keyboard_arrow_up</Icon> :
-            <Icon>keyboard_arrow_down</Icon>}
-        {value !== undefined?value[0]:props.value.toString()}
-    </RawButton>
+    return <>
+        <RawButton
+            ref={ref}
+            disabled={props.disabled}
+            onClick={()=>{handleSetOpen(!open)}}
+            className={"custom-select "+(props.className?props.className:"")}
+            onKeyDown={(e)=>{
+                if(props.disabled) return;
+                if(e.key === "Enter" && !open) {
+                    e.preventDefault();
+                    handleSetOpen(true);
+                }else if(e.key === "Tab") {
+                    handleSetOpen(false);
+                }else{
+                    e.preventDefault();
+                    handleKeyInput(e.key);
+                }
+            }}
+        >
+            {open === true ? 
+                <Icon>keyboard_arrow_up</Icon> :
+                <Icon>keyboard_arrow_down</Icon>}
+            {value !== undefined?value[0]:props.value.toString()}
+        </RawButton>
+        <Popover className="custom-select-options"
+            open={open}
+            setOpenOrClosed={handleSetOpen}
+            onRender={(dropdownElement, buttonElement) => {
+                if (!buttonElement) return;
+
+                const buttonBounds = buttonElement.getBoundingClientRect();
+                dropdownElement.style.width = `${buttonBounds.width}px`;
+                dropdownElement.style.left = `${buttonBounds.left}px`;
+        
+                const spaceAbove = buttonBounds.top;
+                const spaceBelow = window.innerHeight - buttonBounds.bottom;
+        
+                const oneRem = parseFloat(getComputedStyle(buttonElement).fontSize);
+        
+                const maxHeight = (25 - .25) * oneRem;
+                const optionsHeight = 1 + .5 * oneRem + (dropdownElement.firstElementChild?.clientHeight ?? Infinity);
+        
+                if (spaceAbove > spaceBelow) {
+                    const newHeight = Math.min(maxHeight, spaceAbove - .25 * oneRem, optionsHeight);
+                    dropdownElement.style.height = `${newHeight}px`;
+                    dropdownElement.style.top = `unset`;
+                    dropdownElement.style.bottom = `${spaceBelow + buttonBounds.height + .25 * oneRem}px`;
+                } else {
+                    const newHeight = Math.min(maxHeight, spaceBelow - .25 * oneRem, optionsHeight);
+                    dropdownElement.style.height = `${newHeight}px`;
+                    dropdownElement.style.top = `${spaceAbove + buttonBounds.height + .25 * oneRem}px`;
+                    dropdownElement.style.bottom = `unset`;
+                }
+            }}
+            anchorRef={ref}
+        >
+            <SelectOptions 
+                options={optionsNoSearch}
+                searchString={searchString===""?undefined:searchString.substring(0, 20)}
+                onChange={(value)=>{
+                    if(props.disabled) return;
+                    handleSetOpen(false);
+                    handleOnChange(value);
+                }}
+            />
+        </Popover>
+    </>
 }
 
 function SelectOptions<K extends { toString(): string}>(props: Readonly<{
@@ -259,11 +181,8 @@ function SelectOptions<K extends { toString(): string}>(props: Readonly<{
     options: SelectOptionsNoSearch<K>,
     onChange?: (value: K)=>void,
 }>) {
-
     return <div>
-        {props.searchString!==undefined?
-            props.searchString
-        :null}
+        {props.searchString ?? null}
         {[...props.options.entries()]
             .map(([key, value]) => {
                 return <Button

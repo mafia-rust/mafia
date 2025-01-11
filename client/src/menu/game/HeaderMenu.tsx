@@ -7,7 +7,7 @@ import "./headerMenu.css";
 import StyledText from "../../components/StyledText";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
-import { useGameState, usePlayerState } from "../../components/useHooks";
+import { useGameState, usePlayerState, useSpectator } from "../../components/useHooks";
 import { MobileContext } from "../Anchor";
 
 
@@ -26,9 +26,16 @@ export default function HeaderMenu(props: Readonly<{
         (phaseState.type === "night" || phaseState.type === "obituary") ? "background-night" : 
         "background-day";
 
+    const host = useGameState(
+        state => state.host,
+        ["playersHost"]
+    )!;
+
+    const spectator = useSpectator();
+
 
     return <div className={"header-menu " + backgroundStyle}>
-        {!(GAME_MANAGER.getMySpectator() && !GAME_MANAGER.getMyHost()) && <FastForwardButton />}
+        {!(spectator && !host) && <FastForwardButton />}
         <Information />
         {!mobile && <MenuButtons chatMenuNotification={props.chatMenuNotification}/>}
         <Timer />
@@ -106,6 +113,8 @@ function Information(): ReactElement {
             return ` ${dayNumber}`;
         }
     }, [dayNumber, phaseState.type])
+
+    const spectator = useSpectator();
     
 
     return <div className="information"> 
@@ -116,11 +125,9 @@ function Information(): ReactElement {
                         {translate("phase."+phaseState.type)}{dayNumberText}⏳{timeLeftText}
                     </div>
                 </h3>
-                {GAME_MANAGER.getMySpectator() 
-                    || <StyledText>
-                        {myName + " (" + translate("role."+(roleState!.type)+".name") + ")"}
-                    </StyledText>
-                }
+                {spectator || <StyledText>
+                    {myName + " (" + translate("role."+(roleState!.type)+".name") + ")"}
+                </StyledText>}
             </div>
         </div>
         <PhaseSpecificInformation players={players} myIndex={myIndex} phaseState={phaseState}/>
@@ -136,6 +143,9 @@ export function PhaseSpecificInformation(props: Readonly<{
         gameState => gameState.enabledModifiers,
         ["enabledModifiers"]
     )!
+
+    const spectator = useSpectator();
+
     if (
         props.phaseState.type === "testimony"
         || props.phaseState.type === "finalWords"
@@ -146,7 +156,7 @@ export function PhaseSpecificInformation(props: Readonly<{
                 <StyledText>
                     {translate(`${props.phaseState.type}.playerOnTrial`, props.players[props.phaseState.playerOnTrial].toString())}
                 </StyledText>
-                {!GAME_MANAGER.getMySpectator() && props.phaseState.type === "judgement" && <div className="judgement-info">
+                {!spectator && props.phaseState.type === "judgement" && <div className="judgement-info">
                     {(() => {
                         if (props.phaseState.playerOnTrial === props.myIndex) {
                             return translate("judgement.cannotVote.onTrial");

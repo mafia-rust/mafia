@@ -7,6 +7,7 @@ import Icon from "./Icon";
 import translate from "../game/lang";
 import "./textAreaDropdown.css";
 import DetailsSummary from "./DetailsSummary";
+import { usePlayerNames } from "./useHooks";
 
 export function TextDropdownArea(props: Readonly<{
     titleString: string,
@@ -82,6 +83,8 @@ function TextDropdownLabel(
         return props.savedText !== props.field
     }, [props.field, props.savedText]);
 
+    const playerNames = usePlayerNames();
+
     function save(field: string) {
         props.onSave(field);
     }
@@ -92,7 +95,7 @@ function TextDropdownLabel(
     }
 
     return <div>
-        <StyledText>{replaceMentions(props.titleString)}</StyledText>
+        <StyledText>{replaceMentions(props.titleString, playerNames)}</StyledText>
         <span>
             {props.onSubtract ? <Button
                 onClick={(e) => {
@@ -152,6 +155,7 @@ function PrettyTextArea(props: Readonly<{
 }>): ReactElement {
     const [writing, setWriting] = useState<boolean>(false);
     const [hover, setHover] = useState<boolean>(false);
+    const playerNames = usePlayerNames();
 
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -178,7 +182,7 @@ function PrettyTextArea(props: Readonly<{
     >
         {(!writing && !hover) ?
             <div className="textarea">
-                <StyledText noLinks={true}>{sanitizePlayerMessage(replaceMentions(props.field))}</StyledText>
+                <StyledText noLinks={true}>{sanitizePlayerMessage(replaceMentions(props.field, playerNames))}</StyledText>
             </div>
             :
             <textarea

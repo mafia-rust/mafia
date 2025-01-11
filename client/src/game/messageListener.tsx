@@ -149,7 +149,7 @@ export default function messageListener(packet: ToClientPacket){
                 }
                 GAME_MANAGER.state.players = new ListMap(GAME_MANAGER.state.players.entries());
             }else if(GAME_MANAGER.state.stateType === "game"){
-                GAME_MANAGER.state.host = packet.hosts.includes(GAME_MANAGER.state.myId===null?-1:GAME_MANAGER.state.myId)
+                GAME_MANAGER.state.host = packet.hosts.includes(GAME_MANAGER.state.myId ?? -1)
             }
         break;
         case "playersReady":
@@ -194,13 +194,13 @@ export default function messageListener(packet: ToClientPacket){
         case "lobbyClients":
             if(GAME_MANAGER.state.stateType === "lobby"){
 
-                let oldMySpectator = GAME_MANAGER.getMySpectator();
+                const oldMySpectator = GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId!)?.clientType.type === "spectator";
 
                 GAME_MANAGER.state.players = new ListMap();
                 for(let [clientId, lobbyClient] of packet.clients){
                     GAME_MANAGER.state.players.insert(clientId, lobbyClient);
                 }
-                let newMySpectator = GAME_MANAGER.getMySpectator();
+                const newMySpectator = GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId!)?.clientType.type === "spectator";
 
                 
                 if (oldMySpectator && !newMySpectator){
@@ -220,28 +220,30 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.lobbyName = packet.name;
             }
         break;
-        case "startGame": {
-            const isSpectator = GAME_MANAGER.getMySpectator();
-            if(isSpectator){
-                GAME_MANAGER.setSpectatorGameState();
-                ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
-            }else{
-                GAME_MANAGER.setGameState();
-                ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
+        case "startGame": 
+            if (GAME_MANAGER.state.stateType === "lobby") {
+                const isSpectator = GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId!)?.clientType.type === "spectator";
+                if(isSpectator){
+                    GAME_MANAGER.setSpectatorGameState();
+                    ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
+                }else{
+                    GAME_MANAGER.setGameState();
+                    ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
+                }
+    
+                AudioController.queueFile("audio/start_game.mp3");
             }
-
-            AudioController.queueFile("audio/start_game.mp3");
-        }
-        break;
-        case "gameInitializationComplete": {
-            const isSpectator = GAME_MANAGER.getMySpectator();
-            if(isSpectator){
-                ANCHOR_CONTROLLER?.setContent(<SpectatorGameScreen/>);
-            }else{
-                ANCHOR_CONTROLLER?.setContent(<GameScreen/>);
+            break;
+        case "gameInitializationComplete":
+            if (GAME_MANAGER.state.stateType === "game") {
+                const isSpectator = GAME_MANAGER.state.clientState.type === "spectator";
+                if(isSpectator){
+                    ANCHOR_CONTROLLER?.setContent(<SpectatorGameScreen/>);
+                }else{
+                    ANCHOR_CONTROLLER?.setContent(<GameScreen/>);
+                }
             }
-        }
-        break;
+            break;
         case "backToLobby":
             GAME_MANAGER.setLobbyState();
             ANCHOR_CONTROLLER?.setContent(<LobbyMenu/>);

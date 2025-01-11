@@ -4,14 +4,13 @@ import GAME_MANAGER from "./../index";
 import messageListener from "./messageListener";
 import CONFIG from "./../resources/config.json"
 import React from "react";
-import { PhaseType, PhaseTimes, Verdict, Player, PlayerIndex } from "./gameState.d";
+import { PhaseType, PhaseTimes, Verdict, PlayerIndex } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
 import { LobbyPreviewData, ToClientPacket, ToServerPacket } from "./packet";
 import { RoleOutline } from "./roleListState.d";
 import translate from "./lang";
 import PlayMenu from "../menu/main/PlayMenu";
 import { createGameState, createLobbyState } from "./gameState";
-import DUMMY_NAMES from "../resources/dummyNames.json";
 import { deleteReconnectData } from "./localStorage";
 import AudioController from "../menu/AudioController";
 
@@ -93,8 +92,9 @@ export function createGameManager(): GameManager {
             AudioController.clearQueue();
             AudioController.pauseQueue();
             
-            if (!GAME_MANAGER.server.ws?.OPEN) {
-                await GAME_MANAGER.server.open();
+            if (!GAME_MANAGER.server.ws?.OPEN && !await GAME_MANAGER.server.open()) {
+                await this.setDisconnectedState();
+                return false;
             }
 
             GAME_MANAGER.state = {
@@ -102,64 +102,14 @@ export function createGameManager(): GameManager {
                 selectedRoomCode: null,
                 lobbies: new Map<number, LobbyPreviewData>()
             };
+
+            return true;
         },
 
         state: {
             stateType: "disconnected"
         },
 
-        getMyName() {
-            if (gameManager.state.stateType === "lobby"){
-                let client = gameManager.state.players.get(gameManager.state.myId!);
-                if(client === undefined || client === null) return undefined;
-                if(client.clientType.type === "spectator") return undefined;
-                return client.clientType.name;
-            }
-            if (gameManager.state.stateType === "game" && gameManager.state.clientState.type === "player")
-                return gameManager.state.players[gameManager.state.clientState.myIndex!]?.name;
-            return undefined;
-        },
-        getMyHost() {
-            if (gameManager.state.stateType === "lobby")
-                return gameManager.state.players.get(gameManager.state.myId!)?.ready === "host";
-            if (gameManager.state.stateType === "game")
-                return gameManager.state.host;
-            return undefined;
-        },
-        getMySpectator() {
-            if (gameManager.state.stateType === "lobby")
-                return gameManager.state.players.get(gameManager.state.myId!)?.clientType.type === "spectator";
-            if (gameManager.state.stateType === "game")
-                return gameManager.state.clientState.type === "spectator";
-            return false;
-        },
-        getPlayerNames(): string[] {
-            switch (GAME_MANAGER.state.stateType) {
-                case "game":
-                    return GAME_MANAGER.state.players.map((player) => player.toString());
-                case "lobby":
-                    return [];
-                default:
-                    return DUMMY_NAMES;
-            }
-        },
-        getLivingPlayers(): Player[] | null{
-            if(GAME_MANAGER.state.stateType !== "game") return null;
-            return GAME_MANAGER.state.players.filter(player => player.alive)
-        },
-        getVotesRequired(): number | null{            
-            let count = 1;
-            let livingPlayers = GAME_MANAGER.getLivingPlayers();
-            if(livingPlayers === null) return null;
-            for (let player of livingPlayers) {
-                if (player.alive && !player.playerTags.includes("forfeitVote")) {
-                    count += 1;
-                }
-            }
-
-
-            return Math.ceil(count / 2);
-        },
         updateChatFilter(filter: PlayerIndex | null) {
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 GAME_MANAGER.state.clientState.chatFilter = filter===null?null:{
@@ -246,11 +196,14 @@ export function createGameManager(): GameManager {
             const promise = new Promise<boolean>((resolver) => {
                 completePromise = resolver;
             });
-            let onJoined: StateListener = (type) => {
+            const onJoined: StateListener = (type) => {
                 if (type === "acceptJoin") {
                     completePromise(true);
                     GAME_MANAGER.removeStateListener(onJoined);
                 } else if (type === "rejectJoin") {
+                    completePromise(false);
+                    GAME_MANAGER.removeStateListener(onJoined);
+                } else if (type === "connectionClosed") {
                     completePromise(false);
                     GAME_MANAGER.removeStateListener(onJoined);
                 }
@@ -268,14 +221,17 @@ export function createGameManager(): GameManager {
         },
         sendJoinPacket(roomCode: number) {
             let completePromise: (success: boolean) => void;
-            let promise = new Promise<boolean>((resolver) => {
+            const promise = new Promise<boolean>((resolver) => {
                 completePromise = resolver;
             });
-            let onJoined: StateListener = (type) => {
+            const onJoined: StateListener = (type) => {
                 if (type === "acceptJoin") {
                     completePromise(true);
                     GAME_MANAGER.removeStateListener(onJoined);
                 } else if (type === "rejectJoin") {
+                    completePromise(false);
+                    GAME_MANAGER.removeStateListener(onJoined);
+                } else if (type === "connectionClosed") {
                     completePromise(false);
                     GAME_MANAGER.removeStateListener(onJoined);
                 }
@@ -523,20 +479,34 @@ function createServer(){
 
         open : () => {
             let address = CONFIG.address;
-            Server.ws = new WebSocket(address);
+            try {
+                Server.ws = new WebSocket(address);
+            } catch {
+                return Promise.resolve(false);
+            }
 
-            let completePromise: () => void;
-            let promise = new Promise<void>((resolver) => {
-                completePromise = resolver;
-            });
+            let completePromise: (value: boolean) => void;
+            const promise = Promise.race([
+                new Promise<boolean>((resolver) => {
+                    completePromise = resolver;
+                }),
+                new Promise<boolean>((resolver) => {
+                    setTimeout(() => {
+                        resolver(false)
+                    }, 3000)
+                })
+            ]);
 
             Server.ws.onopen = (event: Event)=>{
-                completePromise();
+                completePromise(true);
                 console.log("Connected to server.");
             };
             Server.ws.onclose = (event: CloseEvent)=>{
                 console.log("Disconnected from server.");
+                completePromise(false);
+                GAME_MANAGER.invokeStateListeners("connectionClosed");
                 if (Server.ws === null) return; // We closed it ourselves
+                Server.ws = null;
 
                 ANCHOR_CONTROLLER?.pushErrorCard({
                     title: translate("notification.connectionFailed"), 
@@ -551,6 +521,7 @@ function createServer(){
             };
             Server.ws.onerror = (event: Event) => {
                 Server.close();
+                completePromise(false);
                 ANCHOR_CONTROLLER?.pushErrorCard({
                     title: translate("notification.connectionFailed"), 
                     body: translate("notification.serverNotFound")
