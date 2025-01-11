@@ -219,7 +219,7 @@ export function ChatTextInput(props: Readonly<{
     const playerStrings = useLobbyOrGameState(
         state => {
             if (state.stateType === "game") {
-                return state.players.map(player => player.name)
+                return state.players.map(player => player.toString())
             } else if (state.stateType === "lobby") {
                 return Array.from(state.players.values())
                     .filter(player => player.clientType.type === "player")

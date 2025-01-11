@@ -52,9 +52,11 @@ export type PlayerClientType = {
 }
 
 type GameState = {
-    stateType: "game"
+    stateType: "game",
     roomCode: number,
     lobbyName: string,
+    
+    initialized: boolean,
 
     myId: number | null,
 

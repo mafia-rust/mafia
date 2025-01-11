@@ -40,6 +40,8 @@ export function createGameState(): GameState {
         roomCode: 0,
         lobbyName: "",
 
+        initialized: false,
+
         myId: null,
 
         chatMessages : [],
