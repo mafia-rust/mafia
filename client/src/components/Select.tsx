@@ -176,6 +176,52 @@ export function dropdownPlacementFunction(dropdownElement: HTMLElement, buttonEl
         dropdownElement.style.top = `${spaceAbove + buttonBounds.height + .25 * oneRem}px`;
         dropdownElement.style.bottom = `unset`;
     }
+
+    keepPopoverOnScreen(dropdownElement, buttonElement);
+}
+
+function keepPopoverOnScreen(dropdownElement: HTMLElement, buttonElement?: HTMLElement) {
+    const dropdownBounds = dropdownElement.getBoundingClientRect();
+
+    const modifyTop = dropdownElement.style.bottom === 'unset' || dropdownElement.style.bottom === "";
+    const modifyLeft = dropdownElement.style.right === 'unset' || dropdownElement.style.right === "";
+
+    const spaceAbove = dropdownBounds.top;
+    const spaceBelow = window.innerHeight - dropdownBounds.bottom;
+    const spaceToTheRight = window.innerWidth - dropdownBounds.right;
+    const spaceToTheLeft = dropdownBounds.left;
+
+    if (spaceToTheRight < 0) {
+        if (modifyLeft) {
+            dropdownElement.style.left = `${window.innerWidth - dropdownBounds.width}px`
+        } else {
+            dropdownElement.style.right = "0px"
+        }
+    }
+
+    if (spaceToTheLeft < 0) {
+        if (modifyLeft) {
+            dropdownElement.style.left = "0px"
+        } else {
+            dropdownElement.style.right = `${dropdownBounds.width}px`
+        }
+    }
+
+    if (spaceBelow < 0) {
+        if (modifyTop) {
+            dropdownElement.style.top = `${window.innerHeight - dropdownBounds.height}px`
+        } else {
+            dropdownElement.style.bottom = "0px"
+        }
+    }
+
+    if (spaceAbove < 0) {
+        if (modifyTop) {
+            dropdownElement.style.top = "0px"
+        } else {
+            dropdownElement.style.bottom = `${dropdownBounds.height}px`
+        }
+    }
 }
 
 function SelectOptions<K extends { toString(): string}>(props: Readonly<{
