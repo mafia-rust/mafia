@@ -107,6 +107,21 @@ impl<'de, K> Deserialize<'de> for VecSet<K> where K: Eq, K: Deserialize<'de> {
     }
 }
 
+impl<T: Eq> PartialOrd for VecSet<T> {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl<T: Eq> Ord for VecSet<T> {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        match (self.len() as isize) - (other.len() as isize) {
+            1.. => std::cmp::Ordering::Greater,
+            0 => std::cmp::Ordering::Equal,
+            ..=-1 => std::cmp::Ordering::Less
+        }
+    }
+}
 
 pub use macros::vec_set;
 mod macros {

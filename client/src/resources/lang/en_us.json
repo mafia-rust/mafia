@@ -679,12 +679,15 @@
     "noAll.icon": "🔇",
     "chatGroup.all.icon": "🔊",
     "chatGroup.mafia.icon": "🌹",
+    "chatGroup.mafia.name": "Syndicate",
     "chatGroup.cult.icon": "🕯️",
+    "chatGroup.cult.name": "Cult",
     "chatGroup.jail.icon": "🔒",
     "chatGroup.kidnapped.icon": "🔒",
     "chatGroup.interview.icon": "📝",
     "chatGroup.dead.icon": "💀",
     "chatGroup.puppeteer.icon": "🧵",
+    "chatGroup.puppeteer.name": "Puppeteer",
     "chatGroup.warden.icon": "🕹️",
 
     "messageSender.livingToDead.icon": "🔮",
@@ -701,6 +704,9 @@
 
 
     "standard":"Uncategorized",
+    "default":"Default",
+    "setDefault":"Set Default",
+    "setNotDefault":"Set Custom",
 
     "union": "∪",
     "onTrial": "On Trial",
