@@ -218,7 +218,7 @@ function RoleSetArticle(): ReactElement {
             <WikiStyledText>{"# "+translate("wiki.article.generated.roleSet.title")}</WikiStyledText>
         </section>
         <Masonry columnsCount={columnCount}>
-            {ROLE_SETS.map(set => {
+            {ROLE_SETS.filter(set=>set!=="any").map(set => {
                 const description = translateChecked(`${set}.description`);
                 return <div key={set} className="masonry-item">
                     <PageCollection
