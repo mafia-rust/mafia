@@ -43,8 +43,12 @@ use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
+use role_list::RoleAssignment;
+use role_list::RoleOutlineOptionInsiderGroups;
+use role_list::RoleOutlineOptionWinCondition;
 use role_outline_reference::OriginallyGeneratedRoleAndPlayer;
 use serde::Serialize;
+use win_condition::WinCondition;
 
 use crate::client_connection::ClientConnection;
 use crate::game::event::on_game_start::OnGameStart;
@@ -76,7 +80,7 @@ use self::spectator::{
     Spectator,
     SpectatorInitializeParameters
 };
-use self::role::{Role, RoleState};
+use self::role::RoleState;
 use self::verdict::Verdict;
 
 
@@ -149,7 +153,7 @@ impl Game {
 
         let mut role_generation_tries = 0;
         const MAX_ROLE_GENERATION_TRIES: u8 = 250;
-        let mut game = loop {
+        let (mut game, assignments) = loop {
 
             if role_generation_tries >= MAX_ROLE_GENERATION_TRIES {
                 return Err(RejectStartReason::RoleListCannotCreateRoles);
@@ -159,14 +163,14 @@ impl Game {
             let role_list = settings.role_list.clone();
 
 
-            let roles_to_players = Self::assign_players_to_roles(match role_list.create_random_roles(&settings.enabled_roles){
+            let roles_to_players = Self::assign_players_to_assignments(match role_list.create_random_role_assignments(&settings.enabled_roles){
                 Some(roles) => {roles},
                 None => {return Err(RejectStartReason::RoleListCannotCreateRoles);}
             });
 
             let mut roles_to_players_clone = roles_to_players.clone();
             roles_to_players_clone.sort_by(|(_, i), (_,j)| i.cmp(j));
-            let shuffled_roles = roles_to_players_clone.into_iter().map(|(r,_)|r).collect::<Vec<Role>>();            
+            let assignments = roles_to_players_clone.into_iter().map(|(r,_)|r).collect::<Vec<RoleAssignment>>();            
 
 
             let mut new_players = Vec::new();
@@ -174,24 +178,36 @@ impl Game {
                 let ClientConnection::Connected(ref sender) = player.connection else {
                     return Err(RejectStartReason::PlayerDisconnected)
                 };
+                let Some(assignment) = assignments.get(player_index) else {
+                    return Err(RejectStartReason::RoleListTooSmall)
+                };
+
+                // Set win condition here so we can check if game ends
+                let win_condition = match &assignment.win_condition {
+                    RoleOutlineOptionWinCondition::RoleDefault => assignment.role.default_state().default_win_condition(),
+                    RoleOutlineOptionWinCondition::GameConclusionReached { win_if_any } => {
+                        WinCondition::GameConclusionReached { 
+                            win_if_any: win_if_any.iter().cloned().collect()
+                        }
+                    },
+                };
+
                 let new_player = Player::new(
                     player.name.clone(),
                     sender.clone(),
-                    match shuffled_roles.get(player_index){
-                        Some(role) => *role,
-                        None => return Err(RejectStartReason::RoleListTooSmall),
-                    }
+                    assignment.role,
+                    win_condition
                 );
+                
                 new_players.push(new_player);
             }
-            drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
             let num_players = new_players.len() as u8;
 
             let game = Self{
                 pitchfork: Pitchfork::new(num_players),
 
-                roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
+                roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r.role,PlayerReference::new_unchecked(i))).collect(),
                 ticking: true,
                 spectators: spectators.clone().into_iter().map(Spectator::new).collect(),
                 spectator_chat_messages: Vec::new(),
@@ -221,7 +237,7 @@ impl Game {
             };
 
             if !game.game_is_over() {
-                break game;
+                break (game, assignments);
             }
             role_generation_tries += 1;
         };
@@ -236,10 +252,17 @@ impl Game {
         for player in PlayerReference::all_players(&game){
             let role_data = player.role(&game).new_state(&game);
 
-            player.set_win_condition(&mut game, role_data.clone().default_win_condition());
-        
+            // We already set this earlier, now we just need to call the on_convert event. Hope this doesn't end the game!
+            let win_condition = player.win_condition(&game).clone();
+            player.set_win_condition(&mut game, win_condition);
+
+            let insider_groups = match &assignments[player.index() as usize].insider_groups {
+                RoleOutlineOptionInsiderGroups::RoleDefault => role_data.clone().default_revealed_groups(),
+                RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().cloned().collect(),
+            };
+            
             InsiderGroupID::start_game_set_player_revealed_groups(
-                role_data.clone().default_revealed_groups(),
+                insider_groups,
                 &mut game,
                 player
             );
@@ -270,10 +293,10 @@ impl Game {
 
         Ok(game)
     }
-    fn assign_players_to_roles(roles: Vec<Role>)->Vec<(Role, PlayerIndex)>{
-        let mut player_indices: Vec<PlayerIndex> = (0..roles.len() as PlayerIndex).collect();
+    fn assign_players_to_assignments(initialization_data: Vec<RoleAssignment>)->Vec<(RoleAssignment, PlayerIndex)>{
+        let mut player_indices: Vec<PlayerIndex> = (0..initialization_data.len() as PlayerIndex).collect();
         player_indices.shuffle(&mut thread_rng());
-        roles.into_iter().zip(player_indices).collect()
+        initialization_data.into_iter().zip(player_indices).collect()
     }
 
     pub fn num_players(&self) -> u8 {
@@ -531,12 +554,12 @@ pub mod test {
         let settings = settings.clone();
         let role_list = settings.role_list.clone();
         
-        let roles_to_players = assign_players_to_roles(match role_list.create_random_roles(&settings.enabled_roles){
-            Some(roles) => {roles},
+        let data_to_players = assign_players_to_roles(match role_list.create_random_role_assignments(&settings.enabled_roles){
+            Some(data) => {data.into_iter().map(|datum| datum.role).collect()},
             None => {return Err(RejectStartReason::RoleListCannotCreateRoles);}
         });
         
-        let mut roles_to_players_clone = roles_to_players.clone();
+        let mut roles_to_players_clone = data_to_players.clone();
         roles_to_players_clone.sort_by(|(_, i), (_,j)| i.cmp(j));
         let shuffled_roles = roles_to_players_clone.into_iter().map(|(r,_)|r).collect::<Vec<Role>>();
 
@@ -557,7 +580,7 @@ pub mod test {
         let mut game = Game{
             pitchfork: Pitchfork::new(number_of_players as u8),
             
-            roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
+            roles_originally_generated: data_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
             ticking: true,
             spectators: Vec::new(),
             spectator_chat_messages: Vec::new(),

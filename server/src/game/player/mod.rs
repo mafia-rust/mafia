@@ -87,7 +87,7 @@ struct PlayerNightVariables{
     grave_death_notes: Vec<String>,
 }
 impl Player {
-    pub fn new(name: String, sender: ClientSender, role: Role) -> Self {
+    pub fn new(name: String, sender: ClientSender, role: Role, win_condition: WinCondition) -> Self {
         Self {
             connection: ClientConnection::Connected(sender),
 
@@ -102,7 +102,7 @@ impl Player {
             role_labels: VecSet::new(),
             player_tags: VecMap::new(),
 
-            win_condition: role.default_state().default_win_condition(),
+            win_condition,
 
             chat_messages: Vec::new(),
             queued_chat_messages: Vec::new(),

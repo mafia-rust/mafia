@@ -97,7 +97,7 @@ function GameModeSelectorPanel(props: {
 
     useEffect(() => {
         const listener = (e: KeyboardEvent) => {
-            if (e.ctrlKey && e.key === 's') {
+            if (props.canModifySavedGameModes === true && e.ctrlKey && e.key === 's') {
                 e.preventDefault();
 
                 const result = saveGameMode(gameModeNameField);
@@ -112,7 +112,7 @@ function GameModeSelectorPanel(props: {
         }
         document.addEventListener('keydown', listener);
         return () => document.removeEventListener('keydown', listener);
-    }, [gameModeNameField, anchorController, saveGameMode]);
+    }, [gameModeNameField, anchorController, saveGameMode, props.canModifySavedGameModes]);
 
     // Caller must ensure location is valid
     const loadGameMode = (location: GameModeLocation) => {

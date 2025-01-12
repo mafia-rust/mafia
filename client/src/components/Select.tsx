@@ -134,33 +134,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
         <Popover className="custom-select-options"
             open={open}
             setOpenOrClosed={handleSetOpen}
-            onRender={(dropdownElement, buttonElement) => {
-                if (!buttonElement) return;
-
-                const buttonBounds = buttonElement.getBoundingClientRect();
-                dropdownElement.style.width = `${buttonBounds.width}px`;
-                dropdownElement.style.left = `${buttonBounds.left}px`;
-        
-                const spaceAbove = buttonBounds.top;
-                const spaceBelow = window.innerHeight - buttonBounds.bottom;
-        
-                const oneRem = parseFloat(getComputedStyle(buttonElement).fontSize);
-        
-                const maxHeight = (25 - .25) * oneRem;
-                const optionsHeight = 1 + .5 * oneRem + (dropdownElement.firstElementChild?.clientHeight ?? Infinity);
-        
-                if (spaceAbove > spaceBelow) {
-                    const newHeight = Math.min(maxHeight, spaceAbove - .25 * oneRem, optionsHeight);
-                    dropdownElement.style.height = `${newHeight}px`;
-                    dropdownElement.style.top = `unset`;
-                    dropdownElement.style.bottom = `${spaceBelow + buttonBounds.height + .25 * oneRem}px`;
-                } else {
-                    const newHeight = Math.min(maxHeight, spaceBelow - .25 * oneRem, optionsHeight);
-                    dropdownElement.style.height = `${newHeight}px`;
-                    dropdownElement.style.top = `${spaceAbove + buttonBounds.height + .25 * oneRem}px`;
-                    dropdownElement.style.bottom = `unset`;
-                }
-            }}
+            onRender={dropdownPlacementFunction}
             anchorRef={ref}
         >
             <SelectOptions 
@@ -174,6 +148,80 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
             />
         </Popover>
     </>
+}
+
+export function dropdownPlacementFunction(dropdownElement: HTMLElement, buttonElement: HTMLElement | undefined) {
+    if (!buttonElement) return;
+
+    const buttonBounds = buttonElement.getBoundingClientRect();
+    dropdownElement.style.width = `${buttonBounds.width}px`;
+    dropdownElement.style.left = `${buttonBounds.left}px`;
+
+    const spaceAbove = buttonBounds.top;
+    const spaceBelow = window.innerHeight - buttonBounds.bottom;
+
+    const oneRem = parseFloat(getComputedStyle(buttonElement).fontSize);
+
+    const maxHeight = (25 - .25) * oneRem;
+    const optionsHeight = 1 + .5 * oneRem + (dropdownElement.firstElementChild?.clientHeight ?? Infinity);
+
+    if (spaceAbove > spaceBelow) {
+        const newHeight = Math.min(maxHeight, spaceAbove - .25 * oneRem, optionsHeight);
+        dropdownElement.style.height = `${newHeight}px`;
+        dropdownElement.style.top = `unset`;
+        dropdownElement.style.bottom = `${spaceBelow + buttonBounds.height + .25 * oneRem}px`;
+    } else {
+        const newHeight = Math.min(maxHeight, spaceBelow - .25 * oneRem, optionsHeight);
+        dropdownElement.style.height = `${newHeight}px`;
+        dropdownElement.style.top = `${spaceAbove + buttonBounds.height + .25 * oneRem}px`;
+        dropdownElement.style.bottom = `unset`;
+    }
+
+    keepPopoverOnScreen(dropdownElement, buttonElement);
+}
+
+function keepPopoverOnScreen(dropdownElement: HTMLElement, buttonElement?: HTMLElement) {
+    const dropdownBounds = dropdownElement.getBoundingClientRect();
+
+    const modifyTop = dropdownElement.style.bottom === 'unset' || dropdownElement.style.bottom === "";
+    const modifyLeft = dropdownElement.style.right === 'unset' || dropdownElement.style.right === "";
+
+    const spaceAbove = dropdownBounds.top;
+    const spaceBelow = window.innerHeight - dropdownBounds.bottom;
+    const spaceToTheRight = window.innerWidth - dropdownBounds.right;
+    const spaceToTheLeft = dropdownBounds.left;
+
+    if (spaceToTheRight < 0) {
+        if (modifyLeft) {
+            dropdownElement.style.left = `${window.innerWidth - dropdownBounds.width}px`
+        } else {
+            dropdownElement.style.right = "0px"
+        }
+    }
+
+    if (spaceToTheLeft < 0) {
+        if (modifyLeft) {
+            dropdownElement.style.left = "0px"
+        } else {
+            dropdownElement.style.right = `${dropdownBounds.width}px`
+        }
+    }
+
+    if (spaceBelow < 0) {
+        if (modifyTop) {
+            dropdownElement.style.top = `${window.innerHeight - dropdownBounds.height}px`
+        } else {
+            dropdownElement.style.bottom = "0px"
+        }
+    }
+
+    if (spaceAbove < 0) {
+        if (modifyTop) {
+            dropdownElement.style.top = "0px"
+        } else {
+            dropdownElement.style.bottom = `${dropdownBounds.height}px`
+        }
+    }
 }
 
 function SelectOptions<K extends { toString(): string}>(props: Readonly<{

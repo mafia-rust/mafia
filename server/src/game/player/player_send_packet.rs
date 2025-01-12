@@ -26,7 +26,7 @@ impl PlayerReference{
         if self.alive(game) {
             game.add_message_to_chat_group(
                 crate::game::chat::ChatGroup::All, 
-                ChatMessageVariant::PlayerQuit{player_index: self.index()}
+                ChatMessageVariant::PlayerQuit{player_index: self.index(), game_over: game.game_is_over()}
             );
         }
     }
