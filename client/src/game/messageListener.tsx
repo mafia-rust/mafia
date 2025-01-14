@@ -422,19 +422,20 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 GAME_MANAGER.state.clientState.notes = packet.notes;
                 
-                if(GAME_MANAGER.state.clientState.notes.length === 0){
-                    const myIndex = GAME_MANAGER.state.clientState.myIndex;
-                    const myRoleKey = `role.${GAME_MANAGER.state.clientState.roleState.type}.name`;
+                // old default notes
+                // if(GAME_MANAGER.state.clientState.notes.length === 0){
+                //     const myIndex = GAME_MANAGER.state.clientState.myIndex;
+                //     const myRoleKey = `role.${GAME_MANAGER.state.clientState.roleState.type}.name`;
 
-                    GAME_MANAGER.sendSaveNotesPacket([
-                        "Claims\n" + 
-                        GAME_MANAGER.state.players
-                            .map(player => 
-                                `@${player.index + 1} - ${player.index === myIndex ? translate(myRoleKey) : ''}\n`
-                            )
-                            .join('')
-                    ]);
-                }
+                //     GAME_MANAGER.sendSaveNotesPacket([
+                //         "Claims\n" + 
+                //         GAME_MANAGER.state.players
+                //             .map(player => 
+                //                 `@${player.index + 1} - ${player.index === myIndex ? translate(myRoleKey) : ''}\n`
+                //             )
+                //             .join('')
+                //     ]);
+                // }
             }
         break;
         case "yourCrossedOutOutlines":
