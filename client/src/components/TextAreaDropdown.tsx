@@ -158,12 +158,27 @@ function PrettyTextArea(props: Readonly<{
     const playerNames = usePlayerNames();
 
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const prettyTextAreaRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            if (prettyTextAreaRef.current) {
+                if (prettyTextAreaRef.current.contains(e.target as Node)) {
+                    setHover(true);
+                } else {
+                    setHover(false);
+                }
+            }
+        }
+        document.addEventListener("mousemove", handleMouseMove);
+        return () => document.removeEventListener("mousemove", handleMouseMove);
+    }, []);
 
     // Function to adjust textarea height
     const adjustHeight = () => {
         if (textareaRef.current) {
             textareaRef.current.style.height = "auto"; // Reset height
-            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Adjust to fit content
+            textareaRef.current.style.height = `calc(.25rem + ${textareaRef.current.scrollHeight}px)`; // Adjust to fit content
         }
     };
 
@@ -173,16 +188,19 @@ function PrettyTextArea(props: Readonly<{
     }, [props.field, writing, hover]);
 
     return <div
+        ref={prettyTextAreaRef}
         className="pretty-text-area"
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
         onTouchEnd={() => setWriting(true)}
         onFocus={() => setWriting(true)}
-        onBlur={() => {setWriting(false); setHover(false)}}
+        onBlur={() => setWriting(false)}
     >
         {(!writing && !hover) ?
-            <div className="textarea">
-                <StyledText noLinks={true}>{sanitizePlayerMessage(replaceMentions(props.field, playerNames))}</StyledText>
+            <div
+                className="textarea"
+            >
+                <StyledText noLinks={true}>
+                    {sanitizePlayerMessage(replaceMentions(props.field, playerNames))}
+                </StyledText>
             </div>
             :
             <textarea
