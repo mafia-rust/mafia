@@ -1,7 +1,8 @@
 import { VersionConverter } from ".";
 import { GameMode, GameModeData, GameModeStorage, ShareableGameMode } from "..";
+import { Conclusion, CONCLUSIONS, INSIDER_GROUPS, InsiderGroup } from "../../../../game/gameState.d";
 import { getDefaultSettings, Settings } from "../../../../game/localStorage";
-import { RoleOutline, RoleOutlineOption } from "../../../../game/roleListState.d";
+import { RoleOutline, RoleOutlineOption, RoleSet } from "../../../../game/roleListState.d";
 import { Role } from "../../../../game/roleState.d";
 import { Failure, ParseResult, ParseSuccess, Success, isFailure } from "../parse";
 import { parseName, parsePhaseTimes, parseRole, parseRoleSet } from "./initial";
@@ -214,21 +215,94 @@ function parseRoleOutlineOptionList(json: NonNullable<any>): ParseResult<RoleOut
 }
 
 function parseRoleOutlineOption(json: NonNullable<any>): ParseResult<RoleOutlineOption> {
-    if (json.role !== undefined) {
-        const role = parseRole(json.role);
-        if (isFailure(role)) return role;
 
-        return Success({
-            role: role.value
-        });
-    } else if (json.roleSet !== undefined) {
-        const roleSet = parseRoleSet(json.roleSet);
-        if (isFailure(roleSet)) return roleSet;
+    let out: {
+        insiderGroups?: InsiderGroup[],
+        winIfAny?: Conclusion[],
+        role?: Role,
+        roleSet?: RoleSet
+    } = {}
 
-        return Success ({
-            roleSet: roleSet.value
-        });
-    } else {
-        return Failure("roleOutlineOptionInvalidType", json);
+
+    if("insiderGroups" in json) {
+        const insiderGroupsResult = parseRoleOutlineOptionInsiderGroups(json.insiderGroups);
+        if (isFailure(insiderGroupsResult)) return insiderGroupsResult;
+        out.insiderGroups = insiderGroupsResult.value;
     }
+
+    if("winIfAny" in json) {
+        const winIfAnyResult = parseRoleOutlineOptionWinIfAny(json.winIfAny);
+        if (isFailure(winIfAnyResult)) return winIfAnyResult;
+        out.winIfAny = winIfAnyResult.value;
+    }
+
+    if("role" in json && "roleSet" in json) {
+        return Failure("roleOutlineOptionBothRoleAndRoleSet", json);
+    }
+    
+    if ("role" in json) {
+        const roleResult = parseRole(json.role);
+        if (isFailure(roleResult)) return roleResult;
+        out.role = roleResult.value;
+    } else if ("roleSet" in json) {
+        const roleSetResult = parseRoleSet(json.roleSet);
+        if (isFailure(roleSetResult)) return roleSetResult;
+        out.roleSet = roleSetResult.value;
+    } else {
+        return Failure("roleOutlineOptionNeitherRoleNorRoleSet", json);
+    }
+
+    return Success(out as RoleOutlineOption);
+}
+
+
+function parseRoleOutlineOptionWinIfAny(json: NonNullable<any>): ParseResult<Conclusion[]> {
+    if (!Array.isArray(json)) {
+        return Failure("winIfAnyNotArray", json);
+    }
+    
+    const conclusions = json.map(parseConclusion);
+    for (const conclusion of conclusions) {
+        if (isFailure(conclusion)) return conclusion;
+    }
+
+    return Success(conclusions.map(success => (success as ParseSuccess<Conclusion>).value));
+}
+
+function parseConclusion(json: NonNullable<any>): ParseResult<Conclusion> {
+    if (typeof json !== "string") {
+        return Failure("conclusionNotString", json);
+    }
+
+    if (!CONCLUSIONS.includes(json as Conclusion)) {
+        return Failure("conclusionInvalid", json);
+    }
+
+    return Success(json as Conclusion);
+}
+
+
+function parseRoleOutlineOptionInsiderGroups(json: NonNullable<any>): ParseResult<InsiderGroup[]> {
+    if (!Array.isArray(json)) {
+        return Failure("insiderGroupsNotArray", json);
+    }
+
+    const insiderGroups = json.map(parseInsiderGroup);
+    for (const group of insiderGroups) {
+        if (isFailure(group)) return group;
+    }
+
+    return Success(insiderGroups.map(success => (success as ParseSuccess<InsiderGroup>).value));
+}
+
+function parseInsiderGroup(json: NonNullable<any>): ParseResult<InsiderGroup> {
+    if (typeof json !== "string") {
+        return Failure("insiderGroupNotString", json);
+    }
+
+    if (!INSIDER_GROUPS.includes(json as InsiderGroup)) {
+        return Failure("insiderGroupInvalid", json);
+    }
+
+    return Success(json as InsiderGroup);
 }

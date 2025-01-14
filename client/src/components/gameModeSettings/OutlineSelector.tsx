@@ -28,7 +28,7 @@ export default function RoleOutlineSelector(props: RoleOutlineSelectorProps): Re
         {props.roleOutline.map((option, index) => {
             let roleOrRoleSet: RoleOrRoleSet;
 
-            if (option.role) {
+            if ("role" in option) {
                 roleOrRoleSet = {
                     type: "role",
                     role: option.role
@@ -71,12 +71,16 @@ export default function RoleOutlineSelector(props: RoleOutlineSelectorProps): Re
                             let options = [...props.roleOutline];
                             switch (value.type) {
                                 case "role":
-                                    delete options[index].roleSet;
-                                    options[index].role = value.role;
+                                    options[index] = {
+                                        role: value.role,
+                                        ...options[index]
+                                    }
                                     break;
                                 case "roleSet":
-                                    options[index].roleSet = value.roleSet;
-                                    delete options[index].role;
+                                    options[index] = {
+                                        roleSet: value.roleSet,
+                                        ...options[index]
+                                    }
                                     break;
                             }
 

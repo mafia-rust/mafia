@@ -48,9 +48,7 @@ export type RoleOutline = RoleOutlineOption[];
 
 export type RoleOutlineOption = ({
     roleSet: RoleSet
-    role?: undefined
 } | {
-    roleSet?: undefined
     role: Role
 }) & {
     winIfAny?: Conclusion[],
@@ -84,9 +82,9 @@ export function translateRoleOutlineOption(roleOutlineOption: RoleOutlineOption)
     if (roleOutlineOption.winIfAny) {
         out += `${translateWinCondition({ type: "gameConclusionReached", winIfAny: roleOutlineOption.winIfAny })} `
     }
-    if (roleOutlineOption.roleSet) {
+    if ("roleSet" in roleOutlineOption) {
         out += translate(roleOutlineOption.roleSet)
-    } else if (roleOutlineOption.role) {
+    } else {
         out += translate("role."+roleOutlineOption.role+".name")
     }
     return out;
@@ -103,7 +101,7 @@ export function getRolesFromOutline(roleOutline: RoleOutline): Role[] {
     return roleOutline.flatMap((option) => getRolesFromOutlineOption(option));
 }
 export function getRolesFromOutlineOption(roleOutlineOption: RoleOutlineOption): Role[] {
-    if (roleOutlineOption.roleSet) {
+    if ("roleSet" in roleOutlineOption) {
         return getRolesFromRoleSet(roleOutlineOption.roleSet)
     } else {
         return [roleOutlineOption.role]
