@@ -69,21 +69,23 @@ export default function RoleOutlineSelector(props: RoleOutlineSelectorProps): Re
                         roleOrRoleSet={roleOrRoleSet}
                         onChange={(value) => {
                             let options = [...props.roleOutline];
+
                             switch (value.type) {
                                 case "role":
                                     options[index] = {
-                                        role: value.role,
-                                        ...options[index]
+                                        winIfAny: options[index].winIfAny,
+                                        insiderGroups: options[index].insiderGroups,
+                                        role: value.role
                                     }
                                     break;
                                 case "roleSet":
                                     options[index] = {
-                                        roleSet: value.roleSet,
-                                        ...options[index]
+                                        winIfAny: options[index].winIfAny,
+                                        insiderGroups: options[index].insiderGroups,
+                                        roleSet: value.roleSet
                                     }
                                     break;
                             }
-
                             props.onChange(options);
                         }}
                     />
