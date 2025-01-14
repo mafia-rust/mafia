@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useMemo, useState } from "react";
+import React, { ReactElement, useEffect, useMemo, useRef, useState } from "react";
 import StyledText from "./StyledText";
 import { sanitizePlayerMessage } from "./ChatMessage";
 import GAME_MANAGER, { replaceMentions } from "..";
@@ -157,18 +157,55 @@ function PrettyTextArea(props: Readonly<{
     const [hover, setHover] = useState<boolean>(false);
     const playerNames = usePlayerNames();
 
-    return <div className="pretty-text-area"
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const prettyTextAreaRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            if (prettyTextAreaRef.current) {
+                if (prettyTextAreaRef.current.contains(e.target as Node)) {
+                    setHover(true);
+                } else {
+                    setHover(false);
+                }
+            }
+        }
+        document.addEventListener("mousemove", handleMouseMove);
+        return () => document.removeEventListener("mousemove", handleMouseMove);
+    }, []);
+
+    // Function to adjust textarea height
+    const adjustHeight = () => {
+        if (textareaRef.current) {
+            textareaRef.current.style.height = "auto"; // Reset height
+            textareaRef.current.style.height = `calc(.25rem + ${textareaRef.current.scrollHeight}px)`; // Adjust to fit content
+        }
+    };
+
+    // Adjust height when the `props.field` value changes
+    useEffect(() => {
+        adjustHeight();
+    }, [props.field, writing, hover]);
+
+    return <div
+        ref={prettyTextAreaRef}
+        className="pretty-text-area"
         onTouchEnd={() => setWriting(true)}
         onFocus={() => setWriting(true)}
-        onBlur={() => {setWriting(false); setHover(false)}}
+        onBlur={() => setWriting(false)}
     >
-        {(!writing && !hover)
-            ? <div className="textarea">
-                <StyledText noLinks={true}>{sanitizePlayerMessage(replaceMentions(props.field, playerNames))}</StyledText>
+        {(!writing && !hover) ?
+            <div
+                className="textarea"
+            >
+                <StyledText noLinks={true}>
+                    {sanitizePlayerMessage(replaceMentions(props.field, playerNames))}
+                </StyledText>
             </div>
-            : <textarea
+            :
+            <textarea
+                className="textarea"
+                ref={textareaRef}
                 value={props.field}
                 onChange={e => props.setField(e.target.value)}
                 onKeyDown={(e) => {
@@ -181,8 +218,9 @@ function PrettyTextArea(props: Readonly<{
                         }
                     }
                 }}>
-            </textarea>}
-        </div>
+            </textarea>
+        }
+    </div>
 }
 
 

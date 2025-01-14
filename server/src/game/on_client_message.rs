@@ -92,7 +92,7 @@ impl Game {
                         chat_group.clone(),
                         ChatMessageVariant::Normal{
                             message_sender,
-                            text: text.trim_newline().trim_whitespace().truncate(400).truncate_lines(20), 
+                            text: text.trim_newline().trim_whitespace().truncate(600).truncate_lines(35), 
                             block
                         }
                     );
