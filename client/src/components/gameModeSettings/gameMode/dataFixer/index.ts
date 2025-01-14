@@ -1,4 +1,4 @@
-import { GameModeStorage, ShareableGameMode } from "..";
+import { CurrentFormat, GameModeStorage, ShareableGameMode } from "..";
 import { Settings } from "../../../../game/localStorage";
 import { Failure, ParseResult, Success, isFailure } from "../parse"
 import initial from "./initial"
@@ -29,7 +29,7 @@ type ConverterMap = {
 const VERSION_CONVERTERS: Record<string, VersionConverter> = { initial, v0, v1, v2, v3, v4 }
 
 /// This converter is the latest version, and acts as a verification step.
-export const LATEST_VERSION_STRING = "v3";
+export const LATEST_VERSION_STRING: CurrentFormat = "v4";
 const LATEST_VERSION: VersionConverter = VERSION_CONVERTERS[LATEST_VERSION_STRING];
 
 export default function parseFromJson<T extends keyof ConverterMap>(type: T, json: NonNullable<any>): ParseResult<ConverterMap[T]> {
