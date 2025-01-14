@@ -56,7 +56,7 @@ export default function WillMenu(): ReactElement {
                     GAME_MANAGER.sendSaveWillPacket(text);
                 }}
             />
-            {notes.map((note, i) => {
+            {(notes.length === 0 ? [""] : notes).map((note, i) => {
                 const title = note.split('\n')[0] || translate("menu.will.notes");
                 return <TextDropdownArea
                     key={title + i}

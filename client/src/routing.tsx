@@ -32,7 +32,10 @@ async function routeWiki(anchorController: AnchorController, page: string) {
 async function routeLobby(anchorController: AnchorController, roomCode: string) {
     const reconnectData = loadReconnectData();
 
-    await GAME_MANAGER.setOutsideLobbyState();
+    if (!await GAME_MANAGER.setOutsideLobbyState()) {
+        anchorController.setContent(<StartMenu/>);
+        return;
+    }
     
     window.history.replaceState({}, "", '/');
 
@@ -92,25 +95,28 @@ async function route404(anchorController: AnchorController, path: string) {
     )
 }
 
-async function routeMain(anchorController: AnchorController) {
+async function routeMainButFirstTryUsingReconnectData(anchorController: AnchorController) {
     window.history.replaceState({}, "", "/");
 
     const reconnectData = loadReconnectData();
     
-    if (reconnectData) {
-        await GAME_MANAGER.setOutsideLobbyState();
-
-        const success = await GAME_MANAGER.sendRejoinPacket(reconnectData.roomCode, reconnectData.playerId);
-        if (!success) {
-            // Don't show an error message for an auto-rejoin. The user didn't prompt it - they will be confused.
-            // Reconnect data is deleted in messageListener
-            await GAME_MANAGER.setDisconnectedState();
-            anchorController.clearCoverCard();
-            anchorController.setContent(<StartMenu/>);
-        }
-    } else {
+    if (!reconnectData) {
         anchorController.setContent(<StartMenu/>)
+        return;
     }
+
+    if (!await GAME_MANAGER.setOutsideLobbyState()) {
+        anchorController.setContent(<StartMenu/>);
+        return;
+    }
+
+    if (!await GAME_MANAGER.sendRejoinPacket(reconnectData.roomCode, reconnectData.playerId)) {
+        anchorController.setContent(<StartMenu/>);
+        deleteReconnectData();
+        return;
+    }
+
+    // This is where we *should* handle joining the lobby, but it's handled in messageListener... grumble grumble
 }
 
 export default async function route(anchorController: AnchorController, url: Location) {
@@ -135,5 +141,5 @@ export default async function route(anchorController: AnchorController, url: Loc
         return await route404(anchorController, url.pathname);
     }
     
-    return await routeMain(anchorController);
+    return await routeMainButFirstTryUsingReconnectData(anchorController);
 }

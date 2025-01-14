@@ -1731,7 +1731,7 @@ fn cult_alternates() {
 
 #[test]
 fn puppeteer_marionettes_philosopher(){
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         puppeteer: Puppeteer,
         philo: Philosopher,
         townie: Detective,
@@ -1752,7 +1752,7 @@ fn puppeteer_marionettes_philosopher(){
         ChatMessageVariant::SeerResult{ enemies: true }
     );
 
-    game.skip_to(Night, 2);
+    game.skip_to(Night, 3);
 
     assert!(philo.send_ability_input_two_player_typical(puppeteer, townie));
 
@@ -1765,7 +1765,7 @@ fn puppeteer_marionettes_philosopher(){
 
 #[test]
 fn puppeteer_marionettes_die(){
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         puppeteer: Puppeteer,
         townie: Detective,
         townie2: Detective,
@@ -1779,18 +1779,16 @@ fn puppeteer_marionettes_die(){
 
     assert!(puppeteer.send_ability_input_player_list_typical(townie));
 
-    game.skip_to(Night, 2);
+    game.skip_to(Night, 3);
+
+    puppeteer.send_ability_input(AbilityInput::new(
+        ControllerID::role(puppeteer.player_ref(), Role::Puppeteer, 1),
+        AbilitySelection::new_integer(0)
+    ));
 
     assert!(puppeteer.send_ability_input_player_list_typical(townie2));
 
     game.next_phase();
-
-    assert!(!townie.alive());
-    assert!(townie2.alive());
-    assert!(townie3.alive());
-    assert!(puppeteer.alive());
-
-    game.skip_to(Obituary, 4);
 
     assert!(!townie.alive());
     assert!(!townie2.alive());
@@ -1800,7 +1798,7 @@ fn puppeteer_marionettes_die(){
 
 #[test]
 fn puppeteer_marionettes_win(){
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         puppeteer: Puppeteer,
         townie: Detective,
         townie2: Detective
@@ -1813,16 +1811,16 @@ fn puppeteer_marionettes_win(){
 
     assert!(puppeteer.send_ability_input_player_list_typical(townie));
 
-    game.skip_to(Nomination, 2);
+    game.skip_to(Nomination, 3);
 
     puppeteer.vote_for_player(Some(townie2));
     townie.vote_for_player(Some(townie2));
 
-    game.skip_to(Judgement, 2);
+    game.skip_to(Judgement, 3);
 
     puppeteer.set_verdict(Verdict::Guilty);
 
-    game.skip_to(Dusk, 2);
+    game.skip_to(Dusk, 3);
 
     assert!(puppeteer.alive());
     assert!(townie.alive());
@@ -1835,7 +1833,7 @@ fn puppeteer_marionettes_win(){
 
 #[test]
 fn deputy_shoots_marionette(){
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         deputy: Deputy,
         puppeteer: Puppeteer,
         townie: Detective
@@ -1847,7 +1845,7 @@ fn deputy_shoots_marionette(){
     ));
     assert!(puppeteer.send_ability_input_player_list_typical(townie));
 
-    game.skip_to(Discussion, 2);
+    game.skip_to(Discussion, 3);
 
     deputy.send_ability_input_player_list_typical(townie);
 
@@ -2470,9 +2468,7 @@ fn santa_cannot_convert_naughty_player() {
     kit::scenario!(game in Night 1 where
         santa: SantaClaus,
         nice: Villager,
-        nice2: Villager,
-        naughty: Villager,
-        naughty2: Villager
+        naughty: Villager
     );
     santa.send_ability_input_player_list_typical(nice);
 
@@ -2486,7 +2482,7 @@ fn santa_cannot_convert_naughty_player() {
     assert_contains!(santa.get_messages_after_night(2), 
         ChatMessageVariant::NextSantaAbility { ability: mafia_server::game::role::santa_claus::SantaListKind::Naughty }
     );
-    santa.send_ability_input_player_list([naughty, naughty2], 1);
+    santa.send_ability_input_player_list(naughty, 1);
 
     game.skip_to(Night, 3);
 
@@ -2495,14 +2491,9 @@ fn santa_cannot_convert_naughty_player() {
         GameConclusion::NaughtyList
     );
 
-    santa.send_ability_input_player_list_typical([naughty, nice2]);
+    santa.send_ability_input_player_list_typical(naughty);
 
     game.skip_to(Obituary, 4);
-
-    assert_contains!(
-        nice2.player_ref().win_condition(&*game).required_resolution_states_for_win().unwrap(),
-        GameConclusion::NiceList
-    );
 
     assert_contains!(
         naughty.player_ref().win_condition(&*game).required_resolution_states_for_win().unwrap(),
@@ -2530,35 +2521,40 @@ fn krampus_obeys_ability_order() {
         assert_contains!(krampus.get_messages_after_night(night), ChatMessageVariant::NextKrampusAbility { ability });
     };
 
-    expect_ability(1, KrampusAbility::Kill);
-    krampus.send_ability_input_player_list_typical(town1);
-
-    assert_not_contains!(town2.get_messages_after_night(2), ChatMessageVariant::YouDied);
-    game.skip_to(Obituary, 2);
-    assert!(!town1.alive());
-
-    game.skip_to(Night, 2);
-    expect_ability(2, KrampusAbility::DoNothing);
+    expect_ability(1, KrampusAbility::DoNothing);
     krampus.send_ability_input_player_list_typical(town2);
 
+    game.skip_to(Night, 2);
+
+    expect_ability(2, KrampusAbility::Kill);
+    krampus.send_ability_input_player_list_typical(town1);
+
+    assert_not_contains!(town2.get_messages_after_night(3), ChatMessageVariant::YouDied);
     game.skip_to(Obituary, 3);
-    assert!(town2.alive());
+    assert!(!town1.alive());
 
     game.skip_to(Night, 3);
-    expect_ability(3, KrampusAbility::Kill);
+    expect_ability(3, KrampusAbility::DoNothing);
+    krampus.send_ability_input_player_list_typical(town2);
+
+    game.skip_to(Obituary, 4);
+    assert!(town2.alive());
 
     game.skip_to(Night, 4);
     expect_ability(4, KrampusAbility::Kill);
-    krampus.send_ability_input_player_list_typical(town3);
-
-    game.skip_to(Obituary, 5);
-    assert!(!town3.alive());
 
     game.skip_to(Night, 5);
-    expect_ability(5, KrampusAbility::DoNothing);
+    expect_ability(5, KrampusAbility::Kill);
+    krampus.send_ability_input_player_list_typical(town3);
+
+    game.skip_to(Obituary, 6);
+    assert!(!town3.alive());
 
     game.skip_to(Night, 6);
-    expect_ability(6, KrampusAbility::Kill);
+    expect_ability(6, KrampusAbility::DoNothing);
+
+    game.skip_to(Night, 7);
+    expect_ability(7, KrampusAbility::Kill);
 }
 
 #[test]

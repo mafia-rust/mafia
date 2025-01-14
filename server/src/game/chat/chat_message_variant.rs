@@ -56,7 +56,7 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     GameOver { synopsis: Synopsis },
     #[serde(rename_all = "camelCase")]
-    PlayerQuit{player_index: PlayerIndex},
+    PlayerQuit{player_index: PlayerIndex, game_over: bool},
 
 
     

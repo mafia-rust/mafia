@@ -64,7 +64,7 @@ impl Lobby {
             .filter(|p| matches!(p.1.client_type, LobbyClientType::Player{..}))
             .count();
 
-        settings.role_list.0.resize(length, RoleOutline::Any);
+        settings.role_list.0.resize(length, RoleOutline::default());
     }
 
     pub fn send_to_client_by_id(&self, lobby_client_id: LobbyClientID, packet: ToClientPacket) {

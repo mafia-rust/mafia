@@ -149,7 +149,7 @@ export default function messageListener(packet: ToClientPacket){
                 }
                 GAME_MANAGER.state.players = new ListMap(GAME_MANAGER.state.players.entries());
             }else if(GAME_MANAGER.state.stateType === "game"){
-                GAME_MANAGER.state.host = packet.hosts.includes(GAME_MANAGER.state.myId===null?-1:GAME_MANAGER.state.myId)
+                GAME_MANAGER.state.host = packet.hosts.includes(GAME_MANAGER.state.myId ?? -1)
             }
         break;
         case "playersReady":
@@ -194,13 +194,13 @@ export default function messageListener(packet: ToClientPacket){
         case "lobbyClients":
             if(GAME_MANAGER.state.stateType === "lobby"){
 
-                let oldMySpectator = GAME_MANAGER.getMySpectator();
+                const oldMySpectator = GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId!)?.clientType.type === "spectator";
 
                 GAME_MANAGER.state.players = new ListMap();
                 for(let [clientId, lobbyClient] of packet.clients){
                     GAME_MANAGER.state.players.insert(clientId, lobbyClient);
                 }
-                let newMySpectator = GAME_MANAGER.getMySpectator();
+                const newMySpectator = GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId!)?.clientType.type === "spectator";
 
                 
                 if (oldMySpectator && !newMySpectator){
@@ -220,28 +220,31 @@ export default function messageListener(packet: ToClientPacket){
                 GAME_MANAGER.state.lobbyName = packet.name;
             }
         break;
-        case "startGame": {
-            const isSpectator = GAME_MANAGER.getMySpectator();
-            if(isSpectator){
-                GAME_MANAGER.setSpectatorGameState();
-                ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
-            }else{
-                GAME_MANAGER.setGameState();
-                ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
+        case "startGame": 
+            if (GAME_MANAGER.state.stateType === "lobby") {
+                const isSpectator = GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId!)?.clientType.type === "spectator";
+                if(isSpectator){
+                    GAME_MANAGER.setSpectatorGameState();
+                    ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
+                }else{
+                    GAME_MANAGER.setGameState();
+                    ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
+                }
+    
+                AudioController.queueFile("audio/start_game.mp3");
             }
-
-            AudioController.queueFile("audio/start_game.mp3");
-        }
-        break;
-        case "gameInitializationComplete": {
-            const isSpectator = GAME_MANAGER.getMySpectator();
-            if(isSpectator){
-                ANCHOR_CONTROLLER?.setContent(<SpectatorGameScreen/>);
-            }else{
-                ANCHOR_CONTROLLER?.setContent(<GameScreen/>);
+            break;
+        case "gameInitializationComplete":
+            if (GAME_MANAGER.state.stateType === "game") {
+                const isSpectator = GAME_MANAGER.state.clientState.type === "spectator";
+                GAME_MANAGER.state.initialized = true;
+                if(isSpectator){
+                    ANCHOR_CONTROLLER?.setContent(<SpectatorGameScreen/>);
+                }else{
+                    ANCHOR_CONTROLLER?.setContent(<GameScreen/>);
+                }
             }
-        }
-        break;
+            break;
         case "backToLobby":
             GAME_MANAGER.setLobbyState();
             ANCHOR_CONTROLLER?.setContent(<LobbyMenu/>);
@@ -419,19 +422,20 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 GAME_MANAGER.state.clientState.notes = packet.notes;
                 
-                if(GAME_MANAGER.state.clientState.notes.length === 0){
-                    const myIndex = GAME_MANAGER.state.clientState.myIndex;
-                    const myRoleKey = `role.${GAME_MANAGER.state.clientState.roleState.type}.name`;
+                // old default notes
+                // if(GAME_MANAGER.state.clientState.notes.length === 0){
+                //     const myIndex = GAME_MANAGER.state.clientState.myIndex;
+                //     const myRoleKey = `role.${GAME_MANAGER.state.clientState.roleState.type}.name`;
 
-                    GAME_MANAGER.sendSaveNotesPacket([
-                        "Claims\n" + 
-                        GAME_MANAGER.state.players
-                            .map(player => 
-                                `@${player.index + 1} - ${player.index === myIndex ? translate(myRoleKey) : ''}\n`
-                            )
-                            .join('')
-                    ]);
-                }
+                //     GAME_MANAGER.sendSaveNotesPacket([
+                //         "Claims\n" + 
+                //         GAME_MANAGER.state.players
+                //             .map(player => 
+                //                 `@${player.index + 1} - ${player.index === myIndex ? translate(myRoleKey) : ''}\n`
+                //             )
+                //             .join('')
+                //     ]);
+                // }
             }
         break;
         case "yourCrossedOutOutlines":
@@ -482,10 +486,12 @@ export default function messageListener(packet: ToClientPacket){
                     }
                 }
 
-                for(let chatMessage of packet.chatMessages){
-                    let audioSrc = chatMessageToAudio(chatMessage);
-                    if(audioSrc)
-                        AudioController.queueFile(audioSrc);
+                if (GAME_MANAGER.state.stateType !== "game" || GAME_MANAGER.state.initialized === true) {
+                    for(let chatMessage of packet.chatMessages){
+                        let audioSrc = chatMessageToAudio(chatMessage);
+                        if(audioSrc)
+                            AudioController.queueFile(audioSrc);
+                    }
                 }
             }
         break;

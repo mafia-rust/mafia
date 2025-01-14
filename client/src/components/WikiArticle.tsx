@@ -107,7 +107,7 @@ export default function WikiArticle(props: {
             return <section className="wiki-article">
                 <WikiStyledText className="wiki-article-standard">
                     {"# "+translate(`wiki.article.${articleType}.${props.article.split("/")[1]}.title`)+"\n"}
-                    {replaceMentions(translate(`wiki.article.${articleType}.${props.article.split("/")[1]}.text`))}
+                    {replaceMentions(translate(`wiki.article.${articleType}.${props.article.split("/")[1]}.text`), DUMMY_NAMES)}
                 </WikiStyledText>
             </section>
         }
@@ -139,7 +139,7 @@ function CategoryArticle(props: Readonly<{ category: WikiCategory }>): ReactElem
     return <section className="wiki-article">
         <WikiStyledText className="wiki-article-standard">
             {"# "+title+"\n"}
-            {description ? replaceMentions(description) : ""}
+            {description ? replaceMentions(description, DUMMY_NAMES) : ""}
         </WikiStyledText>
         <PageCollection 
             title={title}
@@ -218,7 +218,7 @@ function RoleSetArticle(): ReactElement {
             <WikiStyledText>{"# "+translate("wiki.article.generated.roleSet.title")}</WikiStyledText>
         </section>
         <Masonry columnsCount={columnCount}>
-            {ROLE_SETS.map(set => {
+            {ROLE_SETS.filter(set=>set!=="any").map(set => {
                 const description = translateChecked(`${set}.description`);
                 return <div key={set} className="masonry-item">
                     <PageCollection
