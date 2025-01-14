@@ -21,7 +21,7 @@ type RoleOutlineSelectorProps = {
 
 export default function RoleOutlineSelector(props: RoleOutlineSelectorProps): ReactElement {
     const handleAddUnion = () => {
-        props.onChange([...props.roleOutline, { role: "wildcard" }]);
+        props.onChange([...props.roleOutline, { roleSet: "any" }]);
     }
 
     return <div className="role-picker">
@@ -48,7 +48,11 @@ export default function RoleOutlineSelector(props: RoleOutlineSelectorProps): Re
                         onChange={groups => {
                             const options = [...props.roleOutline];
 
-                            options[index].insiderGroups = groups
+                            if(groups === undefined && "insiderGroups" in options[index]) {
+                                delete options[index].insiderGroups;
+                            } else {
+                                options[index].insiderGroups = groups;
+                            }
 
                             props.onChange(options)
                         }}
@@ -59,7 +63,11 @@ export default function RoleOutlineSelector(props: RoleOutlineSelectorProps): Re
                         onChange={concs => {
                             const options = [...props.roleOutline];
 
-                            options[index].winIfAny = concs
+                            if(concs === undefined && "winIfAny" in options[index]) {
+                                delete options[index].winIfAny;
+                            } else {
+                                options[index].winIfAny = concs;
+                            }
 
                             props.onChange(options)
                         }}
@@ -70,22 +78,26 @@ export default function RoleOutlineSelector(props: RoleOutlineSelectorProps): Re
                         onChange={(value) => {
                             let options = [...props.roleOutline];
 
+                            let old = {...options[index]};
+
                             switch (value.type) {
                                 case "role":
                                     options[index] = {
-                                        winIfAny: options[index].winIfAny,
-                                        insiderGroups: options[index].insiderGroups,
                                         role: value.role
                                     }
                                     break;
                                 case "roleSet":
                                     options[index] = {
-                                        winIfAny: options[index].winIfAny,
-                                        insiderGroups: options[index].insiderGroups,
                                         roleSet: value.roleSet
                                     }
                                     break;
                             }
+                            
+                            if("winIfAny" in old)
+                                options[index].winIfAny = old.winIfAny;
+                            if("insiderGroups" in old)
+                                options[index].insiderGroups = old.insiderGroups;
+
                             props.onChange(options);
                         }}
                     />
