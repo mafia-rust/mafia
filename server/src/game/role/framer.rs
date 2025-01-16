@@ -85,7 +85,7 @@ impl RoleStateImpl for Framer {
             .collect::<VecSet<_>>();
         
         let grayed_out = 
-            !actor_ref.alive(game) || 
+            actor_ref.ability_deactivated_from_death(game) || 
             Detained::is_detained(game, actor_ref);
         
         
@@ -115,7 +115,7 @@ impl RoleStateImpl for Framer {
 
 
         let grayed_out = 
-            !actor_ref.alive(game) || 
+            actor_ref.ability_deactivated_from_death(game) || 
             Detained::is_detained(game, actor_ref) ||
             !framed_player_exists;
         

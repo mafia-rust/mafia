@@ -84,7 +84,7 @@ impl RoleStateImpl for Martyr {
                 MartyrState::StillPlaying { bullets } => bullets == 0,
                 _ => true
             } ||
-            !actor_ref.alive(game) || 
+            actor_ref.ability_deactivated_from_death(game) || 
             Detained::is_detained(game, actor_ref) ||
             game.day_number() <= 1,
             Some(PhaseType::Obituary),

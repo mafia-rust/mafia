@@ -60,7 +60,7 @@ impl RoleStateImpl for Impostor {
                     .collect()
             ),
             AbilitySelection::new_role_option(Some(Role::Impostor)),
-            !actor_ref.alive(game),
+            actor_ref.ability_deactivated_from_death(game),
             None,
             false,
             vec_set!(actor_ref)

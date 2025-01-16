@@ -25,7 +25,7 @@ pub fn controller_parameters_map_player_list_night_typical(
 ) -> ControllerParametersMap {
     
     let grayed_out = 
-        !actor_ref.alive(game) || 
+        actor_ref.ability_deactivated_from_death(game) ||
         Detained::is_detained(game, actor_ref) ||
         grayed_out;
 
@@ -59,7 +59,7 @@ pub fn controller_parameters_map_boolean(
     ability_id: ControllerID,
 ) -> ControllerParametersMap {
     let grayed_out = 
-        !actor_ref.alive(game) || 
+        actor_ref.ability_deactivated_from_death(game) || 
         Detained::is_detained(game, actor_ref) ||
         grayed_out;
 

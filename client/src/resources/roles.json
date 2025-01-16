@@ -479,6 +479,16 @@
             {"type": "transported"}
         ]
     },
+    "psychopomp":{
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townSupport"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[]
+    },
     "retributionist": {
         "mainRoleSet": "town",
         "roleSets": ["town", "townCommon", "townSupport"],

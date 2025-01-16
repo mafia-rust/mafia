@@ -69,7 +69,7 @@ impl RoleStateImpl for Disguiser {
                     Some(1)
                 ),
             AbilitySelection::new_player_list(vec![]),
-            !actor_ref.alive(game) ||
+            actor_ref.ability_deactivated_from_death(game) ||
             Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),
             false,
@@ -84,7 +84,7 @@ impl RoleStateImpl for Disguiser {
                         .collect()
                 ),
                 AbilitySelection::new_role_option(Some(Role::Disguiser)),
-                !actor_ref.alive(game),
+                actor_ref.ability_deactivated_from_death(game),
                 None,
                 false,
                 self.players_with_disguiser_menu(actor_ref)

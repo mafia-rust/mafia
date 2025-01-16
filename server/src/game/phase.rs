@@ -5,7 +5,12 @@ use serde::{Serialize, Deserialize};
 use crate::{game::modifiers::{ModifierType, Modifiers}, packet::ToClientPacket};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant}, event::{before_phase_end::BeforePhaseEnd, on_any_death::OnAnyDeath, on_night_priority::OnNightPriority, on_phase_start::OnPhaseStart}, grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
+    chat::{ChatGroup, ChatMessageVariant},
+    event::{
+        before_phase_end::BeforePhaseEnd, on_any_death::OnAnyDeath,
+        on_night_priority::OnNightPriority, on_phase_start::OnPhaseStart
+    },
+    grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
 };
 
 
@@ -145,7 +150,9 @@ impl PhaseState {
                 for player_ref in PlayerReference::all_players(game) {
                     if player_ref.night_died(game) {
                         let new_grave = Grave::from_player_night(game, player_ref);
-                        events.push(player_ref.die_return_event(game, new_grave));
+                        if let Some(event) = player_ref.die_return_event(game, new_grave){
+                            events.push(event);
+                        }
                     }
                 }
 

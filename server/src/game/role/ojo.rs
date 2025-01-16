@@ -96,7 +96,7 @@ impl RoleStateImpl for Ojo {
                     .collect()
             ),
             AbilitySelection::new_two_role_outline_option(None, None),
-            !actor_ref.alive(game) || 
+            actor_ref.ability_deactivated_from_death(game) || 
             Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),
             false,
@@ -109,7 +109,7 @@ impl RoleStateImpl for Ojo {
                     Role::values().into_iter().map(|r|Some(r)).chain(std::iter::once(None)).collect()
                 ),
                 AbilitySelection::new_role_option(None),
-                !actor_ref.alive(game) || 
+                actor_ref.ability_deactivated_from_death(game) || 
                 Detained::is_detained(game, actor_ref) ||
                 game.day_number() == 1,
                 Some(PhaseType::Obituary),

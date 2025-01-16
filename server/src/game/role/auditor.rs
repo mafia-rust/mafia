@@ -92,7 +92,7 @@ impl RoleStateImpl for Auditor {
                     .collect()
             ),
             AbilitySelection::new_two_role_outline_option(None, None),
-            !actor_ref.alive(game) || 
+            actor_ref.ability_deactivated_from_death(game) ||
             Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),
             false,

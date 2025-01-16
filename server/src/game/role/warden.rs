@@ -91,7 +91,7 @@ impl RoleStateImpl for Warden {
                 Some(MAX_PLAYERS_IN_PRISON),
             ),
             AbilitySelection::new_player_list(vec![]),
-            !actor_ref.alive(game) || game.day_number() <= 1,
+            actor_ref.ability_deactivated_from_death(game) || game.day_number() <= 1,
             Some(crate::game::phase::PhaseType::Night),
             false,
             vec_set!(actor_ref)
@@ -103,7 +103,7 @@ impl RoleStateImpl for Warden {
                 ControllerID::role(actor_ref, Role::Warden, 1),
                 super::AvailableAbilitySelection::new_boolean(),
                 AbilitySelection::new_boolean(false),
-                !actor_ref.alive(game),
+                actor_ref.ability_deactivated_from_death(game),
                 Some(crate::game::phase::PhaseType::Obituary),
                 false,
                 vec_set!(actor_ref)
@@ -132,7 +132,7 @@ impl RoleStateImpl for Warden {
                     ControllerID::role(actor_ref, Role::Warden, 0)
                 ) else {return};
 
-                if !actor_ref.alive(game) || players_in_prison.iter().any(|p|!p.alive(game)) {return};
+                if actor_ref.ability_deactivated_from_death(game) || players_in_prison.iter().any(|p|!p.alive(game)) {return};
                 
                 self.players_in_prison = players_in_prison.clone();
                 

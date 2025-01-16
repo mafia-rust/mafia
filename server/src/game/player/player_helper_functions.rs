@@ -218,14 +218,18 @@ impl PlayerReference{
     /// ### Pre condition:
     /// self.alive(game) == false
     pub fn die(&self, game: &mut Game, grave: Grave){
-        self.die_return_event(game, grave).invoke(game);
+        if let Some(event) = self.die_return_event(game, grave){
+            event.invoke(game);
+        }
     }
-    pub fn die_return_event(&self, game: &mut Game, grave: Grave)->OnAnyDeath{
+    /// if the player is already dead, this does nothing and returns none
+    pub fn die_return_event(&self, game: &mut Game, grave: Grave)->Option<OnAnyDeath>{
+        if !self.alive(game) { return None }
         self.set_alive(game, false);
         self.add_private_chat_message(game, ChatMessageVariant::YouDied);
         game.add_grave(grave.clone());
 
-        OnAnyDeath::new(*self)
+        Some(OnAnyDeath::new(*self))
     }
     pub fn initial_role_creation(&self, game: &mut Game){
         let new_role_data = self.role(&game).new_state(&game);
@@ -307,6 +311,20 @@ impl PlayerReference{
         map
     }
 
+    pub fn ability_deactivated_from_death(&self, game: &Game) -> bool {
+        !(
+            self.alive(game) ||
+            (
+                PlayerReference::all_players(game).any(|p|
+                    if let RoleState::Psychopomp(c) = p.role_state(game) {
+                        c.targets.contains(self)
+                    }else{
+                        false
+                    }
+                )
+            )
+        )
+    }
     pub fn defense(&self, game: &Game) -> DefensePower {
         if game.current_phase().is_night() {
             self.night_defense(game)
@@ -319,7 +337,7 @@ impl PlayerReference{
     }
     pub fn has_innocent_aura(&self, game: &Game) -> bool {
         PlayerReference::all_players(game).into_iter().any(|player_ref| 
-            player_ref.alive(game) && match player_ref.role_state(game) {
+            match player_ref.role_state(game) {
                 RoleState::Disguiser(r) => 
                     r.current_target.is_some_and(|player|player == *self),
                 _ => false

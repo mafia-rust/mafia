@@ -136,7 +136,7 @@ impl RoleStateImpl for Counterfeiter {
                 ),
                 AbilitySelection::new_role_option(Some(Role::Counterfeiter)),
                 self.forges_remaining == 0 ||
-                !actor_ref.alive(game),
+                actor_ref.ability_deactivated_from_death(game),
                 None,
                 false,
                 vec_set![actor_ref]
@@ -149,7 +149,7 @@ impl RoleStateImpl for Counterfeiter {
                 AvailableAbilitySelection::new_string(),
                 AbilitySelection::new_string(String::new()),
                 self.forges_remaining == 0 ||
-                !actor_ref.alive(game),
+                actor_ref.ability_deactivated_from_death(game),
                 None,
                 false,
                 vec_set![actor_ref]

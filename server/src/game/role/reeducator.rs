@@ -107,7 +107,7 @@ impl RoleStateImpl for Reeducator {
         
         
         let grayed_out = 
-            !actor_ref.alive(game) || 
+            actor_ref.ability_deactivated_from_death(game) || 
             Detained::is_detained(game, actor_ref);
 
         let default = Reeducator::default_role(game);
