@@ -85,6 +85,7 @@ impl RoleStateImpl for Recruiter {
             game,
             actor_ref,
             false,
+            false,
             (!choose_attack && self.recruits_remaining <= 0) || (choose_attack && game.day_number() == 1),
             ControllerID::role(actor_ref, Role::Recruiter, 0)
         ).combine_overwrite_owned(

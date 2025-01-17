@@ -84,6 +84,7 @@ impl RoleStateImpl for Ambusher {
             game,
             actor_ref,
             false,
+            false,
             !(game.day_number() > 1),
             ControllerID::role(actor_ref, Role::Ambusher, 0)
         )

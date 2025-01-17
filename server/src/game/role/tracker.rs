@@ -41,6 +41,7 @@ impl RoleStateImpl for Tracker {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Tracker, 0)
         )

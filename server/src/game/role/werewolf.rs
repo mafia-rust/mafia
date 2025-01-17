@@ -127,6 +127,7 @@ impl RoleStateImpl for Werewolf {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Werewolf, 0)
         )

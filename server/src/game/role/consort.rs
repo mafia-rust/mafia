@@ -34,6 +34,7 @@ impl RoleStateImpl for Consort {
             actor_ref,
             false,
             false,
+            false,
             ControllerID::role(actor_ref, Role::Consort, 0)
         )
     }

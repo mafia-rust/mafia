@@ -42,6 +42,7 @@ impl RoleStateImpl for SerialKiller {
             game,
             actor_ref,
             false,
+            true,
             game.day_number() <= 1,
             ControllerID::role(actor_ref, Role::SerialKiller, 0)
         )

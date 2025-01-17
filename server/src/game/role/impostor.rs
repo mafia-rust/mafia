@@ -49,6 +49,7 @@ impl RoleStateImpl for Impostor {
             game,
             actor_ref,
             false,
+            false,
             game.day_number() <= 1,
             ControllerID::role(actor_ref, Role::Impostor, 0)
         ).combine_overwrite_owned(ControllerParametersMap::new_controller_fast(

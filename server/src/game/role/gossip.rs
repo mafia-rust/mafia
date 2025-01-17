@@ -41,6 +41,7 @@ impl RoleStateImpl for Gossip {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Gossip, 0)
         )

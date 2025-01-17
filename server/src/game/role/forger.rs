@@ -100,6 +100,7 @@ impl RoleStateImpl for Forger {
             game,
             actor_ref,
             false,
+            false,
             self.forges_remaining == 0,
             ControllerID::role(actor_ref, Role::Forger, 0)
         ).combine_overwrite_owned(

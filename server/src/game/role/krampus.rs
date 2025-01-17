@@ -110,6 +110,7 @@ impl RoleStateImpl for Krampus {
             actor_ref,
             false,
             false,
+            false,
             ControllerID::role(actor_ref, Role::Krampus, ability_index)
         )
     }

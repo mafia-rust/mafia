@@ -105,6 +105,7 @@ impl RoleStateImpl for Armorsmith {
             game,
             actor_ref,
             false,
+            true,
             self.open_shops_remaining <= 0,
             ControllerID::role(actor_ref, Role::Armorsmith, 0)
         )

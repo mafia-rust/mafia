@@ -76,6 +76,7 @@ impl RoleStateImpl for Apostle {
             game,
             actor_ref,
             false,
+            false,
             grayed_out,
             ControllerID::role(actor_ref, Role::Apostle, 0)
         )

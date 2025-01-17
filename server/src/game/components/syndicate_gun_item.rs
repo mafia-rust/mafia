@@ -43,6 +43,7 @@ impl SyndicateGunItem {
                 game,
                 player_with_gun,
                 false,
+                false,
                 game.day_number() <= 1,
                 ControllerID::syndicate_gun_item_shoot()
             ).combine_overwrite_owned(

@@ -122,6 +122,7 @@ impl RoleStateImpl for Counterfeiter {
             game,
             actor_ref,
             false,
+            false,
             game.day_number() <= 1,
             ControllerID::role(actor_ref, Role::Counterfeiter, 0)
         ).combine_overwrite_owned(
