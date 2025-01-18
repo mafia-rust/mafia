@@ -112,7 +112,8 @@ impl RoleStateImpl for SantaClaus {
                         Some(1)
                     ),
                     AbilitySelection::new_player_list(vec![]),
-                    Detained::is_detained(game, actor_ref) || !actor_ref.alive(game),
+                    Detained::is_detained(game, actor_ref) ||
+                    actor_ref.ability_deactivated_from_death(game),
                     Some(PhaseType::Obituary),
                     false,
                     vec_set!(actor_ref),
@@ -128,7 +129,8 @@ impl RoleStateImpl for SantaClaus {
                         Some(1)
                     ),
                     AbilitySelection::new_player_list(vec![]),
-                    Detained::is_detained(game, actor_ref) || !actor_ref.alive(game),
+                    Detained::is_detained(game, actor_ref) ||
+                    actor_ref.ability_deactivated_from_death(game),
                     Some(PhaseType::Obituary),
                     false,
                     vec_set!(actor_ref),

@@ -109,6 +109,7 @@ macros::roles! {
     Reporter : reporter,
     Mayor : mayor,
     Transporter : transporter,
+    Psychopomp : psychopomp,
 
     // Mafia
     Godfather : godfather,
@@ -385,7 +386,7 @@ impl Role{
     pub fn possession_immune(&self)->bool{
         match self {
             | Role::Bouncer
-            | Role::Veteran
+            | Role::Veteran | Role::Psychopomp
             | Role::Transporter | Role::Retributionist
             | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper
             | Role::MafiaWitch | Role::Necromancer => true,

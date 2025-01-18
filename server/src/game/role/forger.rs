@@ -100,6 +100,7 @@ impl RoleStateImpl for Forger {
             game,
             actor_ref,
             false,
+            false,
             self.forges_remaining == 0,
             ControllerID::role(actor_ref, Role::Forger, 0)
         ).combine_overwrite_owned(
@@ -114,7 +115,7 @@ impl RoleStateImpl for Forger {
                 ),
                 AbilitySelection::new_role_option(Some(Role::Forger)),
                 self.forges_remaining == 0 ||
-                !actor_ref.alive(game),
+                actor_ref.ability_deactivated_from_death(game),
                 None,
                 false,
                 vec_set![actor_ref]
@@ -127,7 +128,7 @@ impl RoleStateImpl for Forger {
                 AvailableAbilitySelection::new_string(),
                 AbilitySelection::new_string(String::new()),
                 self.forges_remaining == 0 ||
-                !actor_ref.alive(game),
+                actor_ref.ability_deactivated_from_death(game),
                 None,
                 false,
                 vec_set![actor_ref]

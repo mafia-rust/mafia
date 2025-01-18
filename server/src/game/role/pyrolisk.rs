@@ -64,6 +64,7 @@ impl RoleStateImpl for Pyrolisk {
             game,
             actor_ref,
             false,
+            true,
             game.day_number() <= 1 ,
             ControllerID::role(actor_ref, Role::Pyrolisk, 0)
         )

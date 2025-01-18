@@ -103,6 +103,7 @@ impl RoleStateImpl for Yer {
                 game,
                 actor_ref,
                 false,
+                true,
                 game.day_number() <= 1,
                 ControllerID::role(actor_ref, Role::Yer, 1)
             )
@@ -116,7 +117,9 @@ impl RoleStateImpl for Yer {
                         .collect()
                 ),
                 AbilitySelection::new_role_option(Some(Role::Yer)),
-                self.star_passes_remaining <= 0 || !actor_ref.alive(game) || game.day_number() <= 1,
+                self.star_passes_remaining <= 0 ||
+                actor_ref.ability_deactivated_from_death(game) ||
+                game.day_number() <= 1,
                 None,
                 false,
                 vec_set!(actor_ref)

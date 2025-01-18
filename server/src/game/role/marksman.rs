@@ -71,7 +71,7 @@ impl RoleStateImpl for Marksman {
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         
         let gray_out_mark = 
-            !actor_ref.alive(game) || 
+            actor_ref.ability_deactivated_from_death(game) || 
             Detained::is_detained(game, actor_ref) ||
             self.state != MarksmanState::Loaded;
 
@@ -106,7 +106,7 @@ impl RoleStateImpl for Marksman {
 
 
         let gray_out_camp = 
-            !actor_ref.alive(game) || 
+            actor_ref.ability_deactivated_from_death(game) || 
             Detained::is_detained(game, actor_ref) ||
             self.state != MarksmanState::Loaded ||
             if let Some(marked_players) = marked_players {

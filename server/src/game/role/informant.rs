@@ -47,6 +47,7 @@ impl RoleStateImpl for Informant {
             actor_ref,
             false,
             false,
+            false,
             ControllerID::role(actor_ref, Role::Informant, 0)
         )
     }

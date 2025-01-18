@@ -39,6 +39,7 @@ impl RoleStateImpl for Lookout {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Lookout, 0)
         )

@@ -52,6 +52,7 @@ impl RoleStateImpl for Scarecrow {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Scarecrow, 0)
         )

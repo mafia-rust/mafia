@@ -85,6 +85,7 @@ impl RoleStateImpl for Recruiter {
             game,
             actor_ref,
             false,
+            false,
             (!choose_attack && self.recruits_remaining <= 0) || (choose_attack && game.day_number() == 1),
             ControllerID::role(actor_ref, Role::Recruiter, 0)
         ).combine_overwrite_owned(
@@ -93,7 +94,7 @@ impl RoleStateImpl for Recruiter {
                 ControllerID::role(actor_ref, Role::Recruiter, 1),
                 AvailableAbilitySelection::new_integer(0, if self.recruits_remaining > 0 {1} else {0}),
                 AbilitySelection::new_integer(0),
-                !actor_ref.alive(game),
+                actor_ref.ability_deactivated_from_death(game),
                 None,
                 false,
                 vec_set![actor_ref],

@@ -18,6 +18,8 @@ export type RoleState = {
 } | {
     type: "transporter"
 } | {
+    type: "psychopomp"
+} | {
     type: "detective"
 } | {
     type: "lookout"

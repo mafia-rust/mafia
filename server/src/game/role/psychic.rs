@@ -40,6 +40,7 @@ impl RoleStateImpl for Psychic {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Psychic, 0)
         )

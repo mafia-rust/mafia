@@ -32,7 +32,7 @@ impl RoleStateImpl for Reporter {
         if 
             priority == Priority::Investigative &&
             Self::get_public(game, actor_ref) && 
-            actor_ref.alive(game) &&
+            !actor_ref.ability_deactivated_from_death(game) &&
             !actor_ref.night_blocked(game) &&
             !actor_ref.night_silenced(game)
         {
@@ -55,7 +55,7 @@ impl RoleStateImpl for Reporter {
                 Some(1)
             ),
             AbilitySelection::new_player_list(vec![]),
-            !actor_ref.alive(game),
+            actor_ref.ability_deactivated_from_death(game),
             Some(PhaseType::Night),
             false,
             vec_set![actor_ref]
@@ -66,7 +66,7 @@ impl RoleStateImpl for Reporter {
                 ControllerID::role(actor_ref, Role::Reporter, 1),
                 AvailableAbilitySelection::new_boolean(),
                 AbilitySelection::new_boolean(false),
-                !actor_ref.alive(game),
+                actor_ref.ability_deactivated_from_death(game),
                 None,
                 false,
                 vec_set![actor_ref]
@@ -78,7 +78,7 @@ impl RoleStateImpl for Reporter {
                 ControllerID::role(actor_ref, Role::Reporter, 2),
                 AvailableAbilitySelection::new_string(),
                 AbilitySelection::new_string(String::new()),
-                !actor_ref.alive(game),
+                actor_ref.ability_deactivated_from_death(game),
                 None,
                 false,
                 vec_set![actor_ref]
@@ -89,7 +89,7 @@ impl RoleStateImpl for Reporter {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, 
             if 
                 game.current_phase().is_night() &&
-                actor_ref.alive(game) &&
+                !actor_ref.ability_deactivated_from_death(game) &&
                 self.interviewed_target.map_or_else(||false, |p|p.alive(game))
             {
                 vec![ChatGroup::Interview]
@@ -102,7 +102,7 @@ impl RoleStateImpl for Reporter {
         let mut out = crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref);
         if 
             game.current_phase().is_night() &&
-            actor_ref.alive(game) &&
+            !actor_ref.ability_deactivated_from_death(game) &&
             self.interviewed_target.map_or_else(||false, |p|p.alive(game))
         {
             out.insert(ChatGroup::Interview);
@@ -117,7 +117,7 @@ impl RoleStateImpl for Reporter {
                 ) else {return};
                 let Some(target) = target.first() else {return};
 
-                if !actor_ref.alive(game) || !target.alive(game) {return};
+                if actor_ref.ability_deactivated_from_death(game) || !target.alive(game) {return};
                 
                 self.interviewed_target = Some(*target);
                 

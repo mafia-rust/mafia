@@ -30,12 +30,10 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 impl RoleStateImpl for Spy {
     type ClientRoleState = Spy;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        
-        if !actor_ref.alive(game) {return;}
-
         match priority {
             Priority::Investigative => {
                 if actor_ref.night_blocked(game) {return;}
+                if actor_ref.ability_deactivated_from_death(game) {return;}
 
                 let mut mafia_visits = vec![];
                 for other_player in PlayerReference::all_players(game){
@@ -77,6 +75,7 @@ impl RoleStateImpl for Spy {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Spy, 0)
         )

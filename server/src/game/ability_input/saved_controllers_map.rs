@@ -165,6 +165,8 @@ impl SavedControllersMap{
     }
 
     /// return true if selection was valid
+    /// return false if selection was invalid (ie wrong actor)
+    /// if selection is invalid then nothing happens, nothing is updated
     pub fn set_selection_in_controller(
         game: &mut Game,
         actor: PlayerReference,
