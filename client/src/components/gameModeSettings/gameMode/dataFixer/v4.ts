@@ -35,8 +35,8 @@ function parseSettings(json: NonNullable<any>): ParseResult<Settings> {
         }
     }
 
-    if (json.format !== "v3") {
-        return Failure("settingsFormatNotV3", json);
+    if (json.format !== "v4") {
+        return Failure("settingsFormatNotV4", json);
     }
     
     const roleSpecificMenus = parseRoleSpecificMenus(json.roleSpecificMenus);
