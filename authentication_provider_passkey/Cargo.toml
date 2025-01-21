@@ -1,0 +1,9 @@
+[package]
+name = "mafia_autentication_provider_passkey"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+lapin = "2.5.0"
+passkey-authenticator = "0.4.0"
+native-tls = "0.2.12"

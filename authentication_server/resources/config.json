@@ -1,0 +1,5 @@
+{
+    "amqp_address": "amqp://127.0.0.1:5672/%2f",
+    "mongodb_uri": "mongodb://localhost:27017",
+    "database_name": "mafia_authentication"
+}

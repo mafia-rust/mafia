@@ -1,0 +1,11 @@
+[package]
+name = "mafia_autentication_server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+lapin = "2.5.0"
+tokio = { version = "1.43.0", features = ["full"] }
+serde = "1.0.217"
+serde_json = "1.0.137"
+mongodb = "3.2.0"
