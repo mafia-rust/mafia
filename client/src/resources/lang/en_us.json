@@ -1460,19 +1460,19 @@
     "wiki.article.role.snoop.abilities":"- Visit a player to search them\n    - If your target is a town loyalist, and you are not visited by anyone, you are told they are a town loyalist",
     "wiki.article.role.snoop.attributes":"- If your target has a suspicious aura, your results will be inconclusive",
     "wiki.article.role.snoop.extra":"- innocent aura doesn't effect your results",
-    
+
     "wiki.article.role.gossip.reminder": "At night, select a player to eavesdrop on, and learn if they visited a player who is enemies with town.",
     "wiki.article.role.gossip.guide": "- At night, select a player. You are told if they visited a player who is enemies with town\n- If they visited a friend, or nobody, they did not visit an enemy",
     "wiki.article.role.gossip.abilities":"- Visit a player to eavesdrop on\n    - If your target visited a player who is enemies with town, you are told so\n    - If your target visited nobody, then they didn't visit an enemy of the town",
     "wiki.article.role.gossip.attributes":"- If any player your target visits has a suspicious aura, then you are told they visited a town enemy",
     "wiki.article.role.gossip.extra":"- Suspicious aura overrides innocent aura\n- If your target visits multiple other players, you learn if at least one of them is a town enemy\n- False appeared visits can mess with your results, depending on who your target appears to visit\n- Your target having an aura does not mess with the results, however, their targets having an aura does",
-    
+
     "wiki.article.role.tallyClerk.reminder": "At night, you are told how many players are not town loyalists from the players who voted guilty today.",
     "wiki.article.role.tallyClerk.guide": "- At night, you are told how many players are not town loyalists from the players who voted guilty during any of the trials today\n- If any player has innocent aura, they register as a town loyalist\n- If any player has suspicious aura, they register as not a town loyalist",
     "wiki.article.role.tallyClerk.abilities":"- At night, you are told how many players are not town loyalists from the players who voted guilty today\n- If you are blocked, you aren't told anything\n- Your ability doesn't depend on visits",
     "wiki.article.role.tallyClerk.attributes":"- A suspicious aura makes a player register as not a town loyalist\n- An innocent aura makes a player register as a town loyalist\n- A suspicious aura overwrites innocent aura to the Tally Clerk",
     "wiki.article.role.tallyClerk.extra":"",
-    
+
     "wiki.article.role.doctor.reminder": "At night, select a player to protect from attacks. You can protect yourself once per game.",
     "wiki.article.role.doctor.guide": "- At night, select a player to protect\n    - Whoever you protect doesn't die if they're attacked\n    - You and the player you protected are both told if they are attacked\n- You can select yourself to protect yourself once per game\n- If your target is attacked by a protection-piercing attack they still die\n\nYou should try to protect people you think are townies who will be attacked.",
     "wiki.article.role.doctor.abilities":"* Visit a player to protect for the night",
