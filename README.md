@@ -21,14 +21,6 @@ npm start
 ## Server setup
 ### Install Rust
 Follow the [tutorial](https://www.rust-lang.org/learn/get-started) on the rust website.
-### VScode
-If you're using VSCode, it's recommended to download the following extensions to make working on the project easier:
- - [Rust Analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) - You probably already have this. You definitely need it.
- - [Even Better Toml](https://marketplace.visualstudio.com/items?itemName=tamasfe.even-better-toml) - Language support for .TOML files
- - [Crates](https://marketplace.visualstudio.com/items?itemName=serayuzgur.crates) - Helps manage crate versions
- - [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens) - Show error messages inline
- - [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens) - View git blame inline
- - [Spell checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker) - Spelling corrections
 
 It's also a good idea to install clippy (a linter):
 ```bash
@@ -38,6 +30,15 @@ You can make it the default linter using this setting (but you don't need to):
 ```json
 "rust-analyzer.check.command": "clippy",
 ```
+
+### Install RabbitMQ
+Required for communication between the authentication backend, providers, and game server. [Download](https://www.rabbitmq.com/docs/download)
+
+### Install MongoDB
+Used to store information about users. [Download](https://www.mongodb.com/try/download/community)
+
+### Starting the authentication server
+// TODO
 
 ### Starting the server
 Enter the server directory and build the project using cargo.
@@ -64,3 +65,14 @@ curl -fSsL https://raw.githubusercontent.com/mafia-rust/mafia/main/system/instal
 ```bash
 ./mafia/system/update.sh
 ```
+
+
+## Development
+### VScode
+If you're using VSCode, it's recommended to download the following extensions to make working on the project easier:
+ - [Rust Analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) - You probably already have this. You definitely need it.
+ - [Even Better Toml](https://marketplace.visualstudio.com/items?itemName=tamasfe.even-better-toml) - Language support for .TOML files
+ - [Crates](https://marketplace.visualstudio.com/items?itemName=serayuzgur.crates) - Helps manage crate versions
+ - [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens) - Show error messages inline
+ - [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens) - View git blame inline
+ - [Spell checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker) - Spelling corrections
