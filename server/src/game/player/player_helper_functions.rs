@@ -3,8 +3,12 @@ use std::collections::HashSet;
 use rand::seq::SliceRandom;
 
 use crate::{game::{
-    ability_input::{AbilitySelection, ControllerParametersMap, SavedControllersMap}, attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
-        arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura, insider_group::InsiderGroupID, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette
+    ability_input::{AbilitySelection, ControllerParametersMap, SavedControllersMap},
+    attack_power::{AttackPower, DefensePower},
+    chat::{ChatGroup, ChatMessage, ChatMessageVariant},
+    components::{
+        arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura,
+        insider_group::InsiderGroupID, puppeteer_marionette::PuppeteerMarionette
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch
     }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, win_condition::WinCondition, Game
@@ -373,8 +377,11 @@ impl PlayerReference{
         }
     }
     pub fn keeps_game_running(&self, game: &Game) -> bool {
-        if MafiaRecruits::is_recruited(game, *self) {return false;}
         if PuppeteerMarionette::is_marionette(game, *self) {return false;}
+
+        if InsiderGroupID::Mafia.is_player_in_revealed_group(game, *self) {return true;}
+        if self.win_condition(game).is_loyalist_for(GameConclusion::Town) {return true;}
+        
         GameConclusion::keeps_game_running(self.role(game))
     }
 
