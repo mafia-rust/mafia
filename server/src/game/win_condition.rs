@@ -58,6 +58,12 @@ impl WinCondition{
             WinCondition::RoleStateWon => false,
         }
     }
+    pub fn is_loyalist(&self)->bool{
+        match self{
+            WinCondition::GameConclusionReached{win_if_any} => win_if_any.len() == 1,
+            WinCondition::RoleStateWon => false,
+        }
+    }
     
     pub fn new_loyalist(resolution_state: GameConclusion) -> WinCondition {
         let mut win_if_any = HashSet::new();
