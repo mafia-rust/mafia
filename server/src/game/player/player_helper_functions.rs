@@ -320,7 +320,7 @@ impl PlayerReference{
             self.alive(game) ||
             (
                 PlayerReference::all_players(game).any(|p|
-                    if let RoleState::Psychopomp(c) = p.role_state(game) {
+                    if let RoleState::Coxswain(c) = p.role_state(game) {
                         c.targets.contains(self)
                     }else{
                         false

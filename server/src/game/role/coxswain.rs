@@ -19,7 +19,7 @@ use super::{
 
 #[derive(Clone, Debug, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct Psychopomp{
+pub struct Coxswain{
     pub targets: VecSet<PlayerReference>,
 }
 
@@ -27,12 +27,12 @@ pub struct Psychopomp{
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Psychopomp {
-    type ClientRoleState = Psychopomp;
+impl RoleStateImpl for Coxswain {
+    type ClientRoleState = Coxswain;
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::new_controller_fast(
             game,
-            ControllerID::role(actor_ref, Role::Psychopomp, 0),
+            ControllerID::role(actor_ref, Role::Coxswain, 0),
             AvailableAbilitySelection::new_player_list(
                 PlayerReference::all_players(game)
                     .filter(|target_ref|
@@ -87,7 +87,7 @@ impl RoleStateImpl for Psychopomp {
                 
                 //set new
                 let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(
-                    ControllerID::role(actor_ref, Role::Psychopomp, 0)
+                    ControllerID::role(actor_ref, Role::Coxswain, 0)
                 ) else {return};
                 
                 if actor_ref.ability_deactivated_from_death(game) {return};
@@ -100,6 +100,6 @@ impl RoleStateImpl for Psychopomp {
         }
     }
 }
-impl Psychopomp {
+impl Coxswain {
 
 }
