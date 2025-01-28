@@ -7,8 +7,9 @@ use crate::{game::{
     attack_power::{AttackPower, DefensePower},
     chat::{ChatGroup, ChatMessage, ChatMessageVariant},
     components::{
-        arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura,
-        insider_group::InsiderGroupID, puppeteer_marionette::PuppeteerMarionette
+        arsonist_doused::ArsonistDoused,
+        drunk_aura::DrunkAura,
+        insider_group::InsiderGroupID
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch
     }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, win_condition::WinCondition, Game
@@ -376,10 +377,13 @@ impl PlayerReference{
             },
         }
     }
+    /// If they can consistently kill then they keep the game running
+    /// Town kills by voting
+    /// Mafia kills with MK or gun
+    /// Cult kills / converts
     pub fn keeps_game_running(&self, game: &Game) -> bool {
-        if PuppeteerMarionette::is_marionette(game, *self) {return false;}
-
         if InsiderGroupID::Mafia.is_player_in_revealed_group(game, *self) {return true;}
+        if InsiderGroupID::Cult.is_player_in_revealed_group(game, *self) {return true;}
         if self.win_condition(game).is_loyalist_for(GameConclusion::Town) {return true;}
         
         GameConclusion::keeps_game_running(self.role(game))
