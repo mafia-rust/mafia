@@ -1,4 +1,4 @@
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 use serde::{Deserialize, Serialize};
 use vec1::{
     vec1,
@@ -98,7 +98,7 @@ impl RoleOutline{
             .into_iter()
             .filter(|r|role_can_generate(r.role, enabled_roles, taken_roles))
             .collect::<Vec<_>>();
-        options.choose(&mut rand::thread_rng()).cloned()
+        options.choose(&mut rand::rng()).cloned()
     }
     pub fn simplify(&mut self){
         let mut new_options = self.options.to_vec();

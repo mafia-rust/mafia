@@ -42,7 +42,6 @@ use modifiers::ModifierType;
 use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
 use rand::seq::SliceRandom;
-use rand::thread_rng;
 use role_list::RoleAssignment;
 use role_list::RoleOutlineOptionInsiderGroups;
 use role_list::RoleOutlineOptionWinCondition;
@@ -295,7 +294,7 @@ impl Game {
     }
     fn assign_players_to_assignments(initialization_data: Vec<RoleAssignment>)->Vec<(RoleAssignment, PlayerIndex)>{
         let mut player_indices: Vec<PlayerIndex> = (0..initialization_data.len() as PlayerIndex).collect();
-        player_indices.shuffle(&mut thread_rng());
+        player_indices.shuffle(&mut rand::rng());
         initialization_data.into_iter().zip(player_indices).collect()
     }
 

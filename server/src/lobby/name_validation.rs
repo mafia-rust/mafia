@@ -1,7 +1,7 @@
 use crate::{lobby::LobbyClientID, strings::TidyableString, vec_map::VecMap};
 use super::{LobbyClient, LobbyClientType};
 use lazy_static::lazy_static;
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 
 lazy_static!(
     static ref RANDOM_NAMES: Vec<String> = {
@@ -86,7 +86,7 @@ pub fn generate_random_name(taken_names: &[&str]) -> String{
             })
     }).collect::<Vec<&String>>();
 
-    if let Some(random_name) = available_random_names.choose(&mut rand::thread_rng()) {
+    if let Some(random_name) = available_random_names.choose(&mut rand::rng()) {
         (*random_name).clone()
     } else {
         (taken_names.len()).to_string()

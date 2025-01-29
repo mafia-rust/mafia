@@ -1,4 +1,3 @@
-use rand::thread_rng;
 use rand::prelude::SliceRandom;
 use serde::Serialize;
 
@@ -28,10 +27,10 @@ impl RoleStateImpl for Informant {
             let target_ref = visit.target;
 
             let mut visited_by: Vec<PlayerReference> =  visit.target.all_appeared_visitors(game).into_iter().filter(|p|actor_ref!=*p).collect();
-            visited_by.shuffle(&mut thread_rng());
+            visited_by.shuffle(&mut rand::rng());
 
             let mut visited: Vec<PlayerReference> = target_ref.tracker_seen_visits(game).iter().map(|v|v.target).collect();
-            visited.shuffle(&mut thread_rng());
+            visited.shuffle(&mut rand::rng());
 
             let message = ChatMessageVariant::InformantResult{
                 role: target_ref.role(game), 

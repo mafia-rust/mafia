@@ -1,5 +1,4 @@
 use std::collections::HashSet;
-
 use rand::seq::SliceRandom;
 
 use crate::{game::{
@@ -300,7 +299,7 @@ impl PlayerReference{
 
     pub fn push_night_messages_to_player(&self, game: &mut Game){
         let mut messages = self.night_messages(game).to_vec();
-        messages.shuffle(&mut rand::thread_rng());
+        messages.shuffle(&mut rand::rng());
         messages.sort();
         self.send_packet(game, ToClientPacket::NightMessages { chat_messages: 
             messages.iter().map(|msg|ChatMessage::new_private(msg.clone())).collect()
