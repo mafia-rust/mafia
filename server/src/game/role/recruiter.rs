@@ -123,7 +123,7 @@ impl RoleStateImpl for Recruiter {
         let random_mafia_player = PlayerReference::all_players(game)
             .filter(|p|RoleSet::Mafia.get_roles().contains(&p.role(game)))
             .filter(|p|*p!=actor_ref)
-            .choose(&mut rand::thread_rng());
+            .choose(&mut rand::rng());
 
         if let Some(random_mafia_player) = random_mafia_player {
 

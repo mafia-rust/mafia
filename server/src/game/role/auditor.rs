@@ -1,5 +1,6 @@
 use std::iter::once;
 
+use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::components::confused::Confused;
@@ -126,12 +127,12 @@ impl Auditor{
                 .filter(|x|game.settings.enabled_roles.contains(x))
                 .filter(|x|*x != role)
                 .collect::<Vec<Role>>()
-                .choose(&mut rand::thread_rng())
+                .choose(&mut rand::rng())
                 .cloned();
 
             if let Some(fake_role) = fake_role{
                 let mut two = [role, fake_role];
-                two.shuffle(&mut rand::thread_rng());
+                two.shuffle(&mut rand::rng());
                 AuditorResult::Two{roles: [two[0], two[1]]}
             } else {
                 AuditorResult::One{role}
@@ -149,7 +150,7 @@ impl Auditor{
                 .map(|assignment| assignment.role)
                 .filter(|x|game.settings.enabled_roles.contains(x))
                 .collect::<Vec<Role>>()
-                .choose(&mut rand::thread_rng())
+                .choose(&mut rand::rng())
                 .cloned();
 
             if let Some(fake_role) = fake_role{
@@ -165,9 +166,9 @@ impl Auditor{
                 .filter(|x|game.settings.enabled_roles.contains(x))
                 .collect::<Vec<Role>>();
             
-            fake_roles.shuffle(&mut rand::thread_rng());
+            fake_roles.shuffle(&mut rand::rng());
 
-            let fake_roles = fake_roles.choose_multiple(&mut rand::thread_rng(), 2).cloned().collect::<Vec<Role>>();
+            let fake_roles = fake_roles.choose_multiple(&mut rand::rng(), 2).cloned().collect::<Vec<Role>>();
 
             match (fake_roles.get(0), fake_roles.get(1)){
                 (Some(role1), Some(role2)) => {

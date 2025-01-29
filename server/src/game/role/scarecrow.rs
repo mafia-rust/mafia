@@ -1,4 +1,3 @@
-use rand::thread_rng;
 use serde::Serialize;
 
 use crate::game::win_condition::WinCondition;
@@ -33,7 +32,7 @@ impl RoleStateImpl for Scarecrow {
             let target_ref = visit.target;
 
             let mut blocked_players = target_ref.ward(game);
-            blocked_players.shuffle(&mut thread_rng());
+            blocked_players.shuffle(&mut rand::rng());
 
             let message = ChatMessageVariant::ScarecrowResult { players:
                 PlayerReference::ref_vec_to_index(blocked_players.as_slice())

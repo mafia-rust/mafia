@@ -21,14 +21,14 @@ impl ModifierTrait for RandomLoveLinks{
             let random_unlinked_player = PlayerReference::all_players(game)
                 .filter(|p| *p != player)
                 .filter(|p| LoveLinked::get_links(game, *p).len()==0)
-                .choose(&mut rand::thread_rng());
+                .choose(&mut rand::rng());
 
             if let Some(other_player) = random_unlinked_player {
                 LoveLinked::add_love_link(game, player, other_player);
             }else{
                 let random_player = PlayerReference::all_players(game)
                     .filter(|p| *p != player)
-                    .choose(&mut rand::thread_rng());
+                    .choose(&mut rand::rng());
 
                 if let Some(other_player) = random_player {
                     LoveLinked::add_love_link(game, player, other_player);

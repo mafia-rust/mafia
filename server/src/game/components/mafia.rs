@@ -1,4 +1,4 @@
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 
 use crate::{game::{ 
     ability_input::{AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection}, attack_power::AttackPower, chat::{ChatGroup, ChatMessageVariant}, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::{Priority, RoleState}, role_list::RoleSet, tag::Tag, visit::Visit, Game
@@ -144,7 +144,7 @@ impl Mafia{
                 .filter(|p| InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p))
                 .collect::<Vec<_>>();
 
-            let Some(insider) = insiders.choose(&mut rand::thread_rng()) else {return};
+            let Some(insider) = insiders.choose(&mut rand::rng()) else {return};
 
             SyndicateGunItem::give_gun(game, *insider);
         }
@@ -202,7 +202,7 @@ impl Mafia{
         ) {return;}
         
         //choose random mafia to be mafia killing
-        let random_mafia = living_players_to_convert.choose(&mut rand::thread_rng());
+        let random_mafia = living_players_to_convert.choose(&mut rand::rng());
         
         if let Some(random_mafia) = random_mafia {
             random_mafia.set_role_and_win_condition_and_revealed_group(game, role);

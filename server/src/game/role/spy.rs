@@ -45,7 +45,7 @@ impl RoleStateImpl for Spy {
                             .collect()
                     );
                 }
-                mafia_visits.shuffle(&mut rand::thread_rng());
+                mafia_visits.shuffle(&mut rand::rng());
                 
                 actor_ref.push_night_message(game, ChatMessageVariant::SpyMafiaVisit { players: mafia_visits });               
             },
