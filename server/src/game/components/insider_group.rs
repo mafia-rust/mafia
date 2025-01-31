@@ -85,6 +85,10 @@ impl InsiderGroupID{
     }
 
     // Mutations
+    pub unsafe fn add_player_to_revealed_group_unchecked(&self, game: &mut Game, player: PlayerReference){
+        let players: &mut VecSet<PlayerReference> = self.revealed_group_mut(game).into();
+        players.insert(player);
+    }
     pub fn add_player_to_revealed_group(&self, game: &mut Game, player: PlayerReference){
         let players: &mut VecSet<PlayerReference> = self.revealed_group_mut(game).into();
         if players.insert(player).is_none() {

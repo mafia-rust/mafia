@@ -189,12 +189,13 @@ impl Mafia{
         game: &mut Game,
         role: RoleState
     ){
-        let living_players_to_convert = PlayerReference::all_players(game).into_iter().filter(
-            |p|
-            InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p) &&
-            RoleSet::Mafia.get_roles().contains(&p.role(game)) &&
-            p.alive(game)
-        ).collect::<Vec<_>>();
+        let living_players_to_convert = PlayerReference::all_players(game)
+            .into_iter()
+            .filter(|p|
+                p.alive(game) &&
+                InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p)
+            )
+            .collect::<Vec<_>>();
 
         //if they already have a mafia killing then return
         if living_players_to_convert.iter().any(|p|
