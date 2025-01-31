@@ -42,6 +42,7 @@ impl RoleStateImpl for Detective {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Detective, 0)
         )

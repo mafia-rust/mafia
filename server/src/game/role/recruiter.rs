@@ -7,7 +7,7 @@ use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 use crate::game::game_conclusion::GameConclusion;
-use crate::game::role_list::{RoleOutline, RoleOutlineOption, RoleSet};
+use crate::game::role_list::{RoleOutline, RoleOutlineOption, RoleOutlineOptionRoles, RoleSet};
 use crate::game::visit::Visit;
 
 use crate::game::Game;
@@ -85,6 +85,7 @@ impl RoleStateImpl for Recruiter {
             game,
             actor_ref,
             false,
+            false,
             (!choose_attack && self.recruits_remaining <= 0) || (choose_attack && game.day_number() == 1),
             ControllerID::role(actor_ref, Role::Recruiter, 0)
         ).combine_overwrite_owned(
@@ -93,7 +94,7 @@ impl RoleStateImpl for Recruiter {
                 ControllerID::role(actor_ref, Role::Recruiter, 1),
                 AvailableAbilitySelection::new_integer(0, if self.recruits_remaining > 0 {1} else {0}),
                 AbilitySelection::new_integer(0),
-                !actor_ref.alive(game),
+                actor_ref.ability_deactivated_from_death(game),
                 None,
                 false,
                 vec_set![actor_ref],
@@ -122,15 +123,18 @@ impl RoleStateImpl for Recruiter {
         let random_mafia_player = PlayerReference::all_players(game)
             .filter(|p|RoleSet::Mafia.get_roles().contains(&p.role(game)))
             .filter(|p|*p!=actor_ref)
-            .choose(&mut rand::thread_rng());
+            .choose(&mut rand::rng());
 
         if let Some(random_mafia_player) = random_mafia_player {
 
-            let random_town_role = RoleOutline::RoleOutlineOptions { options: vec1![RoleOutlineOption::RoleSet { role_set: RoleSet::TownCommon }] }
-                .get_random_role(
-                    &game.settings.enabled_roles,
-                    PlayerReference::all_players(game).map(|p|p.role(game)).collect::<Vec<_>>().as_slice()
-                );
+            let random_town_role = RoleOutline {options: vec1![RoleOutlineOption {
+                win_condition: Default::default(), 
+                insider_groups: Default::default(), 
+                roles: RoleOutlineOptionRoles::RoleSet{ role_set: RoleSet::TownCommon } 
+            }]}.get_random_role_assignments(
+                &game.settings.enabled_roles,
+                PlayerReference::all_players(game).map(|p|p.role(game)).collect::<Vec<_>>().as_slice()
+            ).map(|assignment| assignment.role);
 
             if let Some(random_town_role) = random_town_role {
                 //special case here. I don't want to use set_role because it alerts the player their role changed

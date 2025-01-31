@@ -285,6 +285,10 @@
     "role.medium.roleDataText": "You decided to haunt \\0.",
     "controllerId.role.medium.0.name": "Haunt",
 
+    "role.coxswain.name": "Coxswain",
+    "role.coxswain.name:var.0": "Coxswains",
+    "controllerId.role.coxswain.0.name": "Revive",
+
     "role.retributionist.name": "Retributionist",
     "role.retributionist.name:var.0": "Retributionists",
     "controllerId.role.retributionist.0.name": "Possess",
@@ -679,12 +683,15 @@
     "noAll.icon": "🔇",
     "chatGroup.all.icon": "🔊",
     "chatGroup.mafia.icon": "🌹",
+    "chatGroup.mafia.name": "Syndicate",
     "chatGroup.cult.icon": "🕯️",
+    "chatGroup.cult.name": "Cult",
     "chatGroup.jail.icon": "🔒",
     "chatGroup.kidnapped.icon": "🔒",
     "chatGroup.interview.icon": "📝",
     "chatGroup.dead.icon": "💀",
     "chatGroup.puppeteer.icon": "🧵",
+    "chatGroup.puppeteer.name": "Puppeteer",
     "chatGroup.warden.icon": "🕹️",
 
     "messageSender.livingToDead.icon": "🔮",
@@ -701,6 +708,9 @@
 
 
     "standard":"Uncategorized",
+    "default":"Default",
+    "setDefault":"Set Default",
+    "setNotDefault":"Set Custom",
 
     "union": "∪",
     "onTrial": "On Trial",
@@ -870,7 +880,8 @@
     "chatMessage.gameOver.player.crumb": "\\0 \\1",
     "chatMessage.playerWon":"\\0 won! They were the \\1.",
     "chatMessage.playerLost":"\\0 lost! They were the \\1.",
-    "chatMessage.playerQuit": "\\0 has quit the game and will certainly die at the end of the next night.",
+    "chatMessage.playerQuit": "\\0 has left the lobby and will certainly die at the end of the next night.",
+    "chatMessage.playerQuit.gameOver": "\\0 has left the lobby.",
 
     "chatMessage.trialInformation":"\\0 votes are needed for a trial. There are \\1 trials left today.",
     "chatMessage.voted":"\\0 voted for \\1.",
@@ -900,7 +911,7 @@
     "chatMessage.jailedSomeone":"\\0 was dragged off to jail!",
     "chatMessage.jailorDecideNotExecute":"The Jailor decided not to execute.",
     "chatMessage.mediumHauntStarted":"\\0 has brought the dead to haunt \\1!",
-    "chatMessage.mediumExists":"There is some way to communicate with the living like a medium or puppeteer, don't leave! Your information could be very important!",
+    "chatMessage.mediumExists":"There is some way to communicate with the living so don't leave! Your information could be very important!",
     "chatMessage.jesterWon":"The Jester will get their revenge from the grave!",
     "chatMessage.revolutionaryWon":"The Revolutionary got their target executed and won!",
     "chatMessage.chronokaiserSpeedUp":"The Chronokaiser speeds up time. Each phase is \\0% faster.",
@@ -1414,9 +1425,9 @@
     "wiki.article.role.lookout.attributes":"* You can't see yourself visit",
     "wiki.article.role.lookout.extra": "* A framer may end up impacting your results using appeared visits",
 
-    "wiki.article.role.spy.reminder": "At night, you are told who the syndicate visits, what happens to your bug target.",
-    "wiki.article.role.spy.guide": "- At night, select a player to be told what seems to happen to them\n    - You are told if they are roleblocked, wardblocked, silenced, transported, possessed, or protected from an attack\n- Each night you will passively learn information:\n    - You always learn who the syndicate visited\n\n You should tell the town the information you get daily",
-    "wiki.article.role.spy.abilities":"* You are told what players are visited by syndicate members, and are told their name multiple times if that player is visited multiple times\n* Visit a player to learn if they were told that they were transported, silenced, roleblocked, wardblocked, possessed, or protected",
+    "wiki.article.role.spy.reminder": "At night, you are told who syndicate insiders visit, what happens to your bug target.",
+    "wiki.article.role.spy.guide": "- At night, select a player to be told what seems to happen to them\n    - You are told if they are roleblocked, wardblocked, silenced, transported, possessed, or protected from an attack\n- Each night you will passively learn information:\n    - You always learn who the syndicate insiders visited\n\n You should tell the town the information you get daily",
+    "wiki.article.role.spy.abilities":"* You are told what players are visited by syndicate insiders, and are told their name multiple times if that player is visited multiple times\n* Visit a player to learn if they were told that they were transported, silenced, roleblocked, wardblocked, possessed, or protected",
     "wiki.article.role.spy.attributes":"* Your bug tells you when your target receives a message saying they are silenced, roleblocked, wardblocked, protected, possessed, or transported\n* Appeared visits can change your syndicate visits information",
     "wiki.article.role.spy.extra": "* If you are blocked, you aren't told syndicate visits, or the bug information\n* Your bug can be messed with by a hypnotist, if a hypnotist sends the player you bug a message, your bug catches that message\n- The syndicate visits count players who are in the syndicate group, even if they don't have syndicate roles, this can happen due to a recruiter\n- The cult count accounts for all alive players in the cult group, even if they don't have a cult role",
 
@@ -1449,19 +1460,19 @@
     "wiki.article.role.snoop.abilities":"- Visit a player to search them\n    - If your target is a town loyalist, and you are not visited by anyone, you are told they are a town loyalist",
     "wiki.article.role.snoop.attributes":"- If your target has a suspicious aura, your results will be inconclusive",
     "wiki.article.role.snoop.extra":"- innocent aura doesn't effect your results",
-    
+
     "wiki.article.role.gossip.reminder": "At night, select a player to eavesdrop on, and learn if they visited a player who is enemies with town.",
     "wiki.article.role.gossip.guide": "- At night, select a player. You are told if they visited a player who is enemies with town\n- If they visited a friend, or nobody, they did not visit an enemy",
     "wiki.article.role.gossip.abilities":"- Visit a player to eavesdrop on\n    - If your target visited a player who is enemies with town, you are told so\n    - If your target visited nobody, then they didn't visit an enemy of the town",
     "wiki.article.role.gossip.attributes":"- If any player your target visits has a suspicious aura, then you are told they visited a town enemy",
     "wiki.article.role.gossip.extra":"- Suspicious aura overrides innocent aura\n- If your target visits multiple other players, you learn if at least one of them is a town enemy\n- False appeared visits can mess with your results, depending on who your target appears to visit\n- Your target having an aura does not mess with the results, however, their targets having an aura does",
-    
+
     "wiki.article.role.tallyClerk.reminder": "At night, you are told how many players are not town loyalists from the players who voted guilty today.",
     "wiki.article.role.tallyClerk.guide": "- At night, you are told how many players are not town loyalists from the players who voted guilty during any of the trials today\n- If any player has innocent aura, they register as a town loyalist\n- If any player has suspicious aura, they register as not a town loyalist",
     "wiki.article.role.tallyClerk.abilities":"- At night, you are told how many players are not town loyalists from the players who voted guilty today\n- If you are blocked, you aren't told anything\n- Your ability doesn't depend on visits",
     "wiki.article.role.tallyClerk.attributes":"- A suspicious aura makes a player register as not a town loyalist\n- An innocent aura makes a player register as a town loyalist\n- A suspicious aura overwrites innocent aura to the Tally Clerk",
     "wiki.article.role.tallyClerk.extra":"",
-    
+
     "wiki.article.role.doctor.reminder": "At night, select a player to protect from attacks. You can protect yourself once per game.",
     "wiki.article.role.doctor.guide": "- At night, select a player to protect\n    - Whoever you protect doesn't die if they're attacked\n    - You and the player you protected are both told if they are attacked\n- You can select yourself to protect yourself once per game\n- If your target is attacked by a protection-piercing attack they still die\n\nYou should try to protect people you think are townies who will be attacked.",
     "wiki.article.role.doctor.abilities":"* Visit a player to protect for the night",
@@ -1513,8 +1524,14 @@
     "wiki.article.role.medium.reminder": "At night or obituary, speak with the dead. After you are dead, you can bring the dead to speak with a living player by haunting them.",
     "wiki.article.role.medium.guide": "- You can message the dead and other mediums at night or obituary\n- After you die, you can choose to haunt a living player X times (X = Total players ÷ 5 (round up))\n    - The player you haunt will be able to speak with the dead during night and obituary\n\n On the first night, you should attempt to contact any other possible mediums to learn if there are any. You should try to find information from other players and tell the town what dead players think about the game.",
     "wiki.article.role.medium.abilities":"* At night or obituary, you can read and send messages in the dead chat group\n* While dead, choose a living player during the day to haunt at night, putting that player in the haunt chat group during the night and obituary.",
-    "wiki.article.role.medium.attributes":"*  You may perform X haunts (X = Total players ÷ 5 (round up))\n- When a player dies, they are told there exists a way to talk with the living",
+    "wiki.article.role.medium.attributes":"*  You may perform X haunts (X = Total players ÷ 5 (round up))",
     "wiki.article.role.medium.extra":"* While in jail, you can't use the dead chat group, during the next obituary you can use the dead chat group\n - Haunted players can read AND send to dead chat, even if in jail\n* While any dead medium haunts any living player, all dead mediums, haunted players, and dead players are together in the dead chat group",
+
+    "wiki.article.role.coxswain.reminder": "Before night starts, select up to 2 dead players to let them use their abilities. During night or obituary, you can speak with the dead.",
+    "wiki.article.role.coxswain.guide": "- Each night, before night starts, select up to 2 dead players\n    - From the start of that night until the start of next night, they can keep using their ability as if they were alive\n    - You can speak in dead chat during night and obituary, but not at night while detained",
+    "wiki.article.role.coxswain.abilities":"- None",
+    "wiki.article.role.coxswain.attributes":"- You are immune to possession",
+    "wiki.article.role.coxswain.extra":"- None",
 
     "wiki.article.role.retributionist.guide": "- At night, Select a dead town role to possess them, forcing them to use their ability on a living player\n- You can only possess dead players who's grave has a town role on it\n- You can possess the same player up to 2 times",
     "wiki.article.role.retributionist.abilities":"- Visit 2 players\n    - The first player has their first visit changed to the second player you visit\n- You can only select certain players\n    - The first player you select must be a dead player with a town role on their grave\n    - The second player you select must be any living player",
@@ -1796,7 +1813,7 @@
     "wiki.article.role.puppeteer.reminder": "Each night, select a player to either kill them or recruit them.",
     "wiki.article.role.puppeteer.guide":"- You may choose to do one of the following\n    - Select and attack a player\n    - Select a player to string up into a marionette\n        - They are told they are strung up, and are now a fiends loyalist\n        - They are attacked the following night, and every night until they die\n - At night all puppeteers and marionettes can chat in the puppeteer chat, even if dead\n    - The players in the puppeteer chat that are dead can chat during the day or night\n- Your attack and convert are both armor-piercing",
     "wiki.article.role.puppeteer.abilities":"- You may choose to do one of the following\n    - Visit a player to attack them\n    - Visit a player to string up into a marionette\n        - They are told they are strung up, and are now a fiends loyalist\n        - They are indirectly attacked (protection-piercing) every night by all puppeteers until they die, if there are no puppeteers they are still attacked\n        - You can only use this X times (X = Total players ÷ 5 (round up))\n- Your attack and convert are both armor-piercing",
-    "wiki.article.role.puppeteer.attributes":"- You and the marionettes are all puppeteer insiders\n- Stringing someone up is armor-piercing\n - At night all puppeteers and marionettes can chat in the puppeteer chat, even if dead\n    - The players in the puppeteer chat that are dead can chat during the day or night\n- When a player dies, they are told there exists a way to talk with the living",
+    "wiki.article.role.puppeteer.attributes":"- You and the marionettes are all puppeteer insiders\n- Stringing someone up is armor-piercing\n - At night all puppeteers and marionettes can chat in the puppeteer chat, even if dead\n    - The players in the puppeteer chat that are dead can chat during the day or night",
     "wiki.article.role.puppeteer.extra":"- You can't select anybody who is a puppeteer, marionette, or is being strung into a marionette\n- A puppeteer can't be stringed into a marionette\n- A marionette can't be stringed into a marionette twice, if 2 puppeteers choose a player to be turned into a marionette on the same night, they get the message only once",
 
     "wiki.article.role.kira.reminder": "Each night, guess players roles, if all your guesses are correct, you attack all of the players you guessed.",

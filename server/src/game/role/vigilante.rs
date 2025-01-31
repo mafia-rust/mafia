@@ -88,6 +88,7 @@ impl RoleStateImpl for Vigilante {
             game,
             actor_ref,
             false,
+            true,
             !can_shoot,
             ControllerID::role(actor_ref, Role::Vigilante, 0)
         )

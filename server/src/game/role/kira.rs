@@ -25,7 +25,7 @@ pub enum KiraGuess{
     Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy, TallyClerk,
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith, Steward,
     Vigilante, Veteran, Marksman, Deputy, Rabblerouser,
-    Escort, Medium, Retributionist, Reporter, Mayor, Transporter
+    Escort, Medium, Retributionist, Reporter, Mayor, Transporter, Coxswain
 }
 impl KiraGuess{
     fn convert_to_guess(role: Role)->Option<KiraGuess>{
@@ -64,6 +64,7 @@ impl KiraGuess{
             Role::Reporter => Some(Self::Reporter),
             Role::Mayor => Some(Self::Mayor),
             Role::Transporter => Some(Self::Transporter),
+            Role::Coxswain => Some(Self::Coxswain),
 
             //Mafia
             Role::Godfather | Role::Mafioso |
@@ -162,7 +163,7 @@ impl RoleStateImpl for Kira {
     type ClientRoleState = Kira;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_blocked(game) {return;}
-        if !actor_ref.alive(game) {return;}
+        if actor_ref.ability_deactivated_from_death(game) {return;}
 
         let Some(KiraSelection(selection)) = 
             game.saved_controllers.get_controller_current_selection_kira(

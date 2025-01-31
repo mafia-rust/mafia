@@ -20,12 +20,13 @@ pub fn controller_parameters_map_player_list_night_typical(
     game: &Game,
     actor_ref: PlayerReference,
     can_select_self: bool,
+    can_select_insiders: bool,
     grayed_out: bool,
     ability_id: ControllerID,
 ) -> ControllerParametersMap {
     
     let grayed_out = 
-        !actor_ref.alive(game) || 
+        actor_ref.ability_deactivated_from_death(game) ||
         Detained::is_detained(game, actor_ref) ||
         grayed_out;
 
@@ -35,10 +36,17 @@ pub fn controller_parameters_map_player_list_night_typical(
         AvailableAbilitySelection::new_player_list(
             PlayerReference::all_players(game)
                 .into_iter()
-                .filter(|p| can_select_self || *p != actor_ref)
-                .filter(|player| 
-                    player.alive(game) &&
-                    !InsiderGroupID::in_same_revealed_group(game, actor_ref, *player)
+                .filter(|player|
+                    if !player.alive(game){
+                        false
+                    }else if *player == actor_ref{
+                        can_select_self
+                    }else if InsiderGroupID::in_same_revealed_group(game, actor_ref, *player){
+                        can_select_insiders
+                    }else{
+                        true
+                    }
+
                 )
                 .collect(),
                 false,
@@ -59,7 +67,7 @@ pub fn controller_parameters_map_boolean(
     ability_id: ControllerID,
 ) -> ControllerParametersMap {
     let grayed_out = 
-        !actor_ref.alive(game) || 
+        actor_ref.ability_deactivated_from_death(game) || 
         Detained::is_detained(game, actor_ref) ||
         grayed_out;
 

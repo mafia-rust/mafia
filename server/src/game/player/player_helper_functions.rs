@@ -1,10 +1,14 @@
 use std::collections::HashSet;
-
 use rand::seq::SliceRandom;
 
 use crate::{game::{
-    ability_input::{AbilitySelection, ControllerParametersMap, SavedControllersMap}, attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
-        arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura, insider_group::InsiderGroupID, mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette
+    ability_input::{AbilitySelection, ControllerParametersMap, SavedControllersMap},
+    attack_power::{AttackPower, DefensePower},
+    chat::{ChatGroup, ChatMessage, ChatMessageVariant},
+    components::{
+        arsonist_doused::ArsonistDoused,
+        drunk_aura::DrunkAura,
+        insider_group::InsiderGroupID
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch
     }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, win_condition::WinCondition, Game
@@ -218,14 +222,18 @@ impl PlayerReference{
     /// ### Pre condition:
     /// self.alive(game) == false
     pub fn die(&self, game: &mut Game, grave: Grave){
-        self.die_return_event(game, grave).invoke(game);
+        if let Some(event) = self.die_return_event(game, grave){
+            event.invoke(game);
+        }
     }
-    pub fn die_return_event(&self, game: &mut Game, grave: Grave)->OnAnyDeath{
+    /// if the player is already dead, this does nothing and returns none
+    pub fn die_return_event(&self, game: &mut Game, grave: Grave)->Option<OnAnyDeath>{
+        if !self.alive(game) { return None }
         self.set_alive(game, false);
         self.add_private_chat_message(game, ChatMessageVariant::YouDied);
         game.add_grave(grave.clone());
 
-        OnAnyDeath::new(*self)
+        Some(OnAnyDeath::new(*self))
     }
     pub fn initial_role_creation(&self, game: &mut Game){
         let new_role_data = self.role(&game).new_state(&game);
@@ -234,9 +242,9 @@ impl PlayerReference{
         if new_role_data.role() == self.role(game) {
             self.add_private_chat_message(game, ChatMessageVariant::RoleAssignment{role: self.role(game)});
         }
-        self.set_win_condition(game, self.role_state(game).clone().default_win_condition());
+        self.set_win_condition(game, self.win_condition(game).clone());
         InsiderGroupID::set_player_revealed_groups(
-            self.role_state(game).clone().default_revealed_groups(), 
+            InsiderGroupID::all_insider_groups_with_player(game, *self), 
             game, *self
         );
     }
@@ -291,7 +299,7 @@ impl PlayerReference{
 
     pub fn push_night_messages_to_player(&self, game: &mut Game){
         let mut messages = self.night_messages(game).to_vec();
-        messages.shuffle(&mut rand::thread_rng());
+        messages.shuffle(&mut rand::rng());
         messages.sort();
         self.send_packet(game, ToClientPacket::NightMessages { chat_messages: 
             messages.iter().map(|msg|ChatMessage::new_private(msg.clone())).collect()
@@ -307,6 +315,20 @@ impl PlayerReference{
         map
     }
 
+    pub fn ability_deactivated_from_death(&self, game: &Game) -> bool {
+        !(
+            self.alive(game) ||
+            (
+                PlayerReference::all_players(game).any(|p|
+                    if let RoleState::Coxswain(c) = p.role_state(game) {
+                        c.targets.contains(self)
+                    }else{
+                        false
+                    }
+                )
+            )
+        )
+    }
     pub fn defense(&self, game: &Game) -> DefensePower {
         if game.current_phase().is_night() {
             self.night_defense(game)
@@ -319,7 +341,7 @@ impl PlayerReference{
     }
     pub fn has_innocent_aura(&self, game: &Game) -> bool {
         PlayerReference::all_players(game).into_iter().any(|player_ref| 
-            player_ref.alive(game) && match player_ref.role_state(game) {
+            match player_ref.role_state(game) {
                 RoleState::Disguiser(r) => 
                     r.current_target.is_some_and(|player|player == *self),
                 _ => false
@@ -354,9 +376,15 @@ impl PlayerReference{
             },
         }
     }
+    /// If they can consistently kill then they keep the game running
+    /// Town kills by voting
+    /// Mafia kills with MK or gun
+    /// Cult kills / converts
     pub fn keeps_game_running(&self, game: &Game) -> bool {
-        if MafiaRecruits::is_recruited(game, *self) {return false;}
-        if PuppeteerMarionette::is_marionette(game, *self) {return false;}
+        if InsiderGroupID::Mafia.is_player_in_revealed_group(game, *self) {return true;}
+        if InsiderGroupID::Cult.is_player_in_revealed_group(game, *self) {return true;}
+        if self.win_condition(game).is_loyalist_for(GameConclusion::Town) {return true;}
+        
         GameConclusion::keeps_game_running(self.role(game))
     }
 

@@ -89,6 +89,9 @@
     border-bottom-color: var(--background-border-shadow-color);
     overflow-y: hidden;
     box-shadow: 0 0 .5rem #0007;
+
+    max-width: 90vw;
+    max-height: 90vh;
 }
 
 .anchor-cover-card-content {

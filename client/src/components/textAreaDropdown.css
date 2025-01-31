@@ -5,7 +5,9 @@
 }
 .text-area-dropdown .textarea, .text-area-dropdown textarea {
     text-align: left;
-    height: 20rem;
+    /* height: 20rem; */
+    height: fit-content;
+    min-height: 2rem;
     margin: .13rem;
     text-wrap: wrap;
     resize: none;

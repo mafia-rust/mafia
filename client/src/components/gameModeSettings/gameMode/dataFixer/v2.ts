@@ -1,7 +1,7 @@
 import { VersionConverter } from ".";
-import { GameMode, GameModeData, GameModeStorage, ShareableGameMode } from "..";
-import { MODIFIERS, ModifierType } from "../../../../game/gameState.d";
-import { RoleOutline, RoleSet } from "../../../../game/roleListState.d";
+import { GameMode, GameModeData } from "..";
+import { MODIFIERS, ModifierType, PhaseTimes } from "../../../../game/gameState.d";
+import { RoleSet } from "../../../../game/roleListState.d";
 import { Role } from "../../../../game/roleState.d";
 import { Failure, ParseFailure, ParseResult, ParseSuccess, Success, isFailure } from "../parse";
 import { parseName, parsePhaseTimes, parseRoleList, parseRole, InitialRoleOutline } from "./initial";
@@ -13,10 +13,36 @@ const v2: VersionConverter = {
 
 export default v2;
 
-type v3GameModeData = GameModeData
-type v3ShareableGameMode = ShareableGameMode
-type v3GameMode = GameMode
-type v3GameModeStorage = GameModeStorage
+type v3RoleOutlineOption = {
+    type: "role",
+    role: Role
+} | {
+    type: "roleSet",
+    role: RoleSet
+}
+
+type v3RoleOutline = {
+    type: "any"
+} | {
+    type: "roleOutlineOptions"
+    options: v3RoleOutlineOption[]
+}
+
+type v3GameModeData = {
+    roleList: v3RoleOutline[],
+    phaseTimes: PhaseTimes,
+    enabledRoles: Role[],
+    enabledModifiers: ModifierType[]
+}
+type v3ShareableGameMode = v3GameModeData & { format: "v3", name: string }
+type v3GameMode = {
+    name: string,
+    data: Record<number, v3GameModeData>
+};
+type v3GameModeStorage = {
+    format: "v3",
+    gameModes: v3GameMode[]
+};
 
 
 function parseGameModeStorage(json: NonNullable<any>): ParseResult<v3GameModeStorage> {
@@ -140,7 +166,7 @@ function parseGameModeData(json: NonNullable<any>): ParseResult<v3GameModeData> 
     });
 }
 
-function convertRoleList(roleList: InitialRoleOutline[]): ParseResult<RoleOutline[]> {
+function convertRoleList(roleList: InitialRoleOutline[]): ParseResult<v3RoleOutline[]> {
     const list = roleList.map(outline => {
         switch(outline.type){
             case "any":
@@ -168,7 +194,7 @@ function convertRoleList(roleList: InitialRoleOutline[]): ParseResult<RoleOutlin
     if (failure !== undefined)
         return failure as ParseFailure;
 
-    return Success(list.map(el => (el as ParseSuccess<RoleOutline>).value))
+    return Success(list.map(el => (el as ParseSuccess<v3RoleOutline>).value))
 }
 
 

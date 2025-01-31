@@ -80,7 +80,7 @@ impl RoleStateImpl for Jailor {
                 Some(1)
             ),
             AbilitySelection::new_player_list(vec![]),
-            !actor_ref.alive(game),
+            actor_ref.ability_deactivated_from_death(game),
             Some(PhaseType::Night),
             false,
             vec_set!(actor_ref)
@@ -90,7 +90,7 @@ impl RoleStateImpl for Jailor {
                 ControllerID::role(actor_ref, Role::Jailor, 1),
                 AvailableAbilitySelection::new_boolean(),
                 AbilitySelection::new_boolean(false),
-                !actor_ref.alive(game) ||
+                actor_ref.ability_deactivated_from_death(game) ||
                 Detained::is_detained(game, actor_ref) || 
                 self.executions_remaining <= 0 ||
                 game.day_number() <= 1 ||
@@ -119,7 +119,7 @@ impl RoleStateImpl for Jailor {
         let mut out = crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref);
         if 
             game.current_phase().is_night() &&
-            actor_ref.alive(game) &&
+            !actor_ref.ability_deactivated_from_death(game) &&
             PlayerReference::all_players(game).any(|p|Detained::is_detained(game, p))
         {
             out.insert(ChatGroup::Jail);
@@ -134,7 +134,7 @@ impl RoleStateImpl for Jailor {
                 ) else {return};
                 let Some(target) = target.first() else {return};
 
-                if !actor_ref.alive(game) || !target.alive(game) {return};
+                if actor_ref.ability_deactivated_from_death(game) || !target.alive(game) {return};
                 
                 self.jailed_target_ref = Some(*target);
                 

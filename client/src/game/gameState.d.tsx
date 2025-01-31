@@ -52,9 +52,11 @@ export type PlayerClientType = {
 }
 
 type GameState = {
-    stateType: "game"
+    stateType: "game",
     roomCode: number,
     lobbyName: string,
+    
+    initialized: boolean,
 
     myId: number | null,
 
@@ -174,7 +176,8 @@ export type Player = {
     toString(): string
 }
 
-export type Conclusion = "town" | "mafia" | "cult" | "fiends" | "politician" | "draw";
+export const CONCLUSIONS = ["town", "mafia", "cult", "fiends", "politician", "niceList", "naughtyList", "draw"] as const;
+export type Conclusion = (typeof CONCLUSIONS)[number];
 
 export type WinCondition = {
     type: "gameConclusionReached"

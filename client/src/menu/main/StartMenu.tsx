@@ -22,8 +22,11 @@ export default function StartMenu(): ReactElement {
             <div>
                 <Button onClick={async () => {
                     setAnchorContent(<LoadingScreen type="default"/>);
-                    await GAME_MANAGER.setOutsideLobbyState();
-                    setAnchorContent(<PlayMenu/>);
+                    if (await GAME_MANAGER.setOutsideLobbyState()) {
+                        setAnchorContent(<PlayMenu/>);
+                    } else {
+                        setAnchorContent(<StartMenu/>);
+                    }
                 }}>
                     <Icon>play_arrow</Icon> {translate("menu.start.button.play")}
                 </Button>

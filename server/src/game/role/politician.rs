@@ -87,7 +87,7 @@ impl RoleStateImpl for Politician {
             ControllerID::role(actor_ref, Role::Politician, 0),
             super::AvailableAbilitySelection::Unit,
             super::AbilitySelection::new_unit(),
-            !actor_ref.alive(game) ||
+            actor_ref.ability_deactivated_from_death(game) ||
             self.revealed || 
             PhaseType::Night == game.current_phase().phase() ||
             PhaseType::Briefing == game.current_phase().phase(),

@@ -3,7 +3,7 @@ import { RoleList } from "../../../game/roleListState.d";
 import { Role } from "../../../game/roleState.d";
 
 
-export type CurrentFormat = "v3";
+export type CurrentFormat = "v4";
 
 export type GameModeStorage = {
     format: CurrentFormat,

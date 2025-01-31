@@ -9,7 +9,7 @@ use crate::game::components::detained::Detained;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::phase::PhaseType;
-use crate::game::role_list::{RoleOutline, RoleOutlineOption, RoleSet};
+use crate::game::role_list::{RoleOutline, RoleOutlineOption, RoleOutlineOptionRoles, RoleSet};
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
 
@@ -107,7 +107,7 @@ impl RoleStateImpl for Reeducator {
         
         
         let grayed_out = 
-            !actor_ref.alive(game) || 
+            actor_ref.ability_deactivated_from_death(game) || 
             Detained::is_detained(game, actor_ref);
 
         let default = Reeducator::default_role(game);
@@ -170,19 +170,21 @@ impl RoleStateImpl for Reeducator {
             .filter(|p|!RoleSet::MafiaKilling.get_roles().contains(&p.role(game)))
             .filter(|p|*p!=actor_ref)
             .filter(|p|p.role(game)!=Role::Reeducator)
-            .choose(&mut rand::thread_rng());
+            .choose(&mut rand::rng());
 
         if let Some(random_mafia_player) = random_mafia_player {
 
-            let random_town_role = RoleOutline::RoleOutlineOptions { 
-                options: vec1![
-                    RoleOutlineOption::RoleSet { role_set: RoleSet::TownCommon }
-                ]
+            let random_town_role = RoleOutline { 
+                options: vec1![RoleOutlineOption {
+                    win_condition: Default::default(),
+                    insider_groups: Default::default(),
+                    roles: RoleOutlineOptionRoles::RoleSet { role_set: RoleSet::TownCommon }
+                }]
             }
-                .get_random_role(
+                .get_random_role_assignments(
                     &game.settings.enabled_roles,
                     PlayerReference::all_players(game).map(|p|p.role(game)).collect::<Vec<_>>().as_slice()
-                );
+                ).map(|assignment| assignment.role);
 
             if let Some(random_town_role) = random_town_role {
                 //special case here. I don't want to use set_role because it alerts the player their role changed
@@ -210,6 +212,6 @@ impl Reeducator {
         RoleSet::MafiaSupport.get_roles().into_iter()
             .filter(|p|game.settings.enabled_roles.contains(&p))
             .filter(|p|*p!=Role::Reeducator)
-            .choose(&mut rand::thread_rng())
+            .choose(&mut rand::rng())
     }
 }

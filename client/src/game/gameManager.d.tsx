@@ -1,7 +1,7 @@
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
 import { AbilityInput } from "./abilityInput";
-import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, Player, ModifierType } from "./gameState.d";
+import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, ModifierType } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
 import { RoleList, RoleOutline } from "./roleListState.d";
 import { Role } from "./roleState.d";
@@ -9,12 +9,12 @@ import { Role } from "./roleState.d";
 export type Server = {
     ws: WebSocket | null,
 
-    open(): Promise<void>;
+    open(): Promise<boolean>;
     sendPacket(packets: ToServerPacket): void;
     close(): void;
 }
 
-export type StateEventType = ToClientPacket["type"] | "tick" | "filterUpdate" | "openGameMenu" | "closeGameMenu" | "whisperChatOpenOrClose";
+export type StateEventType = ToClientPacket["type"] | "tick" | "filterUpdate" | "openGameMenu" | "closeGameMenu" | "whisperChatOpenOrClose" | "connectionClosed";
 export type StateListener = (type?: StateEventType) => void;
 
 export type GameManager = {
@@ -23,16 +23,10 @@ export type GameManager = {
     setLobbyState(): void;
     setGameState(): void;
     setSpectatorGameState(): void;
-    setOutsideLobbyState(): Promise<void>;
+    setOutsideLobbyState(): Promise<boolean>;
     
 
     state: State,
-    getMyName(): string | undefined,
-    getMyHost(): boolean | undefined,
-    getMySpectator(): boolean,
-    getPlayerNames(): string[],
-    getLivingPlayers(): Player[] | null,
-    getVotesRequired(): number | null,
     updateChatFilter(filter: PlayerIndex | null): void,
 
     server: Server,

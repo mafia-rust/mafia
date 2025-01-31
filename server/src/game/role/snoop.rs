@@ -44,6 +44,7 @@ impl RoleStateImpl for Snoop {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Snoop, 0)
         )

@@ -59,6 +59,7 @@ impl RoleStateImpl for Spiral {
             game,
             actor_ref,
             false,
+            true,
             game.day_number() <= 1 || !self.spiraling.is_empty(),
             ControllerID::role(actor_ref, Role::Spiral, 0)
         )

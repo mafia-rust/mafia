@@ -32,6 +32,7 @@ impl RoleStateImpl for Bouncer {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Bouncer, 0)
         )

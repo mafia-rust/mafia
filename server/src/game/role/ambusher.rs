@@ -1,5 +1,5 @@
 
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
@@ -23,7 +23,7 @@ use super::{
 pub struct Ambusher;
 
 
-pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Ambusher {
@@ -45,7 +45,7 @@ impl RoleStateImpl for Ambusher {
                         other_player_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
                         target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
                     ).collect::<Vec<PlayerReference>>()
-                    .choose(&mut rand::thread_rng())
+                    .choose(&mut rand::rng())
                     .copied(){
                     Some(priority_visitor)
                 }else if let Some(other_visitor) = PlayerReference::all_players(game)
@@ -54,7 +54,7 @@ impl RoleStateImpl for Ambusher {
                         *other_player_ref != actor_ref &&
                         target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
                     ).collect::<Vec<PlayerReference>>()
-                    .choose(&mut rand::thread_rng())
+                    .choose(&mut rand::rng())
                     .copied(){
                     Some(other_visitor)
                 }else{
@@ -83,6 +83,7 @@ impl RoleStateImpl for Ambusher {
         crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
             game,
             actor_ref,
+            false,
             false,
             !(game.day_number() > 1),
             ControllerID::role(actor_ref, Role::Ambusher, 0)

@@ -1,5 +1,5 @@
 
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
@@ -58,7 +58,7 @@ impl RoleStateImpl for Jester {
                 .collect();
 
             let Some(target_ref) = all_killable_players
-                .choose(&mut rand::thread_rng()) else {return};
+                .choose(&mut rand::rng()) else {return};
             
             *target_ref
         };

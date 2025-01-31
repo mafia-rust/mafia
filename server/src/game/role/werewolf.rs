@@ -1,6 +1,5 @@
 use std::collections::HashSet;
 
-use rand::thread_rng;
 use rand::seq::SliceRandom;
 
 use serde::Serialize;
@@ -109,7 +108,7 @@ impl RoleStateImpl for Werewolf {
                 tracked_players.into_iter().for_each(|player_ref|{
 
                     let mut players: Vec<PlayerIndex> = player_ref.tracker_seen_visits(game).into_iter().map(|p|p.target.index()).collect();
-                    players.shuffle(&mut thread_rng());
+                    players.shuffle(&mut rand::rng());
 
                     actor_ref.push_night_message(game, 
                         ChatMessageVariant::WerewolfTrackingResult{
@@ -127,6 +126,7 @@ impl RoleStateImpl for Werewolf {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Werewolf, 0)
         )

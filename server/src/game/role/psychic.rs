@@ -40,6 +40,7 @@ impl RoleStateImpl for Psychic {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Psychic, 0)
         )
@@ -62,7 +63,7 @@ impl Psychic {
             .filter(|p|!p.has_innocent_aura(game))
             .collect();
 
-        valid_players.shuffle(&mut rand::thread_rng());
+        valid_players.shuffle(&mut rand::rng());
 
         for i in 0..valid_players.len(){
             for j in i+1..valid_players.len(){
@@ -80,7 +81,7 @@ impl Psychic {
             .filter(|p|!p.has_suspicious_aura(game))
             .collect();
 
-        valid_players.shuffle(&mut rand::thread_rng());
+        valid_players.shuffle(&mut rand::rng());
 
         for i in 0..valid_players.len(){
             if confused || Self::contains_good(game, target, valid_players[i]){

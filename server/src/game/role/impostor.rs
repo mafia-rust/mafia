@@ -49,6 +49,7 @@ impl RoleStateImpl for Impostor {
             game,
             actor_ref,
             false,
+            false,
             game.day_number() <= 1,
             ControllerID::role(actor_ref, Role::Impostor, 0)
         ).combine_overwrite_owned(ControllerParametersMap::new_controller_fast(
@@ -60,7 +61,7 @@ impl RoleStateImpl for Impostor {
                     .collect()
             ),
             AbilitySelection::new_role_option(Some(Role::Impostor)),
-            !actor_ref.alive(game),
+            actor_ref.ability_deactivated_from_death(game),
             None,
             false,
             vec_set!(actor_ref)

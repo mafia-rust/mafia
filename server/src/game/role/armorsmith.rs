@@ -1,5 +1,4 @@
-use rand::thread_rng;
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
@@ -7,7 +6,7 @@ use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::Game;
-use super::{common_role, ControllerID, GetClientRoleState, PlayerListSelection, Priority, Role, RoleStateImpl};
+use super::{common_role, ControllerID, GetClientRoleState, Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Debug)]
 pub struct Armorsmith {
@@ -43,40 +42,32 @@ impl RoleStateImpl for Armorsmith {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Heal => {
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let Some(visit) = actor_visits.first() else {return};
+                let target = visit.target;
 
-                if self.open_shops_remaining > 0 {
-                    if let Some(target) = if let Some(PlayerListSelection(target)) =
-                            game.saved_controllers.get_controller_current_selection_player_list(
-                                ControllerID::role(actor_ref, Role::Armorsmith, 0)
-                            )
-                        {
-                            target.first().cloned()
-                        }else{
-                            None
-                        }
-                    {
-                        self.night_open_shop = true;
-                        self.open_shops_remaining = self.open_shops_remaining.saturating_sub(1);
+                if self.open_shops_remaining <= 0 {return}
+                //
+                    
+                self.night_open_shop = true;
+                self.open_shops_remaining = self.open_shops_remaining.saturating_sub(1);
 
 
-                        actor_ref.increase_defense_to(game, DefensePower::Protection);
+                actor_ref.increase_defense_to(game, DefensePower::Protection);
 
-                        let visitors = actor_ref.all_night_visitors_cloned(game);
+                let visitors = actor_ref.all_night_visitors_cloned(game);
 
-                        for visitor in visitors.iter(){
-                            visitor.increase_defense_to(game, DefensePower::Protection);
-                        }
-
-                        if visitors.contains(&target){
-                            self.players_armor.push(target.clone());
-                        }else if let Some(random_visitor) = visitors.choose(&mut thread_rng()) {
-                            self.players_armor.push(random_visitor.clone());
-                        }
-
-                        self.night_protected_players = visitors;
-                    }
+                for visitor in visitors.iter(){
+                    visitor.increase_defense_to(game, DefensePower::Protection);
                 }
 
+                if visitors.contains(&target){
+                    self.players_armor.push(target.clone());
+                }else if let Some(random_visitor) = visitors.choose(&mut rand::rng()) {
+                    self.players_armor.push(random_visitor.clone());
+                }
+
+                self.night_protected_players = visitors;
 
                 for player in self.players_armor.iter(){
                     player.increase_defense_to(game, DefensePower::Protection);
@@ -113,6 +104,7 @@ impl RoleStateImpl for Armorsmith {
             game,
             actor_ref,
             false,
+            true,
             self.open_shops_remaining <= 0,
             ControllerID::role(actor_ref, Role::Armorsmith, 0)
         )

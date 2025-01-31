@@ -54,7 +54,7 @@ impl RoleStateImpl for Witch {
                 true
             ),
             AbilitySelection::new_two_player_option(None),
-            !actor_ref.alive(game) || Detained::is_detained(game, actor_ref),
+            actor_ref.ability_deactivated_from_death(game) || Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),
             false, 
             vec_set!(actor_ref)

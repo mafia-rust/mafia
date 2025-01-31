@@ -96,6 +96,7 @@ impl RoleStateImpl for Hypnotist {
             actor_ref,
             false,
             false,
+            false,
             ControllerID::role(actor_ref, Role::Hypnotist, 0)
         )
     }
