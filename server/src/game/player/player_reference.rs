@@ -18,9 +18,12 @@ pub struct InvalidPlayerReferenceError;
 impl PlayerReference{
     pub fn new(game: &Game, index: PlayerIndex) -> Result<PlayerReference, InvalidPlayerReferenceError>{
         if (index as usize) >= game.players.len() { return Err(InvalidPlayerReferenceError);} 
-        Ok(PlayerReference::new_unchecked(index))
+        // This unsafe should be fine because we just checked that the index is valid
+        unsafe {
+            Ok(PlayerReference::new_unchecked(index))
+        }
     }
-    pub fn new_unchecked(index: PlayerIndex) -> PlayerReference {
+    pub unsafe fn new_unchecked(index: PlayerIndex) -> PlayerReference {
         PlayerReference { index }
     }
     pub fn deref<'a>(&self, game: &'a Game)->&'a Player{
@@ -94,7 +97,8 @@ impl Iterator for PlayerReferenceIterator {
         if self.current >= self.end {
             None
         } else {
-            let ret = PlayerReference::new_unchecked(self.current);
+            // This unsafe should be fine as long as the iterator itself is fine
+            let ret = unsafe {PlayerReference::new_unchecked(self.current)};
             self.current += 1;
             Some(ret)
         }

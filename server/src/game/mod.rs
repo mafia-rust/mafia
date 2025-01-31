@@ -45,7 +45,7 @@ use rand::seq::SliceRandom;
 use role_list::RoleAssignment;
 use role_list::RoleOutlineOptionInsiderGroups;
 use role_list::RoleOutlineOptionWinCondition;
-use role_outline_reference::OriginallyGeneratedRoleAndPlayer;
+use role_outline_reference::RoleOutlineReference;
 use serde::Serialize;
 use win_condition::WinCondition;
 
@@ -89,7 +89,8 @@ pub struct Game {
     pub spectators: Vec<Spectator>,
     pub spectator_chat_messages: Vec<ChatMessageVariant>,
 
-    pub roles_originally_generated: Vec<OriginallyGeneratedRoleAndPlayer>,
+    /// indexed by role outline reference
+    pub assignments: Vec<(PlayerReference, RoleOutlineReference, RoleAssignment)>,
 
     pub players: Box<[Player]>,
     pub graves: Vec<Grave>,
@@ -161,27 +162,26 @@ impl Game {
             let settings = settings.clone();
             let role_list = settings.role_list.clone();
 
-
-            let roles_to_players = Self::assign_players_to_assignments(match role_list.create_random_role_assignments(&settings.enabled_roles){
+            let random_outline_assignments = match role_list.create_random_role_assignments(&settings.enabled_roles){
                 Some(roles) => {roles},
                 None => {return Err(RejectStartReason::RoleListCannotCreateRoles);}
-            });
+            };
 
-            let mut roles_to_players_clone = roles_to_players.clone();
-            roles_to_players_clone.sort_by(|(_, i), (_,j)| i.cmp(j));
-            let assignments = roles_to_players_clone.into_iter().map(|(r,_)|r).collect::<Vec<RoleAssignment>>();            
+            let assignments = Self::assign_players_to_assignments(random_outline_assignments);            
 
 
+            // Create list of players
             let mut new_players = Vec::new();
             for (player_index, player) in players.iter().enumerate() {
+
                 let ClientConnection::Connected(ref sender) = player.connection else {
                     return Err(RejectStartReason::PlayerDisconnected)
                 };
-                let Some(assignment) = assignments.get(player_index) else {
+                let Some((_, _, assignment)) = assignments.iter().find(|(p,_,_)|p.index() == player_index as u8) else {
                     return Err(RejectStartReason::RoleListTooSmall)
                 };
 
-                // Set win condition here so we can check if game ends
+                // Set win condition & Insider group here so we can check if game ends
                 let win_condition = match &assignment.win_condition {
                     RoleOutlineOptionWinCondition::RoleDefault => assignment.role.default_state().default_win_condition(),
                     RoleOutlineOptionWinCondition::GameConclusionReached { win_if_any } => {
@@ -203,10 +203,10 @@ impl Game {
 
             let num_players = new_players.len() as u8;
 
-            let game = Self{
+            let mut game = Self{
                 pitchfork: Pitchfork::new(num_players),
 
-                roles_originally_generated: roles_to_players.into_iter().map(|(r,i)|(r.role,PlayerReference::new_unchecked(i))).collect(),
+                assignments: assignments.clone(),
                 ticking: true,
                 spectators: spectators.clone().into_iter().map(Spectator::new).collect(),
                 spectator_chat_messages: Vec::new(),
@@ -235,6 +235,27 @@ impl Game {
                 synopsis_tracker: SynopsisTracker::new(num_players)
             };
 
+            // Just distribute insider groups, this is for game over checking (Keeps game running syndicate gun)
+            for player in PlayerReference::all_players(&game){
+                let Some((player, _, assignment)) = assignments
+                    .iter()
+                    .find(|(p,_,_)|*p == player) else {
+                        return Err(RejectStartReason::RoleListTooSmall)
+                    };
+                
+                let insider_groups = match &assignment.insider_groups {
+                    RoleOutlineOptionInsiderGroups::RoleDefault => assignment.role.default_state().default_revealed_groups(),
+                    RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().cloned().collect(),
+                };
+                
+                for group in insider_groups{
+                    unsafe {
+                        group.add_player_to_revealed_group_unchecked(&mut game, *player);
+                    }
+                }
+            }
+
+
             if !game.game_is_over() {
                 break (game, assignments);
             }
@@ -251,11 +272,17 @@ impl Game {
         for player in PlayerReference::all_players(&game){
             let role_data = player.role(&game).new_state(&game);
 
+            let Some((_, _, assignment)) = assignments
+                .iter()
+                .find(|(p,_,_)|*p == player) else {
+                    return Err(RejectStartReason::RoleListTooSmall)
+                };
+
             // We already set this earlier, now we just need to call the on_convert event. Hope this doesn't end the game!
             let win_condition = player.win_condition(&game).clone();
             player.set_win_condition(&mut game, win_condition);
 
-            let insider_groups = match &assignments[player.index() as usize].insider_groups {
+            let insider_groups = match &assignment.insider_groups {
                 RoleOutlineOptionInsiderGroups::RoleDefault => role_data.clone().default_revealed_groups(),
                 RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().cloned().collect(),
             };
@@ -292,10 +319,22 @@ impl Game {
 
         Ok(game)
     }
-    fn assign_players_to_assignments(initialization_data: Vec<RoleAssignment>)->Vec<(RoleAssignment, PlayerIndex)>{
+    
+    fn assign_players_to_assignments(initialization_data: Vec<RoleAssignment>)->Vec<(PlayerReference, RoleOutlineReference, RoleAssignment)>{
         let mut player_indices: Vec<PlayerIndex> = (0..initialization_data.len() as PlayerIndex).collect();
         player_indices.shuffle(&mut rand::rng());
-        initialization_data.into_iter().zip(player_indices).collect()
+
+        initialization_data
+            .into_iter()
+            .enumerate()
+            .zip(player_indices.into_iter())
+            .map(|((o_index, assignment), p_index)|
+                // We are iterating through playerlist and outline list, so this unsafe should be fine
+                unsafe {
+                    (PlayerReference::new_unchecked(p_index), RoleOutlineReference::new_unchecked(o_index as u8), assignment)
+                }
+            )
+            .collect()
     }
 
     pub fn num_players(&self) -> u8 {
@@ -424,9 +463,6 @@ impl Game {
     }
 
 
-
-
-
     pub fn game_is_over(&self) -> bool {
         if let Some(_) = GameConclusion::game_is_over(self){
             true
@@ -535,14 +571,18 @@ pub mod test {
     use super::{
         ability_input::saved_controllers_map::SavedControllersMap,
         components::{
-            arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, verdicts_today::VerdictsToday
+            arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID,
+            love_linked::LoveLinked, mafia::Mafia,
+            mafia_recruits::MafiaRecruits, night_visits::NightVisits,
+            pitchfork::Pitchfork, poison::Poison,
+            puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem,
+            synopsis::SynopsisTracker, verdicts_today::VerdictsToday
         }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
-        phase::PhaseStateMachine, player::{test::mock_player, PlayerIndex, PlayerReference},
+        phase::PhaseStateMachine, player::{test::mock_player, PlayerReference},
         role::Role, settings::Settings, Game, RejectStartReason
     };
-
-
+    
     pub fn mock_game(settings: Settings, number_of_players: usize) -> Result<Game, RejectStartReason> {
 
         //check settings are not completly off the rails
@@ -553,14 +593,14 @@ pub mod test {
         let settings = settings.clone();
         let role_list = settings.role_list.clone();
         
-        let data_to_players = assign_players_to_roles(match role_list.create_random_role_assignments(&settings.enabled_roles){
-            Some(data) => {data.into_iter().map(|datum| datum.role).collect()},
+        let random_outline_assignments = match role_list.create_random_role_assignments(&settings.enabled_roles){
+            Some(roles) => {roles},
             None => {return Err(RejectStartReason::RoleListCannotCreateRoles);}
-        });
+        };
+
+        let assignments = Game::assign_players_to_assignments(random_outline_assignments);
         
-        let mut roles_to_players_clone = data_to_players.clone();
-        roles_to_players_clone.sort_by(|(_, i), (_,j)| i.cmp(j));
-        let shuffled_roles = roles_to_players_clone.into_iter().map(|(r,_)|r).collect::<Vec<Role>>();
+        let shuffled_roles = assignments.iter().map(|(_,_,r)|r.role).collect::<Vec<Role>>();
 
 
         let mut players = Vec::new();
@@ -574,12 +614,11 @@ pub mod test {
             );
             players.push(new_player);
         }
-        drop(shuffled_roles); // Ensure we don't use the order of roles anywhere
 
         let mut game = Game{
             pitchfork: Pitchfork::new(number_of_players as u8),
             
-            roles_originally_generated: data_to_players.into_iter().map(|(r,i)|(r,PlayerReference::new_unchecked(i))).collect(),
+            assignments,
             ticking: true,
             spectators: Vec::new(),
             spectator_chat_messages: Vec::new(),
@@ -631,9 +670,4 @@ pub mod test {
 
         Ok(game)
     }
-    fn assign_players_to_roles(roles: Vec<Role>)->Vec<(Role, PlayerIndex)>{
-        let player_indices: Vec<PlayerIndex> = (0..roles.len() as PlayerIndex).collect();
-        roles.into_iter().zip(player_indices).collect()
-    }
-
 }

@@ -23,10 +23,9 @@ impl SynopsisTracker {
         Synopsis {
             player_synopses: game.synopsis_tracker.player_synopses.iter()
                 .enumerate()
-                .map(|(player_index, player_synopsis)| 
+                .map(|(player_index, player_synopsis)|
                     player_synopsis.get(
-                        PlayerReference::new_unchecked(player_index as u8)
-                            .get_won_game(game)
+                        unsafe { PlayerReference::new_unchecked(player_index as u8).get_won_game(game) }
                     )
                 ).collect(),
             conclusion

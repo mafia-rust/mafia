@@ -12,6 +12,7 @@ use super::{components::insider_group::InsiderGroupID, game_conclusion::GameConc
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RoleList(pub Vec<RoleOutline>);
 impl RoleList {
+    /// Output is the same order as the rolelist
     pub fn create_random_role_assignments(&self, enabled_roles: &VecSet<Role>) -> Option<Vec<RoleAssignment>> {
         let mut generated_data = Vec::<RoleAssignment>::new();
         for entry in self.0.iter(){
@@ -35,7 +36,7 @@ impl RoleList {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct RoleAssignment {
     pub role: Role,
     pub insider_groups: RoleOutlineOptionInsiderGroups,
