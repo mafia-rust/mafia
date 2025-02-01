@@ -11,7 +11,7 @@ use crate::{game::{
         insider_group::InsiderGroupID
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch
-    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, win_condition::WinCondition, Game
+    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
 }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
 use super::PlayerReference;
@@ -116,9 +116,9 @@ impl PlayerReference{
     pub fn possess_night_action(&self, game: &mut Game, priority: Priority, currently_used_player: Option<PlayerReference>)->Option<PlayerReference>{
         match priority {
             Priority::Possess => {
-                let possessor_visits = self.untagged_night_visits_cloned(game);
-                let Some(possessed_visit) = possessor_visits.get(0) else {return None};
-                let Some(possessed_into_visit) = possessor_visits.get(1) else {return None};
+                let untagged_possessor_visits = self.untagged_night_visits_cloned(game);
+                let Some(possessed_visit) = untagged_possessor_visits.get(0) else {return None};
+                let Some(possessed_into_visit) = untagged_possessor_visits.get(1) else {return None};
                 
                 possessed_visit.target.push_night_message(game,
                     ChatMessageVariant::YouWerePossessed { immune: possessed_visit.target.possession_immune(game) }
@@ -192,7 +192,19 @@ impl PlayerReference{
                     possessed_visit.target.convert_selection_to_visits(game)
                 );
 
-                self.set_night_visits(game, vec![possessed_visit.clone()]);
+                //remove the second role visit
+                let mut found_first = false;
+                let mut new_witch_visits = vec![];
+                for visit in self.all_night_visits_cloned(game){
+                    if !found_first || visit.tag != VisitTag::Role {
+                        new_witch_visits.push(visit);
+                    }
+                    if visit.tag == VisitTag::Role {
+                        found_first = true;
+                    }
+                }
+
+                self.set_night_visits(game, new_witch_visits);
                 return Some(possessed_visit.target);
             },
             Priority::Investigative => {

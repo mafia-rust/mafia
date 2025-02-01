@@ -57,9 +57,7 @@ impl TrueWildcard {
             role_can_generate(
                 role, 
                 &game.settings.enabled_roles, 
-                &PlayerReference::all_players(game)
-                    .map(|player_ref| player_ref.role(game))
-                    .collect::<Vec<Role>>()
+                &Vec::new(),    //True wildcard can be whatever they want
             )
         {
             actor_ref.set_role_and_win_condition_and_revealed_group(game, role.new_state(game));
