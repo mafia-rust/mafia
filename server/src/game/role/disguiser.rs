@@ -101,10 +101,15 @@ impl RoleStateImpl for Disguiser {
             actor_ref.set_role_state(game, self);
         }
     }
-    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType) {
-        actor_ref.remove_player_tag_on_all(game, crate::game::tag::Tag::Disguise);
-        self.current_target = None;
-        actor_ref.set_role_state(game, self);
+    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
+        match phase {
+            PhaseType::Night => {
+                actor_ref.remove_player_tag_on_all(game, crate::game::tag::Tag::Disguise);
+                self.current_target = None;
+                actor_ref.set_role_state(game, self);
+            },
+            _ => {}
+        }
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: crate::game::grave::GraveReference) {
         let grave_ref = grave;
@@ -137,7 +142,7 @@ impl RoleStateImpl for Disguiser {
             };
         }
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+    fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
