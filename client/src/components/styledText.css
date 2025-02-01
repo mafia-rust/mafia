@@ -99,16 +99,8 @@
     --spiral-color: #47a850;
     --spiral-background-color: #a4e6a4;
 }
-@font-face {
-    font-family: 'dankduck';
-    font-style: normal;
-    font-weight: 400;
-    src: url(Dankduck.ttf) format('truetype');
-}
 .keyword-title {
-    font-family: 'dankduck', 'Roboto', sans-serif;
-    font-weight: 400;
-    font-style: normal;
+    font-family: var(--title-font), 'Roboto', sans-serif;
 }
 .keyword-kira {
     font-family: var(--kira-font, Arial);
