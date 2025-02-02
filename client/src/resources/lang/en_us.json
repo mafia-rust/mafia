@@ -997,7 +997,7 @@
     "chatMessage.cultKillsNext": "The cult will attempt to sacrifice and kill someone tonight.",
     "chatMessage.addedToNiceList": "You've been good this year, so you have been added to the nice list.",
     "chatMessage.addedToNaughtyList": "You've been bad this year - you have been added to the naughty list.",
-    "chatMessage.nextSantaAbility.nice": "Tonight you will add zer or one players to the nice list.",
+    "chatMessage.nextSantaAbility.nice": "Tonight you will add zero or one players to the nice list.",
     "chatMessage.nextSantaAbility.naughty": "Tonight you will add a player to the naughty list.",
     "chatMessage.nextKrampusAbility.kill": "Tonight you will attack someone and investigate them.",
     "chatMessage.nextKrampusAbility.doNothing": "Tonight you will investigate someone.",
@@ -1025,7 +1025,7 @@
     "wiki.category.neutral": "Neutral",
     "wiki.category.neutral.text": "These are the roles in the Neutral role set. By default, most people with these roles are not insiders and don't win based on the game's conclusion. For example, the Jester wins when it dies.",
     "wiki.category.minions": "Minion",
-    "wiki.category.minions.text": "These are the roles in the Minion role set. By default, most people with these roles win when town loses, and are not insiders.",
+    "wiki.category.minions.text": "These are the roles in the Minion role set. By default, most people with these roles win when town loses, and are not insiders. If the only players left alive are friends with a minion player, that player leaves town and wins.",
     "wiki.category.cult": "Cult",
     "wiki.category.cult.text": "These are the roles in the cult role set. By default, most people with these roles are cult loyalists, cult insiders, and are part of the Cult hierarchy.",
     "wiki.category.fiends": "Fiend",
@@ -1835,8 +1835,8 @@
     "wiki.article.role.spiral.extra":"- You can't cause yourself to spiral\n- If a dead player is spiraling, they stay spiraling, and you attack them again, even while they are dead. Although they cannot die after already dead.",
 
     "wiki.article.role.warden.reminder": "Each night*, put up to 3 players in your prison who each must choose to either live or die, but if they all choose to live, they all die instead.",
-    "wiki.article.role.warden.guide":"- Each night except the first, choose up to 3 players to put in prison\n    - The prisoners must choose to live or die\n        - If a player chooses die, you attack them (armor-piercing)\n        - If all of the players in your prison choose live, you attack all of them (armor-piercing)\n    - The players in your prison can talk in a private chat group at night\n        - You can always read from the private prisoner chat group\n    - The players in your prison are roleblocked\n    - You can put yourself in your prison, but you can't ever die or be roleblocked by your own ability\n - Each night, you may choose to ward yourself",
-    "wiki.article.role.warden.abilities":"- Each night except the first, choose up to 3 players to put in prison\n    - The prisoners must choose to live or die\n        - If a player chooses die, you attack them (armor-piercing)\n        - If all of the players in your prison choose live, you attack all of them (armor-piercing)\n    - The players in your prison can talk in a private chat group at night\n        - You can always read from the private prisoner chat group\n    - The players in your prison are roleblocked\n    - You can put yourself in your prison, but you can't ever die or be roleblocked by your own ability\n - Each night, you may choose to ward yourself",
+    "wiki.article.role.warden.guide":"- Each night except the first, choose up to 3 players to put in prison\n    - The prisoners must choose to live or die\n        - If a player chooses die, you attack them (armor-piercing)\n        - If all of the players in your prison choose live, you attack all of them (armor-piercing)\n    - The players in your prison can talk in a private chat group at night\n        - You can always read from the private prisoner chat group\n    - The players in your prison are roleblocked, but not warded\n    - You can put yourself in your prison, but you can't ever die or be roleblocked by your own ability\n - Each night, you may choose to ward yourself",
+    "wiki.article.role.warden.abilities":"- Each night except the first, choose up to 3 players to put in prison\n    - The prisoners must choose to live or die\n        - If a player chooses die, you attack them (armor-piercing)\n        - If all of the players in your prison choose live, you attack all of them (armor-piercing)\n    - The players in your prison can talk in a private chat group at night\n        - You can always read from the private prisoner chat group\n    - The players in your prison are roleblocked, but not warded\n    - You can put yourself in your prison, but you can't ever die or be roleblocked by your own ability\n - Each night, you may choose to ward yourself",
     "wiki.article.role.warden.attributes":" - You can't die to your own ability, but the logic of your ability doesn't change. _For example_:\n You imprison yourself and another player. You both choose live. You survive and the other player dies. All players in prison chose to live so both players should die, but you can't die to your own ability.",
     "wiki.article.role.warden.extra":" - You don't visit anybody due to your own ability",
 
