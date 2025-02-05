@@ -45,11 +45,11 @@ impl SavedControllersMap{
             return false;
         }
 
-        OnValidatedAbilityInputReceived::new(actor, ability_input).invoke(game);
-
         Self::send_selection_message(game, actor, id, incoming_selection);
         
         Self::send_saved_controllers_to_clients(game);
+
+        OnValidatedAbilityInputReceived::new(actor, ability_input).invoke(game);
 
         true
     }
@@ -270,7 +270,7 @@ impl SavedControllersMap{
             )
     }
 
-    pub fn get_controller_current_selection_player_list(&self,id: ControllerID)->Option<PlayerListSelection>{
+    pub fn get_controller_current_selection_player_list(&self, id: ControllerID)->Option<PlayerListSelection>{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
