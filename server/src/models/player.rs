@@ -1,8 +1,10 @@
-use chrono;
+use chrono::NaiveDateTime;
 
-#[derive(Debug, sqlx::FromRow)]
+#[derive(sqlx::FromRow)]
 pub struct Player {
     pub player_id: i32,
     pub username: String,
-    pub created_at: chrono::NaiveDateTime,
+    pub player_number: Option<i32>,
+    pub created_at: Option<NaiveDateTime>,
+    // ...other fields...
 }

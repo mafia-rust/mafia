@@ -18,5 +18,5 @@ chrono = { version = "0.4.25", default-features = false, features = ["clock"] }
 vec1 = { version = "1.12.1", features = ["serde"] }
 enum_delegate = "0.2.0"
 supabase_rs = "0.4.0"
-sqlx = { version = "0.8", features = ["runtime-tokio", "postgres"] }
+sqlx = { version = "0.8", features = ["runtime-tokio", "postgres", "chrono"] }
 dotenv = "0.15"
