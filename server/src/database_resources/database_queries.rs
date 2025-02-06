@@ -1,8 +1,9 @@
 use sqlx::Pool;
 use crate::models::player::Player;
-use crate::game::Game;
 use std::sync::OnceLock;
 use std::env;
+use crate::sqlx::Row;
+use crate::log;
 
 // Declare a global static variable for the pool
 static POOL: OnceLock<Pool<sqlx::Postgres>> = OnceLock::new();
@@ -22,6 +23,13 @@ pub async fn get_player_by_id(pool: &Pool<sqlx::Postgres>, player_id: i32) -> Re
 }
 
 pub async fn on_game_start() -> Result<(), sqlx::Error> {
-    
+    create_game(POOL.get().unwrap()).await?;
     Ok(())
+}
+
+pub async fn create_game(pool: &Pool<sqlx::Postgres>) -> Result<i32, sqlx::Error> {
+    let game_id = sqlx::query("INSERT INTO games DEFAULT VALUES RETURNING game_id")
+        .fetch_one(pool).await?.get::<i32, _>(0);
+    log!(info "Database"; "Game ID: {}", game_id);
+    Ok(game_id)
 }
