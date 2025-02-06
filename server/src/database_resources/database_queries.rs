@@ -1,5 +1,7 @@
 use sqlx::{Pool, Postgres, Transaction};
+use crate::game;
 use crate::models::player::Player;
+use crate::game::components::save_game_statistics::GameStatistics;
 use crate::game::role::Role;
 use std::sync::OnceLock;
 use std::env;
@@ -18,19 +20,15 @@ pub async fn initialize_pool() -> Result<&'static Pool<sqlx::Postgres>, sqlx::Er
 }
 
 
-pub async fn on_game_start() -> Result<(), sqlx::Error> {
+pub async fn on_game_start(game: GameStatistics) -> Result<(), sqlx::Error> {
     if let Err(e) = create_game(POOL.get().unwrap()).await {
         eprintln!("Failed to create game: {:?}", e);
         return Err(e);
     }
-    if let Err(e) = populate_game(POOL.get().unwrap(), vec![Player {
-        player_id: 1,
-        username: "player1".to_string(),
-        player_number: Some(1),
-        created_at: Some(chrono::Utc::now().naive_utc()),
-        role: "villager".to_string(),
-        team: "town".to_string(),
-    }])
+
+    let game_players: Vec<Player> = game.all_players();
+
+    if let Err(e) = populate_game(POOL.get().unwrap(), game_players)
     .await
     {
         eprintln!("Failed to populate game: {:?}", e);
@@ -39,9 +37,17 @@ pub async fn on_game_start() -> Result<(), sqlx::Error> {
     Ok(())
 }
 
-//update game end timestamp.
+pub async fn on_game_end(game: GameStatistics) -> Result<(), sqlx::Error> {
+    Ok(())
+}
 
+
+//Todo queries for basic winrate information:
+//
+//update game end timestamp.
 //mark game as valid or invalid
+//update game results
+//update player
 
 
 

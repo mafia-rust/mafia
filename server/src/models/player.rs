@@ -10,6 +10,7 @@ pub struct Player {
     pub created_at: Option<NaiveDateTime>,
     pub role: String,
     pub team: String,
+    pub won: Option<bool>,
 
 }
 
@@ -25,6 +26,7 @@ impl Player {
             created_at: Some(chrono::Utc::now().naive_utc()),
             role,
             team: "None".to_string(),
+            won: None,
         }
     }
 

@@ -564,6 +564,16 @@ impl Game {
             spectator.send_packet(packet.clone());
         }
     }
+    fn get_all_players(game: &Game) -> Result<Vec<Player>, ()> {
+        // return a vector of all players in the game
+        // players are stored in a Box<Player>, so we need to deref them
+        let mut players = Vec::new();
+        for player in &game.players {
+            players.push(player.clone());
+        }
+        Ok(players)
+    }
+        
 }
 
 pub mod test {
