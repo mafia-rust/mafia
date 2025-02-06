@@ -1,9 +1,7 @@
 use crate::{websocket_connections::{connection::Connection, ForceLock}, listener::Listener, log};
 use tokio_tungstenite::tungstenite::Message;
 use std::{net::SocketAddr, sync::{Arc, Mutex}, pin::pin};
-
 use futures_util::{future::{self, Either}, StreamExt, SinkExt};
-
 use tokio::sync::{mpsc, broadcast};
 use tokio::net::{TcpListener, TcpStream};
 
@@ -30,6 +28,7 @@ pub async fn create_ws_server(server_address: &str) {
     Listener::start(event_listener.clone());
 
     log!(important "Server"; "Started listening on {server_address}");
+
 
     loop {
         let (stream, client_address) = match future::select(

@@ -1,10 +1,15 @@
-
 use mafia_server::{log, websocket_connections::websocket_listener::create_ws_server};
 use serde::Deserialize;
 use std::{fs, thread, time::Duration};
+use crate::database::Database;
+use sqlx::Pool;
+use sqlx::Postgres;
+use dotenv::dotenv;
+use std::env;
+use database_resources::database_queries;
 
 #[derive(Deserialize)]
-struct Config{
+struct Config {
     address: String,
 }
 
@@ -20,7 +25,10 @@ async fn main() {
         &fs::read_to_string("./resources/config.json").expect("Failed to read the config file")
     ).unwrap();
 
+
     loop {
+        // connect to the database
+        database::database_queries::initialize_pool().await;
         create_ws_server(&config.address).await;
         // This delay is only to make sure disconnect messages are sent before the server restarts
         thread::sleep(Duration::from_secs(1));

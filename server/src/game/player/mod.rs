@@ -33,6 +33,7 @@ pub struct PlayerInitializeParameters {
     pub name: String,
     pub host: bool,
 }
+#[derive(Clone)]
 pub struct Player {
     connection: ClientConnection,
 
@@ -62,10 +63,12 @@ pub struct Player {
     voting_variables: PlayerVotingVariables,
     night_variables: PlayerNightVariables,
 }
+#[derive(Clone)]
 struct PlayerVotingVariables{
     chosen_vote:    Option<PlayerReference>,
     verdict:        Verdict,
 }
+#[derive(Clone)]
 struct PlayerNightVariables{
     died: bool,
     attacked: bool,

@@ -7,6 +7,9 @@ pub mod client_connection;
 pub mod vec_map;
 pub mod vec_set;
 
+pub mod models;
+pub mod database_resources;
+extern crate sqlx;
 pub mod log {
     #[macro_export]
     /// Log a statement to the console. 
