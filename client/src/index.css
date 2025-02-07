@@ -74,20 +74,20 @@
 
 
 :root{
-    --background-color: #0E1026;
+    --background-color: #0d0d0f;
 
-    --fade-color: #161b34;
+    --fade-color: #0e101b;
 
-    --primary-color: #1c244e;
+    --primary-color: #272b3b;
     --secondary-color: #232754;
     --text-color: #ffffff;
 
-    --primary-border-color: #3c4675;
-    --primary-border-shadow-color: #111836;
-    --background-border-color: #262355;
-    --background-border-shadow-color: #09071e;
+    --primary-border-color: #545b78;
+    --primary-border-shadow-color: #1c1f2d;
+    --background-border-color: #33323d;
+    --background-border-shadow-color: #0a0a0f;
 
-    --hover-color: #232c57;
+    --hover-color: #30375a;
     --focus-outline-color: #929ccc;
 
     font-size: 1em;
@@ -128,7 +128,7 @@ s {
     background-color: #220000;
 }
 
-button, input, select, option, textarea, .textarea, summary {
+button, .button, input, select, option, textarea, .textarea, summary {
     border-radius: 0.4rem;
     margin: .13rem;
     background-color: var(--secondary-color);
@@ -175,12 +175,12 @@ a:focus-visible {
     text-decoration-color: var(--focus-outline-color);
 }
 
-button, summary {
+button, .button, summary {
     cursor: default;
     background-color: var(--primary-color);
     white-space: nowrap;
 }
-button, select, summary {
+button, .button, select, summary {
     border-bottom-color: var(--primary-border-shadow-color);
     border-right-color: var(--primary-border-shadow-color);
     user-select: none;
@@ -190,15 +190,16 @@ input, option, textarea, .textarea {
     border-left-color: var(--primary-border-shadow-color);
 }
 
-:has(input):focus-within > button.clear {
+:has(input):focus-within > button.clear,
+:has(input):focus-within > .button.clear {
     display: block;
 }
 
-:has(button.clear) {
+:has(button.clear), :has(.button.clear) {
     position: relative;
 }
 
-button.clear {
+button.clear, .button.clear {
     display: none;
     font-size: 0.8em;
     position: absolute;
@@ -209,12 +210,12 @@ button.clear {
     padding: 0;
 }
 
-button.close {
+button.close, .button.close {
     font-size: 1em;
     padding: 0;
 }
 
-button:disabled, input:disabled, select:disabled, option:disabled, textarea:disabled, .textarea:disabled, summary:disabled {
+button:disabled, .button:disabled, input:disabled, select:disabled, option:disabled, textarea:disabled, .textarea:disabled, summary:disabled {
     opacity: 0.5;
     box-shadow: 0 0 100vmax #55555555 inset;
 }
@@ -229,7 +230,7 @@ option {
     background-color: var(--background-color);
 }
 
-button:hover:not([disabled]):not(:active), input:hover:not([disabled]):not(:active), select:hover:not([disabled]):not(:active), option:hover:not([disabled]):not(:active), summary:hover:not([disabled]):not(:active) {
+button:hover:not([disabled]):not(:active), .button:hover:not([disabled]):not(:active), input:hover:not([disabled]):not(:active), select:hover:not([disabled]):not(:active), option:hover:not([disabled]):not(:active), summary:hover:not([disabled]):not(:active) {
     background-color: var(--hover-color);
 }
 

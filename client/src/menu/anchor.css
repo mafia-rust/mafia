@@ -7,9 +7,8 @@
     width: 100dvw;
 
     background:
-        url('fuzzy-background-alpha.png'),
+        url('fuzzy-background-alpha.png') center / 10000px,
         var(--background-color);
-    background-size: 10000px;
     animation: background-scroll 9s infinite forwards linear;
 }
 
