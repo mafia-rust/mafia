@@ -5,6 +5,7 @@
         "eamodio.gitlens",
         "rust-lang.rust-analyzer",
         "usernamehw.errorlens",
-        "tamasfe.even-better-toml"
+        "tamasfe.even-better-toml",
+        "ms-azuretools.vscode-docker"
     ]
 }
