@@ -479,7 +479,7 @@
             {"type": "transported"}
         ]
     },
-    "psychopomp":{
+    "coxswain":{
         "mainRoleSet": "town",
         "roleSets": ["town", "townCommon", "townSupport"],
         "armor": false,

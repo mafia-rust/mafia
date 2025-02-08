@@ -170,7 +170,7 @@ impl RoleStateImpl for Reeducator {
             .filter(|p|!RoleSet::MafiaKilling.get_roles().contains(&p.role(game)))
             .filter(|p|*p!=actor_ref)
             .filter(|p|p.role(game)!=Role::Reeducator)
-            .choose(&mut rand::thread_rng());
+            .choose(&mut rand::rng());
 
         if let Some(random_mafia_player) = random_mafia_player {
 
@@ -212,6 +212,6 @@ impl Reeducator {
         RoleSet::MafiaSupport.get_roles().into_iter()
             .filter(|p|game.settings.enabled_roles.contains(&p))
             .filter(|p|*p!=Role::Reeducator)
-            .choose(&mut rand::thread_rng())
+            .choose(&mut rand::rng())
     }
 }

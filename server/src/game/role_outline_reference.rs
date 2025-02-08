@@ -27,7 +27,11 @@ impl RoleOutlineReference{
         &game.settings.role_list.0[self.index as usize]
     }
     pub fn deref_as_role_and_player_originally_generated<'a>(&self, game: &'a Game)->OriginallyGeneratedRoleAndPlayer{
-        game.roles_originally_generated[self.index as usize]
+        game.assignments
+            .iter()
+            .find(|(_, outline, _)| outline.index == self.index)
+            .map(|(player, _, role)| (role.role, *player))
+            .expect("RoleOutlineReference does not correspond to any role in the game")
     }
 
     pub fn all_outlines(game: &Game) -> RoleOutlineReferenceIterator {

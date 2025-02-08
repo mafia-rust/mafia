@@ -1,5 +1,4 @@
 use std::collections::HashSet;
-
 use rand::seq::SliceRandom;
 
 use crate::{game::{
@@ -7,11 +6,12 @@ use crate::{game::{
     attack_power::{AttackPower, DefensePower},
     chat::{ChatGroup, ChatMessage, ChatMessageVariant},
     components::{
-        arsonist_doused::ArsonistDoused, drunk_aura::DrunkAura,
-        insider_group::InsiderGroupID, puppeteer_marionette::PuppeteerMarionette
+        arsonist_doused::ArsonistDoused,
+        drunk_aura::DrunkAura,
+        insider_group::InsiderGroupID
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch
-    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::Visit, win_condition::WinCondition, Game
+    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
 }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
 use super::PlayerReference;
@@ -116,9 +116,9 @@ impl PlayerReference{
     pub fn possess_night_action(&self, game: &mut Game, priority: Priority, currently_used_player: Option<PlayerReference>)->Option<PlayerReference>{
         match priority {
             Priority::Possess => {
-                let possessor_visits = self.untagged_night_visits_cloned(game);
-                let Some(possessed_visit) = possessor_visits.get(0) else {return None};
-                let Some(possessed_into_visit) = possessor_visits.get(1) else {return None};
+                let untagged_possessor_visits = self.untagged_night_visits_cloned(game);
+                let Some(possessed_visit) = untagged_possessor_visits.get(0) else {return None};
+                let Some(possessed_into_visit) = untagged_possessor_visits.get(1) else {return None};
                 
                 possessed_visit.target.push_night_message(game,
                     ChatMessageVariant::YouWerePossessed { immune: possessed_visit.target.possession_immune(game) }
@@ -192,7 +192,19 @@ impl PlayerReference{
                     possessed_visit.target.convert_selection_to_visits(game)
                 );
 
-                self.set_night_visits(game, vec![possessed_visit.clone()]);
+                //remove the second role visit
+                let mut found_first = false;
+                let mut new_witch_visits = vec![];
+                for visit in self.all_night_visits_cloned(game){
+                    if !found_first || visit.tag != VisitTag::Role {
+                        new_witch_visits.push(visit);
+                    }
+                    if visit.tag == VisitTag::Role {
+                        found_first = true;
+                    }
+                }
+
+                self.set_night_visits(game, new_witch_visits);
                 return Some(possessed_visit.target);
             },
             Priority::Investigative => {
@@ -299,7 +311,7 @@ impl PlayerReference{
 
     pub fn push_night_messages_to_player(&self, game: &mut Game){
         let mut messages = self.night_messages(game).to_vec();
-        messages.shuffle(&mut rand::thread_rng());
+        messages.shuffle(&mut rand::rng());
         messages.sort();
         self.send_packet(game, ToClientPacket::NightMessages { chat_messages: 
             messages.iter().map(|msg|ChatMessage::new_private(msg.clone())).collect()
@@ -320,7 +332,7 @@ impl PlayerReference{
             self.alive(game) ||
             (
                 PlayerReference::all_players(game).any(|p|
-                    if let RoleState::Psychopomp(c) = p.role_state(game) {
+                    if let RoleState::Coxswain(c) = p.role_state(game) {
                         c.targets.contains(self)
                     }else{
                         false
@@ -376,10 +388,13 @@ impl PlayerReference{
             },
         }
     }
+    /// If they can consistently kill then they keep the game running
+    /// Town kills by voting
+    /// Mafia kills with MK or gun
+    /// Cult kills / converts
     pub fn keeps_game_running(&self, game: &Game) -> bool {
-        if PuppeteerMarionette::is_marionette(game, *self) {return false;}
-
         if InsiderGroupID::Mafia.is_player_in_revealed_group(game, *self) {return true;}
+        if InsiderGroupID::Cult.is_player_in_revealed_group(game, *self) {return true;}
         if self.win_condition(game).is_loyalist_for(GameConclusion::Town) {return true;}
         
         GameConclusion::keeps_game_running(self.role(game))

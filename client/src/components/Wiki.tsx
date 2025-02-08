@@ -275,13 +275,13 @@ export function partitionWikiPages(
             "standard/protect", "standard/rampage", "standard/report", "standard/roleblock", "standard/silenced",
             "standard/spiral", "standard/syndicateGunItem", "standard/transport", "standard/ward",
             "standard/forfeitVote", "standard/aura", "standard/fastForward", "standard/appearedVisit", 
-            "standard/defense", "standard/confused"
+            "standard/defense", "standard/confused", "standard/trial",
         ].includes(wikiPage)) {
             category = "abilities"
         }
         
         if ([
-            "standard/claim", "standard/claimswap", "standard/vfr"
+            "standard/claim", "standard/claimswap", "standard/vfr", "standard/passcode",
         ].includes(wikiPage)) {
             category = "strategies"
         }

@@ -1,5 +1,4 @@
-use rand::thread_rng;
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
@@ -64,7 +63,7 @@ impl RoleStateImpl for Armorsmith {
 
                 if visitors.contains(&target){
                     self.players_armor.push(target.clone());
-                }else if let Some(random_visitor) = visitors.choose(&mut thread_rng()) {
+                }else if let Some(random_visitor) = visitors.choose(&mut rand::rng()) {
                     self.players_armor.push(random_visitor.clone());
                 }
 

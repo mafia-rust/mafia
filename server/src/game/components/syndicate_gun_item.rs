@@ -141,7 +141,7 @@ impl SyndicateGunItem {
         else {return};
         let Some(target) = target.first() else {return};
 
-        if 
+        if
             actor_ref != *target &&
             target.alive(game) &&
             InsiderGroupID::Mafia.is_player_in_revealed_group(game, *target) 

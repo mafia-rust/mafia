@@ -1,5 +1,5 @@
 
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::attack_power::DefensePower;
@@ -83,7 +83,7 @@ impl RoleStateImpl for Revolutionary {
                 p.role(game) != Role::Mayor &&
                 p.role(game) != Role::Reporter
             ).collect::<Vec<PlayerReference>>()
-            .choose(&mut rand::thread_rng())
+            .choose(&mut rand::rng())
         {
             actor_ref.push_player_tag(game, *target, Tag::RevolutionaryTarget);
             actor_ref.set_role_state(game, RoleState::Revolutionary(Revolutionary{target: RevolutionaryTarget::Target(*target)}));

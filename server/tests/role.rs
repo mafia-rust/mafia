@@ -1919,9 +1919,11 @@ fn recruits_dont_get_converted_to_mk(){
 
     assert!(!mortician.alive());
     assert!(a.alive());
-    assert!(a.role() == Role::Detective);
+    assert!(a.role() == Role::Recruiter);
     assert!(mortician.role() == Role::Recruiter);
     assert!(vigi.role() == Role::Vigilante);
+
+    game.skip_to(Obituary, 5);
 
     //make sure recruiter lost
     assert!(!recruiter.get_won_game());
