@@ -5,6 +5,10 @@
     flex-direction: column;
 }
 
+.sm *:not(.material-icons-round, .keyword-title){
+    font-family: var(--computer-font);
+}
+
 .sm > header {
     height: 20rem;
     display: flex;
