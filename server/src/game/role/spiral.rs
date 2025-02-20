@@ -1,6 +1,8 @@
 use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
+use crate::game::chat::ChatMessageVariant;
+use crate::game::components::confused::Confused;
 use crate::game::components::poison::{Poison, PoisonAlert};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -34,20 +36,24 @@ impl RoleStateImpl for Spiral {
         if self.spiraling.is_empty() && game.day_number() > 1 {
             if let Some(visit) = actor_ref.untagged_night_visits_cloned(game).first(){
                 let target_ref = visit.target;
-                
-                target_ref.try_night_kill_single_attacker(
+                if Confused::is_confused(game, actor_ref) {
+                    actor_ref.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
+                    return;
+                }
+                target_ref.try_night_kill_single_attacker_ignore_confusion(
                     actor_ref,
                     game,
                     GraveKiller::Role(Role::Spiral),
                     AttackPower::ArmorPiercing,
                     true
                 );
+                
                 Spiral::spiral_visitors(game, &mut new_spiraling, actor_ref, target_ref);
             }
         } else {
             for spiraling_player in self.spiraling.clone() {
                 Spiral::remove_player_spiraling(game, &mut new_spiraling, actor_ref, spiraling_player);
-
+                
                 Spiral::spiral_visitors(game, &mut new_spiraling, actor_ref, spiraling_player);
             }
         }

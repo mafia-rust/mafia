@@ -2,6 +2,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::components::confused::Confused;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -51,9 +52,11 @@ impl RoleStateImpl for Bodyguard {
             Priority::Bodyguard => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
+                
                 let target_ref = visit.target;
                 if actor_ref == target_ref {return}
-
+                if Confused::is_confused(game, actor_ref) {return}
+                
                 let mut redirected_player_refs = vec![];
                 let mut target_protected_ref = None;
                 for attacker_ref in PlayerReference::all_players(game){
@@ -80,7 +83,7 @@ impl RoleStateImpl for Bodyguard {
                 let actors_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actors_visits.first() else {return};
                 let target_ref = visit.target;
-    
+                
                 if actor_ref == target_ref {
                     let self_shields_remaining = self.self_shields_remaining - 1;
                     actor_ref.set_role_state(game, Bodyguard{
@@ -88,16 +91,18 @@ impl RoleStateImpl for Bodyguard {
                         ..self
                     });
                     
-                    
+                    if Confused::is_confused(game, actor_ref) {return}
                     target_ref.increase_defense_to(game, DefensePower::Protection);
                 }
             },
             Priority::Kill => {
+                if Confused::is_confused(game, actor_ref) {return}
                 for redirected_player_ref in self.redirected_player_refs {
                     redirected_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Bodyguard), AttackPower::ArmorPiercing, false);
                 }
             }
             Priority::Investigative => {
+                if Confused::is_confused(game, actor_ref) {return}
                 if let Some(target_protected_ref) = self.target_protected_ref {
                     actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
                     target_protected_ref.push_night_message(game, ChatMessageVariant::YouWereProtected);

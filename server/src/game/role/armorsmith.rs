@@ -1,6 +1,7 @@
 use rand::seq::IndexedRandom;
 use serde::Serialize;
 
+use crate::game::components::confused::Confused;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -47,11 +48,11 @@ impl RoleStateImpl for Armorsmith {
                 let target = visit.target;
 
                 if self.open_shops_remaining <= 0 {return}
-                //
-                    
+                
                 self.night_open_shop = true;
                 self.open_shops_remaining = self.open_shops_remaining.saturating_sub(1);
 
+                if Confused::is_confused(game, actor_ref) {return}
 
                 actor_ref.increase_defense_to(game, DefensePower::Protection);
 
@@ -76,7 +77,7 @@ impl RoleStateImpl for Armorsmith {
                 actor_ref.set_role_state(game, self);
             }
             Priority::Investigative => {
-
+                if Confused::is_confused(game, actor_ref) {return;}
                 for protected_player in self.night_protected_players.iter(){
                     if protected_player.night_attacked(game){
                         actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);

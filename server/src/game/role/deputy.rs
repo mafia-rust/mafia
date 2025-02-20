@@ -3,6 +3,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::components::confused::Confused;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
@@ -40,6 +41,10 @@ impl RoleStateImpl for Deputy {
         let Some(PlayerListSelection(target_ref)) = ability_input.get_player_list_selection_if_id(
             ControllerID::role(actor_ref, Role::Deputy, 0)
         )else{return};
+        if Confused::is_confused_not_possess_confused(game, actor_ref){
+            actor_ref.add_private_chat_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
+            return;
+        }
         let Some(target_ref) = target_ref.first() else {return};
         
         

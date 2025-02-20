@@ -19,6 +19,18 @@ impl PlayerReference{
     pub fn role(&self, game: &Game) -> Role {
         self.deref(game).role_state.role()
     }
+    
+    // / Equivalent to role, unless the player disguised in which case the disguise role is returned instead
+    // / I have no idea how to let rust trust me to access the role state as an imposter/disguiser one specifically
+    // pub fn role_foolish(&self, game: &game) -> Role {
+    //     let tags = self.player_tags(game);
+    //     let players = PlayerReference::all_players(game);
+    //     for player in players {
+    //         let role_state = player.role_state(game);
+    //     }
+    //     return;
+    // }
+
     pub fn role_state<'a>(&self, game: &'a Game) -> &'a RoleState {
         &self.deref(game).role_state
     }
@@ -388,6 +400,3 @@ impl PlayerReference{
         }
     }
 }
-
-
-

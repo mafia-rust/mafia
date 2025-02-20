@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::components::confused::Confused;
 use crate::game::{attack_power::DefensePower, components::arsonist_doused::ArsonistDoused};
 use crate::game::player::PlayerReference;
 
@@ -27,7 +28,8 @@ impl RoleStateImpl for Arsonist {
                     let target_ref = visit.target;
                     ArsonistDoused::douse(game, target_ref);
                 }
-                
+                //possession doesn't affect who visits you
+                if Confused::is_confused_not_possess_confused(game, actor_ref) {return}
                 //douse all visitors
                 for other_player_ref in actor_ref.all_night_visitors_cloned(game)
                     .into_iter()

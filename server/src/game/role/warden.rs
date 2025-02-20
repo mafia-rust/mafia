@@ -1,4 +1,5 @@
 use serde::Serialize;
+use crate::game::components::confused::Confused;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::{game::attack_power::AttackPower, vec_set::VecSet};
 use crate::game::chat::ChatMessageVariant;
@@ -12,7 +13,7 @@ use super::{
     common_role, AbilitySelection, AvailableAbilitySelection, BooleanSelection, ControllerID, ControllerParametersMap, PlayerListSelection, Priority, Role, RoleStateImpl
 };
 
-
+    
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Warden{
     // vec because order matters
@@ -52,7 +53,16 @@ impl RoleStateImpl for Warden {
             }
             Priority::Kill => {
                 if game.day_number() == 1 {return}
-                for player in self.players_to_kill(game, actor_ref) {
+                
+                let players_to_kill = self.players_to_kill(game, actor_ref);
+
+                if Confused::is_confused(game, actor_ref){
+                    if players_to_kill.is_empty() {return;}
+                    actor_ref.push_night_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
+                    return;
+                }
+
+                for player in players_to_kill {
                     if player == actor_ref {continue}
         
                     player.try_night_kill_single_attacker(

@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::components::confused::Confused;
 use crate::game::components::detained::Detained;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::role_list::RoleSet;
@@ -26,24 +27,26 @@ impl RoleStateImpl for Framer {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Deception => {
-                let framer_visits = actor_ref.untagged_night_visits_cloned(game).clone();
+                if !Confused::is_confused(game, actor_ref) {
+                    let framer_visits = actor_ref.untagged_night_visits_cloned(game).clone();
 
-                let Some(first_visit) = framer_visits.first() else {return};
+                    let Some(first_visit) = framer_visits.first() else {return};
 
-                self.framed_targets.insert(first_visit.target);
+                    self.framed_targets.insert(first_visit.target);
 
-                first_visit.target.set_night_framed(game, true);
-                for framed_target in self.framed_targets.iter(){
-                    framed_target.set_night_framed(game, true);
+                    first_visit.target.set_night_framed(game, true);
+                    for framed_target in self.framed_targets.iter(){
+                        framed_target.set_night_framed(game, true);
+                    }
+                    self.update_framer_tags(game, actor_ref);
+                    actor_ref.set_role_state(game, self);
+
+                    let Some(second_visit) = framer_visits.get(1) else {return};
+                
+                    first_visit.target.set_night_appeared_visits(game, Some(vec![
+                        Visit::new_none(first_visit.target, second_visit.target, false)
+                    ]));
                 }
-                self.update_framer_tags(game, actor_ref);
-                actor_ref.set_role_state(game, self);
-
-                let Some(second_visit) = framer_visits.get(1) else {return};
-            
-                first_visit.target.set_night_appeared_visits(game, Some(vec![
-                    Visit::new_none(first_visit.target, second_visit.target, false)
-                ]));
 
                 //this code erases only the second framer visit
                 let mut new_visits = vec![];

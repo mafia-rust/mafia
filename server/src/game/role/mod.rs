@@ -164,6 +164,7 @@ macros::roles! {
     Yer : yer,
     FiendsWildcard : fiends_wildcard,
     SerialKiller : serial_killer,
+    Tavernkeep : tavernkeep,
 
     Apostle : apostle,
     Disciple : disciple,
@@ -177,7 +178,9 @@ macros::priorities! {
     Transporter,
     Warper,
 
+    ConfusePossessors,
     Possess,
+    Confuse,
     Roleblock,
 
     Deception,
@@ -193,7 +196,8 @@ macros::priorities! {
     Cupid,
     SpyBug,
 
-    StealMessages
+    StealMessages,
+    ConfuseForTomorrow
 }
 
 pub(crate) mod common_role;
@@ -399,7 +403,8 @@ impl Role{
             Role::Bouncer |
             Role::Transporter | Role::Escort | Role::Retributionist | 
             Role::Witch | Role::Scarecrow | Role::Warper |
-            Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer => true,
+            Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer | 
+            Role::Tavernkeep => true,
             _ => false,
         }
     }
@@ -408,6 +413,21 @@ impl Role{
             Role::Jailor | Role::Kidnapper |
             Role::Bouncer | Role::Scarecrow => true,
             _ => false
+        }
+    }
+    pub fn any_wildcard(&self) -> bool{
+        match self {
+            Role::Wildcard | Role::TrueWildcard | 
+            Role::MafiaKillingWildcard | Role::MafiaSupportWildcard | 
+            Role::FiendsWildcard => true, 
+            _=> false
+        }
+    }
+    pub fn can_possess(&self) -> bool{
+        match self {
+            Role::Witch | Role::MafiaWitch | 
+            Role::Retributionist | Role::Necromancer => true,
+            _=> false
         }
     }
     pub fn has_innocent_aura(&self, game: &Game)->bool{

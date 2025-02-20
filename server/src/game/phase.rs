@@ -51,6 +51,7 @@ pub enum PhaseState {
 pub struct PhaseStateMachine {
     pub time_remaining: Duration,
     pub current_state: PhaseState,
+    pub seconds_per_decrement: f32,
     pub day_number: u8, // Hopefully nobody is having more than 256 days anyway
 }
 
@@ -60,6 +61,7 @@ impl PhaseStateMachine {
 
         Self {
             time_remaining: times.get_time_for(current_state.phase()),
+            seconds_per_decrement: 1f32,
             day_number: 1,
             current_state,
         }

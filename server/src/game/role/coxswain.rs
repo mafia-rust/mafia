@@ -5,6 +5,7 @@ use serde::Serialize;
 use crate::game::ability_input::*;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatGroup;
+use crate::game::components::confused::Confused;
 use crate::game::components::detained::Detained;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -78,6 +79,8 @@ impl RoleStateImpl for Coxswain {
         }
         out
     }
+    
+    ///If the coxswain is confused, the "revived" players are confused
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
             PhaseType::Night => {
@@ -89,9 +92,15 @@ impl RoleStateImpl for Coxswain {
                 let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(
                     ControllerID::role(actor_ref, Role::Coxswain, 0)
                 ) else {return};
-                
+
                 if actor_ref.ability_deactivated_from_death(game) {return};
                 
+                if Confused::is_confused(game, actor_ref) {
+                    for target in self.targets {
+                        Confused::add_player(game, target, 1);
+                    }
+                }
+
                 self.targets = target.into_iter().collect();
                 
                 actor_ref.set_role_state(game, self);
@@ -101,5 +110,5 @@ impl RoleStateImpl for Coxswain {
     }
 }
 impl Coxswain {
-
+    
 }

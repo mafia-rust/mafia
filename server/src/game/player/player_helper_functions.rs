@@ -6,9 +6,7 @@ use crate::{game::{
     attack_power::{AttackPower, DefensePower},
     chat::{ChatGroup, ChatMessage, ChatMessageVariant},
     components::{
-        arsonist_doused::ArsonistDoused,
-        drunk_aura::DrunkAura,
-        insider_group::InsiderGroupID
+        arsonist_doused::ArsonistDoused, confused::Confused, drunk_aura::DrunkAura, insider_group::InsiderGroupID
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch
     }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
@@ -47,11 +45,16 @@ impl PlayerReference{
         self.night_roleblocked(game) || self.night_wardblocked(game)
     }
 
-
-
     /// Returns true if attack overpowered defense
     pub fn try_night_kill_single_attacker(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
-        self.try_night_kill(
+        if attack != AttackPower::ProtectionPiercing && Confused::is_confused(game, attacker_ref){
+            if attacker_ref == *self {
+                self.push_night_message(game,ChatMessageVariant::YouSurvivedAttack);
+            }
+            attacker_ref.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
+            return false;
+        }
+        self.try_night_kill_ignore_confusion(
             &vec![attacker_ref].into_iter().collect(),
             game,
             grave_killer,
@@ -59,7 +62,38 @@ impl PlayerReference{
             should_leave_death_note
         )
     }
-    pub fn try_night_kill(&self, attacker_refs: &VecSet<PlayerReference>, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
+    pub fn try_night_kill_single_attacker_ignore_confusion(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
+        self.try_night_kill_ignore_confusion(
+            &vec![attacker_ref].into_iter().collect(),
+            game,
+            grave_killer,
+            attack,
+            should_leave_death_note
+        )
+    }
+    pub fn try_night_kill(&self, attacker_refs_param: &VecSet<PlayerReference>, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
+        let attacker_refs: &VecSet<PlayerReference> = if attack != AttackPower::ProtectionPiercing {
+            let attacker_refs_temp = &mut attacker_refs_param.clone();
+            let mut all_confused = true;
+            for attacker_ref in attacker_refs_param.iter() {
+                if Confused::is_confused(game, *attacker_ref) {
+                    if attacker_ref == self {
+                        self.push_night_message(game,ChatMessageVariant::YouSurvivedAttack);
+                    }
+                    attacker_ref.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
+                    attacker_refs_temp.remove(attacker_ref);
+                } else {
+                    all_confused = false;
+                }
+            }
+            if all_confused == true {return false;}
+            &attacker_refs_temp.clone()
+        } else {
+            attacker_refs_param
+        };
+        return self.try_night_kill_ignore_confusion(attacker_refs, game, grave_killer, attack, should_leave_death_note)
+    }
+    pub fn try_night_kill_ignore_confusion(&self, attacker_refs: &VecSet<PlayerReference>, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool{
         self.set_night_attacked(game, true);
 
         if self.night_defense(game).can_block(attack){
@@ -293,7 +327,6 @@ impl PlayerReference{
         }
     }
     
-    
     pub fn tracker_seen_visits(self, game: &Game) -> Vec<Visit> {
         if let Some(v) = self.night_appeared_visits(game) {
             v.clone()
@@ -301,6 +334,18 @@ impl PlayerReference{
             self.all_night_visits_cloned(game)
         }
     }
+
+    pub fn confused_tracker_seen_visits(self, game: &Game) -> Vec<PlayerReference> {
+        let mut valid_players: Vec<PlayerReference> = PlayerReference::all_players(game)
+            .filter(|p|*p != self)
+            .filter(|p| p.alive(game))
+            .collect();
+        if valid_players.len() <= 1 {
+            return valid_players;
+        }
+        return valid_players.partial_shuffle(&mut rand::rng(), 1).0.to_vec();
+    }
+
     pub fn all_appeared_visitors(self, game: &Game) -> Vec<PlayerReference> {
         PlayerReference::all_players(game).filter(|player_ref|{
             player_ref.tracker_seen_visits(game).iter().any(|other_visit| 

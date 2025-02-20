@@ -25,13 +25,13 @@ impl RoleStateImpl for Drunk {
 
         //special case here. I don't want to use set_role because it alerts the player their role changed
         //NOTE: It will still send a packet to the player that their role state updated,
-        //so it might be deducable that there is a recruiter
+        //so it might be deductible that there is a recruiter
         if let Some(random_town_role) = possible_roles.choose(&mut rand::rng()) {
             actor_ref.set_role_state(game, random_town_role.new_state(game));
         }
 
-        Confused::add_player(game, actor_ref);
-        DrunkAura::add_player(game, actor_ref);
+        Confused::add_player_permanent(game, actor_ref);
+        DrunkAura::add_player_permanent(game, actor_ref);
     }
 }
 impl Drunk{

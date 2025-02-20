@@ -1,5 +1,5 @@
 use crate::game::{
-    components::{pitchfork::Pitchfork, verdicts_today::VerdictsToday},
+    components::{confused::Confused, drunk_aura::DrunkAura, pitchfork::Pitchfork, verdicts_today::VerdictsToday},
     modifiers::Modifiers, phase::PhaseType, Game
 };
 
@@ -15,5 +15,7 @@ impl BeforePhaseEnd{
         VerdictsToday::before_phase_end(game, self.phase);
         Pitchfork::before_phase_end(game, self.phase);
         Modifiers::before_phase_end(game, self.phase);
+        Confused::before_phase_end(game, self.phase);
+        DrunkAura::before_phase_end(game, self.phase);
     }
 }

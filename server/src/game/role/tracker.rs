@@ -1,6 +1,7 @@
 use rand::prelude::SliceRandom;
 use serde::Serialize;
 
+use crate::game::components::confused::Confused;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 
@@ -18,15 +19,20 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Tracker {
     type ClientRoleState = Tracker;
+    ///If confused, you are told your target visited a random player 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 
-
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-        if let Some(visit) = actor_visits.first(){
+        if let Some(visit) = actor_visits.first() {
             
-            let mut seen_players: Vec<PlayerReference> = visit.target.tracker_seen_visits(game).into_iter().map(|v|v.target).collect();
-            seen_players.shuffle(&mut rand::rng());
+            let mut seen_players: Vec<PlayerReference>;
+            if Confused::is_confused(game, actor_ref) {
+                seen_players = visit.target.confused_tracker_seen_visits(game);
+            } else {
+                seen_players = visit.target.tracker_seen_visits(game).into_iter().map(|v|v.target).collect();
+                seen_players.shuffle(&mut rand::rng());
+            };
 
             let message = ChatMessageVariant::TrackerResult { players:
                 PlayerReference::ref_vec_to_index(seen_players.as_slice())

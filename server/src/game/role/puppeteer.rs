@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::components::confused::Confused;
 use crate::game::components::detained::Detained;
 use crate::game::{
     attack_power::DefensePower,
@@ -45,12 +46,11 @@ impl RoleStateImpl for Puppeteer {
         if let Some(visit) = actor_visits.first(){
             let target = visit.target;
             
-            if 
-                game.saved_controllers.get_controller_current_selection_integer(
+            if game.saved_controllers.get_controller_current_selection_integer(
                     ControllerID::role(actor_ref, Role::Puppeteer, 1)
                 ).unwrap_or(IntegerSelection(0)).0 == 1
             {
-                if !AttackPower::ArmorPiercing.can_pierce(target.defense(game)) {
+                if !AttackPower::ArmorPiercing.can_pierce(target.defense(game)) || Confused::is_confused(game, actor_ref){
                     actor_ref.push_night_message(game, crate::game::chat::ChatMessageVariant::YourConvertFailed);
                 }else{
                     if PuppeteerMarionette::string(game, target){

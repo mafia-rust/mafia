@@ -84,7 +84,6 @@ impl From<PlayerReference> for PlayerIndex {
     }
 }
 
-
 pub struct PlayerReferenceIterator {
     current: PlayerIndex,
     end: PlayerIndex

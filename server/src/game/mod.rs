@@ -154,11 +154,10 @@ impl Game {
         let mut role_generation_tries = 0;
         const MAX_ROLE_GENERATION_TRIES: u8 = 250;
         let (mut game, assignments) = loop {
-
             if role_generation_tries >= MAX_ROLE_GENERATION_TRIES {
                 return Err(RejectStartReason::RoleListCannotCreateRoles);
             }
-
+            
             let settings = settings.clone();
             let role_list = settings.role_list.clone();
 
@@ -258,7 +257,7 @@ impl Game {
                 }
             }
 
-
+            
             if !game.game_is_over() {
                 break (game, assignments);
             }
@@ -348,23 +347,23 @@ impl Game {
     pub fn count_verdict_votes(&self, player_on_trial: PlayerReference)->(u8,u8){
         let mut guilty = 0;
         let mut innocent = 0;
-        for player_ref in PlayerReference::all_players(self){
-            if !player_ref.alive(self) || player_ref == player_on_trial {
+        for voter_ref in PlayerReference::all_players(self){
+            if !voter_ref.alive(self) || voter_ref == player_on_trial {
                 continue;
             }
             let mut voting_power = 1;
-            if let RoleState::Mayor(mayor) = player_ref.role_state(self).clone(){
-                if mayor.revealed {
+            if let RoleState::Mayor(mayor) = voter_ref.role_state(self).clone(){
+                if mayor.revealed && !Confused::is_confused_not_possess_confused(self, voter_ref){
                     voting_power += 2;
                 }
             }
-            if let RoleState::Politician(politician) = player_ref.role_state(self).clone(){
-                if politician.revealed {
+            if let RoleState::Politician(politician) = voter_ref.role_state(self).clone(){
+                if politician.revealed && !Confused::is_confused_not_possess_confused(self, voter_ref){
                     voting_power += 2;
                 }
             }
             
-            match player_ref.verdict(self) {
+            match voter_ref.verdict(self) {
                 Verdict::Innocent => innocent += voting_power,
                 Verdict::Abstain => {},
                 Verdict::Guilty => guilty += voting_power,

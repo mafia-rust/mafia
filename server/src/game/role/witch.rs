@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::components::confused::Confused;
 use crate::game::components::detained::Detained;
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, grave::Grave};
@@ -33,9 +34,15 @@ impl RoleStateImpl for Witch {
     type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
+            if Confused::is_confused(game, actor_ref) && !currently_used_player.role(game).possession_immune() {
+                match priority {
+                    Priority::Possess => Confused::add_player_from_possession(game, currently_used_player), 
+                    _=>(),
+                }
+            }
             actor_ref.set_role_state(game, Witch{
                 currently_used_player: Some(currently_used_player)
-            })
+            });
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {

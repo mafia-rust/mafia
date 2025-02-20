@@ -6,6 +6,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
+use crate::game::components::confused::Confused;
 use crate::game::grave::GraveKiller;
 use crate::game::player::{PlayerIndex, PlayerReference};
 
@@ -41,21 +42,28 @@ impl RoleStateImpl for Werewolf {
                 match actor_ref.untagged_night_visits_cloned(game).first() {
                     //rampage at target
                     Some(first_visit) => {
-                        let target_ref = first_visit.target;                        
-
+                        let target_ref = first_visit.target;   
+                                            
+                        if Confused::is_confused(game, actor_ref) {
+                            actor_ref.push_night_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
+                            return;
+                        }
+                        
                         for other_player_ref in 
                             target_ref.all_night_visitors_cloned(game).into_iter().filter(|p|actor_ref!=*p)
                             .collect::<Vec<PlayerReference>>()
                         {
-                            other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
+                            other_player_ref.try_night_kill_single_attacker_ignore_confusion(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
                         }
-                        target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
+                        target_ref.try_night_kill_single_attacker_ignore_confusion(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
                     },
 
 
 
                     //rampage at home
                     None => {
+                        if Confused::is_confused(game, actor_ref) {return}
+
                         for other_player_ref in 
                             actor_ref.all_night_visitors_cloned(game).into_iter().filter(|p|actor_ref!=*p)
                             .collect::<Vec<PlayerReference>>()

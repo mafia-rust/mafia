@@ -1,7 +1,7 @@
 use rand::seq::SliceRandom;
 use serde::Serialize;
 
-use crate::game::attack_power::DefensePower;
+use crate::game::{attack_power::DefensePower, components::confused::Confused};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::player::PlayerReference;
@@ -50,6 +50,8 @@ impl RoleStateImpl for Spy {
                 actor_ref.push_night_message(game, ChatMessageVariant::SpyMafiaVisit { players: mafia_visits });               
             },
             Priority::SpyBug => {
+                if Confused::is_confused(game, actor_ref) {return}
+
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
 

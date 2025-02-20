@@ -3,6 +3,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::selection_type::two_role_option_selection::TwoRoleOptionSelection;
 use crate::game::ability_input::ControllerID;
+use crate::game::components::confused::Confused;
 use crate::game::components::detained::Detained;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
@@ -55,6 +56,24 @@ impl RoleStateImpl for Steward {
                 let Some(selection) = selection else {return};
                 let TwoRoleOptionSelection(first, second) = selection;
                 
+                let self_heals_remaining = if 
+                    first.is_some_and(|r|r == Role::Steward) || 
+                    second.is_some_and(|r|r == Role::Steward)
+                {
+                    self.self_heals_remaining.saturating_sub(1)
+                }else{
+                    self.self_heals_remaining
+                };
+
+                if Confused::is_confused(game, actor_ref) {
+                    actor_ref.set_role_state(game, Steward{
+                        self_heals_remaining,
+                        target_healed_refs: healed_players,
+                        previous_input: TwoRoleOptionSelection(first, second), //updates here
+                    });
+                    return
+                }
+                
                 if let Some(role) = first {
                     for player in PlayerReference::all_players(game){
                         if role != player.role(game) {continue;}
@@ -72,14 +91,7 @@ impl RoleStateImpl for Steward {
                     }
                 }
                 
-                let self_heals_remaining = if 
-                    first.is_some_and(|r|r == Role::Steward) || 
-                    second.is_some_and(|r|r == Role::Steward)
-                {
-                    self.self_heals_remaining.saturating_sub(1)
-                }else{
-                    self.self_heals_remaining
-                };
+                
                 
                 actor_ref.set_role_state(game, Steward{
                     self_heals_remaining,
@@ -88,6 +100,7 @@ impl RoleStateImpl for Steward {
                 });
             }
             Priority::Investigative => {
+                if Confused::is_confused(game, actor_ref) {return;}
                 for target_healed_ref in self.target_healed_refs{
                     if target_healed_ref.night_attacked(game){
                         actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);

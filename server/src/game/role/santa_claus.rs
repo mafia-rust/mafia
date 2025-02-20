@@ -1,5 +1,6 @@
 use serde::Serialize;
 use crate::game::chat::ChatMessageVariant;
+use crate::game::components::confused::Confused;
 use crate::game::components::detained::Detained;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::phase::PhaseType;
@@ -39,6 +40,11 @@ impl RoleStateImpl for SantaClaus {
                 let targets = actor_visits.map(|v| v.target);
 
                 for target_ref in targets {
+                    if target_ref == actor_ref || Confused::is_confused(game, actor_ref) {
+                        actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                        continue;
+                    }
+                    
                     let WinCondition::GameConclusionReached { mut win_if_any } = target_ref.win_condition(game).clone() else {
                         actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
                         continue
@@ -67,6 +73,11 @@ impl RoleStateImpl for SantaClaus {
                 let targets = actor_visits.map(|v| v.target);
 
                 for target_ref in targets {
+                    if target_ref == actor_ref || Confused::is_confused(game, actor_ref) {
+                        actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                        continue;
+                    }
+                    
                     let WinCondition::GameConclusionReached { mut win_if_any } = target_ref.win_condition(game).clone() else {
                         actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
                         continue

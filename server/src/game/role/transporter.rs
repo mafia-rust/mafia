@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::components::confused::Confused;
 use crate::game::components::detained::Detained;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
@@ -19,7 +20,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Transporter {
     type ClientRoleState = Transporter;
+    ///if confused, the players get the message they were transported but visits are not actually transported
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+
         if priority != Priority::Transporter {return;}
     
         let transporter_visits = actor_ref.untagged_night_visits_cloned(game).clone();
@@ -29,7 +32,9 @@ impl RoleStateImpl for Transporter {
         
         first_visit.target.push_night_message(game, ChatMessageVariant::Transported);
         second_visit.target.push_night_message(game, ChatMessageVariant::Transported);
-    
+
+        if Confused::is_confused(game, actor_ref) {return}
+
         for player_ref in PlayerReference::all_players(game){
             if player_ref == actor_ref {continue;}
             if player_ref.role(game) == Role::Transporter {continue;}

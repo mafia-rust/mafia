@@ -52,7 +52,7 @@ impl RoleStateImpl for Auditor {
         else{return};
 
         if let Some(chosen_outline) = selection.0{
-            let result = if Confused::is_confused(game, actor_ref){
+            let result = if Confused::is_confused_not_possess_confused(game, actor_ref){
                 Self::get_confused_result(game, chosen_outline)
             }else{
                 Self::get_result(game, chosen_outline)

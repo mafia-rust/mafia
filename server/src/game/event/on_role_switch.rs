@@ -23,7 +23,7 @@ impl OnRoleSwitch{
         Mafia::on_role_switch(game, self.old.clone(), self.new.clone());
 
         ArsonistDoused::tag_doused_players_for_arsonists(game);
-        DrunkAura::on_role_switch(game, self.player);
+        DrunkAura::on_role_switch(game, self.player, self.old.role());
 
         SynopsisTracker::on_role_switch(game, self.player, self.old.role(), self.new.role());
     }

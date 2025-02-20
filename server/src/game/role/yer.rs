@@ -2,6 +2,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
+use crate::game::components::confused::Confused;
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::player::PlayerReference;
@@ -45,7 +46,6 @@ impl RoleStateImpl for Yer {
 
             if !chose_to_convert{
                 if priority != Priority::Kill {return}
-
                 target_ref.try_night_kill_single_attacker(
                     actor_ref,
                     game,
@@ -57,7 +57,7 @@ impl RoleStateImpl for Yer {
                 if priority != Priority::Convert {return}
                 if self.star_passes_remaining <= 0 {return}
 
-                if target_ref.night_defense(game).can_block(AttackPower::ArmorPiercing) {
+                if Confused::is_confused(game, actor_ref) || target_ref.night_defense(game).can_block(AttackPower::ArmorPiercing){
                     actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
                     return
                 }

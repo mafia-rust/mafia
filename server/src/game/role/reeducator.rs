@@ -5,6 +5,7 @@ use vec1::vec1;
 use crate::game::ability_input::ControllerID;
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
+use crate::game::components::confused::Confused;
 use crate::game::components::detained::Detained;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::game_conclusion::GameConclusion;
@@ -28,11 +29,13 @@ use super::{
 #[serde(rename_all = "camelCase")]
 pub struct Reeducator{
     convert_charges_remaining: bool,
+    successful_target_ref: Option<PlayerReference>
 }
 impl Default for Reeducator{
     fn default() -> Self {
         Self {
             convert_charges_remaining: true,
+            successful_target_ref: None
         }
     }
 }
@@ -45,7 +48,9 @@ impl RoleStateImpl for Reeducator {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Deception => {
-                if !self.convert_charges_remaining {return}
+                if !self.convert_charges_remaining {
+                    return
+                }
 
                 actor_ref.set_night_visits(game, actor_ref
                     .all_night_visits_cloned(game)
@@ -63,7 +68,9 @@ impl RoleStateImpl for Reeducator {
             },
             Priority::Convert => {
                 let visits = actor_ref.untagged_night_visits_cloned(game);
-                let Some(target_ref) = visits.first().map(|v| v.target) else {return};
+                let Some(target_ref) = visits.first().map(|v| v.target) else {
+                    return
+                };
 
                 let role = 
                 if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
@@ -79,8 +86,8 @@ impl RoleStateImpl for Reeducator {
                 let new_state = role.new_state(game);
 
                 if InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref) {
-
                     target_ref.set_night_convert_role_to(game, Some(new_state));
+                    self.successful_target_ref = Some(target_ref);
 
                 }else if self.convert_charges_remaining && game.day_number() > 1{
 
@@ -95,11 +102,17 @@ impl RoleStateImpl for Reeducator {
                         WinCondition::new_loyalist(crate::game::game_conclusion::GameConclusion::Mafia)
                     );
                     target_ref.set_night_convert_role_to(game, Some(new_state));
-
+                    self.successful_target_ref = Some(target_ref);
                     self.convert_charges_remaining = false;
                     actor_ref.set_role_state(game, self);
                 }
             },
+            Priority::ConfuseForTomorrow => {
+                let Some(target_ref) = self.successful_target_ref else {return;};
+                //effectively duration 1
+                Confused::add_player(game, target_ref, 2);
+                self.successful_target_ref = None;
+            }
             _ => {}
         }                
     }

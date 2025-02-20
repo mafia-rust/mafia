@@ -1,6 +1,8 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::chat::ChatMessageVariant;
+use crate::game::components::confused::Confused;
 use crate::game::components::detained::Detained;
 use crate::game::attack_power::DefensePower;
 use crate::game::game_conclusion::GameConclusion;
@@ -55,7 +57,12 @@ impl RoleStateImpl for Marksman {
         {
             return;
         };
-
+        if Confused::is_confused(game, actor_ref) {
+            if !marks.is_empty() && !visiting_players.is_empty(){
+                actor_ref.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
+            }
+            return;
+        }
         for mark in marks {
             if !visiting_players.contains(&mark) {continue};
             

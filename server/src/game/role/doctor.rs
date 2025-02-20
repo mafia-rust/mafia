@@ -1,6 +1,7 @@
 
 use serde::Serialize;
 
+use crate::game::components::confused::Confused;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -43,6 +44,8 @@ impl RoleStateImpl for Doctor {
                 
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
+                if Confused::is_confused(game, actor_ref) {return}
+
                 let target_ref = visit.target;
 
                 target_ref.increase_defense_to(game, DefensePower::Protection);
@@ -52,7 +55,7 @@ impl RoleStateImpl for Doctor {
                         self_heals_remaining: self.self_heals_remaining.saturating_sub(1), 
                         target_healed_ref: Some(target_ref)
                     }));
-                }else{
+                } else {
                     actor_ref.set_role_state(game, RoleState::Doctor(Doctor{
                         target_healed_ref: Some(target_ref),
                         ..self

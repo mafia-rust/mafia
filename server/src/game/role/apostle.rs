@@ -2,6 +2,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
+use crate::game::components::confused::Confused;
 use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::grave::GraveKiller;
@@ -45,7 +46,7 @@ impl RoleStateImpl for Apostle {
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 
-                if target_ref.night_defense(game).can_block(AttackPower::Basic) {
+                if target_ref.night_defense(game).can_block(AttackPower::Basic) || Confused::is_confused(game, actor_ref){
                     actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
                     return
                 }

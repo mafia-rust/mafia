@@ -35,7 +35,7 @@ impl RoleStateImpl for TallyClerk {
             }
         }
 
-        if Confused::is_confused(game, actor_ref){
+        if Confused::is_confused_not_possess_confused(game, actor_ref){
             let total_guilties = VerdictsToday::guilties(game).len();
             //add or subtract 1 randomly from the count
             if rand::random::<bool>(){

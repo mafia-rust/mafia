@@ -1,6 +1,7 @@
 use rand::prelude::SliceRandom;
 use serde::Serialize;
 
+use crate::game::components::confused::Confused;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 
@@ -21,9 +22,12 @@ impl RoleStateImpl for Lookout {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-        if let Some(visit) = actor_visits.first(){
-            
-            let mut seen_players: Vec<PlayerReference> = visit.target.all_appeared_visitors(game).into_iter().filter(|p|actor_ref!=*p).collect();
+        if let Some(visit) = actor_visits.first() {
+            let mut seen_players: Vec<PlayerReference> = if Confused::is_confused(game, actor_ref) {
+                Vec::new()
+            } else {
+                visit.target.all_appeared_visitors(game).into_iter().filter(|p|actor_ref!=*p).collect()
+            };
             seen_players.shuffle(&mut rand::rng());
 
             let message = ChatMessageVariant::LookoutResult { players:

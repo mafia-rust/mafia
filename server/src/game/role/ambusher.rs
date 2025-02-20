@@ -46,22 +46,21 @@ impl RoleStateImpl for Ambusher {
                         target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
                     ).collect::<Vec<PlayerReference>>()
                     .choose(&mut rand::rng())
-                    .copied(){
+                    .copied() {
                     Some(priority_visitor)
-                }else if let Some(other_visitor) = PlayerReference::all_players(game)
-                    .filter(|other_player_ref|
-                        other_player_ref.alive(game) &&
-                        *other_player_ref != actor_ref &&
-                        target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
-                    ).collect::<Vec<PlayerReference>>()
-                    .choose(&mut rand::rng())
-                    .copied(){
-                    Some(other_visitor)
-                }else{
-                    None
+                } else {
+                    PlayerReference::all_players(game)
+                        .filter(|other_player_ref|
+                            other_player_ref.alive(game) &&
+                            *other_player_ref != actor_ref &&
+                            //this is in the filter rather than being the Vec the players are filtered from to prevent repeat players
+                            target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
+                        ).collect::<Vec<PlayerReference>>()
+                        .choose(&mut rand::rng())
+                        .copied()
                 };
 
-                if let Some(player_to_attack) = player_to_attack{
+                if let Some(player_to_attack) = player_to_attack {
                     player_to_attack.try_night_kill_single_attacker(
                         actor_ref,
                         game,
@@ -69,7 +68,6 @@ impl RoleStateImpl for Ambusher {
                         AttackPower::Basic,
                         false
                     );
-
                     for visitor in target_ref.all_night_visitors_cloned(game){
                         if visitor == player_to_attack {continue;}
                         visitor.push_night_message(game, ChatMessageVariant::AmbusherCaught { ambusher: actor_ref });

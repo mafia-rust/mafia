@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::components::confused::Confused;
 use crate::game::components::detained::Detained;
 use crate::game::role_list::RoleSet;
 use crate::game::{attack_power::DefensePower, phase::PhaseType};
@@ -31,6 +32,12 @@ impl RoleStateImpl for Retributionist {
     type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
+            if Confused::is_confused(game, actor_ref){
+                match priority {
+                    Priority::TopPriority => Confused::add_player_from_possession(game, currently_used_player), 
+                    _=>(),
+                }
+            }
             let mut used_bodies = self.used_bodies;
             used_bodies.push(currently_used_player);
 

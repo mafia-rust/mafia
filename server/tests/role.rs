@@ -1177,6 +1177,8 @@ fn drunk_suspicious_aura() {
     );
 }
 
+/// NOT a test to confirm that a framer works when it's confused.
+/// idk what its for
 #[test]
 fn drunk_framer() {
     kit::scenario!(game in Night 2 where

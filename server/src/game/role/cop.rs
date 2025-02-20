@@ -3,6 +3,7 @@ use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::components::confused::Confused;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
@@ -38,18 +39,25 @@ impl RoleStateImpl for Cop {
 
         match priority {
             Priority::Heal => {
-                
+                if Confused::is_confused(game, actor_ref){return;}
+
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
-
+                
                 target_ref.increase_defense_to(game, DefensePower::Protection);
                 actor_ref.set_role_state(game, Cop {target_protected_ref: Some(target_ref)});
             }
             Priority::Kill => {
                 
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                
                 let Some(visit) = actor_visits.first() else {return};
+                if Confused::is_confused(game, actor_ref){
+                    actor_ref.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
+                    return;
+                }
+
                 let target_ref = visit.target;
 
                 let player_to_attack =
@@ -63,19 +71,18 @@ impl RoleStateImpl for Cop {
                     .choose(&mut rand::rng())
                     .copied(){
                     Some(non_town_visitor)
-                }else if let Some(town_visitor) = PlayerReference::all_players(game)
-                    .filter(|other_player_ref|
-                        other_player_ref.alive(game) &&
-                        *other_player_ref != actor_ref &&
-                        target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
-                    ).collect::<Vec<PlayerReference>>()
-                    .choose(&mut rand::rng())
-                    .copied(){
-                    Some(town_visitor)
-                }else{
-                    None
+                } else {
+                    PlayerReference::all_players(game)
+                        .filter(|other_player_ref|
+                            other_player_ref.alive(game) &&
+                            *other_player_ref != actor_ref &&
+                            //this is in the filter rather than being the Vec the players are filtered from to prevent repeat players
+                            target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
+                        ).collect::<Vec<PlayerReference>>()
+                        .choose(&mut rand::rng())
+                        .copied()
                 };
-
+                
                 if let Some(player_to_attack) = player_to_attack{
                     player_to_attack.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Cop), AttackPower::Basic, false);
                 }

@@ -1,6 +1,7 @@
 use rand::prelude::SliceRandom;
 use serde::Serialize;
 
+use crate::game::components::confused::Confused;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 
@@ -25,12 +26,20 @@ impl RoleStateImpl for Informant {
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
             let target_ref = visit.target;
+            let is_confused = Confused::is_confused(game, actor_ref);
+            
+            let mut visited_by: Vec<PlayerReference>;
+            let mut visited: Vec<PlayerReference>;
+            if is_confused {
+                visited_by = Vec::new();
+                visited = target_ref.confused_tracker_seen_visits(game);
+            } else {
+                visited_by = visit.target.all_appeared_visitors(game).into_iter().filter(|p|actor_ref!=*p).collect();
+                visited_by.shuffle(&mut rand::rng());
 
-            let mut visited_by: Vec<PlayerReference> =  visit.target.all_appeared_visitors(game).into_iter().filter(|p|actor_ref!=*p).collect();
-            visited_by.shuffle(&mut rand::rng());
-
-            let mut visited: Vec<PlayerReference> = target_ref.tracker_seen_visits(game).iter().map(|v|v.target).collect();
-            visited.shuffle(&mut rand::rng());
+                visited = target_ref.tracker_seen_visits(game).iter().map(|v|v.target).collect();
+                    visited.shuffle(&mut rand::rng());
+            };
 
             let message = ChatMessageVariant::InformantResult{
                 role: target_ref.role(game), 

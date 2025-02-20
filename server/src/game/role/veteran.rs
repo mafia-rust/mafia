@@ -1,6 +1,8 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::chat::ChatMessageVariant;
+use crate::game::components::confused::Confused;
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -42,6 +44,7 @@ impl RoleStateImpl for Veteran {
             ..Self::default()
         }
     }
+    ///if confused, you do not rampage or protect yourself and are told you attacked someone but they survived and told that you were attacked by someone but you survived
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::TopPriority => {
@@ -63,12 +66,16 @@ impl RoleStateImpl for Veteran {
                 }
             }
             Priority::Heal=>{
-                if !self.alerting_tonight {return}
+                if !self.alerting_tonight || Confused::is_confused(game, actor_ref) {return}
                 actor_ref.increase_defense_to(game, DefensePower::Protection);
             }
             Priority::Kill => {
                 if !self.alerting_tonight {return}
-
+                if Confused::is_confused(game, actor_ref){
+                    actor_ref.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
+                    // actor_ref.push_night_message(game,ChatMessageVariant::YouSurvivedAttack);
+                    return;
+                }
                 for other_player_ref in actor_ref.all_night_visitors_cloned(game)
                     .into_iter().filter(|other_player_ref|
                         other_player_ref.alive(game) &&
@@ -77,6 +84,7 @@ impl RoleStateImpl for Veteran {
                 {
                     other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Veteran), AttackPower::ArmorPiercing, false);
                 }
+
             }
             _=>{}
         }

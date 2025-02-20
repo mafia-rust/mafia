@@ -200,6 +200,7 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     FramerResult{ mafia_member: PlayerIndex, visitors: Vec<Role>},
     #[serde(rename_all = "camelCase")]
+   
     ScarecrowResult{players: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
     AmbusherCaught{ambusher: PlayerReference},
