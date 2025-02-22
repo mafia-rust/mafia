@@ -1,5 +1,7 @@
 {
     "lobbyMessage": "player",
+    "debugVisits": "result",
+    "debugMisc": "result",
     "whisper": "discreet",
     "broadcastWhisper": "discreet",
     "roleAssignment": "important center",
