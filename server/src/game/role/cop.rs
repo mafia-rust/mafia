@@ -57,23 +57,26 @@ impl RoleStateImpl for Cop {
                     .filter(|other_player_ref|
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref &&
-                        !other_player_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
+                        other_player_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
+                        // Its probably this way rather than having it filter applied directly to target_ref.all_night_visitors_cloned(game) 
+                        // in order to prevent repeat players
                         target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
                     ).collect::<Vec<PlayerReference>>()
                     .choose(&mut rand::rng())
                     .copied(){
                     Some(non_town_visitor)
-                }else if let Some(town_visitor) = PlayerReference::all_players(game)
-                    .filter(|other_player_ref|
-                        other_player_ref.alive(game) &&
-                        *other_player_ref != actor_ref &&
-                        target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
-                    ).collect::<Vec<PlayerReference>>()
-                    .choose(&mut rand::rng())
-                    .copied(){
-                    Some(town_visitor)
-                }else{
-                    None
+                } else {
+                    PlayerReference::all_players(game)
+                        .filter(|other_player_ref|
+                            other_player_ref.alive(game) &&
+                            *other_player_ref != actor_ref &&
+                            // Its probably this way rather than having it filter applied directly to target_ref.all_night_visitors_cloned(game) 
+                            // in order to prevent repeat players
+                            target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
+                        )
+                        .collect::<Vec<PlayerReference>>()
+                        .choose(&mut rand::rng())
+                        .copied()
                 };
 
                 if let Some(player_to_attack) = player_to_attack{
