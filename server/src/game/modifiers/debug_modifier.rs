@@ -19,8 +19,7 @@ impl ModifierTrait for DebugModifier {
         for player in players {
             player.push_night_message(game, ChatMessageVariant::DebugVisits { 
                 visited_by: player.all_night_visitors_cloned(game), 
-                visited: player.all_night_visits_cloned(game) });
+                visited: player.all_night_visits_cloned(game).iter().map(|visit| visit.target).collect() });
         }
-        
     }
 }
