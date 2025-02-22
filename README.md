@@ -25,7 +25,7 @@ Follow the [tutorial](https://www.rust-lang.org/learn/get-started) on the rust w
 If you're using VSCode, it's recommended to download the following extensions to make working on the project easier:
  - [Rust Analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) - You probably already have this. You definitely need it.
  - [Even Better Toml](https://marketplace.visualstudio.com/items?itemName=tamasfe.even-better-toml) - Language support for .TOML files
- - [Crates](https://marketplace.visualstudio.com/items?itemName=serayuzgur.crates) - Helps manage crate versions
+ - [Dependi](https://marketplace.visualstudio.com/items?itemName=fill-labs.dependi) - Helps manage crate versions
  - [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens) - Show error messages inline
  - [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens) - View git blame inline
  - [Spell checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker) - Spelling corrections
