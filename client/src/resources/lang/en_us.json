@@ -480,7 +480,9 @@
 
     "role.werewolf.name": "Werewolf",
     "role.werewolf.name:var.0": "Werewolves",
-    "controllerId.role.werewolf.0.name": "Sniff Or Rampage",
+    "role.werewolf.name:var.1": "Wolf",
+    "role.werewolf.name:var.2": "Wolves",
+    "controllerId.role.werewolf.0.name": "Sniff/Camp",
 
     "role.ojo.name": "Ojo",
     "role.ojo.name:var.0": "Ojos",
@@ -967,6 +969,7 @@
     "chatMessage.targetHasWinCondition":"Your target has the win condition \\0.",
     "chatMessage.targetIsPossessionImmune":"Your target was immune to possession.",
     "chatMessage.werewolfTrackingResult":"\\0 visited \\1.",
+    "chatMessage.werewolfTracked":"A werewolf has caught your scent! They are told who you visit and can camp outside your house.",
     "chatMessage.armorsmithArmorBroke": "The temporary armor, secretly given to you by an armorsmith, has been used and is now broken.",
     "chatMessage.engineerVisitorsRole": "A \\0 visited the trapped player.",
     "chatMessage.trapState.dismantled": "Your trap is currently dismantled. You can't set it yet.",

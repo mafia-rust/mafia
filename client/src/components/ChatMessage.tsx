@@ -698,6 +698,10 @@ export function translateChatMessage(
                 playerNames[message.trackedPlayer],
                 playerListToString(message.players, playerNames)
             );
+        case "werewolfTracked":
+            return translate("chatMessage.werewolfTracked", 
+                playerNames[message.target]
+            );
         case "wildcardConvertFailed":
             return translate("chatMessage.wildcardConvertFailed", translate("role."+message.role+".name"));
         case "youAreLoveLinked":
@@ -1091,6 +1095,9 @@ export type ChatMessageVariant = {
 } | {
     type: "santaAddedPlayerToNaughtyList",
     player: PlayerIndex
+} | {
+    type: "werewolfTracked",
+    target: PlayerIndex
 }
 
 export type MessageSender = {
