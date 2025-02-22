@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::game::{
     ability_input::*, components::synopsis::Synopsis, grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
         auditor::AuditorResult, engineer::TrapState, kira::KiraResult, krampus::KrampusAbility, santa_claus::SantaListKind, spy::SpyBug, Role
-    }, role_list::RoleOutline, tag::Tag, verdict::Verdict, win_condition::WinCondition
+    }, role_list::RoleOutline, tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition
 };
 
 
@@ -65,6 +65,15 @@ pub enum ChatMessageVariant {
         phase: PhaseState, 
         day_number: u8
     },
+
+    /* Debug */
+    //I have no idea if I should put the serde thing here, idk what its for but all the others seem to have it
+    #[serde(rename_all = "camelCase")]
+    DebugVisits {
+        visited_by:Vec <PlayerReference>,
+        visited:Vec <Visit>,
+    },
+
     /* Trial */
     #[serde(rename_all = "camelCase")]
     TrialInformation{

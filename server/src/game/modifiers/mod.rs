@@ -11,8 +11,10 @@ pub mod no_whispers;
 pub mod no_night_chat;
 pub mod no_chat;
 pub mod scheduled_nominations;
+pub mod debug_modifier;
 
 use dead_can_chat::DeadCanChat;
+use debug_modifier::DebugModifier;
 use no_abstaining::NoAbstaining;
 use no_chat::NoChat;
 use no_due_process::AutoGuilty;
@@ -61,6 +63,7 @@ pub enum ModifierState{
     NoNightChat(NoNightChat),
     NoChat(NoChat),
     ScheduledNominations(ScheduledNominations),
+    DebugModifier(DebugModifier),
 }
 #[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Debug, Hash)]
 #[serde(rename_all = "camelCase")]
@@ -78,6 +81,7 @@ pub enum ModifierType{
     NoNightChat,
     NoChat,
     ScheduledNominations,
+    DebugModifier,
 }
 impl ModifierType{
     pub fn default_state(&self)->ModifierState{
@@ -95,6 +99,7 @@ impl ModifierType{
             Self::NoNightChat => ModifierState::NoNightChat(NoNightChat::default()),
             Self::NoChat => ModifierState::NoChat(NoChat::default()),
             Self::ScheduledNominations => ModifierState::ScheduledNominations(ScheduledNominations::default()),
+            Self::DebugModifier => ModifierState::DebugModifier(DebugModifier::default()),
         }
     }
 }
@@ -114,6 +119,7 @@ impl From<&ModifierState> for ModifierType{
             ModifierState::NoNightChat(_) => Self::NoNightChat,
             ModifierState::NoChat(_) => Self::NoChat,
             ModifierState::ScheduledNominations(_) => Self::ScheduledNominations,
+            ModifierState::DebugModifier(_) => Self::DebugModifier,
         }
     }
 }
