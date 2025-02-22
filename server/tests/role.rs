@@ -3,7 +3,7 @@ use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::{ability_input::{ability_selection::AbilitySelection, ControllerID}, game_conclusion::GameConclusion};
+use mafia_server::game::{ability_input::{ability_selection::AbilitySelection, ControllerID}, game_conclusion::GameConclusion, role::engineer::Trap};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*,
@@ -85,6 +85,7 @@ pub use mafia_server::game::{
         apostle::Apostle,
         zealot::Zealot,
         
+        warden::Warden,
         arsonist::Arsonist,
         spiral::Spiral,
         pyrolisk::Pyrolisk,
@@ -1634,6 +1635,28 @@ fn godfather_backup_sets_off_engineer_trap() {
     assert!(eng.alive());
     assert!(!backup.alive());
     
+}
+
+#[test]
+fn warden_dismantles_trap() {
+    kit::scenario!(game in Dusk 2 where
+        evil: Warden,
+        eng: Engineer,
+        esc: Escort
+    );
+
+    evil.send_ability_input_player_list_typical(esc);
+    eng.send_ability_input_player_list_typical(esc);
+
+    game.skip_to(Obituary, 3);
+
+    assert!(matches!(
+        eng.role_state(),
+        RoleState::Engineer(Engineer { trap: Trap::Dismantled })
+    ));
+    assert!(esc.alive());
+    assert!(evil.alive());
+    assert!(eng.alive());
 }
 
 #[test]
