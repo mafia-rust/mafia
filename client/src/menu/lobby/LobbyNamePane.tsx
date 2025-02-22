@@ -27,7 +27,6 @@ export default function LobbyNamePane(): ReactElement {
                     : <><Icon>visibility</Icon> {translate("switchToSpectator")}</>}
             </Button>
             {ready !== "host" && <Button
-                highlighted={ready === "notReady"}
                 onClick={() => {GAME_MANAGER.sendReadyUpPacket(ready === "notReady")}}
             >
                 {ready === "ready"
@@ -39,11 +38,20 @@ export default function LobbyNamePane(): ReactElement {
 }
 
 function NameSelector(): ReactElement {
+    const myName = useLobbyState(
+        state => {
+            const client = state.players.get(state.myId!);
+            if(client === undefined || client === null) return undefined;
+            if(client.clientType.type === "spectator") return undefined;
+            return client.clientType.name;
+        },
+        ["lobbyClients", "yourId"]
+    );
     const [enteredName, setEnteredName] = React.useState("");
 
     return <div className="name-pane-selector">
         <div className="lobby-name">
-            <section><h2>{GAME_MANAGER.getMyName() ?? ""}</h2></section>
+            <section><h2>{myName ?? ""}</h2></section>
         </div>
         <div className="name-box">
             <input type="text" value={enteredName}

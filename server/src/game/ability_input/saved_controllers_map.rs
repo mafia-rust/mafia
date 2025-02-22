@@ -165,6 +165,8 @@ impl SavedControllersMap{
     }
 
     /// return true if selection was valid
+    /// return false if selection was invalid (ie wrong actor)
+    /// if selection is invalid then nothing happens, nothing is updated
     pub fn set_selection_in_controller(
         game: &mut Game,
         actor: PlayerReference,
@@ -277,6 +279,18 @@ impl SavedControllersMap{
             )
     }
 
+    pub fn get_controller_current_selection_two_player_option(&self,id: ControllerID)->Option<TwoPlayerOptionSelection>{
+        self
+            .get_controller_current_selection(id)
+            .and_then(|selection| 
+                if let AbilitySelection::TwoPlayerOption { selection } = selection {
+                    Some(selection)
+                }else{
+                    None
+                }
+            )
+    }
+
     pub fn get_controller_current_selection_role_option(&self,id: ControllerID)->Option<RoleOptionSelection>{
         self
             .get_controller_current_selection(id)
@@ -318,6 +332,18 @@ impl SavedControllersMap{
             .get_controller_current_selection(id)
             .and_then(|selection| 
                 if let AbilitySelection::String { selection } = selection {
+                    Some(selection)
+                }else{
+                    None
+                }
+            )
+    }
+
+    pub fn get_controller_current_selection_integer(&self,id: ControllerID)->Option<IntegerSelection>{
+        self
+            .get_controller_current_selection(id)
+            .and_then(|selection| 
+                if let AbilitySelection::Integer { selection } = selection {
                     Some(selection)
                 }else{
                     None

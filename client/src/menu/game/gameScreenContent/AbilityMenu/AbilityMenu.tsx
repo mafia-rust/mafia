@@ -2,9 +2,9 @@ import React, { ReactElement } from "react";
 import translate from "../../../../game/lang";
 import { ContentMenu, ContentTab } from "../../GameScreen";
 import { useGameState } from "../../../../components/useHooks";
-import OldSelectionType from "./AbilitySelectionTypes/OldSelectionMenu";
 import GenericAbilityMenu from "./GenericAbilityMenu";
 import "./abilityMenu.css";
+import RoleSpecificSection from "./RoleSpecific";
 
 export default function AbilityMenu(): ReactElement {
     const mySpectator = useGameState(
@@ -17,10 +17,10 @@ export default function AbilityMenu(): ReactElement {
             {translate("menu.ability.title")}
         </ContentTab>
         {!mySpectator &&
-            <>
-                <OldSelectionType/>
+            <div className="abilities">
+                <RoleSpecificSection/>
                 <GenericAbilityMenu/>
-            </>
+            </div>
         }
     </div>
     

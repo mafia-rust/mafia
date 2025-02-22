@@ -121,6 +121,7 @@ impl RoleStateImpl for Engineer {
                     if target.night_attacked(game){
                         actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
                         target.push_night_message(game, ChatMessageVariant::YouWereProtected);
+                        should_dismantle = true;
                     }
 
                     for visitor in target.all_night_visitors_cloned(game) {
@@ -135,7 +136,9 @@ impl RoleStateImpl for Engineer {
                     }
                 }
 
-                actor_ref.push_night_message(game, ChatMessageVariant::TrapStateEndOfNight { state: self.trap.state() });
+                if let RoleState::Engineer(Engineer { trap }) = actor_ref.role_state(game){
+                    actor_ref.push_night_message(game, ChatMessageVariant::TrapStateEndOfNight { state: trap.state() });
+                }
             }
             _ => {}
         }
@@ -147,6 +150,7 @@ impl RoleStateImpl for Engineer {
                     game,
                     actor_ref,
                     false,
+                    true,
                     false,
                     ControllerID::role(actor_ref, Role::Engineer, 0)
                 )
@@ -164,7 +168,7 @@ impl RoleStateImpl for Engineer {
             }
         }
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         common_role::convert_controller_selection_to_visits(
             game,
             actor_ref, 

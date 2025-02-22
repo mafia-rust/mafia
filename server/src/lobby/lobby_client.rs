@@ -24,6 +24,7 @@ pub struct LobbyClient{
 }
 
 #[derive(Clone, Debug, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
 pub enum Ready {
     Host,
     Ready,
@@ -53,7 +54,7 @@ impl LobbyClient {
 
         match game_client.client_location {
             GameClientLocation::Player(index) => {
-                let player_ref = PlayerReference::new_unchecked(index);
+                let player_ref = unsafe { PlayerReference::new_unchecked(index) };
                 LobbyClient{
                     connection: player_ref.connection(game).clone(),
                     ready: if game_client.host { Ready::Host } else { Ready::NotReady },

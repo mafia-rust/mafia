@@ -1,17 +1,20 @@
-import { ReactElement, useEffect, useMemo, useState } from "react";
+import React, { ReactElement, useEffect, useMemo, useRef, useState } from "react";
 import StyledText from "./StyledText";
 import { sanitizePlayerMessage } from "./ChatMessage";
 import GAME_MANAGER, { replaceMentions } from "..";
-import React from "react";
 import { Button } from "./Button";
 import Icon from "./Icon";
 import translate from "../game/lang";
 import "./textAreaDropdown.css";
+import DetailsSummary from "./DetailsSummary";
+import { usePlayerNames } from "./useHooks";
 
 export function TextDropdownArea(props: Readonly<{
     titleString: string,
     savedText: string,
+    defaultOpen?: boolean,
     open?: boolean,
+    dropdownArrow?: boolean,
     onAdd?: () => void,
     onSubtract?: () => void,
     onSave: (text: string) => void,
@@ -37,18 +40,21 @@ export function TextDropdownArea(props: Readonly<{
     }
 
     return (
-        <details className="text-area-dropdown" open={props.open ?? false}>
-            <summary>
-                <TextDropdownLabel
-                    titleString={props.titleString}
-                    savedText={props.savedText}
-                    field={field}
-                    onAdd={props.onAdd}
-                    onSubtract={props.onSubtract}
-                    onSave={save}
-                    cantPost={props.cantPost}
-                />
-            </summary>
+        <DetailsSummary
+            className="text-area-dropdown"
+            dropdownArrow={props.dropdownArrow}
+            defaultOpen={props.defaultOpen}
+            open={props.open}
+            summary={<TextDropdownLabel
+                titleString={props.titleString}
+                savedText={props.savedText}
+                field={field}
+                onAdd={props.onAdd}
+                onSubtract={props.onSubtract}
+                onSave={save}
+                cantPost={props.cantPost}
+            />}
+        >
             {unsaved ? "Unsaved" : ""}
             <PrettyTextArea
                 field={field}
@@ -56,7 +62,7 @@ export function TextDropdownArea(props: Readonly<{
                 save={save}
                 send={send}
             />
-        </details>
+        </DetailsSummary>
     )
 }
 
@@ -77,6 +83,8 @@ function TextDropdownLabel(
         return props.savedText !== props.field
     }, [props.field, props.savedText]);
 
+    const playerNames = usePlayerNames();
+
     function save(field: string) {
         props.onSave(field);
     }
@@ -87,12 +95,13 @@ function TextDropdownLabel(
     }
 
     return <div>
-        <StyledText>{replaceMentions(props.titleString)}</StyledText>
+        <StyledText>{replaceMentions(props.titleString, playerNames)}</StyledText>
         <span>
             {props.onSubtract ? <Button
-                onClick={() => {
+                onClick={(e) => {
                     if(props.onSubtract)
                         props.onSubtract();
+                    stopBubblingUpDomEvent(e);
                 }}
                 pressedChildren={() => <Icon size="small">done</Icon>}
                 aria-label={translate("menu.will.subtract")}
@@ -100,9 +109,10 @@ function TextDropdownLabel(
                 <Icon size="small">remove</Icon>
             </Button> : null}
             {props.onAdd ? <Button
-                onClick={() => {
+                onClick={(e) => {
                     if(props.onAdd)
                         props.onAdd();
+                    stopBubblingUpDomEvent(e);
                 }}
                 pressedChildren={() => <Icon size="small">done</Icon>}
                 aria-label={translate("menu.will.add")}
@@ -111,8 +121,9 @@ function TextDropdownLabel(
             </Button> : null}
             <Button
                 highlighted={unsaved}
-                onClick={() => {
+                onClick={(e) => {
                     save(props.field);
+                    stopBubblingUpDomEvent(e);
                     return true;
                 }}
                 pressedChildren={() => <Icon size="small">done</Icon>}
@@ -122,8 +133,9 @@ function TextDropdownLabel(
             </Button>
             <Button
                 disabled={props.cantPost}
-                onClick={() => {
+                onClick={(e) => {
                     send(props.field);
+                    stopBubblingUpDomEvent(e);
                     return true;
                 }}
                 pressedChildren={() => <Icon size="small">done</Icon>}
@@ -143,18 +155,57 @@ function PrettyTextArea(props: Readonly<{
 }>): ReactElement {
     const [writing, setWriting] = useState<boolean>(false);
     const [hover, setHover] = useState<boolean>(false);
+    const playerNames = usePlayerNames();
+
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const prettyTextAreaRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            if (prettyTextAreaRef.current) {
+                if (prettyTextAreaRef.current.contains(e.target as Node)) {
+                    setHover(true);
+                } else {
+                    setHover(false);
+                }
+            }
+        }
+        document.addEventListener("mousemove", handleMouseMove);
+        return () => document.removeEventListener("mousemove", handleMouseMove);
+    }, []);
+
+    // Function to adjust textarea height
+    const adjustHeight = () => {
+        if (textareaRef.current) {
+            textareaRef.current.style.height = "auto"; // Reset height
+            textareaRef.current.style.height = `calc(.25rem + ${textareaRef.current.scrollHeight}px)`; // Adjust to fit content
+        }
+    };
+
+    // Adjust height when the `props.field` value changes
+    useEffect(() => {
+        adjustHeight();
+    }, [props.field, writing, hover]);
 
     return <div
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
+        ref={prettyTextAreaRef}
+        className="pretty-text-area"
+        onTouchEnd={() => setWriting(true)}
         onFocus={() => setWriting(true)}
         onBlur={() => setWriting(false)}
     >
-        {(!writing && !hover)
-            ? <div className="textarea">
-                <StyledText noLinks={true}>{sanitizePlayerMessage(replaceMentions(props.field))}</StyledText>
+        {(!writing && !hover) ?
+            <div
+                className="textarea"
+            >
+                <StyledText noLinks={true}>
+                    {sanitizePlayerMessage(replaceMentions(props.field, playerNames))}
+                </StyledText>
             </div>
-            : <textarea
+            :
+            <textarea
+                className="textarea"
+                ref={textareaRef}
                 value={props.field}
                 onChange={e => props.setField(e.target.value)}
                 onKeyDown={(e) => {
@@ -167,6 +218,12 @@ function PrettyTextArea(props: Readonly<{
                         }
                     }
                 }}>
-            </textarea>}
-        </div>
+            </textarea>
+        }
+    </div>
+}
+
+
+function stopBubblingUpDomEvent(e: React.MouseEvent) {
+    e.stopPropagation();
 }

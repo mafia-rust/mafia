@@ -62,7 +62,6 @@ impl PlayerReference{
                 self.set_night_framed(game, false);
                 self.set_night_convert_role_to(game, None);
                 self.set_night_silenced(game, false);
-                self.set_selection(game, vec![]);
                 self.set_night_messages(game, vec![]);
                 
                 self.set_night_grave_role(game, None);
@@ -77,7 +76,8 @@ impl PlayerReference{
                     
                     self.set_night_grave_killers(game, vec![GraveKiller::Quit]);
                 }
-            }
+            },
+            PhaseType::Recess => {}
         }
 
         self.set_fast_forward_vote(game, false);

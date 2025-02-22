@@ -36,7 +36,7 @@ impl RoleStateImpl for Impostor {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         Godfather::night_ability(game, actor_ref, priority);
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,
@@ -49,6 +49,7 @@ impl RoleStateImpl for Impostor {
             game,
             actor_ref,
             false,
+            false,
             game.day_number() <= 1,
             ControllerID::role(actor_ref, Role::Impostor, 0)
         ).combine_overwrite_owned(ControllerParametersMap::new_controller_fast(
@@ -60,7 +61,7 @@ impl RoleStateImpl for Impostor {
                     .collect()
             ),
             AbilitySelection::new_role_option(Some(Role::Impostor)),
-            !actor_ref.alive(game),
+            actor_ref.ability_deactivated_from_death(game),
             None,
             false,
             vec_set!(actor_ref)

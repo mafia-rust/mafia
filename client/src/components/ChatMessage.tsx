@@ -3,19 +3,17 @@ import React, { ReactElement } from "react";
 import GAME_MANAGER, { find, replaceMentions } from "..";
 import StyledText, { KeywordDataMap, PLAYER_SENDER_KEYWORD_DATA } from "./StyledText";
 import "./chatMessage.css"
-import { ChatGroup, PhaseState, PlayerIndex, Tag, Verdict } from "../game/gameState.d";
+import { ChatGroup, Conclusion, PhaseState, PlayerIndex, Tag, translateConclusion, translateWinCondition, Verdict, WinCondition } from "../game/gameState.d";
 import { Role, RoleState } from "../game/roleState.d";
 import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
 import GraveComponent from "./grave";
 import { RoleOutline, translateRoleOutline } from "../game/roleListState.d";
 import { CopyButton } from "./ClipboardButtons";
-import { useGameState, useLobbyOrGameState, usePlayerState } from "./useHooks";
+import { useGameState, useLobbyOrGameState, usePlayerNames, usePlayerState, useSpectator } from "./useHooks";
 import { KiraResult, KiraResultDisplay } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
-import { PuppeteerAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/SmallPuppeteerMenu";
-import { RecruiterAction } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/RecruiterMenu";
-import { ControllerID, AbilitySelection, translateControllerID } from "../game/abilityInput";
+import { ControllerID, AbilitySelection, translateControllerID, controllerIdToLink } from "../game/abilityInput";
 import DetailsSummary from "./DetailsSummary";
 
 const ChatElement = React.memo((
@@ -39,7 +37,8 @@ const ChatElement = React.memo((
     const [mouseHovering, setMouseHovering] = React.useState(false); 
 
     const message = props.message;
-    const playerNames = props.playerNames ?? GAME_MANAGER.getPlayerNames();
+    const realPlayerNames = usePlayerNames();
+    const playerNames = props.playerNames ?? realPlayerNames;
     const chatMessageStyles = require("../resources/styling/chatMessage.json");
     if(message.variant === undefined){
         console.error("ChatElement message with undefined variant:");
@@ -134,35 +133,13 @@ const ChatElement = React.memo((
                 />
             </div>
         case "playerDied":
-
-            let graveRoleString: string;
-            switch (message.variant.grave.information.type) {
-                case "obscured":
-                    graveRoleString = translate("obscured");
-                    break;
-                case "normal":
-                    graveRoleString = translate("role."+message.variant.grave.information.role+".name");
-                    break;
-            }
-
-            return <div className={"chat-message-div"}>
-                <DetailsSummary
-                    summary={
-                        <StyledText className={"chat-message " + style}
-                            playerKeywordData={props.playerKeywordData}
-                        >
-                            {(chatGroupIcon??"")} {translate("chatMessage.playerDied",
-                                playerNames[message.variant.grave.player], graveRoleString
-                            )}
-                        </StyledText>
-                    }
-                    defaultOpen={GAME_MANAGER.getMySpectator()}
-                >
-                    <div className="grave-message">
-                        <GraveComponent grave={message.variant.grave} playerNames={playerNames}/>
-                    </div>
-                </DetailsSummary>
-            </div>;
+            return <PlayerDiedChatMessage
+                playerKeywordData={props.playerKeywordData}
+                style={style}
+                chatGroupIcon={chatGroupIcon}
+                playerNames={playerNames}
+                message={message as any}
+            />
     }
 
     return <div
@@ -182,6 +159,43 @@ const ChatElement = React.memo((
         }
     </div>;
 });
+
+function PlayerDiedChatMessage(props: Readonly<{
+    playerKeywordData?: KeywordDataMap,
+    style: string,
+    chatGroupIcon: string | null,
+    playerNames: string[],
+    message: ChatMessage & { variant: { type: "playerDied" } }
+}>): ReactElement {
+    let graveRoleString: string;
+    switch (props.message.variant.grave.information.type) {
+        case "obscured":
+            graveRoleString = translate("obscured");
+            break;
+        case "normal":
+            graveRoleString = translate("role."+props.message.variant.grave.information.role+".name");
+            break;
+    }
+
+    const spectator = useSpectator();
+
+    return <div className={"chat-message-div"}>
+        <DetailsSummary
+            summary={
+                <StyledText className={"chat-message " + props.style}
+                    playerKeywordData={props.playerKeywordData}
+                >
+                    {(props.chatGroupIcon ?? "")} {translate("chatMessage.playerDied",
+                        props.playerNames[props.message.variant.grave.player], graveRoleString
+                    )}
+                </StyledText>
+            }
+            defaultOpen={spectator}
+        >
+            <GraveComponent grave={props.message.variant.grave} playerNames={props.playerNames}/>
+        </DetailsSummary>
+    </div>;
+}
 
 function LobbyChatMessage(props: Readonly<{
     message: ChatMessage & { variant: { type: "lobbyMessage" } }
@@ -330,14 +344,9 @@ export function sanitizePlayerMessage(text: string): string {
 
 export function translateChatMessage(
     message: ChatMessageVariant,
-    playerNames?: string[],
+    playerNames: string[],
     roleList?: RoleOutline[]
 ): string {
-
-    if (playerNames === undefined) {
-        playerNames = GAME_MANAGER.getPlayerNames();
-    }
-
     switch (message.type) {
         case "lobbyMessage":
             return sanitizePlayerMessage(replaceMentions(message.text, playerNames));
@@ -390,7 +399,7 @@ export function translateChatMessage(
                 );
             }
         case "playerQuit":
-            return translate("chatMessage.playerQuit",
+            return translate(`chatMessage.playerQuit${message.gameOver ? ".gameOver" : ""}`,
                 playerNames[message.playerIndex]
             );
         case "youDied":
@@ -411,6 +420,8 @@ export function translateChatMessage(
                         message.dayNumber,
                         playerNames[message.phase.playerOnTrial]
                     );
+                case "recess":
+                    return translate("chatMessage.phaseChange.recess");
                 default:
                     return translate("chatMessage.phaseChange",
                         translate("phase."+message.phase.type),
@@ -444,23 +455,21 @@ export function translateChatMessage(
                 playerNames[message.voterPlayerIndex],
                 translate("verdict."+message.verdict.toLowerCase())
             );
-        case "trialVerdict":
+        case "trialVerdict":{
+            let hang;
+            // Damn
+            if (GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.enabledModifiers.includes("twoThirdsMajority")) {
+                hang = message.innocent <= 2 * message.guilty
+            } else {
+                hang = message.innocent < message.guilty
+            }
             return translate("chatMessage.trialVerdict",
                 playerNames[message.playerOnTrial],
-                message.innocent>=message.guilty?translate("verdict.innocent"):translate("verdict.guilty"),
+                hang?translate("verdict.guilty"):translate("verdict.innocent"),
                 message.innocent,
                 message.guilty
             );
-        case "targeted":
-            if (message.targets.length > 0) {
-                return translate("chatMessage.targeted",
-                    playerNames[message.targeter],
-                    playerListToString(message.targets, playerNames));
-            } else {
-                return translate("chatMessage.targeted.cleared",
-                    playerNames[message.targeter],
-                );
-            }
+        }
         case "abilityUsed":
 
             let out;
@@ -469,13 +478,24 @@ export function translateChatMessage(
                 case "unit":
                     out = translate("chatMessage.abilityUsed.selection.unit");
                     break;
-                case "boolean":
-                    if(message.selection.selection){
-                        out = " "+translate("on");
+                case "boolean":{
+                    let text = null;
+                    if(message.selection.selection===true){
+                        text = translateChecked("controllerId."+controllerIdToLink(message.abilityId).replace(/\//g, ".") + ".boolean.true");
+                        if(text===null)
+                            text = " "+translate("on");
+                        else
+                            text = " "+text;
                     }else{
-                        out = " "+translate("off");
+                        text = translateChecked("controllerId."+controllerIdToLink(message.abilityId).replace(/\//g, ".") + ".boolean.false");
+                        if(text===null)
+                            text = " "+translate("off");
+                        else
+                            text = " "+text;
                     }
+                    out = translate("chatMessage.abilityUsed.selection.boolean", text);
                     break;
+                }
                 case "playerList":
                     out = translate("chatMessage.abilityUsed.selection.playerList",
                         playerListToString(message.selection.selection, playerNames)
@@ -515,7 +535,16 @@ export function translateChatMessage(
                     out = translate("chatMessage.abilityUsed.selection.twoRoleOutlineOption", first, second);
                     break;
                 case "string":
-                    out = translate("chatMessage.abilityUsed.selection.string", sanitizePlayerMessage(replaceMentions(message.selection.selection)));
+                    out = translate("chatMessage.abilityUsed.selection.string", sanitizePlayerMessage(replaceMentions(message.selection.selection, playerNames)));
+                    break;
+                case "integer":
+                    let text = translateChecked("controllerId."+controllerIdToLink(message.abilityId).replace(/\//g, ".") + ".integer." + message.selection.selection);
+                    
+                    if(text === null){
+                        text = message.selection.selection.toString()
+                    }
+
+                    out = translate("chatMessage.abilityUsed.selection.integer", text);
                     break;
                 default:
                     out = "";
@@ -536,10 +565,6 @@ export function translateChatMessage(
             return translate("chatMessage.reporterReport",
                 sanitizePlayerMessage(replaceMentions(message.report, playerNames))
             );
-        case "youAreInterviewingPlayer":
-            return translate("chatMessage.youAreInterviewingPlayer",
-                playerNames[message.playerIndex],
-            );
         case "playerIsBeingInterviewed":
             return translate("chatMessage.playerIsBeingInterviewed",
                 playerNames[message.playerIndex],
@@ -552,6 +577,10 @@ export function translateChatMessage(
             return translate("chatMessage.jailedSomeone",
                 playerNames[message.playerIndex]
             );
+        case "wardenPlayersImprisoned":
+            return translate("chatMessage.wardenPlayersImprisoned",
+                playerListToString(message.players, playerNames)
+            )
         case "deputyKilled":
             return translate("chatMessage.deputyKilled",
                 playerNames[message.shotIndex]
@@ -564,12 +593,6 @@ export function translateChatMessage(
             return translate("chatMessage.recruiterPlayerIsNowRecruit",
                 playerNames[message.player]
             );
-        case "jailorDecideExecute":
-            if (message.target !== null) {
-                return translate("chatMessage.jailorDecideExecute", playerNames[message.target]);
-            } else {
-                return translate("chatMessage.jailorDecideExecute.nobody");
-            }
         case "godfatherBackup":
             if (message.backup !== null) {
                 return translate("chatMessage.godfatherBackup", playerNames[message.backup]);
@@ -600,9 +623,16 @@ export function translateChatMessage(
         case "seerResult":
             return translate("chatMessage.seerResult." + (message.enemies ? "enemies" : "friends"));
         case "psychicEvil":
-            return translate("chatMessage.psychicEvil", playerListToString(message.players, playerNames));
+            return translate(
+                "chatMessage.psychicEvil",
+                playerNames[message.first],
+                playerNames[message.second]
+            );
         case "psychicGood":
-            return translate("chatMessage.psychicGood", playerListToString(message.players, playerNames));
+            return translate(
+                "chatMessage.psychicGood",
+                playerNames[message.player]
+            );
         case "auditorResult":
             if(message.result.type === "one"){
                 return translate("chatMessage.auditorResult.one", 
@@ -649,16 +679,10 @@ export function translateChatMessage(
             return translate("chatMessage.scarecrowResult",
                 playerListToString(message.players, playerNames)
             );
-        case "roleChosen":
-            if(message.role === null){
-                return translate("chatMessage.roleChosen.none");
-            }else{
-                return translate("chatMessage.roleChosen.role", translate("role."+message.role+".name"));
-            }
-        case "puppeteerActionChosen":
-            return translate("chatMessage.puppeteerActionChosen."+message.action);
-        case "recruiterActionChosen":
-            return translate("chatMessage.recruiterActionChosen."+message.action);
+        case "ambusherCaught":
+            return translate("chatMessage.ambusherCaught",
+                playerNames[message.ambusher]
+            );
         case "silenced":
             return translate("chatMessage.silenced");
         case "mediumHauntStarted":
@@ -667,6 +691,8 @@ export function translateChatMessage(
             return translate("chatMessage.youWerePossessed" + (message.immune ? ".immune" : ""));
         case "targetHasRole":
             return translate("chatMessage.targetHasRole", translate("role."+message.role+".name"));
+        case "targetHasWinCondition":
+            return translate("chatMessage.targetHasWinCondition", translateWinCondition(message.winCondition));
         case "werewolfTrackingResult":
             return translate("chatMessage.werewolfTrackingResult", 
                 playerNames[message.trackedPlayer],
@@ -680,12 +706,37 @@ export function translateChatMessage(
             return translate("chatMessage.playerDiedOfBrokenHeart", playerNames[message.player], playerNames[message.lover]);
         case "chronokaiserSpeedUp":
             return translate("chatMessage.chronokaiserSpeedUp", message.percent);
+        case "addedToNiceList":
+            return translate("chatMessage.addedToNiceList");
+        case "nextSantaAbility":
+            return translate(`chatMessage.nextSantaAbility.${message.ability}`);
+        case "nextKrampusAbility":
+            return translate(`chatMessage.nextKrampusAbility.${message.ability}`);
+        case "addedToNaughtyList":
+            return translate("chatMessage.addedToNaughtyList");
+        case "santaAddedPlayerToNaughtyList":
+            return translate("chatMessage.santaAddedPlayerToNaughtyList", playerNames[message.player]);
+        case "gameOver": {
+            const conclusionString = 
+                translateChecked(`chatMessage.gameOver.conclusion.${message.synopsis.conclusion}`)
+                ?? translate(`chatMessage.gameOver.conclusion.unknown`, translateConclusion(message.synopsis.conclusion))
+            
+            return conclusionString + '\n'
+                + message.synopsis.playerSynopses.map((synopsis, index) => 
+                    translate(`chatMessage.gameOver.player.won.${synopsis.won}`, playerNames![index])
+                        + ` (${
+                            synopsis.crumbs.map(crumb => translate("chatMessage.gameOver.player.crumb",
+                                translateWinCondition(crumb.winCondition), 
+                                translate(`role.${crumb.role}.name`)
+                            )).join(" → ")
+                        })`
+                ).join('\n');
+        }
         case "deputyShotYou":
         case "mediumExists":
         case "targetWasAttacked":
         case "youWereProtected":
         case "revolutionaryWon":
-        case "gameOver":
         case "jesterWon":
         case "wardblocked":
         case "yourConvertFailed":
@@ -703,7 +754,7 @@ export function translateChatMessage(
         case "targetsMessage":
         case "psychicFailed":
         case "phaseFastForwarded":
-        case "mayorCantWhisper":
+        case "invalidWhisper":
         case "politicianCountdownStarted":
         case "youAttackedSomeone":
         case "youWereAttacked":
@@ -764,6 +815,17 @@ export type ChatMessageVariant = {
     tag: Tag
 } | {
     type: "gameOver"
+    synopsis: {
+        playerSynopses: {
+            crumbs: {
+                night: number | null,
+                role: Role,
+                winCondition: WinCondition
+            }[],
+            won: boolean
+        }[],
+        conclusion: Conclusion
+    }
 } | {
     type: "playerWonOrLost",
     player: PlayerIndex,
@@ -772,6 +834,7 @@ export type ChatMessageVariant = {
 } | {
     type: "playerQuit",
     playerIndex: PlayerIndex
+    gameOver: boolean,
 } | {
     type: "phaseChange", 
     phase: PhaseState,
@@ -802,10 +865,6 @@ export type ChatMessageVariant = {
 } | 
 // Misc.
 {
-    type: "targeted", 
-    targeter: PlayerIndex, 
-    targets: PlayerIndex[]
-} | {
     type: "abilityUsed", 
     player: PlayerIndex,
     abilityId: ControllerID,
@@ -819,15 +878,12 @@ export type ChatMessageVariant = {
     type: "mayorRevealed", 
     playerIndex: PlayerIndex
 } | {
-    type: "mayorCantWhisper"
+    type: "invalidWhisper"
 } | {
     type: "politicianCountdownStarted"
 } | {
     type: "reporterReport",
     report: string
-} | {
-    type: "youAreInterviewingPlayer",
-    playerIndex: PlayerIndex
 } | {
     type: "playerIsBeingInterviewed",
     playerIndex: PlayerIndex
@@ -838,8 +894,8 @@ export type ChatMessageVariant = {
     type: "jailedSomeone",
     playerIndex: PlayerIndex
 } | {
-    type: "jailorDecideExecute"
-    target: PlayerIndex | null
+    type: "wardenPlayersImprisoned",
+    players: PlayerIndex[]
 } | {
     type: "yourConvertFailed"
 } | {
@@ -909,10 +965,11 @@ export type ChatMessageVariant = {
     enemies: boolean
 } | {
     type: "psychicGood",
-    players: PlayerIndex[]
+    player: PlayerIndex
 } | {
     type: "psychicEvil",
-    players: PlayerIndex[]
+    first: PlayerIndex,
+    second: PlayerIndex
 } | {
     type: "psychicFailed"
 } | {
@@ -975,14 +1032,8 @@ export type ChatMessageVariant = {
     type: "scarecrowResult",
     players: PlayerIndex[]
 } | {
-    type: "roleChosen",
-    role: Role | null,
-} | {
-    type: "puppeteerActionChosen",
-    action: PuppeteerAction,
-} | {
-    type: "recruiterActionChosen",
-    action: RecruiterAction,
+    type: "ambusherCaught",
+    ambusher: PlayerIndex
 } | {
     type: "targetIsPossessionImmune"
 } | {
@@ -991,6 +1042,9 @@ export type ChatMessageVariant = {
 } | {
     type: "targetHasRole",
     role: Role
+} | {
+    type: "targetHasWinCondition",
+    winCondition: WinCondition
 } | {
     type: "targetsMessage",
     message: ChatMessageVariant
@@ -1024,6 +1078,19 @@ export type ChatMessageVariant = {
 } | {
     type: "martyrRevealed",
     martyr: PlayerIndex
+} | {
+    type: "addedToNiceList"
+} | {
+    type: "nextSantaAbility"
+    ability: "nice" | "naughty"
+} | {
+    type: "nextKrampusAbility",
+    ability: "doNothing" | "kill"
+} | {
+    type: "addedToNaughtyList"
+} | {
+    type: "santaAddedPlayerToNaughtyList",
+    player: PlayerIndex
 }
 
 export type MessageSender = {

@@ -18,7 +18,7 @@ impl RoleStateImpl for Chronokaiser {
     type ClientRoleState = Chronokaiser;
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
 
-        if !actor_ref.alive(game) {
+        if actor_ref.ability_deactivated_from_death(game) {
             return;
         }
 

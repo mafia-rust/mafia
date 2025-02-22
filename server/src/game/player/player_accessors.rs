@@ -4,7 +4,7 @@ use crate::{
     game::{
         attack_power::DefensePower, chat::{
             ChatGroup, ChatMessage, ChatMessageVariant
-        }, event::{on_fast_forward::OnFastForward, on_remove_role_label::OnRemoveRoleLabel}, grave::GraveKiller, modifiers::{ModifierType, Modifiers}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
+        }, event::{on_convert::OnConvert, on_fast_forward::OnFastForward, on_remove_role_label::OnRemoveRoleLabel}, grave::GraveKiller, modifiers::{ModifierType, Modifiers}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
     }, 
     packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet, 
 };
@@ -40,7 +40,9 @@ impl PlayerReference{
             alive_players.push(player.deref(game).alive);
         }
         game.send_packet_to_all(ToClientPacket::PlayerAlive { alive: alive_players });
-        game.count_votes_and_start_trial();
+        game.count_nomination_and_start_trial(
+            !Modifiers::modifier_is_enabled(game, crate::game::modifiers::ModifierType::ScheduledNominations)
+        );
     }
 
     pub fn will<'a>(&self, game: &'a Game) -> &'a String {
@@ -160,7 +162,10 @@ impl PlayerReference{
         &self.deref(game).win_condition
     }
     pub fn set_win_condition(&self, game: &mut Game, win_condition: WinCondition){
-        self.deref_mut(game).win_condition = win_condition;
+        let old_win_condition = self.win_condition(game).clone();
+        self.deref_mut(game).win_condition = win_condition.clone();
+
+        OnConvert::new(*self, old_win_condition, win_condition).invoke(game)
     }
 
     pub fn add_private_chat_message(&self, game: &mut Game, message: ChatMessageVariant) {
@@ -326,33 +331,6 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.appeared_visits = appeared_visits;
     }
     
-    pub fn selection<'a>(&self, game: &'a Game) -> &'a Vec<PlayerReference>{
-        &self.deref(game).night_variables.selection
-    }
-    ///returns true if all selections were valid
-    pub fn set_selection(&self, game: &mut Game, selection: Vec<PlayerReference>)->bool{
-        let mut all_selections_valid = true;
-
-        self.deref_mut(game).night_variables.selection = vec![];
-
-        for target_ref in selection {
-            if self.can_select(game, target_ref){
-                self.deref_mut(game).night_variables.selection.push(target_ref);
-            }else{
-                all_selections_valid = false;
-                break;
-            }
-        }
-
-        let packet = ToClientPacket::YourSelection { 
-            player_indices: PlayerReference::ref_vec_to_index(
-                &self.deref(game).night_variables.selection
-            )
-        };
-        self.send_packet(game, packet);
-        all_selections_valid
-    }
-
     pub fn night_messages<'a>(&self, game: &'a Game) -> &'a Vec<ChatMessageVariant> {
         &self.deref(game).night_variables.messages
     }

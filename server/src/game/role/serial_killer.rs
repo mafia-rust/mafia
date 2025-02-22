@@ -28,7 +28,13 @@ impl RoleStateImpl for SerialKiller {
 
             let target_ref = visit.target;
             
-            target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::SerialKiller), AttackPower::Basic, true);
+            target_ref.try_night_kill_single_attacker(
+                actor_ref,
+                game,
+                GraveKiller::Role(Role::SerialKiller),
+                AttackPower::ArmorPiercing,
+                true
+            );
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
@@ -36,11 +42,12 @@ impl RoleStateImpl for SerialKiller {
             game,
             actor_ref,
             false,
+            true,
             game.day_number() <= 1,
             ControllerID::role(actor_ref, Role::SerialKiller, 0)
         )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,

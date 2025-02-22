@@ -47,7 +47,7 @@ impl RoleStateImpl for Disguiser {
 
         actor_ref.set_role_state(game, self);
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,
@@ -69,7 +69,7 @@ impl RoleStateImpl for Disguiser {
                     Some(1)
                 ),
             AbilitySelection::new_player_list(vec![]),
-            !actor_ref.alive(game) ||
+            actor_ref.ability_deactivated_from_death(game) ||
             Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),
             false,
@@ -84,7 +84,7 @@ impl RoleStateImpl for Disguiser {
                         .collect()
                 ),
                 AbilitySelection::new_role_option(Some(Role::Disguiser)),
-                !actor_ref.alive(game),
+                actor_ref.ability_deactivated_from_death(game),
                 None,
                 false,
                 self.players_with_disguiser_menu(actor_ref)
@@ -99,6 +99,16 @@ impl RoleStateImpl for Disguiser {
             actor_ref.remove_player_tag_on_all(game, crate::game::tag::Tag::Disguise);
             self.current_target = None;
             actor_ref.set_role_state(game, self);
+        }
+    }
+    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
+        match phase {
+            PhaseType::Night => {
+                actor_ref.remove_player_tag_on_all(game, crate::game::tag::Tag::Disguise);
+                self.current_target = None;
+                actor_ref.set_role_state(game, self);
+            },
+            _ => {}
         }
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: crate::game::grave::GraveReference) {
@@ -132,7 +142,7 @@ impl RoleStateImpl for Disguiser {
             };
         }
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+    fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
@@ -158,36 +168,3 @@ impl Disguiser{
         }
     }
 }
-
-
-/*
-
-            Priority::Investigative => {
-                if actor_ref.alive(game) || actor_ref.night_blocked(game) {return;}
-
-                let mut chat_messages = Vec::new();
-
-                for player in PlayerReference::all_players(game){
-                    if !InsiderGroupID::in_same_revealed_group(game, actor_ref, player) {continue;}
-
-                    let visitors_roles: Vec<Role> = PlayerReference::all_appeared_visitors(player, game)
-                        .iter()
-                        .filter(|player|
-                            player.win_condition(game)
-                                .is_loyalist_for(crate::game::game_conclusion::GameConclusion::Town)
-                        )
-                        .map(|player| player.role(game))
-                        .collect();
-
-
-                    chat_messages.push(ChatMessageVariant::FramerResult{mafia_member: player.index(), visitors: visitors_roles});
-                }
-
-                for player in PlayerReference::all_players(game){
-                    if !InsiderGroupID::in_same_revealed_group(game, actor_ref, player) {continue;}
-                    for msg in chat_messages.iter(){
-                        player.push_night_message(game, msg.clone());
-                    }
-                }
-            },
- */

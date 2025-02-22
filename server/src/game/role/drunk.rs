@@ -1,5 +1,4 @@
-use rand::seq::SliceRandom;
-use rand::thread_rng;
+use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::components::drunk_aura::DrunkAura;
@@ -27,7 +26,7 @@ impl RoleStateImpl for Drunk {
         //special case here. I don't want to use set_role because it alerts the player their role changed
         //NOTE: It will still send a packet to the player that their role state updated,
         //so it might be deducable that there is a recruiter
-        if let Some(random_town_role) = possible_roles.choose(&mut thread_rng()) {
+        if let Some(random_town_role) = possible_roles.choose(&mut rand::rng()) {
             actor_ref.set_role_state(game, random_town_role.new_state(game));
         }
 

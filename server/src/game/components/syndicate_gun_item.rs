@@ -43,6 +43,7 @@ impl SyndicateGunItem {
                 game,
                 player_with_gun,
                 false,
+                false,
                 game.day_number() <= 1,
                 ControllerID::syndicate_gun_item_shoot()
             ).combine_overwrite_owned(
@@ -140,7 +141,7 @@ impl SyndicateGunItem {
         else {return};
         let Some(target) = target.first() else {return};
 
-        if 
+        if
             actor_ref != *target &&
             target.alive(game) &&
             InsiderGroupID::Mafia.is_player_in_revealed_group(game, *target) 

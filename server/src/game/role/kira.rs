@@ -25,7 +25,7 @@ pub enum KiraGuess{
     Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy, TallyClerk,
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith, Steward,
     Vigilante, Veteran, Marksman, Deputy, Rabblerouser,
-    Escort, Medium, Retributionist, Reporter, Mayor, Transporter
+    Escort, Medium, Retributionist, Reporter, Mayor, Transporter, Coxswain
 }
 impl KiraGuess{
     fn convert_to_guess(role: Role)->Option<KiraGuess>{
@@ -64,6 +64,7 @@ impl KiraGuess{
             Role::Reporter => Some(Self::Reporter),
             Role::Mayor => Some(Self::Mayor),
             Role::Transporter => Some(Self::Transporter),
+            Role::Coxswain => Some(Self::Coxswain),
 
             //Mafia
             Role::Godfather | Role::Mafioso |
@@ -73,19 +74,20 @@ impl KiraGuess{
             Role::MafiaWitch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
             Role::Disguiser | Role::Reeducator |
-            Role::Cupid | Role::MafiaSupportWildcard => Some(Self::NonTown),
+            Role::Cupid | Role::Ambusher | Role::MafiaSupportWildcard => Some(Self::NonTown),
 
             //Neutral
             Role::Jester | Role::Revolutionary | Role::Geist | Role::Politician |
             Role::Doomsayer |
             Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | Role::Chronokaiser |
-            Role::Wildcard | Role::TrueWildcard | Role::Drunk | Role::Spiral => Some(Self::NonTown),
+            Role::Wildcard | Role::TrueWildcard | Role::Drunk | Role::Spiral |
+            Role::SantaClaus | Role::Krampus => Some(Self::NonTown),
             Role::Martyr => None,
 
             //Fiends
             Role::Arsonist | Role::Werewolf | 
             Role::Ojo | Role::Puppeteer | Role::Pyrolisk | Role::Kira | 
-            Role::SerialKiller |
+            Role::SerialKiller | Role::Warden | Role::Yer |
             Role::FiendsWildcard => Some(Self::NonTown),
             
             //Cult
@@ -161,7 +163,7 @@ impl RoleStateImpl for Kira {
     type ClientRoleState = Kira;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if actor_ref.night_blocked(game) {return;}
-        if !actor_ref.alive(game) {return;}
+        if actor_ref.ability_deactivated_from_death(game) {return;}
 
         let Some(KiraSelection(selection)) = 
             game.saved_controllers.get_controller_current_selection_kira(

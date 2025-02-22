@@ -10,7 +10,7 @@ import { HistoryPoller, HistoryQueue } from "../../../history";
 import { Button } from "../../../components/Button";
 import Icon from "../../../components/Icon";
 import StyledText, { KeywordDataMap, PLAYER_KEYWORD_DATA, PLAYER_SENDER_KEYWORD_DATA } from "../../../components/StyledText";
-import { useGameState, useLobbyOrGameState, usePlayerState } from "../../../components/useHooks";
+import { useGameState, useLobbyOrGameState, usePlayerNames, usePlayerState } from "../../../components/useHooks";
 import { Virtuoso } from 'react-virtuoso';
 
 
@@ -25,17 +25,19 @@ export default function ChatMenu(): ReactElement {
         ["yourSendChatGroups"]
     );
 
+    const playerNames = usePlayerNames();
+
     const filterString = useMemo(() => {
         if (filter === undefined || filter === null) {
             return "";
         } else if (filter.type === "playerNameInMessage") {
-            return GAME_MANAGER.getPlayerNames()[filter.player];
+            return playerNames[filter.player];
         } else if (filter.type === "myWhispersWithPlayer") {
-            return GAME_MANAGER.getPlayerNames()[filter.player];
+            return playerNames[filter.player];
         }else{
             return "";
         }
-    }, [filter]);
+    }, [filter, playerNames]);
 
     return <div className="chat-menu chat-menu-colors">
         <ContentTab close={ContentMenu.ChatMenu} helpMenu={"standard/chat"}>{translate("menu.chat.title")}</ContentTab>
@@ -108,13 +110,13 @@ export function ChatMessageSection(props: Readonly<{
                             }
                             break;
                         case "targetsMessage":
-                            msgTxt = translateChatMessage(msg.variant.message, GAME_MANAGER.getPlayerNames());
+                            msgTxt = translateChatMessage(msg.variant.message, players.map(player => player.toString()));
                             break;
                     }
 
-                    msgTxt += translateChatMessage(msg.variant, GAME_MANAGER.getPlayerNames());
+                    msgTxt += translateChatMessage(msg.variant, players.map(player => player.toString()));
                     
-                    return msgTxt.includes(GAME_MANAGER.getPlayerNames()[filter.player]);
+                    return msgTxt.includes(players[filter.player].toString());
                 case "myWhispersWithPlayer":
                     switch (msg.variant.type) {
                         //translateChatMessage errors for playerDied type.
@@ -178,10 +180,10 @@ export function ChatMessageSection(props: Readonly<{
     return <div className="chat-message-section"><Virtuoso
         alignToBottom={true}
         totalCount={allMessages.length}
-        followOutput={'smooth'}
+        followOutput={true}
         initialTopMostItemIndex={allMessages.length===0 ? 0 : allMessages.length-1}
         itemContent={(index) => allMessages[index]}
-        atBottomThreshold={4}
+        atBottomThreshold={15}
     /></div>;
 }
 
@@ -217,7 +219,7 @@ export function ChatTextInput(props: Readonly<{
     const playerStrings = useLobbyOrGameState(
         state => {
             if (state.stateType === "game") {
-                return state.players.map(player => player.name)
+                return state.players.map(player => player.toString())
             } else if (state.stateType === "lobby") {
                 return Array.from(state.players.values())
                     .filter(player => player.clientType.type === "player")
@@ -261,7 +263,7 @@ export function ChatTextInput(props: Readonly<{
 
 
     const sendChatField = useCallback(() => {
-        let text = chatBoxText.replace("\n", "").replace("\r", "").trim();
+        let text = chatBoxText.trim();
         setWhispering(null);
         setChatBoxText("");
         if (text === "") return;
@@ -291,17 +293,17 @@ export function ChatTextInput(props: Readonly<{
                 setChatBoxText(text);
             }
         } else {
-            setChatBoxText(
-                text
-                    .replace(/  +/g, ' ')
-                    .replace(/\t/g, ' ')
-                    .replace(/\n/g, ' ')
-            );
+            setChatBoxText(text);
         }
     }, [gamePlayers, myIndex, whispering]);
 
     const handleInputKeyDown = useCallback((event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (event.key === "Enter") {
+        
+        //if press enter while holding shift
+        if(event.key === "Enter" && event.shiftKey){
+            event.preventDefault();
+            setChatBoxText(chatBoxText+"\n");
+        } else if (event.key === "Enter") {
             event.preventDefault();
             sendChatField();
         } else if (event.key === "ArrowUp") {
@@ -317,7 +319,7 @@ export function ChatTextInput(props: Readonly<{
             event.preventDefault();
             setWhispering(null);
         }
-    }, [sendChatField, history, historyPoller]);
+    }, [sendChatField, history, historyPoller, chatBoxText]);
 
     return <>
         {whisperingPlayer !== null && <div className="chat-whisper-notification">

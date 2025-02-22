@@ -63,14 +63,14 @@ impl RoleStateImpl for Transporter {
                 true
             ),
             super::AbilitySelection::new_two_player_option(None),
-            !actor_ref.alive(game) ||
+            actor_ref.ability_deactivated_from_death(game) ||
             Detained::is_detained(game, actor_ref),
             Some(crate::game::phase::PhaseType::Obituary),
             false,
             vec_set![actor_ref]
         )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,

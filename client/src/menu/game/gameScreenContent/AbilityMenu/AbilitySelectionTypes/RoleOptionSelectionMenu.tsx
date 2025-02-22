@@ -13,7 +13,7 @@ export default function RoleOptionSelectionMenu(props: Readonly<{
         return <div>
             <RoleDropdown
                 value={
-                    ((props.selection===undefined||props.selection===null)? "jester" : props.selection) as Role
+                    ((props.selection===undefined)? null : props.selection) as Role
                 }
                 enabledRoles={props.enabledRoles?.filter(role=>role!==null) as Role[]}
                 onChange={props.onChoose}

@@ -13,7 +13,8 @@ import {
     singleAbilityJsonData,
     StringSelection,
     translateControllerIDNoRole,
-    PlayerListSelection
+    PlayerListSelection,
+    IntegerSelection
 } from "../../../../game/abilityInput";
 import React from "react";
 import { usePlayerState } from "../../../../components/useHooks";
@@ -23,7 +24,6 @@ import GAME_MANAGER from "../../../..";
 import TwoRoleOptionSelectionMenu from "./AbilitySelectionTypes/TwoRoleOptionSelectionMenu";
 import TwoPlayerOptionSelectionMenu from "./AbilitySelectionTypes/TwoPlayerOptionSelectionMenu";
 import StyledText from "../../../../components/StyledText";
-import CheckBox from "../../../../components/CheckBox";
 import KiraSelectionMenu, { KiraSelection } from "./AbilitySelectionTypes/KiraSelectionMenu";
 import RoleOptionSelectionMenu from "./AbilitySelectionTypes/RoleOptionSelectionMenu";
 import "./genericAbilityMenu.css";
@@ -35,6 +35,8 @@ import { Role } from "../../../../game/roleState.d";
 import { PlayerIndex } from "../../../../game/gameState.d";
 import Icon from "../../../../components/Icon";
 import PlayerListSelectionMenu from "./AbilitySelectionTypes/PlayerListSelectionMenu";
+import IntegerSelectionMenu from "./AbilitySelectionTypes/IntegerSelectionMenu";
+import BooleanSelectionMenu from "./AbilitySelectionTypes/BooleanSelectionMenu";
 
 type GroupName = `${PlayerIndex}/${Role}` | "syndicateGunItem" | "backup" | ControllerID["type"];
 
@@ -256,15 +258,20 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
             }else{
                 bool = selected.selection;
             }
-            return <div><CheckBox checked={bool} onChange={(x)=>{
-                GAME_MANAGER.sendAbilityInput({
-                    id, 
-                    selection: {
-                        type: "boolean",
-                        selection: x
-                    }
-                });
-            }}/></div>;
+
+            return <BooleanSelectionMenu
+                id={id}
+                selection={bool}
+                onChoose={(x)=>{
+                    GAME_MANAGER.sendAbilityInput({
+                        id, 
+                        selection: {
+                            type: "boolean",
+                            selection: x
+                        }
+                    });
+                }}
+            />;
         }
         case "playerList":{
             let input: PlayerListSelection;
@@ -411,6 +418,32 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
                         id,
                         selection: {
                             type: "string",
+                            selection: selection
+                        }
+                    });
+                }}
+            />
+        }
+        case "integer":{
+            let input: IntegerSelection;
+            if(
+                props.selected === null ||
+                props.selected.type !== "integer"
+            ){
+                input = 0;
+            }else{
+                input = props.selected.selection;
+            }
+
+            return <IntegerSelectionMenu
+                id={id}
+                selection={input}
+                available={available.selection}
+                onChoose={(selection: number) => {
+                    GAME_MANAGER.sendAbilityInput({
+                        id,
+                        selection: {
+                            type: "integer",
                             selection: selection
                         }
                     });

@@ -10,40 +10,23 @@ use crate::{game::{
     game_conclusion::GameConclusion,
     modifiers::{ModifierType, Modifiers},
     phase::{PhaseState, PhaseType}, player::PlayerReference,
-    role_list::RoleSet, visit::{Visit, VisitTag}, win_condition::WinCondition,
+    role_list::RoleSet, visit::Visit, win_condition::WinCondition,
     Game
 }, vec_set};
 
-use super::{reporter::Reporter, medium::Medium, InsiderGroupID, Role, RoleState};
-
-
-pub fn can_night_select(game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-    actor_ref != target_ref &&
-    !Detained::is_detained(game, actor_ref) &&
-    actor_ref.selection(game).is_empty() &&
-    actor_ref.alive(game) &&
-    target_ref.alive(game) &&
-    !InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref)
-}
-
-pub(super) fn convert_selection_to_visits(_game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>, attack: bool) -> Vec<Visit> {
-    if !target_refs.is_empty() {
-        vec![Visit::new(actor_ref, target_refs[0], attack, VisitTag::Role)]
-    } else {
-        Vec::new()
-    }
-}
+use super::{medium::Medium, reporter::Reporter, warden::Warden, InsiderGroupID, Role, RoleState};
 
 pub fn controller_parameters_map_player_list_night_typical(
     game: &Game,
     actor_ref: PlayerReference,
     can_select_self: bool,
+    can_select_insiders: bool,
     grayed_out: bool,
     ability_id: ControllerID,
 ) -> ControllerParametersMap {
     
     let grayed_out = 
-        !actor_ref.alive(game) || 
+        actor_ref.ability_deactivated_from_death(game) ||
         Detained::is_detained(game, actor_ref) ||
         grayed_out;
 
@@ -53,10 +36,17 @@ pub fn controller_parameters_map_player_list_night_typical(
         AvailableAbilitySelection::new_player_list(
             PlayerReference::all_players(game)
                 .into_iter()
-                .filter(|p| can_select_self || *p != actor_ref)
-                .filter(|player| 
-                    player.alive(game) &&
-                    !InsiderGroupID::in_same_revealed_group(game, actor_ref, *player)
+                .filter(|player|
+                    if !player.alive(game){
+                        false
+                    }else if *player == actor_ref{
+                        can_select_self
+                    }else if InsiderGroupID::in_same_revealed_group(game, actor_ref, *player){
+                        can_select_insiders
+                    }else{
+                        true
+                    }
+
                 )
                 .collect(),
                 false,
@@ -77,7 +67,7 @@ pub fn controller_parameters_map_boolean(
     ability_id: ControllerID,
 ) -> ControllerParametersMap {
     let grayed_out = 
-        !actor_ref.alive(game) || 
+        actor_ref.ability_deactivated_from_death(game) || 
         Detained::is_detained(game, actor_ref) ||
         grayed_out;
 
@@ -151,6 +141,9 @@ pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: Pla
 }
 
 pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference, mut night_chat_groups: Vec<ChatGroup>) -> HashSet<ChatGroup> {
+    if game.current_phase().phase() == PhaseType::Recess {
+        return vec![ChatGroup::All].into_iter().collect()
+    }
     if 
         !actor_ref.alive(game) && 
         !Modifiers::modifier_is_enabled(game, ModifierType::DeadCanChat)
@@ -200,7 +193,8 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         | PhaseState::Nomination {..}
         | PhaseState::Judgement {..}
         | PhaseState::FinalWords {..}
-        | PhaseState::Dusk => vec![ChatGroup::All].into_iter().collect(),
+        | PhaseState::Dusk 
+        | PhaseState::Recess => vec![ChatGroup::All].into_iter().collect(),
         &PhaseState::Testimony { player_on_trial, .. } => {
             if player_on_trial == actor_ref {
                 vec![ChatGroup::All].into_iter().collect()
@@ -224,8 +218,8 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
                 out.push(ChatGroup::Dead);
             }
             //reporter interview
-            if PlayerReference::all_players(game)
-                .any(|p|
+            if 
+                PlayerReference::all_players(game).any(|p|
                     match p.role_state(game) {
                         RoleState::Reporter(Reporter{interviewed_target: Some(interviewed_target_ref), ..}) => {
                             *interviewed_target_ref == actor_ref
@@ -235,6 +229,18 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
                 )
             {
                 out.push(ChatGroup::Interview);
+            }
+            if
+                PlayerReference::all_players(game).any(|p|
+                    match p.role_state(game) {
+                        RoleState::Warden(Warden{players_in_prison}) => {
+                            players_in_prison.contains(&actor_ref)
+                        },
+                        _ => false
+                    }
+                )
+            {
+                out.push(ChatGroup::Warden);
             }
 
 
@@ -335,17 +341,29 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
     }
     if 
         game.current_phase().phase() == PhaseType::Night && 
-        PlayerReference::all_players(game)
-            .any(|p|
-                match p.role_state(game) {
-                    RoleState::Reporter(Reporter{interviewed_target: Some(interviewed_target_ref), ..}) => {
-                        *interviewed_target_ref == actor_ref
-                    },
-                    _ => false
-                }
-            )
+        PlayerReference::all_players(game).any(|p|
+            match p.role_state(game) {
+                RoleState::Reporter(Reporter{interviewed_target: Some(interviewed_target_ref), ..}) => {
+                    *interviewed_target_ref == actor_ref
+                },
+                _ => false
+            }
+        )
     {
         out.push(ChatGroup::Interview);
+    }
+    if 
+        game.current_phase().phase() == PhaseType::Night && 
+        PlayerReference::all_players(game).any(|detainer|
+            match detainer.role_state(game) {
+                RoleState::Warden(warden) => {
+                    warden.players_in_prison.contains(&actor_ref)
+                },
+                _ => false
+            }
+        )
+    {
+        out.push(ChatGroup::Warden);
     }
 
     out.into_iter().collect()
@@ -353,7 +371,6 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
 
 ///Only works for roles that win based on end game condition
 pub(super) fn default_win_condition(role: Role) -> WinCondition {
-
     if RoleSet::Mafia.get_roles().contains(&role) {
         WinCondition::GameConclusionReached{win_if_any: vec![GameConclusion::Mafia].into_iter().collect()}
 
@@ -368,10 +385,10 @@ pub(super) fn default_win_condition(role: Role) -> WinCondition {
 
     }else if RoleSet::Minions.get_roles().contains(&role) {
         WinCondition::GameConclusionReached{win_if_any: GameConclusion::all().into_iter().filter(|end_game_condition|
-            match end_game_condition {
-                GameConclusion::Town | GameConclusion::Draw => false,
-                _ => true
-            }
+            !matches!(end_game_condition, 
+                GameConclusion::Town | GameConclusion::Draw |
+                GameConclusion::NiceList | GameConclusion::NaughtyList
+            )
         ).collect()}
 
     }else{

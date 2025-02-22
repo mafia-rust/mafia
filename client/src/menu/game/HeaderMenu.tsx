@@ -2,12 +2,12 @@ import React, { ReactElement, useContext, useMemo } from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import { PhaseState, Player, Verdict } from "../../game/gameState.d";
-import { MenuControllerContext, ContentMenu } from "./GameScreen";
+import { MenuControllerContext, ContentMenu, MENU_THEMES, MENU_TRANSLATION_KEYS } from "./GameScreen";
 import "./headerMenu.css";
 import StyledText from "../../components/StyledText";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
-import { useGameState, usePlayerState } from "../../components/useHooks";
+import { useGameState, usePlayerState, useSpectator } from "../../components/useHooks";
 import { MobileContext } from "../Anchor";
 
 
@@ -26,11 +26,18 @@ export default function HeaderMenu(props: Readonly<{
         (phaseState.type === "night" || phaseState.type === "obituary") ? "background-night" : 
         "background-day";
 
+    const host = useGameState(
+        state => state.host,
+        ["playersHost"]
+    )!;
+
+    const spectator = useSpectator();
+
 
     return <div className={"header-menu " + backgroundStyle}>
-        {!(GAME_MANAGER.getMySpectator() && !GAME_MANAGER.getMyHost()) && <FastForwardButton />}
+        {!(spectator && !host) && <FastForwardButton />}
         <Information />
-        {!(GAME_MANAGER.getMySpectator() && !mobile) && <MenuButtons chatMenuNotification={props.chatMenuNotification}/>}
+        {!mobile && <MenuButtons chatMenuNotification={props.chatMenuNotification}/>}
         <Timer />
     </div>
 }
@@ -41,7 +48,10 @@ function Timer(): ReactElement {
         ["phaseTimeLeft", "tick"]
     )!
     const phaseLength = useGameState(
-        gameState => gameState.phaseTimes[gameState.phaseState.type],
+        gameState => {
+            if (gameState.phaseState.type === "recess") return 0;
+            return gameState.phaseTimes[gameState.phaseState.type]
+        },
         ["phase"]
     )!
 
@@ -87,6 +97,24 @@ function Information(): ReactElement {
         return myIndex === undefined ? undefined : players[myIndex]?.toString()
     }, [myIndex, players])
 
+
+    const timeLeftText = useMemo(() => {
+        if (timeLeftMs >= 1000000000000000000) {
+            return "∞"
+        } else {
+            return Math.floor(timeLeftMs/1000);
+        }
+    }, [timeLeftMs])
+
+    const dayNumberText = useMemo(() => {
+        if (phaseState.type === "recess") {
+            return "";
+        } else {
+            return ` ${dayNumber}`;
+        }
+    }, [dayNumber, phaseState.type])
+
+    const spectator = useSpectator();
     
 
     return <div className="information"> 
@@ -94,14 +122,12 @@ function Information(): ReactElement {
             <div>
                 <h3>
                     <div>
-                        {translate("phase."+phaseState.type)} {dayNumber}⏳{Math.floor(timeLeftMs/1000)}
+                        {translate("phase."+phaseState.type)}{dayNumberText}⏳{timeLeftText}
                     </div>
                 </h3>
-                {GAME_MANAGER.getMySpectator() 
-                    || <StyledText>
-                        {myName + " (" + translate("role."+(roleState!.type)+".name") + ")"}
-                    </StyledText>
-                }
+                {spectator || <StyledText>
+                    {myName + " (" + translate("role."+(roleState!.type)+".name") + ")"}
+                </StyledText>}
             </div>
         </div>
         <PhaseSpecificInformation players={players} myIndex={myIndex} phaseState={phaseState}/>
@@ -117,6 +143,9 @@ export function PhaseSpecificInformation(props: Readonly<{
         gameState => gameState.enabledModifiers,
         ["enabledModifiers"]
     )!
+
+    const spectator = useSpectator();
+
     if (
         props.phaseState.type === "testimony"
         || props.phaseState.type === "finalWords"
@@ -127,7 +156,7 @@ export function PhaseSpecificInformation(props: Readonly<{
                 <StyledText>
                     {translate(`${props.phaseState.type}.playerOnTrial`, props.players[props.phaseState.playerOnTrial].toString())}
                 </StyledText>
-                {!GAME_MANAGER.getMySpectator() && props.phaseState.type === "judgement" && <div className="judgement-info">
+                {!spectator && props.phaseState.type === "judgement" && <div className="judgement-info">
                     {(() => {
                         if (props.phaseState.playerOnTrial === props.myIndex) {
                             return translate("judgement.cannotVote.onTrial");
@@ -170,56 +199,23 @@ function VerdictButton(props: Readonly<{ verdict: Verdict }>) {
     </Button>
 }
 
-function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactElement | null {
+export function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactElement | null {
     const menuController = useContext(MenuControllerContext)!;
 
     return <div className="menu-buttons">
-        <Button className="wiki-menu-colors"
-            highlighted={menuController.menusOpen().includes(ContentMenu.WikiMenu)} 
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.WikiMenu)}
-        >
-            {translate("menu.wiki.icon")}
-            <span className="mobile-hidden">{translate("menu.wiki.title")}</span>
-        </Button>
-        <Button className="graveyard-menu-colors" 
-            highlighted={menuController.menusOpen().includes(ContentMenu.GraveyardMenu)}
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.GraveyardMenu)}
-        >
-            {translate("menu.gameMode.icon")}
-            <span className="mobile-hidden">{translate("menu.gameMode.title")}</span>
-        </Button>
-        <Button className="player-list-menu-colors"
-            highlighted={menuController.menusOpen().includes(ContentMenu.PlayerListMenu)}
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.PlayerListMenu)}
-        >
-            {translate("menu.playerList.icon")}
-            <span className="mobile-hidden">{translate("menu.playerList.title")}</span>
-        </Button>
-        <Button className="chat-menu-colors"
-            highlighted={menuController.menusOpen().includes(ContentMenu.ChatMenu)}
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.ChatMenu)}
-        >
-            {props.chatMenuNotification && <div className="chat-notification highlighted">!</div>}
-            {translate("menu.chat.icon")}
-            <span className="mobile-hidden">{translate("menu.chat.title")}</span>
-        </Button>
-        {GAME_MANAGER.getMySpectator() || <Button className="will-menu-colors" 
-            highlighted={menuController.menusOpen().includes(ContentMenu.WillMenu)}
-            onClick={()=>menuController.closeOrOpenMenu(ContentMenu.WillMenu)}
-        >
-            {translate("menu.will.icon")}
-            <span className="mobile-hidden">{translate("menu.will.title")}</span>
-        </Button>}
-        {!GAME_MANAGER.getMySpectator() && <Button className="role-specific-colors" 
-                highlighted={menuController.menusOpen().includes(ContentMenu.RoleSpecificMenu)}
-                onClick={()=>menuController.closeOrOpenMenu(ContentMenu.RoleSpecificMenu)}
+        {menuController.menus().map(menu => {
+            return <Button key={menu} className={MENU_THEMES[menu] ?? ""}
+                highlighted={menuController.menusOpen().includes(menu)} 
+                onClick={()=>menuController.closeOrOpenMenu(menu)}
             >
-                {translate("menu.ability.icon")}
-                <span className="mobile-hidden">
-                    {translate("menu.ability.title")}
-                </span>
+                {menu === ContentMenu.ChatMenu
+                    && props.chatMenuNotification
+                    && <div className="chat-notification highlighted">!</div>
+                }
+                {translate(MENU_TRANSLATION_KEYS[menu] + ".icon")}
+                <span className="mobile-hidden">{translate(MENU_TRANSLATION_KEYS[menu] + ".title")}</span>
             </Button>
-        }
+        })}
     </div>
 }
 

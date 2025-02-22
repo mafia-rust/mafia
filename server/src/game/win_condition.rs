@@ -1,13 +1,31 @@
 use std::collections::HashSet;
 
+use serde::Serialize;
+
 use super::game_conclusion::GameConclusion;
 
 /// Related functions require RoleStateWon to be independent of GameConclusion. 
 /// RoleStateWon needs to be able to win with any GameConclusion.
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase", tag = "type")]
 pub enum WinCondition{
-    GameConclusionReached{win_if_any: HashSet<GameConclusion>},
+    #[serde(rename_all = "camelCase")]
+    GameConclusionReached{
+        win_if_any: HashSet<GameConclusion>
+    },
     RoleStateWon,
+}
+
+impl PartialOrd for WinCondition {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for WinCondition {
+    fn cmp(&self, _: &Self) -> std::cmp::Ordering {
+        std::cmp::Ordering::Equal
+    }
 }
 
 
@@ -37,6 +55,12 @@ impl WinCondition{
     pub fn is_loyalist_for(&self, resolution_state: GameConclusion)->bool{
         match self{
             WinCondition::GameConclusionReached{win_if_any} => win_if_any.len() == 1 && win_if_any.contains(&resolution_state),
+            WinCondition::RoleStateWon => false,
+        }
+    }
+    pub fn is_loyalist(&self)->bool{
+        match self{
+            WinCondition::GameConclusionReached{win_if_any} => win_if_any.len() == 1,
             WinCondition::RoleStateWon => false,
         }
     }

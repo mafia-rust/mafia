@@ -33,7 +33,6 @@ impl<T> GetClientRoleState<T> for T {
 pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<<Self as RoleStateImpl>::ClientRoleState> {
     type ClientRoleState: Clone + std::fmt::Debug + Serialize;
     fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {}
-    fn do_day_action(self, _game: &mut Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) {}
 
     fn controller_parameters_map(self, _game: &Game, _actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::default()
@@ -42,14 +41,7 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn on_validated_ability_input_received(self, _game: &mut Game, _actor_ref: PlayerReference, _input_player: PlayerReference, _ability_input: AbilityInput) {}
     fn on_ability_input_received(self, _game: &mut Game, _actor_ref: PlayerReference, _input_player: PlayerReference, _ability_input: AbilityInput) {}
 
-    fn can_select(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
-    }
-    fn can_day_target(self, _game: &Game, _actor_ref: PlayerReference, _target_ref: PlayerReference) -> bool {
-        false
-    }
-
-    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, _game: &Game, _actor_ref: PlayerReference) -> Vec<Visit> {
         vec![]
     }
 
@@ -117,6 +109,7 @@ macros::roles! {
     Reporter : reporter,
     Mayor : mayor,
     Transporter : transporter,
+    Coxswain : coxswain,
 
     // Mafia
     Godfather : godfather,
@@ -140,6 +133,7 @@ macros::roles! {
     Forger : forger,
     Reeducator : reeducator,
     Cupid : cupid,
+    Ambusher : ambusher,
     MafiaSupportWildcard: mafia_support_wildcard,
 
     // Neutral
@@ -151,6 +145,8 @@ macros::roles! {
     Wildcard : wild_card,
     TrueWildcard : true_wildcard,
     Martyr : martyr,
+    SantaClaus : santa_claus,
+    Krampus : krampus,
 
     Witch : witch,
     Scarecrow : scarecrow,
@@ -165,6 +161,8 @@ macros::roles! {
     Pyrolisk : pyrolisk,
     Spiral : spiral,
     Kira : kira,
+    Warden : warden,
+    Yer : yer,
     FiendsWildcard : fiends_wildcard,
     SerialKiller : serial_killer,
 
@@ -190,7 +188,7 @@ macros::priorities! {
 
     Heal,
     Kill,
-    Convert,
+    Convert,    //role swap & win condition change
     Poison,
     Investigative,
 
@@ -265,11 +263,6 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.do_night_action(game, actor_ref, priority)),*
                     }
                 }
-                pub fn do_day_action(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference){
-                    match self {
-                        $(Self::$name(role_struct) => role_struct.do_day_action(game, actor_ref, target_ref)),*
-                    }
-                }
                 pub fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
                     match self {
                         $(Self::$name(role_struct) => role_struct.controller_parameters_map(game, actor_ref)),*
@@ -290,19 +283,9 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.on_ability_input_received(game, actor_ref, input_player, ability_input)),*
                     }
                 }
-                pub fn can_select(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
+                pub fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit>{
                     match self {
-                        $(Self::$name(role_struct) => role_struct.can_select(game, actor_ref, target_ref)),*
-                    }
-                }
-                pub fn can_day_target(self, game: &Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool{
-                    match self {
-                        $(Self::$name(role_struct) => role_struct.can_day_target(game, actor_ref, target_ref)),*
-                    }
-                }
-                pub fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, target_refs: Vec<PlayerReference>) -> Vec<Visit>{
-                    match self {
-                        $(Self::$name(role_struct) => role_struct.convert_selection_to_visits(game, actor_ref, target_refs)),*
+                        $(Self::$name(role_struct) => role_struct.convert_selection_to_visits(game, actor_ref)),*
                     }
                 }
                 pub fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup>{
@@ -404,23 +387,22 @@ mod macros {
 impl Role{
     pub fn possession_immune(&self)->bool{
         match self {
-            Role::TallyClerk
             | Role::Bouncer
-            | Role::Veteran
+            | Role::Veteran | Role::Coxswain
             | Role::Transporter | Role::Retributionist
-            | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper | Role::Geist
-            | Role::MafiaWitch | Role::Necromancer
-            | Role::Ojo => true,
+            | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper
+            | Role::MafiaWitch | Role::Necromancer | Role::Geist => true,
             _ => false,
         }
     }
     pub fn roleblock_immune(&self)->bool{
         match self {
+            Role::Veteran | Role::Jester | 
             Role::Bouncer |
-            Role::Veteran | 
             Role::Transporter | Role::Escort | Role::Retributionist | 
-            Role::Jester | Role::Witch | Role::Scarecrow | Role::Warper | Role::Geist |
-            Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer => true,
+            Role::Witch | Role::Scarecrow | Role::Warper |
+            Role::Hypnotist | Role::Consort | Role::MafiaWitch | 
+            Role::Necromancer | Role::Geist => true,
             _ => false,
         }
     }

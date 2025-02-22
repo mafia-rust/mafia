@@ -111,11 +111,12 @@ impl RoleStateImpl for Bodyguard {
             game,
             actor_ref,
             self.self_shields_remaining > 0,
+            true,
             !(game.day_number() > 1),
             ControllerID::role(actor_ref, Role::Bodyguard, 0)
         )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,

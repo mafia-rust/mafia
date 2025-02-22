@@ -2,7 +2,6 @@ use mafia_server::game::{
     player::PlayerReference, 
     Game, 
     role::RoleState,
-    role_list::RoleOutline,
     settings::Settings,
     test::mock_game
 };
@@ -64,7 +63,7 @@ pub(crate) use {scenario, assert_contains, assert_not_contains};
 /// Stuff that shouldn't be called directly - only in macro invocations.
 #[doc(hidden)]
 pub mod _init {
-    use mafia_server::game::{role::Role, role_list::RoleList};
+    use mafia_server::game::{role::Role, role_list::{RoleList, RoleOutline, RoleOutlineOption, RoleOutlineOptionInsiderGroups, RoleOutlineOptionRoles, RoleOutlineOptionWinCondition}};
     use vec1::vec1;
 
     use super::*;
@@ -72,8 +71,12 @@ pub mod _init {
     pub fn create_basic_scenario(roles: Vec<RoleState>) -> TestScenario {
         let mut role_list = Vec::new();
         for role in roles.iter() {
-            role_list.push(RoleOutline::RoleOutlineOptions { options: 
-                vec1![mafia_server::game::role_list::RoleOutlineOption::Role { role: role.role() }]
+            role_list.push(RoleOutline { options: 
+                vec1![RoleOutlineOption {
+                    roles: RoleOutlineOptionRoles::Role { role: role.role() },
+                    insider_groups: RoleOutlineOptionInsiderGroups::RoleDefault,
+                    win_condition: RoleOutlineOptionWinCondition::RoleDefault,
+                }]
             });
         }
     

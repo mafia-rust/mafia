@@ -40,11 +40,12 @@ impl RoleStateImpl for Psychic {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Psychic, 0)
         )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,
@@ -62,14 +63,12 @@ impl Psychic {
             .filter(|p|!p.has_innocent_aura(game))
             .collect();
 
-        valid_players.shuffle(&mut rand::thread_rng());
+        valid_players.shuffle(&mut rand::rng());
 
         for i in 0..valid_players.len(){
             for j in i+1..valid_players.len(){
-                let out = [target, valid_players[i], valid_players[j]];
-
-                if confused || Self::contains_evil(game, out){
-                    return ChatMessageVariant::PsychicEvil { players: [out[0].index(), out[1].index(), out[2].index()] }
+                if confused || Self::contains_evil(game, target, valid_players[i], valid_players[j]){
+                    return ChatMessageVariant::PsychicEvil { first: valid_players[i], second: valid_players[j] }
                 }
             }
         }
@@ -82,13 +81,11 @@ impl Psychic {
             .filter(|p|!p.has_suspicious_aura(game))
             .collect();
 
-        valid_players.shuffle(&mut rand::thread_rng());
+        valid_players.shuffle(&mut rand::rng());
 
         for i in 0..valid_players.len(){
-            let out = [target, valid_players[i]];
-
-            if confused || Self::contains_good(game, out){
-                return ChatMessageVariant::PsychicGood { players: [out[0].index(), out[1].index()] }
+            if confused || Self::contains_good(game, target, valid_players[i]){
+                return ChatMessageVariant::PsychicGood { player: valid_players[i] }
             }
         }
 
@@ -106,10 +103,10 @@ impl Psychic {
             .collect()
     }
 
-    fn contains_evil(game: &Game, player_refs: [PlayerReference; 3])->bool{
-        player_refs.into_iter().any(|player_ref|Psychic::player_is_evil(game, player_ref))
+    fn contains_evil(game: &Game, target: PlayerReference, a: PlayerReference, b: PlayerReference)->bool{
+        [target, a, b].into_iter().any(|player_ref|Psychic::player_is_evil(game, player_ref))
     }
-    fn contains_good(game: &Game, player_refs: [PlayerReference; 2])->bool{
-        player_refs.into_iter().any(|player_ref|!Psychic::player_is_evil(game, player_ref))
+    fn contains_good(game: &Game, target: PlayerReference, player: PlayerReference)->bool{
+        [target, player].into_iter().any(|player_ref|!Psychic::player_is_evil(game, player_ref))
     }
 }

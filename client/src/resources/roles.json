@@ -29,8 +29,6 @@
                 "chatGroup": "jail",
                 "block": false
             },
-            {"type": "jailorDecideExecute","target": 7},
-            {"type": "jailorDecideExecute","target": null},
             {"type": "wardblocked"},
             {"type": "someoneSurvivedYourAttack"}
         ]
@@ -116,8 +114,9 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "psychicEvil", "players": [19,27,3]},
-            {"type": "psychicGood", "players": [24,25]}
+            {"type": "psychicEvil", "first": 19, "second": 27},
+            {"type": "psychicGood", "player": 24},
+            {"type": "psychicFailed"}
         ]
     },
     "spy": {
@@ -150,10 +149,10 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "auditorResult", "roleOutline":{"type":"any"},"result": {"type":"two","roles":["godfather","jester"]}},
-            {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "options":[{"type":"role","role":"vigilante"},{"type":"role","role":"marksman"}]},"result": {"type":"one","role":["vigilante"]}},
-            {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "options":[{"type":"role","role":"fiendsWildcard"}]},"result": {"type":"one","role":["fiendsWildcard"]}},
-            {"type": "auditorResult", "roleOutline":{"type":"roleOutlineOptions", "options":[{"type":"roleSet","roleSet":"townSupport"}]},"result": {"type":"two","roles":["escort","medium"]}}
+            {"type": "auditorResult", "roleOutline":[{"roleSet": "any"}],"result": {"type":"two","roles":["godfather","jester"]}},
+            {"type": "auditorResult", "roleOutline":[{"role":"vigilante"},{"role":"marksman"}],"result": {"type":"one","role":["vigilante"]}},
+            {"type": "auditorResult", "roleOutline":[{"role":"fiendsWildcard"}],"result": {"type":"one","role":["fiendsWildcard"]}},
+            {"type": "auditorResult", "roleOutline":[{"roleSet":"townSupport"}],"result": {"type":"two","roles":["escort","medium"]}}
         ]
     },
     "snoop": {
@@ -430,7 +429,7 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "mayorRevealed","playerIndex": 3},
-            {"type": "mayorCantWhisper"}
+            {"type": "invalidWhisper"}
         ]
     },
     "reporter": {
@@ -442,7 +441,6 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "youAreInterviewingPlayer","playerIndex": 1},
             {"type": "playerIsBeingInterviewed","playerIndex": 1},
             {
                 "type": "normal", 
@@ -480,6 +478,16 @@
         "chatMessages":[
             {"type": "transported"}
         ]
+    },
+    "coxswain":{
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townSupport"],
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[]
     },
     "retributionist": {
         "mainRoleSet": "town",
@@ -557,9 +565,7 @@
             {"type": "godfatherBackup", "backup": null},
             {"type": "godfatherBackup", "backup": 26},
             {"type": "recruiterPlayerIsNowRecruit","player": 40},
-            {"type": "someoneSurvivedYourAttack"},
-            {"type": "recruiterActionChosen", "action": "kill"},
-            {"type": "recruiterActionChosen", "action": "recruit"}
+            {"type": "someoneSurvivedYourAttack"}
         ]
     },
     "mafioso": {
@@ -769,6 +775,20 @@
             {"type": "youWerePossessed", "immune": true}
         ]
     },
+    "ambusher": {
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaSupport"],
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": ["godfather"],
+        "chatMessages":[
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youAttackedSomeone"},
+            {"type": "ambusherCaught", "ambusher": 17}
+        ]
+    },
     "cupid": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaSupport"],
@@ -843,7 +863,7 @@
         "chatMessages":[
             {"type": "politicianCountdownStarted"},
             {"type": "mayorRevealed","playerIndex": 1},
-            {"type": "mayorCantWhisper"},
+            {"type": "invalidWhisper"},
             {"type": "youSurvivedAttack"}
         ]
     },
@@ -872,6 +892,43 @@
             {"type": "chronokaiserSpeedUp", "percent": "60"},
             {"type": "chronokaiserSpeedUp", "percent": "120"},
             {"type": "chronokaiserSpeedUp", "percent": "180"}
+        ]
+    },
+    "santaClaus": {
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "nextSantaAbility", "ability": "nice"},
+            {"type": "nextSantaAbility", "ability": "naughty"},
+            {"type": "addedToNiceList"},
+            {"type": "addedToNaughtyList"},
+            {"type": "yourConvertFailed"}
+        ]
+    },
+    "krampus": {
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "canWriteDeathNote": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "nextKrampusAbility", "ability": "kill"},
+            {"type": "youAttackedSomeone"},
+            {"type": "addedToNaughtyList"},
+            {"type": "nextKrampusAbility", "ability": "doNothing"},
+            {"type": "targetHasRole", "role": "godfather"},
+            {"type": "targetHasWinCondition", "winCondition": { 
+                "type": "gameConclusionReached",
+                "winIfAny": ["mafia", "niceList"]
+            }},
+            {"type": "santaAddedPlayerToNaughtyList", "player": 38}
         ]
     },
     "martyr": {
@@ -986,8 +1043,6 @@
                 "text": "I'm jester", 
                 "chatGroup": "jail"
             },
-            {"type": "jailorDecideExecute","target": 7},
-            {"type": "jailorDecideExecute","target": null},
             {"type": "wardblocked"},
             {"type": "someoneSurvivedYourAttack"}
         ]
@@ -1044,7 +1099,7 @@
         "chatMessages":[
             {"type": "playersRoleRevealed","role": "veteran","player": 7},
             {"type": "playersRoleConcealed","player": 7},
-            {"type": "auditorResult", "roleOutline":{"type":"any"},"result": {"type":"one","role":["jester"]}},
+            {"type": "auditorResult", "roleOutline":[{"roleSet": "any"}],"result": {"type":"one","role":["jester"]}},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
@@ -1059,7 +1114,7 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "puppeteerPlayerIsNowMarionette","player": 32},
-            {"type": "youArePoisoned"},
+            {"type": "yourConvertFailed"},
             {
                 "type": "normal", 
                 "messageSender": {
@@ -1070,8 +1125,7 @@
                 "chatGroup": "puppeteer",
                 "block": false
             },
-            {"type": "puppeteerActionChosen", "action": "poison"},
-            {"type": "puppeteerActionChosen", "action": "string"}
+            {"type": "mediumExists"}
         ]
     },
     "pyrolisk": {
@@ -1142,6 +1196,36 @@
         "canWriteDeathNote": true,
         "canBeConvertedTo": [],
         "chatMessages":[
+            {"type": "someoneSurvivedYourAttack"}
+        ]
+    },
+    "warden": {
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
+        "armor": true,
+        "aura": null,
+        "maxCount": 1,
+        "canWriteDeathNote": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "wardenPlayersImprisoned", "players": [5,2,10]},
+            {"type": "youAttackedSomeone"},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "roleBlocked", "immune": true},
+            {"type": "roleBlocked", "immune": false},
+            {"type": "wardblocked"}
+        ]
+    },
+    "yer": {
+        "mainRoleSet": "fiends",
+        "roleSets": ["fiends"],
+        "armor": true,
+        "aura": null,
+        "maxCount": null,
+        "canWriteDeathNote": true,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "youAttackedSomeone"},
             {"type": "someoneSurvivedYourAttack"}
         ]
     },

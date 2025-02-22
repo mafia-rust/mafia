@@ -6,7 +6,9 @@ import { GameManager, createGameManager } from './game/gameManager';
 import LoadingScreen from './menu/LoadingScreen';
 import route from './routing';
 
-export type Theme = "player-list-menu-colors" | "will-menu-colors" | "role-specific-colors" | "graveyard-menu-colors" | "wiki-menu-colors"
+export const DEV_ENV = process.env.NODE_ENV !== 'production';
+
+export type Theme = "chat-menu-colors" | "player-list-menu-colors" | "will-menu-colors" | "role-specific-colors" | "graveyard-menu-colors" | "wiki-menu-colors"
 
 const THEME_CSS_ATTRIBUTES = [
     'background-color', 'fade-color', 'primary-color', 'secondary-color', 
@@ -51,15 +53,7 @@ export function regEscape(text: string) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
 }
 
-export function replaceMentions(rawText: string, playerNames?: string[]) {
-
-    if (playerNames === undefined) {
-        playerNames = GAME_MANAGER.getPlayerNames();
-        if (playerNames === undefined) {
-            return rawText;
-        }
-    }
-
+export function replaceMentions(rawText: string, playerNames: string[]) {
     let text = rawText;
     playerNames.forEach((player, i) => {
         text = text.replace(find(`@${i + 1}`), player);

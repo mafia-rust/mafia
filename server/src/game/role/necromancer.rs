@@ -58,13 +58,13 @@ impl RoleStateImpl for Necromancer {
                 true
             ),
             AbilitySelection::new_two_player_option(None),
-            !actor_ref.alive(game) || Detained::is_detained(game, actor_ref),
+            actor_ref.ability_deactivated_from_death(game) || Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),
             false, 
             vec_set!(actor_ref)
         )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,
@@ -77,6 +77,11 @@ impl RoleStateImpl for Necromancer {
             actor_ref.set_role_state(game, Necromancer { currently_used_player: None, ..self });
         }
     }
+    fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+       vec![
+           crate::game::components::insider_group::InsiderGroupID::Mafia
+       ].into_iter().collect()
+   }
 }
 impl GetClientRoleState<ClientRoleState> for Necromancer {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

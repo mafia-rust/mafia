@@ -31,7 +31,7 @@ pub enum DoomsayerGuess{
     // No TI
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith, Steward,
     Vigilante, Veteran, Marksman, Deputy, Rabblerouser,
-    Escort, Medium, Retributionist, Reporter, Mayor, Transporter
+    Escort, Medium, Retributionist, Reporter, Mayor, Transporter, Coxswain
 }
 impl DoomsayerGuess{
     fn convert_to_guess(role: Role)->Option<DoomsayerGuess>{
@@ -63,6 +63,7 @@ impl DoomsayerGuess{
             Role::Reporter => Some(DoomsayerGuess::Reporter),
             Role::Mayor => Some(DoomsayerGuess::Mayor),
             Role::Transporter => Some(DoomsayerGuess::Transporter),
+            Role::Coxswain => Some(DoomsayerGuess::Coxswain),
 
             //Mafia
             Role::Godfather | Role::Mafioso | 
@@ -72,20 +73,21 @@ impl DoomsayerGuess{
             Role::MafiaWitch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
             Role::Disguiser | Role::Reeducator |
-            Role::Cupid | Role::MafiaSupportWildcard => Some(DoomsayerGuess::NonTown),
+            Role::Cupid | Role::Ambusher | Role::MafiaSupportWildcard => Some(DoomsayerGuess::NonTown),
 
             //Neutral
             Role::Jester | Role::Revolutionary | Role::Geist | Role::Politician |
             Role::Doomsayer |
             Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | Role::Chronokaiser |
-            Role::Wildcard | Role::TrueWildcard | Role::Drunk | Role::Spiral => Some(DoomsayerGuess::NonTown),
+            Role::Wildcard | Role::TrueWildcard | Role::Drunk | Role::Spiral |
+            Role::SantaClaus | Role::Krampus => Some(DoomsayerGuess::NonTown),
             Role::Martyr => None,
            
 
             //Fiends
             Role::Arsonist | Role::Werewolf | 
             Role::Ojo | Role::Puppeteer | Role::Pyrolisk | Role::Kira |
-            Role:: SerialKiller |
+            Role::SerialKiller | Role::Warden | Role::Yer |
             Role::FiendsWildcard => Some(DoomsayerGuess::NonTown),
             
             //Cult

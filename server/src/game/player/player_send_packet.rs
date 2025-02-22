@@ -26,7 +26,7 @@ impl PlayerReference{
         if self.alive(game) {
             game.add_message_to_chat_group(
                 crate::game::chat::ChatGroup::All, 
-                ChatMessageVariant::PlayerQuit{player_index: self.index()}
+                ChatMessageVariant::PlayerQuit{player_index: self.index(), game_over: game.game_is_over()}
             );
         }
     }
@@ -111,9 +111,6 @@ impl PlayerReference{
             },
             ToClientPacket::YourPlayerTags { 
                 player_tags: PlayerReference::ref_vec_map_to_index(self.player_tags(game).clone())
-            },
-            ToClientPacket::YourSelection{
-                player_indices: PlayerReference::ref_vec_to_index(self.selection(game))
             },
             ToClientPacket::YourJudgement{
                 verdict: self.verdict(game)

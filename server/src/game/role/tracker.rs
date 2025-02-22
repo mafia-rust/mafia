@@ -1,4 +1,3 @@
-use rand::thread_rng;
 use rand::prelude::SliceRandom;
 use serde::Serialize;
 
@@ -27,7 +26,7 @@ impl RoleStateImpl for Tracker {
         if let Some(visit) = actor_visits.first(){
             
             let mut seen_players: Vec<PlayerReference> = visit.target.tracker_seen_visits(game).into_iter().map(|v|v.target).collect();
-            seen_players.shuffle(&mut thread_rng());
+            seen_players.shuffle(&mut rand::rng());
 
             let message = ChatMessageVariant::TrackerResult { players:
                 PlayerReference::ref_vec_to_index(seen_players.as_slice())
@@ -41,11 +40,12 @@ impl RoleStateImpl for Tracker {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Tracker, 0)
         )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,

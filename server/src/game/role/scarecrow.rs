@@ -1,4 +1,3 @@
-use rand::thread_rng;
 use serde::Serialize;
 
 use crate::game::win_condition::WinCondition;
@@ -33,7 +32,7 @@ impl RoleStateImpl for Scarecrow {
             let target_ref = visit.target;
 
             let mut blocked_players = target_ref.ward(game);
-            blocked_players.shuffle(&mut thread_rng());
+            blocked_players.shuffle(&mut rand::rng());
 
             let message = ChatMessageVariant::ScarecrowResult { players:
                 PlayerReference::ref_vec_to_index(blocked_players.as_slice())
@@ -42,6 +41,7 @@ impl RoleStateImpl for Scarecrow {
             for player_ref in blocked_players.iter(){
                 actor_ref.insert_role_label(game, *player_ref);
             }
+            actor_ref.insert_role_label(game, target_ref);
             
             actor_ref.push_night_message(game, message);
         }
@@ -51,11 +51,12 @@ impl RoleStateImpl for Scarecrow {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Scarecrow, 0)
         )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,

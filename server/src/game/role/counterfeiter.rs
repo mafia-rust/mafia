@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
@@ -13,9 +13,7 @@ use crate::game::Game;
 use crate::vec_set;
 use super::godfather::Godfather;
 use super::{
-    AbilitySelection, AvailableAbilitySelection, ControllerID,
-    ControllerParametersMap, GetClientRoleState, 
-    Priority, Role, RoleOptionSelection, RoleStateImpl, StringSelection
+    AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, GetClientRoleState, IntegerSelection, Priority, Role, RoleOptionSelection, RoleStateImpl, StringSelection
 };
 
 
@@ -23,32 +21,19 @@ use super::{
 #[serde(rename_all = "camelCase")]
 pub struct Counterfeiter{
     pub forges_remaining: u8,
-    pub forged_ref: Option<PlayerReference>,
-
-    pub action: CounterfeiterAction
+    pub forged_ref: Option<PlayerReference>
 }
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ClientRoleState{
-    pub forges_remaining: u8,
-
-    pub action: CounterfeiterAction
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "camelCase")]
-pub enum CounterfeiterAction{
-    Forge,
-    NoForge
+    pub forges_remaining: u8
 }
 impl Default for Counterfeiter {
     fn default() -> Self {
         Counterfeiter {
             forges_remaining: 3,
-            forged_ref: None,
-
-            action: CounterfeiterAction::NoForge,
+            forged_ref: None
         }
     }
 }
@@ -70,7 +55,7 @@ impl RoleStateImpl for Counterfeiter {
 
         match priority {
             Priority::Deception => {
-                if self.forges_remaining == 0 || self.action == CounterfeiterAction::NoForge {return}
+                if self.forges_remaining == 0 || chose_no_forge(game, actor_ref) {return}
                 
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else{return};
@@ -124,7 +109,7 @@ impl RoleStateImpl for Counterfeiter {
             _ => {}
         }
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,
@@ -136,6 +121,7 @@ impl RoleStateImpl for Counterfeiter {
         crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
             game,
             actor_ref,
+            false,
             false,
             game.day_number() <= 1,
             ControllerID::role(actor_ref, Role::Counterfeiter, 0)
@@ -151,7 +137,7 @@ impl RoleStateImpl for Counterfeiter {
                 ),
                 AbilitySelection::new_role_option(Some(Role::Counterfeiter)),
                 self.forges_remaining == 0 ||
-                !actor_ref.alive(game),
+                actor_ref.ability_deactivated_from_death(game),
                 None,
                 false,
                 vec_set![actor_ref]
@@ -164,10 +150,23 @@ impl RoleStateImpl for Counterfeiter {
                 AvailableAbilitySelection::new_string(),
                 AbilitySelection::new_string(String::new()),
                 self.forges_remaining == 0 ||
-                !actor_ref.alive(game),
+                actor_ref.ability_deactivated_from_death(game),
                 None,
                 false,
                 vec_set![actor_ref]
+            )
+        ).combine_overwrite_owned(
+            ControllerParametersMap::new_controller_fast(
+                game,
+                ControllerID::role(actor_ref, Role::Counterfeiter, 3),
+                super::AvailableAbilitySelection::new_integer(0, 
+                    if self.forges_remaining > 0 {1} else {0}
+                ),
+                AbilitySelection::new_integer(0),
+                false,
+                None,
+                false,
+                vec_set!(actor_ref),
             )
         )
     }
@@ -189,8 +188,17 @@ impl RoleStateImpl for Counterfeiter {
 impl GetClientRoleState<ClientRoleState> for Counterfeiter {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState{
-            forges_remaining: self.forges_remaining,
-            action: self.action,
+            forges_remaining: self.forges_remaining
         }
+    }
+}
+
+fn chose_no_forge(game: &Game, actor_ref: PlayerReference)->bool{
+    if let Some(IntegerSelection(x)) = game.saved_controllers.get_controller_current_selection_integer(
+        ControllerID::role(actor_ref, Role::Counterfeiter, 3)
+    ){
+        x == 0
+    }else{
+        true
     }
 }

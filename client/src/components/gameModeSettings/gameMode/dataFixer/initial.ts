@@ -1,7 +1,7 @@
 import { VersionConverter } from ".";
 import { PHASES, PhaseTimes } from "../../../../game/gameState.d";
 import { Settings } from "../../../../game/localStorage";
-import { ROLE_SETS, RoleOutline, RoleOutlineOption, RoleSet, getAllRoles } from "../../../../game/roleListState.d";
+import { ROLE_SETS, RoleSet, getAllRoles } from "../../../../game/roleListState.d";
 import { Role } from "../../../../game/roleState.d";
 import { Failure, ParseResult, ParseSuccess, Success, isFailure } from "../parse";
 
@@ -20,7 +20,7 @@ type InitialGameMode = { name: string, roleList: InitialRoleOutline[], phaseTime
 type InitialGameModeStorage = Record<string, InitialGameMode>;
 
 const FACTIONS = ["mafia", "town", "neutral", "cult", "fiends"]
-export type InitialRoleOutlineOption = RoleOutlineOption | { type: "faction", faction: typeof FACTIONS[number] }
+export type InitialRoleOutlineOption = { type: "role", role: Role } | { type: "roleSet", roleSet: RoleSet } | { type: "faction", faction: typeof FACTIONS[number] }
 export type InitialRoleOutline = { type: "any" } | { type: "roleOutlineOptions", options: InitialRoleOutlineOption[] }
 
 
@@ -180,7 +180,7 @@ export function parseRoleList(json: NonNullable<any>): ParseResult<InitialRoleOu
         if (isFailure(outline)) return outline;
     }
 
-    return Success(roleList.map(success => (success as ParseSuccess<RoleOutline>).value));
+    return Success(roleList.map(success => (success as ParseSuccess<InitialRoleOutline>).value));
 }
 
 function parseRoleOutline(json: NonNullable<any>): ParseResult<InitialRoleOutline> {
@@ -218,7 +218,7 @@ function parseRoleOutlineOptionList(json: NonNullable<any>): ParseResult<Initial
         if (isFailure(option)) return option;
     }
 
-    return Success(outlineOptionList.map(success => (success as ParseSuccess<RoleOutlineOption>).value) as RoleOutlineOption[]);
+    return Success(outlineOptionList.map(success => (success as ParseSuccess<InitialRoleOutlineOption>).value) as InitialRoleOutlineOption[]);
 }
 
 function parseRoleOutlineOption(json: NonNullable<any>): ParseResult<InitialRoleOutlineOption> {
@@ -270,7 +270,7 @@ function parseRoleOutlineOption(json: NonNullable<any>): ParseResult<InitialRole
 
 export function parsePhaseTimes(json: NonNullable<any>): ParseResult<PhaseTimes> {
     for (const phase of PHASES) {
-        if (!Object.keys(json).includes(phase)) {
+        if (phase !== "recess" && !Object.keys(json).includes(phase)) {
             return Failure(`${phase}KeyMissingFromPhaseTimes`, json);
         }
     }

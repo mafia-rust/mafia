@@ -73,7 +73,7 @@ impl RoleStateImpl for Mortician {
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         let grayed_out = 
-            !actor_ref.alive(game) || 
+            actor_ref.ability_deactivated_from_death(game) || 
             Detained::is_detained(game, actor_ref);
 
         ControllerParametersMap::new_controller_fast(
@@ -98,7 +98,7 @@ impl RoleStateImpl for Mortician {
             vec_set![actor_ref]
         )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,
@@ -113,7 +113,7 @@ impl RoleStateImpl for Mortician {
     }
     fn on_grave_added(mut self, game: &mut Game, actor_ref: PlayerReference, grave_ref: GraveReference){
         if
-            actor_ref.alive(game) &&
+            !actor_ref.ability_deactivated_from_death(game) &&
             self.obscured_players.contains(&grave_ref.deref(game).player) &&
             self.cremations_remaining > 0
         {
