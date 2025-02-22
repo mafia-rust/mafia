@@ -436,8 +436,6 @@ impl Game {
         
         if start_trial_instantly {
             if let Some(player_on_trial) = voted_player {
-                self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
-                
                 PhaseStateMachine::next_phase(self, Some(PhaseState::Testimony {
                     trials_left: trials_left.saturating_sub(1), 
                     player_on_trial, 
@@ -556,7 +554,9 @@ impl Game {
         spectator_pointer.index
     }
     pub fn remove_spectator(&mut self, i: SpectatorIndex){
-        self.spectators.remove(i as usize);
+        if (i as usize) < self.spectators.len() {
+            self.spectators.remove(i as usize);
+        }
     }
 
     pub fn send_packet_to_all(&self, packet: ToClientPacket){

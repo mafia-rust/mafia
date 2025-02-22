@@ -62,7 +62,7 @@ export function createGameState(): GameState {
         ticking: true,
 
         clientState: createPlayerGameState(),
-        host: false,
+        host: null,
 
         missedChatMessages: false
     }

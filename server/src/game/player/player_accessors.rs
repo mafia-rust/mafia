@@ -15,6 +15,13 @@ impl PlayerReference{
     pub fn name<'a>(&self, game: &'a Game) -> &'a String {
         &self.deref(game).name
     }
+    pub fn set_name(&self, game: &mut Game, new_name: String) {
+        self.deref_mut(game).name = new_name;
+
+        game.send_packet_to_all(ToClientPacket::GamePlayers { 
+            players: PlayerReference::all_players(game).map(|p| p.name(game)).cloned().collect()
+        });
+    }
     
     pub fn role(&self, game: &Game) -> Role {
         self.deref(game).role_state.role()

@@ -42,6 +42,15 @@
     "menu.globalMenu.settings": "Settings",
     "menu.globalMenu.gameSettingsEditor": "Game Mode Editor",
 
+    "menu.hostSettings.title": "Host Settings",
+    "menu.hostSettings.lastRefresh": "Last refresh: \\0",
+    "menu.hostSettings.players": "Manage Players",
+    "menu.hostSettings.spectators": "Spectators",
+    "menu.hostSettings.lobby": "Manage Lobby",
+    "menu.hostSettings.renamePlayer": "Rename",
+    "menu.hostSettings.endGame": "End Game",
+    "menu.hostSettings.skipPhase": "Skip Phase",
+
     "menu.settings.title": "Settings",
     "menu.settings.general": "General",
     "menu.settings.gameplay": "Gameplay",

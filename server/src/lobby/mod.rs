@@ -92,11 +92,21 @@ impl Lobby {
         }
     }
 
+    pub fn get_player_names(clients: &VecMap<LobbyClientID, LobbyClient>) -> Vec<String> {
+        clients.values().filter_map(|p| {
+            if let LobbyClientType::Player { name } = p.client_type.clone() {
+                Some(name)
+            } else {
+                None
+            }
+        }).collect()
+    }
+
     pub fn join_player(&mut self, send: &ClientSender) -> Result<LobbyClientID, RejectJoinReason>{
         match &mut self.lobby_state {
             LobbyState::Lobby { clients, settings } => {
 
-                let name = name_validation::sanitize_name("".to_string(), clients);
+                let name = name_validation::sanitize_name("".to_string(), &Self::get_player_names(clients));
                 
                 let mut new_player = LobbyClient::new(name.clone(), send.clone(), clients.is_empty());
                 let lobby_client_id: LobbyClientID =
@@ -192,6 +202,14 @@ impl Lobby {
                         }
                     },
                     GameClientLocation::Spectator(idx) => {
+                        clients.remove(&lobby_client_id);
+                        for client in clients.iter_mut() {
+                            if let GameClientLocation::Spectator(index) = &mut client.1.client_location {
+                                if *index > idx {
+                                    *index -= 1;
+                                }
+                            }
+                        }
                         game.remove_spectator(idx);
                     }
                 }
@@ -297,6 +315,34 @@ impl Lobby {
                 Err(RejectJoinReason::RoomDoesntExist)
             },
         }
+    }
+
+    pub fn set_player_name(lobby_client_id: LobbyClientID, name: String, clients: &mut VecMap<LobbyClientID, LobbyClient>) {
+        let mut other_players = clients.clone();
+        other_players.remove(&lobby_client_id);
+        
+        let new_name: String = name_validation::sanitize_name(name, &Self::get_player_names(&other_players));
+
+        if let Some(player) = clients.get_mut(&lobby_client_id){
+            if let LobbyClientType::Player { name } = &mut player.client_type {
+                *name = new_name;
+            }
+        }
+
+        Self::send_players_lobby(clients);
+    }
+
+    pub fn set_player_name_game(game: &mut Game, player_ref: PlayerReference, name: String) {
+        let mut other_players: Vec<String> = PlayerReference::all_players(game)
+            .map(|p| p.name(game))
+            .cloned()
+            .collect();
+
+        other_players.remove(player_ref.index() as usize);
+        
+        let new_name: String = name_validation::sanitize_name(name, &other_players);
+
+        player_ref.set_name(game, new_name);
     }
 
     pub fn is_closed(&self) -> bool {
