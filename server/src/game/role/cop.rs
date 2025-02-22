@@ -57,7 +57,7 @@ impl RoleStateImpl for Cop {
                     .filter(|other_player_ref|
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref &&
-                        other_player_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
+                        !other_player_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
                         // Its probably this way rather than having it filter applied directly to target_ref.all_night_visitors_cloned(game) 
                         // in order to prevent repeat players
                         target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
