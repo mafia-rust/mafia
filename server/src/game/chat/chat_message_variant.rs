@@ -73,6 +73,11 @@ pub enum ChatMessageVariant {
         visited_by:Vec <PlayerReference>,
         visited:Vec <Visit>,
     },
+    //I have no idea if I should put the serde thing here, idk what its for but all the others seem to have it
+    #[serde(rename_all = "camelCase")]
+    DebugMisc {
+        text: String,
+    },
 
     /* Trial */
     #[serde(rename_all = "camelCase")]
