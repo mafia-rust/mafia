@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use super::player::PlayerReference;
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct Visit {
     pub visitor: PlayerReference,
     pub target: PlayerReference,
@@ -29,7 +29,7 @@ impl Visit {
     }
 }
 
-#[derive(Default, Clone, Copy, Debug, PartialEq, Eq, Serialize, PartialOrd, Ord)]
+#[derive(Default, Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 pub enum VisitTag{
     #[default]
     Role,

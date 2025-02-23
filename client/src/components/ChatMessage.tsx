@@ -793,9 +793,11 @@ export type ChatMessageVariant = {
 } | 
 // System
 {
-    type: "debugVisit",
-    visiters: PlayerIndex[]
-    visits: PlayerIndex[]
+    type: "debugVisitedBy",
+    visitedBy: PlayerIndex[]
+} | {
+    type: "debugVisited",
+    visited: PlayerIndex[]
 } | {
     type: "debugMisc",
     text: string
