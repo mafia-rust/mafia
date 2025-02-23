@@ -67,13 +67,16 @@ pub enum ChatMessageVariant {
     },
 
     /* Debug */
-    //I have no idea if I should put the serde thing here, idk what its for but all the others seem to have it
     #[serde(rename_all = "camelCase")]
-    DebugVisits {
-        visited_by:Vec <PlayerReference>,
-        visited:Vec <PlayerReference>,
+    DebugVisited {
+        visited: Vec <PlayerReference>,
     },
-    //I have no idea if I should put the serde thing here, idk what its for but all the others seem to have it
+
+    #[serde(rename_all = "camelCase")]
+    DebugVisitedBy {
+        visited_by: Vec <PlayerReference>,
+    },
+
     #[serde(rename_all = "camelCase")]
     DebugMisc {
         text: String,
