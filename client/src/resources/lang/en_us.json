@@ -928,6 +928,10 @@
     "chatMessage.youAttackedSomeone": "You attacked someone.",
     "chatMessage.youWereAttacked": "You were attacked by someone",
     
+    "chatMessage.debugMisc": "👾 You visited \\0.",
+    "chatMessage.debugVisited": "👾 You were visited by \\0.",
+    "chatMessage.debugVisitedBy": "👾 \\0",
+
     "chatMessage.targetWasAttacked":"You protected someone from at least one attack.",
     "chatMessage.youWereProtected": "You were protected from at least one attack.",
 

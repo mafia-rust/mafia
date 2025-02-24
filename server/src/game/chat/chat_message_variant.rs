@@ -65,6 +65,23 @@ pub enum ChatMessageVariant {
         phase: PhaseState, 
         day_number: u8
     },
+
+    /* Debug */
+    #[serde(rename_all = "camelCase")]
+    DebugVisited {
+        visited: Vec <PlayerReference>,
+    },
+
+    #[serde(rename_all = "camelCase")]
+    DebugVisitedBy {
+        visited_by: Vec <PlayerReference>,
+    },
+
+    #[serde(rename_all = "camelCase")]
+    DebugMisc {
+        text: String,
+    },
+
     /* Trial */
     #[serde(rename_all = "camelCase")]
     TrialInformation{
