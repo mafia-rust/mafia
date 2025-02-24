@@ -1,15 +1,21 @@
 use std::{collections::VecDeque, time::Instant};
 
+use serde::Serialize;
+
 use crate::game::{player::PlayerIndex, spectator::spectator_pointer::SpectatorIndex};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct GameClient{
+    #[serde(rename = "clientType")]
     pub client_location: GameClientLocation,
     pub host: bool,
 
+    #[serde(skip)]
     pub last_message_times: VecDeque<Instant>,
 }
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
+#[serde(tag = "type", content = "index", rename_all="camelCase")]
 pub enum GameClientLocation {
     Player(PlayerIndex),
     Spectator(SpectatorIndex)
