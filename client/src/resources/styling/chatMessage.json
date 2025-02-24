@@ -81,6 +81,8 @@
     "youArePoisoned": "result",
     "engineerVisitorsRole": "result",
     "armorsmithArmorBroke": "result",
+    "receivedMessagesStart": "special",
+    "receivedMessagesEnd": "special",
     "trapState": "special",
     "trapStateEndOfNight": "result",
     "targetsMessage": "result",

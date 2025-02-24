@@ -164,6 +164,7 @@ macros::roles! {
     Yer : yer,
     FiendsWildcard : fiends_wildcard,
     SerialKiller : serial_killer,
+    Telepath : telepath,
 
     Apostle : apostle,
     Disciple : disciple,
@@ -399,7 +400,8 @@ impl Role{
             Role::Bouncer |
             Role::Transporter | Role::Escort | Role::Retributionist | 
             Role::Witch | Role::Scarecrow | Role::Warper |
-            Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer => true,
+            Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer |
+            Role::Telepath => true,
             _ => false,
         }
     }

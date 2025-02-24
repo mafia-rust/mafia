@@ -88,7 +88,7 @@ impl DoomsayerGuess{
             Role::Arsonist | Role::Werewolf | 
             Role::Ojo | Role::Puppeteer | Role::Pyrolisk | Role::Kira |
             Role::SerialKiller | Role::Warden | Role::Yer |
-            Role::FiendsWildcard => Some(DoomsayerGuess::NonTown),
+            Role::FiendsWildcard | Role::Telepath => Some(DoomsayerGuess::NonTown),
             
             //Cult
             Role::Apostle | Role::Disciple | Role::Zealot => Some(DoomsayerGuess::NonTown),

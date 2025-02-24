@@ -91,6 +91,7 @@ pub use mafia_server::game::{
         pyrolisk::Pyrolisk,
         puppeteer::Puppeteer,
         fiends_wildcard::FiendsWildcard,
+        telepath::Telepath,
 
         armorsmith::Armorsmith, auditor::AuditorResult,
         drunk::Drunk, ojo::Ojo,
@@ -2635,3 +2636,238 @@ fn santa_always_gets_their_naughty_selection() {
         );
     }
 }
+
+#[test]
+//If this makes it to main I fucked up though this test should always pass
+fn test_test() {
+    kit::scenario!(game in Dusk 1 where
+        escort: Escort,
+        jester: Jester,
+        townie: Detective,
+        mafioso: Mafioso,
+        maf2: Godfather,
+        hypnotist: Hypnotist
+    );
+
+    assert!(escort.alive());
+    assert!(jester.alive());
+    assert!(townie.alive());
+    assert!(mafioso.alive());
+    assert!(hypnotist.alive());
+
+    escort.send_ability_input_player_list_typical(mafioso);
+    townie.send_ability_input_player_list_typical(jester);
+    mafioso.send_ability_input_player_list_typical(jester);
+    hypnotist.send_ability_input_player_list_typical(escort);
+
+    game.skip_to(Discussion, 2);
+
+    assert!(escort.alive());
+    assert!(jester.alive());
+    assert!(townie.alive());
+    assert!(mafioso.alive());
+    assert!(maf2.alive());
+    assert!(hypnotist.alive());
+
+    escort.send_ability_input_player_list_typical(mafioso);
+    townie.send_ability_input_player_list_typical(jester);
+    mafioso.send_ability_input_player_list_typical(jester);
+    hypnotist.send_ability_input_player_list_typical(escort);
+
+    game.skip_to(Discussion, 3);
+
+    assert!(escort.alive());
+    assert!(jester.alive());
+    assert!(townie.alive());
+    assert!(mafioso.alive());
+    assert!(maf2.alive());
+    assert!(hypnotist.alive());
+
+    //escort.send_ability_input_player_list_typical(godfather);
+    townie.send_ability_input_player_list_typical(jester);
+    mafioso.send_ability_input_player_list_typical(jester);
+    hypnotist.send_ability_input_player_list_typical(escort);
+
+    game.skip_to(Discussion, 4);
+
+    assert!(escort.alive());
+    assert!(!jester.alive());
+    assert!(townie.alive());
+    assert!(mafioso.alive());
+    assert!(maf2.alive());
+    assert!(hypnotist.alive());
+
+}
+
+#[test]
+fn telepath_roleblocks_both_players_kills_first_player() {
+    kit::scenario!(game in Dusk 1 where
+        telepath: Telepath,
+        jester: Jester,
+        townie: Detective,
+        mafioso: Mafioso,
+        godfather: Godfather
+    );
+
+    assert!(telepath.alive());
+    assert!(jester.alive());
+    assert!(townie.alive());
+    assert!(mafioso.alive());
+    assert!(godfather.alive());
+
+    telepath.send_ability_input_player_list(mafioso,0);
+    telepath.send_ability_input_player_list(godfather,1);
+    townie.send_ability_input_player_list_typical(jester);
+    mafioso.send_ability_input_player_list_typical(jester);
+    godfather.send_ability_input_player_list_typical(jester);
+
+    game.skip_to(Obituary, 2);
+
+    assert!(!telepath.was_roleblocked());
+    assert!(!jester.was_roleblocked());
+    assert!(!townie.was_roleblocked());
+    assert!(!mafioso.was_roleblocked());
+    assert!(godfather.was_roleblocked());
+    assert!(!telepath.was_roleblocked());
+
+    assert!(telepath.alive());
+    assert!(jester.alive());
+    assert!(townie.alive());
+    assert!(mafioso.alive());
+    assert!(godfather.alive());
+
+    telepath.send_ability_input_player_list(mafioso,0);
+    telepath.send_ability_input_player_list(godfather,1);
+    townie.send_ability_input_player_list_typical(jester);
+    mafioso.send_ability_input_player_list_typical(jester);
+    godfather.send_ability_input_player_list_typical(jester);
+
+    game.skip_to(Obituary, 3);
+
+    assert!(!telepath.was_roleblocked());
+    assert!(!jester.was_roleblocked());
+    assert!(!townie.was_roleblocked());
+    assert!(mafioso.was_roleblocked());
+    assert!(godfather.was_roleblocked());
+
+    assert!(telepath.alive());
+    assert!(jester.alive());
+    assert!(townie.alive());
+    assert!(!mafioso.alive());
+    assert!(godfather.alive());
+
+    telepath.send_ability_input_player_list(godfather,0);
+    townie.send_ability_input_player_list_typical(jester);
+    godfather.send_ability_input_player_list_typical(jester);
+
+    game.skip_to(Obituary, 4);
+
+    assert!(!telepath.was_roleblocked());
+    assert!(!jester.was_roleblocked());
+    assert!(!townie.was_roleblocked());
+    assert!(!mafioso.was_roleblocked());
+    assert!(godfather.was_roleblocked());
+
+    assert!(telepath.alive());
+    assert!(jester.alive());
+    assert!(townie.alive());
+    assert!(!mafioso.alive());
+} 
+
+//The above test but 
+#[test]
+fn telepath_is_roleblock_immune() {
+    kit::scenario!(game in Dusk 1 where
+        telepath: Telepath,
+        jester: Jester,
+        townie: Detective,
+        mafioso: Mafioso,
+        godfather: Godfather,
+        hypnotist: Hypnotist,
+        escort: Escort
+    );
+
+    assert!(telepath.alive());
+    assert!(jester.alive());
+    assert!(townie.alive());
+    assert!(mafioso.alive());
+    assert!(godfather.alive());
+    assert!(hypnotist.alive());
+
+    //0 is the one that attacks, it should not activate
+    telepath.send_ability_input_player_list(mafioso,0);
+    telepath.send_ability_input_player_list(godfather,1);
+    townie.send_ability_input_player_list_typical(jester);
+    mafioso.send_ability_input_player_list_typical(jester);
+    godfather.send_ability_input_player_list_typical(jester);
+    hypnotist.send_ability_input_player_list_typical(telepath);
+    escort.send_ability_input_player_list_typical(telepath);
+
+    game.skip_to(Obituary, 2);
+
+    assert!(!telepath.was_roleblocked());
+    assert!(!jester.was_roleblocked());
+    assert!(!townie.was_roleblocked());
+    assert!(!mafioso.was_roleblocked());
+    assert!(godfather.was_roleblocked());
+    assert!(!hypnotist.was_roleblocked());
+    assert!(!escort.was_roleblocked());
+
+    assert!(telepath.alive());
+    assert!(jester.alive());
+    assert!(townie.alive());
+    assert!(mafioso.alive());
+    assert!(godfather.alive());
+    assert!(hypnotist.alive());
+    assert!(escort.alive());
+
+    telepath.send_ability_input_player_list(mafioso,0);
+    telepath.send_ability_input_player_list(godfather,1);
+    townie.send_ability_input_player_list_typical(jester);
+    mafioso.send_ability_input_player_list_typical(jester);
+    godfather.send_ability_input_player_list_typical(jester);
+    hypnotist.send_ability_input_player_list_typical(telepath);
+    escort.send_ability_input_player_list_typical(telepath);
+
+    game.skip_to(Obituary, 3);
+
+    assert!(!telepath.was_roleblocked());
+    assert!(!jester.was_roleblocked());
+    assert!(!townie.was_roleblocked());
+    assert!(mafioso.was_roleblocked());
+    assert!(godfather.was_roleblocked());
+    assert!(!hypnotist.was_roleblocked());
+    assert!(!escort.was_roleblocked());
+
+    assert!(telepath.alive());
+    assert!(jester.alive());
+    assert!(townie.alive());
+    assert!(!mafioso.alive());
+    assert!(godfather.alive());
+    assert!(hypnotist.alive());
+    assert!(escort.alive());
+
+    telepath.send_ability_input_player_list(godfather,0);
+    townie.send_ability_input_player_list_typical(jester);
+    godfather.send_ability_input_player_list_typical(jester);
+    hypnotist.send_ability_input_player_list_typical(telepath);
+    escort.send_ability_input_player_list_typical(telepath);
+
+    game.skip_to(Obituary, 4);
+
+    assert!(!telepath.was_roleblocked());
+    assert!(!jester.was_roleblocked());
+    assert!(!townie.was_roleblocked());
+    assert!(!mafioso.was_roleblocked());
+    assert!(godfather.was_roleblocked());
+    assert!(!hypnotist.was_roleblocked());
+    assert!(!escort.was_roleblocked());
+
+    assert!(telepath.alive());
+    assert!(jester.alive());
+    assert!(townie.alive());
+    assert!(!mafioso.alive());
+    assert!(!godfather.alive());
+    assert!(hypnotist.alive());
+    assert!(escort.alive());
+} 

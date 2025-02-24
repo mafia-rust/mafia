@@ -1009,6 +1009,8 @@
     "chatMessage.martyrWon": "The messiah has been killed! May we all enter the kingdom of heaven.",
     "chatMessage.youAreLoveLinked": "You are now love linked to \\0.",
     "chatMessage.playerDiedOfBrokenHeart": "\\0 died of a broken heart, joining their lover \\1 in their next life.",
+    "chatMessage.receivedMessagesStart": "\\0 received the following messages: (start)",
+    "chatMessage.receivedMessagesEnd": "(end)",
 
     "kiraResult.correct": "Correct",
     "kiraResult.wrongSpot": "Somebody has this role, but not this player",

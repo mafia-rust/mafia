@@ -932,7 +932,12 @@ export type ChatMessageVariant = {
     type: "youAttackedSomeone"
 } | {
     type: "youArePoisoned"
-} |
+} | {
+    type: "receivedMessagesStart",
+    recipient: PlayerIndex,
+} | {
+    type: "receivedMessagesEnd"
+} | 
 /* Role-specific */
 {
     type: "wardblocked"

@@ -144,6 +144,11 @@ pub enum ChatMessageVariant {
     AddedToNaughtyList,
     SantaAddedPlayerToNaughtyList { player: PlayerReference },
 
+    #[serde(rename_all = "camelCase")]
+    ReceivedMessagesStart {recipient: PlayerReference},
+    #[serde(rename_all = "camelCase")]
+    ReceivedMessagesEnd,
+
     SomeoneSurvivedYourAttack,
     YouSurvivedAttack,
     TargetWasAttacked,
