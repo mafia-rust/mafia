@@ -8,14 +8,16 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 
 use super::detective::Detective;
-use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleState, RoleStateImpl};
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 #[derive(Clone, Debug, Serialize, Default)]
-pub struct Gossip;
+pub struct Gossip {
+    red_herring: Option<PlayerReference>,
+}
 
 impl RoleStateImpl for Gossip {
     type ClientRoleState = Gossip;
@@ -25,9 +27,9 @@ impl RoleStateImpl for Gossip {
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
             
-            let enemies = if Confused::is_confused(game, actor_ref){
-                false
-            }else{
+            let enemies = if Confused::is_confused(game, actor_ref) {
+                self.red_herring.is_some_and(|red_herring| red_herring == visit.target)
+            } else {
                 Gossip::enemies(game, visit.target)
             };
 
@@ -53,6 +55,12 @@ impl RoleStateImpl for Gossip {
             ControllerID::role(actor_ref, Role::Gossip, 0),
             false
         )
+    }
+
+    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
+        actor_ref.set_role_state(game, RoleState::Gossip(Gossip{
+            red_herring: PlayerReference::generate_red_herring(actor_ref, game)
+        }));
     }
 }
 

@@ -2,6 +2,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::ControllerID;
 use crate::game::components::confused::Confused;
+use crate::game::role::RoleState;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::player::PlayerReference;
@@ -15,7 +16,9 @@ pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 #[derive(Clone, Debug, Serialize, Default)]
-pub struct Detective;
+pub struct Detective {
+    red_herring: Option<PlayerReference>,
+}
 
 impl RoleStateImpl for Detective {
     type ClientRoleState = Detective;
@@ -25,7 +28,7 @@ impl RoleStateImpl for Detective {
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
             let suspicious = if Confused::is_confused(game, actor_ref) {
-                false
+                self.red_herring.is_some_and(|red_herring| red_herring == visit.target)
             }else{
                 Detective::player_is_suspicious(game, visit.target)
             };
@@ -54,6 +57,12 @@ impl RoleStateImpl for Detective {
             ControllerID::role(actor_ref, Role::Detective, 0),
             false
         )
+    }
+
+    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
+        actor_ref.set_role_state(game, RoleState::Detective(Detective{
+            red_herring: PlayerReference::generate_red_herring(actor_ref, game)
+        }));
     }
 }
 
