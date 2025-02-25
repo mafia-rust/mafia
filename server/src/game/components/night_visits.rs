@@ -69,6 +69,7 @@ impl PlayerReference{
             .cloned()
             .collect()
     }
+    /// Returns all vists where the player is the visitor
     pub fn all_night_visits_cloned<'a>(&self, game: &Game) -> Vec<Visit>{
         NightVisits::all_visits(game)
             .into_iter()
@@ -76,6 +77,7 @@ impl PlayerReference{
             .cloned()
             .collect()
     }
+    /// Returns all vists where the player is the target
     pub fn all_night_visitors_cloned(self, game: &Game) -> Vec<PlayerReference> {
         NightVisits::all_visits(game)
             .into_iter()
