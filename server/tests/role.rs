@@ -1,6 +1,7 @@
 mod kit;
 use std::{ops::Deref, vec};
 
+use kit::scenario;
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
 use mafia_server::game::{ability_input::{ability_selection::AbilitySelection, ControllerID}, game_conclusion::GameConclusion, role::engineer::Trap};
@@ -87,6 +88,7 @@ pub use mafia_server::game::{
         
         warden::Warden,
         arsonist::Arsonist,
+        werewolf::Werewolf,
         spiral::Spiral,
         pyrolisk::Pyrolisk,
         puppeteer::Puppeteer,
@@ -2634,4 +2636,20 @@ fn santa_always_gets_their_naughty_selection() {
             GameConclusion::NaughtyList
         );
     }
+}
+#[test]
+fn werewolf_kills_visiting_target() {
+    kit::scenario!(game in Night 2 where
+        werewolf: Werewolf,
+        target: Snoop,
+        bystander: Snoop
+    );
+    werewolf.send_ability_input_player_list_typical(target);
+    target.send_ability_input_player_list_typical(bystander);
+
+    game.skip_to(Night, 3);
+    werewolf.send_ability_input_player_list_typical(target);
+    target.send_ability_input_player_list_typical(bystander);
+    game.next_phase();
+    assert!(!target.alive());
 }

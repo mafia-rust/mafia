@@ -46,33 +46,29 @@ impl RoleStateImpl for Werewolf {
 
                         
 
-                        //If player is tracked, check if they are visiting, then attack them
-                        if self.tracked_players.contains(&target_ref) {
-                            if target_ref.untagged_night_visits(game).len() > 0 {
-                                actor_ref.try_night_kill_single_attacker(target_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
-                            }
-                            else {
-                            //rampage target    
-                                for other_player_ref in 
-                                target_ref.all_night_visitors_cloned(game).into_iter().filter(|p|actor_ref!=*p)
-                                .collect::<Vec<PlayerReference>>() 
-                                {
-                                other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
-                                }
-                            }
-                        }
-                        else {
-                            
-                            //If player is not tracked, track them instead
-                            if self.tracked_players.contains(&target_ref) {
-                                return;
-                            }
+                        //If player is untracked, track them
+                        if !self.tracked_players.contains(&target_ref) {
+                            actor_ref.push_player_tag(game, target_ref, Tag::WerewolfTracked);
                             let mut tracked_players = self.tracked_players.clone();
                             tracked_players.push(target_ref);
                             actor_ref.set_role_state(game, RoleState::Werewolf(Werewolf {
                                 tracked_players
                             }));
                             
+                        }
+                        else {
+                            //rampage target    
+                            for other_player_ref in 
+                            target_ref.all_night_visitors_cloned(game).into_iter().filter(|p|actor_ref!=*p)
+                            .collect::<Vec<PlayerReference>>() 
+                            {
+                                other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
+                            }
+                            
+                            //If target visits, attack them
+                            if target_ref.untagged_night_visits(game).len() > 0 {
+                                actor_ref.try_night_kill_single_attacker(target_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
+                            } 
                         }
                     },
 
@@ -166,7 +162,7 @@ impl RoleStateImpl for Werewolf {
                 ) else {return};
                 let Some(target) = target.first() else {return};
 
-                if actor_ref.ability_deactivated_from_death(game) || !target.alive(game) {return};
+                if actor_ref.ability_deactivated_from_death(game) || !target.alive(game) || *target == actor_ref || self.tracked_players.contains(target) {return};
                 actor_ref.push_player_tag(game, *target, Tag::WerewolfTracked);
                 self.tracked_players.push(*target);
                 let tracked_players = self.tracked_players.clone();
