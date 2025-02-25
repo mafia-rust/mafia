@@ -112,7 +112,7 @@ impl SubAssign<u8> for Duration {
             }
         }
     }
-=======
+
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
