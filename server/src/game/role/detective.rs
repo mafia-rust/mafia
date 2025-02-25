@@ -28,12 +28,13 @@ impl RoleStateImpl for Detective {
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
             let suspicious = if Confused::is_confused(game, actor_ref) {
+                visit.target.night_framed(game) ||
                 self.red_herring.is_some_and(|red_herring| red_herring == visit.target)
             }else{
                 Detective::player_is_suspicious(game, visit.target)
             };
 
-            let message = ChatMessageVariant::SheriffResult {
+            let message = ChatMessageVariant::DetectiveResult {
                 suspicious
             };
             
