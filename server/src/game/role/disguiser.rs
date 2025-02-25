@@ -131,7 +131,7 @@ impl RoleStateImpl for Disguiser {
             *grave_ref.deref_mut(game) = match grave.information {
                 GraveInformation::Normal{role: _, will, death_cause, death_notes} => {
                     grave.information = GraveInformation::Normal{
-                        role: Self::disguised_role(&self, game, actor_ref),
+                        role: Self::disguised_role(game, actor_ref),
                         will,
                         death_cause,
                         death_notes
@@ -150,14 +150,14 @@ impl RoleStateImpl for Disguiser {
 }
 
 impl Disguiser{
-    fn players_with_disguiser_menu(&self, actor_ref: PlayerReference)->VecSet<PlayerReference>{
+    pub fn players_with_disguiser_menu(&self, actor_ref: PlayerReference)->VecSet<PlayerReference>{
         let mut players = vec_set!(actor_ref);
         if let Some(disguised) = self.current_target{
             players.insert(disguised);
         }
         players
     }
-    pub fn disguised_role(&self, game: &Game, actor_ref: PlayerReference)->Role{
+    pub fn disguised_role(game: &Game, actor_ref: PlayerReference)->Role{
         if let Some(role) = game.saved_controllers.get_controller_current_selection_role_option(
             ControllerID::role(actor_ref, Role::Disguiser, 1)
         ).and_then(|selection| selection.0)

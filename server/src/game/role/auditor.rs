@@ -15,15 +15,20 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_map::VecMap;
 use crate::vec_set::vec_set;
-
+use crate::game::grave::{GraveDeathCause, GraveInformation, GraveKiller, GraveReference};
 use rand::prelude::SliceRandom;
-use super::{common_role, Priority, Role, RoleStateImpl};
+use super::counterfeiter::Counterfeiter;
+use super::disguiser::Disguiser;
+use super::forger::Forger;
+use super::impostor::Impostor;
+use super::{common_role, Priority, Role, RoleState, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Auditor{
     pub previously_given_results: VecMap<RoleOutlineReference, AuditorResult>,
+    pub grave_roles: Vec<Role>,
 }
 
 #[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
@@ -53,7 +58,7 @@ impl RoleStateImpl for Auditor {
 
         if let Some(chosen_outline) = selection.0{
             let result = if Confused::is_confused(game, actor_ref){
-                Self::get_confused_result(game, chosen_outline)
+                Self::get_confused_result(game, chosen_outline, &self.grave_roles)
             }else{
                 Self::get_result(game, chosen_outline)
             };
@@ -67,7 +72,7 @@ impl RoleStateImpl for Auditor {
 
         if let Some(chosen_outline) = selection.1{
             let result = if Confused::is_confused(game, actor_ref){
-                Self::get_confused_result(game, chosen_outline)
+                Self::get_confused_result(game, chosen_outline, &self.grave_roles)
             }else{
                 Self::get_result(game, chosen_outline)
             };
@@ -108,6 +113,24 @@ impl RoleStateImpl for Auditor {
             false
         )
     }
+    fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: GraveReference) {
+        let grave = grave.deref(game).clone();
+        let mut grave_roles = self.grave_roles.clone();
+        if let GraveInformation::Normal{role, death_cause, ..} = grave.information {
+            grave_roles.push(role);
+            if let GraveDeathCause::Killers(killers) = death_cause {
+                for killer in killers {
+                    if let GraveKiller::Role(role) = killer {
+                        grave_roles.push(role);
+                    }
+                }
+            }
+        }
+        actor_ref.set_role_state(game, RoleState::Auditor(Auditor{
+            previously_given_results: self.previously_given_results, 
+            grave_roles
+        }));
+    }
 }
 
 impl Auditor{
@@ -140,7 +163,7 @@ impl Auditor{
         }
     }
     //panics if chosen_outline is not found
-    pub fn get_confused_result(game: &Game, chosen_outline: RoleOutlineReference) -> AuditorResult {        
+    pub fn get_confused_result(game: &Game, chosen_outline: RoleOutlineReference, grave_roles: &Vec<Role>) -> AuditorResult {        
         let outline = chosen_outline.deref(game);
 
         if outline.get_role_assignments().len() == 1 || outline.get_role_assignments().len() == 2 {
@@ -158,7 +181,7 @@ impl Auditor{
             }else{
                 unreachable!("Auditor role outline is empty")
             }
-        }else{
+        } else {
             let mut fake_roles = outline
                 .get_role_assignments()
                 .into_iter()
@@ -166,7 +189,18 @@ impl Auditor{
                 .filter(|x|game.settings.enabled_roles.contains(x))
                 .collect::<Vec<Role>>();
             
-            fake_roles.shuffle(&mut rand::rng());
+            for player in PlayerReference::all_players(game) {
+                let Some(fake_role) = Self::fake_role(game, player) else {continue};
+                if fake_roles.contains(&fake_role){
+                    fake_roles.push(fake_role);
+                }
+            }
+                
+            for role in grave_roles {
+                if fake_roles.contains(role){
+                    fake_roles.push(*role);
+                }
+            }
 
             let fake_roles = fake_roles.choose_multiple(&mut rand::rng(), 2).cloned().collect::<Vec<Role>>();
 
@@ -176,6 +210,39 @@ impl Auditor{
                 },
                 _ => unreachable!("Auditor role outline is empty")
             }
+        }
+    }
+
+    /// Returns the role the player is trying/tried to make themselves or someone else look like
+    fn fake_role(game: &Game, player: PlayerReference) -> Option<Role> {
+        match player.role_state(game) {
+            RoleState::Disguiser(disguiser) => {
+                let fake_role = Disguiser::disguised_role(game, player);
+                if fake_role == Role::Disguiser && disguiser.players_with_disguiser_menu(player).contains(&player){
+                    return None;
+                }
+                return Some(fake_role);
+            },
+            RoleState::Impostor(..) => {
+                return Impostor::current_fake_role(game, player);
+            },
+            RoleState::Counterfeiter(..) => {
+                if Counterfeiter::chose_no_forge(game, player) {
+                    return None;
+                };
+                return Counterfeiter::selected_forge_role(game, player);
+            },
+            RoleState::Forger(..) => {
+                return Forger::selected_forge_role(game, player);
+            },
+            RoleState::Yer(yer) => { 
+                let fake_role = yer.current_fake_role(game, player);
+                if fake_role != Role::Yer {
+                    return Some(fake_role);
+                }
+                return None;
+            },
+            _=> return None,
         }
     }
 }

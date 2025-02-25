@@ -58,12 +58,7 @@ impl RoleStateImpl for Forger {
 
                 let target_ref = visit.target;
 
-                let fake_role = if let Some(RoleOptionSelection(fake_role)) = game.saved_controllers
-                    .get_controller_current_selection_role_option(ControllerID::role(actor_ref, Role::Forger, 1)) {
-                    fake_role
-                } else {
-                    None
-                };
+                let fake_role = Self::selected_forge_role(game, actor_ref);
 
                 target_ref.set_night_grave_role(game, fake_role);
 
@@ -149,7 +144,7 @@ impl RoleStateImpl for Forger {
             ..self
         }));
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+    fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
@@ -159,6 +154,16 @@ impl GetClientRoleState<ClientRoleState> for Forger {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState {
             forges_remaining: self.forges_remaining,
+        }
+    }
+}
+impl Forger {
+    pub fn selected_forge_role(game: &Game, actor_ref: PlayerReference) -> Option<Role> {
+        if let Some(RoleOptionSelection(fake_role)) = game.saved_controllers
+            .get_controller_current_selection_role_option(ControllerID::role(actor_ref, Role::Forger, 1)) {
+            fake_role
+        } else {
+            None
         }
     }
 }

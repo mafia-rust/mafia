@@ -68,7 +68,7 @@ impl RoleStateImpl for Impostor {
         ))
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: crate::game::grave::GraveReference) {
-        let Some(role) = self.current_fake_role(game, actor_ref) else {return};
+        let Some(role) = Self::current_fake_role(game, actor_ref) else {return};
         
         if grave.deref(game).player == actor_ref {
             let grave = grave.deref_mut(game);
@@ -91,7 +91,7 @@ impl RoleStateImpl for Impostor {
 }
 
 impl Impostor {
-    pub fn current_fake_role(&self, game: &Game, actor_ref: PlayerReference) -> Option<Role>{
+    pub fn current_fake_role(game: &Game, actor_ref: PlayerReference) -> Option<Role>{
         let Some(RoleOptionSelection(role)) = game.saved_controllers.get_controller_current_selection_role_option(
             ControllerID::role(actor_ref, Role::Impostor, 1)
         ) else {
