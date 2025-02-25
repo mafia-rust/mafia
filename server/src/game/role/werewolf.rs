@@ -67,7 +67,7 @@ impl RoleStateImpl for Werewolf {
                             
                             //If target visits, attack them
                             if target_ref.all_night_visits_cloned(game).len() > 0 {
-                                actor_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
+                                target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
                             } 
                         }
                     },
