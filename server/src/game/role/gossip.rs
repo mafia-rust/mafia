@@ -30,7 +30,6 @@ impl RoleStateImpl for Gossip {
         if let Some(visit) = actor_visits.first(){
             
             let enemies = self.enemies(game, visit.target, actor_ref);
-            
             let message = ChatMessageVariant::GossipResult{ enemies };
             
             actor_ref.push_night_message(game, message);

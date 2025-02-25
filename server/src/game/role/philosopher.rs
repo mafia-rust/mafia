@@ -32,8 +32,6 @@ impl RoleStateImpl for Philosopher {
         let Some(first_visit) = actor_visits.get(0) else {return;};
         let Some(second_visit) = actor_visits.get(1) else {return;};
 
-        
-
         let enemies = 
         if first_visit.target == second_visit.target {
             false
