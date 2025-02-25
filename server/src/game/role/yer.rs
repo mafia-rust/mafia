@@ -16,7 +16,8 @@ use crate::game::ability_input::*;
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Yer{
-    star_passes_remaining: u8,
+    pub star_passes_remaining: u8,
+    pub old_role: Option<Role>,
 }
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -78,7 +79,10 @@ impl RoleStateImpl for Yer {
                     game,
                     WinCondition::new_loyalist(crate::game::game_conclusion::GameConclusion::Fiends)
                 );
-                target_ref.set_night_convert_role_to(game, Some(RoleState::Yer(self.clone())));
+                target_ref.set_night_convert_role_to(game, Some(RoleState::Yer(Yer { 
+                    star_passes_remaining: self.star_passes_remaining, 
+                    old_role: Some(target_ref.role(game)),
+                })));
 
                 actor_ref.try_night_kill_single_attacker(
                     actor_ref,
@@ -138,4 +142,15 @@ impl RoleStateImpl for Yer {
 
 
 impl Yer{
+    pub fn current_fake_role(&self, game: &Game, actor_ref: PlayerReference) -> Role {
+        if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
+            ControllerID::role(actor_ref, Role::Yer, 2)
+        ){
+            role
+        } else if let Some(old_role) = self.old_role{
+            old_role
+        } else {
+            Role::Yer
+        }
+    }
 }
