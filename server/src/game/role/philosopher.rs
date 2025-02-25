@@ -14,7 +14,7 @@ use super::{common_role, AvailableAbilitySelection, ControllerID, ControllerPara
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Philosopher{
-    red_herring: Option<PlayerReference>,
+    pub red_herring: Option<PlayerReference>,
 }
 
 
@@ -26,25 +26,31 @@ impl RoleStateImpl for Philosopher {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 
+        println!("phil do_night_action");
+
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         let Some(first_visit) = actor_visits.get(0) else {return;};
         let Some(second_visit) = actor_visits.get(1) else {return;};
+
+        
 
         let enemies = 
         if first_visit.target == second_visit.target {
             false
         } else if Confused::is_confused(game, actor_ref) {
             self.red_herring.is_some_and(|red_herring| 
-                red_herring == first_visit.target || 
-                red_herring == second_visit.target
+                (red_herring == first_visit.target || first_visit.target.night_framed(game)) ^
+                (red_herring == second_visit.target || second_visit.target.night_framed(game))
             )
         } else {
             Philosopher::players_are_enemies(game, first_visit.target, second_visit.target)
         };
 
-        let message = ChatMessageVariant::SeerResult{ enemies };
+        let message = ChatMessageVariant::PhilosopherResult{ enemies };
         
         actor_ref.push_night_message(game, message);
+
+        println!("enemies: {}", enemies);
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
 
