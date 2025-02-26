@@ -154,8 +154,15 @@ impl RoleStateImpl for Reeducator {
             )
         )
     }
+    // Unlike other conversion roles, its visit isn't tagged as an attack.
+    // I assume this is because if the target is syndicate then it is converted without an attack
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
-        common_role::convert_controller_selection_to_visits(game, actor_ref, ControllerID::role(actor_ref, Role::Reeducator, 0), false)
+        common_role::convert_controller_selection_to_visits(
+            game, 
+            actor_ref, 
+            ControllerID::role(actor_ref, Role::Reeducator, 0),
+            false
+        )
     }
     fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
 
