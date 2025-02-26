@@ -1,4 +1,6 @@
-use std::collections::HashSet;
+
+
+use std::ops::Div;
 
 use rand::seq::SliceRandom;
 
@@ -6,14 +8,16 @@ use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
+use crate::game::components::night_visits::NightVisits;
 use crate::game::grave::GraveKiller;
 use crate::game::player::{PlayerIndex, PlayerReference};
 
 use crate::game::tag::Tag;
-use crate::game::visit::Visit;
+use crate::game::visit::{Visit, VisitTag};
+use crate::game::phase::PhaseType;
 
 use crate::game::Game;
-use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, PlayerListSelection, GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default)]
@@ -32,73 +36,101 @@ impl RoleStateImpl for Werewolf {
     type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
+            //priority completely burgered so sammy told me to make my own priority but i didn't want to so i just made it heal
+            Priority::Heal => {
+                let visits = actor_ref.untagged_night_visits_cloned(game);
+                let Some(first_visit) = visits.first() else {return};
+
+                let target_ref = first_visit.target;
+                let enraged = self.tracked_players.len() as f32 >= PlayerReference::all_players(game)
+                .filter(|p|p.alive(game)).count() as f32 * 2f32.div(3f32);
+
+                // Only set visit to attacking visit when enraged
+                if !enraged && target_ref.all_night_visits_cloned(game).is_empty() {return}
+                    
+                NightVisits::all_visits_mut(game)
+                    .into_iter()
+                    .filter(|visit| 
+                        visit.target == target_ref && visit.visitor == actor_ref && visit.tag == VisitTag::Role  
+                    ).for_each(|visit| {
+                        visit.attack = true;
+                    });
+
+
+            }
             Priority::Kill => {
 
-                if game.day_number() == 1 || game.day_number() == 3 {
-                    return;
-                }
-
                 match actor_ref.untagged_night_visits_cloned(game).first() {
-                    //rampage at target
                     Some(first_visit) => {
                         let target_ref = first_visit.target;                        
-
-                        for other_player_ref in 
-                            target_ref.all_night_visitors_cloned(game).into_iter().filter(|p|actor_ref!=*p)
-                            .collect::<Vec<PlayerReference>>()
-                        {
-                            other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
+                        //If player is untracked, track them
+                        if !self.tracked_players.contains(&target_ref) {
+                            actor_ref.push_player_tag(game, target_ref, Tag::WerewolfTracked);
+                            let mut tracked_players = self.tracked_players.clone();
+                            tracked_players.push(target_ref);
+                            actor_ref.set_role_state(game, Self {
+                                tracked_players
+                            });
+                            
                         }
-                        target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
+                        else {
+                            //Dont attack or rampage first night
+                            if game.day_number() == 1 {return}
+                        
+                            //rampage target    
+                            for other_player_ref in target_ref
+                                .all_night_visitors_cloned(game).into_iter().filter(|p|actor_ref!=*p)
+                                .collect::<Vec<PlayerReference>>() 
+                            {
+                                other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
+                            }
+                            
+                            //If target visits, attack them
+                            if first_visit.attack {
+                                target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
+                            } 
+                        }
                     },
-
-
-
+                    //COMMENTED OUT CODE MAY BE ADDED LATER IF WE WANT WEREWOLF TO SELF RAMPAGE
                     //rampage at home
                     None => {
-                        for other_player_ref in 
-                            actor_ref.all_night_visitors_cloned(game).into_iter().filter(|p|actor_ref!=*p)
-                            .collect::<Vec<PlayerReference>>()
-                        {
-                            other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
-                        }
+                        //for other_player_ref in 
+                        //    actor_ref.all_night_visitors_cloned(game).into_iter().filter(|p|actor_ref!=*p)
+                        //    .collect::<Vec<PlayerReference>>()
+                        //{
+                        //    other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
+                        //}
                         
                     },
                 }
             },
             Priority::Investigative => {
-                
-                
-
-                //on night 1 and 3, werewolf can track the scent of players who visit them and their target
-                if game.day_number() == 1 || game.day_number() == 3 {
+                //COMMENTED OUT CODE MAY BE ADDED LATER IF WE WANT WEREWOLF TO TRACK VISITORS
+                //let mut newly_tracked_players: Vec<PlayerReference> = actor_ref.all_night_visitors_cloned(game).into_iter().filter(|p|actor_ref!=*p).collect();
+            
+                //if let Some(first_visit) = actor_ref.untagged_night_visits_cloned(game).first() {
+                //    let target_ref = first_visit.target;
                     
+                //    newly_tracked_players.push(target_ref);
+                //}
 
-                    let mut newly_tracked_players: Vec<PlayerReference> = actor_ref.all_night_visitors_cloned(game).into_iter().filter(|p|actor_ref!=*p).collect();
+                //this should remove duplicates
+                //newly_tracked_players.append(&mut self.tracked_players.clone());
+                //let tracked_players: HashSet<PlayerReference> = newly_tracked_players.into_iter().collect();
+                //let tracked_players: Vec<PlayerReference> = tracked_players.into_iter().collect();
+
+                //send the list to the werewolf using tags
+                //for player_ref in tracked_players.iter() {
+                //    if actor_ref.player_has_tag(game, *player_ref, Tag::WerewolfTracked) == 0 {
+                //        actor_ref.push_player_tag(game, *player_ref, Tag::WerewolfTracked);
+                //    }
+                //}
+
+                //actor_ref.set_role_state(game, RoleState::Werewolf(Werewolf {
+                //    tracked_players
+                //}));
+
                 
-                    if let Some(first_visit) = actor_ref.untagged_night_visits_cloned(game).first() {
-                        let target_ref = first_visit.target;
-                        
-                        newly_tracked_players.push(target_ref);
-                    }
-
-                    //this should remove duplicates
-                    newly_tracked_players.append(&mut self.tracked_players.clone());
-                    let tracked_players: HashSet<PlayerReference> = newly_tracked_players.into_iter().collect();
-                    let tracked_players: Vec<PlayerReference> = tracked_players.into_iter().collect();
-
-                    //send the list to the werewolf using tags
-                    for player_ref in tracked_players.iter() {
-                        if actor_ref.player_has_tag(game, *player_ref, Tag::WerewolfTracked) == 0 {
-                            actor_ref.push_player_tag(game, *player_ref, Tag::WerewolfTracked);
-                        }
-                    }
-
-                    actor_ref.set_role_state(game, RoleState::Werewolf(Werewolf {
-                        tracked_players
-                    }));
-
-                }
 
                 //track the scent of players
                 let RoleState::Werewolf(werewolf) = actor_ref.role_state(game) else {
@@ -136,8 +168,35 @@ impl RoleStateImpl for Werewolf {
             game,
             actor_ref,
             ControllerID::role(actor_ref, Role::Werewolf, 0),
-            true
+            false
         )
+    }
+
+    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
+        match phase {
+            PhaseType::Night => {
+
+                //Mark chosen player as tracked on phase start: night
+                let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(
+                    ControllerID::role(actor_ref, Role::Werewolf, 0)
+                ) else {return};
+                let Some(target) = target.first() else {return};
+
+                if actor_ref.ability_deactivated_from_death(game) || !target.alive(game) || *target == actor_ref || self.tracked_players.contains(target) {return};
+                actor_ref.push_player_tag(game, *target, Tag::WerewolfTracked);
+                self.tracked_players.push(*target);
+                let tracked_players = self.tracked_players.clone();
+                actor_ref.set_role_state(game, self);
+
+                //Send tracked message to all tracked players
+                for player in tracked_players {
+                    player.add_private_chat_message(game, ChatMessageVariant::WerewolfTracked{ target: player });
+
+                    
+                }
+            },
+            _ => {}
+        }
     }
 }
 impl GetClientRoleState<ClientRoleState> for Werewolf {
