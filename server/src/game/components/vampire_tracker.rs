@@ -191,7 +191,7 @@ impl VampireTracker {
             information: GraveInformation::Normal { 
                 role: Role::Vampire, 
                 will: player_on_trial.will(game).to_owned(), 
-                death_cause: GraveDeathCause::Sun, 
+                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Sun]), 
                 death_notes: vec![],
             },
             player: player_on_trial,
