@@ -64,10 +64,7 @@ impl PlayerReference{
     pub fn index_vec_to_ref(game: &Game, index_vec: &Vec<PlayerIndex>)->Result<Vec<PlayerReference>, InvalidPlayerReferenceError>{
         let mut out = Vec::new();
         for index in index_vec{
-            out.push(match Self::new(game, *index){
-                Ok(player_ref) => player_ref,
-                Err(e) => return Err(e),
-            });
+            out.push(Self::new(game, *index)?);
         }
         Ok(out)
     }

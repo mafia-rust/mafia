@@ -41,7 +41,7 @@ impl RoleStateImpl for TallyClerk {
             if rand::random::<bool>(){
                 evil_count = (evil_count.saturating_add(1u8)).min(total_guilties as u8);
             }else{
-                evil_count = (evil_count.saturating_sub(1u8)).max(0);
+                evil_count = evil_count.saturating_sub(1u8);
             }
         }
 

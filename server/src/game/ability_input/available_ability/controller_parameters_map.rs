@@ -28,7 +28,7 @@ impl ControllerParametersMap{
             controllers: vec_map!((id, ability_data))
         }
     }
-    #[allow(clippy::too_many_arguments)] // We should make a builder for this
+    #[expect(clippy::too_many_arguments)] // We should make a builder for this
     pub fn new_controller_fast(
         game: &Game,
         id: ControllerID,

@@ -148,6 +148,6 @@ impl Reporter{
     fn get_public(game: &Game, actor_ref: PlayerReference)->bool{
         game.saved_controllers.get_controller_current_selection_boolean(
             ControllerID::role(actor_ref, Role::Reporter, 1)
-        ).map_or(false, |b|b.0)
+        ).is_some_and(|b|b.0)
     }
 }

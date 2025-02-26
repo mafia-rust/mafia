@@ -117,7 +117,7 @@ impl PlayerReference{
         match priority {
             Priority::Possess => {
                 let untagged_possessor_visits = self.untagged_night_visits_cloned(game);
-                #[allow(clippy::get_first)]
+                #[expect(clippy::get_first)]
                 let possessed_visit = untagged_possessor_visits.get(0)?;
                 let possessed_into_visit = untagged_possessor_visits.get(1)?;
                 

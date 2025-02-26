@@ -54,7 +54,7 @@ pub struct Listener {
     clients: HashMap<SocketAddr, ListenerClient>,
 }
 impl Listener{
-    #[allow(clippy::new_without_default)]
+    #[expect(clippy::new_without_default)]
     pub fn new() -> Self {
         Self {
             lobbies: HashMap::new(),
