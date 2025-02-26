@@ -191,14 +191,14 @@ impl Auditor{
             
             for player in PlayerReference::all_players(game) {
                 let Some(fake_role) = Self::fake_role(game, player) else {continue};
-                fake_roles.add(fake_role, 1);
+                fake_roles.add_no_insert(fake_role, 1);
             }
                 
             for role in grave_roles {
-                fake_roles.add(*role, 1);
+                fake_roles.add_no_insert(*role,1);
             }
 
-            let fake_roles = fake_roles.choose_multiple( 2);
+            let fake_roles = fake_roles.choose_multiple(2);
 
             match (fake_roles.get(0), fake_roles.get(1)){
                 (Some(Some(role1)), Some(Some(role2))) => {

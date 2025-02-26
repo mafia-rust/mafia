@@ -6,7 +6,7 @@ use crate::vec_map::VecMap;
 
 
 #[derive(Clone, Debug)]
-pub struct WeightMap<K> where K: Eq {
+pub struct WeightMap<K> where K: Eq + Copy {
     pub weight_maps: VecMap<K, u8>,
 }
 
@@ -28,7 +28,7 @@ impl<K> WeightMap<K> where K: Eq + Copy {
             }
             choice_index -= *weight.1 as u32;
         }
-        panic!("Managed to pick a value that is greater than the sum of the weights");
+        unreachable!("Managed to pick a value that is greater than the sum of the weights");
     }
 
     pub fn choose_remove(&mut self) -> Option<K>{
@@ -50,7 +50,7 @@ impl<K> WeightMap<K> where K: Eq + Copy {
             }
             choice_index -= weight.1 as u32;
         }
-        let Some(key) = key else {panic!("Managed to pick a value that is greater than the sum of the weights");};
+        let Some(key) = key else {unreachable!("Managed to pick a value that is greater than the sum of the weights");};
         return self.weight_maps.remove(&key).map(|x|x.0);
     }
 
@@ -88,45 +88,61 @@ impl<K> WeightMap<K> where K: Eq + Copy {
 
     /// adds weight to the weight of key, if the key does not have a weight it is added with the specified weight
     /// returns the old value if it exists
-    pub fn insert_add(&mut self, key: K, weight: u8) -> Option<(K, u8)>{
-        self.weight_maps.insert_add(key, weight)
-    }
-    
-    /// adds weight to the weight of key, if the key does not have a weight nothing happens
-    /// returns the old value if it exists
     pub fn add(&mut self, key: K, weight: u8) -> Option<(K, u8)>{
         self.weight_maps.add(key, weight)
     }
+
+    /// adds weight to the weight of key, if the key does not have a weight nothing happens
+    /// returns the old value if it exists
+    pub fn add_no_insert(&mut self, key: K, weight: u8) -> Option<(K, u8)>{
+        self.weight_maps.add_no_insert(key, weight)
+    }
 }
-impl<K> PartialEq for WeightMap<K> where K: Eq {
+
+impl<K> PartialEq for WeightMap<K> where K: Eq + Copy {
     fn eq(&self, other: &Self) -> bool {
         self.weight_maps == other.weight_maps
     }
 }
-impl<K> Eq for WeightMap<K> where K: Eq {}
+impl<K> Eq for WeightMap<K> where K: Eq + Copy {}
 
 impl<K> Add<WeightMap<K>> for WeightMap<K> where K: Eq + Copy {
     type Output = WeightMap<K>;
     fn add(self, rhs: WeightMap<K>) -> Self::Output {
-        let mut sum: VecMap<K, u8> = VecMap::with_capacity(self.weight_maps.len().max(rhs.weight_maps.len()));
-        
-        for map in self.weight_maps.iter(){
-            sum.insert(*map.0, *map.1);
+        if self.weight_maps.len() >= rhs.weight_maps.len() {
+            let mut sum: VecMap<K, u8> = self.weight_maps.clone();
+            for map in rhs.weight_maps.iter(){
+                sum.add(*map.0, *map.1);
+            }
+            return WeightMap{weight_maps: sum};
+        } else {
+            let mut sum: VecMap<K, u8> = rhs.weight_maps.clone();
+            for map in self.weight_maps.iter(){
+                sum.add(*map.0, *map.1);
+            }
+            return WeightMap{weight_maps: sum};
         }
-
-        for map in rhs.weight_maps.iter(){
-            sum.insert_add(*map.0, *map.1);
-        }
-
-        return WeightMap{weight_maps: sum};
     }
 }
-
 impl<K> AddAssign<WeightMap<K>> for WeightMap<K> where K: Eq + Copy {
     fn add_assign(&mut self, rhs: WeightMap<K>) {
         for map in rhs.weight_maps.iter(){
-            self.weight_maps.insert_add(*map.0, *map.1);
+            self.weight_maps.add(*map.0, *map.1);
         }
+    }
+}
+
+impl<K> Add<(K, u8)> for WeightMap<K> where K: Eq + Copy {
+    type Output = WeightMap<K>;
+    fn add(self, rhs: (K, u8)) -> Self::Output {
+        let mut clone = self.clone();
+        clone.weight_maps.add(rhs.0, rhs.1);
+        return clone;
+    }
+}
+impl<K> AddAssign<(K, u8)> for WeightMap<K> where K: Eq + Copy {
+    fn add_assign(&mut self, rhs: (K, u8)) {
+        self.weight_maps.add(rhs.0, rhs.1);
     }
 }
 
