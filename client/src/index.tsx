@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import './index.css';
 import Anchor from './menu/Anchor';
 import { GameManager, createGameManager } from './game/gameManager';
@@ -19,7 +19,7 @@ const THEME_CSS_ATTRIBUTES = [
 
 export { THEME_CSS_ATTRIBUTES }
 
-const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
+const ROOT = createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
 const TIME_PERIOD = 1000;
 export default GAME_MANAGER;
