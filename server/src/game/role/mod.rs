@@ -139,6 +139,7 @@ macros::roles! {
     // Neutral
     Jester : jester,
     Revolutionary : revolutionary,
+    Geist : geist,
     Politician : politician,
     Doomsayer : doomsayer,
     Wildcard : wild_card,
@@ -176,6 +177,7 @@ macros::priorities! {
 
     Transporter,
     Warper,
+    Geist,
 
     Possess,
     Roleblock,
@@ -389,7 +391,7 @@ impl Role{
             | Role::Veteran | Role::Coxswain
             | Role::Transporter | Role::Retributionist
             | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper
-            | Role::MafiaWitch | Role::Necromancer => true,
+            | Role::MafiaWitch | Role::Necromancer | Role::Geist => true,
             _ => false,
         }
     }
@@ -399,7 +401,8 @@ impl Role{
             Role::Bouncer |
             Role::Transporter | Role::Escort | Role::Retributionist | 
             Role::Witch | Role::Scarecrow | Role::Warper |
-            Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer => true,
+            Role::Hypnotist | Role::Consort | Role::MafiaWitch | 
+            Role::Necromancer | Role::Geist => true,
             _ => false,
         }
     }
