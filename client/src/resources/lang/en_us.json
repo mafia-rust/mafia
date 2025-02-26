@@ -779,6 +779,7 @@
     "pitchfork.description": "Vote for a player before midnight. If two-thirds of town loyalists vote for a player, that player dies.",
     "nobodyDiedLastNight": "Nobody died last night.",
     "nobody": "nobody",
+    "sun": "sun",
     "modifiers": "Modifiers",
     "obscuredGraves": "Obscured Graves",
     "randomLoveLinks": "Random Love Links",
@@ -1369,6 +1370,10 @@
     "wiki.article.standard.nobody.title:var.2":"Noone",
     "wiki.article.standard.nobody.text":"Nobody means nobody. If you have further questions, please find an english dictionary.",
 
+    "wiki.article.standard.sun.title": "Sun",
+    "wiki.article.standard.sun.title.var.0": "Suns.",
+    "wiki.article.standard.sun.text": "You know, that thing that kills vampires.",
+    
     "wiki.article.standard.vfr.title":"Vote-For-Role",
     "wiki.article.standard.vfr.title:var.0":"VFR",
     "wiki.article.standard.vfr.text":"Vote for role is the name of a common strategy. Players will choose a player and force them to claim under the threat of getting voted out. If that player claims they will likely be spared. Usually there is not much of a reason why a specific player is chosen, the strategy is often used to just get starting information.",
