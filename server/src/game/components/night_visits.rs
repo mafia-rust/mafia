@@ -40,6 +40,9 @@ impl NightVisits{
     pub fn all_visits(game: &Game) -> Vec<&Visit>{
         game.night_visits.visits.iter().collect()
     }
+    pub fn all_visits_mut<'a>(game: &'a mut Game) -> Vec<&'a mut Visit>{
+        game.night_visits.visits.iter_mut().collect()
+    }
 
     //accessors
     fn get_untagged_visits_from_visitor<'a>(game: &Game, visitor: PlayerReference) -> Vec<&Visit>{
