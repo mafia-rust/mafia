@@ -1,4 +1,4 @@
-use crate::{game::{attack_power::AttackPower, chat::ChatMessageVariant, game_conclusion::GameConclusion, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::{Priority, Role}, win_condition::WinCondition, Game}, vec_set::VecSet};
+use crate::{game::{attack_power::AttackPower, chat::ChatMessageVariant, event::on_fast_forward::OnFastForward, game_conclusion::GameConclusion, grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller, GravePhase}, phase::{PhaseState, PhaseType}, player::PlayerReference, role::{Priority, Role}, win_condition::WinCondition, Game}, vec_set::VecSet};
 
 
 #[derive(Clone, Debug, Default)]
@@ -129,10 +129,9 @@ impl VampireTracker {
         game.vampire_tracker.new_vampires = game.vampire_tracker.new_vampires.union(&new_vamp_que);
     }
 
-    pub fn on_phase_start(game: &mut Game, phase: PhaseType){
+    pub fn on_phase_start(game: &mut Game, phase: PhaseState){
         match phase {
-
-            PhaseType::Obituary => {
+            PhaseState::Obituary => {
                 let vampire_tracker = game.vampire_tracker.clone();
                 let mut new_vampires: Vec<PlayerReference> = vampire_tracker.new_vampires.into();
                 new_vampires.retain(|vamp| vamp.alive(game) && !vampire_tracker.vampires.clone().contains(vamp));
@@ -162,7 +161,13 @@ impl VampireTracker {
                 };
             },
 
-            PhaseType::Night => {
+            PhaseState::Judgement{player_on_trial,..} => {
+                if game.day_number() <= 2 {return;}
+                if player_on_trial.role(game) != Role::Vampire {return}
+                OnFastForward::invoke(game);
+            }
+
+            PhaseState::Night => {
                 if game.day_number() == 1 {return;}
                 let vampire_tracker = game.vampire_tracker.clone();
                 for i in 0..vampire_tracker.vampires.len().min(vampire_tracker.max_converts.value() as usize){
@@ -173,5 +178,23 @@ impl VampireTracker {
 
             _=>(),
         }    
+    }
+
+    pub fn before_phase_end(game: &mut Game, phase: PhaseState){
+        let PhaseState::Judgement {player_on_trial,.. } = phase else {return};
+        if player_on_trial.role(game) != Role::Vampire {return}
+        player_on_trial.set_alive(game, false);
+        
+        player_on_trial.die(game, Grave{
+            day_number: game.day_number(),
+            died_phase: GravePhase::Day,
+            information: GraveInformation::Normal { 
+                role: Role::Vampire, 
+                will: player_on_trial.will(game).to_owned(), 
+                death_cause: GraveDeathCause::Sun, 
+                death_notes: vec![],
+            },
+            player: player_on_trial,
+        });
     }
 }

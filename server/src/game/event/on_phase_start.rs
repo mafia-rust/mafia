@@ -24,7 +24,7 @@ impl OnPhaseStart{
         Cult::on_phase_start(game, self.phase.phase());
         SavedControllersMap::on_phase_start(game, self.phase.phase());
         Modifiers::on_phase_start(game, self.phase.clone());
-        VampireTracker::on_phase_start(game, self.phase.phase());
+        VampireTracker::on_phase_start(game, self.phase.clone());
 
         game.on_phase_start(self.phase.phase());
     }

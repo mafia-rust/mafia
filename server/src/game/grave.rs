@@ -43,7 +43,8 @@ pub enum GraveDeathCause {
     Execution,
     LeftTown,
     BrokenHeart,
-    Killers(Vec<GraveKiller>)
+    Killers(Vec<GraveKiller>),
+    Sun,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[serde(rename_all = "camelCase")]
