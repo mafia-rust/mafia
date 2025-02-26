@@ -83,9 +83,9 @@ impl Psychic {
 
         valid_players.shuffle(&mut rand::rng());
 
-        for i in 0..valid_players.len(){
-            if confused || Self::contains_good(game, target, valid_players[i]){
-                return ChatMessageVariant::PsychicGood { player: valid_players[i] }
+        for player in valid_players{
+            if confused || Self::contains_good(game, target, player){
+                return ChatMessageVariant::PsychicGood { player }
             }
         }
 

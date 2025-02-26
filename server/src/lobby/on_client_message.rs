@@ -147,10 +147,10 @@ impl Lobby {
                 let mut ready = Vec::new();
                 for client in clients.iter() {
                     if client.1.ready == Ready::Ready {
-                        ready.push(client.0.clone());
+                        ready.push(*client.0);
                     }
                 }
-                Self::send_to_all(&self, ToClientPacket::PlayersReady { ready });
+                Self::send_to_all(self, ToClientPacket::PlayersReady { ready });
             },
             ToServerPacket::SetLobbyName{ name } => {
                 let LobbyState::Lobby { .. } = self.lobby_state else {
@@ -162,12 +162,12 @@ impl Lobby {
 
                 let name = sanitize_server_name(name);
                 let name = if name.is_empty() {
-                    self.name = name_validation::DEFAULT_SERVER_NAME.to_string();
-                    self.name.clone()
+                    name_validation::DEFAULT_SERVER_NAME.to_string()
                 } else {
-                    self.name = name.clone();
-                    self.name.clone()
+                    name
                 };
+
+                self.name.clone_from(&name);
                 
                 self.send_to_all(ToClientPacket::LobbyName { name })
             },
@@ -374,7 +374,7 @@ impl Lobby {
 
                 let mut new_clients = VecMap::new();
                 for (lobby_client_id, game_client) in clients.clone().into_iter() {
-                    new_clients.insert(lobby_client_id, LobbyClient::new_from_game_client(&game, game_client));
+                    new_clients.insert(lobby_client_id, LobbyClient::new_from_game_client(game, game_client));
                 }
 
 
@@ -383,12 +383,12 @@ impl Lobby {
                     clients: new_clients,
                 };
 
-                Self::send_to_all(&self, ToClientPacket::BackToLobby);
+                self.send_to_all(ToClientPacket::BackToLobby);
 
                 match &self.lobby_state {
                     LobbyState::Lobby { clients, settings } => {
                         for (id, client) in clients.iter() {
-                            client.send(ToClientPacket::YourId { player_id: id.clone() });
+                            client.send(ToClientPacket::YourId { player_id: *id });
                             Self::send_settings(client, settings, self.name.clone());
                         }
                         Self::send_players_lobby(clients);

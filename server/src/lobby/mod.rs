@@ -43,7 +43,6 @@ pub const GAME_DISCONNECT_TIMER_SECS: u64 = 60 * 2;
 
 
 impl Lobby {
-    #[allow(clippy::new_without_default)]
     pub fn new(room_code: RoomCode) -> Lobby {
         Self { 
             room_code,

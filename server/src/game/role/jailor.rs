@@ -92,7 +92,7 @@ impl RoleStateImpl for Jailor {
                 AbilitySelection::new_boolean(false),
                 actor_ref.ability_deactivated_from_death(game) ||
                 Detained::is_detained(game, actor_ref) || 
-                self.executions_remaining <= 0 ||
+                self.executions_remaining == 0 ||
                 game.day_number() <= 1 ||
                 self.jailed_target_ref.is_none(),
                 Some(PhaseType::Obituary),

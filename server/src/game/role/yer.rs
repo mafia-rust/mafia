@@ -26,18 +26,15 @@ impl RoleStateImpl for Yer {
     type ClientRoleState = Yer;
     fn new_state(game: &Game) -> Self {
         Self{
-            star_passes_remaining: game.num_players().div_ceil(5),
-            ..Self::default()
+            star_passes_remaining: game.num_players().div_ceil(5)
         }
     }
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if game.day_number() == 1 {return}
 
-        let chose_to_convert = if let Some(BooleanSelection(bool)) = game.saved_controllers.get_controller_current_selection_boolean(
+        let chose_to_convert = game.saved_controllers.get_controller_current_selection_boolean(
             ControllerID::role(actor_ref, Role::Yer, 0)
-        ){
-            bool
-        }else{false};
+        ).map(|selection| selection.0).unwrap_or(false);
 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
@@ -55,7 +52,7 @@ impl RoleStateImpl for Yer {
                 );
             }else{
                 if priority != Priority::Convert {return}
-                if self.star_passes_remaining <= 0 {return}
+                if self.star_passes_remaining == 0 {return}
 
                 if target_ref.night_defense(game).can_block(AttackPower::ArmorPiercing) {
                     actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
@@ -96,7 +93,7 @@ impl RoleStateImpl for Yer {
         crate::game::role::common_role::controller_parameters_map_boolean(
             game,
             actor_ref,
-            self.star_passes_remaining <= 0 || game.day_number() <= 1,
+            self.star_passes_remaining == 0 || game.day_number() <= 1,
             ControllerID::role(actor_ref, Role::Yer, 0)
         ).combine_overwrite_owned(
             crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
@@ -113,11 +110,11 @@ impl RoleStateImpl for Yer {
                 ControllerID::role(actor_ref, Role::Yer, 2),
                 AvailableAbilitySelection::new_role_option(
                     Role::values().into_iter()
-                        .map(|role| Some(role))
+                        .map(Some)
                         .collect()
                 ),
                 AbilitySelection::new_role_option(Some(Role::Yer)),
-                self.star_passes_remaining <= 0 ||
+                self.star_passes_remaining == 0 ||
                 actor_ref.ability_deactivated_from_death(game) ||
                 game.day_number() <= 1,
                 None,

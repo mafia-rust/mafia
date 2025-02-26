@@ -34,7 +34,6 @@ impl RoleStateImpl for Puppeteer {
     fn new_state(game: &Game) -> Self {
         Self{
             marionettes_remaining: game.num_players().div_ceil(5),
-            ..Self::default()
         }
     }
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {

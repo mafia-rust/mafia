@@ -54,7 +54,7 @@ pub struct Listener {
     clients: HashMap<SocketAddr, ListenerClient>,
 }
 impl Listener{
-    #[allow(clippy::new_without_default)]
+    #[expect(clippy::new_without_default)]
     pub fn new() -> Self {
         Self {
             lobbies: HashMap::new(),
@@ -115,11 +115,9 @@ impl Listener{
     }
 
     fn create_lobby(&mut self) -> Option<RoomCode>{
-        let Some(room_code) = ((random::<u16>() as usize)..usize::MAX).find(
+        let room_code = ((random::<u16>() as usize)..usize::MAX).find(
             |code| !self.lobbies.contains_key(code)
-        ) else {
-            return None;
-        };
+        )?;
 
         let lobby = Lobby::new(room_code);
         self.lobbies.insert(room_code, lobby);

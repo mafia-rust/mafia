@@ -89,7 +89,7 @@ impl RoleStateImpl for Kidnapper {
                 AbilitySelection::new_boolean(false),
                 actor_ref.ability_deactivated_from_death(game) ||
                 Detained::is_detained(game, actor_ref) || 
-                self.executions_remaining <= 0 ||
+                self.executions_remaining == 0 ||
                 game.day_number() <= 1 ||
                 self.jailed_target_ref.is_none(),
                 Some(PhaseType::Obituary),
@@ -155,7 +155,7 @@ impl RoleStateImpl for Kidnapper {
                 .filter(|p|p.alive(game))
                 .filter(|p|p.keeps_game_running(game))
                 .all(|p|
-                    WinCondition::are_friends(&p.win_condition(game), actor_ref.win_condition(game))
+                    WinCondition::are_friends(p.win_condition(game), actor_ref.win_condition(game))
                 )
 
         {

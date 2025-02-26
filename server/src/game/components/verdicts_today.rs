@@ -29,25 +29,19 @@ impl VerdictsToday{
         &game.verdicts_today().guilties
     }
     pub fn on_phase_start(game: &mut Game, phase: PhaseType){
-        match phase {
-            PhaseType::Obituary=>{
-                game.set_verdicts_today(VerdictsToday::new());
-            },
-            _=>{}
+        if phase == PhaseType::Obituary {
+            game.set_verdicts_today(VerdictsToday::new());
         }
     }
     pub fn before_phase_end(game: &mut Game, phase: PhaseType){
-        match phase {
-            PhaseType::Judgement=>{
-                let mut verdicts_today = game.verdicts_today().clone();
-                for player in PlayerReference::all_players(game) {
-                    if player.verdict(game) == Verdict::Guilty {
-                        verdicts_today.guilties.insert(player);
-                    }
+        if phase == PhaseType::Judgement {
+            let mut verdicts_today = game.verdicts_today().clone();
+            for player in PlayerReference::all_players(game) {
+                if player.verdict(game) == Verdict::Guilty {
+                    verdicts_today.guilties.insert(player);
                 }
-                game.set_verdicts_today(verdicts_today);
-            },
-            _=>{}
+            }
+            game.set_verdicts_today(verdicts_today);
         }
     }
 }

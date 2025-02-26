@@ -155,9 +155,8 @@ pub enum ToClientPacket{
 }
 impl ToClientPacket {
     pub fn to_json_string(&self) -> Result<String, serde_json::Error> {
-        serde_json::to_string(self).map_err(|err|{
+        serde_json::to_string(self).inspect_err(|_|{
             log!(error "Serde error"; "Parsing JSON string: {:?}", self);
-            err
         })
     }
     pub fn new_player_votes(game: &mut Game)->ToClientPacket{

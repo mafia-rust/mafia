@@ -112,7 +112,7 @@ impl RoleStateImpl for Bodyguard {
             actor_ref,
             self.self_shields_remaining > 0,
             true,
-            !(game.day_number() > 1),
+            game.day_number() <= 1,
             ControllerID::role(actor_ref, Role::Bodyguard, 0)
         )
     }

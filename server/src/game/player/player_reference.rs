@@ -23,6 +23,9 @@ impl PlayerReference{
             Ok(PlayerReference::new_unchecked(index))
         }
     }
+    /// # Safety
+    /// Check to make sure the index is less than the number of players in the game,
+    /// otherwise, this could cause a panic.
     pub unsafe fn new_unchecked(index: PlayerIndex) -> PlayerReference {
         PlayerReference { index }
     }
@@ -61,10 +64,7 @@ impl PlayerReference{
     pub fn index_vec_to_ref(game: &Game, index_vec: &Vec<PlayerIndex>)->Result<Vec<PlayerReference>, InvalidPlayerReferenceError>{
         let mut out = Vec::new();
         for index in index_vec{
-            out.push(match Self::new(game, *index){
-                Ok(player_ref) => player_ref,
-                Err(e) => return Err(e),
-            });
+            out.push(Self::new(game, *index)?);
         }
         Ok(out)
     }

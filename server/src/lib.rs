@@ -1,3 +1,5 @@
+#![deny(clippy::allow_attributes)]
+
 pub mod game;
 pub mod websocket_connections;
 pub mod listener;

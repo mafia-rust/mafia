@@ -8,7 +8,7 @@ use crate::{game::{ability_input::ValidateAvailableSelection, player::PlayerRefe
 pub struct ThreePlayerOptionSelection(pub Option<PlayerReference>, pub Option<PlayerReference>, pub Option<PlayerReference>);
 impl ThreePlayerOptionSelection{
     pub fn any_in_common(&self, other: &ThreePlayerOptionSelection) -> bool{
-        vec![self.0, self.1, self.2].iter().any(|player|
+        [self.0, self.1, self.2].iter().any(|player|
             if let Some(player) = player{
                 other.contains(*player)
             }else{
@@ -39,8 +39,8 @@ pub struct AvailableThreePlayerOptionSelection{
     pub can_choose_duplicates: bool
 }
 impl PartialOrd for AvailableThreePlayerOptionSelection{
-    fn partial_cmp(&self, _other: &Self) -> Option<std::cmp::Ordering>{
-        Some(Ordering::Equal)
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering>{
+        Some(self.cmp(other))
     }
 }
 impl Ord for AvailableThreePlayerOptionSelection{
