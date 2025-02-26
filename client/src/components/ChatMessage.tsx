@@ -793,6 +793,15 @@ export type ChatMessageVariant = {
 } | 
 // System
 {
+    type: "debugVisitedBy",
+    visitedBy: PlayerIndex[]
+} | {
+    type: "debugVisited",
+    visited: PlayerIndex[]
+} | {
+    type: "debugMisc",
+    text: string
+} | {
     type: "roleAssignment", 
     role: Role
 } | {
