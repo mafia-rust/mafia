@@ -16,6 +16,7 @@ use crate::game::Game;
 use crate::vec_map::VecMap;
 use crate::vec_set::vec_set;
 use crate::game::grave::{GraveDeathCause, GraveInformation, GraveKiller, GraveReference};
+use crate::weight_map::WeightMap;
 use rand::prelude::SliceRandom;
 use super::counterfeiter::Counterfeiter;
 use super::disguiser::Disguiser;
@@ -115,8 +116,8 @@ impl RoleStateImpl for Auditor {
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: GraveReference) {
         let grave = grave.deref(game).clone();
+        let GraveInformation::Normal{role, death_cause, ..} = grave.information else {return;};
         let mut grave_roles = self.grave_roles.clone();
-        if let GraveInformation::Normal{role, death_cause, ..} = grave.information {
             grave_roles.push(role);
             if let GraveDeathCause::Killers(killers) = death_cause {
                 for killer in killers {
@@ -125,11 +126,10 @@ impl RoleStateImpl for Auditor {
                     }
                 }
             }
-        }
-        actor_ref.set_role_state(game, RoleState::Auditor(Auditor{
-            previously_given_results: self.previously_given_results, 
-            grave_roles
-        }));
+            actor_ref.set_role_state(game, RoleState::Auditor(Auditor{
+                previously_given_results: self.previously_given_results, 
+                grave_roles
+            }));
     }
 }
 
@@ -182,30 +182,26 @@ impl Auditor{
                 unreachable!("Auditor role outline is empty")
             }
         } else {
-            let mut fake_roles = outline
+            let mut fake_roles = WeightMap::from(outline
                 .get_role_assignments()
                 .into_iter()
                 .map(|assignment| assignment.role)
                 .filter(|x|game.settings.enabled_roles.contains(x))
-                .collect::<Vec<Role>>();
+                .collect::<Vec<Role>>());
             
             for player in PlayerReference::all_players(game) {
                 let Some(fake_role) = Self::fake_role(game, player) else {continue};
-                if fake_roles.contains(&fake_role){
-                    fake_roles.push(fake_role);
-                }
+                fake_roles.add(fake_role, 1);
             }
                 
             for role in grave_roles {
-                if fake_roles.contains(role){
-                    fake_roles.push(*role);
-                }
+                fake_roles.add(*role, 1);
             }
 
-            let fake_roles = fake_roles.choose_multiple(&mut rand::rng(), 2).cloned().collect::<Vec<Role>>();
+            let fake_roles = fake_roles.choose_multiple( 2);
 
             match (fake_roles.get(0), fake_roles.get(1)){
-                (Some(role1), Some(role2)) => {
+                (Some(Some(role1)), Some(Some(role2))) => {
                     AuditorResult::Two{roles: [*role1, *role2]}
                 },
                 _ => unreachable!("Auditor role outline is empty")

@@ -1,3 +1,5 @@
+use std::ops::Add;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug)]
@@ -21,7 +23,10 @@ impl<K, V> VecMap<K, V> where K: Eq {
         }
         out
     }
-
+    pub fn with_capacity(capacity: usize) -> Self{
+        VecMap { vec: Vec::with_capacity(capacity) }
+    }
+    
     /// returns the old value if the key already exists
     pub fn insert(&mut self, key: K, value: V) -> Option<(K, V)>{
 
@@ -159,11 +164,38 @@ impl<'de, K, V> Deserialize<'de> for VecMap<K, V> where K: Eq, K: Deserialize<'d
     }
 }
 
+impl<K, V> VecMap<K, V> where K: Eq, V: Add<V, Output = V> + Copy {
+    /// adds weight to the weight of key, if the key does not have a weight it is added with the specified weight
+    /// returns the old value if it exists
+    pub fn insert_add(&mut self, key: K, value: V) -> Option<(K, V)> {
+        if let Some((old_key, old_val)) = self.vec.iter_mut().find(|(k, _)| *k == key) {
+            Some((
+                std::mem::replace(old_key, key), 
+                std::mem::replace(old_val, *old_val + value)
+            ))
+        }else{
+            self.vec.push((key, value));
+            None
+        }
+    }
 
-
+    /// adds weight to the weight of key, if the key does not have a weight nothing happens
+    /// returns the old value if it exists
+    pub fn add(&mut self, key: K, value: V) -> Option<(K, V)> {
+        if let Some((old_key, old_val)) = self.vec.iter_mut().find(|(k, _)| *k == key) {
+            Some((
+                std::mem::replace(old_key, key), 
+                std::mem::replace(old_val, *old_val + value)
+            ))
+        }else{
+            None
+        }
+    }
+}
 
 
 pub use macros::vec_map;
+
 mod macros {
     #[macro_export]
     macro_rules! vec_map {
