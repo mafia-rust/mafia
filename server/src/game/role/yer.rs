@@ -9,14 +9,16 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use crate::vec_set;
+use crate::vec_set::vec_set;
+use crate::vec_set::VecSet;
 use super::{Priority, Role, RoleState, RoleStateImpl};
 use crate::game::ability_input::*;
 
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Yer{
-    star_passes_remaining: u8,
+    pub star_passes_remaining: u8,
+    pub old_role: Option<Role>,
 }
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -65,11 +67,7 @@ impl RoleStateImpl for Yer {
                 self.star_passes_remaining = self.star_passes_remaining.saturating_sub(1);
 
                 //role switching stuff
-                let fake_role = if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
-                    ControllerID::role(actor_ref, Role::Yer, 2)
-                ){
-                    role
-                }else{Role::Yer};
+                let fake_role = self.current_fake_role(&game, actor_ref);
 
                 actor_ref.set_night_grave_role(game, Some(fake_role));
                 
@@ -78,7 +76,10 @@ impl RoleStateImpl for Yer {
                     game,
                     WinCondition::new_loyalist(crate::game::game_conclusion::GameConclusion::Fiends)
                 );
-                target_ref.set_night_convert_role_to(game, Some(RoleState::Yer(self.clone())));
+                target_ref.set_night_convert_role_to(game, Some(RoleState::Yer(Yer { 
+                    star_passes_remaining: self.star_passes_remaining, 
+                    old_role: Some(target_ref.role(game)),
+                })));
 
                 actor_ref.try_night_kill_single_attacker(
                     actor_ref,
@@ -93,6 +94,10 @@ impl RoleStateImpl for Yer {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        let mut role_options = Role::values().into_iter()
+            .map(|role| Some(role))
+            .collect::<VecSet<Option<Role>>>();
+        role_options.insert(None);
         crate::game::role::common_role::controller_parameters_map_boolean(
             game,
             actor_ref,
@@ -111,12 +116,8 @@ impl RoleStateImpl for Yer {
             ControllerParametersMap::new_controller_fast(
                 game,
                 ControllerID::role(actor_ref, Role::Yer, 2),
-                AvailableAbilitySelection::new_role_option(
-                    Role::values().into_iter()
-                        .map(|role| Some(role))
-                        .collect()
-                ),
-                AbilitySelection::new_role_option(Some(Role::Yer)),
+                AvailableAbilitySelection::new_role_option(role_options),
+                AbilitySelection::new_role_option(self.old_role),
                 self.star_passes_remaining <= 0 ||
                 actor_ref.ability_deactivated_from_death(game) ||
                 game.day_number() <= 1,
@@ -138,4 +139,15 @@ impl RoleStateImpl for Yer {
 
 
 impl Yer{
+    pub fn current_fake_role(&self, game: &Game, actor_ref: PlayerReference) -> Role {
+        if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
+            ControllerID::role(actor_ref, Role::Yer, 2)
+        ){
+            role
+        } else if let Some(old_role) = self.old_role{
+            old_role
+        } else {
+            Role::Yer
+        }
+    }
 }
