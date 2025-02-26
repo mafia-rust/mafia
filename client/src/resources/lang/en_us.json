@@ -1832,9 +1832,9 @@
     "wiki.article.role.kira.attributes":"- You don't visit anyone\n- Your attack is armor-piercing\n- You don't attack anyone night 1",
     "wiki.article.role.kira.extra":"- You can't guess dead players or yourself, nor can you attack them\n* If you are blocked, your ability does nothing",
 
-    "wiki.article.role.pyrolisk.reminder": "Each night*, select a player to attack them. You passively attack everyone who visits you. Everyone you kill is obscured.",
-    "wiki.article.role.pyrolisk.guide":"- Each night except the first, select a player to attack them, and obscure them\n- You passively attack and obscure everyone who visits you\n- On night 1, you can't attack anyone, and you have innocent aura\n- You are told the players you obscures role and alibi",
-    "wiki.article.role.pyrolisk.abilities":"* On night 1\n    * You can't attack\n    * You have innocent aura\n* On other nights\n    * Visit a player to attack them\n    * All players who visit you are attacked\n* All players you attacked and killed have their grave obscured and you are told their role and alibi",
+    "wiki.article.role.pyrolisk.reminder": "You passively attack everyone who visits you. Everyone you kill is obscured. Each night*, select a player to attack if nobody visits you. ",
+    "wiki.article.role.pyrolisk.guide":"- You passively attack and obscure everyone who visits you\n - Each night except the first, select a player to attack them, and obscure them. You only attack and obscure them if you don't kill a visitor\n- On night 1, you can't attack anyone, and you have innocent aura\n- You are told the players you obscures role and alibi",
+    "wiki.article.role.pyrolisk.abilities":"* On night 1\n    * You can't attack\n    * You have innocent aura\n* On other nights\n    * Visit a player to attack them only if you don't kill a visitor to yourself\n    * All players who visit you are attacked\n* All players you attacked and killed have their grave obscured and you are told their role and alibi",
     "wiki.article.role.pyrolisk.attributes":"* Your attack is armor piercing",
     "wiki.article.role.pyrolisk.extra":"* If you are roleblocked, you still attack visitors, but you don't visit anyone, so you wont attack the player you chose",
 

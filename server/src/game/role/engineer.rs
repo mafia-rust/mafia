@@ -136,7 +136,9 @@ impl RoleStateImpl for Engineer {
                     }
                 }
 
-                actor_ref.push_night_message(game, ChatMessageVariant::TrapStateEndOfNight { state: self.trap.state() });
+                if let RoleState::Engineer(Engineer { trap }) = actor_ref.role_state(game){
+                    actor_ref.push_night_message(game, ChatMessageVariant::TrapStateEndOfNight { state: trap.state() });
+                }
             }
             _ => {}
         }

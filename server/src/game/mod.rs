@@ -164,7 +164,10 @@ impl Game {
 
             let random_outline_assignments = match role_list.create_random_role_assignments(&settings.enabled_roles){
                 Some(roles) => {roles},
-                None => {return Err(RejectStartReason::RoleListCannotCreateRoles);}
+                None => {
+                    role_generation_tries += 1;
+                    continue;
+                }
             };
 
             let assignments = Self::assign_players_to_assignments(random_outline_assignments);            
