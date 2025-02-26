@@ -606,6 +606,8 @@
     "grave.killer.quit:var.0": "Quit",
     "grave.killer.quit:var.1": "Quits",
     "grave.killer.suicide": "Suicide",
+    "grave.killer.sun": "Sun",
+    "grave.killer.sun:var.0": "Suns",
     "grave.deathNote": "A note was found with the body",
     "graveyard": "Graveyard",
     "grave.icon": "🪦",
