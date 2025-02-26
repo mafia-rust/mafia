@@ -58,7 +58,6 @@ impl Pitchfork{
                     ControllerID::pitchfork_vote(player),
                     AvailableAbilitySelection::new_player_list(
                         PlayerReference::all_players(game)
-                            .into_iter()
                             .filter(|p|p.alive(game))
                             .collect(),
                             false,
@@ -80,22 +79,19 @@ impl Pitchfork{
     
 
     pub fn before_phase_end(game: &mut Game, phase: PhaseType){
-        match phase{
-            PhaseType::Night => {
-                Pitchfork::set_angry_mobbed_player(game, None);
-                if Pitchfork::pitchfork_uses_remaining(game) > 0 {
-                    if let Some(target) = Pitchfork::player_is_voted(game){
-                        Pitchfork::set_angry_mobbed_player(game, Some(target));
-                    }
+        if phase == PhaseType::Night {
+            Pitchfork::set_angry_mobbed_player(game, None);
+            if Pitchfork::pitchfork_uses_remaining(game) > 0 {
+                if let Some(target) = Pitchfork::player_is_voted(game){
+                    Pitchfork::set_angry_mobbed_player(game, Some(target));
                 }
-            },
-            _ => {}
+            }
         }
     }
     pub fn on_night_priority(game: &mut Game, priority: Priority){
         if priority != Priority::Kill {return;}
         if game.day_number() <= 1 {return;}
-        if Pitchfork::usable_pitchfork_owners(game).len() < 1 {return;}
+        if Pitchfork::usable_pitchfork_owners(game).is_empty() {return;}
         
         if let Some(target) = Pitchfork::angry_mobbed_player(game) {
             target.try_night_kill(
@@ -114,7 +110,7 @@ impl Pitchfork{
     pub fn usable_pitchfork_owners(game: &Game) -> VecSet<PlayerReference> {
         Pitchfork::pitchfork_owners(game).iter()
             .filter(|p|p.alive(game) && !p.night_blocked(game))
-            .map(|p|*p).collect()
+            .copied().collect()
     }
 
     
@@ -134,7 +130,7 @@ impl Pitchfork{
             {continue;}
 
 
-            let count: u8 = if let Some(count) = votes.get(&target){
+            let count: u8 = if let Some(count) = votes.get(target){
                 *count + 1
             }else{
                 1

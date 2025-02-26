@@ -115,11 +115,9 @@ impl Listener{
     }
 
     fn create_lobby(&mut self) -> Option<RoomCode>{
-        let Some(room_code) = ((random::<u16>() as usize)..usize::MAX).find(
+        let room_code = ((random::<u16>() as usize)..usize::MAX).find(
             |code| !self.lobbies.contains_key(code)
-        ) else {
-            return None;
-        };
+        )?;
 
         let lobby = Lobby::new(room_code);
         self.lobbies.insert(room_code, lobby);

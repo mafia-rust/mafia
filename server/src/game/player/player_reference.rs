@@ -23,6 +23,9 @@ impl PlayerReference{
             Ok(PlayerReference::new_unchecked(index))
         }
     }
+    /// # Safety
+    /// Check to make sure the index is less than the number of players in the game,
+    /// otherwise, this could cause a panic.
     pub unsafe fn new_unchecked(index: PlayerIndex) -> PlayerReference {
         PlayerReference { index }
     }

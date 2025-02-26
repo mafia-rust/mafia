@@ -62,7 +62,7 @@ impl RoleStateImpl for Ojo {
                     if let Some(chosen_outline) = a{
                         let result = Self::get_result(game, chosen_outline);
                         actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                            role_outline: chosen_outline.deref(&game).clone(),
+                            role_outline: chosen_outline.deref(game).clone(),
                             result: result.clone()
                         });
                         self.previously_given_results.insert(chosen_outline, result);
@@ -71,7 +71,7 @@ impl RoleStateImpl for Ojo {
                     if let Some(chosen_outline) = b{
                         let result = Self::get_result(game, chosen_outline);
                         actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                            role_outline: chosen_outline.deref(&game).clone(),
+                            role_outline: chosen_outline.deref(game).clone(),
                             result: result.clone()
                         });
                         self.previously_given_results.insert(chosen_outline, result);
@@ -91,7 +91,7 @@ impl RoleStateImpl for Ojo {
             AvailableAbilitySelection::new_two_role_outline_option(
                 RoleOutlineReference::all_outlines(game)
                     .filter(|o|!self.previously_given_results.contains(o))
-                    .map(|o|Some(o))
+                    .map(Some)
                     .chain(std::iter::once(None))
                     .collect()
             ),
@@ -106,7 +106,7 @@ impl RoleStateImpl for Ojo {
                 game,
                 ControllerID::role(actor_ref, Role::Ojo, 1),
                 AvailableAbilitySelection::new_role_option(
-                    Role::values().into_iter().map(|r|Some(r)).chain(std::iter::once(None)).collect()
+                    Role::values().into_iter().map(Some).chain(std::iter::once(None)).collect()
                 ),
                 AbilitySelection::new_role_option(None),
                 actor_ref.ability_deactivated_from_death(game) || 

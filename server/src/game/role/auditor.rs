@@ -58,7 +58,7 @@ impl RoleStateImpl for Auditor {
                 Self::get_result(game, chosen_outline)
             };
             actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                role_outline: chosen_outline.deref(&game).clone(),
+                role_outline: chosen_outline.deref(game).clone(),
                 result: result.clone()
             });
 
@@ -72,7 +72,7 @@ impl RoleStateImpl for Auditor {
                 Self::get_result(game, chosen_outline)
             };
             actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                role_outline: chosen_outline.deref(&game).clone(),
+                role_outline: chosen_outline.deref(game).clone(),
                 result: result.clone()
             });
 
@@ -88,7 +88,7 @@ impl RoleStateImpl for Auditor {
             AvailableAbilitySelection::new_two_role_outline_option(
                 RoleOutlineReference::all_outlines(game)
                     .filter(|o|!self.previously_given_results.contains(o))
-                    .map(|o|Some(o))
+                    .map(Some)
                     .chain(once(None))
                     .collect()
             ),

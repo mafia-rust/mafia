@@ -60,10 +60,10 @@ impl <K> VecSet<K> where K: Eq {
     }
 
     pub fn subtract(&self, other: &Self) -> Self where K: Clone {
-        self.vec.keys().cloned().filter(|k| !other.contains(k)).collect()
+        self.vec.keys().filter(|&k| !other.contains(k)).cloned().collect()
     }
     pub fn intersection(&self, other: &Self) -> Self where K: Clone {
-        self.vec.keys().cloned().filter(|k| other.contains(k)).collect()
+        self.vec.keys().filter(|&k| other.contains(k)).cloned().collect()
     }
     pub fn union(&self, other: &Self) -> Self where K: Clone {
         self.vec.keys().cloned().chain(other.vec.keys().cloned()).collect()
@@ -128,7 +128,7 @@ mod macros {
     #[macro_export]
     macro_rules! vec_set {
         ($($key:expr),*) => {{
-            let mut map = crate::vec_set::VecSet::new();
+            let mut map = $crate::vec_set::VecSet::new();
             $(map.insert($key);)*
             map
         }};

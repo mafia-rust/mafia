@@ -26,7 +26,7 @@ impl RoleStateImpl for TallyClerk {
         if priority != Priority::Investigative {return;}
 
         let mut evil_count: u8 = 0;
-        for player in PlayerReference::all_players(game).into_iter()
+        for player in PlayerReference::all_players(game)
             .filter(|player|player.alive(game))
             .filter(|player|VerdictsToday::player_guiltied_today(game, player))
         {

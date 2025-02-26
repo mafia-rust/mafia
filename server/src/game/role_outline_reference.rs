@@ -16,6 +16,9 @@ impl RoleOutlineReference{
         if (index as usize) >= game.settings.role_list.0.len() { return None;} 
         unsafe { Some(RoleOutlineReference::new_unchecked(index)) }
     }
+    /// # Safety
+    /// If the index is too high, there might not be a role outline with that index.
+    /// Make sure that the index is valid: it should be less than the number of role outlines
     pub unsafe fn new_unchecked(index: OutlineIndex) -> RoleOutlineReference {
         RoleOutlineReference { index }
     }
@@ -26,7 +29,7 @@ impl RoleOutlineReference{
     pub fn deref<'a>(&self, game: &'a Game)->&'a RoleOutline{
         &game.settings.role_list.0[self.index as usize]
     }
-    pub fn deref_as_role_and_player_originally_generated<'a>(&self, game: &'a Game)->OriginallyGeneratedRoleAndPlayer{
+    pub fn deref_as_role_and_player_originally_generated(&self, game: &Game)->OriginallyGeneratedRoleAndPlayer{
         game.assignments
             .iter()
             .find(|(_, outline, _)| outline.index == self.index)

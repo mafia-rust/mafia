@@ -85,6 +85,8 @@ impl InsiderGroupID{
     }
 
     // Mutations
+    /// # Safety
+    /// This function will not alert the other players of the addition of this new player
     pub unsafe fn add_player_to_revealed_group_unchecked(&self, game: &mut Game, player: PlayerReference){
         let players: &mut VecSet<PlayerReference> = self.revealed_group_mut(game).into();
         players.insert(player);

@@ -25,31 +25,28 @@ impl Cult{
     pub fn on_phase_start(game: &mut Game, phase: PhaseType){
         Cult::set_ordered_cultists(game);
         
-        match phase {
-            PhaseType::Night => {
-                if let Some(ability) = Cult::ability_used_last_night(game) {
-                    match ability {
-                        CultAbility::Kill => {
-                            Cult::set_next_ability(game, CultAbility::Convert);
-                        },
-                        CultAbility::Convert => {
-                            Cult::set_next_ability(game, CultAbility::Kill);
-                        }
-                    }
-                    Cult::set_ability_used_last_night(game, None);
-                }
-
-
-                match Cult::next_ability(game) {
+        if phase == PhaseType::Night {
+            if let Some(ability) = Cult::ability_used_last_night(game) {
+                match ability {
                     CultAbility::Kill => {
-                        game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::CultKillsNext);
+                        Cult::set_next_ability(game, CultAbility::Convert);
                     },
                     CultAbility::Convert => {
-                        game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::CultConvertsNext);
+                        Cult::set_next_ability(game, CultAbility::Kill);
                     }
                 }
-            },
-            _ => {}
+                Cult::set_ability_used_last_night(game, None);
+            }
+
+
+            match Cult::next_ability(game) {
+                CultAbility::Kill => {
+                    game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::CultKillsNext);
+                },
+                CultAbility::Convert => {
+                    game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::CultConvertsNext);
+                }
+            }
         }
     }
     pub fn on_game_start(game: &mut Game) {

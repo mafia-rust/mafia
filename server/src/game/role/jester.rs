@@ -80,7 +80,6 @@ impl RoleStateImpl for Jester {
             ControllerID::role(actor_ref, Role::Jester, 0),
             super::AvailableAbilitySelection::new_player_list(
                 PlayerReference::all_players(game)
-                    .into_iter()
                     .filter(|p| *p != actor_ref)
                     .filter(|player| 
                         player.alive(game) &&

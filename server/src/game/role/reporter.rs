@@ -143,11 +143,11 @@ impl Reporter{
     fn get_report(game: &Game, actor_ref: PlayerReference)->String{
         game.saved_controllers.get_controller_current_selection_string(
             ControllerID::role(actor_ref, Role::Reporter, 2)
-        ).map_or_else(||String::new(), |s|s.0)
+        ).map_or_else(String::new, |s|s.0)
     }
     fn get_public(game: &Game, actor_ref: PlayerReference)->bool{
         game.saved_controllers.get_controller_current_selection_boolean(
             ControllerID::role(actor_ref, Role::Reporter, 1)
-        ).map_or_else(||false, |b|b.0)
+        ).map_or(false, |b|b.0)
     }
 }

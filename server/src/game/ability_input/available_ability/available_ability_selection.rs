@@ -85,32 +85,32 @@ impl ValidateAvailableSelection for AvailableAbilitySelection{
             Self::Boolean => {true},
             Self::TwoPlayerOption{ selection: available } => {
                 let AbilitySelection::TwoPlayerOption{selection} = selection else {return false};
-                return available.validate_selection(game, selection);
+                available.validate_selection(game, selection)
             },
             Self::PlayerList { selection: available } => {
                 let AbilitySelection::PlayerList{selection} = selection else {return false};
-                return available.validate_selection(game, selection);
+                available.validate_selection(game, selection)
             }
             Self::RoleOption{ selection: available } => {
                 let AbilitySelection::RoleOption{selection} = selection else {return false};
-                return available.validate_selection(game, selection);
+                available.validate_selection(game, selection)
             },
             Self::TwoRoleOption{ selection: available } => {
                 let AbilitySelection::TwoRoleOption{selection} = selection else {return false};
-                return available.validate_selection(game, selection);
+                available.validate_selection(game, selection)
             },
             Self::TwoRoleOutlineOption{ selection: available } => {
                 let AbilitySelection::TwoRoleOutlineOption{selection} = selection else {return false};
-                return available.validate_selection(game, selection);
+                available.validate_selection(game, selection)
             },
             Self::String => {true},
             Self::Integer{ selection: available } => {
                 let AbilitySelection::Integer{selection} = selection else {return false};
-                return available.validate_selection(game, selection);
+                available.validate_selection(game, selection)
             },
             Self::Kira{ selection: available} => {
                 let AbilitySelection::Kira { selection } = selection else {return false};
-                return available.validate_selection(game, selection);
+                available.validate_selection(game, selection)
             }
         }
     }

@@ -330,7 +330,7 @@ impl Game {
         initialization_data
             .into_iter()
             .enumerate()
-            .zip(player_indices.into_iter())
+            .zip(player_indices)
             .map(|((o_index, assignment), p_index)|
                 // We are iterating through playerlist and outline list, so this unsafe should be fine
                 unsafe {
@@ -467,11 +467,7 @@ impl Game {
 
 
     pub fn game_is_over(&self) -> bool {
-        if let Some(_) = GameConclusion::game_is_over(self){
-            true
-        }else{
-            false
-        }
+        GameConclusion::game_is_over(self).is_some()
     }
 
     pub fn current_phase(&self) -> &PhaseState {

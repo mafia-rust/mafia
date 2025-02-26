@@ -117,8 +117,9 @@ impl PlayerReference{
         match priority {
             Priority::Possess => {
                 let untagged_possessor_visits = self.untagged_night_visits_cloned(game);
-                let Some(possessed_visit) = untagged_possessor_visits.get(0) else {return None};
-                let Some(possessed_into_visit) = untagged_possessor_visits.get(1) else {return None};
+                #[allow(clippy::get_first)]
+                let possessed_visit = untagged_possessor_visits.get(0)?;
+                let possessed_into_visit = untagged_possessor_visits.get(1)?;
                 
                 possessed_visit.target.push_night_message(game,
                     ChatMessageVariant::YouWerePossessed { immune: possessed_visit.target.possession_immune(game) }
@@ -148,7 +149,7 @@ impl PlayerReference{
                         },
                         AbilitySelection::TwoPlayerOption { selection } => {
 
-                            let mut selection = selection.0.clone();
+                            let mut selection = selection.0;
                             if let Some((_, second)) = selection {
                                 selection = Some((possessed_into_visit.target, second));
                             }
@@ -205,7 +206,7 @@ impl PlayerReference{
                 }
 
                 self.set_night_visits(game, new_witch_visits);
-                return Some(possessed_visit.target);
+                Some(possessed_visit.target)
             },
             Priority::Investigative => {
                 if let Some(currently_used_player) = currently_used_player {
@@ -213,7 +214,7 @@ impl PlayerReference{
                         ChatMessageVariant::TargetHasRole { role: currently_used_player.role(game) }
                     );
                 }
-                return None;
+                None
             },
             Priority::StealMessages => {
                 if let Some(currently_used_player) = currently_used_player {
@@ -223,10 +224,10 @@ impl PlayerReference{
                         );
                     }
                 }
-                return None;
+                None
             },
             _ => {
-                return None;
+                None
             }
         }
     }
@@ -248,7 +249,7 @@ impl PlayerReference{
         Some(OnAnyDeath::new(*self))
     }
     pub fn initial_role_creation(&self, game: &mut Game){
-        let new_role_data = self.role(&game).new_state(&game);
+        let new_role_data = self.role(game).new_state(game);
         self.set_role_state(game, new_role_data.clone());
         self.on_role_creation(game);    //this function can change role state
         if new_role_data.role() == self.role(game) {
@@ -352,7 +353,7 @@ impl PlayerReference{
         self.role(game).possession_immune()
     }
     pub fn has_innocent_aura(&self, game: &Game) -> bool {
-        PlayerReference::all_players(game).into_iter().any(|player_ref| 
+        PlayerReference::all_players(game).any(|player_ref| 
             match player_ref.role_state(game) {
                 RoleState::Disguiser(r) => 
                     r.current_target.is_some_and(|player|player == *self),
