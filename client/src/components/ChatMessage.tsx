@@ -903,6 +903,14 @@ export type ChatMessageVariant = {
 } | {
     type: "cultKillsNext"
 } | {
+    type: "currentVampires",
+    vampires: PlayerIndex[]
+} | {
+    type: "newVampires",
+    vampires: PlayerIndex[]
+} | {
+    type: "vampireCanConvert"
+} | {
     type: "mediumHauntStarted",
     medium: PlayerIndex,
     player: PlayerIndex

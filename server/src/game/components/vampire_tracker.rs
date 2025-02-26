@@ -163,6 +163,7 @@ impl VampireTracker {
             },
 
             PhaseType::Night => {
+                if game.day_number() == 1 {return;}
                 let vampire_tracker = game.vampire_tracker.clone();
                 for i in 0..vampire_tracker.vampires.len().min(vampire_tracker.max_converts.value() as usize){
                     let vamp = vampire_tracker.vampires[i];

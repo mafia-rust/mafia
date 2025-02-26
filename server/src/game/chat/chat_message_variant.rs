@@ -223,8 +223,11 @@ pub enum ChatMessageVariant {
     DoomsayerWon,
     DoomsayerFailed,
     KiraResult{result: KiraResult},
+    #[serde(rename_all = "camelCase")]
     CurrentVampires{vampires: Vec<PlayerReference>},
+    #[serde(rename_all = "camelCase")]
     NewVampires{vampires: Vec<PlayerReference>},
+    #[serde(rename_all = "camelCase")]
     VampireCanConvert,
     MartyrRevealed { martyr: PlayerIndex },
     MartyrWon,
