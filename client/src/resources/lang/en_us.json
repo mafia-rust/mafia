@@ -523,6 +523,14 @@
     "controllerId.role.yer.1.name": "Choose Target",
     "controllerId.role.yer.2.name": "Disguise as Role",
 
+    "role.vampire.name": "Vampire",
+    "role.vampire.name:var.0": "Vampires",
+    "role.vampire.name:var.1": "Vampiric",
+    "role.vampire.name:var.2": "Vamp",
+    "role.vampire.name:var.3": "Vamps",
+    "role.vampire.name:var.4": "Vampirism",
+    "controllerId.role.vampire.0.name": "Bite",
+
     "role.serialKiller.name": "Serial Killer",
     "role.serialKiller.name:var.0": "Serial Killers",
     "controllerId.role.serialKiller.0.name": "Attack",
@@ -1859,6 +1867,12 @@
     "wiki.article.role.yer.abilities":"",
     "wiki.article.role.yer.attributes":"",
     "wiki.article.role.yer.extra":"- You visit the player you choose\n- You can't attack or convert night 1",
+
+    "wiki.article.role.vampire.reminder":"Each night*, bite a player.\n- The player bitten will be converted to vampire if you are one of the oldest living vampires, otherwise you will attack them.\n- The number of vampires that convert their target is the number of vampires there were at the beginning of the game plus the number of wildcards that converted to a vampire.",
+    "wiki.article.role.vampire.guide":"- At night choose who to bite. ",
+    "wiki.article.role.vampire.abilities":"",
+    "wiki.article.role.vampire.attributes":"* Your attack is armor piercing.\n    * If you are nominated you are instantly killed by the sun*.",
+    "wiki.article.role.vampire.extra":"- You visit the player you choose\n-You are immune to the sun on day 2 \n- You can't attack or convert night 1. The number of vampires considered old is the number of vampires role outlines that generate vampire plus the number of wildcards that converted to a vampire.",
 
     "wiki.article.role.fiendsWildcard.reminder": "Choose a fiends role to become at start of night.",
     "wiki.article.role.fiendsWildcard.guide": "* Choose a fiends role to become that role\n    * You become that role when night starts\n* You can't become a role that has exceeded its role limit",
