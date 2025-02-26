@@ -49,26 +49,27 @@ impl RoleStateImpl for Recruiter {
     }
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
-        let choose_attack = if let Some(IntegerSelection(x)) = game.saved_controllers.get_controller_current_selection_integer(
-            ControllerID::role(actor_ref, Role::Recruiter, 1)
-        ){x==0}else{true};
-
-        if choose_attack{
-            if game.day_number() <= 1 {return}
-        }else{
-            if self.recruits_remaining == 0 {return}
-        }
+       
 
         match priority {
             Priority::Kill => {
+                let choose_attack = if let Some(IntegerSelection(x)) = game.saved_controllers.get_controller_current_selection_integer(
+                    ControllerID::role(actor_ref, Role::Recruiter, 1)) {
+                    x==0
+                } else {
+                    true
+                };
+        
+                if choose_attack {
+                    if game.day_number() <= 1 {return}
+                } else {
+                    if self.recruits_remaining == 0 {return}
+                }
+
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-                if let Some(visit) = actor_visits.first(){
-                    if Recruiter::night_ability(self.clone(), game, actor_ref, visit.target) {
-                        if choose_attack {
-                            actor_ref.set_role_state(game, Recruiter{recruits_remaining: self.recruits_remaining.saturating_add(1), ..self})
-                        }else{
-                            actor_ref.set_role_state(game, Recruiter{recruits_remaining: self.recruits_remaining.saturating_sub(1), ..self});
-                        }
+                if let Some(visit) = actor_visits.first() {
+                    if Recruiter::night_ability(self.clone(), game, actor_ref, visit.target, choose_attack) && !choose_attack {
+                        actor_ref.set_role_state(game, Recruiter{recruits_remaining: self.recruits_remaining.saturating_sub(1), ..self});
                     }
                 }
             },
@@ -106,7 +107,7 @@ impl RoleStateImpl for Recruiter {
             game,
             actor_ref,
             ControllerID::role(actor_ref, Role::Recruiter, 0),
-            false
+            true
         )
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
@@ -139,7 +140,7 @@ impl RoleStateImpl for Recruiter {
             if let Some(random_town_role) = random_town_role {
                 //special case here. I don't want to use set_role because it alerts the player their role changed
                 //NOTE: It will still send a packet to the player that their role state updated,
-                //so it might be deducable that there is a recruiter
+                //so it might be deducible that there is a recruiter
                 InsiderGroupID::Mafia.remove_player_from_revealed_group(game, random_mafia_player);
                 random_mafia_player.set_win_condition(game, crate::game::win_condition::WinCondition::GameConclusionReached{
                     win_if_any: vec![GameConclusion::Town].into_iter().collect()
@@ -150,7 +151,7 @@ impl RoleStateImpl for Recruiter {
         }
         
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+    fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
@@ -160,11 +161,7 @@ impl RoleStateImpl for Recruiter {
 impl Recruiter {
     /// returns true if target_ref is killed when trying to kill
     /// returns true if target_ref is recruited when trying to recruit
-    pub fn night_ability(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        let choose_attack = if let Some(IntegerSelection(x)) = game.saved_controllers.get_controller_current_selection_integer(
-            ControllerID::role(actor_ref, Role::Recruiter, 1)
-        ){x==0}else{true};
-
+    pub fn night_ability(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference, choose_attack: bool) -> bool {
         if choose_attack {
             target_ref.try_night_kill_single_attacker(
                 actor_ref,
@@ -173,10 +170,10 @@ impl Recruiter {
                 AttackPower::Basic,
                 false
             )
-        }else{
+        } else {
             if AttackPower::Basic.can_pierce(target_ref.defense(game)) {
                 MafiaRecruits::recruit(game, target_ref)
-            }else{
+            } else {
                 false
             }
         }

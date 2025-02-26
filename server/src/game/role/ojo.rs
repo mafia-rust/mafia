@@ -120,14 +120,14 @@ impl RoleStateImpl for Ojo {
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         let mut out = vec![];
-
+        //Auditor visits
         out.extend(common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,
             ControllerID::role(actor_ref, Role::Ojo, 0),
             false
         ));
-
+        //Kira/Doomsayer visits
         if game.day_number() > 1 {
             if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
                 ControllerID::role(actor_ref, Role::Ojo, 1)
