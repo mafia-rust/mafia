@@ -3,7 +3,7 @@ use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::{ability_input::{ability_selection::AbilitySelection, ControllerID}, game_conclusion::GameConclusion, role::engineer::Trap};
+use mafia_server::game::{ability_input::{ability_selection::AbilitySelection, ControllerID}, game_conclusion::GameConclusion, role::{engineer::Trap}};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*,
@@ -87,6 +87,7 @@ pub use mafia_server::game::{
         
         warden::Warden,
         arsonist::Arsonist,
+        vampire::Vampire,
         spiral::Spiral,
         pyrolisk::Pyrolisk,
         puppeteer::Puppeteer,
@@ -2438,6 +2439,42 @@ fn godfather_dies_to_veteran_after_possessed(){
     assert!(!gf.alive());
     assert!(vet.alive());
     assert!(min.alive());
+}
+
+#[test]
+fn vampire_dies_to_sun(){
+    kit::scenario!(game in Nomination 2 where
+        vamp: Vampire,
+        townie1: Vigilante,
+        townie2: Villager
+    );
+
+    townie1.vote_for_player(vamp);
+    townie2.vote_for_player(vamp);
+
+    game.next_phase();
+
+    assert!(game.current_phase().phase() == PhaseType::Judgement);
+
+    assert!(vamp.alive());
+    assert!(townie1.alive());
+    assert!(townie2.alive());
+
+    game.skip_to(PhaseType::Nomination, 3);
+
+    townie1.vote_for_player(vamp);
+    townie2.vote_for_player(vamp);
+
+    game.next_phase();
+    //Even though the phase gets fast forwarded, the judgement phase must be skipped manually because 
+    //fast forwarding just sets the remaining time to 0
+    game.next_phase();
+
+    assert!(game.current_phase().phase() == PhaseType::Nomination);
+
+    assert!(!vamp.alive());
+    assert!(townie1.alive());
+    assert!(townie2.alive());
 }
 
 #[test]

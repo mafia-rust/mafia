@@ -1,4 +1,4 @@
-use crate::{game::{attack_power::AttackPower, chat::ChatMessageVariant, event::on_fast_forward::OnFastForward, game_conclusion::GameConclusion, grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller, GravePhase}, phase::PhaseState, player::PlayerReference, role::{Priority, Role}, win_condition::WinCondition, Game}, vec_set::VecSet};
+use crate::{game::{attack_power::AttackPower, chat::ChatMessageVariant, event::on_fast_forward::OnFastForward, game_conclusion::GameConclusion, grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller, GravePhase}, phase::{PhaseState, PhaseType}, player::PlayerReference, role::{Priority, Role}, win_condition::WinCondition, Game}, vec_set::VecSet};
 
 
 #[derive(Clone, Debug, Default)]
@@ -8,6 +8,7 @@ pub struct VampireTracker {
     vampires: Vec<PlayerReference>,
     new_vampires: VecSet<PlayerReference>,
     max_converts: MaxConverts,
+    vamp_on_trial: Option<PlayerReference>,
 }
 
 /// Its like this because otherwise if a player is converted to a vampire and there were no vampires to begin with
@@ -158,6 +159,7 @@ impl VampireTracker {
                     vampires: vampire_tracker.vampires,
                     new_vampires: VecSet::with_capacity(vampire_tracker.max_converts.value() as usize),
                     max_converts: vampire_tracker.max_converts,
+                    vamp_on_trial: None,
                 };
             },
 
@@ -165,6 +167,7 @@ impl VampireTracker {
                 if game.day_number() <= 2 {return;}
                 if player_on_trial.role(game) != Role::Vampire {return}
                 OnFastForward::invoke(game);
+                game.vampire_tracker.vamp_on_trial = Some(player_on_trial);
             }
 
             PhaseState::Night => {
@@ -180,21 +183,24 @@ impl VampireTracker {
         }    
     }
 
-    pub fn before_phase_end(game: &mut Game, phase: PhaseState){
-        let PhaseState::Judgement {player_on_trial,.. } = phase else {return};
-        if player_on_trial.role(game) != Role::Vampire {return}
-        player_on_trial.set_alive(game, false);
-        
-        player_on_trial.die(game, Grave{
+    pub fn before_phase_end(game: &mut Game, phase: PhaseType){
+        if phase != PhaseType::Judgement {return};
+
+        let Some(vamp_on_trial) = game.vampire_tracker.vamp_on_trial else {return};
+
+        vamp_on_trial.set_alive(game, false);
+        vamp_on_trial.die(game, Grave{
             day_number: game.day_number(),
             died_phase: GravePhase::Day,
             information: GraveInformation::Normal { 
                 role: Role::Vampire, 
-                will: player_on_trial.will(game).to_owned(), 
+                will: vamp_on_trial.will(game).to_owned(), 
                 death_cause: GraveDeathCause::Killers(vec![GraveKiller::Sun]), 
                 death_notes: vec![],
             },
-            player: player_on_trial,
+            player: vamp_on_trial,
         });
+
+        game.vampire_tracker.vamp_on_trial = None;
     }
 }
