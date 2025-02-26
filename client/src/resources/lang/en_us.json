@@ -393,6 +393,8 @@
 
     "role.mafiaWitch.name": "Syndicate Witch",
     "role.mafiaWitch.name:var.0": "Syndicate Witches",
+    "role.mafiaWitch.name:var.1": "Mafia Witch",
+    "role.mafiaWitch.name:var.2": "Mafia Witches",
     "controllerId.role.mafiaWitch.0.name": "Possess",
     
     "role.mortician.name": "Mortician",
