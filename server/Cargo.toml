@@ -9,7 +9,6 @@ edition = "2021"
 tokio-tungstenite = ">=0.18.0"
 futures-util = "0.3.31"
 tokio = { version = "1", features = ["full"] }
-tokio-native-tls = "0.3.0"
 lazy_static = "1.4.0"
 serde_json = "1.0"
 serde = {version = "1.0.152",  features = ["derive"]}
