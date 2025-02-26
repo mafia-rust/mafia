@@ -22,20 +22,12 @@ use serde::{Deserialize, Serialize};
 use vec1::Vec1;
 
 use crate::{
-    game::{
-        ability_input::*,
-        available_buttons::AvailableButtons,
-        chat::{ChatGroup, ChatMessage},
-        components::insider_group::InsiderGroupID,
-        grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType},
-        player::{PlayerIndex, PlayerReference}, 
-        role::{
+    client_connection::ClientConnection, game::{
+        ability_input::*, available_buttons::AvailableButtons, chat::{ChatGroup, ChatMessage}, components::insider_group::InsiderGroupID, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
             doomsayer::DoomsayerGuess,
             ClientRoleStateEnum, Role
-        },
-        role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings,
-        tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
-    }, listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log, vec_map::VecMap, vec_set::VecSet
+        }, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, spectator::spectator_pointer::SpectatorIndex, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
+    }, listener::RoomCode, lobby::{game_client::GameClientLocation, lobby_client::{LobbyClient, LobbyClientID}}, log, vec_map::VecMap, vec_set::VecSet
 };
 
 #[derive(Serialize, Debug, Clone)]
@@ -44,6 +36,14 @@ pub struct LobbyPreviewData {
     pub name: String,
     pub in_game: bool,
     pub players: Vec<(LobbyClientID, String)>
+}
+
+#[derive(Serialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct HostDataPacketGameClient {
+    pub client_type: GameClientLocation,
+    pub connection: ClientConnection,
+    pub host: bool,
 }
 
 #[derive(Serialize, Debug, Clone)]
@@ -66,22 +66,20 @@ pub enum ToClientPacket{
     RejectJoin{reason: RejectJoinReason},
     
     // Lobby
+    LobbyName{name: String},
     #[serde(rename_all = "camelCase")]
     YourId{player_id: LobbyClientID},
     #[serde(rename_all = "camelCase")]
     LobbyClients{clients: VecMap<LobbyClientID, LobbyClient>},
-    LobbyName{name: String},
-    #[serde(rename_all = "camelCase")]
-    RejectStart{reason: RejectStartReason},
     PlayersHost{hosts: Vec<LobbyClientID>},
     PlayersReady{ready: Vec<LobbyClientID>},
     #[serde(rename_all = "camelCase")]
     PlayersLostConnection{lost_connection: Vec<LobbyClientID>},
     StartGame,
-    GameInitializationComplete,
-    BackToLobby,
+    #[serde(rename_all = "camelCase")]
+    RejectStart{reason: RejectStartReason},
 
-    GamePlayers{players: Vec<String>},
+    // Settings
     #[serde(rename_all = "camelCase")]
     RoleList{role_list: RoleList},
     #[serde(rename_all = "camelCase")]
@@ -95,8 +93,13 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     EnabledModifiers{modifiers: Vec<ModifierType>},
 
+    // Host
+    HostData { clients: VecMap<LobbyClientID, HostDataPacketGameClient> },
+
     // Game
-    
+    GamePlayers{players: Vec<String>},
+    GameInitializationComplete,
+    BackToLobby,
     #[serde(rename_all = "camelCase")]
     YourPlayerIndex{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
@@ -105,8 +108,6 @@ pub enum ToClientPacket{
     Phase{phase: PhaseState, day_number: u8},
     #[serde(rename_all = "camelCase")]
     PhaseTimeLeft{seconds_left: u64},
-    #[serde(rename_all = "camelCase")]
-    PlayerOnTrial{player_index: PlayerIndex},
 
     PlayerAlive{alive: Vec<bool>},
     #[serde(rename_all = "camelCase")]
@@ -214,6 +215,8 @@ pub enum ToServerPacket{
     ReadyUp{ready: bool},
     SetLobbyName{name: String},
     StartGame,
+
+    // Settings
     #[serde(rename_all = "camelCase")]
     SetRoleList{role_list: RoleList},
     #[serde(rename_all = "camelCase")]
@@ -229,7 +232,12 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SetEnabledModifiers{modifiers: Vec<ModifierType>},
 
+    // Host
     BackToLobby,
+    HostDataRequest,
+    EndGame,
+    SkipPhase,
+    SetPlayerName { id: LobbyClientID, name: String },
 
     // Game
     #[serde(rename_all = "camelCase")]
