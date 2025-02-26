@@ -1376,7 +1376,7 @@
     "wiki.article.standard.passcode.text":"A passcode is a code that a player makes up and gives to another player to find information.\nFor example:\nSuppose @4 claims they are a coxswain (Players with the coxswain role can chat with dead players).\n@2 whispers to @3 saying \"The coxswain passcode is 1234\"\n If @4 really is a coxswain, when @2 dies, @2 should tell @4 the passcode.\n If @4 isn't able to tell @3 that the passcode is \"1234\", then @4 wasn't able to talk with @2 and therefore isn't a coxswain.",
     
     "wiki.article.standard.shwompt.title":"Shwompt",
-    "wiki.article.standard.shwompt.text":"Shwompt \nPronunciation: ʃwɒmpt \nA sudden whooshing sound that contains a siblant conclusion. This describes the sound that is made when objects phase through a solid wall. \nOther forms: Shwompter, Shwompting, Shwompted, Shwomptee",
+    "wiki.article.standard.shwompt.text":"Shwompt \nPronunciation: ʃwɒmpt \nA sudden whooshing sound that contains a sibilant conclusion. This describes the sound that is made when objects phase through a solid wall. \nOther forms: Shwompter, Shwompting, Shwompted, Shwomptee",
 
 
     "wiki.article.generated.roleSet.title":"Role Sets",
