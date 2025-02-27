@@ -39,7 +39,7 @@ impl RoleStateImpl for Puppeteer {
     }
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return;}
-        if game.day_number() <= 1 {return;}
+        if !game.attack_convert_abilities_enabled() {return;}
 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
@@ -87,7 +87,7 @@ impl RoleStateImpl for Puppeteer {
             AbilitySelection::new_player_list(vec![]),
             Detained::is_detained(game, actor_ref) ||
             actor_ref.ability_deactivated_from_death(game) ||
-            game.day_number() <= 1,
+            !game.attack_convert_abilities_enabled(),
             None,
             false,
             vec_set!(actor_ref),
@@ -101,7 +101,7 @@ impl RoleStateImpl for Puppeteer {
                 AbilitySelection::new_integer(0),
                 Detained::is_detained(game, actor_ref) ||
                 actor_ref.ability_deactivated_from_death(game) ||
-                game.day_number() <= 1,
+                !game.attack_convert_abilities_enabled(),
                 None,
                 false,
                 vec_set!(actor_ref),

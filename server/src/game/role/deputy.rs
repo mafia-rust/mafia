@@ -84,7 +84,7 @@ impl RoleStateImpl for Deputy {
             AbilitySelection::new_player_list(vec![]),
             actor_ref.ability_deactivated_from_death(game) ||
             self.bullets_remaining == 0 || 
-            game.day_number() <= 1 || 
+            !game.attack_convert_abilities_enabled() || 
             !(PhaseType::Discussion == game.current_phase().phase() || PhaseType::Nomination == game.current_phase().phase()),
             None,
             true,

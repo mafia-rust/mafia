@@ -90,7 +90,7 @@ impl RoleStateImpl for Kidnapper {
                 actor_ref.ability_deactivated_from_death(game) ||
                 Detained::is_detained(game, actor_ref) || 
                 self.executions_remaining <= 0 ||
-                game.day_number() <= 1 ||
+                !game.attack_convert_abilities_enabled() ||
                 self.jailed_target_ref.is_none(),
                 Some(PhaseType::Obituary),
                 false,
