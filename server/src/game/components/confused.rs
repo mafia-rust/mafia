@@ -9,33 +9,30 @@ pub struct Confused {
     pub players_durations: VecMap<PlayerReference, Duration>,
 }
 
-
-impl Confused{
-    fn confused<'a>(game: &'a Game)->&'a Self{
-        &game.confused
+impl Game {
+    fn confused(&self)->&Confused{
+        &self.confused
     }
-    fn confused_mut<'a>(game: &'a mut Game)->&'a mut Self{
-        &mut game.confused
+    fn confused_mut(&mut self)->&mut Confused{
+        &mut self.confused
     }
+}
 
+impl Confused {
     pub fn add_player_permanent(game: &mut Game, player: PlayerReference){
-        let confused = Self::confused_mut(game);
-        confused.players_durations.insert(player, Duration::Permanent);
+        game.confused_mut().players_durations.insert(player, Duration::Permanent);
     }
 
     pub fn add_player_temporary(game: &mut Game, player: PlayerReference, duration: u8){
-        let confused = Self::confused_mut(game);
-        confused.players_durations.keep_greater(player, Duration::Temporary(duration));
+        game.confused_mut().players_durations.keep_greater(player, Duration::Temporary(duration));
     }
 
     pub fn remove_player(game: &mut Game, player: PlayerReference){
-        let confused = Self::confused_mut(game);
-        confused.players_durations.remove(&player);
+        game.confused_mut().players_durations.remove(&player);
     }
 
     pub fn is_confused(game: &Game, player: PlayerReference)->bool{
-        let confused = Self::confused(game);
-        confused.players_durations.contains(&player)
+        game.confused().players_durations.contains(&player)
     }
     
     /// Decrements confusion durations and removes players whose durations are up

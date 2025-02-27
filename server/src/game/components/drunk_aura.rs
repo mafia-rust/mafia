@@ -7,32 +7,30 @@ pub struct DrunkAura {
     pub players_durations: VecMap<PlayerReference, Duration>,
 }
 
-impl DrunkAura {
-    fn drunk_aura(game: &Game) -> &Self {
-        &game.drunk_aura
+impl Game {
+    fn drunk_aura(&self) -> &DrunkAura {
+        &self.drunk_aura
     }
-    fn drunk_aura_mut(game: &mut Game) -> &mut Self {
-        &mut game.drunk_aura
+    fn drunk_aura_mut(&mut self) -> &mut DrunkAura {
+        &mut self.drunk_aura
     }
+}
 
+impl DrunkAura {
     pub fn add_player_permanent(game: &mut Game, player: PlayerReference){
-        let drunk_aura = Self::drunk_aura_mut(game);
-        drunk_aura.players_durations.insert(player, Duration::Permanent);
+        game.drunk_aura_mut().players_durations.insert(player, Duration::Permanent);
     }
 
     pub fn add_player_temporary(game: &mut Game, player: PlayerReference, duration: u8){
-        let drunk_aura = Self::drunk_aura_mut(game);
-        drunk_aura.players_durations.keep_greater(player, Duration::Temporary(duration));
+        game.drunk_aura_mut().players_durations.keep_greater(player, Duration::Temporary(duration));
     }
 
     pub fn remove_player(game: &mut Game, player: PlayerReference){
-        let drunk_aura = Self::drunk_aura_mut(game);
-        drunk_aura.players_durations.remove(&player);
+        game.drunk_aura_mut().players_durations.remove(&player);
     }
   
     pub fn has_drunk_aura(game: &Game, player: PlayerReference) -> bool {
-        let drunk_aura = Self::drunk_aura(game);
-        drunk_aura.players_durations.contains(&player)
+        game.drunk_aura().players_durations.contains(&player)
     }
 
     pub fn on_role_switch(game: &mut Game, player: PlayerReference) {
