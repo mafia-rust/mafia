@@ -144,7 +144,18 @@ impl VampireTracker {
                 let vampire_tracker = game.vampire_tracker.clone();
                 let mut new_vampires: Vec<PlayerReference> = vampire_tracker.new_vampires.into();
                 new_vampires.retain(|vamp| vamp.alive(game) && !vampire_tracker.vampires.clone().contains(vamp));
+
+                if new_vampires.is_empty() {
+                    game.vampire_tracker = VampireTracker {
+                        vampires: vampire_tracker.vampires,
+                        new_vampires: VecSet::with_capacity(vampire_tracker.max_converts.value() as usize),
+                        max_converts: vampire_tracker.max_converts,
+                        vamp_on_trial: None,
+                    };
+                    return;
+                };
                 new_vampires.shuffle(&mut rand::rng());
+
                 let new_vamp_message = ChatMessageVariant::NewVampires { vampires: new_vampires.clone() };
                 
                 for vamp in new_vampires.clone() {
@@ -154,15 +165,12 @@ impl VampireTracker {
                 let vampires = game.vampire_tracker.vampires.clone();
 
                 for vamp in vampires.clone() {
-                    vamp.add_private_chat_message(game, new_vamp_message.clone());
-                }
-
-                for vamp in new_vampires {
                     let mut other_vampires = vampires.clone();
                     other_vampires.retain(|other_vamp| vamp != *other_vamp);
                     vamp.add_private_chat_message(game, ChatMessageVariant::CurrentVampires { 
                         vampires: other_vampires
                     });
+                    vamp.add_private_chat_message(game, new_vamp_message.clone());
                 }
 
                 game.vampire_tracker = VampireTracker {

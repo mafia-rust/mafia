@@ -599,6 +599,12 @@ export function translateChatMessage(
             } else {
                 return translate("chatMessage.godfatherBackup.nobody");
             }
+        case "currentVampires":
+            return translate("chatMessage.currentVampires", playerListToString(message.vampires, playerNames));
+        case "newVampires":
+            return translate("chatMessage.newVampires", playerListToString(message.vampires, playerNames));
+        case "vampireCanConvert":
+            return translate("chatMessage.vampireCanConvert");
         /* NIGHT */
         case "godfatherBackupKilled":
             return translate("chatMessage.godfatherBackupKilled", playerNames[message.backup]);
