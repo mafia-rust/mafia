@@ -82,7 +82,7 @@ impl RoleStateImpl for Reeducator {
 
                     target_ref.set_night_convert_role_to(game, Some(new_state));
 
-                }else if self.convert_charges_remaining && game.day_number() > 1{
+                }else if self.convert_charges_remaining && game.attack_convert_abilities_enabled() {
 
                     if target_ref.night_defense(game).can_block(AttackPower::Basic) {
                         actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
@@ -123,7 +123,7 @@ impl RoleStateImpl for Reeducator {
                         player.alive(game) &&
                         (
                             InsiderGroupID::in_same_revealed_group(game, actor_ref, *player) || 
-                            (game.day_number() > 1 && self.convert_charges_remaining)
+                            (game.attack_convert_abilities_enabled() && self.convert_charges_remaining)
                         )
                     )
                     .collect(),

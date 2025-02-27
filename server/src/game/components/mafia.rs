@@ -97,7 +97,7 @@ impl Mafia{
     pub fn on_phase_start(_game: &mut Game, _phase: PhaseType){
     }
     pub fn on_night_priority(game: &mut Game, priority: Priority){
-        if game.day_number() <= 1 {return}
+        if !game.attack_convert_abilities_enabled() {return}
         match priority {
             Priority::TopPriority => {
                 let Some(PlayerListSelection(backup)) = game.saved_controllers.get_controller_current_selection_player_list(ControllerID::syndicate_choose_backup()) else {return};

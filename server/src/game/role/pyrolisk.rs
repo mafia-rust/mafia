@@ -26,7 +26,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 impl RoleStateImpl for Pyrolisk {
     type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if game.day_number() <= 1 {return;}
+        if !game.attack_convert_abilities_enabled() {return;}
 
         match priority {
             Priority::Kill => {
@@ -70,7 +70,7 @@ impl RoleStateImpl for Pyrolisk {
             actor_ref,
             false,
             true,
-            game.day_number() <= 1 ,
+            !game.attack_convert_abilities_enabled() ,
             ControllerID::role(actor_ref, Role::Pyrolisk, 0)
         )
     }

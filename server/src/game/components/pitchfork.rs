@@ -65,7 +65,7 @@ impl Pitchfork{
                             Some(1)
                     ),
                     AbilitySelection::new_player_list(vec![]),
-                    game.day_number() == 1 ||
+                    !game.attack_convert_abilities_enabled() ||
                         !player.alive(game) ||
                         !player.win_condition(game).is_loyalist_for(GameConclusion::Town),
                         Some(PhaseType::Obituary),
@@ -94,7 +94,7 @@ impl Pitchfork{
     }
     pub fn on_night_priority(game: &mut Game, priority: Priority){
         if priority != Priority::Kill {return;}
-        if game.day_number() <= 1 {return;}
+        if !game.attack_convert_abilities_enabled() {return;}
         if Pitchfork::usable_pitchfork_owners(game).len() < 1 {return;}
         
         if let Some(target) = Pitchfork::angry_mobbed_player(game) {

@@ -31,7 +31,7 @@ impl RoleStateImpl for Yer {
         }
     }
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if game.day_number() == 1 {return}
+        if !game.attack_convert_abilities_enabled() {return}
 
         let chose_to_convert = if let Some(BooleanSelection(bool)) = game.saved_controllers.get_controller_current_selection_boolean(
             ControllerID::role(actor_ref, Role::Yer, 0)
@@ -96,7 +96,7 @@ impl RoleStateImpl for Yer {
         crate::game::role::common_role::controller_parameters_map_boolean(
             game,
             actor_ref,
-            self.star_passes_remaining <= 0 || game.day_number() <= 1,
+            self.star_passes_remaining <= 0 || !game.attack_convert_abilities_enabled(),
             ControllerID::role(actor_ref, Role::Yer, 0)
         ).combine_overwrite_owned(
             crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
@@ -104,7 +104,7 @@ impl RoleStateImpl for Yer {
                 actor_ref,
                 false,
                 true,
-                game.day_number() <= 1,
+                !game.attack_convert_abilities_enabled(),
                 ControllerID::role(actor_ref, Role::Yer, 1)
             )
         ).combine_overwrite_owned(
@@ -119,7 +119,7 @@ impl RoleStateImpl for Yer {
                 AbilitySelection::new_role_option(Some(Role::Yer)),
                 self.star_passes_remaining <= 0 ||
                 actor_ref.ability_deactivated_from_death(game) ||
-                game.day_number() <= 1,
+                !game.attack_convert_abilities_enabled(),
                 None,
                 false,
                 vec_set!(actor_ref)

@@ -31,7 +31,7 @@ impl RoleStateImpl for Spiral {
 
         if priority != Priority::Poison { return };
         
-        if self.spiraling.is_empty() && game.day_number() > 1 {
+        if self.spiraling.is_empty() && game.attack_convert_abilities_enabled() {
             if let Some(visit) = actor_ref.untagged_night_visits_cloned(game).first(){
                 let target_ref = visit.target;
                 
@@ -60,7 +60,7 @@ impl RoleStateImpl for Spiral {
             actor_ref,
             false,
             true,
-            game.day_number() <= 1 || !self.spiraling.is_empty(),
+            !game.attack_convert_abilities_enabled() || !self.spiraling.is_empty(),
             ControllerID::role(actor_ref, Role::Spiral, 0)
         )
     }

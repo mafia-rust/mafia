@@ -35,7 +35,7 @@ impl RoleStateImpl for Ojo {
 
         match priority {
             Priority::Kill => {
-                if game.day_number() == 1 {return;}
+                if !game.attack_convert_abilities_enabled() {return;}
                 for visit in actor_ref.untagged_night_visits_cloned(game).clone() {
                     if visit.attack {
                         visit.target.try_night_kill_single_attacker(
@@ -111,7 +111,7 @@ impl RoleStateImpl for Ojo {
                 AbilitySelection::new_role_option(None),
                 actor_ref.ability_deactivated_from_death(game) || 
                 Detained::is_detained(game, actor_ref) ||
-                game.day_number() == 1,
+                game.attack_convert_abilities_enabled(),
                 Some(PhaseType::Obituary),
                 false,
                 vec_set![actor_ref],
@@ -128,14 +128,14 @@ impl RoleStateImpl for Ojo {
             false
         ));
 
-        if game.day_number() > 1 {
-            if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
-                ControllerID::role(actor_ref, Role::Ojo, 1)
-            ) {
-                for player in PlayerReference::all_players(game){
-                    if player.alive(game) && player.role(game) == role {
-                        out.push(Visit::new_none(actor_ref, player, true));
-                    }
+        if !game.attack_convert_abilities_enabled() {return out};
+        
+        if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
+            ControllerID::role(actor_ref, Role::Ojo, 1)
+        ) {
+            for player in PlayerReference::all_players(game){
+                if player.alive(game) && player.role(game) == role {
+                    out.push(Visit::new_none(actor_ref, player, true));
                 }
             }
         }

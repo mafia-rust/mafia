@@ -54,7 +54,7 @@ impl RoleStateImpl for Recruiter {
         ){x==0}else{true};
 
         if choose_attack{
-            if game.day_number() <= 1 {return}
+            if !game.attack_convert_abilities_enabled() {return}
         }else{
             if self.recruits_remaining == 0 {return}
         }
@@ -86,7 +86,7 @@ impl RoleStateImpl for Recruiter {
             actor_ref,
             false,
             false,
-            (!choose_attack && self.recruits_remaining <= 0) || (choose_attack && game.day_number() == 1),
+            (!choose_attack && self.recruits_remaining <= 0) || (choose_attack && !game.attack_convert_abilities_enabled()),
             ControllerID::role(actor_ref, Role::Recruiter, 0)
         ).combine_overwrite_owned(
             ControllerParametersMap::new_controller_fast(

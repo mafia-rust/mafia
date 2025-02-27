@@ -22,7 +22,7 @@ impl RoleStateImpl for Mafioso {
     type ClientRoleState = Mafioso;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return}
-        if game.day_number() == 1 {return}
+        if !game.attack_convert_abilities_enabled() {return}
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
             let target_ref = visit.target;

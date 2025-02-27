@@ -29,7 +29,7 @@ impl RoleStateImpl for Godfather {
             actor_ref,
             false,
             false,
-            game.day_number() <= 1,
+            !game.attack_convert_abilities_enabled(),
             ControllerID::role(actor_ref, Role::Godfather, 0)
         )
     }
@@ -53,7 +53,7 @@ impl RoleStateImpl for Godfather {
 
 impl Godfather{
     pub(super) fn night_ability(game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if game.day_number() == 1 {return}
+        if !game.attack_convert_abilities_enabled() {return}
 
         match priority {
             //kill the target
