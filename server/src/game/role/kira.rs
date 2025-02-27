@@ -81,8 +81,8 @@ impl KiraGuess{
             Role::Doomsayer |
             Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | Role::Chronokaiser |
             Role::Wildcard | Role::TrueWildcard | Role::Drunk | Role::Spiral |
-            Role::SantaClaus | Role::Krampus => Some(Self::NonTown),
-            Role::Martyr => None,
+            Role::SantaClaus | Role::Krampus => Some(Self::NonTown),            
+            Role::Martyr | Role::Mimic => None,
 
             //Fiends
             Role::Arsonist | Role::Werewolf | 

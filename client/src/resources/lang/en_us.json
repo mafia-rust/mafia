@@ -448,6 +448,9 @@
     "role.chronokaiser.name": "Chronokaiser",
     "role.chronokaiser.name:var.0": "Chronokaisers",
     
+    "role.mimic.name": "Mimic",
+    "role.mimic.name:var.0": "Mimics",
+
     "role.witch.name": "Witch",
     "role.witch.name:var.0": "Witches",
     "controllerId.role.witch.0.name": "Possess",
