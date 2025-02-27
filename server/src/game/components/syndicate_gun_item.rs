@@ -74,24 +74,29 @@ impl SyndicateGunItem {
         }
     }
 
-
     //event listeners
     pub fn on_any_death(game: &mut Game, player: PlayerReference) {
         if game.syndicate_gun_item.player_with_gun.is_some_and(|p|p==player) {
-            game.syndicate_gun_item.player_with_gun = None;
-
-            for insider in InsiderGroupID::Mafia.players(game).clone() {
-                insider.remove_player_tag_on_all(game, Tag::SyndicateGun);
-            }
-            for insider in InsiderGroupID::Mafia.players(game).iter()
-                .filter(|p|p.alive(game))
-                .cloned()
-                .collect::<Vec<_>>()
-            {
-                SyndicateGunItem::give_gun(game, insider);
-            }
+            Self::give_gun_any(game);
         }
     }
+
+    pub fn give_gun_any(game: &mut Game){
+        if game.syndicate_gun_item.player_with_gun.is_some_and(|p|p.alive(game)) {return}
+        game.syndicate_gun_item.player_with_gun = None;
+
+        for insider in InsiderGroupID::Mafia.players(game).clone() {
+            insider.remove_player_tag_on_all(game, Tag::SyndicateGun);
+        }
+        for insider in InsiderGroupID::Mafia.players(game).iter()
+            .filter(|p|p.alive(game))
+            .cloned()
+            .collect::<Vec<_>>()
+        {
+            SyndicateGunItem::give_gun(game, insider);
+        }
+    } 
+
     pub fn on_night_priority(game: &mut Game, priority: Priority) {
         if game.day_number() <= 1 {return}
         match priority {
