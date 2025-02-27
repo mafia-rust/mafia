@@ -1229,8 +1229,8 @@
             {"type": "youAttackedSomeone"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "yourConvertFailed"},
-            {"type": "currentVampires"},
-            {"type": "newVampires"},
+            {"type": "currentVampires", "vampires": [3,1,7]},
+            {"type": "newVampires", "vampires": [2,5,4,9]},
             {"type": "vampireCanConvert"}
         ]
     },
