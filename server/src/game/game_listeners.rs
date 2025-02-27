@@ -4,7 +4,7 @@ use super::{
     chat::{ChatGroup, ChatMessageVariant}, components::synopsis::SynopsisTracker, game_conclusion::GameConclusion, grave::GraveReference, phase::{PhaseState, PhaseStateMachine, PhaseType}, player::PlayerReference, role::Role, Game, GameOverReason
 };
 
-//Event listerner functions for game defined here
+//Event listener functions for game defined here
 impl Game{
     pub fn on_phase_start(&mut self, _phase: PhaseType){
         self.send_packet_to_all(ToClientPacket::Phase { 

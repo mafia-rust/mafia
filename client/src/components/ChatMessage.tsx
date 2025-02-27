@@ -367,6 +367,12 @@ export function translateChatMessage(
             return translate("chatMessage.roleAssignment", 
                 translate("role."+message.role+".name")
             );
+        case "debugVisitedBy":
+            return translate("chatMessage.debugVisitedBy", playerListToString(message.visitedBy, playerNames));
+        case "debugVisited":
+            return translate("chatMessage.debugVisited", playerListToString(message.visited, playerNames));
+        case "debugMisc":
+            return translate("chatMessage.debugMisc");
         case "playersRoleRevealed":
             return translate("chatMessage.playersRoleRevealed",
                 playerNames[message.player],
@@ -793,6 +799,15 @@ export type ChatMessageVariant = {
 } | 
 // System
 {
+    type: "debugVisitedBy",
+    visitedBy: PlayerIndex[]
+} | {
+    type: "debugVisited",
+    visited: PlayerIndex[]
+} | {
+    type: "debugMisc",
+    text: string
+} | {
     type: "roleAssignment", 
     role: Role
 } | {
