@@ -111,7 +111,7 @@ impl RoleStateImpl for Ojo {
                 AbilitySelection::new_role_option(None),
                 actor_ref.ability_deactivated_from_death(game) || 
                 Detained::is_detained(game, actor_ref) ||
-                game.attack_convert_abilities_enabled(),
+                !game.attack_convert_abilities_enabled(),
                 Some(PhaseType::Obituary),
                 false,
                 vec_set![actor_ref],
