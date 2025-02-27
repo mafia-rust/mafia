@@ -38,6 +38,6 @@ impl RoleStateImpl for Vampire {
         )
     }
     fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
-        VampireTracker::before_role_switch(game, actor_ref, Role::Vampire, Role::Wildcard);
+        VampireTracker::before_initial_role_creation(game, actor_ref);
     }
 }

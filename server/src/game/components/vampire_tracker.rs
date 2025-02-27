@@ -1,3 +1,5 @@
+use rand::seq::SliceRandom;
+
 use crate::{game::{attack_power::AttackPower, chat::ChatMessageVariant, event::on_fast_forward::OnFastForward, game_conclusion::GameConclusion, grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller, GravePhase}, phase::{PhaseState, PhaseType}, player::PlayerReference, role::{Priority, Role}, win_condition::WinCondition, Game}, vec_set::VecSet};
 
 
@@ -93,19 +95,25 @@ impl VampireTracker {
         }
     }  
 
+    pub fn before_initial_role_creation(game: &mut Game, player: PlayerReference){
+        let vampire_tracker = Self::vampire_data_mut(game);
+        vampire_tracker.max_converts.increment();
+        Self::track(game, player);
+    }
+
     pub fn on_night_priority(game: &mut Game, priority: Priority){
         
         if priority != Priority::Kill {return};
         if game.day_number() == 1 {return;}
         let vampire_tracker = game.vampire_tracker.clone();      
-        let mut new_vamp_que = vampire_tracker.new_vampires.clone();
+        let mut new_vampires = vampire_tracker.new_vampires.clone();
         let converts = vampire_tracker.max_converts.value() as usize;
 
         for i in 0..vampire_tracker.vampires.len() {
             let vamp = vampire_tracker.vampires[i];
             let Some(visit) = vamp.untagged_night_visits_cloned(game).first().copied() else {continue};
-            if converts <= i  {
-                let target_ref = visit.target;
+            let target_ref = visit.target;
+            if converts > i  {
                 if target_ref.night_defense(game).can_block(AttackPower::ArmorPiercing) || target_ref.role(&game) == Role::Vampire {
                     vamp.push_night_message(game, ChatMessageVariant::YourConvertFailed);
                     continue
@@ -115,9 +123,9 @@ impl VampireTracker {
                     WinCondition::new_loyalist(GameConclusion::Fiends)
                 );
                 target_ref.set_night_convert_role_to(game, Some(Role::Vampire.new_state(game)));
-                new_vamp_que.insert(target_ref);
-            } else if game.day_number() != 1 && !vampire_tracker.new_vampires.contains(&visit.target) {
-                visit.target.try_night_kill_single_attacker(
+                new_vampires.insert(target_ref);
+            } else if !new_vampires.contains(&target_ref) {
+                target_ref.try_night_kill_single_attacker(
                     vamp,
                     game,
                     GraveKiller::Role(Role::Vampire),
@@ -127,7 +135,7 @@ impl VampireTracker {
             }
         }
 
-        game.vampire_tracker.new_vampires = game.vampire_tracker.new_vampires.union(&new_vamp_que);
+        game.vampire_tracker.new_vampires = game.vampire_tracker.new_vampires.union(&new_vampires);
     }
 
     pub fn on_phase_start(game: &mut Game, phase: PhaseState){
@@ -136,19 +144,21 @@ impl VampireTracker {
                 let vampire_tracker = game.vampire_tracker.clone();
                 let mut new_vampires: Vec<PlayerReference> = vampire_tracker.new_vampires.into();
                 new_vampires.retain(|vamp| vamp.alive(game) && !vampire_tracker.vampires.clone().contains(vamp));
-
+                new_vampires.shuffle(&mut rand::rng());
                 let new_vamp_message = ChatMessageVariant::NewVampires { vampires: new_vampires.clone() };
                 
                 for vamp in new_vampires.clone() {
                     Self::track(game, vamp);
                 }
 
-                for vamp in vampire_tracker.vampires.clone() {
+                let vampires = game.vampire_tracker.vampires.clone();
+
+                for vamp in vampires.clone() {
                     vamp.add_private_chat_message(game, new_vamp_message.clone());
                 }
 
                 for vamp in new_vampires {
-                    let mut other_vampires = vampire_tracker.vampires.clone();
+                    let mut other_vampires = vampires.clone();
                     other_vampires.retain(|other_vamp| vamp != *other_vamp);
                     vamp.add_private_chat_message(game, ChatMessageVariant::CurrentVampires { 
                         vampires: other_vampires
@@ -156,7 +166,7 @@ impl VampireTracker {
                 }
 
                 game.vampire_tracker = VampireTracker {
-                    vampires: vampire_tracker.vampires,
+                    vampires: vampires,
                     new_vampires: VecSet::with_capacity(vampire_tracker.max_converts.value() as usize),
                     max_converts: vampire_tracker.max_converts,
                     vamp_on_trial: None,
