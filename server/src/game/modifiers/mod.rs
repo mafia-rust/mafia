@@ -11,6 +11,7 @@ pub mod no_whispers;
 pub mod no_night_chat;
 pub mod no_chat;
 pub mod scheduled_nominations;
+pub mod player_drops;
 
 use dead_can_chat::DeadCanChat;
 use no_abstaining::NoAbstaining;
@@ -20,6 +21,7 @@ use no_night_chat::NoNightChat;
 use no_trial::NoTrialPhases;
 use no_whispers::NoWhispers;
 use obscured_graves::ObscuredGraves;
+use player_drops::PlayerDrops;
 use random_love_links::RandomLoveLinks;
 use no_death_cause::NoDeathCause;
 use role_set_grave_killers::RoleSetGraveKillers;
@@ -61,6 +63,7 @@ pub enum ModifierState{
     NoNightChat(NoNightChat),
     NoChat(NoChat),
     ScheduledNominations(ScheduledNominations),
+    PlayerDrops(PlayerDrops),
 }
 #[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Debug, Hash)]
 #[serde(rename_all = "camelCase")]
@@ -78,6 +81,7 @@ pub enum ModifierType{
     NoNightChat,
     NoChat,
     ScheduledNominations,
+    PlayerDrops,
 }
 impl ModifierType{
     pub fn default_state(&self)->ModifierState{
@@ -95,6 +99,7 @@ impl ModifierType{
             Self::NoNightChat => ModifierState::NoNightChat(NoNightChat::default()),
             Self::NoChat => ModifierState::NoChat(NoChat::default()),
             Self::ScheduledNominations => ModifierState::ScheduledNominations(ScheduledNominations::default()),
+            Self::PlayerDrops => ModifierState::PlayerDrops(PlayerDrops::default())
         }
     }
 }
@@ -114,6 +119,7 @@ impl From<&ModifierState> for ModifierType{
             ModifierState::NoNightChat(_) => Self::NoNightChat,
             ModifierState::NoChat(_) => Self::NoChat,
             ModifierState::ScheduledNominations(_) => Self::ScheduledNominations,
+            ModifierState::PlayerDrops(_) => Self::PlayerDrops,
         }
     }
 }
