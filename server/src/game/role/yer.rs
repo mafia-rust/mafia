@@ -20,7 +20,7 @@ pub struct Yer{
 }
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Shielded;
 
 impl RoleStateImpl for Yer {
     type ClientRoleState = Yer;
@@ -50,14 +50,14 @@ impl RoleStateImpl for Yer {
                     actor_ref,
                     game,
                     GraveKiller::Role(Role::Yer),
-                    AttackPower::ArmorPiercing,
+                    AttackPower::ShieldPiercing,
                     true
                 );
             }else{
                 if priority != Priority::Convert {return}
                 if self.star_passes_remaining <= 0 {return}
 
-                if target_ref.night_defense(game).can_block(AttackPower::ArmorPiercing) {
+                if target_ref.night_defense(game).can_block(AttackPower::ShieldPiercing) {
                     actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
                     return
                 }

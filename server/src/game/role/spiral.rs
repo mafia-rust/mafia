@@ -22,7 +22,7 @@ pub struct ClientRoleState;
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Shielded;
 
 impl RoleStateImpl for Spiral {
     type ClientRoleState = ClientRoleState;
@@ -39,7 +39,7 @@ impl RoleStateImpl for Spiral {
                     actor_ref,
                     game,
                     GraveKiller::Role(Role::Spiral),
-                    AttackPower::ArmorPiercing,
+                    AttackPower::ShieldPiercing,
                     true
                 );
                 Spiral::spiral_visitors(game, &mut new_spiraling, actor_ref, target_ref);
@@ -86,7 +86,7 @@ impl Spiral {
             return;
         }
         Poison::poison_player(game, target_ref, 
-            AttackPower::ArmorPiercing, 
+            AttackPower::ShieldPiercing, 
             GraveKiller::Role(Role::Spiral), 
             attackers, 
             true, 

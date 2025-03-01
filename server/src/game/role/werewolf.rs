@@ -26,7 +26,7 @@ pub struct ClientRoleState;
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Shielded;
 
 impl RoleStateImpl for Werewolf {
     type ClientRoleState = ClientRoleState;
@@ -47,9 +47,9 @@ impl RoleStateImpl for Werewolf {
                             target_ref.all_night_visitors_cloned(game).into_iter().filter(|p|actor_ref!=*p)
                             .collect::<Vec<PlayerReference>>()
                         {
-                            other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
+                            other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ShieldPiercing, true);
                         }
-                        target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
+                        target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ShieldPiercing, true);
                     },
 
 
@@ -60,7 +60,7 @@ impl RoleStateImpl for Werewolf {
                             actor_ref.all_night_visitors_cloned(game).into_iter().filter(|p|actor_ref!=*p)
                             .collect::<Vec<PlayerReference>>()
                         {
-                            other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ArmorPiercing, true);
+                            other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Werewolf), AttackPower::ShieldPiercing, true);
                         }
                         
                     },
