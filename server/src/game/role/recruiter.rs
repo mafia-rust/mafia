@@ -2,6 +2,7 @@ use rand::seq::IteratorRandom;
 use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
+use crate::game::chat::ChatMessageVariant;
 use crate::game::components::mafia_recruits::MafiaRecruits;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::grave::GraveKiller;
@@ -14,8 +15,7 @@ use crate::game::Game;
 use crate::vec_set;
 use super::godfather::Godfather;
 use super::{
-    common_role, AbilitySelection, AvailableAbilitySelection, ControllerID,
-    ControllerParametersMap, IntegerSelection, Priority, Role, RoleStateImpl
+    common_role, AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, IntegerSelection, Priority, Role, RoleState, RoleStateImpl
 };
 
 use vec1::vec1;
@@ -63,12 +63,29 @@ impl RoleStateImpl for Recruiter {
             Priority::Kill => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 if let Some(visit) = actor_visits.first(){
-                    if Recruiter::night_ability(self.clone(), game, actor_ref, visit.target) {
-                        if choose_attack {
-                            actor_ref.set_role_state(game, Recruiter{recruits_remaining: self.recruits_remaining.saturating_add(1), ..self})
-                        }else{
-                            actor_ref.set_role_state(game, Recruiter{recruits_remaining: self.recruits_remaining.saturating_sub(1), ..self});
+                    let target_ref = visit.target;
+
+                    let choose_attack = if let Some(IntegerSelection(x)) = game.saved_controllers.get_controller_current_selection_integer(
+                        ControllerID::role(actor_ref, Role::Recruiter, 1)
+                    ){x==0}else{true};
+            
+                    if choose_attack {
+                        target_ref.try_night_kill_single_attacker(
+                            actor_ref,
+                            game,
+                            GraveKiller::RoleSet(RoleSet::Mafia),
+                            AttackPower::Basic,
+                            false
+                        );
+                    } else {
+                        if AttackPower::Basic.can_pierce(target_ref.defense(game)){
+                            MafiaRecruits::recruit(game, target_ref);
+                        } else {
+                            actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
                         }
+                        actor_ref.set_role_state(game, RoleState::Recruiter(Recruiter{
+                            recruits_remaining: self.recruits_remaining.saturating_sub(1)
+                        }));
                     }
                 }
             },
@@ -154,31 +171,5 @@ impl RoleStateImpl for Recruiter {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
-    }
-}
-
-impl Recruiter {
-    /// returns true if target_ref is killed when trying to kill
-    /// returns true if target_ref is recruited when trying to recruit
-    pub fn night_ability(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        let choose_attack = if let Some(IntegerSelection(x)) = game.saved_controllers.get_controller_current_selection_integer(
-            ControllerID::role(actor_ref, Role::Recruiter, 1)
-        ){x==0}else{true};
-
-        if choose_attack {
-            target_ref.try_night_kill_single_attacker(
-                actor_ref,
-                game,
-                GraveKiller::RoleSet(RoleSet::Mafia),
-                AttackPower::Basic,
-                false
-            )
-        }else{
-            if AttackPower::Basic.can_pierce(target_ref.defense(game)) {
-                MafiaRecruits::recruit(game, target_ref)
-            }else{
-                false
-            }
-        }
     }
 }
