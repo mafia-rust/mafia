@@ -260,6 +260,10 @@
     "role.armorsmith.name:var.0": "Armorsmiths",
     "role.armorsmith.name:var.1": "Armoursmith",
     "role.armorsmith.name:var.2": "Armoursmiths",
+    "role.armorsmith.name:var.3": "Armor",
+    "role.armorsmith.name:var.4": "Armour",
+    "role.armorsmith.name:var.5": "Armored",
+    "role.armorsmith.name:var.6": "Armoured",
     "role.armorsmith.roleDataText": "\\0 uses remaining.",
     "controllerId.role.armorsmith.0.name": "Open Shop",
 
@@ -1519,7 +1523,7 @@
     "wiki.article.role.armorsmith.reminder": "At night, open shop to protect yourself and all visitors to you. Give one visitor secret temporary armor.",
     "wiki.article.role.armorsmith.guide": "- At night, visit a player to open shop, up to X times per game (X = Total players ÷ 5 (round up))\n    - You and all visitors to you are protected for the night\n    - One random visitor to you is given temporary armor, prioritizing the player you visited, they have protected defense at night until they are attacked, when they are attacked, armor breaks.",
     "wiki.article.role.armorsmith.abilities":"* Visit anyone to open shop\n    * You and all visitors to you are protected\n    * One random visitor to you is given temporary armor, prioritizing the player you visited, which gives them protected defense at night until they are attacked, in which case it breaks",
-    "wiki.article.role.armorsmith.attributes":"* You have only X uses of your ability (X = Total players ÷ 5 (round up))\n* Players with temporary armor are told when their armor breaks, but not when they gain it\n* You are not told who has temporary armor\n* Possession can force you to open shop, and blocking can stop you from opening shop",
+    "wiki.article.role.armorsmith.attributes":"* You have only X uses of your ability (X = Total players ÷ 5 (round up))\n* Players with temporary armor are told when their armor breaks, but not when they gain it\n* You are not told who has temporary armor\n*Players with temporary armor have protection level defense\n* Possession can force you to open shop, and blocking can stop you from opening shop",
     "wiki.article.role.armorsmith.extra":"* Your target is told they are protected if they get attacked\n* You can't choose yourself\n- If you somehow visit yourself, you give yourself the temporary armor",
 
     "wiki.article.role.steward.reminder": "At night, select up to 2 roles to protect everyone with those roles.",
