@@ -1752,6 +1752,12 @@
     "wiki.article.role.chronokaiser.attributes":"* You have no night time ability\n* Everyone is told how much you sped up the game each day",
     "wiki.article.role.chronokaiser.extra":"* Roleblocking doesn't effect your ability\n If there are multiple Chronokaisers, the message is sent twice during discussion, and the game is sped up twice",
 
+    "wiki.article.role.mimic.reminder": "Each night select a player, you swap roles with the player but the win conditions stays the same. You win if a player with the mimic role dies.",
+    "wiki.article.role.mimic.guide": "- Each night select a player, you swap roles with the player but your win condition stays the same.\n- You win if a player with the mimic role dies. ",
+    "wiki.article.role.mimic.attributes":"Your convert/role swap has the strength of a basic attack. You can use it night 1.",
+    "wiki.article.role.mimic.abilities":"* Each night select a player, you swap roles with the player but the conditions stays the same.",
+    "wiki.article.role.mimic.extra": "If the player's win condition depends on their role, your convert fails. You can use it night 1.",
+
     "wiki.article.role.martyr.reminder": "If you die, you win, and everyone else dies too, you can shoot yourself.",
     "wiki.article.role.martyr.guide": "If you die, you win, and everyone commits suicide in an attempt to follow you to the afterlife\n - You are revealed to the entire town\n - You can choose to shoot yourself X times (X = Total players ÷ 5 (round up))\n - You can't shoot night 1",
     "wiki.article.role.martyr.abilities":"* Visit yourself to attack yourself and spend one bullet\n* You start with X bullets (X = Total players ÷ 5 (round up))\n* When you die, everyone else commits suicide and you win.",

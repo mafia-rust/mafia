@@ -8,6 +8,7 @@ use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 
+use crate::game::win_condition::WinCondition;
 use crate::game::Game;
 use super::RoleState;
 use super::{Priority, Role, RoleStateImpl};
@@ -30,7 +31,7 @@ impl RoleStateImpl for Mimic {
 
             let target_ref = visit.target;
             
-            if target_ref.defense(game).can_block(AttackPower::ProtectionPiercing) {
+            if target_ref.defense(game).can_block(AttackPower::Basic) || *target_ref.win_condition(game) == WinCondition::RoleStateWon {
                 actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
                 return;
             }
@@ -56,7 +57,8 @@ impl RoleStateImpl for Mimic {
             false
         )
     }
-    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
+    fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
         MimicWinCon::new_mimic(game, actor_ref);
+        actor_ref.set_win_condition_no_convert_call(game, WinCondition::Mimic(actor_ref));
     }
 }
