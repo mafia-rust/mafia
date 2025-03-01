@@ -11,6 +11,7 @@ pub mod no_whispers;
 pub mod no_night_chat;
 pub mod no_chat;
 pub mod scheduled_nominations;
+pub mod skip_day_1;
 
 use dead_can_chat::DeadCanChat;
 use no_abstaining::NoAbstaining;
@@ -26,6 +27,7 @@ use role_set_grave_killers::RoleSetGraveKillers;
 use scheduled_nominations::ScheduledNominations;
 
 use serde::{Deserialize, Serialize};
+use skip_day_1::SkipDay1;
 use two_thirds_majority::TwoThirdsMajority;
 
 use crate::{vec_map::VecMap, vec_set::VecSet};
@@ -50,6 +52,7 @@ pub trait ModifierTrait where Self: Clone + Sized{
 pub enum ModifierState{
     ObscuredGraves(ObscuredGraves),
     RandomLoveLinks(RandomLoveLinks),
+    SkipDay1(SkipDay1),
     DeadCanChat(DeadCanChat),
     NoAbstaining(NoAbstaining),
     NoDeathCause(NoDeathCause),
@@ -67,6 +70,7 @@ pub enum ModifierState{
 pub enum ModifierType{
     ObscuredGraves,
     RandomLoveLinks,
+    SkipDay1,
     DeadCanChat,
     NoAbstaining,
     NoDeathCause,
@@ -84,6 +88,7 @@ impl ModifierType{
         match self{
             Self::ObscuredGraves => ModifierState::ObscuredGraves(ObscuredGraves::default()),
             Self::RandomLoveLinks => ModifierState::RandomLoveLinks(RandomLoveLinks::default()),
+            Self::SkipDay1 => ModifierState::SkipDay1(SkipDay1::default()),
             Self::DeadCanChat => ModifierState::DeadCanChat(DeadCanChat::default()),
             Self::NoAbstaining => ModifierState::NoAbstaining(NoAbstaining::default()),
             Self::NoDeathCause => ModifierState::NoDeathCause(NoDeathCause::default()),
@@ -103,6 +108,7 @@ impl From<&ModifierState> for ModifierType{
         match state {
             ModifierState::ObscuredGraves(_) => Self::ObscuredGraves,
             ModifierState::RandomLoveLinks(_) => Self::RandomLoveLinks,
+            ModifierState::SkipDay1(_) => Self::SkipDay1,
             ModifierState::DeadCanChat(_) => Self::DeadCanChat,
             ModifierState::NoAbstaining(_) => Self::NoAbstaining,
             ModifierState::NoDeathCause(_) => Self::NoDeathCause,
