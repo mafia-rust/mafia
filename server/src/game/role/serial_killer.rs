@@ -14,7 +14,7 @@ use crate::game::ability_input::*;
 pub struct SerialKiller;
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Shielded;
 
 impl RoleStateImpl for SerialKiller {
     type ClientRoleState = SerialKiller;
@@ -32,7 +32,7 @@ impl RoleStateImpl for SerialKiller {
                 actor_ref,
                 game,
                 GraveKiller::Role(Role::SerialKiller),
-                AttackPower::ArmorPiercing,
+                AttackPower::ShieldPiercing,
                 true
             );
         }

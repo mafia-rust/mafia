@@ -108,7 +108,7 @@ impl RoleStateImpl for Engineer {
                             visit.target == target &&
                             visit.visitor != actor_ref
                         {
-                            visit.visitor.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Engineer), AttackPower::ArmorPiercing, false);
+                            visit.visitor.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Engineer), AttackPower::ShieldPiercing, false);
                         }
                     }
                 }

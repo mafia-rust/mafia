@@ -32,7 +32,7 @@ pub enum KrampusAbility {
 }
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Shielded;
 
 impl RoleStateImpl for Krampus {
     type ClientRoleState = ();

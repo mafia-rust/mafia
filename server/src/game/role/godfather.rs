@@ -16,7 +16,7 @@ pub struct Godfather;
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Shielded;
 
 impl RoleStateImpl for Godfather {
     type ClientRoleState = Godfather;
