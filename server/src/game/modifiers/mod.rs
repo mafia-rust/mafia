@@ -11,8 +11,10 @@ pub mod no_whispers;
 pub mod no_night_chat;
 pub mod no_chat;
 pub mod scheduled_nominations;
+pub mod hidden_whispers;
 
 use dead_can_chat::DeadCanChat;
+use hidden_whispers::HiddenWhispers;
 use no_abstaining::NoAbstaining;
 use no_chat::NoChat;
 use no_due_process::AutoGuilty;
@@ -60,6 +62,7 @@ pub enum ModifierState{
     NoWhispers(NoWhispers),
     NoNightChat(NoNightChat),
     NoChat(NoChat),
+    HiddenWhispers(HiddenWhispers),
     ScheduledNominations(ScheduledNominations),
 }
 #[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Debug, Hash)]
@@ -77,6 +80,7 @@ pub enum ModifierType{
     NoWhispers,
     NoNightChat,
     NoChat,
+    HiddenWhispers,
     ScheduledNominations,
 }
 impl ModifierType{
@@ -94,6 +98,7 @@ impl ModifierType{
             Self::NoWhispers => ModifierState::NoWhispers(NoWhispers::default()),
             Self::NoNightChat => ModifierState::NoNightChat(NoNightChat::default()),
             Self::NoChat => ModifierState::NoChat(NoChat::default()),
+            Self::HiddenWhispers => ModifierState::HiddenWhispers(HiddenWhispers::default()),
             Self::ScheduledNominations => ModifierState::ScheduledNominations(ScheduledNominations::default()),
         }
     }
@@ -113,6 +118,7 @@ impl From<&ModifierState> for ModifierType{
             ModifierState::NoWhispers(_) => Self::NoWhispers,
             ModifierState::NoNightChat(_) => Self::NoNightChat,
             ModifierState::NoChat(_) => Self::NoChat,
+            ModifierState::HiddenWhispers(_) => Self::HiddenWhispers,
             ModifierState::ScheduledNominations(_) => Self::ScheduledNominations,
         }
     }
