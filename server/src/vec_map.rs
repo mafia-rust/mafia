@@ -21,6 +21,9 @@ impl<K, V> VecMap<K, V> where K: Eq {
         }
         out
     }
+    pub fn with_capacity(capacity: usize) -> Self{
+        VecMap { vec: Vec::with_capacity(capacity) }
+    }
 
     /// returns the old value if the key already exists
     pub fn insert(&mut self, key: K, value: V) -> Option<(K, V)>{
