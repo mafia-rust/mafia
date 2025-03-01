@@ -150,6 +150,20 @@ impl Grave{
             }
         }
     }
+
+    pub fn from_sun(game: &Game, player_ref: PlayerReference) -> Grave {
+        Grave {
+            player: player_ref,
+            died_phase: GravePhase::from_phase_type(game.current_phase().phase()), 
+            day_number: game.phase_machine.day_number,
+            information: GraveInformation::Normal { 
+                role: player_ref.role(game), 
+                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Sun]), 
+                death_notes: vec![],
+                will: player_ref.will(game).clone(), 
+            }
+        }
+    }
 }
 
 #[derive(Clone, Copy)]

@@ -1,6 +1,6 @@
 use rand::seq::SliceRandom;
 
-use crate::{game::{attack_power::AttackPower, chat::ChatMessageVariant, event::on_fast_forward::OnFastForward, game_conclusion::GameConclusion, grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller, GravePhase}, phase::{PhaseState, PhaseType}, player::PlayerReference, role::{Priority, Role}, win_condition::WinCondition, Game}, vec_set::VecSet};
+use crate::{game::{attack_power::AttackPower, chat::ChatMessageVariant, event::on_fast_forward::OnFastForward, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, phase::{PhaseState, PhaseType}, player::PlayerReference, role::{Priority, Role}, win_condition::WinCondition, Game}, vec_set::VecSet};
 
 
 #[derive(Clone, Debug, Default)]
@@ -207,17 +207,7 @@ impl VampireTracker {
         let Some(vamp_on_trial) = game.vampire_tracker.vamp_on_trial else {return};
 
         vamp_on_trial.set_alive(game, false);
-        vamp_on_trial.die(game, Grave{
-            day_number: game.day_number(),
-            died_phase: GravePhase::Day,
-            information: GraveInformation::Normal { 
-                role: Role::Vampire, 
-                will: vamp_on_trial.will(game).to_owned(), 
-                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Sun]), 
-                death_notes: vec![],
-            },
-            player: vamp_on_trial,
-        });
+        vamp_on_trial.die(game, Grave::from_sun(game, vamp_on_trial));
 
         game.vampire_tracker.vamp_on_trial = None;
     }
