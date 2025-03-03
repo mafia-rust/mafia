@@ -1487,16 +1487,7 @@ fn red_herrings_framer() {
         
         let mut found_philosopher_red_herring = false;
 
-        let philosopher_red_herring_is_tester = 
-        if let RoleState::Philosopher(Philosopher {red_herring}) = philosopher.player_ref().role_state(&*game) {
-            if let Some(red_herring) = red_herring {
-                *red_herring == tester.player_ref()
-            } else {
-                panic!()
-            }
-        } else {
-            panic!();
-        };
+        let philosopher_red_herring_is_tester = Confused::is_red_herring(&*game, philosopher.player_ref(), tester.player_ref());
 
         for index in 0u8..4 {
             let target;
