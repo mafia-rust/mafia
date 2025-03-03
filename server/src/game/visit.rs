@@ -32,7 +32,7 @@ impl Visit {
 #[derive(Default, Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 pub enum VisitTag{
     #[default]
-    Role,
+    Role,   //The order matters
     SyndicateGunItem,
     SyndicateBackupAttack
 }
