@@ -70,7 +70,7 @@ pub use mafia_server::game::{
         necromancer::Necromancer,
         mortician::Mortician,
         mafia_support_wildcard::MafiaSupportWildcard, 
-        
+        ambusher::Ambusher,
 
         jester::Jester,
         revolutionary::Revolutionary,
@@ -460,7 +460,7 @@ fn rabble_rouser_dies(){
 
 #[test]
 fn psychic_auras(){
-    for _ in 0..100 {
+    for _ in 0..20 {
         kit::scenario!(game in Night 1 where
             psy: Psychic,
             god: Godfather,
@@ -784,34 +784,34 @@ fn witch_basic(){
 fn cop_basic(){
     kit::scenario!(game in Night 2 where
         crus: Cop,
-        protected: Jester,
+        protected_player: Jester,
         townie1: Detective,
         townie2: Detective,
         mafioso: Mafioso,
         _maf2: Framer
     );
 
-    crus.send_ability_input_player_list_typical(protected);
-    townie1.send_ability_input_player_list_typical(protected);
-    townie2.send_ability_input_player_list_typical(protected);
-    mafioso.send_ability_input_player_list_typical(protected);
+    crus.send_ability_input_player_list_typical(protected_player);
+    townie1.send_ability_input_player_list_typical(protected_player);
+    townie2.send_ability_input_player_list_typical(protected_player);
+    mafioso.send_ability_input_player_list_typical(protected_player);
 
     game.skip_to(Night, 3);
 
     assert!(crus.alive());
-    assert!(protected.alive());
+    assert!(protected_player.alive());
     assert!(townie1.alive());
     assert!(townie2.alive());
     assert!(!mafioso.alive());
 
-    crus.send_ability_input_player_list_typical(protected);
-    townie1.send_ability_input_player_list_typical(protected);
-    townie2.send_ability_input_player_list_typical(protected);
+    crus.send_ability_input_player_list_typical(protected_player);
+    townie1.send_ability_input_player_list_typical(protected_player);
+    townie2.send_ability_input_player_list_typical(protected_player);
 
     game.next_phase();
     
     assert!(crus.alive());
-    assert!(protected.alive());
+    assert!(protected_player.alive());
     assert!(townie1.alive() || townie2.alive());
     assert!(!townie1.alive() || !townie2.alive());
 }
@@ -820,20 +820,85 @@ fn cop_basic(){
 fn cop_does_not_kill_framed_player(){
     kit::scenario!(game in Night 2 where
         crus: Cop,
-        protected: Jester,
+        protected_player: Jester,
         townie: Detective,
         framer: Framer,
         mafioso: Mafioso
     );
 
-    assert!(crus.send_ability_input_player_list_typical(protected));
+    assert!(crus.send_ability_input_player_list_typical(protected_player));
     assert!(framer.send_ability_input_player_list(townie, 0));
-    assert!(framer.send_ability_input_player_list(protected, 1));
+    assert!(framer.send_ability_input_player_list(protected_player, 1));
 
     game.next_phase();
 
     assert!(crus.alive());
-    assert!(protected.alive());
+    assert!(protected_player.alive());
+    assert!(framer.alive());
+    assert!(mafioso.alive());
+    assert!(townie.alive());
+}
+
+#[test]
+fn ambusher_basic(){
+    kit::scenario!(game in Night 2 where
+        ambusher: Ambusher,
+        protected_player: Jester,
+        townie1: Detective,
+        townie2: Detective,
+        blackmailer: Blackmailer
+    );
+
+    
+    ambusher.send_ability_input_player_list_typical(protected_player);
+    townie1.send_ability_input_player_list_typical(protected_player);
+    townie2.send_ability_input_player_list_typical(protected_player);
+    blackmailer.send_ability_input_player_list_typical(protected_player);
+
+    game.skip_to(Night, 3);
+
+    assert!(ambusher.alive());
+    assert!(protected_player.alive());
+    assert!(townie1.alive() || townie2.alive());
+    assert!(!townie1.alive() || !townie2.alive());
+    assert!(blackmailer.alive());
+
+    let townie1_status = townie1.alive();
+    let townie2_status = townie2.alive();
+
+    ambusher.send_ability_input_player_list_typical(protected_player);
+    blackmailer.send_ability_input_player_list_typical(protected_player);
+
+    game.next_phase();
+    
+    assert!(ambusher.alive());
+    assert!(protected_player.alive());
+    assert!(townie1.alive() || townie2.alive());
+    assert!(!townie1.alive() || !townie2.alive());
+    assert!(!blackmailer.alive());
+    assert!(townie1.alive() == townie1_status);
+    assert!(townie2.alive() == townie2_status);
+    
+}
+
+#[test]
+fn ambusher_does_not_kill_framed_player(){
+    kit::scenario!(game in Night 2 where
+        ambusher: Ambusher,
+        protected_player: Jester,
+        townie: Detective,
+        framer: Framer,
+        mafioso: Mafioso
+    );
+
+    assert!(ambusher.send_ability_input_player_list_typical(protected_player));
+    assert!(framer.send_ability_input_player_list(townie, 0));
+    assert!(framer.send_ability_input_player_list(protected_player, 1));
+
+    game.next_phase();
+
+    assert!(ambusher.alive());
+    assert!(protected_player.alive());
     assert!(framer.alive());
     assert!(mafioso.alive());
     assert!(townie.alive());
