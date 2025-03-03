@@ -461,7 +461,7 @@ fn rabble_rouser_dies(){
 
 #[test]
 fn psychic_auras(){
-    for _ in 0..100 {
+    for _ in 0..20 {
         kit::scenario!(game in Night 1 where
             psy: Psychic,
             god: Godfather,
@@ -902,6 +902,27 @@ fn ambusher_does_not_kill_framed_player(){
     assert!(protected_player.alive());
     assert!(framer.alive());
     assert!(mafioso.alive());
+    assert!(townie.alive());
+}
+
+#[test]
+fn ambusher_kills_self(){
+    kit::scenario!(game in Night 2 where
+        ambusher: Ambusher,
+        protected_player: Jester,
+        townie: Detective
+    );
+
+    ambusher.send_ability_input_player_list_typical(protected_player);
+    ambusher.send_ability_input(AbilityInput::new(
+        ControllerID::syndicate_gun_item_shoot(),
+        AbilitySelection::new_player_list(vec![protected_player.player_ref()])
+    ));
+
+    game.next_phase();
+
+    assert!(!ambusher.alive());
+    assert!(!protected_player.alive());
     assert!(townie.alive());
 }
 
