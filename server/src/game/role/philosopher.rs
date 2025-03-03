@@ -10,12 +10,10 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_set;
 
-use super::{common_role, AvailableAbilitySelection, ControllerID, ControllerParametersMap, Priority, Role, RoleState, RoleStateImpl};
+use super::{common_role, AvailableAbilitySelection, ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
-pub struct Philosopher{
-    pub red_herring: Option<PlayerReference>,
-}
+pub struct Philosopher;
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -36,10 +34,8 @@ impl RoleStateImpl for Philosopher {
         if first_visit.target == second_visit.target {
             false
         } else if Confused::is_confused(game, actor_ref) {
-            self.red_herring.is_some_and(|red_herring| 
-                (red_herring == first_visit.target || first_visit.target.night_framed(game)) ^
-                (red_herring == second_visit.target || second_visit.target.night_framed(game))
-            )
+            (first_visit.target.night_framed(game) || Confused::is_red_herring(game, actor_ref, first_visit.target)) ^
+            (second_visit.target.night_framed(game) || Confused::is_red_herring(game, actor_ref, second_visit.target))
         } else {
             Philosopher::players_are_enemies(game, first_visit.target, second_visit.target)
         };
@@ -81,12 +77,6 @@ impl RoleStateImpl for Philosopher {
             ControllerID::role(actor_ref, Role::Philosopher, 0),
             false
         )
-    }
-
-    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
-        actor_ref.set_role_state(game, RoleState::Philosopher(Philosopher{
-            red_herring: PlayerReference::generate_red_herring(actor_ref, game)
-        }));
     }
 }
 impl Philosopher{

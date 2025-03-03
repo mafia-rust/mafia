@@ -56,7 +56,7 @@ impl Confused {
         let data = ConfusionData::new_perm(game, player);
         game.confused_mut().0.insert_unsized(player, data);
     }
-
+    
     pub fn add_player_temporary(game: &mut Game, player: PlayerReference, duration: u8){
         let data = ConfusionData::new_temp(game, player, duration);
         game.confused_mut().0.keep_greater_unsized(player, data);
@@ -80,6 +80,13 @@ impl Confused {
                 );
             },
             _=>{}
+        }
+    }
+
+    pub fn is_red_herring(game: &Game, confused_player: PlayerReference, target: PlayerReference) -> bool{
+        return match game.confused().0.get(&confused_player) {
+            None => false,
+            Some(data) => data.red_herrings.contains(&target),
         }
     }
 }

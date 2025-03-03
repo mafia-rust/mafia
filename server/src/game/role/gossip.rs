@@ -8,16 +8,14 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 
 use super::detective::Detective;
-use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleState, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 #[derive(Clone, Debug, Serialize, Default)]
-pub struct Gossip {
-    red_herring: Option<PlayerReference>,
-}
+pub struct Gossip;
 
 impl RoleStateImpl for Gossip {
     type ClientRoleState = Gossip;
@@ -54,12 +52,6 @@ impl RoleStateImpl for Gossip {
             false
         )
     }
-
-    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
-        actor_ref.set_role_state(game, RoleState::Gossip(Gossip{
-            red_herring: PlayerReference::generate_red_herring(actor_ref, game)
-        }));
-    }
 }
 
 impl Gossip {
@@ -71,11 +63,12 @@ impl Gossip {
             .iter()
             .map(|v|v.target.clone())
             .any(
-                |targets_target: PlayerReference|   
+                |target_of_target: PlayerReference|   
                     if Confused::is_confused(game, actor_ref) {
-                        targets_target.night_framed(game) || self.red_herring.is_some_and(|red_herring| red_herring == targets_target)
+                        target_of_target.night_framed(game) || 
+                        Confused::is_red_herring(game, actor_ref, target_of_target)
                     } else {
-                        Detective::player_is_suspicious(game, targets_target)
+                        Detective::player_is_suspicious(game, target_of_target)
                     }
             )
     }
