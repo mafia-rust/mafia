@@ -115,11 +115,7 @@ impl<T: Eq> PartialOrd for VecSet<T> {
 
 impl<T: Eq> Ord for VecSet<T> {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        match (self.len() as isize) - (other.len() as isize) {
-            1.. => std::cmp::Ordering::Greater,
-            0 => std::cmp::Ordering::Equal,
-            ..=-1 => std::cmp::Ordering::Less
-        }
+        self.len().cmp(&other.len())
     }
 }
 

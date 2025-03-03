@@ -1,6 +1,6 @@
 use std::{collections::VecDeque, time::{Duration, Instant}};
 
-use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
+use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game, RejectStartReason}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
 
 use super::{lobby_client::{LobbyClient, LobbyClientID, LobbyClientType, Ready}, name_validation::{self, sanitize_server_name}, Lobby, LobbyState};
 
@@ -222,14 +222,24 @@ impl Lobby {
                                 connection: lobby_client.connection,
                                 name: name.clone(),
                             });
-                            next_player_index += 1;
+                            if let Some(new_player_index) = next_player_index.checked_add(1) {
+                                next_player_index = new_player_index;
+                            } else {
+                                send.send(ToClientPacket::RejectStart { reason: RejectStartReason::TooManyClients });
+                                return;
+                            }
                         },
                         LobbyClientType::Spectator => {
                             game_spectator_params.push(SpectatorInitializeParameters{
                                 host: lobby_client.is_host(),
                                 connection: lobby_client.connection,
                             });
-                            next_spectator_index += 1;
+                            if let Some(new_spectator_index) = next_spectator_index.checked_add(1) {
+                                next_spectator_index = new_spectator_index;
+                            } else {
+                                send.send(ToClientPacket::RejectStart { reason: RejectStartReason::TooManyClients });
+                                return;
+                            }
                         }
                     }
                 }

@@ -167,7 +167,7 @@ impl ToClientPacket {
             if player_ref.alive(game){
                 if let Some(player_voted) = player_ref.chosen_vote(game){
                     if let Some(num_votes) = voted_for_player.get_mut(&player_voted.index()){
-                        *num_votes+=1;
+                        *num_votes = num_votes.saturating_add(1);
                     }else{
                         voted_for_player.insert(player_voted.index(), 1);
                     }

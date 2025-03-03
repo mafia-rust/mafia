@@ -126,6 +126,7 @@ pub struct Game {
 #[derive(Serialize, Debug, Clone, Copy)]
 #[serde(rename_all = "camelCase")]
 pub enum RejectStartReason {
+    TooManyClients,
     GameEndsInstantly,
     RoleListTooSmall,
     RoleListCannotCreateRoles,
@@ -151,7 +152,7 @@ impl Game {
         }
         
 
-        let mut role_generation_tries = 0;
+        let mut role_generation_tries = 0u8;
         const MAX_ROLE_GENERATION_TRIES: u8 = 250;
         let (mut game, assignments) = loop {
 
@@ -165,7 +166,7 @@ impl Game {
             let random_outline_assignments = match role_list.create_random_role_assignments(&settings.enabled_roles){
                 Some(roles) => {roles},
                 None => {
-                    role_generation_tries += 1;
+                    role_generation_tries = role_generation_tries.saturating_add(1);
                     continue;
                 }
             };
@@ -346,28 +347,28 @@ impl Game {
 
     /// Returns a tuple containing the number of guilty votes and the number of innocent votes
     pub fn count_verdict_votes(&self, player_on_trial: PlayerReference)->(u8,u8){
-        let mut guilty = 0;
-        let mut innocent = 0;
+        let mut guilty = 0u8;
+        let mut innocent = 0u8;
         for player_ref in PlayerReference::all_players(self){
             if !player_ref.alive(self) || player_ref == player_on_trial {
                 continue;
             }
-            let mut voting_power = 1;
+            let mut voting_power = 1u8;
             if let RoleState::Mayor(mayor) = player_ref.role_state(self).clone(){
                 if mayor.revealed {
-                    voting_power += 2;
+                    voting_power = voting_power.saturating_add(2);
                 }
             }
             if let RoleState::Politician(politician) = player_ref.role_state(self).clone(){
                 if politician.revealed {
-                    voting_power += 2;
+                    voting_power = voting_power.saturating_add(2);
                 }
             }
             
             match player_ref.verdict(self) {
-                Verdict::Innocent => innocent += voting_power,
+                Verdict::Innocent => innocent = innocent.saturating_add(voting_power),
                 Verdict::Abstain => {},
-                Verdict::Guilty => guilty += voting_power,
+                Verdict::Guilty => guilty = guilty.saturating_add(voting_power),
             }
         }
         (guilty, innocent)
@@ -395,7 +396,7 @@ impl Game {
             }
 
             if let Some(num_votes) = voted_player_votes.get_mut(&voted_player) {
-                *num_votes += voting_power;
+                *num_votes = num_votes.saturating_add(voting_power);
             } else {
                 voted_player_votes.insert(voted_player, voting_power);
             }
@@ -459,9 +460,19 @@ impl Game {
             .count() as u8;
 
         if Modifiers::modifier_is_enabled(self, ModifierType::TwoThirdsMajority) {
-            (eligible_voters + 1) * 2 / 3
+            // equivalent to x - (x - (x + 1)/3)/2 to prevent overflow issues
+            eligible_voters
+            .saturating_sub(
+                eligible_voters
+                .saturating_sub(
+                    eligible_voters
+                    .saturating_add(1)
+                    .saturating_div(3)
+                )
+                .saturating_div(2)
+            )
         } else {
-            1 + eligible_voters / 2
+            eligible_voters.saturating_div(2).saturating_add(1)
         }
     }
 
@@ -545,6 +556,7 @@ impl Game {
 
     pub fn add_spectator(&mut self, params: SpectatorInitializeParameters) -> SpectatorIndex {
         self.spectators.push(Spectator::new(params));
+        #[expect(clippy::arithmetic_side_effects)]
         let spectator_pointer = SpectatorPointer::new(self.spectators.len() as SpectatorIndex - 1);
 
         spectator_pointer.send_join_game_data(self);

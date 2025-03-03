@@ -147,6 +147,7 @@
     "notification.rejectStart.roleListTooSmall": "Role list is too small",
     "notification.rejectStart.roleListCannotCreateRoles": "Role list cannot create roles",
     "notification.rejectStart.zeroTimeGame": "Game has no time",
+    "notification.rejectStart.tooManyClients": "A game can have a maximum of 256 players and 256 spectators.",
     
     "notification.clipboard.write.success": "Copied!",
     "notification.clipboard.write.failure": "Failed to copy",

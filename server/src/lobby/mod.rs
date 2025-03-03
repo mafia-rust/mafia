@@ -98,11 +98,13 @@ impl Lobby {
                 let name = name_validation::sanitize_name("".to_string(), clients);
                 
                 let mut new_player = LobbyClient::new(name.clone(), send.clone(), clients.is_empty());
-                let lobby_client_id: LobbyClientID =
-                    clients
+                let Some(lobby_client_id) =
+                    (clients
                         .iter()
                         .map(|(i,_)|*i)
-                        .fold(0u32, u32::max) as LobbyClientID + 1u32;
+                        .fold(0u32, u32::max) as LobbyClientID).checked_add(1) else {
+                            return Err(RejectJoinReason::RoomFull)
+                        };
 
                 //if there are no hosts, make this player the host
                 if !clients.iter().any(|p|p.1.is_host()) {
@@ -127,11 +129,13 @@ impl Lobby {
 
                 let is_host = !clients.iter().any(|p|p.1.host);
                 
-                let lobby_client_id: LobbyClientID = 
-                    clients
+                let Some(lobby_client_id) = 
+                    (clients
                         .iter()
                         .map(|(i,_)|*i)
-                        .fold(0u32, u32::max) as LobbyClientID + 1u32;
+                        .fold(0u32, u32::max) as LobbyClientID).checked_add(1) else {
+                            return Err(RejectJoinReason::RoomFull);
+                        };
 
                 send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id: lobby_client_id, spectator: true});
 
@@ -153,7 +157,6 @@ impl Lobby {
                 Ok(lobby_client_id)
             }
             LobbyState::Closed => {
-                send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::RoomDoesntExist});
                 Err(RejectJoinReason::RoomDoesntExist)
             }
         }
