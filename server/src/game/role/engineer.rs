@@ -121,6 +121,7 @@ impl RoleStateImpl for Engineer {
                     if target.night_attacked(game){
                         actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
                         target.push_night_message(game, ChatMessageVariant::YouWereProtected);
+                        should_dismantle = true;
                     }
 
                     for visitor in target.all_night_visitors_cloned(game) {
@@ -135,7 +136,9 @@ impl RoleStateImpl for Engineer {
                     }
                 }
 
-                actor_ref.push_night_message(game, ChatMessageVariant::TrapStateEndOfNight { state: self.trap.state() });
+                if let RoleState::Engineer(Engineer { trap }) = actor_ref.role_state(game){
+                    actor_ref.push_night_message(game, ChatMessageVariant::TrapStateEndOfNight { state: trap.state() });
+                }
             }
             _ => {}
         }
