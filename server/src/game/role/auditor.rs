@@ -115,18 +115,18 @@ impl Auditor{
     pub fn get_result(game: &Game, chosen_outline: RoleOutlineReference) -> AuditorResult {
         let (role, _) = chosen_outline.deref_as_role_and_player_originally_generated(game);
         
-        let outline = chosen_outline.deref(game);
+        let outline = chosen_outline.without_unavailable(game);
 
-        if outline.get_role_assignments().len() == 1 || outline.get_role_assignments().len() == 2 {
+        if outline.0.len() == 1 || outline.0.len() == 2 {
             AuditorResult::One{role}
         }else{
-            let fake_role = outline
-                .get_role_assignments()
-                .into_iter()
+            let fake_role = outline.0
+                .iter()
                 .map(|data| data.role)
-                .filter(|x|game.settings.enabled_roles.contains(x))
-                .filter(|x|*x != role)
-                .collect::<Vec<Role>>()
+                .filter(|x|
+                    *x != role &&
+                    game.settings.enabled_roles.contains(x)
+                ).collect::<Vec<Role>>()
                 .choose(&mut rand::rng())
                 .cloned();
 
@@ -141,12 +141,11 @@ impl Auditor{
     }
     //panics if chosen_outline is not found
     pub fn get_confused_result(game: &Game, chosen_outline: RoleOutlineReference) -> AuditorResult {        
-        let outline = chosen_outline.deref(game);
+        let outline = chosen_outline.without_unavailable(game);
 
-        if outline.get_role_assignments().len() == 1 || outline.get_role_assignments().len() == 2 {
-            let fake_role = outline
-                .get_role_assignments()
-                .into_iter()
+        if outline.0.len() == 1 || outline.0.len() == 2 {
+            let fake_role = outline.0
+                .iter()
                 .map(|assignment| assignment.role)
                 .filter(|x|game.settings.enabled_roles.contains(x))
                 .collect::<Vec<Role>>()
@@ -158,10 +157,9 @@ impl Auditor{
             }else{
                 unreachable!("Auditor role outline is empty")
             }
-        }else{
-            let mut fake_roles = outline
-                .get_role_assignments()
-                .into_iter()
+        } else {
+            let mut fake_roles = outline.0
+                .iter()
                 .map(|assignment| assignment.role)
                 .filter(|x|game.settings.enabled_roles.contains(x))
                 .collect::<Vec<Role>>();

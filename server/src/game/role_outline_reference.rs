@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{role_list::RoleOutline, Game};
+use super::{role_list::{RoleOutline, RoleOutlineGenData}, Game};
 
 
 pub type OutlineIndex = u8;
@@ -25,6 +25,9 @@ impl RoleOutlineReference{
 
     pub fn deref<'a>(&self, game: &'a Game)->&'a RoleOutline{
         &game.settings.role_list.0[self.index as usize]
+    }
+    pub fn without_unavailable<'a>(&self, game: &'a Game)->&'a RoleOutlineGenData {
+        &game.role_assignment_gen.0[self.index as usize]
     }
     pub fn deref_as_role_and_player_originally_generated<'a>(&self, game: &'a Game)->OriginallyGeneratedRoleAndPlayer{
         game.assignments

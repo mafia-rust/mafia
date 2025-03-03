@@ -29,9 +29,11 @@ impl RoleList {
         let mut taken_roles = Vec::new();
         let mut outline_gens = Vec::new();
         for outline in self.0.iter() {
-            let Ok(gen) = outline.generator(enabled_roles) else {return Err(())};
+            let gen = outline.generator(enabled_roles);
+            if gen.0.is_empty() {return Err(())};
             outline_gens.push(gen.clone());
-            let RoleOutlineGenData::Mono(option) = gen else { continue};
+            if gen.0.len() > 1 {continue}
+            let Some(option) = gen.0.first() else {return Err(())};
             if option.role.role_limit_1() {
                 taken_roles.push(option.role);
             }
@@ -40,21 +42,13 @@ impl RoleList {
         loop {
             for i in 0..outline_gens.len() {
                 let outline = &mut outline_gens[i];
-                match outline {
-                    RoleOutlineGenData::Mono(option) => {
-                        //the old ones are guaranteed to contain it if it came from a poly
-                        if new_taken_roles.contains(&option.role) {return Err(())}
-                    },
-                    RoleOutlineGenData::Poly(options) => {
-                        options.retain(|option|!taken_roles.contains(&option.role));
-                        if options.len() == 0 {return Err(())}
-                        if options.len() == 1 {
-                            if options[0].role.role_limit_1() {
-                                taken_roles.push(options[0].role);
-                            }
-                            outline_gens[i] = RoleOutlineGenData::Mono(options[0].clone());
-                        }
-                    },
+                if outline.0.len() == 1 {continue;}
+                outline.0.retain(|option|!taken_roles.contains(&option.role));
+                if outline.0.len() == 0 {return Err(())}
+                if outline.0.len() == 1 {
+                    if outline.0[0].role.role_limit_1() {
+                        taken_roles.push(outline.0[0].role);
+                    }
                 }
             }
 
@@ -63,24 +57,26 @@ impl RoleList {
             taken_roles = new_taken_roles.clone();
             new_taken_roles.clear();
         }
-
+        //using new taken roles because its guaranteed to be empty and it doesn't need to reallocate
         for outline in outline_gens.iter() {
-            let Some(role) = outline.role_if_mono() else {continue};
-            if !role.role_limit_1() {continue}
-            if new_taken_roles.contains(&role) {return Err(())};
-            new_taken_roles.push(role);
+            if outline.0.len() > 1 {continue;}
+            let Some(role_assignment) = outline.0.first() else {return Err(())};
+            if !role_assignment.role.role_limit_1() {continue}
+            if new_taken_roles.contains(&role_assignment.role) {return Err(())};
+            new_taken_roles.push(role_assignment.role);
         }
         
         return Ok(RoleAssignmentGen(outline_gens));
     }
 }
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct RoleAssignmentGen(Vec<RoleOutlineGenData>);
+pub struct RoleAssignmentGen(pub Vec<RoleOutlineGenData>);
 impl RoleAssignmentGen {
     pub fn create_random_role_assignments(&self) -> Result<Vec<RoleAssignment>, ()> {
         let mut generated_data = Vec::<RoleAssignment>::new();
+        let rng = &mut rand::rng();
         for entry in self.0.iter(){
-            if let Ok(assignment) = entry.get_random_role_assignment(){
+            if let Some(assignment) = entry.0.choose(rng){
                 let role = assignment.role;
                 match role.maximum_count() {
                     Some(max) => {
@@ -104,7 +100,7 @@ impl RoleAssignmentGen {
                     }
                     _=>(),
                 }
-                generated_data.push(assignment);
+                generated_data.push(assignment.clone());
             } else {
                 return Err(());
             }
@@ -113,7 +109,7 @@ impl RoleAssignmentGen {
     }
     ///Returns true if the role is guaranteed to exist with the default win condition and insider group
     pub fn specifies_role_with_defaults(&self, role: Role) -> bool {
-        self.0.contains(&RoleOutlineGenData::Mono(RoleAssignment::new_from_default(role)))  
+        self.0.contains(&RoleOutlineGenData(vec![RoleAssignment::new_from_default(role)]))
     }
 }
 
@@ -223,7 +219,7 @@ impl RoleOutline{
     /// - Allows for more fail-fast cases when trying to start game with a role list that cannot generate
     /// - Makes the probability of picking any given combination of roles more uniform
     /// - Reduces the probability of failing even when there is a valid way to generate roles from the role list
-    pub fn generator(&self, enabled_roles:&VecSet<Role>) -> Result<RoleOutlineGenData, ()> {
+    pub fn generator(&self, enabled_roles:&VecSet<Role>) -> RoleOutlineGenData {
         let options = self.simplified().options;
         let mut new_options = VecSet::with_capacity(options.len());
         for option in options {
@@ -231,44 +227,12 @@ impl RoleOutline{
             new_options = new_options.union(&opt_gen);
         };
         let new_options: Vec<RoleAssignment> = new_options.into_iter().collect();
-        if new_options.len() > 1 {
-            return Ok(RoleOutlineGenData::Poly(new_options));
-        }
-        match new_options.first().cloned() {
-            Some(option) => Ok(RoleOutlineGenData::Mono(option)),
-            None => Err(()),
-        }
+        RoleOutlineGenData(new_options)
     }
 }
-// Set up this way rather than just Vec<RoleAssignment> because which enum is it is information.
-// If something is mono and the role has role limit 1, then it must have been the outline to take that role rather than 
-// a poly that retain has been called on
+//Don't be stupid, make sure the game doesn't start if there isn't anything in the outline
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub enum RoleOutlineGenData {
-    //not Vec1 because of reasons
-    Poly(Vec<RoleAssignment>),
-    Mono(RoleAssignment),
-}
-
-impl RoleOutlineGenData {
-    pub fn role_if_mono(&self) -> Option<Role> {
-        match self {
-            Self::Mono(role_assignment) => return Some(role_assignment.role),
-            _=> None,
-        }
-    }
-    pub fn get_random_role_assignment(&self) -> Result<RoleAssignment, ()> {
-        match self {
-            Self::Mono(role_assignment) => {Ok(role_assignment.clone())}
-            Self::Poly(options) => {
-                match options.choose(&mut rand::rng()).cloned() {
-                    Some(option) => Ok(option),
-                    _=> Err(())
-                }
-            }
-        }
-    }
-}
+pub struct RoleOutlineGenData(pub Vec<RoleAssignment>);
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, PartialOrd, Ord)]
 #[serde(untagged, rename_all = "camelCase")]
@@ -527,14 +491,14 @@ impl RoleSet{
                 vec![
                     Role::Godfather, Role::Counterfeiter,
                     Role::Impostor, Role::Recruiter,
-                    Role::Mafioso
+                    Role::Mafioso, Role::MafiaKillingWildcard
                 ],
             RoleSet::MafiaSupport => 
                 vec![
                     Role::Blackmailer, Role::Informant, Role::Hypnotist, Role::Consort,
                     Role::Forger, Role::Framer, Role::Mortician, Role::Disguiser,
                     Role::MafiaWitch, Role::Necromancer, Role::Cupid, Role::Reeducator,
-                    Role::Ambusher,
+                    Role::Ambusher, Role::MafiaSupportWildcard
                 ],
             RoleSet::Minions => 
                 vec![
@@ -544,6 +508,7 @@ impl RoleSet{
                 vec![
                     Role::Jester, Role::Revolutionary, Role::Politician, Role::Doomsayer,
                     Role::Martyr, Role::Chronokaiser, Role::SantaClaus, Role::Krampus,
+                    Role::Wildcard, Role::TrueWildcard,
                 ],
             RoleSet::Fiends =>
                 vec![
