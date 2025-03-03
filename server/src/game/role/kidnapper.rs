@@ -52,7 +52,13 @@ impl RoleStateImpl for Kidnapper {
     
                     let target_ref = visit.target;
                     if Detained::is_detained(game, target_ref){
-                        target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Jailor), AttackPower::ProtectionPiercing, false);
+                        target_ref.try_night_kill_single_attacker(
+                            actor_ref, 
+                            game, 
+                            GraveKiller::Role(Role::Jailor), 
+                            AttackPower::ProtectionPiercing, 
+                            false
+                        );
         
                         self.executions_remaining = self.executions_remaining.saturating_sub(1);
                         actor_ref.set_role_state(game, self);
@@ -99,9 +105,10 @@ impl RoleStateImpl for Kidnapper {
         )
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
-        let Some(AbilitySelection::Boolean {selection: BooleanSelection(true)}) = game.saved_controllers.get_controller_current_selection(ControllerID::role(actor_ref, Role::Kidnapper, 1)) else {return Vec::new()};
+        let Some(AbilitySelection::Boolean {selection: BooleanSelection(true)}) = game.saved_controllers.get_controller_current_selection(
+            ControllerID::role(actor_ref, Role::Kidnapper, 1)) else {return Vec::new()};
         let Some(target) = self.jailed_target_ref else {return Vec::new()};
-        vec![Visit::new_none(actor_ref, target, true)]
+        return vec![Visit::new_none(actor_ref, target, true)]
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, 
