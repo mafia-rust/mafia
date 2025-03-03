@@ -113,44 +113,48 @@ impl RoleStateImpl for Recruiter {
         Godfather::pass_role_state_down(game, actor_ref, dead_player_ref, self);
     }
     fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
-
-        if game.settings.role_list.0.contains(&RoleOutline::new_exact(Role::Recruiter)) {
+        
+        if game.role_assignment_gen.specifies_role_with_defaults(Role::Reeducator) {
             return;
         }
 
         //get random mafia player and turn them info a random town role
 
         let random_mafia_player = PlayerReference::all_players(game)
-            .filter(|p|RoleSet::Mafia.get_roles().contains(&p.role(game)))
-            .filter(|p|*p!=actor_ref)
+            .filter(|p|
+                *p!=actor_ref &&
+                p.role(game)!=Role::Reeducator &&
+                !RoleSet::MafiaKilling.get_roles().contains(&p.role(game)) &&
+                RoleSet::Mafia.get_roles().contains(&p.role(game))
+            )
             .choose(&mut rand::rng());
 
-        if let Some(random_mafia_player) = random_mafia_player {
+        let Some(random_mafia_player) = random_mafia_player else {return};
 
-            let random_town_role = RoleOutline {options: vec1![RoleOutlineOption {
-                win_condition: Default::default(), 
-                insider_groups: Default::default(), 
-                roles: RoleOutlineOptionRoles::RoleSet{ role_set: RoleSet::TownCommon } 
-            }]}.get_random_role_assignments(
-                &game.settings.enabled_roles,
-                PlayerReference::all_players(game).map(|p|p.role(game)).collect::<Vec<_>>().as_slice()
-            ).map(|assignment| assignment.role);
+        let random_town_role = RoleOutline { 
+            options: vec1![RoleOutlineOption {
+                win_condition: Default::default(),
+                insider_groups: Default::default(),
+                roles: RoleOutlineOptionRoles::RoleSet { role_set: RoleSet::TownCommon }
+            }]
+        }.get_random_role_assignment(
+            &game.settings.enabled_roles,
+            PlayerReference::all_players(game).map(|p|p.role(game)).collect::<Vec<_>>().as_slice()
+        ).map(|assignment| assignment.role);
 
-            if let Some(random_town_role) = random_town_role {
-                //special case here. I don't want to use set_role because it alerts the player their role changed
-                //NOTE: It will still send a packet to the player that their role state updated,
-                //so it might be deducable that there is a recruiter
-                InsiderGroupID::Mafia.remove_player_from_revealed_group(game, random_mafia_player);
-                random_mafia_player.set_win_condition(game, crate::game::win_condition::WinCondition::GameConclusionReached{
-                    win_if_any: vec![GameConclusion::Town].into_iter().collect()
-                });
-                random_mafia_player.set_role_state(game, random_town_role.new_state(game));
-                
-            }
+        if let Some(random_town_role) = random_town_role {
+            //special case here. I don't want to use set_role because it alerts the player their role changed
+            //NOTE: It will still send a packet to the player that their role state updated,
+            //so it might be deducible that there is a recruiter
+            InsiderGroupID::Mafia.remove_player_from_revealed_group(game, random_mafia_player);
+            random_mafia_player.set_win_condition(game, crate::game::win_condition::WinCondition::GameConclusionReached{
+                win_if_any: vec![GameConclusion::Town].into_iter().collect()
+            });
+            random_mafia_player.set_role_state(game, random_town_role.new_state(game));
+            
         }
-        
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+    fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()

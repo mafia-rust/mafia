@@ -425,4 +425,7 @@ impl Role{
     pub fn has_suspicious_aura(&self, _game: &Game)->bool{
         false
     }
+    pub fn role_limit_1(&self)->bool{
+        return self.maximum_count().is_some_and(|max|max==1);
+    }
 }

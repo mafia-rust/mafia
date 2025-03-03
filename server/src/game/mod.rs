@@ -43,6 +43,7 @@ use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
 use rand::seq::SliceRandom;
 use role_list::RoleAssignment;
+use role_list::RoleAssignmentGen;
 use role_list::RoleOutlineOptionInsiderGroups;
 use role_list::RoleOutlineOptionWinCondition;
 use role_outline_reference::RoleOutlineReference;
@@ -85,7 +86,7 @@ use self::verdict::Verdict;
 
 pub struct Game {
     pub settings : Settings,
-
+    pub role_assignment_gen: RoleAssignmentGen,
     pub spectators: Vec<Spectator>,
     pub spectator_chat_messages: Vec<ChatMessageVariant>,
 
@@ -129,6 +130,7 @@ pub enum RejectStartReason {
     GameEndsInstantly,
     RoleListTooSmall,
     RoleListCannotCreateRoles,
+    RoleAssignmentsMustExceedLimits,
     ZeroTimeGame,
     PlayerDisconnected
 }
@@ -145,11 +147,16 @@ pub enum GameOverReason {
 
 impl Game {
     pub fn new(settings: Settings, players: Vec<PlayerInitializeParameters>, spectators: Vec<SpectatorInitializeParameters>) -> Result<Self, RejectStartReason>{
-        //check settings are not completly off the rails
+
         if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
         }
         
+        //Simplifying the role list makes the role generation quicker, and successful more often
+        //let role_list_generator = settings.role_list.generator();
+        let Ok(role_assignment_gen) = settings.role_list.generator(&settings.enabled_roles) else {
+            return Err(RejectStartReason::RoleAssignmentsMustExceedLimits);
+        };
 
         let mut role_generation_tries = 0;
         const MAX_ROLE_GENERATION_TRIES: u8 = 250;
@@ -159,17 +166,13 @@ impl Game {
                 return Err(RejectStartReason::RoleListCannotCreateRoles);
             }
 
-            let settings = settings.clone();
-            let role_list = settings.role_list.clone();
-
-            let random_outline_assignments = match role_list.create_random_role_assignments(&settings.enabled_roles){
-                Some(roles) => {roles},
-                None => {
+            let random_outline_assignments = match role_assignment_gen.clone().create_random_role_assignments(){
+                Ok(roles) => {roles},
+                Err(_) => {
                     role_generation_tries += 1;
                     continue;
                 }
             };
-
             let assignments = Self::assign_players_to_assignments(random_outline_assignments);            
 
 
@@ -217,7 +220,8 @@ impl Game {
                 graves: Vec::new(),
                 phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
                 modifiers: Modifiers::default_from_settings(settings.enabled_modifiers.clone()),
-                settings,
+                settings: settings.clone(),
+                role_assignment_gen: role_assignment_gen.clone(),
 
                 saved_controllers: SavedControllersMap::default(),
                 night_visits: NightVisits::default(),
@@ -588,17 +592,21 @@ pub mod test {
     
     pub fn mock_game(settings: Settings, number_of_players: usize) -> Result<Game, RejectStartReason> {
 
-        //check settings are not completly off the rails
+        //check settings are not completely off the rails
         if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
         }
 
         let settings = settings.clone();
-        let role_list = settings.role_list.clone();
+        // let role_list = settings.role_list.clone();
         
-        let random_outline_assignments = match role_list.create_random_role_assignments(&settings.enabled_roles){
-            Some(roles) => {roles},
-            None => {return Err(RejectStartReason::RoleListCannotCreateRoles);}
+        let Ok(role_assignment_gen) = settings.role_list.generator(&settings.enabled_roles) else {
+            return Err(RejectStartReason::RoleAssignmentsMustExceedLimits);
+        };
+
+        let random_outline_assignments = match role_assignment_gen.create_random_role_assignments(){
+            Ok(roles) => {roles},
+            Err(_) => {return Err(RejectStartReason::RoleListCannotCreateRoles);}
         };
 
         let assignments = Game::assign_players_to_assignments(random_outline_assignments);
@@ -629,6 +637,7 @@ pub mod test {
             graves: Vec::new(),
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
+            role_assignment_gen: role_assignment_gen,
 
             saved_controllers: SavedControllersMap::default(),
             night_visits: NightVisits::default(),
