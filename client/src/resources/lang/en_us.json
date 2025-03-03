@@ -1505,7 +1505,7 @@
     "wiki.article.role.cop.reminder": "At night, select a player to protect. You attack a random visitor of the player you protect.",
     "wiki.article.role.cop.guide": "- At night, select a player to protect\n - You attack one random other player who visits your target\n- You can't use your ability night 1\n\n You should try to protect people you think are townies who will be attacked. You could easily accidentally kill town loyalists, so you should try to make sure no other town loyalists visit the player you protect.",
     "wiki.article.role.cop.abilities":"* Visit a player to protect for the night\n* Attack a random visitor of the player you protect",
-    "wiki.article.role.cop.attributes":"* Your attack prioritizes a random evil player over town royalists\n* You can't attack yourself",
+    "wiki.article.role.cop.attributes":"* Your attack prioritizes non town loyalists\n* You can attack yourself if you somehow visit yourself with another ability.",
     "wiki.article.role.cop.extra":"* You can't select yourself\n* You are told if your target is attacked\n* Your target is only be told that they are protected if they are attacked\n* Your attack is indirect and basic\n* You can't attack dead players",
 
     "wiki.article.role.bouncer.reminder": "At night, select a player to ward. All visitors to the warded player are wardblocked.",
@@ -1719,8 +1719,8 @@
     "wiki.article.role.ambusher.reminder": "At night, choose a player to attack a random visitor to them",
     "wiki.article.role.ambusher.guide": "- At night, choose a player to camp\n    - You attack a random visitor to the player you chose to camp\n        - The attack prioritizes town loyalists\n   - All other visitors to your target are told you are the ambusher\n    - You can't use your ability night 1\n    - You only visit the player you camp",
     "wiki.article.role.ambusher.abilities":"- At night, choose a player to camp\n    - You attack a random visitor to the player you chose to camp\n        - The attack prioritizes town loyalists\n   - All other visitors to your target are told you are the ambusher\n    - You can't use your ability night 1\n    - You only visit the player you camp",
-    "wiki.article.role.ambusher.attributes":"- The ambushers attack has an attack power of basic\n- You can't ever attack yourself",
-    "wiki.article.role.ambusher.extra":"- You can't select yourself or other syndicate members",
+    "wiki.article.role.ambusher.attributes":"- The ambushers attack has an attack power of basic\n- You can attack yourself if you somehow visit yourself with another ability (for exmaple: syndicate gun)\n - If another player visits your target twice, they could potentially get the message saying they caught an ambusher twice, or get attacked and get the message once.",
+    "wiki.article.role.ambusher.extra":"- You can't select yourself or other syndicate members\n - You don't visit the player you attack",
 
     "wiki.article.role.cupid.reminder": "At night, choose two players to love link to each other",
     "wiki.article.role.cupid.guide": "- At night, select 2 players to love link\n* The players are told they are love linked, if one of them dies, the other dies of a broken heart",
