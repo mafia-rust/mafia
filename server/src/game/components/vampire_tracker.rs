@@ -7,7 +7,7 @@ use crate::{game::{attack_power::AttackPower, chat::ChatMessageVariant, event::o
 
 pub struct VampireTracker {
     //not using VecSet here because the order matters for tracking who has been a vampire the longest
-    vampires: Vec<PlayerReference>,
+    vampires: Vec<(PlayerReference, u8)>,
     new_vampires: VecSet<PlayerReference>,
     max_converts: MaxConverts,
     vamp_on_trial: Option<PlayerReference>,
@@ -50,18 +50,17 @@ impl VampireTracker {
     
     /// Returns true if the player was not already tracked, and false otherwise
     pub fn track(game: &mut Game, player: PlayerReference) -> bool{
+        if Self::is_tracked(game, player) {return false}
+        let day = game.day_number();
         let vampire_tracker = Self::vampire_data_mut(game);
-        if vampire_tracker.vampires.contains(&player) {
-            return false;
-        }
-        vampire_tracker.vampires.push(player);
+        vampire_tracker.vampires.push((player, day));
         return true;
     }
 
     /// Returns true if the player is tracked
     pub fn is_tracked(game: &Game, player: PlayerReference) -> bool {
         let vampire_tracker = Self::vampire_data(game);
-        return vampire_tracker.vampires.contains(&player);
+        return vampire_tracker.vampires.iter().any(|v|v.0==player);
     }
     
     pub fn max_converts(game: &Game) -> u8 {
@@ -73,7 +72,7 @@ impl VampireTracker {
     pub fn remove(game: &mut Game, player: PlayerReference) -> bool {
         let vampire_tracker = Self::vampire_data_mut(game);
         vampire_tracker.new_vampires.remove(&player);
-        let Some(index) = vampire_tracker.vampires.iter().position(|other|*other==player) else {return false};
+        let Some(index) = vampire_tracker.vampires.iter().position(|other|other.0==player) else {return false};
         vampire_tracker.vampires.remove(index);
         return true;
     }
@@ -110,7 +109,7 @@ impl VampireTracker {
         let converts = vampire_tracker.max_converts.value() as usize;
 
         for i in 0..vampire_tracker.vampires.len() {
-            let vamp = vampire_tracker.vampires[i];
+            let vamp = vampire_tracker.vampires[i].0;
             let Some(visit) = vamp.untagged_night_visits_cloned(game).first().copied() else {continue};
             let target_ref = visit.target;
             if converts > i  {
@@ -143,7 +142,7 @@ impl VampireTracker {
             PhaseState::Obituary => {
                 let vampire_tracker = game.vampire_tracker.clone();
                 let mut new_vampires: Vec<PlayerReference> = vampire_tracker.new_vampires.into();
-                new_vampires.retain(|vamp| vamp.alive(game) && !vampire_tracker.vampires.clone().contains(vamp));
+                new_vampires.retain(|vamp| vamp.alive(game) && !Self::is_tracked(game, *vamp));
 
                 if new_vampires.is_empty() {
                     game.vampire_tracker = VampireTracker {
@@ -167,10 +166,10 @@ impl VampireTracker {
                 for vamp in vampires.clone() {
                     let mut other_vampires = vampires.clone();
                     other_vampires.retain(|other_vamp| vamp != *other_vamp);
-                    vamp.add_private_chat_message(game, ChatMessageVariant::CurrentVampires { 
-                        vampires: other_vampires
+                    vamp.0.add_private_chat_message(game, ChatMessageVariant::CurrentVampires { 
+                        vampires: other_vampires.iter().map(|x|x.0).collect()
                     });
-                    vamp.add_private_chat_message(game, new_vamp_message.clone());
+                    vamp.0.add_private_chat_message(game, new_vamp_message.clone());
                 }
 
                 game.vampire_tracker = VampireTracker {
@@ -184,6 +183,9 @@ impl VampireTracker {
             PhaseState::Judgement{player_on_trial,..} => {
                 if game.day_number() <= 2 {return;}
                 if player_on_trial.role(game) != Role::Vampire {return}
+                let Some(data) = game.vampire_tracker.vampires.iter().find(|x|x.0==player_on_trial) else {return};
+                if data.1 == game.day_number() {return}
+                
                 OnFastForward::invoke(game);
                 game.vampire_tracker.vamp_on_trial = Some(player_on_trial);
             }
@@ -192,7 +194,7 @@ impl VampireTracker {
                 if game.day_number() == 1 {return;}
                 let vampire_tracker = game.vampire_tracker.clone();
                 for i in 0..vampire_tracker.vampires.len().min(vampire_tracker.max_converts.value() as usize){
-                    let vamp = vampire_tracker.vampires[i];
+                    let vamp = vampire_tracker.vampires[i].0;
                     vamp.add_private_chat_message(game, ChatMessageVariant::VampireCanConvert);
                 }
             }
