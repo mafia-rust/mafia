@@ -56,11 +56,29 @@ impl AvailableAbilitySelection{
     pub fn new_role_option(selection: VecSet<Option<Role>>)->Self{
         Self::RoleOption{selection: AvailableRoleOptionSelection(selection)}
     }
+    pub fn role_option_enabled(game: &Game, allow_none: bool)->Self{
+        let mut selection: VecSet<Option<Role>> = game.settings.enabled_roles.iter().map(|role|Some(*role)).collect();
+        if allow_none {
+            selection.insert(None);
+        }
+        Self::new_role_option(
+            selection
+        )
+    }
     pub fn new_two_role_option(first: VecSet<Option<Role>>, can_choose_duplicates: bool)->Self{
         Self::TwoRoleOption{selection: AvailableTwoRoleOptionSelection{
             available_roles: first,
             can_choose_duplicates
         }}
+    }
+    pub fn two_role_option_enabled(game: &Game, allow_none: bool)->Self{
+        let mut selection: VecSet<Option<Role>> = game.settings.enabled_roles.iter().map(|role|Some(*role)).collect();
+        if allow_none {
+            selection.insert(None);
+        }
+        Self::new_role_option(
+            selection
+        )
     }
     pub fn new_two_role_outline_option(available_outlines: VecSet<Option<RoleOutlineReference>>)->Self{
         Self::TwoRoleOutlineOption{selection: AvailableTwoRoleOutlineOptionSelection(available_outlines)}

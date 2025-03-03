@@ -111,11 +111,7 @@ impl RoleStateImpl for Yer {
             ControllerParametersMap::new_controller_fast(
                 game,
                 ControllerID::role(actor_ref, Role::Yer, 2),
-                AvailableAbilitySelection::new_role_option(
-                    Role::values().into_iter()
-                        .map(|role| Some(role))
-                        .collect()
-                ),
+                AvailableAbilitySelection::role_option_enabled(game, false),
                 AbilitySelection::new_role_option(Some(Role::Yer)),
                 self.star_passes_remaining <= 0 ||
                 actor_ref.ability_deactivated_from_death(game) ||
