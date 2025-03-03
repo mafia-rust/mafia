@@ -114,7 +114,7 @@ impl RoleStateImpl for Recruiter {
     }
     fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
         
-        if game.role_assignment_gen.specifies_role_with_defaults(Role::Reeducator) {
+        if game.role_assignment_gen.specifies_role_with_defaults(Role::Recruiter) {
             return;
         }
 
@@ -123,7 +123,7 @@ impl RoleStateImpl for Recruiter {
         let random_mafia_player = PlayerReference::all_players(game)
             .filter(|p|
                 *p!=actor_ref &&
-                p.role(game)!=Role::Reeducator &&
+                p.role(game)!=Role::Recruiter &&
                 !RoleSet::MafiaKilling.get_roles().contains(&p.role(game)) &&
                 RoleSet::Mafia.get_roles().contains(&p.role(game))
             )
