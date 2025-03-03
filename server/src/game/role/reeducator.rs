@@ -155,14 +155,19 @@ impl RoleStateImpl for Reeducator {
             )
         )
     }
+    // Unlike other conversion roles, its visit isn't tagged as an attack.
+    // I assume this is because if the target is syndicate then it is converted without an attack
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
-        common_role::convert_controller_selection_to_visits(game, actor_ref, ControllerID::role(actor_ref, Role::Reeducator, 0), false)
+        common_role::convert_controller_selection_to_visits(
+            game, 
+            actor_ref, 
+            ControllerID::role(actor_ref, Role::Reeducator, 0),
+            false
+        )
     }
     fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
 
-        if game.role_assignment_gen.specifies_role_with_defaults(Role::Reeducator) {
-            return;
-        }
+        if game.role_assignment_gen.specifies_role_with_defaults(Role::Reeducator) {return}
 
         //get random mafia player and turn them info a random town role
 
@@ -197,7 +202,6 @@ impl RoleStateImpl for Reeducator {
                 win_if_any: vec![GameConclusion::Town].into_iter().collect()
             });
             random_mafia_player.set_role_state(game, random_town_role.new_state(game));
-            
         }
         
     }
