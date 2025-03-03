@@ -1,7 +1,7 @@
 import React, { JSXElementConstructor, ReactElement, useRef, createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import "../index.css";
 import "./anchor.css";
-import translate, { switchLanguage } from "../game/lang";
+import { switchLanguage } from "../game/lang";
 import GlobalMenu from "./GlobalMenu";
 import { loadSettingsParsed } from "../game/localStorage";
 import LoadingScreen from "./LoadingScreen";
@@ -12,7 +12,6 @@ import { ChatMessage } from "../components/ChatMessage";
 import WikiCoverCard from "../components/WikiCoverCard";
 import WikiArticle from "../components/WikiArticle";
 import AudioController from "./AudioController";
-import { Helmet } from "react-helmet";
 
 const MobileContext = createContext<boolean | undefined>(undefined);
 
@@ -230,16 +229,6 @@ export default function Anchor(props: Readonly<{
                     setTouchCurrent(null)
                 }}
             >
-                <Helmet>
-                    <title>🌹{translate("menu.start.title")}🔪</title>
-                    <meta name="twitter:site" content={translate("menu.start.title")}></meta>
-                    <meta name="og:site" content={translate("menu.start.title")}></meta>
-                    <meta name="twitter:title" content={translate("menu.start.title")}></meta>
-                    <meta name="og:title" content={translate("menu.start.title")}></meta>
-                    <meta name="twitter:description" content={translate("menu.start.description")}></meta>
-                    <meta name="og:description" content={translate("menu.start.description")}></meta>
-                    <meta name="twitter:card" content="summary_large_image"></meta>
-                </Helmet>
                 <Button className="global-menu-button" 
                     onClick={() => {
                         if (!globalMenuOpen) {
