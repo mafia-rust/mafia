@@ -14,11 +14,20 @@ use crate::vec_set::VecSet;
 use super::{Priority, Role, RoleState, RoleStateImpl};
 use crate::game::ability_input::*;
 
-#[derive(Debug, Clone, Serialize, Default)]
+#[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Yer{
     pub star_passes_remaining: u8,
-    pub old_role: Option<Role>,
+    pub old_role: Role,
+}
+
+impl Default for Yer {
+    fn default() -> Yer {
+        Yer {
+            star_passes_remaining: 0,
+            old_role: Role::Yer
+        }
+    }
 }
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -78,7 +87,7 @@ impl RoleStateImpl for Yer {
                 );
                 target_ref.set_night_convert_role_to(game, Some(RoleState::Yer(Yer { 
                     star_passes_remaining: self.star_passes_remaining, 
-                    old_role: Some(target_ref.role(game)),
+                    old_role: target_ref.role(game),
                 })));
 
                 actor_ref.try_night_kill_single_attacker(
@@ -94,10 +103,6 @@ impl RoleStateImpl for Yer {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        let mut role_options = Role::values().into_iter()
-            .map(|role| Some(role))
-            .collect::<VecSet<Option<Role>>>();
-        role_options.insert(None);
         crate::game::role::common_role::controller_parameters_map_boolean(
             game,
             actor_ref,
@@ -116,8 +121,13 @@ impl RoleStateImpl for Yer {
             ControllerParametersMap::new_controller_fast(
                 game,
                 ControllerID::role(actor_ref, Role::Yer, 2),
-                AvailableAbilitySelection::new_role_option(role_options),
-                AbilitySelection::new_role_option(self.old_role),
+                
+                AvailableAbilitySelection::new_role_option(
+                    game.settings.enabled_roles.iter()
+                        .map(|role| Some(*role))
+                        .collect::<VecSet<Option<Role>>>()
+                ),
+                AbilitySelection::new_role_option(Some(self.old_role)),
                 self.star_passes_remaining <= 0 ||
                 actor_ref.ability_deactivated_from_death(game) ||
                 game.day_number() <= 1,
@@ -144,10 +154,8 @@ impl Yer{
             ControllerID::role(actor_ref, Role::Yer, 2)
         ){
             role
-        } else if let Some(old_role) = self.old_role{
-            old_role
         } else {
-            Role::Yer
+            self.old_role
         }
     }
 }
