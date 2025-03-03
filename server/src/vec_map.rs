@@ -29,7 +29,6 @@ impl<K, V> VecMap<K, V> where K: Eq {
 
     /// returns the old value if the key already exists
     pub fn insert(&mut self, key: K, value: V) -> Option<(K, V)>{
-
         if let Some((old_key, old_val)) = self.vec.iter_mut().find(|(k, _)| *k == key) {
             Some((
                 std::mem::replace(old_key, key), 
@@ -39,6 +38,13 @@ impl<K, V> VecMap<K, V> where K: Eq {
             self.vec.push((key, value));
             None
         }
+    }
+
+    pub fn insert_unsized(&mut self, key: K, value: V)  {
+        if let Some(i) = self.vec.iter().position(|(k, _)| *k == key) {
+            self.vec.swap_remove(i);
+        }
+        self.vec.push((key, value));
     }
 
     pub fn get(&self, key: &K) -> Option<&V> {

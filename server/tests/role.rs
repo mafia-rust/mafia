@@ -105,8 +105,12 @@ pub use mafia_server::game::{
 };
 // Pub use so that submodules don't have to reimport everything.
 pub use mafia_server::packet::ToServerPacket;
+#[test]
+fn rust_test_if_this_made_it_to_the_final_ver_remove_this_was_me_testing_how_rust_works(){
+    let mut x: VecMap<u8, Vec<u8>> = Vec::new();
+    x.insert(1, vec![1]);
 
-
+}
 #[test]
 fn no_unwanted_tags() {
     kit::scenario!(game in Dusk 1 where
