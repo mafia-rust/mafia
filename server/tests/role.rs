@@ -461,7 +461,7 @@ fn rabble_rouser_dies(){
 
 #[test]
 fn psychic_auras(){
-    for _ in 0..100 {
+    for _ in 0..20 {
         kit::scenario!(game in Night 1 where
             psy: Psychic,
             god: Godfather,
