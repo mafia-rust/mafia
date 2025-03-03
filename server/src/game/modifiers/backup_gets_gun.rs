@@ -1,12 +1,12 @@
 use super::{ModifierTrait, ModifierType};
 /* See Godfather for the actual implementation*/
 #[derive(Clone, Default, PartialEq, Eq, Hash)]
-pub struct PlayerDrops;
+pub struct BackupGetsGun;
 
-impl From<&PlayerDrops> for ModifierType{
-    fn from(_: &PlayerDrops) -> Self {
+impl From<&BackupGetsGun> for ModifierType{
+    fn from(_: &BackupGetsGun) -> Self {
         ModifierType::PlayerDrops
     }
 }
 
-impl ModifierTrait for PlayerDrops{}
+impl ModifierTrait for BackupGetsGun{}
