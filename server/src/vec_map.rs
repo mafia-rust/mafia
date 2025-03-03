@@ -133,7 +133,6 @@ impl<K, V> VecMap<K, V> where K: Eq, V: PartialOrd {
    /// Returns the old value if the key already exists, the last value of the tuple is the true if the old value was replaced
    /// If the old value is greater than value, then it is not replaced
    pub fn keep_greater(&mut self, key: K, value: V) -> Option<(K, V, bool)>{
-
         if let Some((old_key, old_val)) = self.vec.iter_mut().find(|(k, _)| *k == key) {
             if *old_val > value {
                 Some((
@@ -153,6 +152,18 @@ impl<K, V> VecMap<K, V> where K: Eq, V: PartialOrd {
             self.vec.push((key, value));
             None
         }
+    }
+
+   /// If the old value is greater than value, then it is not replaced
+   pub fn keep_greater_unsized(&mut self, key: K, value: V) {
+        if let Some(i) = self.vec.iter().position(|(k, _)| *k == key) {
+            if self.vec[i].1 < value {
+                self.vec.swap_remove(i);
+                self.vec.push((key, value));
+            }
+            return;
+        }
+        self.vec.push((key, value));
     }
     
     /// Returns the old value if the key already exists, the last value of the tuple is the true if the old value was replaced
@@ -177,6 +188,18 @@ impl<K, V> VecMap<K, V> where K: Eq, V: PartialOrd {
             self.vec.push((key, value));
             None
         }
+    }
+
+    /// If the old value is lesser than value, then it is not replaced
+   pub fn keep_lesser_unsized(&mut self, key: K, value: V) {
+        if let Some(i) = self.vec.iter().position(|(k, _)| *k == key) {
+            if self.vec[i].1 > value {
+                self.vec.swap_remove(i);
+                self.vec.push((key, value));
+            }
+            return;
+        }
+        self.vec.push((key, value));
     }
 }
 

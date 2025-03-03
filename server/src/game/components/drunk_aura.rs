@@ -1,10 +1,10 @@
 use crate::{game::{phase::PhaseState, player::PlayerReference, Game}, vec_map::VecMap};
 
-use super::{duration::Duration, confused::Confused};
+use super::{status_duration::StatusDuration, confused::Confused};
 
 #[derive(Default, Clone)]
 pub struct DrunkAura {
-    pub players_durations: VecMap<PlayerReference, Duration>,
+    pub players_durations: VecMap<PlayerReference, StatusDuration>,
 }
 
 impl Game {
@@ -18,11 +18,11 @@ impl Game {
 
 impl DrunkAura {
     pub fn add_player_permanent(game: &mut Game, player: PlayerReference){
-        game.drunk_aura_mut().players_durations.insert(player, Duration::Permanent);
+        game.drunk_aura_mut().players_durations.insert(player, StatusDuration::Permanent);
     }
 
     pub fn add_player_temporary(game: &mut Game, player: PlayerReference, duration: u8){
-        game.drunk_aura_mut().players_durations.keep_greater(player, Duration::Temporary(duration));
+        game.drunk_aura_mut().players_durations.keep_greater(player, StatusDuration::Temporary(duration));
     }
 
     pub fn remove_player(game: &mut Game, player: PlayerReference){

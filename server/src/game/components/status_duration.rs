@@ -1,13 +1,13 @@
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
-#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Default)]
 /// All operators are saturating
-pub enum Duration {
+pub enum StatusDuration {
     Temporary(u8),
-    Permanent,
+    #[default] Permanent,
 }
 
-impl Duration {
+impl StatusDuration {
     ///Returns true if the duration is not 0
     pub fn decrement(&mut self) -> bool {
         match self {
@@ -40,9 +40,9 @@ impl Duration {
     }
 }
 
-impl Add for Duration {
+impl Add for StatusDuration {
     type Output = Self;
-    fn add(self, rhs: Duration) -> Self::Output {
+    fn add(self, rhs: StatusDuration) -> Self::Output {
         match self {
             Self::Permanent => Self::Permanent,
             Self::Temporary(duration) => {
@@ -56,7 +56,7 @@ impl Add for Duration {
     }
 }
 
-impl AddAssign for Duration {
+impl AddAssign for StatusDuration {
     fn add_assign(&mut self, rhs: Self) {
         match rhs {
             Self::Permanent => *self = Self::Permanent,
@@ -73,8 +73,8 @@ impl AddAssign for Duration {
     }
 }
 
-impl Add<u8> for Duration {
-    type Output = Duration;
+impl Add<u8> for StatusDuration {
+    type Output = StatusDuration;
     fn add(self, rhs: u8) -> Self::Output {
         match self {
             Self::Permanent => Self::Permanent,
@@ -83,7 +83,7 @@ impl Add<u8> for Duration {
     }
 }
 
-impl AddAssign<u8> for Duration {
+impl AddAssign<u8> for StatusDuration {
     fn add_assign(&mut self, rhs: u8) {
         match self {
             Self::Permanent => return,
@@ -94,8 +94,8 @@ impl AddAssign<u8> for Duration {
     }
 }
 
-impl Sub<u8> for Duration {
-    type Output = Duration;
+impl Sub<u8> for StatusDuration {
+    type Output = StatusDuration;
     fn sub(self, rhs: u8) -> Self::Output {
         match self {
             Self::Permanent => Self::Permanent,
@@ -104,7 +104,7 @@ impl Sub<u8> for Duration {
     }
 }
 
-impl SubAssign<u8> for Duration {
+impl SubAssign<u8> for StatusDuration {
     fn sub_assign(&mut self, rhs: u8) {
         match self {
             Self::Permanent => return,

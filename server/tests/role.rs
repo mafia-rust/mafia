@@ -4,7 +4,7 @@ use std::{ops::Deref, vec};
 use kit::player::TestPlayer;
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::{ability_input::{ability_selection::AbilitySelection, ControllerID}, components::{confused::Confused, duration::Duration}, game_conclusion::GameConclusion, role::engineer::Trap};
+use mafia_server::game::{ability_input::{ability_selection::AbilitySelection, ControllerID}, components::{confused::Confused, status_duration::StatusDuration}, game_conclusion::GameConclusion, role::engineer::Trap};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*,
@@ -105,12 +105,7 @@ pub use mafia_server::game::{
 };
 // Pub use so that submodules don't have to reimport everything.
 pub use mafia_server::packet::ToServerPacket;
-#[test]
-fn rust_test_if_this_made_it_to_the_final_ver_remove_this_was_me_testing_how_rust_works(){
-    let mut x: VecMap<u8, Vec<u8>> = Vec::new();
-    x.insert(1, vec![1]);
 
-}
 #[test]
 fn no_unwanted_tags() {
     kit::scenario!(game in Dusk 1 where
@@ -1273,14 +1268,18 @@ fn drunk_suspicious_aura() {
 fn drunk_confused_and_drunk_aura() {
     kit::scenario!(game in Night 1 where
         drunk: Drunk,
-        _mafioso: Mafioso
+        mafioso: Mafioso
     );
-    match game.confused.players_durations.get(&drunk.player_ref()) {
-        Some(duration) => assert!(*duration == Duration::Permanent),
+    match game.confused.0.get(&drunk.player_ref()) {
+        Some(value) => {
+            assert!(value.duration == StatusDuration::Permanent);
+            assert!(value.red_herrings.len() == 1);
+            assert!(value.red_herrings.first().is_some_and(|rh|*rh == mafioso.player_ref()));
+        },
         None => panic!()
     }
     match game.drunk_aura.players_durations.get(&drunk.player_ref()) {
-        Some(duration) => assert!(*duration == Duration::Permanent),
+        Some(duration) => assert!(*duration == StatusDuration::Permanent),
         None => panic!()
     }
 }
