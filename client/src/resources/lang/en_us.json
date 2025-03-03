@@ -1324,7 +1324,8 @@
     "wiki.article.modifier.randomLoveLinks.title":"Random Love Links",
     "wiki.article.modifier.randomLoveLinks.text":"Random Love Links is a game modifier that makes it so all players are love linked to a random player. The game is set up such that all players are love linked to at least 1 other player, and at most 1 player is love linked to more than 1 other player.",
     "wiki.article.modifier.skipDay1.title": "Skip Day 1",
-    "wiki.article.modifier.skipDay1.text": "All phases day 1 except for Briefing, are fast forwarded",
+    "wiki.article.modifier.skipDay1.text": "All phases during day 1 are fast forwarded except for Briefing",
+
     "wiki.article.modifier.deadCanChat.title":"Dead Can Chat",
     "wiki.article.modifier.deadCanChat.text":"Dead Can Chat is a game modifier that changes the game such that dead players can still use chats as if they were alive. Dead players can not whisper or be whispered to.",
     "wiki.article.modifier.scheduledNominations.title":"Scheduled Nominations",
