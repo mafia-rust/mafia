@@ -186,6 +186,12 @@
     "role.villager.name":"Villager",
     "role.villager.name:var.0":"Villagers",
 
+    "role.wanderer.name": "Wanderer",
+    "role.wanderer.name:var.0": "Wanderers",
+    "controllerId.role.wanderer.0.name": "Visit",
+    "controllerId.role.wanderer.1.name": "Visit",
+    "controllerId.role.wanderer.2.name": "Visit",
+
     "role.detective.name":"Detective",
     "role.detective.name:var.0":"Detectives",
     "controllerId.role.detective.0.name": "Interrogate",
@@ -1412,6 +1418,12 @@
     "wiki.article.role.villager.abilities":"None",
     "wiki.article.role.villager.attributes":"None",
     "wiki.article.role.villager.extra":"None",
+
+    "wiki.article.role.wanderer.reminder": "Each night, choose a player, role, and role outline. You visit the player, players with the role, and the outline's player.",
+    "wiki.article.role.wanderer.guide": "Each night, choose a player, role, and role outline. You visit the player, players with the role, and the outline's player.",
+    "wiki.article.role.wanderer.abilities":"- Choose a player, a role and a role outline. \n- You visit: \n    - the player you select\n    - players with the role you select\n    - the player whose role assignment came from the outline you selected",
+    "wiki.article.role.wanderer.attributes":"None",
+    "wiki.article.role.wanderer.extra":"Visitor and Tracker, should typically not be enabled together.",
 
     "wiki.article.role.mayor.reminder": "Once per game you can enfranchise to gain 3x voting power.",
     "wiki.article.role.mayor.guide": "Choose to enfranchise during the day to make your vote count as three votes for the rest of the game.\n- When you enfranchise\n    - Everyone is told you have enfranchised\n    - You can't whisper or be whispered to\n    - You have triple voting power every day",
