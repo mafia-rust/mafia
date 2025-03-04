@@ -121,7 +121,6 @@ impl RoleStateImpl for Yer {
             ControllerParametersMap::new_controller_fast(
                 game,
                 ControllerID::role(actor_ref, Role::Yer, 2),
-                
                 AvailableAbilitySelection::new_role_option(
                     game.settings.enabled_roles.iter()
                         .map(|role| Some(*role))
