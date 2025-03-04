@@ -1,5 +1,5 @@
 use crate::game::{
-    components::{cult::Cult, dead_can_still_play_message::DeadCanStillPlayMessage, love_linked::LoveLinked, mafia::Mafia, pathologist_info_dump::PathologistInfoDump, syndicate_gun_item::SyndicateGunItem}, modifiers::Modifiers, player::PlayerReference, role::pathologist::Pathologist, Game
+    components::{cult::Cult, dead_can_still_play_message::DeadCanStillPlayMessage, love_linked::LoveLinked, mafia::Mafia, pathologist_info_dump::PathologistInfoDump, syndicate_gun_item::SyndicateGunItem}, modifiers::Modifiers, player::PlayerReference, Game
 };
 
 #[must_use = "Event must be invoked"]
