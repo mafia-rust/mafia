@@ -3,7 +3,7 @@ use std::time::Duration;
 use crate::{
     client_connection::ClientConnection, 
     game::{
-        available_buttons::AvailableButtons, chat::{ChatMessage, ChatMessageVariant}, components::insider_group::InsiderGroupID, modifiers::{ModifierType, Modifiers}, phase::PhaseState, role::Role, Game, GameOverReason
+        available_buttons::AvailableButtons, chat::ChatMessageVariant, components::insider_group::InsiderGroupID, phase::PhaseState, Game, GameOverReason
     },
     lobby::GAME_DISCONNECT_TIMER_SECS,
     packet::ToClientPacket, websocket_connections::connection::ClientSender
@@ -150,22 +150,12 @@ impl PlayerReference{
         
         let mut chat_messages_out = vec![];
 
-        let hide_whispers = self.role(game) != Role::Informant && Modifiers::modifier_is_enabled(game, ModifierType::HiddenWhispers);
-
         // Send in chunks
         for _ in 0..5 {
             let msg_option = self.deref(game).queued_chat_messages.first();
             if let Some(msg) = msg_option{
                 //The reason that self.deref_mut(game).queued_chat_messages.remove(0); isn't written here and is instead at the ends of the 2 if statements
                 //is because otherwise you run into the issue of borrowing as immutable and as mutable
-                if hide_whispers {
-                    if let ChatMessage{variant: ChatMessageVariant::BroadcastWhisper { whisperer, whisperee },..} = msg {
-                        if *whisperee != self.index() && *whisperer != self.index() {
-                            self.deref_mut(game).queued_chat_messages.remove(0);
-                            continue;
-                        }
-                    }
-                }
                 chat_messages_out.push(msg.clone());
                 self.deref_mut(game).queued_chat_messages.remove(0);
             } else {break}
