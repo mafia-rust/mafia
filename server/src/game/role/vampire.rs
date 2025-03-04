@@ -8,7 +8,7 @@ use crate::game::visit::Visit;
 
 use crate::game::Game;
 use crate::vec_set::VecSet;
-use super::{Role, RoleStateImpl};
+use super::{common_role, Role, RoleStateImpl};
 use crate::game::ability_input::*;
 
 #[derive(Debug, Clone, Serialize, Default)]
@@ -21,7 +21,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 impl RoleStateImpl for Vampire {
     type ClientRoleState = Vampire;
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        // crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
+        // common_role::controller_parameters_map_player_list_night_typical(
         //     game,
         //     actor_ref,
         //     false,
@@ -43,9 +43,9 @@ impl RoleStateImpl for Vampire {
                 ),
             AbilitySelection::new_player_list(vec![]), 
             false, 
-            Some(PhaseType::Discussion), 
+            Some(PhaseType::Obituary), 
             false, 
-            VecSet::with_first(actor_ref)
+            vec_set!(actor_ref)
         )
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
