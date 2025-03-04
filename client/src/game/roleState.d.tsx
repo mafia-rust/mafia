@@ -14,6 +14,8 @@ export type RoleState = {
 } | {
     type: "villager"
 } | {
+    type: "wanderer"
+} | {
     type: "mayor"
 } | {
     type: "transporter"

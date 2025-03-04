@@ -1,17 +1,10 @@
 use std::collections::HashSet;
 
 use crate::{game::{
-    ability_input::*,
-    chat::ChatGroup,
-    components::{
+    ability_input::*, chat::ChatGroup, components::{
         detained::Detained,
         puppeteer_marionette::PuppeteerMarionette
-    },
-    game_conclusion::GameConclusion,
-    modifiers::{ModifierType, Modifiers},
-    phase::{PhaseState, PhaseType}, player::PlayerReference,
-    role_list::RoleSet, visit::Visit, win_condition::WinCondition,
-    Game
+    }, game_conclusion::GameConclusion, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::PlayerReference, role_list::RoleSet, role_outline_reference::RoleOutlineReference, visit::Visit, win_condition::WinCondition, Game
 }, vec_set};
 
 use super::{medium::Medium, reporter::Reporter, warden::Warden, InsiderGroupID, Role, RoleState};
@@ -53,6 +46,39 @@ pub fn controller_parameters_map_player_list_night_typical(
                 Some(1)
             ),
         AbilitySelection::new_player_list(Vec::new()),
+        grayed_out,
+        Some(PhaseType::Obituary),
+        false,
+        vec_set!(actor_ref)
+    )
+}
+
+pub fn controller_parameters_map_role_outline_typical(
+    game: &Game,
+    actor_ref: PlayerReference,
+    include_none: bool,
+    grayed_out: bool,
+    ability_id: ControllerID,
+) -> ControllerParametersMap {
+
+    let grayed_out = 
+        actor_ref.ability_deactivated_from_death(game) ||
+        Detained::is_detained(game, actor_ref) ||
+        grayed_out;
+        
+    let available = AvailableAbilitySelection::new_role_outline_option(
+        if include_none {
+            RoleOutlineReference::all_outlines(game).map(|o|Some(o)).chain(None).collect()
+        } else {
+            RoleOutlineReference::all_outlines(game).map(|o|Some(o)).collect()
+        }
+    );
+
+    ControllerParametersMap::new_controller_fast(
+        game,
+        ability_id,
+        available,
+        AbilitySelection::new_role_outline_option(None),
         grayed_out,
         Some(PhaseType::Obituary),
         false,

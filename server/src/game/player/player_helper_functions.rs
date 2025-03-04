@@ -181,6 +181,7 @@ impl PlayerReference{
                         },
                         AbilitySelection::RoleOption { .. } => {},
                         AbilitySelection::TwoRoleOption { .. } => {},
+                        AbilitySelection::RoleOutlineOption { .. } => {},
                         AbilitySelection::TwoRoleOutlineOption { .. } => {},
                         AbilitySelection::String { .. } => {},
                         AbilitySelection::Integer { .. } => {},

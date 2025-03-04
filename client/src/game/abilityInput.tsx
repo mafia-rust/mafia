@@ -64,7 +64,7 @@ export type ControllerID = {
 
 export type RoleControllerID = number;
 
-/// create a type that represnts all strings that look like "abilityId/role/1"
+/// create a type that represents all strings that look like "abilityId/role/1"
 
 export type ControllerIDLink = (
     `role/${Role}/${RoleControllerID}` | 
@@ -166,6 +166,9 @@ export type AbilitySelection = {
     type: "roleOption"
     selection: RoleOptionSelection
 } | {
+    type: "roleOutlineOption"
+    selection: RoleOutlineOptionSelection
+} | {
     type: "twoRoleOption"
     selection: TwoRoleOptionSelection
 } | {
@@ -194,6 +197,8 @@ export function defaultAbilitySelection(available: AvailableAbilitySelection): A
             return {type: "playerList", selection: []};
         case "roleOption":
             return {type: "roleOption", selection: null};
+        case "roleOutlineOption":
+            return {type: "roleOutlineOption", selection: null};
         case "twoRoleOption":
             return {type: "twoRoleOption", selection: [null, null]};
         case "twoRoleOutlineOption":
@@ -221,6 +226,9 @@ export type AvailableAbilitySelection = {
 } | {
     type: "roleOption"
     selection: AvailableRoleOptionSelection,
+} | {
+    type: "roleOutlineOption"
+    selection: AvailableRoleOutlineOptionSelection,
 } | {
     type: "twoRoleOption"
     selection: AvailableTwoRoleOptionSelection,
@@ -258,6 +266,8 @@ export type AvailablePlayerListSelection = {
 export type RoleOptionSelection = Role | null;
 export type AvailableRoleOptionSelection = (Role | null)[];
 
+export type RoleOutlineOptionSelection = PlayerIndex | null;
+export type AvailableRoleOutlineOptionSelection = (number | null)[];
 
 export type TwoRoleOptionSelection = [Role | null, Role | null];
 export type AvailableTwoRoleOptionSelection = {

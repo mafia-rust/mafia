@@ -21,7 +21,7 @@ pub enum KiraGuess{
     None,
     #[default] NonTown,
 
-    Jailor, Villager,
+    Jailor, Villager, Visitor,
     Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy, TallyClerk,
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith, Steward,
     Vigilante, Veteran, Marksman, Deputy, Rabblerouser,
@@ -32,6 +32,7 @@ impl KiraGuess{
         match role {
             Role::Jailor => Some(Self::Jailor),
             Role::Villager => Some(Self::Villager),
+            Role::Wanderer => Some(Self::Visitor),
 
             Role::Detective => Some(Self::Detective),
             Role::Lookout => Some(Self::Lookout),

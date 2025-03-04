@@ -77,6 +77,7 @@ macros::roles! {
     Jailor : jailor,
     Villager : villager,
     Drunk : drunk,
+    Wanderer : wanderer,
 
     Detective : detective,
     Lookout : lookout,

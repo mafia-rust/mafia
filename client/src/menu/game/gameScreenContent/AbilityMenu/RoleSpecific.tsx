@@ -13,6 +13,7 @@ import RecruiterMenu from "./RoleSpecificMenus/RecruiterMenu";
 import { RoleState } from "../../../../game/roleState.d";
 import { PhaseState } from "../../../../game/gameState.d";
 import DetailsSummary from "../../../../components/DetailsSummary";
+import WandererMenu from "./RoleSpecificMenus/WandererMenu";
 
     
 
@@ -61,6 +62,8 @@ function roleSpecificSectionInner(
     switch(roleState.type){
         case "auditor":
             return <AuditorMenu roleState={roleState}/>;
+        case "wanderer":
+            return <WandererMenu/>;
         case "hypnotist":
             return <LargeHypnotistMenu/>;
         case "doomsayer":

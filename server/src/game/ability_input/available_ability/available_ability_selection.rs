@@ -21,6 +21,7 @@ pub enum AvailableAbilitySelection{
     PlayerList{selection: AvailablePlayerListSelection},
     RoleOption{selection: AvailableRoleOptionSelection},
     TwoRoleOption{selection: AvailableTwoRoleOptionSelection},
+    RoleOutlineOption{selection: AvailableRoleOutlineOptionSelection},
     TwoRoleOutlineOption{selection: AvailableTwoRoleOutlineOptionSelection},
     String,
     Integer{selection: AvailableIntegerSelection},
@@ -62,6 +63,9 @@ impl AvailableAbilitySelection{
             can_choose_duplicates
         }}
     }
+    pub fn new_role_outline_option(available_outlines: VecSet<Option<RoleOutlineReference>>)->Self{
+        Self::RoleOutlineOption{selection: AvailableRoleOutlineOptionSelection(available_outlines)}
+    }
     pub fn new_two_role_outline_option(available_outlines: VecSet<Option<RoleOutlineReference>>)->Self{
         Self::TwoRoleOutlineOption{selection: AvailableTwoRoleOutlineOptionSelection(available_outlines)}
     }
@@ -99,6 +103,10 @@ impl ValidateAvailableSelection for AvailableAbilitySelection{
                 let AbilitySelection::TwoRoleOption{selection} = selection else {return false};
                 return available.validate_selection(game, selection);
             },
+            Self::RoleOutlineOption { selection: available } => {
+                let AbilitySelection::RoleOutlineOption{selection} = selection else {return false};
+                return available.validate_selection(game, selection);
+            }
             Self::TwoRoleOutlineOption{ selection: available } => {
                 let AbilitySelection::TwoRoleOutlineOption{selection} = selection else {return false};
                 return available.validate_selection(game, selection);
@@ -111,7 +119,7 @@ impl ValidateAvailableSelection for AvailableAbilitySelection{
             Self::Kira{ selection: available} => {
                 let AbilitySelection::Kira { selection } = selection else {return false};
                 return available.validate_selection(game, selection);
-            }
+            },
         }
     }
 }

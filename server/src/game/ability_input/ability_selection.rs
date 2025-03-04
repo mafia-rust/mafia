@@ -6,7 +6,7 @@ use crate::game::{
 };
 
 use super::{selection_type::{
-    kira_selection::KiraSelection, role_option_selection::RoleOptionSelection, two_player_option_selection::TwoPlayerOptionSelection, two_role_option_selection::TwoRoleOptionSelection, two_role_outline_option_selection::TwoRoleOutlineOptionSelection, BooleanSelection
+    kira_selection::KiraSelection, role_option_selection::RoleOptionSelection, two_player_option_selection::TwoPlayerOptionSelection, two_role_option_selection::TwoRoleOptionSelection, two_role_outline_option_selection::TwoRoleOutlineOptionSelection, BooleanSelection, role_outline_option_selection::RoleOutlineOptionSelection
 }, IntegerSelection, PlayerListSelection, StringSelection};
 
 
@@ -20,6 +20,7 @@ pub enum AbilitySelection{
     PlayerList{selection: PlayerListSelection},
     RoleOption{selection: RoleOptionSelection,},
     TwoRoleOption{selection: TwoRoleOptionSelection},
+    RoleOutlineOption{selection: RoleOutlineOptionSelection},
     TwoRoleOutlineOption{selection: TwoRoleOutlineOptionSelection},
     String{selection: StringSelection},
     Integer{selection: IntegerSelection},
@@ -43,6 +44,9 @@ impl AbilitySelection{
     }
     pub fn new_two_role_option(first: Option<Role>, second: Option<Role>)->Self{
         Self::TwoRoleOption{selection: TwoRoleOptionSelection(first, second)}
+    }
+    pub fn new_role_outline_option(selection: Option<RoleOutlineReference>)->Self{
+        Self::RoleOutlineOption {selection: RoleOutlineOptionSelection(selection)}
     }
     pub fn new_two_role_outline_option(first: Option<RoleOutlineReference>, second: Option<RoleOutlineReference>)->Self{
         Self::TwoRoleOutlineOption{selection: TwoRoleOutlineOptionSelection(first, second)}

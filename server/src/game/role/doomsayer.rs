@@ -27,7 +27,7 @@ pub struct ClientRoleState {
 pub enum DoomsayerGuess{
     #[default] NonTown,
 
-    Jailor, Villager,
+    Jailor, Villager, Visitor,
     // No TI
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith, Steward,
     Vigilante, Veteran, Marksman, Deputy, Rabblerouser,
@@ -38,6 +38,7 @@ impl DoomsayerGuess{
         match role {
             Role::Jailor => Some(DoomsayerGuess::Jailor),
             Role::Villager => Some(DoomsayerGuess::Villager),
+            Role::Wanderer => Some(DoomsayerGuess::Visitor),
 
             Role::Detective | Role::Lookout | Role::Spy | 
             Role::Tracker | Role::Philosopher | Role::Psychic | 
