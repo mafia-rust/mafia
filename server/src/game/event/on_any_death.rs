@@ -1,7 +1,5 @@
 use crate::game::{
-    components::{cult::Cult, dead_can_still_play_message::DeadCanStillPlayMessage, love_linked::LoveLinked, mafia::Mafia, syndicate_gun_item::SyndicateGunItem}, 
-    modifiers::Modifiers,
-    player::PlayerReference, Game
+    components::{cult::Cult, dead_can_still_play_message::DeadCanStillPlayMessage, love_linked::LoveLinked, mafia::Mafia, pathologist_info_dump::PathologistInfoDump, syndicate_gun_item::SyndicateGunItem}, modifiers::Modifiers, player::PlayerReference, role::pathologist::Pathologist, Game
 };
 
 #[must_use = "Event must be invoked"]
@@ -13,6 +11,9 @@ impl OnAnyDeath{
         Self{dead_player}
     }
     pub fn invoke(self, game: &mut Game){
+        // This is before everything else because many of them remove things like tags
+        PathologistInfoDump::on_any_death(game, self.dead_player);
+
         for player_ref in PlayerReference::all_players(game){
             player_ref.on_any_death(game, self.dead_player)
         }

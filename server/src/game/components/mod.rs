@@ -16,3 +16,5 @@ pub mod night_visits;
 pub mod syndicate_gun_item;
 pub mod synopsis;
 pub mod dead_can_still_play_message;
+pub mod pathologist_info_dump;
+pub mod status_effects;

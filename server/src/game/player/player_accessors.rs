@@ -157,6 +157,14 @@ impl PlayerReference{
             self.remove_player_tag(game, player_ref, value)
         }
     }
+    pub fn tags_on_player(&self, game: &Game) -> VecMap<PlayerReference, Vec1<Tag>> {
+        let mut player_tags = Vec::new();
+        for player in Self::all_players(game) {
+            let Some(tags) = player.player_tags(game).get(self) else {continue};
+            player_tags.push((player, tags.clone()))
+        }
+        VecMap::new_from_vec(player_tags)
+    }
 
     pub fn win_condition<'a>(&self, game: &'a Game) -> &'a WinCondition {
         &self.deref(game).win_condition
@@ -293,10 +301,24 @@ impl PlayerReference{
     }
 
     pub fn night_wardblocked(&self, game: &Game) -> bool {
-        self.deref(game).night_variables.roleblocked
+        self.deref(game).night_variables.wardblocked
     }
-    pub fn set_night_wardblocked(&self, game: &mut Game, roleblocked: bool){
-        self.deref_mut(game).night_variables.roleblocked = roleblocked;
+    pub fn set_night_wardblocked(&self, game: &mut Game, wardblocked: bool){
+        self.deref_mut(game).night_variables.wardblocked = wardblocked;
+    }
+
+    pub fn night_possessed(&self, game: &Game) -> bool{
+        self.deref(game).night_variables.possessed
+    }
+    pub fn set_night_possessed(&self, game: &mut Game, possessed: bool) {
+        self.deref_mut(game).night_variables.possessed = possessed;
+    }
+
+    pub fn night_transported(&self, game: &Game) -> bool{
+        self.deref(game).night_variables.transported
+    }
+    pub fn set_night_transported(&self, game: &mut Game, transported: bool) {
+        self.deref_mut(game).night_variables.transported = transported;
     }
 
     pub fn night_defense(&self, game: &Game) -> DefensePower {

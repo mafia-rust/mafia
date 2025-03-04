@@ -98,6 +98,8 @@ pub struct PlayerSynopsis {
     won: bool
 }
 
+#[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "camelCase")]
 pub struct PartialPlayerSynopsis {
     crumbs: Vec<SynopsisCrumb>
 }
@@ -125,7 +127,13 @@ impl PartialPlayerSynopsis {
     }
 }
 
-#[derive(Clone, Debug, Serialize, PartialEq)]
+impl Game {
+    pub fn convert_history(&self, player: PlayerReference) -> PartialPlayerSynopsis {
+        self.synopsis_tracker.player_synopses[player.index() as usize].clone()
+    }
+}
+
+#[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub struct SynopsisCrumb {
     night: Option<u8>,

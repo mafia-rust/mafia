@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::game::components::detained::Detained;
-use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
+use crate::game::attack_power::DefensePower;
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
@@ -27,24 +27,7 @@ impl RoleStateImpl for Transporter {
         let Some(second_visit) = transporter_visits.get(1) else {return};
         
         
-        first_visit.target.push_night_message(game, ChatMessageVariant::Transported);
-        second_visit.target.push_night_message(game, ChatMessageVariant::Transported);
-    
-        for player_ref in PlayerReference::all_players(game){
-            if player_ref == actor_ref {continue;}
-            if player_ref.role(game) == Role::Transporter {continue;}
-
-
-            let new_visits = player_ref.all_night_visits_cloned(game).clone().into_iter().map(|mut v|{
-                if v.target == first_visit.target {
-                    v.target = second_visit.target;
-                } else if v.target == second_visit.target{
-                    v.target = first_visit.target;
-                }
-                v
-            }).collect();
-            player_ref.set_night_visits(game, new_visits);
-        }
+        actor_ref.transport(game, first_visit.target, second_visit.target);
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
 

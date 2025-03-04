@@ -115,6 +115,7 @@ macros::roles! {
     Godfather : godfather,
     Counterfeiter : counterfeiter,
     Impostor : impostor,
+    Pathologist : pathologist,
     Recruiter : recruiter,
     Mafioso : mafioso,
     MafiaKillingWildcard : mafia_killing_wildcard,

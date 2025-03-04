@@ -67,7 +67,7 @@ impl KiraGuess{
             Role::Coxswain => Some(Self::Coxswain),
 
             //Mafia
-            Role::Godfather | Role::Mafioso |
+            Role::Godfather | Role::Mafioso | Role::Pathologist |
             Role::Counterfeiter | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
             Role::Goon |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 

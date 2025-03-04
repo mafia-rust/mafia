@@ -70,6 +70,9 @@ struct PlayerNightVariables{
     died: bool,
     attacked: bool,
     roleblocked: bool,
+    wardblocked: bool,
+    possessed: bool,
+    transported: bool,
     upgraded_defense: Option<DefensePower>,
 
     convert_role_to: Option<RoleState>,
@@ -120,10 +123,12 @@ impl Player {
                 died: false,
                 attacked: false,
                 roleblocked: false,
+                wardblocked: false,
+                possessed: false,
+                transported: false,
                 upgraded_defense: None,
                 appeared_visits: None,
                 framed: false,
-
                 convert_role_to: None,
 
                 silenced: false,
@@ -180,6 +185,9 @@ pub mod test {
                 died: false,
                 attacked: false,
                 roleblocked: false,
+                wardblocked: false,
+                possessed: false,
+                transported: false,
                 upgraded_defense: None,
                 appeared_visits: None,
                 framed: false,
