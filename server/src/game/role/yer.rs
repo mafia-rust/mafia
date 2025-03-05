@@ -9,14 +9,25 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use crate::vec_set;
+use crate::vec_set::vec_set;
+use crate::vec_set::VecSet;
 use super::{Priority, Role, RoleState, RoleStateImpl};
 use crate::game::ability_input::*;
 
-#[derive(Debug, Clone, Serialize, Default)]
+#[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Yer{
-    star_passes_remaining: u8,
+    pub star_passes_remaining: u8,
+    pub old_role: Role,
+}
+
+impl Default for Yer {
+    fn default() -> Yer {
+        Yer {
+            star_passes_remaining: 3,
+            old_role: Role::Yer
+        }
+    }
 }
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -43,7 +54,7 @@ impl RoleStateImpl for Yer {
         if let Some(visit) = actor_visits.first(){
             let target_ref = visit.target;
 
-            if !chose_to_convert{
+            if !chose_to_convert {
                 if priority != Priority::Kill {return}
 
                 target_ref.try_night_kill_single_attacker(
@@ -53,7 +64,7 @@ impl RoleStateImpl for Yer {
                     AttackPower::ArmorPiercing,
                     true
                 );
-            }else{
+            } else {
                 if priority != Priority::Convert {return}
                 if self.star_passes_remaining <= 0 {return}
 
@@ -65,11 +76,7 @@ impl RoleStateImpl for Yer {
                 self.star_passes_remaining = self.star_passes_remaining.saturating_sub(1);
 
                 //role switching stuff
-                let fake_role = if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
-                    ControllerID::role(actor_ref, Role::Yer, 2)
-                ){
-                    role
-                }else{Role::Yer};
+                let fake_role = self.current_fake_role(&game, actor_ref);
 
                 actor_ref.set_night_grave_role(game, Some(fake_role));
                 
@@ -78,7 +85,10 @@ impl RoleStateImpl for Yer {
                     game,
                     WinCondition::new_loyalist(crate::game::game_conclusion::GameConclusion::Fiends)
                 );
-                target_ref.set_night_convert_role_to(game, Some(RoleState::Yer(self.clone())));
+                target_ref.set_night_convert_role_to(game, Some(RoleState::Yer(Yer { 
+                    star_passes_remaining: self.star_passes_remaining, 
+                    old_role: target_ref.role(game),
+                })));
 
                 actor_ref.try_night_kill_single_attacker(
                     actor_ref,
@@ -112,11 +122,11 @@ impl RoleStateImpl for Yer {
                 game,
                 ControllerID::role(actor_ref, Role::Yer, 2),
                 AvailableAbilitySelection::new_role_option(
-                    Role::values().into_iter()
-                        .map(|role| Some(role))
-                        .collect()
+                    game.settings.enabled_roles.iter()
+                        .map(|role| Some(*role))
+                        .collect::<VecSet<Option<Role>>>()
                 ),
-                AbilitySelection::new_role_option(Some(Role::Yer)),
+                AbilitySelection::new_role_option(Some(self.old_role)),
                 self.star_passes_remaining <= 0 ||
                 actor_ref.ability_deactivated_from_death(game) ||
                 game.day_number() <= 1,
@@ -138,4 +148,13 @@ impl RoleStateImpl for Yer {
 
 
 impl Yer{
+    pub fn current_fake_role(&self, game: &Game, actor_ref: PlayerReference) -> Role {
+        if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
+            ControllerID::role(actor_ref, Role::Yer, 2)
+        ){
+            role
+        } else {
+            self.old_role
+        }
+    }
 }
