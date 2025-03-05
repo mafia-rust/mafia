@@ -24,7 +24,7 @@ pub struct Yer{
 impl Default for Yer {
     fn default() -> Yer {
         Yer {
-            star_passes_remaining: 0,
+            star_passes_remaining: 3,
             old_role: Role::Yer
         }
     }
