@@ -19,6 +19,7 @@ import LobbyChatMenu from "./LobbyChatMenu";
 import { useLobbyState } from "../../components/useHooks";
 import { Button } from "../../components/Button";
 import { EnabledModifiersSelector } from "../../components/gameModeSettings/EnabledModifiersSelector";
+import LobbyNamePane from "./LobbyNamePane";
 
 export default function LobbyMenu(): ReactElement {
     const isSpectator = useLobbyState(
@@ -56,6 +57,7 @@ export default function LobbyMenu(): ReactElement {
             {advancedView 
                 ? <main>
                     <div>
+                        <LobbyNamePane />
                         <LobbyPlayerList />
                         <LobbyChatMenu spectator={isSpectator}/>
                     </div>
@@ -65,6 +67,7 @@ export default function LobbyMenu(): ReactElement {
                 </main>
                 : <main>
                     <div>
+                        <LobbyNamePane />
                         <LobbyPlayerList />
                     </div>
                     <div>
