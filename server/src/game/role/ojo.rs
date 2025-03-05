@@ -105,9 +105,7 @@ impl RoleStateImpl for Ojo {
             ControllerParametersMap::new_controller_fast(
                 game,
                 ControllerID::role(actor_ref, Role::Ojo, 1),
-                AvailableAbilitySelection::new_role_option(
-                    Role::values().into_iter().map(|r|Some(r)).chain(std::iter::once(None)).collect()
-                ),
+                AvailableAbilitySelection::role_option_enabled(game, true),
                 AbilitySelection::new_role_option(None),
                 actor_ref.ability_deactivated_from_death(game) || 
                 Detained::is_detained(game, actor_ref) ||
