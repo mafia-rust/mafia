@@ -6,10 +6,7 @@
     height: 100dvh;
     width: 100dvw;
 
-    background:
-        url('../../public/images/fuzzy-background-alpha.png') center / 10000px,
-        var(--background-color);
-    animation: background-scroll 9s infinite forwards linear;
+    background-color: var(--background-color);
 }
 
 .error-card {
@@ -54,7 +51,7 @@
     text-align: left;
 }
 
-@media (prefers-reduced-motion: no-preference) {
+@media (prefers-reduced-motion = no-preference) {
     .error-card {
         /* Start off the page and slide in */
         transform: translateX(100%);
@@ -126,10 +123,6 @@
     content: "";
     width: 100%;
     height: 100%;
-    background: 
-        url('../../public/images/fuzzy-background-alpha.png'),
-        var(--fade-color, var(--background-color));
-    background-size: 10000px;
-    animation: background-scroll 9s infinite forwards linear;
+    background-color: var(--fade-color, var(--background-color));
     opacity: 80%;
 }

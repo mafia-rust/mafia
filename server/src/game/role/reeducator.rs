@@ -154,15 +154,8 @@ impl RoleStateImpl for Reeducator {
             )
         )
     }
-    // Unlike other conversion roles, its visit isn't tagged as an attack.
-    // I assume this is because if the target is syndicate then it is converted without an attack
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
-        common_role::convert_controller_selection_to_visits(
-            game, 
-            actor_ref, 
-            ControllerID::role(actor_ref, Role::Reeducator, 0),
-            false
-        )
+        common_role::convert_controller_selection_to_visits(game, actor_ref, ControllerID::role(actor_ref, Role::Reeducator, 0), false)
     }
     fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
 
@@ -196,7 +189,7 @@ impl RoleStateImpl for Reeducator {
             if let Some(random_town_role) = random_town_role {
                 //special case here. I don't want to use set_role because it alerts the player their role changed
                 //NOTE: It will still send a packet to the player that their role state updated,
-                //so it might be deducible that there is a reeducator
+                //so it might be deducable that there is a recruiter
                 InsiderGroupID::Mafia.remove_player_from_revealed_group(game, random_mafia_player);
                 random_mafia_player.set_win_condition(game, crate::game::win_condition::WinCondition::GameConclusionReached{
                     win_if_any: vec![GameConclusion::Town].into_iter().collect()

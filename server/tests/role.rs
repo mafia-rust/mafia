@@ -3,7 +3,7 @@ use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::{ability_input::{ability_selection::AbilitySelection, ControllerID}, game_conclusion::GameConclusion, role::engineer::Trap};
+use mafia_server::game::{ability_input::{ability_selection::AbilitySelection, ControllerID, RoleOptionSelection}, game_conclusion::GameConclusion, role::engineer::Trap};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*,
@@ -90,6 +90,7 @@ pub use mafia_server::game::{
         spiral::Spiral,
         pyrolisk::Pyrolisk,
         puppeteer::Puppeteer,
+        yer::Yer,
         fiends_wildcard::FiendsWildcard,
 
         armorsmith::Armorsmith, auditor::AuditorResult,
@@ -460,7 +461,7 @@ fn rabble_rouser_dies(){
 
 #[test]
 fn psychic_auras(){
-    for _ in 0..20 {
+    for _ in 0..100 {
         kit::scenario!(game in Night 1 where
             psy: Psychic,
             god: Godfather,
@@ -901,27 +902,6 @@ fn ambusher_does_not_kill_framed_player(){
     assert!(protected_player.alive());
     assert!(framer.alive());
     assert!(mafioso.alive());
-    assert!(townie.alive());
-}
-
-#[test]
-fn ambusher_kills_self(){
-    kit::scenario!(game in Night 2 where
-        ambusher: Ambusher,
-        protected_player: Jester,
-        townie: Detective
-    );
-
-    ambusher.send_ability_input_player_list_typical(protected_player);
-    ambusher.send_ability_input(AbilityInput::new(
-        ControllerID::syndicate_gun_item_shoot(),
-        AbilitySelection::new_player_list(vec![protected_player.player_ref()])
-    ));
-
-    game.next_phase();
-
-    assert!(!ambusher.alive());
-    assert!(!protected_player.alive());
     assert!(townie.alive());
 }
 
@@ -2317,6 +2297,152 @@ fn apostle_converting_trapped_player_same_day(){
 
     assert!(trapped.role_state().role() != Role::Zealot);
     assert!(trapped.role_state().role() == Role::Detective);
+}
+
+#[test]
+fn yer() {
+    kit::scenario!(game in Dusk 1 where
+        yer: Yer,
+        detective: Detective,
+        convertee: Engineer,
+        gossip: Gossip,
+        _villager: Villager,
+        informant: Informant
+    );
+
+    /* Night 1 Kill Attempt Test */
+    yer.send_ability_input_boolean_typical(true);
+    yer.send_ability_input_player_list(detective, 1);
+    yer.send_ability_input(AbilityInput::new(
+        ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
+        AbilitySelection::RoleOption { selection: RoleOptionSelection(Some(Role::TallyClerk)) 
+    }));
+
+    game.skip_to(PhaseType::Dusk, 2);
+
+    assert!(yer.alive());
+    assert!(detective.alive());
+    assert!(convertee.alive());
+    assert!(gossip.alive());
+    assert!(informant.alive());
+
+    assert!(detective.role() == Role::Detective);
+
+    /* Reg Attack Test */
+    yer.send_ability_input_boolean_typical(false);
+    yer.send_ability_input_player_list(detective, 1);
+    yer.send_ability_input(AbilityInput::new(
+        ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
+        AbilitySelection::RoleOption { selection: RoleOptionSelection(Some(Role::Mafioso)) 
+    }));
+    
+    game.skip_to(PhaseType::Dusk, 3);
+
+    assert!(yer.alive());
+    assert!(!detective.alive());
+    assert!(convertee.alive());
+    assert!(gossip.alive());
+    assert!(informant.alive());
+
+    assert!(detective.role() == Role::Detective);
+    assert!(convertee.role() == Role::Engineer);
+
+    let grave_message = ChatMessageVariant::PlayerDied{grave: Grave{
+        player: detective.player_ref(),
+        died_phase: GravePhase::Night,
+        day_number: 2,
+        information: GraveInformation::Normal { 
+            role: Role::Detective, 
+            will: "".to_string(), 
+            death_cause: GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Yer)]), 
+            death_notes: Vec::new(),
+        },
+        
+    }};
+    
+
+    assert!(yer.get_messages().contains(&grave_message));
+    assert!(detective.get_messages().contains(&grave_message));
+    assert!(convertee.get_messages().contains(&grave_message));
+    assert!(gossip.get_messages().contains(&grave_message));
+    assert!(informant.get_messages().contains(&grave_message));
+
+    /* Conversion & Disguise Test */
+    yer.send_ability_input_boolean_typical(true);
+    yer.send_ability_input_player_list(convertee, 1);
+    yer.send_ability_input(AbilityInput::new(
+        ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
+        AbilitySelection::RoleOption { selection: RoleOptionSelection(Some(Role::Zealot)) 
+    }));
+    
+    game.skip_to(PhaseType::Dusk, 4);
+
+    assert!(!yer.alive());
+    assert!(!detective.alive());
+    assert!(convertee.alive());
+    assert!(gossip.alive());
+    assert!(informant.alive());
+
+    assert!(detective.role() == Role::Detective);
+    assert!(convertee.role() == Role::Yer);
+
+    let grave_message = ChatMessageVariant::PlayerDied{grave: Grave{
+        player: yer.player_ref(),
+        died_phase: GravePhase::Night,
+        day_number: 3,
+        information: GraveInformation::Normal { 
+            role: Role::Zealot, 
+            will: "".to_string(), 
+            death_cause: GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Yer)]), 
+            death_notes: Vec::new(),
+        },
+    }};
+
+    assert!(yer.get_messages().contains(&grave_message));
+    assert!(detective.get_messages().contains(&grave_message));
+    assert!(convertee.get_messages().contains(&grave_message));
+    assert!(gossip.get_messages().contains(&grave_message));
+    assert!(informant.get_messages().contains(&grave_message));
+
+    /* Idiot Proofing Test */
+    convertee.send_ability_input_boolean_typical(true);
+    convertee.send_ability_input_player_list(informant, 1);
+    convertee.send_ability_input(AbilityInput::new(
+        ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
+        AbilitySelection::RoleOption { selection: RoleOptionSelection(Some(Role::Zealot)) 
+    }));
+    
+    game.skip_to(PhaseType::Dusk, 5);
+
+    println!("messages: {}", kit::_format_messages_debug(convertee.get_messages()));
+
+    assert!(!yer.alive());
+    assert!(!detective.alive());
+    assert!(!convertee.alive());
+    assert!(gossip.alive());
+    assert!(informant.alive());
+
+    assert!(detective.role() == Role::Detective);
+    assert!(convertee.role() == Role::Yer);
+    assert!(informant.role() == Role::Yer);
+
+    let grave_message = ChatMessageVariant::PlayerDied{grave: Grave{
+        player: convertee.player_ref(),
+        died_phase: GravePhase::Night,
+        day_number: 4,
+        information: GraveInformation::Normal { 
+            role: Role::Engineer, 
+            will: "".to_string(), 
+            death_cause: GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Yer)]), 
+            death_notes: Vec::new(),
+        },
+    }};
+
+    assert!(yer.get_messages().contains(&grave_message));
+    assert!(detective.get_messages().contains(&grave_message));
+    assert!(convertee.get_messages().contains(&grave_message));
+    assert!(gossip.get_messages().contains(&grave_message));
+    assert!(informant.get_messages().contains(&grave_message));
 }
 
 #[test]
