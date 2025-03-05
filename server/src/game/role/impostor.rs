@@ -50,7 +50,7 @@ impl RoleStateImpl for Impostor {
             actor_ref,
             false,
             false,
-            game.day_number() <= 1,
+            !game.attack_convert_abilities_enabled(),
             ControllerID::role(actor_ref, Role::Impostor, 0)
         ).combine_overwrite_owned(ControllerParametersMap::new_controller_fast(
             game,

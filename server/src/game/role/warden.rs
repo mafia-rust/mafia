@@ -43,7 +43,7 @@ impl RoleStateImpl for Warden {
                 }
             }
             Priority::Roleblock => {
-                if game.day_number() == 1 {return}
+                if !game.attack_convert_abilities_enabled() {return}
                 for &player in self.players_in_prison.iter() {
                     if player != actor_ref {
                         player.roleblock(game, true);
@@ -51,7 +51,7 @@ impl RoleStateImpl for Warden {
                 }
             }
             Priority::Kill => {
-                if game.day_number() == 1 {return}
+                if !game.attack_convert_abilities_enabled() {return}
                 for player in self.players_to_kill(game, actor_ref) {
                     if player == actor_ref {continue}
         
@@ -91,7 +91,7 @@ impl RoleStateImpl for Warden {
                 Some(MAX_PLAYERS_IN_PRISON),
             ),
             AbilitySelection::new_player_list(vec![]),
-            actor_ref.ability_deactivated_from_death(game) || game.day_number() <= 1,
+            actor_ref.ability_deactivated_from_death(game) || !game.attack_convert_abilities_enabled(),
             Some(crate::game::phase::PhaseType::Night),
             false,
             vec_set!(actor_ref)
