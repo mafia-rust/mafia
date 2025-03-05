@@ -245,3 +245,11 @@ pub enum ChatMessageVariant {
     MartyrFailed,
     WildcardConvertFailed{ role: Role },
 }
+
+impl ChatMessageVariant {
+    /// Returns a DebugMisc error message that (in game) will display as how this would display
+    /// if formatted via the rust debug formatter
+    pub fn as_debug_misc(&self) -> Self {
+        Self::DebugMisc { text: format!("{:?}", self) }
+    }
+}
