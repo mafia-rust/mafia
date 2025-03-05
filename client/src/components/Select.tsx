@@ -98,7 +98,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
             default:
                 if(/^[a-zA-Z0-9- ]$/.test(inputKey)) {
                     if (searchString === "") {
-                        if(inputKey != " "){
+                        if(inputKey !== " "){
                             setSearchString("🔍"+inputKey);
                         }
                     } else {
