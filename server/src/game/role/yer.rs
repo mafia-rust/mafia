@@ -1,3 +1,462 @@
+Diffchecker logo
+Diffchecker
+Text
+Images
+Documents
+Excel
+
+Folders
+Features
+Desktop
+Pricing
+Sign in
+Download Diffchecker Desktop
+Compare text
+Find the difference between two text files
+
+
+
+
+
+Mar 4, 8:49 PM
+now
+
+Mar 4, 8:48 PM
+now
+
+Mar 4, 8:48 PM
+now
+
+Mar 4, 8:48 PM
+now
+
+Mar 4, 8:48 PM
+now
+
+Mar 4, 8:48 PM
+now
+
+Mar 4, 8:47 PM
+a minute ago
+
+Mar 4, 8:47 PM
+a minute ago
+
+Mar 4, 8:47 PM
+2 minutes ago
+
+Mar 4, 8:47 PM
+2 minutes ago
+Diffchecker Desktop icon
+Diffchecker Desktop
+The most secure way to run Diffchecker. Get the Diffchecker Desktop app: your diffs never leave your computer!
+Get Desktop
+Untitled diff
+
+Clear
+
+Save
+
+Share
+2 removals
+160 lines
+
+Copy
+
+0 additions
+158 lines
+
+Copy
+
+use serde::Serialize;
+
+
+
+use crate::game::attack_power::AttackPower;
+
+use crate::game::chat::ChatMessageVariant;
+
+use crate::game::win_condition::WinCondition;
+
+use crate::game::{attack_power::DefensePower, grave::GraveKiller};
+
+use crate::game::player::PlayerReference;
+
+
+
+use crate::game::visit::Visit;
+
+
+
+use crate::game::Game;
+
+use crate::vec_set::vec_set;
+
+use crate::vec_set::VecSet;
+
+use super::{Priority, Role, RoleState, RoleStateImpl};
+
+use crate::game::ability_input::*;
+
+
+
+#[derive(Debug, Clone, Serialize)]
+
+#[serde(rename_all = "camelCase")]
+
+pub struct Yer{
+
+    pub star_passes_remaining: u8,
+
+    pub old_role: Role,
+
+}
+
+
+
+impl Default for Yer {
+
+    fn default() -> Yer {
+
+        Yer {
+
+            star_passes_remaining: 3,
+
+            old_role: Role::Yer
+
+        }
+
+    }
+
+}
+
+
+
+pub(super) const MAXIMUM_COUNT: Option<u8> = None;
+
+pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+
+
+
+impl RoleStateImpl for Yer {
+
+    type ClientRoleState = Yer;
+
+    fn new_state(game: &Game) -> Self {
+
+        Self{
+
+            star_passes_remaining: game.num_players().div_ceil(5),
+
+            ..Self::default()
+
+        }
+
+    }
+
+    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+
+        if game.day_number() == 1 {return}
+
+
+
+        let chose_to_convert = game.saved_controllers.get_controller_current_selection_boolean(
+
+            ControllerID::role(actor_ref, Role::Yer, 0)
+
+        ).map(|selection| selection.0).unwrap_or(false);
+
+
+
+        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+
+        if let Some(visit) = actor_visits.first(){
+
+            let target_ref = visit.target;
+
+
+
+            if !chose_to_convert {
+
+                if priority != Priority::Kill {return}
+
+
+
+                target_ref.try_night_kill_single_attacker(
+
+                    actor_ref,
+
+                    game,
+
+                    GraveKiller::Role(Role::Yer),
+
+                    AttackPower::ArmorPiercing,
+
+                    true
+
+                );
+
+            } else {
+
+                if priority != Priority::Convert {return}
+
+                if self.star_passes_remaining == 0 {return}
+
+
+
+                if target_ref.night_defense(game).can_block(AttackPower::ArmorPiercing) {
+
+                    actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+
+                    return
+
+                }
+
+
+
+                self.star_passes_remaining = self.star_passes_remaining.saturating_sub(1);
+
+
+
+                //role switching stuff
+
+                let fake_role = self.current_fake_role(&game, actor_ref);
+
+
+
+                actor_ref.set_night_grave_role(game, Some(fake_role));
+
+                
+
+                //convert & kill stuff
+
+                target_ref.set_win_condition(
+
+                    game,
+
+                    WinCondition::new_loyalist(crate::game::game_conclusion::GameConclusion::Fiends)
+
+                );
+
+                target_ref.set_night_convert_role_to(game, Some(RoleState::Yer(Yer { 
+
+                    star_passes_remaining: self.star_passes_remaining, 
+
+                    old_role: target_ref.role(game),
+
+                })));
+
+
+
+                actor_ref.try_night_kill_single_attacker(
+
+                    actor_ref,
+
+                    game,
+
+                    GraveKiller::Role(Role::Yer),
+
+                    AttackPower::ProtectionPiercing,
+
+                    true
+
+                );
+
+
+
+                actor_ref.set_role_state(game, self);
+
+            }
+
+        }
+
+    }
+
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+
+        crate::game::role::common_role::controller_parameters_map_boolean(
+
+            game,
+
+            actor_ref,
+
+            self.star_passes_remaining == 0 || game.day_number() <= 1,
+
+            ControllerID::role(actor_ref, Role::Yer, 0)
+
+        ).combine_overwrite_owned(
+
+            crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
+
+                game,
+
+                actor_ref,
+
+                false,
+
+                true,
+
+                game.day_number() <= 1,
+
+                ControllerID::role(actor_ref, Role::Yer, 1)
+
+            )
+
+        ).combine_overwrite_owned(
+
+            ControllerParametersMap::new_controller_fast(
+
+                game,
+
+                ControllerID::role(actor_ref, Role::Yer, 2),
+
+                AvailableAbilitySelection::new_role_option(
+
+                    game.settings.enabled_roles.iter()
+
+                        .map(|role| Some(*role))
+
+                        .collect::<VecSet<Option<Role>>>()
+
+                ),
+
+                AbilitySelection::new_role_option(Some(self.old_role)),
+
+                self.star_passes_remaining <= 0 ||
+
+                actor_ref.ability_deactivated_from_death(game) ||
+
+                game.day_number() <= 1,
+
+                None,
+
+                false,
+
+                vec_set!(actor_ref)
+
+            )
+
+        )
+
+    }
+
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
+
+        crate::game::role::common_role::convert_controller_selection_to_visits(
+
+            game,
+
+            actor_ref,
+
+            ControllerID::role(actor_ref, Role::Yer, 1),
+
+            true
+
+        )
+
+    }
+
+}
+
+
+
+
+
+impl Yer{
+
+    pub fn current_fake_role(&self, game: &Game, actor_ref: PlayerReference) -> Role {
+
+        if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
+
+            ControllerID::role(actor_ref, Role::Yer, 2)
+
+        ){
+
+            role
+
+        } else {
+
+            self.old_role
+
+        }
+
+    }
+
+}
+
+
+
+
+Saved diffs
+Your saved diffs will appear here.
+Original text
+No file chosen
+Open file
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
@@ -37,7 +496,8 @@ impl RoleStateImpl for Yer {
     type ClientRoleState = Yer;
     fn new_state(game: &Game) -> Self {
         Self{
-            star_passes_remaining: game.num_players().div_ceil(5)
+            star_passes_remaining: game.num_players().div_ceil(5),
+            ..Self::default()
         }
     }
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -60,66 +520,59 @@ impl RoleStateImpl for Yer {
                     GraveKiller::Role(Role::Yer),
                     AttackPower::ArmorPiercing,
                     true
-                );
-            } else {
-                if priority != Priority::Convert {return}
-                if self.star_passes_remaining == 0 {return}
-
-                if target_ref.night_defense(game).can_block(AttackPower::ArmorPiercing) {
-                    actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
-                    return
-                }
-
-                self.star_passes_remaining = self.star_passes_remaining.saturating_sub(1);
-
-                //role switching stuff
-                let fake_role = self.current_fake_role(&game, actor_ref);
-
-                actor_ref.set_night_grave_role(game, Some(fake_role));
-                
-                //convert & kill stuff
-                target_ref.set_win_condition(
-                    game,
-                    WinCondition::new_loyalist(crate::game::game_conclusion::GameConclusion::Fiends)
-                );
-                target_ref.set_night_convert_role_to(game, Some(RoleState::Yer(Yer { 
-                    star_passes_remaining: self.star_passes_remaining, 
-                    old_role: target_ref.role(game),
-                })));
-
-                actor_ref.try_night_kill_single_attacker(
-                    actor_ref,
-                    game,
-                    GraveKiller::Role(Role::Yer),
-                    AttackPower::ProtectionPiercing,
-                    true
-                );
-
-                actor_ref.set_role_state(game, self);
-            }
-        }
-    }
-    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        crate::game::role::common_role::controller_parameters_map_boolean(
-            game,
-            actor_ref,
-            self.star_passes_remaining == 0 || game.day_number() <= 1,
-            ControllerID::role(actor_ref, Role::Yer, 0)
-        ).combine_overwrite_owned(
-            crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-                game,
-                actor_ref,
-                false,
-                true,
-                game.day_number() <= 1,
-                ControllerID::role(actor_ref, Role::Yer, 1)
+Changed text
+No file chosen
+Open file
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+use serde::Serialize;
             )
         ).combine_overwrite_owned(
             ControllerParametersMap::new_controller_fast(
                 game,
                 ControllerID::role(actor_ref, Role::Yer, 2),
                 AvailableAbilitySelection::new_role_option(
-                                    game.settings.enabled_roles.iter()
+                    game.settings.enabled_roles.iter()
                         .map(|role| Some(*role))
                         .collect::<VecSet<Option<Role>>>()
                 ),
