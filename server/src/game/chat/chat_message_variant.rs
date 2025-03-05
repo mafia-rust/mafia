@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-
+use std::fmt::Debug;
 use crate::game::{
     ability_input::*, components::synopsis::Synopsis, grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
         auditor::AuditorResult, engineer::TrapState, kira::KiraResult, krampus::KrampusAbility, santa_claus::SantaListKind, spy::SpyBug, Role
@@ -65,6 +65,23 @@ pub enum ChatMessageVariant {
         phase: PhaseState, 
         day_number: u8
     },
+
+    /* Debug */
+    #[serde(rename_all = "camelCase")]
+    DebugVisited {
+        visited: Vec <PlayerReference>,
+    },
+
+    #[serde(rename_all = "camelCase")]
+    DebugVisitedBy {
+        visited_by: Vec <PlayerReference>,
+    },
+
+    #[serde(rename_all = "camelCase")]
+    DebugMisc {
+        text: String,
+    },
+
     /* Trial */
     #[serde(rename_all = "camelCase")]
     TrialInformation{
@@ -228,4 +245,12 @@ pub enum ChatMessageVariant {
     MartyrWon,
     MartyrFailed,
     WildcardConvertFailed{ role: Role },
+}
+
+impl ChatMessageVariant {
+    /// Returns a DebugMisc error message that (in game) will display as how this would display
+    /// if formatted via the rust debug formatter
+    pub fn as_debug_misc<X: Debug>(x: X) -> Self {
+        Self::DebugMisc { text: format!("{:?}", x) }
+    }
 }

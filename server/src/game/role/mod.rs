@@ -193,7 +193,8 @@ macros::priorities! {
     Cupid,
     SpyBug,
 
-    StealMessages
+    StealMessages,
+    DebugMessages
 }
 
 pub(crate) mod common_role;
