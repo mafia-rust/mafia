@@ -24,19 +24,27 @@ impl RoleStateImpl for Philosopher {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 
+        println!("phil do_night_action");
+
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         let Some(first_visit) = actor_visits.get(0) else {return;};
         let Some(second_visit) = actor_visits.get(1) else {return;};
 
-        let enemies = if Confused::is_confused(game, actor_ref) {
+        let enemies = 
+        if first_visit.target == second_visit.target {
             false
+        } else if Confused::is_confused(game, actor_ref) {
+            (first_visit.target.night_framed(game) || Confused::is_red_herring(game, actor_ref, first_visit.target)) ^
+            (second_visit.target.night_framed(game) || Confused::is_red_herring(game, actor_ref, second_visit.target))
         } else {
             Philosopher::players_are_enemies(game, first_visit.target, second_visit.target)
         };
 
-        let message = ChatMessageVariant::SeerResult{ enemies };
+        let message = ChatMessageVariant::PhilosopherResult{ enemies };
         
         actor_ref.push_night_message(game, message);
+
+        println!("enemies: {}", enemies);
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
 

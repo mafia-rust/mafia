@@ -23,19 +23,20 @@ impl RoleStateImpl for Detective {
         if priority != Priority::Investigative {return;}
         
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-        if let Some(visit) = actor_visits.first(){
-            let suspicious = if Confused::is_confused(game, actor_ref) {
-                false
-            }else{
-                Detective::player_is_suspicious(game, visit.target)
-            };
+        let Some(visit) = actor_visits.first() else {return};
+        let target_ref = visit.target;
+        let suspicious = if Confused::is_confused(game, actor_ref) {
+            target_ref.night_framed(game) ||
+            Confused::is_red_herring(game, actor_ref, target_ref)
+        }else{
+            Detective::player_is_suspicious(game, target_ref)
+        };
 
-            let message = ChatMessageVariant::SheriffResult {
-                suspicious
-            };
-            
-            actor_ref.push_night_message(game, message);
-        }
+        let message = ChatMessageVariant::DetectiveResult {
+            suspicious
+        };
+        
+        actor_ref.push_night_message(game, message);
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         crate::game::role::common_role::controller_parameters_map_player_list_night_typical(

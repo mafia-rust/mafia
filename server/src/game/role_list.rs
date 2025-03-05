@@ -43,7 +43,25 @@ pub struct RoleAssignment {
     pub win_condition: RoleOutlineOptionWinCondition
 }
 
-
+impl RoleAssignment {
+    pub fn is_evil(&self)-> bool{
+        match self.win_condition.clone() {
+            RoleOutlineOptionWinCondition::GameConclusionReached { win_if_any } => 
+                win_if_any.into_iter().any(|a|
+                    a == GameConclusion::Politician || a == GameConclusion::Cult || 
+                    a == GameConclusion::Fiends || a == GameConclusion::Mafia || 
+                    a == GameConclusion::NaughtyList
+                ),
+            RoleOutlineOptionWinCondition::RoleDefault => {
+                self.role == Role::Politician ||
+                RoleSet::Mafia.get_roles().contains(&self.role) ||
+                RoleSet::Minions.get_roles().contains(&self.role) ||
+                RoleSet::Fiends.get_roles().contains(&self.role) ||
+                RoleSet::Cult.get_roles().contains(&self.role)
+            },
+        }
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct RoleOutline {
