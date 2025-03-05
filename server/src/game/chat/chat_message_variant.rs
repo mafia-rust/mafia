@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-
+use std::fmt::Debug;
 use crate::game::{
     ability_input::*, components::synopsis::Synopsis, grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
         auditor::AuditorResult, engineer::TrapState, kira::KiraResult, krampus::KrampusAbility, santa_claus::SantaListKind, spy::SpyBug, Role
@@ -250,7 +250,7 @@ pub enum ChatMessageVariant {
 impl ChatMessageVariant {
     /// Returns a DebugMisc error message that (in game) will display as how this would display
     /// if formatted via the rust debug formatter
-    pub fn as_debug_misc(&self) -> Self {
-        Self::DebugMisc { text: format!("{:?}", self) }
+    pub fn as_debug_misc<X: Debug>(x: X) -> Self {
+        Self::DebugMisc { text: format!("{:?}", x) }
     }
 }
