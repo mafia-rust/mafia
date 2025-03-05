@@ -7,8 +7,8 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use crate::vec_set::VecSet;
-use super::{common_role, Role, RoleStateImpl};
+use crate::vec_set;
+use super::{Role, RoleStateImpl};
 use crate::game::ability_input::*;
 
 #[derive(Debug, Clone, Serialize, Default)]
