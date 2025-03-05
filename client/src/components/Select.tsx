@@ -68,9 +68,12 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
                 handleSetOpen(false);
                 break;
             case "Enter": {
+                if(searchString.length < 2){
+                    handleSetOpen(false);
+                    break;
+                }
                 const allSearchResults = [...optionsSearch.keys()].filter((key) => {
-                    for(const search of searchString.split(" ")) {
-                        
+                    for(const search of searchString.substring(1).split(" ")) {
                         const val = optionsSearch.get(key);
                         if(val === undefined) {return false}
                         if(!val[1].toLowerCase().includes(search.toLowerCase())){
@@ -87,7 +90,6 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
                     handleOnChange(allSearchResults[0]);
                 }
                 handleSetOpen(false);
-
                 break;
             }
             case "Backspace":
@@ -95,7 +97,13 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
                 break;
             default:
                 if(/^[a-zA-Z0-9- ]$/.test(inputKey)) {
-                    setSearchString(searchString+inputKey);
+                    if (searchString === "") {
+                        if(inputKey !== " "){
+                            setSearchString("🔍"+inputKey);
+                        }
+                    } else {
+                        setSearchString(searchString+inputKey);
+                    }
                 }
         }
     }
