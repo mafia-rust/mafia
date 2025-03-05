@@ -15,13 +15,15 @@ impl<K, V> VecMap<K, V> where K: Eq {
         VecMap { vec: Vec::new() }
     }
     pub fn new_from_vec(vec: Vec<(K, V)>) -> Self {
-        let mut out = VecMap::new();
+        let mut out = VecMap::with_capacity(vec.len());
         for (k, v) in vec {
             out.insert(k, v);
         }
         out
     }
-
+    pub fn with_capacity(capacity: usize) -> Self {
+        VecMap { vec: Vec::with_capacity(capacity) }
+    }
     /// returns the old value if the key already exists
     pub fn insert(&mut self, key: K, value: V) -> Option<(K, V)>{
 
