@@ -110,7 +110,7 @@ impl Mafia{
                 NightVisits::add_visit(game, new_visit);
             }
             Priority::Deception => {
-                if Self::players_with_gun(&game).into_iter().any(|p|!p.night_blocked(game) && p.alive(game)) {
+                if Self::players_with_gun(game).into_iter().any(|p|!p.night_blocked(game) && p.alive(game)) {
                     NightVisits::clear_visits_with_predicate(game, |v|v.tag == crate::game::visit::VisitTag::SyndicateBackupAttack);
                 }
             }
@@ -155,8 +155,7 @@ impl Mafia{
 
         let backup = 
             game.saved_controllers.get_controller_current_selection_player_list(controller_id)
-            .map(|b|b.0.first().cloned())
-            .flatten();
+            .and_then(|b|b.0.first().cloned());
 
         
         for player_ref in PlayerReference::all_players(game){
@@ -190,7 +189,6 @@ impl Mafia{
         role: RoleState
     ){
         let living_players_to_convert = PlayerReference::all_players(game)
-            .into_iter()
             .filter(|p|
                 p.alive(game) &&
                 InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p)

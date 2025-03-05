@@ -6,6 +6,7 @@ use crate::game::{
 pub struct OnTick;
 
 impl OnTick{
+    #[expect(clippy::new_without_default)]
     pub fn new()->Self{
         Self{}
     }

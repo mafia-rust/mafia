@@ -64,7 +64,7 @@ impl Gossip {
             None => player_ref.all_night_visits_cloned(game),
         }
             .iter()
-            .map(|v|v.target.clone())
+            .map(|v|v.target)
             .any(|targets_target|
                 Detective::player_is_suspicious(game, targets_target)
             )

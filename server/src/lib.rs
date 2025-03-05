@@ -1,3 +1,6 @@
+#![warn(clippy::allow_attributes)]
+#![warn(clippy::arithmetic_side_effects)]
+
 pub mod game;
 pub mod websocket_connections;
 pub mod listener;
