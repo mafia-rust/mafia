@@ -759,6 +759,7 @@ export function translateChatMessage(
         case "youAttackedSomeone":
         case "youWereAttacked":
         case "armorsmithArmorBroke":
+        case "werewolfTracked":
             return translate("chatMessage."+message.type);
         case "playerDied":
         case "kiraResult":
@@ -1091,6 +1092,8 @@ export type ChatMessageVariant = {
 } | {
     type: "santaAddedPlayerToNaughtyList",
     player: PlayerIndex
+} | {
+    type: "werewolfTracked"
 }
 
 export type MessageSender = {
