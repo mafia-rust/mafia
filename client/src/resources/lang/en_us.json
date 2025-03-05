@@ -1853,7 +1853,7 @@
     "wiki.article.role.warden.extra":" - You don't visit anybody due to your own ability",
 
     "wiki.article.role.yer.reminder":"Each night*, either attack a player, or convert a player to be a yer, and attack yourself.",
-    "wiki.article.role.yer.guide":"- At night choose to either shapeshift or not\n    - If you don't shapeshift\n        - Choose a player to attack with an armor piercing attack\n    - If you shapeshift\n        - Choose a player to convert with an armor-piercing attack\n        - If the attack succeedes\n            - That players role becomes yer            - That player converts to fiends loyalist\n            - You attack yourself with a protection piercing attack\n            - If you die, your grave shows the role you disguised as on it\n- You can only shapeshift X times (X = Total players ÷ 5 (round up))",
+    "wiki.article.role.yer.guide":"- At night choose to either shapeshift or not\n    - If you don't shapeshift\n        - Choose a player to attack with an armor piercing attack\n    - If you shapeshift\n        - Choose a player to convert with an armor-piercing attack\n        - If the attack succeeds\n            - That players role becomes yer            - That player converts to fiends loyalist\n            - You attack yourself with a protection piercing attack\n            - If you die, your grave shows the role you disguised as on it \n- You can only shapeshift X times (X = Total players ÷ 5 (round up))",
     "wiki.article.role.yer.abilities":"",
     "wiki.article.role.yer.attributes":"",
     "wiki.article.role.yer.extra":"- You visit the player you choose\n- You can't attack or convert night 1",
