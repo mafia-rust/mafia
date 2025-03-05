@@ -103,6 +103,10 @@ impl RoleStateImpl for Yer {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        let mut role_options = Role::values().into_iter()
+            .map(|role| Some(role))
+            .collect::<VecSet<Option<Role>>>();
+        role_options.insert(None);
         crate::game::role::common_role::controller_parameters_map_boolean(
             game,
             actor_ref,
