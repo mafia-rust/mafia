@@ -1,6 +1,7 @@
 mod kit;
 use std::{ops::Deref, vec};
 
+
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
 
@@ -90,6 +91,7 @@ pub use mafia_server::game::{
         warden::Warden,
         arsonist::Arsonist,
         vampire::Vampire,
+        werewolf::Werewolf,
         spiral::Spiral,
         pyrolisk::Pyrolisk,
         puppeteer::Puppeteer,
@@ -3033,4 +3035,102 @@ fn santa_always_gets_their_naughty_selection() {
             GameConclusion::NaughtyList
         );
     }
+}
+#[test]
+fn werewolf_kills_visiting_target() {
+    kit::scenario!(game in Night 2 where
+        werewolf: Werewolf,
+        target: Snoop,
+        bystander: Snoop
+    );
+    werewolf.send_ability_input_player_list_typical(target);
+    target.send_ability_input_player_list_typical(bystander);
+
+    game.skip_to(Night, 3);
+    werewolf.send_ability_input_player_list_typical(target);
+    target.send_ability_input_player_list_typical(bystander);
+    game.next_phase();
+    assert!(!target.alive());
+}
+#[test]
+fn werewolf_kills_nonvisiting_target() {
+    kit::scenario!(game in Night 2 where
+        werewolf: Werewolf,
+        target: Snoop,
+        bystander: Snoop
+    );
+    werewolf.send_ability_input_player_list_typical(target);
+    target.send_ability_input_player_list_typical(bystander);
+
+    game.skip_to(Night, 3);
+    werewolf.send_ability_input_player_list_typical(target);
+    game.next_phase();
+    assert!(target.alive());
+}
+#[test]
+fn werewolf_spares_nonvisiting_target() {
+    kit::scenario!(game in Night 2 where
+        werewolf: Werewolf,
+        target: Snoop,
+        bystander: Snoop,
+        _bystander2: Snoop,
+        _bystander3: Snoop
+    );
+    werewolf.send_ability_input_player_list_typical(target);
+    target.send_ability_input_player_list_typical(bystander);
+
+    game.skip_to(Night, 3);
+    werewolf.send_ability_input_player_list_typical(bystander);
+    game.next_phase();
+    assert!(bystander.alive());
+}
+
+#[test]
+fn werewolf_rampage() {
+    kit::scenario!(game in Night 2 where
+        werewolf: Werewolf,
+        target: Snoop,
+        bystander: Snoop
+    );
+    werewolf.send_ability_input_player_list_typical(target);
+    target.send_ability_input_player_list_typical(bystander);
+
+    game.skip_to(Night, 3);
+    werewolf.send_ability_input_player_list_typical(target);
+    bystander.send_ability_input_player_list_typical(target);
+    game.next_phase();
+    assert!(!bystander.alive());
+}
+#[test]
+fn werewolf_nonrampage() {
+    kit::scenario!(game in Night 2 where
+        werewolf: Werewolf,
+        target: Snoop,
+        bystander: Snoop
+    );
+    werewolf.send_ability_input_player_list_typical(bystander);
+    target.send_ability_input_player_list_typical(bystander);
+
+    game.skip_to(Night, 3);
+    werewolf.send_ability_input_player_list_typical(target);
+    bystander.send_ability_input_player_list_typical(target);
+    game.next_phase();
+    assert!(bystander.alive());
+}
+
+#[test]
+fn enraged_werewolf_kills() {
+    kit::scenario!(game in Night 2 where
+        werewolf: Werewolf,
+        target: Snoop,
+        bystander: Snoop
+    );
+    werewolf.send_ability_input_player_list_typical(target);
+    target.send_ability_input_player_list_typical(bystander);
+
+    game.skip_to(Night, 3);
+    werewolf.send_ability_input_player_list_typical(target);
+    bystander.send_ability_input_player_list_typical(target);
+    game.next_phase();
+    assert!(!bystander.alive());
 }
