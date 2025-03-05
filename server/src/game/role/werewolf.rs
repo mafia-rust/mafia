@@ -84,7 +84,7 @@ impl RoleStateImpl for Werewolf {
                             actor_ref,
                             game,
                             GraveKiller::Role(Role::Werewolf),
-                            AttackPower:ShieldPiercing,
+                            AttackPower::ShieldPiercing,
                             true
                         );
                     }
