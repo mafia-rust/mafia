@@ -215,7 +215,7 @@ export type Role = keyof typeof ROLES;
 export type SingleRoleJsonData = {
     mainRoleSet: RoleSet,
     roleSets: RoleSet[],
-    armor: boolean,
+    shielded: boolean,
     aura: null | "innocent" | "suspicious",
     maxCount: null | number,
     canWriteDeathNote: boolean,
