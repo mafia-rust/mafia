@@ -127,8 +127,7 @@ pub enum ChatMessageVariant {
     DeputyShotYou,
     #[serde(rename_all = "camelCase")]
     WardenPlayersImprisoned{players: Vec<PlayerReference>},
-    #[serde(rename_all = "camelCase")]
-    WerewolfTracked{target: PlayerReference},
+    WerewolfTracked,
     
     #[serde(rename_all = "camelCase")]
     PlayerDiedOfABrokenHeart{player: PlayerIndex, lover: PlayerIndex},
