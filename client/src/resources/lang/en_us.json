@@ -249,6 +249,8 @@
 
     "role.engineer.name": "Engineer",
     "role.engineer.name:var.0": "Engineers",
+    "role.engineer.name:var.1": "Engi",
+    "role.engineer.name:var.2": "Engis",
     "role.engineer.roleDataText.dismantled": "The trap is dismantled, wait for it to be ready.",
     "role.engineer.roleDataText.ready": "The trap is ready, you can set it on someone for it to trigger as soon as tonight.",
     "role.engineer.roleDataText.set": "The trap is currently set, If you dismantle it, it will be ready next night.",
