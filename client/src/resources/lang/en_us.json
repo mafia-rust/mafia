@@ -333,6 +333,10 @@
     "role.godfather.name:var.0": "Godfathers",
     "controllerId.role.godfather.0.name": "Attack",
 
+    "role.pathologist.name": "Pathologist",
+    "role.pathologist.name:var.0": "Pathologists",
+    "controllerId.role.pathologist.0.name": "Attack",
+
     "role.impostor.name": "Impostor",
     "role.impostor.name:var.0": "Impostors",
     "role.impostor.name:var.1": "Imposter",
@@ -1623,6 +1627,12 @@
     "wiki.article.role.godfather.abilities":"* Visit a player to attack\n* Choose another living syndicate member to be your backup at any time\n* While you are blocked, the backup will attack the first player they visit",
     "wiki.article.role.godfather.attributes":"* When you are blocked, the syndicate is told that the backup attacks for you\n- Neither you or the backup can select or attack night 1",
     "wiki.article.role.godfather.extra":"* You only have a basic attack\n* When the Godfather dies, their current backup becomes the Godfather\n* You can not select other syndicate members",
+    
+    "wiki.article.role.pathologist.reminder": "Each night, select a player to attack. You perform an autopsy on any player who dies.",
+    "wiki.article.role.pathologist.guide": "- At night, select a player to attack\n- You can't attack night 1\n- Choose a backup to attack for you if you are blocked\n- When a player dies, you perform on autopsy on them, telling you their role, will, win conditions, and various status affects that were applied to them when they died.\n\n You should try to kill townies who are likely to stop you from winning or have powerful abilities, but be careful about town protective roles.",
+    "wiki.article.role.pathologist.abilities":"* Visit a player to attack\n* Choose another living syndicate member to be your backup at any time\n* While you are blocked, the backup will attack the first player they visit",
+    "wiki.article.role.pathologist.attributes":"* When you are blocked, the syndicate is told that the backup attacks for you\n- Neither you or the backup can select or attack night 1",
+    "wiki.article.role.pathologist.extra":"* You only have a basic attack\n* When the Pathologist dies, their current backup becomes the Pathologist\n* You can not select other syndicate members",
     
     "wiki.article.role.impostor.reminder": "Each night, select a player to attack. If you die, your grave shows whatever role you chose to disguise as.",
     "wiki.article.role.impostor.guide": "- At night, select a player to attack\n- You can't attack night 1\n- Choose a backup to attack for you if you are blocked\n- You can choose what role appears on your grave, giving false information to the town when you die\n\n You should try to kill townies who are likely to stop you from winning or have powerful abilities, but be careful about town protective roles.",
