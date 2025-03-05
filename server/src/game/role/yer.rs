@@ -21,6 +21,15 @@ pub struct Yer{
     pub old_role: Role,
 }
 
+impl Default for Yer {
+    fn default() -> Yer {
+        Yer {
+            star_passes_remaining: 3,
+            old_role: Role::Yer
+        }
+    }
+}
+
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
