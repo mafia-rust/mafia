@@ -16,6 +16,7 @@ import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSp
 import { ControllerID, AbilitySelection, translateControllerID, controllerIdToLink } from "../game/abilityInput";
 import DetailsSummary from "./DetailsSummary";
 
+
 const ChatElement = React.memo((
     props: {
         message: ChatMessage,
@@ -428,7 +429,53 @@ export function translateChatMessage(
                         message.dayNumber
                     );
             }
+        case "playerConvertHistory": {
+            return `(${
+                message.crumbs.map(crumb => translate("chatMessage.gameOver.player.crumb",
+                    translateWinCondition(crumb.winCondition), 
+                    translate(`role.${crumb.role}.name`)
+                )).join(" → ")
+            })`;
+        }
+        case "playerStatusEffects": {
+            let effects = "";
+            if(message.confused)
+                effects += translate("chatMessage.playerStatusEffects.status.confused")
+            if(message.innocentAura)
+                effects += translate("chatMessage.playerStatusEffects.status.innocentAura")
+            if(message.susAura)
+                effects += translate("chatMessage.playerStatusEffects.status.susAura")
+            if(message.armor)
+                effects += translate("chatMessage.playerStatusEffects.status.armor")
+            if(message.silenced)
+                effects += translate("chatMessage.playerStatusEffects.status.silenced")
+            if(message.loveLinks.length == 1)
+                effects += translate("chatMessage.playerStatusEffects.status.loveLinks.single", playerNames[message.loveLinks[0]])
+            else if(message.loveLinks.length > 1)
+                effects += translate("chatMessage.playerStatusEffects.status.loveLinks.multiple", playerListToString(message.loveLinks, playerNames))
             
+            if(message.nightStatus !== null) {
+                effects += translate("chatMessage.playerStatusEffects.status.nightStatus.nightDefense."+message.nightStatus.nightDefense)
+                if(message.nightStatus.roleblocked)
+                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.roleblocked")
+                if(message.nightStatus.wardblocked)
+                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.wardblocked")
+                if(message.nightStatus.possessed)
+                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.possessed")
+                if(message.nightStatus.transported)
+                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.transported")
+                if(message.nightStatus.detained)
+                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.detained")
+            }
+
+            for(let tag in message.tags) {
+                effects += translate("chatMessage.playerStatusEffects.status.tag."+tag);
+            }
+            let target = message.player === null ? translate("chatMessage.playerStatusEffects.unspecifiedTarget") : playerNames[message.player];
+            return effects.length == 0 ? 
+                translate("chatMessage.playerStatusEffects.none", target) :
+                translate("chatMessage.playerStatusEffects.some", target);
+        }
         case "trialInformation":
             return translate("chatMessage.trialInformation",
                 message.requiredVotes,
@@ -1012,6 +1059,32 @@ export type ChatMessageVariant = {
 } | {
     type: "godfatherBackupKilled",
     backup: PlayerIndex
+} | {
+    type: "playerConvertHistory",
+    player: PlayerIndex,
+    crumbs: {
+        night: number | null,
+        role: Role,
+        winCondition: WinCondition
+    }[],
+} | {
+    type: "playerStatusEffects",
+    player: PlayerIndex,
+    tags: Tag[],
+    loveLinks: PlayerIndex[],
+    innocentAura: boolean,
+    susAura: boolean,
+    armor: boolean,
+    confused: boolean,
+    silenced: boolean,
+    nightStatus: {
+        nightDefense: number
+        roleblocked: boolean,
+        wardblocked: boolean,
+        possessed: boolean,
+        transported: boolean,
+        detained: boolean,
+    } | null,
 } | {
     type: "silenced"
 } | {

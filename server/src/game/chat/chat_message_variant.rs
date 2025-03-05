@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::{
-    ability_input::*, components::{status_effects::StatusEffects, synopsis::{PartialPlayerSynopsis, Synopsis}}, grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
+    ability_input::*, components::{pathologist_info_dump::NightStatusEffects, synopsis::{PartialPlayerSynopsis, Synopsis}}, grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
         auditor::AuditorResult, engineer::TrapState, kira::KiraResult, krampus::KrampusAbility, santa_claus::SantaListKind, spy::SpyBug, Role
     }, role_list::RoleOutline, tag::Tag, verdict::Verdict, win_condition::WinCondition
 };
@@ -195,7 +195,17 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     PlayerConvertHistory{player: PlayerIndex, history: PartialPlayerSynopsis},
     #[serde(rename_all = "camelCase")]
-    PlayerStatus{player: PlayerIndex, status: StatusEffects},
+    PlayerStatusEffects{
+        player: Option<PlayerIndex>,     
+        tags: Vec<Tag>,
+        love_links: Vec<PlayerIndex>,
+        innocent_aura: bool,
+        sus_aura: bool,
+        armor: bool,
+        confused: bool,
+        silenced: bool,
+        night_status: Option<NightStatusEffects>,
+    },
 
     #[serde(rename_all = "camelCase")]
     PlayerRoleAndAlibi { player: PlayerReference, role: Role, will: String },
