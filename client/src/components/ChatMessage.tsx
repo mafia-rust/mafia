@@ -473,7 +473,7 @@ export function translateChatMessage(
             }
             let target = message.player === null ? translate("chatMessage.playerStatusEffects.unspecifiedTarget") : playerNames[message.player];
             return effects.length === 0 ? 
-                translate("chatMessage.playerStatusEffects.none", target) :
+                translate("chatMessage.playerStatusEffects.none", target, effects) :
                 translate("chatMessage.playerStatusEffects.some", target);
         }
         case "trialInformation":
