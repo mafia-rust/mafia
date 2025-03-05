@@ -139,8 +139,11 @@ impl Game {
                     break 'packet_match;
                 }
 
+                let hide_whispers = Modifiers::modifier_is_enabled(self, ModifierType::HiddenWhispers);
+                if !hide_whispers {
+                    self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::BroadcastWhisper { whisperer: sender_player_index, whisperee: whispered_to_player_index });
+                }
 
-                self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::BroadcastWhisper { whisperer: sender_player_index, whisperee: whispered_to_player_index });
                 let message = ChatMessageVariant::Whisper { 
                     from_player_index: sender_player_index, 
                     to_player_index: whispered_to_player_index, 
@@ -154,6 +157,9 @@ impl Game {
                         player.role(self) == Role::Informant ||
                         whisperee_ref == player
                     {
+                        if hide_whispers {
+                            player.add_private_chat_message(self, ChatMessageVariant::BroadcastWhisper { whisperer: sender_player_index, whisperee: whispered_to_player_index });
+                        }
                         player.add_private_chat_message(self, message.clone());
                     }
                 }
