@@ -93,6 +93,8 @@ export type RoleState = {
 } | {
     type: "godfather"
 } | {
+    type: "pathologist"
+} | {
     type: "impostor"
 } | {
     type: "counterfeiter",

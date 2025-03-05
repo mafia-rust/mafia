@@ -449,7 +449,7 @@ export function translateChatMessage(
                 effects += translate("chatMessage.playerStatusEffects.status.armor")
             if(message.silenced)
                 effects += translate("chatMessage.playerStatusEffects.status.silenced")
-            if(message.loveLinks.length == 1)
+            if(message.loveLinks.length === 1)
                 effects += translate("chatMessage.playerStatusEffects.status.loveLinks.single", playerNames[message.loveLinks[0]])
             else if(message.loveLinks.length > 1)
                 effects += translate("chatMessage.playerStatusEffects.status.loveLinks.multiple", playerListToString(message.loveLinks, playerNames))
@@ -472,7 +472,7 @@ export function translateChatMessage(
                 effects += translate("chatMessage.playerStatusEffects.status.tag."+tag);
             }
             let target = message.player === null ? translate("chatMessage.playerStatusEffects.unspecifiedTarget") : playerNames[message.player];
-            return effects.length == 0 ? 
+            return effects.length === 0 ? 
                 translate("chatMessage.playerStatusEffects.none", target) :
                 translate("chatMessage.playerStatusEffects.some", target);
         }

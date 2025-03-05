@@ -324,7 +324,7 @@ impl RoleSet{
                 vec![
                     Role::Godfather, Role::Counterfeiter,
                     Role::Impostor, Role::Recruiter,
-                    Role::Mafioso
+                    Role::Mafioso, Role::Pathologist,
                 ],
             RoleSet::MafiaSupport => 
                 vec![

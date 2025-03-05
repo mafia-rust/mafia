@@ -522,6 +522,53 @@
             {"type": "youSurvivedAttack"}
         ]
     },
+    "pathologist": {
+        "mainRoleSet": "mafia",
+        "roleSets": ["mafia", "mafiaKilling"],
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {
+                "type": "playerStatusEffects", 
+                "player": 2, 
+                "tags":[
+                    "disguise",
+                    "syndicateGun",
+                    "godfatherBackup",
+                    "werewolfTracked",
+                    "doused",
+                    "revolutionaryTarget",
+                    "morticianTagged",
+                    "puppeteerMarionette",
+                    "loveLinked",
+                    "frame",
+                    "forfeitVote",
+                    "spiraling"
+                    ],
+                "loveLinks":[1,3,9,7],
+                "innocentAura":true,
+                "susAura": true,
+                "armor": true,
+                "confused": true,
+                "silenced": true,
+                "nightStatus": {
+                    "nightDefense": 1,
+                    "roleblocked": true,
+                    "wardblocked": true,
+                    "possessed": true,
+                    "transported": true,
+                    "detained": true
+                }
+            },
+            {"type": "godfatherBackup", "backup": null},
+            {"type": "godfatherBackup", "backup": 26},
+            {"type": "godfatherBackupKilled", "backup": 26},
+            {"type": "someoneSurvivedYourAttack"}
+        ]
+    },
     "impostor": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaKilling"],
