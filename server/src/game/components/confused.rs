@@ -63,28 +63,20 @@ impl Confused {
     }
 
     pub fn is_confused(game: &Game, player: PlayerReference)->bool{
-        game.confused().0.contains(&player)
+        Self::get_confusion_data(game, player).is_some_and(|data|data.confused)
     }
 
     pub fn is_red_herring(game: &Game, confused_player: PlayerReference, target: PlayerReference) -> bool{
         match game.confused().0.get(&confused_player) {
+            Some(data) => data.confused && data.red_herrings.contains(&target),
             None => false,
-            Some(data) => data.red_herrings.contains(&target),
         }
     }
 
+    /// <strong>WARNING: JUST BECAUSE A PLAYER HAS CONFUSION DATA, IT DOESN'T MEAN THEY ARE CONFUSED</strong> <br>
+    /// to check if player is confused, either check whether the data's confused flag is true
+    /// or use is_confused function
     pub fn get_confusion_data(game: &Game, player: PlayerReference) -> Option<&ConfusionData>{
         game.confused().0.get(&player)
-    }
-}
-
-impl PlayerReference {
-    pub fn generate_red_herring(self, game: &Game) -> Option<PlayerReference>{
-        return PlayerReference::all_players(game)
-            .filter(|player|
-                player.alive(game) &&
-                *player != self
-            )
-            .choose(&mut rand::rng())
     }
 }

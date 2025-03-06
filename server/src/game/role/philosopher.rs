@@ -89,4 +89,8 @@ impl Philosopher{
             !WinCondition::are_friends(a.win_condition(game), b.win_condition(game))
         }
     }
+    pub fn players_are_enemies_confused(game: &Game, a: PlayerReference, b: PlayerReference, actor_ref: PlayerReference) -> bool {
+        (a.night_framed(game) || Confused::is_red_herring(game, actor_ref, a)) ^
+        (b.night_framed(game) || Confused::is_red_herring(game, actor_ref, b))
+    }
 }

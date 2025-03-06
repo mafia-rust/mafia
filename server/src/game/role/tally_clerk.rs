@@ -30,21 +30,14 @@ impl RoleStateImpl for TallyClerk {
             .filter(|player|player.alive(game))
             .filter(|player|VerdictsToday::player_guiltied_today(game, player))
         {
-            if TallyClerk::player_is_suspicious(game, player){
+            if Confused::is_confused(game, actor_ref) {
+                if Self::player_is_suspicious_confused(game, player, actor_ref) {
+                    evil_count += 1;
+                }
+            } else if Self::player_is_suspicious(game, player) {
                 evil_count += 1;
             }
         }
-
-        if Confused::is_confused(game, actor_ref){
-            let total_guilties = VerdictsToday::guilties(game).len();
-            //add or subtract 1 randomly from the count
-            if rand::random::<bool>(){
-                evil_count = (evil_count.saturating_add(1u8)).min(total_guilties as u8);
-            }else{
-                evil_count = (evil_count.saturating_sub(1u8)).max(0);
-            }
-        }
-
         
         let message = ChatMessageVariant::TallyClerkResult{ evil_count };
         actor_ref.push_night_message(game, message);
@@ -53,7 +46,6 @@ impl RoleStateImpl for TallyClerk {
 
 impl TallyClerk {
     pub fn player_is_suspicious(game: &Game, player_ref: PlayerReference) -> bool {
-
         if player_ref.has_suspicious_aura(game){
             true
         }else if player_ref.has_innocent_aura(game){
@@ -61,5 +53,9 @@ impl TallyClerk {
         }else{
             !player_ref.win_condition(game).is_loyalist_for(GameConclusion::Town)
         }
+    }
+    pub fn player_is_suspicious_confused(game: &Game, player_ref: PlayerReference, actor_ref: PlayerReference) -> bool {
+        actor_ref.night_framed(game) ||
+        Confused::is_red_herring(game, actor_ref, player_ref)
     }
 }

@@ -26,8 +26,7 @@ impl RoleStateImpl for Detective {
         let Some(visit) = actor_visits.first() else {return};
         let target_ref = visit.target;
         let suspicious = if Confused::is_confused(game, actor_ref) {
-            target_ref.night_framed(game) ||
-            Confused::is_red_herring(game, actor_ref, target_ref)
+            Self::player_is_suspicious_confused(game, actor_ref, target_ref)
         }else{
             Detective::player_is_suspicious(game, target_ref)
         };
@@ -68,5 +67,9 @@ impl Detective {
         }else{
             !player_ref.win_condition(game).friends_with_resolution_state(GameConclusion::Town)
         }
+    }
+    pub fn player_is_suspicious_confused(game: &Game, player_ref: PlayerReference, actor_ref: PlayerReference) -> bool {
+        actor_ref.night_framed(game) ||
+        Confused::is_red_herring(game, actor_ref, player_ref)
     }
 }

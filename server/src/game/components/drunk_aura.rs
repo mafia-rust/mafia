@@ -20,7 +20,7 @@ impl DrunkAura {
     pub fn add_player(game: &mut Game, player: PlayerReference){
         game.drunk_aura_mut().players.insert(player);
     }
-
+    /// Returns true if the player was drunk
     pub fn remove_player(game: &mut Game, player: PlayerReference) -> bool{
         game.drunk_aura_mut().players.remove(&player).is_some()
     }

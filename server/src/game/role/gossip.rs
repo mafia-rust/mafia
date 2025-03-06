@@ -27,8 +27,8 @@ impl RoleStateImpl for Gossip {
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
             
-            let enemies = self.enemies(game, visit.target, actor_ref);
-            let message = ChatMessageVariant::GossipResult{ enemies };
+            let enemies = Self::visited_enemies(game, visit.target, actor_ref);
+            let message: ChatMessageVariant = ChatMessageVariant::GossipResult{ enemies };
             
             actor_ref.push_night_message(game, message);
         }
@@ -55,21 +55,21 @@ impl RoleStateImpl for Gossip {
 }
 
 impl Gossip {
-    pub fn enemies(self, game: &Game, player_ref: PlayerReference, actor_ref: PlayerReference) -> bool {
+    pub fn visited_enemies(game: &Game, player_ref: PlayerReference, actor_ref: PlayerReference) -> bool {
         match player_ref.night_appeared_visits(game) {
             Some(x) => x.clone(),
             None => player_ref.all_night_visits_cloned(game),
         }
             .iter()
             .map(|v|v.target.clone())
-            .any(
-                |target_of_target: PlayerReference|   
-                    if Confused::is_confused(game, actor_ref) {
-                        target_of_target.night_framed(game) || 
-                        Confused::is_red_herring(game, actor_ref, target_of_target)
-                    } else {
-                        Detective::player_is_suspicious(game, target_of_target)
-                    }
-            )
+            .any(|target_of_target: PlayerReference|Self::enemy(game, target_of_target, actor_ref))
+    }
+    pub fn enemy(game: &Game, player_ref: PlayerReference, actor_ref: PlayerReference) -> bool{
+        if Confused::is_confused(game, actor_ref) {
+            player_ref.night_framed(game) || 
+            Confused::is_red_herring(game, actor_ref, player_ref)
+        } else {
+            Detective::player_is_suspicious(game, player_ref)
+        }
     }
 }
