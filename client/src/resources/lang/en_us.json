@@ -228,6 +228,9 @@
     "role.tallyClerk.name": "Tally Clerk",
     "role.tallyClerk.name:var.0": "Tally Clerks",
     "role.tallyClerk.target": "Distribute",
+    
+    "role.pathologist.name": "Pathologist",
+    "role.pathologist.name:var.0": "Pathologists",
 
     "role.doctor.name": "Doctor",
     "role.doctor.name:var.0": "Doctors",
@@ -332,10 +335,6 @@
     "role.godfather.name": "Godfather",
     "role.godfather.name:var.0": "Godfathers",
     "controllerId.role.godfather.0.name": "Attack",
-
-    "role.pathologist.name": "Pathologist",
-    "role.pathologist.name:var.0": "Pathologists",
-    "controllerId.role.pathologist.0.name": "Attack",
 
     "role.impostor.name": "Impostor",
     "role.impostor.name:var.0": "Impostors",
@@ -1521,6 +1520,12 @@
     "wiki.article.role.tallyClerk.attributes":"- A suspicious aura makes a player register as not a town loyalist\n- An innocent aura makes a player register as a town loyalist\n- A suspicious aura overwrites innocent aura to the Tally Clerk",
     "wiki.article.role.tallyClerk.extra":"",
 
+    "wiki.article.role.pathologist.reminder": "You perform an autopsy on any player who dies.",
+    "wiki.article.role.pathologist.guide": "- When a player dies you perform an autopsy on them. \n- From an autopsy you learn the conditions of the player at their time of death and their role history.\n- The example autopsy message includes every condition of the player that you can learn.",
+    "wiki.article.role.pathologist.abilities":"- When a player dies you perform an autopsy on them. \n    - Autopsies reveal a player's condition at the time of death and their role history.",
+    "wiki.article.role.pathologist.attributes":"- You do not visit players to perform an autopsy.",
+    "wiki.article.role.pathologist.extra":"- You do not visit players to perform an autopsy.",
+
     "wiki.article.role.doctor.reminder": "At night, select a player to protect from attacks. You can protect yourself once per game.",
     "wiki.article.role.doctor.guide": "- At night, select a player to protect\n    - Whoever you protect doesn't die if they're attacked\n    - You and the player you protected are both told if they are attacked\n- You can select yourself to protect yourself once per game\n- If your target is attacked by a protection-piercing attack they still die\n\nYou should try to protect people you think are townies who will be attacked.",
     "wiki.article.role.doctor.abilities":"* Visit a player to protect for the night",
@@ -1627,13 +1632,7 @@
     "wiki.article.role.godfather.abilities":"* Visit a player to attack\n* Choose another living syndicate member to be your backup at any time\n* While you are blocked, the backup will attack the first player they visit",
     "wiki.article.role.godfather.attributes":"* When you are blocked, the syndicate is told that the backup attacks for you\n- Neither you or the backup can select or attack night 1",
     "wiki.article.role.godfather.extra":"* You only have a basic attack\n* When the Godfather dies, their current backup becomes the Godfather\n* You can not select other syndicate members",
-    
-    "wiki.article.role.pathologist.reminder": "Each night, select a player to attack. You perform an autopsy on any player who dies.",
-    "wiki.article.role.pathologist.guide": "- At night, select a player to attack\n- You can't attack night 1\n- Choose a backup to attack for you if you are blocked\n- When a player dies, you perform on autopsy on them, telling you their role, will, win conditions, and various status affects that were applied to them when they died.\n\n You should try to kill townies who are likely to stop you from winning or have powerful abilities, but be careful about town protective roles.",
-    "wiki.article.role.pathologist.abilities":"* Visit a player to attack\n* Choose another living syndicate member to be your backup at any time\n* While you are blocked, the backup will attack the first player they visit",
-    "wiki.article.role.pathologist.attributes":"* When you are blocked, the syndicate is told that the backup attacks for you\n- Neither you or the backup can select or attack night 1",
-    "wiki.article.role.pathologist.extra":"* You only have a basic attack\n* When the Pathologist dies, their current backup becomes the Pathologist\n* You can not select other syndicate members",
-    
+        
     "wiki.article.role.impostor.reminder": "Each night, select a player to attack. If you die, your grave shows whatever role you chose to disguise as.",
     "wiki.article.role.impostor.guide": "- At night, select a player to attack\n- You can't attack night 1\n- Choose a backup to attack for you if you are blocked\n- You can choose what role appears on your grave, giving false information to the town when you die\n\n You should try to kill townies who are likely to stop you from winning or have powerful abilities, but be careful about town protective roles.",
     "wiki.article.role.impostor.abilities":"* Visit a player to attack\n* Choose another living syndicate member to be your backup at any time\n* While you are blocked, the backup will attack the first player they visit\n- At any time while you are alive, choose a role, that role appears on your grave when you die instead of impostor",

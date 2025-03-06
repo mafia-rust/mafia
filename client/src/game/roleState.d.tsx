@@ -45,6 +45,8 @@ export type RoleState = {
 } | {
     type: "tallyClerk"
 } | {
+    type: "pathologist"
+} | {
     type: "doctor",
     selfHealsRemaining: number,
 } | {
@@ -92,8 +94,6 @@ export type RoleState = {
     interviewedTarget: PlayerIndex | null
 } | {
     type: "godfather"
-} | {
-    type: "pathologist"
 } | {
     type: "impostor"
 } | {

@@ -429,15 +429,14 @@ export function translateChatMessage(
                         message.dayNumber
                     );
             }
-        case "playerConvertHistory": {
+        case "playerConvertHistory":
             return `(${
                 message.crumbs.map(crumb => translate("chatMessage.gameOver.player.crumb",
                     translateWinCondition(crumb.winCondition), 
                     translate(`role.${crumb.role}.name`)
                 )).join(" → ")
             })`;
-        }
-        case "playerStatusEffects": {
+        case "playerStatusEffects":
             let effects = "";
             if(message.confused)
                 effects += translate("chatMessage.playerStatusEffects.status.confused")
@@ -473,9 +472,8 @@ export function translateChatMessage(
             }
             let target = message.player === null ? translate("chatMessage.playerStatusEffects.unspecifiedTarget") : playerNames[message.player];
             return effects.length === 0 ? 
-                translate("chatMessage.playerStatusEffects.none", target, effects) :
-                translate("chatMessage.playerStatusEffects.some", target);
-        }
+                translate("chatMessage.playerStatusEffects.none", target) :
+                translate("chatMessage.playerStatusEffects.some", target, effects);
         case "trialInformation":
             return translate("chatMessage.trialInformation",
                 message.requiredVotes,
