@@ -416,9 +416,6 @@ impl Role{
             Role::Pyrolisk => {
                 game.day_number() == 1
             },
-            Role::Werewolf => {
-                game.day_number() == 1 || game.day_number() == 3
-            },
             _ => false,
         }
     }
