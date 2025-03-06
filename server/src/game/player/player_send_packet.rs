@@ -154,7 +154,6 @@ impl PlayerReference{
         for _ in 0..5 {
             let msg_option = self.deref(game).queued_chat_messages.first();
             if let Some(msg) = msg_option{
-                //is because otherwise you run into the issue of borrowing as immutable and as mutable
                 chat_messages_out.push(msg.clone());
                 self.deref_mut(game).queued_chat_messages.remove(0);
             } else {break}
