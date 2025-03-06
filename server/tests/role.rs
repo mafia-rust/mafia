@@ -1270,7 +1270,7 @@ fn drunk_suspicious_aura() {
 #[test]
 fn drunk_confused_and_drunk_aura() {
     for _ in 0..20 {
-        kit::scenario!(game in Night 1 where
+        kit::scenario!(game in Night 2 where
             drunk: Drunk,
             reed: Reeducator,
             townie: Deputy
