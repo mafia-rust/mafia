@@ -221,7 +221,7 @@ function ConclusionsSelectorLabel(props: Readonly<{
         <Popover
             open={popupOpen}
             setOpenOrClosed={setPopupOpen}
-            anchorRef={ref}
+            anchorForPositionRef={ref}
             onRender={dropdownPlacementFunction}
         >
             <ConclusionsSelector
@@ -333,7 +333,7 @@ function InsiderGroupSelectorLabel(props: Readonly<{
         <Popover
             open={popupOpen}
             setOpenOrClosed={setPopupOpen}
-            anchorRef={ref}
+            anchorForPositionRef={ref}
             onRender={dropdownPlacementFunction}
         >
             <InsiderGroupSelector
