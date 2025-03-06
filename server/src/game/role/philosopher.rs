@@ -10,6 +10,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_set;
 
+use super::detective::Detective;
 use super::{common_role, AvailableAbilitySelection, ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -90,7 +91,7 @@ impl Philosopher{
         }
     }
     pub fn players_are_enemies_confused(game: &Game, a: PlayerReference, b: PlayerReference, actor_ref: PlayerReference) -> bool {
-        (a.night_framed(game) || Confused::is_red_herring(game, actor_ref, a)) ^
-        (b.night_framed(game) || Confused::is_red_herring(game, actor_ref, b))
+        Detective::player_is_suspicious_confused(game, a, actor_ref) ^
+        Detective::player_is_suspicious_confused(game, b, actor_ref)
     }
 }

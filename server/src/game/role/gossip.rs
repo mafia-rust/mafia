@@ -22,14 +22,11 @@ impl RoleStateImpl for Gossip {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Investigative {return;}
 
-        
-
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
             
             let enemies = Self::visited_enemies(game, visit.target, actor_ref);
             let message: ChatMessageVariant = ChatMessageVariant::GossipResult{ enemies };
-            
             actor_ref.push_night_message(game, message);
         }
         
@@ -61,12 +58,11 @@ impl Gossip {
             None => player_ref.all_night_visits_cloned(game),
         }
             .iter()
-            .map(|v|v.target.clone())
-            .any(|target_of_target: PlayerReference|
+            .any(|visit: &Visit|
                 if Confused::is_confused(game, actor_ref) {
-                    Detective::player_is_suspicious_confused(game, target_of_target, actor_ref)
+                    Detective::player_is_suspicious_confused(game, visit.target, actor_ref)
                 } else {
-                    Detective::player_is_suspicious(game, target_of_target)
+                    Detective::player_is_suspicious(game, visit.target)
                 }
             )
     }

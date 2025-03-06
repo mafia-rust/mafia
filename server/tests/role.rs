@@ -1391,6 +1391,7 @@ fn red_herrings() {
             detective: Detective,
             gossip: Gossip,
             philosopher: Philosopher,
+            //Has to be a doctor so they can visit themself
             tester: Doctor,
             mafia: Informant
         );
@@ -1415,7 +1416,7 @@ fn red_herrings() {
             unsafe {
                 target = TestPlayer::new(PlayerReference::new_unchecked(index), &*game);
             }
-    
+            
             detective.send_ability_input_player_list_typical(target);
             gossip.send_ability_input_player_list_typical(tester);
             philosopher.send_ability_input_two_player_typical(target, tester);
@@ -1440,12 +1441,14 @@ fn red_herrings() {
                     panic!("detective_messages: {:?}", detective_messages);
                 } else {
                     found_detective_red_herring = true;
+                    assert!(Confused::is_red_herring(&*game, detective.player_ref(), target.player_ref()));
                 }
             } else {
                 assert_eq!(
                     detective_messages.contains(&ChatMessageVariant::DetectiveResult { suspicious: false }),
                     target != detective
-                )
+                );
+                assert!(!Confused::is_red_herring(&*game, detective.player_ref(), target.player_ref()));
             }
     
             /* Test Gossip */
@@ -1456,9 +1459,11 @@ fn red_herrings() {
                     panic!("gossip_messages: {:?}", gossip_messages);
                 } else {
                     found_gossip_red_herring = true;
+                    assert!(Confused::is_red_herring(&*game, gossip.player_ref(), target.player_ref()))
                 }
             } else {
                 assert!(gossip_messages.contains(&ChatMessageVariant::GossipResult { enemies: false }));
+                assert!(!Confused::is_red_herring(&*game, gossip.player_ref(), target.player_ref()));
             }
             
     
@@ -1486,20 +1491,7 @@ fn red_herrings() {
         }
     
         assert!(found_detective_red_herring);
-    
-        if !found_gossip_red_herring {
-            gossip.send_ability_input_player_list_typical(detective);
-            detective.send_ability_input_player_list_typical(tester);
-    
-            game.skip_to(Obituary, 7);
-    
-            let message_before_ability_message = ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 6 };
-    
-            let gossip_messages = gossip.get_messages_after_last_message(message_before_ability_message.clone());
-                
-            assert!(gossip_messages.contains(&ChatMessageVariant::GossipResult { enemies: true }));
-        }
-    
+        assert!(found_gossip_red_herring);
         assert!(found_philosopher_red_herring);
     }
 }
@@ -1527,20 +1519,20 @@ fn red_herrings_framer() {
 
         let philosopher_red_herring_is_tester = Confused::is_red_herring(&*game, philosopher.player_ref(), tester.player_ref());
 
-        for index in 0..5u8 {
+        for index in 0..4u8 {
             let target;
             //The unsafe part is the fact that the player index is next ensured to be a player.
             //this is fine as only indices 0 to 4 would be allowed which is what is going on here.
             unsafe {
                 target = TestPlayer::new(PlayerReference::new_unchecked(index), &*game);
             }
-    
+            
             detective.send_ability_input_player_list_typical(target);
             gossip.send_ability_input_player_list_typical(tester);
             philosopher.send_ability_input_two_player_typical(target, tester);
             tester.send_ability_input_player_list_typical(target);
             mafia.send_ability_input_player_list_typical(target);
-    
+            
             game.skip_to(Obituary, index+2);
     
             assert!(detective.alive());
@@ -1548,7 +1540,7 @@ fn red_herrings_framer() {
             assert!(philosopher.alive());
             assert!(tester.alive());
             assert!(mafia.alive());
-    
+            
             let message_before_ability_message = ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: index+1 };
             
             /* Test Detective */
@@ -1557,7 +1549,7 @@ fn red_herrings_framer() {
                 detective_messages.contains(&ChatMessageVariant::DetectiveResult { suspicious: true }),
                 target != detective
             );
-    
+
             /* Test Gossip */
             let gossip_messages = gossip.get_messages_after_last_message(message_before_ability_message.clone()); 
             assert!(gossip_messages.contains(&ChatMessageVariant::GossipResult { enemies: true }));

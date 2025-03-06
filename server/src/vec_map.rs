@@ -109,7 +109,7 @@ impl<K, V> VecMap<K, V> where K: Eq {
         self.vec.retain(|(k, v)| f(k, v));
     }
 
-    pub fn retain_mut<F>(&mut self, mut f: F) where F: FnMut(&mut K, &mut V) -> bool {
+    pub fn retain_mut<F>(&mut self, mut f: F) where F: FnMut(&K, &mut V) -> bool {
         self.vec.retain_mut(|(k, v)| f(k, v));
     }
 

@@ -5,7 +5,7 @@ use crate::{game::{player::PlayerReference, Game}, vec_map::VecMap};
 /// the information you get should be consistent with your previous role's info if possible.
 /// the reason why it stores whether your confused instead of removing you if your not,
 /// is so if you become confused after stop being confused, you have the same confusion data.
-#[derive(Default, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Default, Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 pub struct ConfusionData{
     pub red_herrings: Vec<PlayerReference>,
     pub confused: bool,
@@ -28,7 +28,7 @@ impl ConfusionData {
 }
 
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug)]
 pub struct Confused(pub VecMap<PlayerReference, ConfusionData>);
 
 impl Game {
