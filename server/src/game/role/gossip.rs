@@ -64,9 +64,9 @@ impl Gossip {
             .map(|v|v.target.clone())
             .any(|target_of_target: PlayerReference|
                 if Confused::is_confused(game, actor_ref) {
-                    Detective::player_is_suspicious_confused(game, player_ref, actor_ref)
+                    Detective::player_is_suspicious_confused(game, target_of_target, actor_ref)
                 } else {
-                    Detective::player_is_suspicious(game, player_ref)
+                    Detective::player_is_suspicious(game, target_of_target)
                 }
             )
     }
