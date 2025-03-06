@@ -30,8 +30,8 @@ impl RoleStateImpl for Drunk {
             actor_ref.set_role_state(game, random_town_role.new_state(game));
         }
 
-        Confused::add_player_permanent(game, actor_ref);
-        DrunkAura::add_player_permanent(game, actor_ref);
+        Confused::add_player(game, actor_ref);
+        DrunkAura::add_player(game, actor_ref);
     }
 }
 impl Drunk{

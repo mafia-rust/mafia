@@ -1,25 +1,20 @@
 use rand::seq::IteratorRandom;
 
-use crate::{game::{phase::PhaseState, player::PlayerReference, Game}, vec_map::VecMap};
-
-use super::status_duration::StatusDuration;
-
-#[derive(Default, Clone, PartialEq, Eq, PartialOrd)]
+use crate::{game::{player::PlayerReference, Game}, vec_map::VecMap};
+/// Its not an enum that is different for every role because if you swap roles but stay confused,
+/// the information you get should be consistent with your previous role's info if possible.
+/// the reason why it stores whether your confused instead of removing you if your not,
+/// is so if you become confused after stop being confused, you have the same confusion data.
+#[derive(Default, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ConfusionData{
-    pub duration: StatusDuration,
     pub red_herrings: Vec<PlayerReference>,
+    pub confused: bool,
 }
 impl ConfusionData {
-    pub fn new_perm(game: &Game, player: PlayerReference) -> ConfusionData {
+    pub fn new(game: &Game, player: PlayerReference) -> ConfusionData {
         ConfusionData {
-            duration: StatusDuration::Permanent,
             red_herrings: Self::generate_red_herrings(game,player),
-        }
-    }
-    pub fn new_temp(game: &Game, player: PlayerReference, duration: u8) -> ConfusionData {
-        ConfusionData {
-            duration: StatusDuration::Temporary(duration),
-            red_herrings: Self::generate_red_herrings(game,player),
+            confused: true,
         }
     }
     pub fn generate_red_herrings(game: &Game, player: PlayerReference) -> Vec<PlayerReference> {
@@ -29,12 +24,6 @@ impl ConfusionData {
         PlayerReference::all_players(game)
                 .filter(|p|*p != player)
                 .choose_multiple(&mut rand::rng(), count)
-        
-    }
-}
-impl Ord for ConfusionData{
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        return self.duration.cmp(&other.duration)
     }
 }
 
@@ -52,42 +41,40 @@ impl Game {
 }
 
 impl Confused {
-    pub fn add_player_permanent(game: &mut Game, player: PlayerReference){
-        let data = ConfusionData::new_perm(game, player);
-        game.confused_mut().0.insert_unsized(player, data);
+    pub fn add_player(game: &mut Game, player: PlayerReference) {
+        match game.confused_mut().0.get_mut(&player) {
+            Some(data) => data.confused = true,
+            _=> {
+                let data = ConfusionData::new(game, player);
+                game.confused_mut().0.insert_unsized(player, data);
+            }
+        }
     }
     
-    pub fn add_player_temporary(game: &mut Game, player: PlayerReference, duration: u8){
-        let data = ConfusionData::new_temp(game, player, duration);
-        game.confused_mut().0.keep_greater_unsized(player, data);
-    }
-
-    pub fn remove_player(game: &mut Game, player: PlayerReference){
-        game.confused_mut().0.remove(&player);
+    pub fn remove_player(game: &mut Game, player: PlayerReference) -> bool {
+        match game.confused_mut().0.get_mut(&player) {
+            Some(data) => {
+                let old = data.confused.clone();
+                data.confused = false;
+                old
+            },
+            None=>false,
+        }
     }
 
     pub fn is_confused(game: &Game, player: PlayerReference)->bool{
         game.confused().0.contains(&player)
     }
-    
-    /// Decrements confusion durations and removes players whose durations are up
-    pub fn on_phase_start(game: &mut Game, phase: PhaseState){
-        match phase {
-            //feel free to change the phase, right now there aren't any ways to temporarily confuse a player so I chose Night mostly arbitrarily
-            PhaseState::Night => {
-                game.confused.0.retain_mut(
-                    |_, data| data.duration.decrement()
-                );
-            },
-            _=>{}
-        }
-    }
 
     pub fn is_red_herring(game: &Game, confused_player: PlayerReference, target: PlayerReference) -> bool{
-        return match game.confused().0.get(&confused_player) {
+        match game.confused().0.get(&confused_player) {
             None => false,
             Some(data) => data.red_herrings.contains(&target),
         }
+    }
+
+    pub fn get_confusion_data(game: &Game, player: PlayerReference) -> Option<&ConfusionData>{
+        game.confused().0.get(&player)
     }
 }
 

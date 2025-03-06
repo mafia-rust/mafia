@@ -4,7 +4,7 @@ use std::{ops::Deref, vec};
 use kit::player::TestPlayer;
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::{ability_input::{ability_selection::AbilitySelection, ControllerID, RoleOptionSelection}, components::{confused::Confused, status_duration::StatusDuration}, game_conclusion::GameConclusion, role::engineer::Trap};
+use mafia_server::game::{ability_input::{ability_selection::AbilitySelection, ControllerID, RoleOptionSelection}, components::{confused::Confused, drunk_aura::DrunkAura}, game_conclusion::GameConclusion, role::{engineer::Trap, reeducator::Reeducator}};
 
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
@@ -1269,21 +1269,56 @@ fn drunk_suspicious_aura() {
 
 #[test]
 fn drunk_confused_and_drunk_aura() {
-    kit::scenario!(game in Night 1 where
-        drunk: Drunk,
-        mafioso: Mafioso
-    );
-    match game.confused.0.get(&drunk.player_ref()) {
-        Some(value) => {
-            assert!(value.duration == StatusDuration::Permanent);
-            assert!(value.red_herrings.len() == 1);
-            assert!(value.red_herrings.first().is_some_and(|rh|*rh == mafioso.player_ref()));
-        },
-        None => panic!()
-    }
-    match game.drunk_aura.players_durations.get(&drunk.player_ref()) {
-        Some(duration) => assert!(*duration == StatusDuration::Permanent),
-        None => panic!()
+    for _ in 0..20 {
+        kit::scenario!(game in Night 1 where
+            drunk: Drunk,
+            reed: Reeducator,
+            townie: Deputy
+        );
+
+        let red_herring;
+        match Confused::get_confusion_data(&*game, drunk.player_ref()) {
+            Some(value) => {
+                assert!(value.red_herrings.len() == 1);
+                assert!(value.red_herrings.first().is_some_and(|rh|
+                    (*rh == reed.player_ref()) ^ (*rh == townie.player_ref())
+                ));
+                assert!(value.confused);
+                red_herring = value.red_herrings[0];
+            },
+            None => unreachable!()
+        }
+
+        assert!(Confused::is_confused(&*game, drunk.player_ref()));
+        assert!(!Confused::is_confused(&*game, reed.player_ref()));
+        assert!(!Confused::is_confused(&*game, townie.player_ref()));
+
+        assert!(DrunkAura::has_drunk_aura(&*game, drunk.player_ref()));
+        assert!(!DrunkAura::has_drunk_aura(&*game, reed.player_ref()));
+        assert!(!DrunkAura::has_drunk_aura(&*game, townie.player_ref()));
+
+        reed.send_ability_input_player_list_typical(drunk);
+        game.next_phase();
+
+        match game.confused.0.get(&drunk.player_ref()) {
+            Some(value) => {
+                assert!(value.red_herrings.len() == 1);
+                assert!(value.red_herrings.first().is_some_and(|rh|
+                    (*rh == reed.player_ref()) ^ (*rh == townie.player_ref())
+                ));
+                assert!(!value.confused);
+                assert!(red_herring == value.red_herrings[0]);
+            },
+            None => unreachable!()
+        }
+
+        assert!(!Confused::is_confused(&*game, drunk.player_ref()));
+        assert!(!Confused::is_confused(&*game, reed.player_ref()));
+        assert!(!Confused::is_confused(&*game, townie.player_ref()));
+
+        assert!(!DrunkAura::has_drunk_aura(&*game, drunk.player_ref()));
+        assert!(!DrunkAura::has_drunk_aura(&*game, reed.player_ref()));
+        assert!(!DrunkAura::has_drunk_aura(&*game, townie.player_ref()));
     }
 }
 
@@ -1360,9 +1395,9 @@ fn red_herrings() {
             mafia: Informant
         );
     
-        Confused::add_player_permanent(&mut game, detective.player_ref());
-        Confused::add_player_permanent(&mut game, gossip.player_ref());
-        Confused::add_player_permanent(&mut game, philosopher.player_ref());
+        Confused::add_player(&mut game, detective.player_ref());
+        Confused::add_player(&mut game, gossip.player_ref());
+        Confused::add_player(&mut game, philosopher.player_ref());
         
         assert!(Confused::is_confused(&*game, detective.player_ref()));
         assert!(Confused::is_confused(&*game, gossip.player_ref()));
@@ -1480,9 +1515,9 @@ fn red_herrings_framer() {
             mafia: Framer
         );
     
-        Confused::add_player_permanent(&mut game, detective.player_ref());
-        Confused::add_player_permanent(&mut game, gossip.player_ref());
-        Confused::add_player_permanent(&mut game, philosopher.player_ref());
+        Confused::add_player(&mut game, detective.player_ref());
+        Confused::add_player(&mut game, gossip.player_ref());
+        Confused::add_player(&mut game, philosopher.player_ref());
         
         assert!(Confused::is_confused(&*game, detective.player_ref()));
         assert!(Confused::is_confused(&*game, gossip.player_ref()));
@@ -1492,7 +1527,7 @@ fn red_herrings_framer() {
 
         let philosopher_red_herring_is_tester = Confused::is_red_herring(&*game, philosopher.player_ref(), tester.player_ref());
 
-        for index in 0u8..4 {
+        for index in 0..5u8 {
             let target;
             //The unsafe part is the fact that the player index is next ensured to be a player.
             //this is fine as only indices 0 to 4 would be allowed which is what is going on here.

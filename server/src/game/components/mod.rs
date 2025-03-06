@@ -11,7 +11,6 @@ pub mod insider_group;
 pub mod detained;
 pub mod confused;
 pub mod drunk_aura;
-pub mod status_duration;
 pub mod forfeit_vote;
 pub mod night_visits;
 pub mod syndicate_gun_item;
