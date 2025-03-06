@@ -22,7 +22,7 @@ pub enum KiraGuess{
     #[default] NonTown,
 
     Jailor, Villager,
-    Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy, TallyClerk,
+    Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy, TallyClerk, Pathologist,
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith, Steward,
     Vigilante, Veteran, Marksman, Deputy, Rabblerouser,
     Escort, Medium, Retributionist, Reporter, Mayor, Transporter, Coxswain
@@ -43,7 +43,8 @@ impl KiraGuess{
             Role::Gossip => Some(Self::Gossip),
             Role::Spy => Some(Self::Spy),
             Role::TallyClerk => Some(Self::TallyClerk),
-
+            Role::Pathologist => Some(Self::Pathologist),
+            
             Role::Doctor => Some(Self::Doctor),
             Role::Bodyguard => Some(Self::Bodyguard),
             Role::Cop => Some(Self::Cop),
@@ -67,7 +68,7 @@ impl KiraGuess{
             Role::Coxswain => Some(Self::Coxswain),
 
             //Mafia
-            Role::Godfather | Role::Mafioso | Role::Pathologist |
+            Role::Godfather | Role::Mafioso |
             Role::Counterfeiter | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
             Role::Goon |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 

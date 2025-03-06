@@ -11,7 +11,7 @@ impl OnAnyDeath{
         Self{dead_player}
     }
     pub fn invoke(self, game: &mut Game){
-        // This is before everything else because many of them remove things like tags
+        // Nothing should ever be before this because this is supposed to retrieve information as though the player had not yet died.
         PathologistInfoDump::on_any_death(game, self.dead_player);
 
         for player_ref in PlayerReference::all_players(game){

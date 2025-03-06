@@ -41,7 +41,8 @@ impl DoomsayerGuess{
 
             Role::Detective | Role::Lookout | Role::Spy | 
             Role::Tracker | Role::Philosopher | Role::Psychic | 
-            Role::Auditor | Role::Snoop | Role::Gossip | Role::TallyClerk => None, 
+            Role::Auditor | Role::Snoop | Role::Gossip | Role::TallyClerk |
+            Role::Pathologist => None, 
 
             Role::Doctor => Some(DoomsayerGuess::Doctor),
             Role::Bodyguard => Some(DoomsayerGuess::Bodyguard),
@@ -66,7 +67,7 @@ impl DoomsayerGuess{
             Role::Coxswain => Some(DoomsayerGuess::Coxswain),
 
             //Mafia
-            Role::Godfather | Role::Mafioso | Role::Pathologist |
+            Role::Godfather | Role::Mafioso |
             Role::Counterfeiter | Role::Recruiter | Role::Impostor | Role::MafiaKillingWildcard |
             Role::Goon |
             Role::Hypnotist | Role::Blackmailer | Role::Informant | 

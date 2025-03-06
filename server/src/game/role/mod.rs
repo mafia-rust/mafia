@@ -88,6 +88,7 @@ macros::roles! {
     Snoop : snoop,
     Gossip : gossip,
     TallyClerk : tally_clerk,
+    Pathologist : pathologist,
 
     Doctor : doctor,
     Bodyguard : bodyguard,
@@ -115,7 +116,6 @@ macros::roles! {
     Godfather : godfather,
     Counterfeiter : counterfeiter,
     Impostor : impostor,
-    Pathologist : pathologist,
     Recruiter : recruiter,
     Mafioso : mafioso,
     MafiaKillingWildcard : mafia_killing_wildcard,
