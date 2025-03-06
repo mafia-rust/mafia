@@ -3,6 +3,7 @@ import { Button, RawButton } from "./Button";
 import "./select.css";
 import Icon from "./Icon";
 import Popover from "./Popover";
+import translate from "../game/lang";
 
 export type SelectOptionsNoSearch<K extends { toString(): string}> = Map<K, React.ReactNode>;
 export type SelectOptionsSearch<K extends { toString(): string}> = Map<K, [React.ReactNode, string]>;
@@ -91,7 +92,7 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
                 break;
             }
             case "Backspace":
-                setSearchString("");
+                setSearchString(searchString.substring(0,searchString.length-1));
                 break;
             default:
                 if(/^[a-zA-Z0-9- ]$/.test(inputKey)) {
@@ -131,25 +132,28 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
                 <Icon>keyboard_arrow_down</Icon>}
             {value !== undefined?value[0]:props.value.toString()}
         </RawButton>
-        <Popover className="custom-select-options"
+        <Popover className="custom-select-options-popover"
             open={open}
             setOpenOrClosed={handleSetOpen}
             onRender={dropdownPlacementFunction}
-            anchorRef={ref}
+            anchorForPositionRef={ref}
         >
-            <SelectOptions 
-                options={optionsNoSearch}
-                searchString={searchString===""?undefined:searchString.substring(0, 20)}
-                onChange={(value)=>{
-                    if(props.disabled) return;
-                    handleSetOpen(false);
-                    handleOnChange(value);
-                }}
-            />
+            <div>
+                {searchString!==""?<>{translate("menu.ability.icon")}<span>{searchString===""?undefined:searchString.substring(0, 20)}</span></>:""}
+                <SelectOptions 
+                    options={optionsNoSearch}
+                    onChange={(value)=>{
+                        if(props.disabled) return;
+                        handleSetOpen(false);
+                        handleOnChange(value);
+                    }}
+                />
+            </div>
         </Popover>
     </>
 }
 
+/// Assumes there is only 1 element inside Popover
 export function dropdownPlacementFunction(dropdownElement: HTMLElement, buttonElement: HTMLElement | undefined) {
     if (!buttonElement) return;
 
@@ -225,25 +229,25 @@ function keepPopoverOnScreen(dropdownElement: HTMLElement, buttonElement?: HTMLE
 }
 
 function SelectOptions<K extends { toString(): string}>(props: Readonly<{
-    searchString?: string,
     options: SelectOptionsNoSearch<K>,
     onChange?: (value: K)=>void,
 }>) {
-    return <div>
-        {props.searchString ?? null}
-        {[...props.options.entries()]
-            .map(([key, value]) => {
-                return <Button
-                    key={key.toString()}
-                    onClick={()=>{
-                        if(props.onChange) {
-                            props.onChange(key);
-                        }
-                    }}
-                >
-                    {value}
-                </Button>
-            })
-        }
+    return <div className="custom-select-options">
+        <div>
+            {[...props.options.entries()]
+                .map(([key, value]) => {
+                    return <Button
+                        key={key.toString()}
+                        onClick={()=>{
+                            if(props.onChange) {
+                                props.onChange(key);
+                            }
+                        }}
+                    >
+                        {value}
+                    </Button>
+                })
+            }
+        </div>
     </div>
 }
