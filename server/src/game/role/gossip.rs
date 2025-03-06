@@ -62,14 +62,12 @@ impl Gossip {
         }
             .iter()
             .map(|v|v.target.clone())
-            .any(|target_of_target: PlayerReference|Self::enemy(game, target_of_target, actor_ref))
-    }
-    pub fn enemy(game: &Game, player_ref: PlayerReference, actor_ref: PlayerReference) -> bool{
-        if Confused::is_confused(game, actor_ref) {
-            player_ref.night_framed(game) || 
-            Confused::is_red_herring(game, actor_ref, player_ref)
-        } else {
-            Detective::player_is_suspicious(game, player_ref)
-        }
+            .any(|target_of_target: PlayerReference|
+                if Confused::is_confused(game, actor_ref) {
+                    Detective::player_is_suspicious_confused(game, player_ref, actor_ref)
+                } else {
+                    Detective::player_is_suspicious(game, player_ref)
+                }
+            )
     }
 }
