@@ -37,7 +37,8 @@ impl RoleStateImpl for Yer {
     type ClientRoleState = Yer;
     fn new_state(game: &Game) -> Self {
         Self{
-            star_passes_remaining: game.num_players().div_ceil(5)
+            star_passes_remaining: game.num_players().div_ceil(5),
+            ..Self::default()
         }
     }
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -119,12 +120,12 @@ impl RoleStateImpl for Yer {
                 game,
                 ControllerID::role(actor_ref, Role::Yer, 2),
                 AvailableAbilitySelection::new_role_option(
-                                    game.settings.enabled_roles.iter()
+                    game.settings.enabled_roles.iter()
                         .map(|role| Some(*role))
                         .collect::<VecSet<Option<Role>>>()
                 ),
                 AbilitySelection::new_role_option(Some(self.old_role)),
-                self.star_passes_remaining <= 0 ||
+                self.star_passes_remaining == 0 ||
                 actor_ref.ability_deactivated_from_death(game) ||
                 game.day_number() <= 1,
                 None,
