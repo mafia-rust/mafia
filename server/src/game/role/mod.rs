@@ -423,7 +423,7 @@ impl Role{
     pub fn has_suspicious_aura(&self, _game: &Game)->bool{
         false
     }
-    pub fn sudo_enables(&self) -> VecSet<Role>{
+    pub fn pseudo_enables(&self) -> VecSet<Role>{
         // Its like this instead of just using _=> to force people to remember to add it to this
         match self {
             Role::Apostle => vec_set![Role::Disciple, Role::Zealot],
@@ -456,10 +456,10 @@ impl Role{
     pub fn enabled(game: &Game) -> &VecSet<Role>{
         &game.settings.enabled_roles
     }
-    pub fn enabled_include_sudo(game: &Game) -> VecSet<Role>{
+    pub fn enabled_include_pseudo(game: &Game) -> VecSet<Role>{
         let mut roles = Self::enabled(game).clone();
         for role in roles.clone().iter() {
-            roles.extend(role.sudo_enables());
+            roles.extend(role.pseudo_enables());
         }
         roles
     }
