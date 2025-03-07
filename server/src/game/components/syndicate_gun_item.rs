@@ -16,6 +16,17 @@ pub struct SyndicateGunItem {
 }
 
 impl SyndicateGunItem {
+    pub fn on_visit_wardblocked(game: &mut Game, visit: Visit){
+        NightVisits::retain(game, |v|
+            v.tag != VisitTag::SyndicateGunItem || v.visitor != visit.visitor
+        );
+    }
+    pub fn on_player_roleblocked(game: &mut Game, player: PlayerReference){
+        NightVisits::retain(game, |v|
+            v.tag != VisitTag::SyndicateGunItem || v.visitor != player
+        );
+    }
+
     pub fn give_gun(game: &mut Game, player: PlayerReference) {
         Self::take_gun(game);
         game.syndicate_gun_item.player_with_gun = Some(player);

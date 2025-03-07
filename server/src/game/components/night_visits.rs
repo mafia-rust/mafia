@@ -24,12 +24,9 @@ impl NightVisits{
         game.night_visits.visits.clear();
     }
 
-    pub fn clear_visits_with_predicate(game: &mut Game, predicate: impl Fn(&Visit) -> bool){
-        game.night_visits.visits.retain(|visit| !predicate(visit));
-    }
 
     fn clear_visits_from_visitor(game: &mut Game, visitor: PlayerReference){
-        Self::clear_visits_with_predicate(game, |visit| visit.visitor == visitor);
+        Self::retain(game, |visit| visit.visitor != visitor);
     }
     pub fn add_visit(game: &mut Game, visits: Visit){
         game.night_visits.visits.push(visits);
@@ -37,11 +34,20 @@ impl NightVisits{
     fn add_visits(game: &mut Game, visits: Vec<Visit>){
         game.night_visits.visits.extend(visits);
     }
+
     pub fn all_visits(game: &Game) -> Vec<&Visit>{
         game.night_visits.visits.iter().collect()
     }
     pub fn all_visits_mut<'a>(game: &'a mut Game) -> Vec<&'a mut Visit>{
         game.night_visits.visits.iter_mut().collect()
+    }
+    pub fn all_visits_cloned<'a>(game: &'a mut Game) -> Vec<Visit>{
+        game.night_visits.visits.iter().copied().collect()
+    }
+
+    //Only keeps elements where f is true
+    pub fn retain(game: &mut Game, f: impl FnMut(&Visit) -> bool){
+        game.night_visits.visits.retain(f);
     }
 
     //accessors
