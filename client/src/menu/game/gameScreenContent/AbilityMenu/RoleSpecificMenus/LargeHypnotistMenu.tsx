@@ -158,14 +158,6 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                 <ChatElement message={{
                     variant: {
                         type: "roleBlocked",
-                        immune: false,
-                    },
-                    chatGroup:null
-                }}/>
-                <ChatElement message={{
-                    variant: {
-                        type: "roleBlocked",
-                        immune: true,
                     },
                     chatGroup:null
                 }}/>

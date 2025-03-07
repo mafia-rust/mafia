@@ -117,8 +117,8 @@ impl TestPlayer {
         self.0.alive(game!(self))
     }
 
-    pub fn was_roleblocked(&self) -> bool {
-        self.0.night_roleblocked(game!(self))
+    pub fn was_blocked(&self) -> bool {
+        self.0.night_blocked(game!(self))
     }
 
     pub fn get_messages(&self) -> Vec<ChatMessageVariant> {
