@@ -3,9 +3,7 @@ use std::time::Duration;
 use crate::{
     client_connection::ClientConnection, 
     game::{
-        available_buttons::AvailableButtons,
-        chat::ChatMessageVariant, components::insider_group::InsiderGroupID,
-        phase::PhaseState, Game, GameOverReason
+        available_buttons::AvailableButtons, chat::ChatMessageVariant, components::insider_group::InsiderGroupID, phase::PhaseState, Game, GameOverReason
     },
     lobby::GAME_DISCONNECT_TIMER_SECS,
     packet::ToClientPacket, websocket_connections::connection::ClientSender
@@ -158,7 +156,7 @@ impl PlayerReference{
             if let Some(msg) = msg_option{
                 chat_messages_out.push(msg.clone());
                 self.deref_mut(game).queued_chat_messages.remove(0);
-            }else{ break; }
+            } else {break}
         }
         
         self.send_packet(game, ToClientPacket::AddChatMessages { chat_messages: chat_messages_out });
