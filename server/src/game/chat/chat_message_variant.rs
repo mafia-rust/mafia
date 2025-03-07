@@ -175,8 +175,7 @@ pub enum ChatMessageVariant {
     /*
     Night Information
     */
-    RoleBlocked { immune : bool },
-
+    RoleBlocked,
     Wardblocked,
 
     SheriffResult {suspicious: bool},

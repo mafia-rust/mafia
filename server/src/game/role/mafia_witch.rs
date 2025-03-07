@@ -76,6 +76,7 @@ impl RoleStateImpl for MafiaWitch {
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
+    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
 impl GetClientRoleState<ClientRoleState> for MafiaWitch {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

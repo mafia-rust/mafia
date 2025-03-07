@@ -288,18 +288,11 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.attacked = attacked;
     }
 
-    pub fn night_roleblocked(&self, game: &Game) -> bool {
-        self.deref(game).night_variables.roleblocked
+    pub fn night_blocked(&self, game: &Game) -> bool {
+        self.deref(game).night_variables.blocked
     }
-    pub fn set_night_roleblocked(&self, game: &mut Game, roleblocked: bool){
-        self.deref_mut(game).night_variables.roleblocked = roleblocked;
-    }
-
-    pub fn night_wardblocked(&self, game: &Game) -> bool {
-        self.deref(game).night_variables.roleblocked
-    }
-    pub fn set_night_wardblocked(&self, game: &mut Game, roleblocked: bool){
-        self.deref_mut(game).night_variables.roleblocked = roleblocked;
+    pub fn set_night_blocked(&self, game: &mut Game, roleblocked: bool){
+        self.deref_mut(game).night_variables.blocked = roleblocked;
     }
 
     pub fn night_defense(&self, game: &Game) -> DefensePower {
