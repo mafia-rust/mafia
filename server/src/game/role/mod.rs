@@ -2,6 +2,7 @@
 #![allow(clippy::get_first)]
 
 use std::collections::HashSet;
+use crate::vec_set;
 use crate::vec_set::VecSet;
 
 use crate::game::player::PlayerReference;
@@ -421,5 +422,45 @@ impl Role{
     }
     pub fn has_suspicious_aura(&self, _game: &Game)->bool{
         false
+    }
+    pub fn sudo_enables(&self) -> VecSet<Role>{
+        // Its like this instead of just using _=> to force people to remember to add it to this
+        match self {
+            Role::Apostle => vec_set![Role::Disciple, Role::Zealot],
+            Role::Disciple => vec_set![Role::Apostle, Role::Zealot],
+            Role::Zealot => vec_set![Role::Apostle, Role::Disciple],
+            Role::Revolutionary => vec_set![Role::Jester],
+
+            Role::Jailor | Role::Villager | Role::Drunk | 
+
+            Role::Detective | Role::Lookout | Role::Spy | Role::Tracker | Role::Philosopher | Role::Psychic | Role::Auditor | Role::Snoop | Role::Gossip | Role::TallyClerk | 
+            
+            Role::Doctor | Role::Bodyguard | Role::Cop | Role::Bouncer | Role::Engineer | Role::Armorsmith | Role::Steward | 
+            
+            Role::Vigilante | Role::Veteran | Role::Marksman | Role::Deputy | Role::Rabblerouser | 
+            
+            Role::Escort | Role::Medium | Role::Retributionist | Role::Reporter | Role::Mayor | Role::Transporter | Role::Coxswain | 
+            
+            Role::Godfather | Role::Counterfeiter | Role::Impostor | Role::Recruiter | Role::Mafioso | Role::MafiaKillingWildcard | 
+            
+            Role::Goon | Role::Consort | Role::Hypnotist | Role::Blackmailer | Role::Informant | Role::MafiaWitch | Role::Necromancer | Role::Mortician | Role::Framer | Role::Disguiser | Role::Forger | Role::Reeducator | Role::Cupid | Role::Ambusher | Role::MafiaSupportWildcard | 
+            
+            Role::Jester | Role::Politician | Role::Doomsayer | Role::Chronokaiser | Role::Martyr | Role::SantaClaus | Role::Krampus | Role::Wildcard | Role::TrueWildcard |
+            
+            Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | 
+
+            Role::Arsonist | Role::Werewolf | Role::Ojo | Role::Puppeteer | Role::Pyrolisk | Role::Spiral | Role::Kira | Role::Warden | Role::Yer | Role::FiendsWildcard | Role::SerialKiller 
+            => VecSet::new(),
+        }
+    }
+    pub fn enabled(game: &Game) -> &VecSet<Role>{
+        &game.settings.enabled_roles
+    }
+    pub fn enabled_include_sudo(game: &Game) -> VecSet<Role>{
+        let mut roles = Self::enabled(game).clone();
+        for role in roles.clone().iter() {
+            roles.extend(role.sudo_enables());
+        }
+        roles
     }
 }
