@@ -49,11 +49,7 @@ impl RoleAssignment {
             RoleOutlineOptionWinCondition::GameConclusionReached { win_if_any } => 
                 !WinCondition::GameConclusionReached{win_if_any: win_if_any.into()}.friends_with_resolution_state(GameConclusion::Town),
             RoleOutlineOptionWinCondition::RoleDefault => {
-                self.role == Role::Politician ||
-                RoleSet::Mafia.get_roles().contains(&self.role) ||
-                RoleSet::Minions.get_roles().contains(&self.role) ||
-                RoleSet::Fiends.get_roles().contains(&self.role) ||
-                RoleSet::Cult.get_roles().contains(&self.role)
+                !RoleSet::Town.get_roles().contains(&self.role)
             },
         }
     }
