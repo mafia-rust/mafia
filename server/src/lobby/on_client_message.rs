@@ -49,7 +49,7 @@ impl Lobby {
                         break;
                     }
                 }
-                if last_message_times.len() >= (MESSAGE_PER_SECOND_LIMIT_TIME.as_secs() * MESSAGE_PER_SECOND_LIMIT) as usize {
+                if last_message_times.len() as u64 >= MESSAGE_PER_SECOND_LIMIT_TIME.as_secs() * MESSAGE_PER_SECOND_LIMIT {
                     send.send(ToClientPacket::RateLimitExceeded);
                     return;
                 }

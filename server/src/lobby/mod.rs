@@ -10,7 +10,7 @@ use lobby_client::Ready;
 
 use crate::{
     client_connection::ClientConnection, game::{
-        player::PlayerReference, role_list::RoleOutline, settings::Settings, spectator::{spectator_pointer::{SpectatorIndex, SpectatorPointer}, SpectatorInitializeParameters}, Game
+        player::PlayerReference, role_list::RoleOutline, settings::Settings, spectator::{spectator_pointer::SpectatorPointer, SpectatorInitializeParameters}, Game
     }, listener::RoomCode, lobby::game_client::GameClientLocation, packet::{
         RejectJoinReason,
         ToClientPacket,
@@ -137,24 +137,25 @@ impl Lobby {
                             return Err(RejectJoinReason::RoomFull);
                         };
 
-                send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id: lobby_client_id, spectator: true});
-
-                let new_index: SpectatorIndex = game.add_spectator(SpectatorInitializeParameters {
+                match game.add_spectator(SpectatorInitializeParameters {
                     connection: ClientConnection::Connected(send.clone()),
                     host: is_host,
-                });
+                }) {
+                    Ok(new_index) => {
+                        send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id: lobby_client_id, spectator: true});
 
-
-                let new_client = GameClient::new_spectator(new_index, is_host);
-
-
-
-                clients.insert(lobby_client_id, new_client);
-                
-
-                // send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::GameAlreadyStarted});
-                // Err(RejectJoinReason::GameAlreadyStarted)
-                Ok(lobby_client_id)
+                        let new_client = GameClient::new_spectator(new_index, is_host);
+    
+                        clients.insert(lobby_client_id, new_client);
+        
+                        // send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::GameAlreadyStarted});
+                        // Err(RejectJoinReason::GameAlreadyStarted)
+                        Ok(lobby_client_id)
+                    }
+                    Err(reason) => {
+                        Err(reason)
+                    }
+                }
             }
             LobbyState::Closed => {
                 Err(RejectJoinReason::RoomDoesntExist)

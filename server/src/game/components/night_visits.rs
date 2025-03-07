@@ -38,11 +38,11 @@ impl NightVisits{
     pub fn all_visits(game: &Game) -> Vec<&Visit>{
         game.night_visits.visits.iter().collect()
     }
-    pub fn all_visits_mut<'a>(game: &'a mut Game) -> Vec<&'a mut Visit>{
+    pub fn all_visits_mut(game: &mut Game) -> Vec<&mut Visit>{
         game.night_visits.visits.iter_mut().collect()
     }
-    pub fn all_visits_cloned<'a>(game: &'a mut Game) -> Vec<Visit>{
-        game.night_visits.visits.iter().copied().collect()
+    pub fn all_visits_cloned(game: &mut Game) -> Vec<Visit>{
+        game.night_visits.visits.to_vec()
     }
 
     //Only keeps elements where f is true

@@ -82,7 +82,7 @@ impl RoleStateImpl for Bodyguard {
                 let target_ref = visit.target;
     
                 if actor_ref == target_ref {
-                    let self_shields_remaining = self.self_shields_remaining - 1;
+                    let self_shields_remaining = self.self_shields_remaining.saturating_sub(1);
                     actor_ref.set_role_state(game, Bodyguard{
                         self_shields_remaining, 
                         ..self

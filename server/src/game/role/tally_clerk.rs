@@ -31,7 +31,7 @@ impl RoleStateImpl for TallyClerk {
             .filter(|player|VerdictsToday::player_guiltied_today(game, player))
         {
             if TallyClerk::player_is_suspicious(game, player){
-                evil_count += 1;
+                evil_count = evil_count.saturating_add(1);
             }
         }
 
@@ -39,7 +39,7 @@ impl RoleStateImpl for TallyClerk {
             let total_guilties = VerdictsToday::guilties(game).len();
             //add or subtract 1 randomly from the count
             if rand::random::<bool>(){
-                evil_count = (evil_count.saturating_add(1u8)).min(total_guilties as u8);
+                evil_count = (evil_count.saturating_add(1u8)).min(total_guilties.try_into().unwrap_or(u8::MAX));
             }else{
                 evil_count = evil_count.saturating_sub(1u8);
             }

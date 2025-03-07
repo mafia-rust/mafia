@@ -25,6 +25,7 @@ impl SynopsisTracker {
                 .enumerate()
                 .map(|(player_index, player_synopsis)|
                     player_synopsis.get(
+                        #[expect(clippy::cast_possible_truncation)]
                         unsafe { PlayerReference::new_unchecked(player_index as u8).get_won_game(game) }
                     )
                 ).collect(),

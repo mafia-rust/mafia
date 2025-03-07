@@ -40,7 +40,7 @@ impl RoleOutlineReference{
     pub fn all_outlines(game: &Game) -> RoleOutlineReferenceIterator {
         RoleOutlineReferenceIterator {
             current: 0,
-            end: game.settings.role_list.0.len() as OutlineIndex
+            end: game.settings.role_list.0.len().try_into().unwrap_or(OutlineIndex::MAX)
         }
     }
 }
@@ -74,14 +74,18 @@ impl Iterator for RoleOutlineReferenceIterator {
                 None
             } else {
                 let ret: RoleOutlineReference = RoleOutlineReference::new_unchecked(self.current);
-                self.current += 1;
+                if let Some(new) = self.current.checked_add(1) {
+                    self.current = new;
+                } else {
+                    return None;
+                }
                 Some(ret)
             }
         }
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        let size = (self.end - self.current) as usize;
+        let size = self.end.saturating_sub(self.current) as usize;
         (size, Some(size))
     }
 }

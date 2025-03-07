@@ -1,5 +1,6 @@
 #![warn(clippy::allow_attributes)]
 #![warn(clippy::arithmetic_side_effects)]
+#![warn(clippy::cast_possible_truncation)]
 
 pub mod game;
 pub mod websocket_connections;

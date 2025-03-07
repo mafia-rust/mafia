@@ -74,7 +74,7 @@ impl RoleStateImpl for Yer {
                 self.star_passes_remaining = self.star_passes_remaining.saturating_sub(1);
 
                 //role switching stuff
-                let fake_role = self.current_fake_role(&game, actor_ref);
+                let fake_role = self.current_fake_role(game, actor_ref);
 
                 actor_ref.set_night_grave_role(game, Some(fake_role));
                 

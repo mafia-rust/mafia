@@ -66,6 +66,7 @@ impl Psychic {
         valid_players.shuffle(&mut rand::rng());
 
         for i in 0..valid_players.len(){
+            #[expect(clippy::arithmetic_side_effects)]
             for j in i+1..valid_players.len(){
                 if confused || Self::contains_evil(game, target, valid_players[i], valid_players[j]){
                     return ChatMessageVariant::PsychicEvil { first: valid_players[i], second: valid_players[j] }

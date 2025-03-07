@@ -52,6 +52,7 @@ use win_condition::WinCondition;
 use crate::client_connection::ClientConnection;
 use crate::game::event::on_game_start::OnGameStart;
 use crate::game::player::PlayerIndex;
+use crate::packet::RejectJoinReason;
 use crate::packet::ToClientPacket;
 use crate::vec_map::VecMap;
 use crate::vec_set::VecSet;
@@ -181,7 +182,7 @@ impl Game {
                 let ClientConnection::Connected(ref sender) = player.connection else {
                     return Err(RejectStartReason::PlayerDisconnected)
                 };
-                let Some((_, _, assignment)) = assignments.iter().find(|(p,_,_)|p.index() == player_index as u8) else {
+                let Some((_, _, assignment)) = assignments.iter().find(|(p,_,_)|p.index() as usize == player_index) else {
                     return Err(RejectStartReason::RoleListTooSmall)
                 };
 
@@ -205,6 +206,7 @@ impl Game {
                 new_players.push(new_player);
             }
 
+            #[expect(clippy::cast_possible_truncation)]
             let num_players = new_players.len() as u8;
 
             let mut game = Self{
@@ -263,7 +265,7 @@ impl Game {
             if !game.game_is_over() {
                 break (game, assignments);
             }
-            role_generation_tries += 1;
+            role_generation_tries = role_generation_tries.saturating_add(1);
         };
 
         if game.game_is_over() {
@@ -324,6 +326,7 @@ impl Game {
         Ok(game)
     }
     
+    #[expect(clippy::cast_possible_truncation)]
     fn assign_players_to_assignments(initialization_data: Vec<RoleAssignment>)->Vec<(PlayerReference, RoleOutlineReference, RoleAssignment)>{
         let mut player_indices: Vec<PlayerIndex> = (0..initialization_data.len() as PlayerIndex).collect();
         player_indices.shuffle(&mut rand::rng());
@@ -341,6 +344,7 @@ impl Game {
             .collect()
     }
 
+    #[expect(clippy::cast_possible_truncation)]
     pub fn num_players(&self) -> u8 {
         self.players.len() as u8
     }
@@ -455,6 +459,7 @@ impl Game {
         votes >= self.nomination_votes_required()
     }
     pub fn nomination_votes_required(&self)->u8{
+        #[expect(clippy::cast_possible_truncation)]
         let eligible_voters = PlayerReference::all_players(self)
             .filter(|p| p.alive(self) && !p.forfeit_vote(self))
             .count() as u8;
@@ -554,14 +559,14 @@ impl Game {
         self.spectator_chat_messages.push(message);
     }
 
-    pub fn add_spectator(&mut self, params: SpectatorInitializeParameters) -> SpectatorIndex {
+    pub fn add_spectator(&mut self, params: SpectatorInitializeParameters) -> Result<SpectatorIndex, RejectJoinReason> {
+        let spectator_index = SpectatorIndex::try_from(self.spectators.len()).map_err(|_| RejectJoinReason::RoomFull)?;
         self.spectators.push(Spectator::new(params));
-        #[expect(clippy::arithmetic_side_effects)]
-        let spectator_pointer = SpectatorPointer::new(self.spectators.len() as SpectatorIndex - 1);
+        let spectator_pointer = SpectatorPointer::new(spectator_index);
 
         spectator_pointer.send_join_game_data(self);
 
-        spectator_pointer.index
+        Ok(spectator_pointer.index)
     }
     pub fn remove_spectator(&mut self, i: SpectatorIndex){
         self.spectators.remove(i as usize);
@@ -594,7 +599,7 @@ pub mod test {
         role::Role, settings::Settings, Game, RejectStartReason
     };
     
-    pub fn mock_game(settings: Settings, number_of_players: usize) -> Result<Game, RejectStartReason> {
+    pub fn mock_game(settings: Settings, number_of_players: u8) -> Result<Game, RejectStartReason> {
 
         //check settings are not completly off the rails
         if settings.phase_times.game_ends_instantly() {
@@ -618,7 +623,7 @@ pub mod test {
         for player_index in 0..number_of_players {
             let new_player = mock_player(
                 format!("{}",player_index),
-                match shuffled_roles.get(player_index){
+                match shuffled_roles.get(player_index as usize){
                     Some(role) => *role,
                     None => return Err(RejectStartReason::RoleListTooSmall),
                 }
@@ -627,7 +632,7 @@ pub mod test {
         }
 
         let mut game = Game{
-            pitchfork: Pitchfork::new(number_of_players as u8),
+            pitchfork: Pitchfork::new(number_of_players),
             
             assignments,
             ticking: true,
@@ -654,7 +659,7 @@ pub mod test {
             detained: Default::default(),
             confused: Default::default(),
             drunk_aura: Default::default(),
-            synopsis_tracker: SynopsisTracker::new(number_of_players as u8)
+            synopsis_tracker: SynopsisTracker::new(number_of_players)
         };
 
         //set wincons and revealed groups

@@ -45,7 +45,7 @@ impl SpectatorPointer {
     pub fn all_spectators(game: &Game) -> SpectatorPointerIterator {
         SpectatorPointerIterator {
             current: 0,
-            end: game.spectators.len() as SpectatorIndex
+            end: game.spectators.len().try_into().unwrap_or(SpectatorIndex::MAX)
         }
     }
 
@@ -174,13 +174,17 @@ impl Iterator for SpectatorPointerIterator {
             None
         } else {
             let ret = SpectatorPointer::new(self.current);
-            self.current += 1;
+            if let Some(new) = self.current.checked_add(1) {
+                self.current = new;
+            } else {
+                return None
+            }
             Some(ret)
         }
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        let size = (self.end - self.current) as usize;
+        let size = self.end.saturating_sub(self.current) as usize;
         (size, Some(size))
     }
 }

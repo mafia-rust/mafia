@@ -138,7 +138,6 @@ impl RoleStateImpl for Werewolf {
                 ControllerID::role(actor_ref, Role::Werewolf, 1),
                 AvailableAbilitySelection::new_player_list(
                     PlayerReference::all_players(game)
-                        .into_iter()
                         .filter(|player|
                             player.alive(game) && *player != actor_ref
                         )

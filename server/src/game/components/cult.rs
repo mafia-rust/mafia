@@ -85,7 +85,7 @@ impl Cult{
         for (i, player_ref) in cult.ordered_cultists.iter().enumerate(){
             let role = if i == 0 {
                 RoleState::Apostle(Apostle)
-            }else if i == cult.ordered_cultists.len() - 1 {
+            }else if cult.ordered_cultists.len().checked_sub(1).is_some_and(|last_index| last_index == i) {
                 RoleState::Zealot(Zealot)
             }else{
                 RoleState::Disciple(Disciple)

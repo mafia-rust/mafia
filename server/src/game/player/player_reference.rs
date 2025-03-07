@@ -72,7 +72,7 @@ impl PlayerReference{
     pub fn all_players(game: &Game) -> PlayerReferenceIterator {
         PlayerReferenceIterator {
             current: 0,
-            end: game.players.len() as PlayerIndex
+            end: game.players.len().try_into().unwrap_or(u8::MAX)
         }
     }
 }
@@ -99,13 +99,17 @@ impl Iterator for PlayerReferenceIterator {
         } else {
             // This unsafe should be fine as long as the iterator itself is fine
             let ret = unsafe {PlayerReference::new_unchecked(self.current)};
-            self.current += 1;
+            if let Some(new) = self.current.checked_add(1) {
+                self.current = new;
+            } else {
+                return None
+            }
             Some(ret)
         }
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        let size = (self.end - self.current) as usize;
+        let size = self.end.saturating_sub(self.current) as usize;
         (size, Some(size))
     }
 }
