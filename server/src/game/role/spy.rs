@@ -56,7 +56,7 @@ impl RoleStateImpl for Spy {
                 for message in visit.target.night_messages(game).clone(){
                     if let Some(message) = match message{
                         ChatMessageVariant::Silenced => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Silenced }),
-                        ChatMessageVariant::RoleBlocked { immune: _ } => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Roleblocked }),
+                        ChatMessageVariant::RoleBlocked => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Roleblocked }),
                         ChatMessageVariant::YouWereProtected => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Protected }),
                         ChatMessageVariant::Transported => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Transported }),
                         ChatMessageVariant::YouWerePossessed { immune: _ } => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Possessed }),

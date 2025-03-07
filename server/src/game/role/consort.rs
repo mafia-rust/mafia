@@ -51,4 +51,5 @@ impl RoleStateImpl for Consort {
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
+    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
