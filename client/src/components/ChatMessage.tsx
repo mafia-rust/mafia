@@ -602,8 +602,6 @@ export function translateChatMessage(
         /* NIGHT */
         case "godfatherBackupKilled":
             return translate("chatMessage.godfatherBackupKilled", playerNames[message.backup]);
-        case "roleBlocked":
-            return translate("chatMessage.roleBlocked" + (message.immune ? ".immune" : ""));
         case "sheriffResult":
             return translate("chatMessage.sheriffResult." + (message.suspicious ? "suspicious" : "innocent"));
         case "snoopResult":
@@ -739,6 +737,7 @@ export function translateChatMessage(
         case "revolutionaryWon":
         case "jesterWon":
         case "wardblocked":
+        case "roleBlocked":
         case "yourConvertFailed":
         case "cultConvertsNext":
         case "cultKillsNext":
@@ -921,8 +920,7 @@ export type ChatMessageVariant = {
     type: "recruiterPlayerIsNowRecruit",
     player: PlayerIndex
 } | {
-    type: "roleBlocked", 
-    immune : boolean
+    type: "roleBlocked"
 } | {
     type: "someoneSurvivedYourAttack"
 } | {
