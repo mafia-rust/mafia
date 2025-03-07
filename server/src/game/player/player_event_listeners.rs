@@ -1,4 +1,4 @@
-use crate::game::{ability_input::{AbilityInput, ControllerID}, grave::GraveReference, role::RoleState, Game};
+use crate::game::{ability_input::{AbilityInput, ControllerID}, grave::GraveReference, role::RoleState, visit::Visit, Game};
 
 use super::PlayerReference;
 
@@ -29,5 +29,11 @@ impl PlayerReference {
     }
     pub fn before_initial_role_creation(&self, game: &mut Game){
         self.role_state(game).clone().before_initial_role_creation(game, *self)
+    }
+    pub fn on_player_roleblocked(&self, game: &mut Game, player: PlayerReference, invisible: bool) {
+        self.role_state(game).clone().on_player_roleblocked(game, *self, player, invisible)
+    }
+    pub fn on_visit_wardblocked(&self, game: &mut Game, visit: Visit) {
+        self.role_state(game).clone().on_visit_wardblocked(game, *self, visit)
     }
 }
