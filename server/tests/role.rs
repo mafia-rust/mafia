@@ -2690,8 +2690,6 @@ fn yer() {
     
     game.skip_to(PhaseType::Dusk, 5);
 
-    println!("messages: {}", kit::_format_messages_debug(convertee.get_messages()));
-
     assert!(!yer.alive());
     assert!(!detective.alive());
     assert!(!convertee.alive());
