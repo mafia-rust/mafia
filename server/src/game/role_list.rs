@@ -7,7 +7,7 @@ use vec1::{
 
 use crate::vec_set::VecSet;
 
-use super::{components::insider_group::InsiderGroupID, game_conclusion::GameConclusion, role::Role};
+use super::{components::insider_group::InsiderGroupID, game_conclusion::GameConclusion, role::Role, win_condition::WinCondition};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RoleList(pub Vec<RoleOutline>);
@@ -47,11 +47,7 @@ impl RoleAssignment {
     pub fn is_evil(&self)-> bool{
         match self.win_condition.clone() {
             RoleOutlineOptionWinCondition::GameConclusionReached { win_if_any } => 
-                win_if_any.into_iter().any(|a|
-                    a == GameConclusion::Politician || a == GameConclusion::Cult || 
-                    a == GameConclusion::Fiends || a == GameConclusion::Mafia || 
-                    a == GameConclusion::NaughtyList
-                ),
+                !WinCondition::GameConclusionReached{win_if_any: win_if_any.into()}.friends_with_resolution_state(GameConclusion::Town),
             RoleOutlineOptionWinCondition::RoleDefault => {
                 self.role == Role::Politician ||
                 RoleSet::Mafia.get_roles().contains(&self.role) ||

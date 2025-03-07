@@ -1,3 +1,5 @@
+use std::{collections::HashSet, hash::Hash};
+
 use serde::{Deserialize, Serialize};
 
 use crate::vec_map::VecMap;
@@ -120,6 +122,16 @@ impl<T: Eq> Ord for VecSet<T> {
             0 => std::cmp::Ordering::Equal,
             ..=-1 => std::cmp::Ordering::Less
         }
+    }
+}
+
+impl<K> Into<HashSet<K>> for VecSet<K> where K: Eq+Hash{
+    fn into(self) -> HashSet<K> {
+        let mut hash_set = HashSet::with_capacity(self.len());
+        for key in self.vec {
+            hash_set.insert(key.0);
+        }
+        hash_set
     }
 }
 
