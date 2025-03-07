@@ -430,10 +430,11 @@ export function translateChatMessage(
                     );
             }
         case "playerConvertHistory":
-            return message.crumbs.map(crumb => translate("chatMessage.gameOver.player.crumb",
-                translateWinCondition(crumb.winCondition), 
-                translate(`role.${crumb.role}.name`)
-            )).join(" → ");
+            return "fuck";
+            // return message.crumbs.map(value => translate("chatMessage.gameOver.player.crumb",
+            //     translateWinCondition(value.winCondition), 
+            //     translate(`role.${value.role}.name`)
+            // )).join(" → ");
         case "playerStatusEffects":
             let effects = "";
             if(message.confused)
