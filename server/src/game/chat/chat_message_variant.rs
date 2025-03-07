@@ -68,17 +68,13 @@ pub enum ChatMessageVariant {
 
     /* Debug */
     #[serde(rename_all = "camelCase")]
-    DebugVisited {
+    DebugVisits {
+        visitor: PlayerReference,
         visited: Vec <PlayerReference>,
     },
 
     #[serde(rename_all = "camelCase")]
-    DebugVisitedBy {
-        visited_by: Vec <PlayerReference>,
-    },
-
-    #[serde(rename_all = "camelCase")]
-    DebugMisc {
+    Debug {
         text: String,
     },
 
@@ -250,6 +246,6 @@ impl ChatMessageVariant {
     /// Returns a DebugMisc error message that (in game) will display as how this would display
     /// if formatted via the rust debug formatter
     pub fn as_debug_misc<X: Debug>(x: X) -> Self {
-        Self::DebugMisc { text: format!("{:?}", x) }
+        Self::Debug { text: format!("{:?}", x) }
     }
 }

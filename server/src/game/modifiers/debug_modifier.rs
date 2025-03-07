@@ -1,4 +1,5 @@
-use crate::game::{chat::chat_message_variant::ChatMessageVariant, player::PlayerReference, role::Priority, Game};
+
+use crate::game::{chat::{chat_message_variant::ChatMessageVariant, ChatGroup}, player::PlayerReference, role::Priority, Game};
 
 use super::{ModifierTrait, ModifierType};
 
@@ -17,11 +18,12 @@ impl ModifierTrait for DebugModifier {
         
         let players = PlayerReference::all_players(game);
         for player in players {
-            player.push_night_message(game, ChatMessageVariant::DebugVisitedBy { 
-                visited_by: player.all_night_visitors_cloned(game), 
+            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::DebugVisits {
+                visitor: player,
+                visited: player.all_night_visits_cloned(game).iter().map(|visit| visit.target).collect(),
             });
-            player.push_night_message(game, ChatMessageVariant::DebugVisited { 
-                visited: player.all_night_visits_cloned(game).iter().map(|visit| visit.target).collect() 
+            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::Debug {
+                text: format!("@{} has role state data: {:?}",player.index(), player.role_state(game))
             });
         }
     }
