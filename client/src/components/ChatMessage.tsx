@@ -430,45 +430,45 @@ export function translateChatMessage(
                     );
             }
         case "playerConvertHistory":
-            return `(${
-                message.crumbs.map(crumb => translate("chatMessage.gameOver.player.crumb",
-                    translateWinCondition(crumb.winCondition), 
-                    translate(`role.${crumb.role}.name`)
-                )).join(" → ")
-            })`;
+            return message.crumbs.map(crumb => translate("chatMessage.gameOver.player.crumb",
+                translateWinCondition(crumb.winCondition), 
+                translate(`role.${crumb.role}.name`)
+            )).join(" → ");
         case "playerStatusEffects":
             let effects = "";
             if(message.confused)
-                effects += translate("chatMessage.playerStatusEffects.status.confused")
+                effects += translate("chatMessage.playerStatusEffects.status.confused");
             if(message.innocentAura)
-                effects += translate("chatMessage.playerStatusEffects.status.innocentAura")
+                effects += translate("chatMessage.playerStatusEffects.status.innocentAura");
             if(message.susAura)
-                effects += translate("chatMessage.playerStatusEffects.status.susAura")
+                effects += translate("chatMessage.playerStatusEffects.status.susAura");
             if(message.armor)
-                effects += translate("chatMessage.playerStatusEffects.status.armor")
+                effects += translate("chatMessage.playerStatusEffects.status.armor");
             if(message.silenced)
-                effects += translate("chatMessage.playerStatusEffects.status.silenced")
+                effects += translate("chatMessage.playerStatusEffects.status.silenced");
             if(message.loveLinks.length === 1)
-                effects += translate("chatMessage.playerStatusEffects.status.loveLinks.single", playerNames[message.loveLinks[0]])
-            else if(message.loveLinks.length > 1)
-                effects += translate("chatMessage.playerStatusEffects.status.loveLinks.multiple", playerListToString(message.loveLinks, playerNames))
+                effects += translate("chatMessage.playerStatusEffects.status.loveLinks.1", playerNames[message.loveLinks[0]]);
+            else if(message.loveLinks.length === 2)
+                effects += translate("chatMessage.playerStatusEffects.status.loveLinks.2", playerNames[message.loveLinks[0]], playerNames[message.loveLinks[1]]);
+            else if(message.loveLinks.length !== 0)
+                effects += translate("chatMessage.playerStatusEffects.status.loveLinks.many", playerListToString(message.loveLinks, playerNames));
             
             if(message.nightStatus !== null) {
-                effects += translate("chatMessage.playerStatusEffects.status.nightStatus.nightDefense."+message.nightStatus.nightDefense)
+                effects += translate("chatMessage.playerStatusEffects.status.nightStatus.nightDefense."+message.nightStatus.nightDefense);
                 if(message.nightStatus.roleblocked)
-                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.roleblocked")
+                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.roleblocked");
                 if(message.nightStatus.wardblocked)
-                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.wardblocked")
+                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.wardblocked");
                 if(message.nightStatus.possessed)
-                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.possessed")
+                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.possessed");
                 if(message.nightStatus.transported)
-                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.transported")
+                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.transported");
                 if(message.nightStatus.detained)
-                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.detained")
+                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.detained");
             }
 
             for(let tag in message.tags) {
-                effects += translate("chatMessage.playerStatusEffects.status.tag."+tag);
+                effects += translate("chatMessage.playerStatusEffects.status.tag."+(tag.toString()));
             }
             let target = message.player === null ? translate("chatMessage.playerStatusEffects.unspecifiedTarget") : playerNames[message.player];
             return effects.length === 0 ? 
@@ -757,7 +757,7 @@ export function translateChatMessage(
             return translate(`chatMessage.nextSantaAbility.${message.ability}`);
         case "nextKrampusAbility":
             return translate(`chatMessage.nextKrampusAbility.${message.ability}`);
-        case "addedToNaughtyList":
+        case  "addedToNaughtyList":
             return translate("chatMessage.addedToNaughtyList");
         case "santaAddedPlayerToNaughtyList":
             return translate("chatMessage.santaAddedPlayerToNaughtyList", playerNames[message.player]);

@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::{chat::ChatMessageVariant, player::PlayerReference, role::{armorsmith::Armorsmith, Role}, Game};
+use crate::{game::{chat::ChatMessageVariant, player::PlayerReference, role::{armorsmith::Armorsmith, Role}, tag::Tag, Game}, vec_set::VecSet};
 
 use super::{confused::Confused, detained::Detained, love_linked::LoveLinked};
 #[derive(Debug, Clone, Default)]
@@ -50,7 +50,7 @@ impl PathologistInfoDump {
         if game.current_phase().is_night() {
             ChatMessageVariant::PlayerStatusEffects {
                 player: if specify_target {Some(target.index())} else {None},
-                tags: target.tags_on_player(game).into_iter().flat_map(|t|t.1).collect(),
+                tags: target.tags_on_player(game).into_iter().flat_map(|t|t.1).collect::<VecSet<Tag>>().into_iter().collect(),
                 love_links: LoveLinked::get_links(game, target).iter().map(|p|p.index()).collect(),
                 innocent_aura: target.has_innocent_aura(game),
                 sus_aura: target.has_suspicious_aura(game),
