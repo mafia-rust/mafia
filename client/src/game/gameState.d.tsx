@@ -153,12 +153,14 @@ export type Tag =
 
 export const MODIFIERS = [
     "obscuredGraves", "randomLoveLinks",
+    "skipDay1",
     "deadCanChat", "noAbstaining",
     "noDeathCause",
     "roleSetGraveKillers", "autoGuilty", 
     "twoThirdsMajority", "noTrialPhases", 
-    "noWhispers", "noNightChat",
-    "noChat", "scheduledNominations"
+    "noWhispers", "hiddenWhispers",
+    "noNightChat", "noChat", 
+    "scheduledNominations"
 ] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 
