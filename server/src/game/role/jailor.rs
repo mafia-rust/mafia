@@ -152,4 +152,5 @@ impl RoleStateImpl for Jailor {
             _ => {}
         }
     }
+    fn on_visit_wardblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _visit: Visit) {}
 }
