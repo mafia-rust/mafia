@@ -938,9 +938,8 @@
     "chatMessage.targetWasAttacked":"You protected someone from at least one attack.",
     "chatMessage.youWereProtected": "You were protected from at least one attack.",
 
-    "chatMessage.wardblocked":"You were wardblocked, some of your targets were warded",
-    "chatMessage.roleBlocked.immune": "Someone tried to roleblock you but you are immune.",
-    "chatMessage.roleBlocked": "You've been roleblocked.",
+    "chatMessage.wardblocked":"A visit of yours may have been wardblocked. One of your targets was a warded player.",
+    "chatMessage.roleBlocked": "Some of your abilities may have been roleblocked.",
     
     "chatMessage.youArePoisoned": "You are poisoned, you will be attacked tomorrow night.",
 
@@ -952,11 +951,11 @@
     "chatMessage.seerResult.enemies":"Your targets are enemies.",
     "chatMessage.spyMafiaVisit":"The syndicate visited \\0.",
     "chatMessage.spyBug.silenced":"Your target was silenced.",
-    "chatMessage.spyBug.roleblocked":"Someone attempted to roleblock your target.",
+    "chatMessage.spyBug.roleblocked":"Your target may have had some of their abilities roleblocked.",
     "chatMessage.spyBug.protected":"Your target was protected from an attack.",
     "chatMessage.spyBug.transported":"Your target was transported.",
     "chatMessage.spyBug.possessed":"Someone attempted to possess your target.",
-    "chatMessage.spyBug.wardblocked":"Someone successfully wardblocked your target.",
+    "chatMessage.spyBug.wardblocked":"Your target may have had a visit of theirs wardblocked.",
     "chatMessage.psychicGood":"Between your target, and \\0, at least one player is a town loyalist.",
     "chatMessage.psychicEvil":"Between your target, \\0, and \\1, at least one player is not a town loyalist.",
     "chatMessage.psychicFailed":"This vision is impossible.",
