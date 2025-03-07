@@ -7,7 +7,7 @@ export default function Popover<T extends HTMLElement = HTMLElement>(props: Read
     children: ReactNode,
     setOpenOrClosed: (open: boolean) => void,
     onRender?: (popoverElement: HTMLDivElement, anchorElement?: T | undefined) => void
-    anchorRef?: React.RefObject<T>,
+    anchorForPositionRef?: React.RefObject<T>,
     className?: string
 }>): ReactElement {
     const thisRef = useRef<HTMLDivElement>(null);
@@ -36,22 +36,22 @@ export default function Popover<T extends HTMLElement = HTMLElement>(props: Read
 
     //match css styles
     useEffect(() => {
-        const styleBenefactor = props.anchorRef?.current ?? thisRef.current;
+        const styleCopyFrom = props.anchorForPositionRef?.current ?? thisRef.current;
         const popoverElement = popoverRef.current;
         
-        if (styleBenefactor) {
+        if (styleCopyFrom) {
             // Match styles
             THEME_CSS_ATTRIBUTES.forEach(prop => {
-                popoverElement.style.setProperty(`--${prop}`, getComputedStyle(styleBenefactor).getPropertyValue(`--${prop}`))
+                popoverElement.style.setProperty(`--${prop}`, getComputedStyle(styleCopyFrom).getPropertyValue(`--${prop}`))
             })
 
             popoverElement.className = 'popover ' + (props.className ?? '')
         }
-    }, [props.anchorRef, props.className])
+    }, [props.anchorForPositionRef, props.className])
 
     // This is for the popover's anchor, not the element named Anchor
     const [anchorLocation, setAnchorLocation] = React.useState(() => {
-        const bounds = props.anchorRef?.current?.getBoundingClientRect();
+        const bounds = props.anchorForPositionRef?.current?.getBoundingClientRect();
 
         if (bounds) {
             return { top: bounds.top, left: bounds.left }
@@ -63,7 +63,7 @@ export default function Popover<T extends HTMLElement = HTMLElement>(props: Read
     //close on scroll
     useEffect(() => {
         const listener = () => {
-            const bounds = props.anchorRef?.current?.getBoundingClientRect();
+            const bounds = props.anchorForPositionRef?.current?.getBoundingClientRect();
             if (
                 bounds &&
                 props.open &&
@@ -86,7 +86,7 @@ export default function Popover<T extends HTMLElement = HTMLElement>(props: Read
     //open and set position
     useEffect(() => {
         const popoverElement = popoverRef.current;
-        const anchorElement = props.anchorRef?.current;
+        const anchorElement = props.anchorForPositionRef?.current;
 
         if (props.open) {
             popoverRoot.render(props.children);
@@ -120,7 +120,11 @@ export default function Popover<T extends HTMLElement = HTMLElement>(props: Read
         setTimeout(() => {
             document.addEventListener("click", handleClickOutside);
         })
-        return () => document.removeEventListener("click", handleClickOutside);
+        return () => {
+            setTimeout(() => {
+                document.removeEventListener("click", handleClickOutside);
+            })
+        }
     }, [props]);
 
     return <div ref={thisRef} />
