@@ -8,15 +8,13 @@ pub struct PathologistInfoDump;
 
 
 impl PathologistInfoDump {
+    /// Here rather than in Pathologist because it must run before any other step in the player death invocation
+    /// because it needs to gather information as if the player was still alive.
     pub fn on_any_death(game: &mut Game, dead_player: PlayerReference) {
         let status_message = Self::new_status_effects_message(game, dead_player, true);
         let convert_message = ChatMessageVariant::PlayerConvertHistory {
             player: dead_player.index(),
             history: game.convert_history(dead_player),
-        };
-        let win_con_message = ChatMessageVariant::PlayerHasWinCondition { 
-            player: dead_player.index(), 
-            win_condition: dead_player.win_condition(game).clone(),
         };
         let role_will_message = ChatMessageVariant::PlayerRoleAndAlibi { 
             player: dead_player, 
@@ -32,14 +30,12 @@ impl PathologistInfoDump {
             for pathologist in pathologists {
                 pathologist.push_night_message(game, status_message.clone());
                 pathologist.push_night_message(game, convert_message.clone());
-                pathologist.push_night_message(game, win_con_message.clone());
                 pathologist.push_night_message(game, role_will_message.clone());
             }
         } else {
             for pathologist in pathologists {
                 pathologist.add_private_chat_message(game, status_message.clone());
                 pathologist.add_private_chat_message(game, convert_message.clone());
-                pathologist.add_private_chat_message(game, win_con_message.clone());
                 pathologist.add_private_chat_message(game, role_will_message.clone());
             }
         }

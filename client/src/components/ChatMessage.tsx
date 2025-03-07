@@ -430,7 +430,23 @@ export function translateChatMessage(
                     );
             }
         case "playerConvertHistory":
-            return "fuck";
+            let history = "";
+            if (message.crumbs.length !== 0) {
+                for(let i = 0; i<message.crumbs.length-1; i++) {
+                    let crumb = message.crumbs[i];
+                    history += translate("chatMessage.playerConvertHistory.formatCrumb",
+                        translateWinCondition(crumb.winCondition), 
+                        translate(`role.${crumb.role}.name`),
+                    ) + " → ";
+                }
+                let crumb = message.crumbs[message.crumbs.length-1];
+                history += translate("chatMessage.playerConvertHistory.formatCrumb",
+                    translateWinCondition(crumb.winCondition), 
+                    translate(`role.${crumb.role}.name`),
+                )
+            }
+            return translate("chatMessage.playerConvertHistory", message.player, history);
+            // for some reason the following always errors
             // return message.crumbs.map(value => translate("chatMessage.gameOver.player.crumb",
             //     translateWinCondition(value.winCondition), 
             //     translate(`role.${value.role}.name`)
@@ -467,9 +483,10 @@ export function translateChatMessage(
                 if(message.nightStatus.detained)
                     effects += translate("chatMessage.playerStatusEffects.status.nightStatus.detained");
             }
-
+            //I don't understand why tag is of type tag, but is a number. Its fine though because this works.
+            //Also the joiner is in the language file rather than here because of loveLink which is a tag, but is processed else where
             for(let tag in message.tags) {
-                effects += translate("chatMessage.playerStatusEffects.status.tag."+(tag.toString()));
+                effects += translate("chatMessage.playerStatusEffects.status.tag."+message.tags[tag]);
             }
             let target = message.player === null ? translate("chatMessage.playerStatusEffects.unspecifiedTarget") : playerNames[message.player];
             return effects.length === 0 ? 
