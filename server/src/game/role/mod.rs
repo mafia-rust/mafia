@@ -14,10 +14,7 @@ use crate::game::attack_power::DefensePower;
 use serde::{Serialize, Deserialize};
 
 use super::{
-    ability_input::*, 
-    components::insider_group::InsiderGroupID, 
-    grave::GraveReference, 
-    win_condition::WinCondition
+    ability_input::*, components::{insider_group::InsiderGroupID, night_visits::NightVisits}, grave::GraveReference, visit::VisitTag, win_condition::WinCondition
 };
 
 pub trait GetClientRoleState<CRS> {
@@ -70,6 +67,20 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference) {}
     fn on_game_start(self, _game: &mut Game, _actor_ref: PlayerReference) {}
     fn before_initial_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
+    fn on_player_roleblocked(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _invisible: bool) {
+        if player != actor_ref {return}
+
+        NightVisits::retain(game, |v|
+            v.tag != VisitTag::Role || v.visitor != actor_ref
+        );
+    }
+    fn on_visit_wardblocked(self, game: &mut Game, actor_ref: PlayerReference, visit: Visit) {
+        if actor_ref != visit.visitor {return};
+
+        NightVisits::retain(game, |v|
+            v.tag != VisitTag::Role || v.visitor != actor_ref
+        );
+    }
 }
 
 // Creates the Role enum
@@ -257,6 +268,16 @@ mod macros {
                     }
                 }
                 
+                pub fn on_player_roleblocked(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, invisible: bool){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_player_roleblocked(game, actor_ref, player, invisible)),*
+                    }
+                }
+                pub fn on_visit_wardblocked(self, game: &mut Game, actor_ref: PlayerReference, visit: Visit) {
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_visit_wardblocked(game, actor_ref, visit)),*
+                    }
+                }
                 pub fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority){
                     match self {
                         $(Self::$name(role_struct) => role_struct.do_night_action(game, actor_ref, priority)),*
@@ -394,31 +415,11 @@ impl Role{
             _ => false,
         }
     }
-    pub fn roleblock_immune(&self)->bool{
-        match self {
-            Role::Veteran | Role::Jester | 
-            Role::Bouncer |
-            Role::Transporter | Role::Escort | Role::Retributionist | 
-            Role::Witch | Role::Scarecrow | Role::Warper |
-            Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer => true,
-            _ => false,
-        }
-    }
-    pub fn wardblock_immune(&self)->bool{
-        match self {
-            Role::Jailor | Role::Kidnapper |
-            Role::Bouncer | Role::Scarecrow => true,
-            _ => false
-        }
-    }
     pub fn has_innocent_aura(&self, game: &Game)->bool{
         match self {
             Role::Godfather => true,
             Role::Pyrolisk => {
                 game.day_number() == 1
-            },
-            Role::Werewolf => {
-                game.day_number() == 1 || game.day_number() == 3
             },
             _ => false,
         }

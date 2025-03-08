@@ -8,9 +8,9 @@ use crate::{game::{
     components::{
         arsonist_doused::ArsonistDoused,
         drunk_aura::DrunkAura,
-        insider_group::InsiderGroupID
+        insider_group::InsiderGroupID, night_visits::NightVisits
     }, event::{
-        before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_role_switch::OnRoleSwitch
+        before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_player_roleblocked::OnPlayerRoleblocked, on_role_switch::OnRoleSwitch, on_visit_wardblocked::OnVisitWardblocked
     }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
 }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
@@ -18,28 +18,14 @@ use super::PlayerReference;
 
 impl PlayerReference{
     pub fn roleblock(&self, game: &mut Game, send_messages: bool) {
-        let roleblock_immune = self.role(game).roleblock_immune();
-
-        if !roleblock_immune {
-            self.set_night_roleblocked(game, true);
-            self.set_night_visits(game, vec![]);
-        }
-
-        if send_messages {
-            self.push_night_message(game,
-                ChatMessageVariant::RoleBlocked { immune: roleblock_immune }
-            );
-        }
+        OnPlayerRoleblocked::new(*self, !send_messages).invoke(game);
     }
     pub fn ward(&self, game: &mut Game) -> Vec<PlayerReference> {
-        let mut wardblocked = vec![];
-        for visitor in self.all_night_visitors_cloned(game){
-            if !visitor.role(game).wardblock_immune() {
-                visitor.set_night_wardblocked(game, true);
-                visitor.set_night_visits(game, vec![]);
-                visitor.push_night_message(game, ChatMessageVariant::Wardblocked);
-                wardblocked.push(visitor);
-            }
+        let mut wardblocked = Vec::new();
+        for visit in NightVisits::all_visits_cloned(game).into_iter(){
+            if visit.target != *self {continue;}
+            OnVisitWardblocked::new(visit).invoke(game);
+            out.push(visit.visitor);
         }
         wardblocked
     }
@@ -81,9 +67,6 @@ impl PlayerReference{
             }).collect();
             player_ref.set_night_visits(game, new_visits);
         }
-    }
-    pub fn night_blocked(&self, game: &Game)->bool{
-        self.night_roleblocked(game) || self.night_wardblocked(game)
     }
 
 

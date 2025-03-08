@@ -61,4 +61,5 @@ impl RoleStateImpl for Transporter {
             false
         )
     }
+    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
