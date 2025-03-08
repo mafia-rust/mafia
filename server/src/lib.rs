@@ -1,17 +1,16 @@
-#![warn(clippy::allow_attributes)]
+// Meta
+#![warn(clippy::allow_attributes, clippy::allow_attributes_without_reason)]
+// Arithmetic
 #![warn(clippy::arithmetic_side_effects)]
-#![warn(clippy::cast_possible_truncation)]
-#![warn(clippy::cast_possible_wrap)]
-#![warn(clippy::cast_precision_loss)]
-#![warn(clippy::cast_sign_loss)]
-#![warn(clippy::clear_with_drain, clippy::cloned_instead_of_copied)]
-#![warn(clippy::collection_is_never_read)]
-#![warn(clippy::expect_used, clippy::unwrap_used)]
+// Casting
+#![warn(clippy::cast_possible_truncation, clippy::cast_possible_wrap, clippy::cast_precision_loss, clippy::cast_sign_loss)]
+// Collections
+#![warn(clippy::clear_with_drain, clippy::cloned_instead_of_copied, clippy::collection_is_never_read, clippy::explicit_into_iter_loop, clippy::flat_map_option)]
+// Panicking operations
+#![deny(clippy::unwrap_used, clippy::panic, clippy::indexing_slicing)]
+// Misc.
 #![warn(clippy::expl_impl_clone_on_copy)]
-#![warn(clippy::explicit_into_iter_loop)]
-#![warn(clippy::flat_map_option)]
-#![deny(clippy::indexing_slicing)]
-#![warn(clippy::panic)]
+#![allow(clippy::new_without_default, reason = "This lint is stupid")]
 
 pub mod game;
 pub mod websocket_connections;

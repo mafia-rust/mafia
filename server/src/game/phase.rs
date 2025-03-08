@@ -91,7 +91,7 @@ impl PhaseStateMachine {
     pub fn get_phase_time_length(game: &Game, phase: PhaseType) -> Duration {
         let mut time = game.settings.phase_times.get_time_for(phase);
         //if there are less than 3 players alive then the game is sped up by 2x
-        #[expect(clippy::arithmetic_side_effects)]
+        #[expect(clippy::arithmetic_side_effects, reason = "Dividing by two cannot panic")]
         if PlayerReference::all_players(game).filter(|p|p.alive(game)).count() <= 3{
             time /= 2;
         }

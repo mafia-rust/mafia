@@ -271,7 +271,8 @@ impl Lobby {
                 
                 if let GameClientLocation::Player(player_index) = game_player.client_location {
                     let Ok(player_ref) = PlayerReference::new(game, player_index) else {
-                        unreachable!()
+                        send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
+                        return Err(RejectJoinReason::PlayerDoesntExist)
                     };
                     if !player_ref.could_reconnect(game) {
                         send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerTaken});

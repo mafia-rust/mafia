@@ -54,7 +54,6 @@ pub struct Listener {
     clients: HashMap<SocketAddr, ListenerClient>,
 }
 impl Listener{
-    #[expect(clippy::new_without_default)]
     pub fn new() -> Self {
         Self {
             lobbies: HashMap::new(),
@@ -350,8 +349,7 @@ impl Listener{
                     if let Some(lobby) = self.lobbies.get_mut(room_code){
                         lobby.on_client_message(&connection.get_sender(), *lobby_client_id, incoming_packet);
                     } else {
-                        //Player is in a lobby that doesn't exist
-                        panic!("Recieved a message from a player in a lobby that doesnt exist")
+                        log!(error "listener.rs"; "Received a message from a player in a lobby that doesnt exist");
                     }
                 }
             }

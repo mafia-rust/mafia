@@ -164,7 +164,7 @@ impl PlayerReference{
 
         self.send_chat_messages(game);
     }
-    #[expect(clippy::assigning_clones)]
+    #[expect(clippy::assigning_clones, reason = "Reference rules prevents this")]
     fn requeue_chat_messages(&self, game: &mut Game){
         self.deref_mut(game).queued_chat_messages = self.deref(game).chat_messages.clone();
     }   

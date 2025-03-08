@@ -114,7 +114,6 @@ impl RoleOutline{
             }
         }
 
-        #[expect(clippy::expect_used)]
         let mut new_options = Vec1::try_from_vec(new_options)
             .expect("It is impossible to have two sets that are not equal but are subsets of each other, role_list.rs: RoleOutline::simplify");
 

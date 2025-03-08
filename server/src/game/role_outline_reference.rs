@@ -32,7 +32,6 @@ impl RoleOutlineReference{
         }
     }
     pub fn deref_as_role_and_player_originally_generated(&self, game: &Game)->OriginallyGeneratedRoleAndPlayer{
-        #![expect(clippy::expect_used)]
         game.assignments
             .iter()
             .find(|(_, outline, _)| outline.index == self.index)

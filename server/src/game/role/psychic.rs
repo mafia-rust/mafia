@@ -65,9 +65,9 @@ impl Psychic {
 
         valid_players.shuffle(&mut rand::rng());
 
-        #[expect(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing, reason = "We're iterating over indexes, so it's safe")]
         for i in 0..valid_players.len(){
-            #[expect(clippy::arithmetic_side_effects)]
+            #[expect(clippy::arithmetic_side_effects, reason = "`i` must be less than the list length, which must fit in usize.")]
             for j in i+1..valid_players.len(){
                 if confused || Self::contains_evil(game, target, valid_players[i], valid_players[j]){
                     return ChatMessageVariant::PsychicEvil { first: valid_players[i], second: valid_players[j] }

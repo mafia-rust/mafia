@@ -1,3 +1,5 @@
+#![allow(clippy::get_first, reason = "Often need to get first two visits manually.")]
+
 pub mod grave;
 pub mod phase;
 pub mod player;
@@ -146,6 +148,7 @@ pub enum GameOverReason {
 
 
 impl Game {
+    /// `players` must have length 255 or lower.
     pub fn new(settings: Settings, players: Vec<PlayerInitializeParameters>, spectators: Vec<SpectatorInitializeParameters>) -> Result<Self, RejectStartReason>{
         //check settings are not completly off the rails
         if settings.phase_times.game_ends_instantly() {
@@ -206,7 +209,7 @@ impl Game {
                 new_players.push(new_player);
             }
 
-            #[expect(clippy::cast_possible_truncation)]
+            #[expect(clippy::cast_possible_truncation, reason = "Explained in doc comment")]
             let num_players = new_players.len() as u8;
 
             let mut game = Self{
@@ -326,7 +329,8 @@ impl Game {
         Ok(game)
     }
     
-    #[expect(clippy::cast_possible_truncation)]
+    /// `initialization_data` must have length 255 or lower
+    #[expect(clippy::cast_possible_truncation, reason = "See doc comment")]
     fn assign_players_to_assignments(initialization_data: Vec<RoleAssignment>)->Vec<(PlayerReference, RoleOutlineReference, RoleAssignment)>{
         let mut player_indices: Vec<PlayerIndex> = (0..initialization_data.len() as PlayerIndex).collect();
         player_indices.shuffle(&mut rand::rng());
@@ -344,7 +348,7 @@ impl Game {
             .collect()
     }
 
-    #[expect(clippy::cast_possible_truncation)]
+    #[expect(clippy::cast_possible_truncation, reason = "Game can only have 255 players maximum")]
     pub fn num_players(&self) -> u8 {
         self.players.len() as u8
     }
@@ -459,7 +463,7 @@ impl Game {
         votes >= self.nomination_votes_required()
     }
     pub fn nomination_votes_required(&self)->u8{
-        #[expect(clippy::cast_possible_truncation)]
+        #[expect(clippy::cast_possible_truncation, reason = "Game can only have max 255 players")]
         let eligible_voters = PlayerReference::all_players(self)
             .filter(|p| p.alive(self) && !p.forfeit_vote(self))
             .count() as u8;
