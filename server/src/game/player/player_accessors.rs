@@ -162,10 +162,14 @@ impl PlayerReference{
         &self.deref(game).win_condition
     }
     pub fn set_win_condition(&self, game: &mut Game, win_condition: WinCondition){
+        let old_win_condition = self.set_win_condition_no_convert_call(game, win_condition.clone());
+        OnConvert::new(*self, old_win_condition, win_condition).invoke(game)
+    }
+    /// Returns the old win condition
+    pub fn set_win_condition_no_convert_call(&self, game: &mut Game, win_condition: WinCondition) -> WinCondition{
         let old_win_condition = self.win_condition(game).clone();
         self.deref_mut(game).win_condition = win_condition.clone();
-
-        OnConvert::new(*self, old_win_condition, win_condition).invoke(game)
+        return old_win_condition;
     }
 
     pub fn add_private_chat_message(&self, game: &mut Game, message: ChatMessageVariant) {
