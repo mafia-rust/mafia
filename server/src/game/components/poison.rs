@@ -1,7 +1,7 @@
 use crate::{game::{
     attack_power::AttackPower, chat::ChatMessageVariant,
     grave::GraveKiller, player::PlayerReference,
-    role::Priority, Game
+    role::{Priority, Role}, Game
 }, vec_set::VecSet};
 
 impl Game {
@@ -51,6 +51,14 @@ pub enum PoisonAlert {
 }
 
 impl Poison{
+    pub fn is_spiraling(game: &Game, player: PlayerReference) -> bool {
+        game.poison().poisons.iter()
+            .any(|poison|
+                poison.player == player && 
+                poison.grave_killer == GraveKiller::Role(Role::Spiral)
+            )
+    }
+
     /// run this at night
     pub fn poison_player(
         game: &mut Game,

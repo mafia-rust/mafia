@@ -21,13 +21,52 @@ impl PlayerReference{
         OnPlayerRoleblocked::new(*self, !send_messages).invoke(game);
     }
     pub fn ward(&self, game: &mut Game) -> Vec<PlayerReference> {
-        let mut out = Vec::new();
+        let mut wardblocked = Vec::new();
         for visit in NightVisits::all_visits_cloned(game).into_iter(){
             if visit.target != *self {continue;}
             OnVisitWardblocked::new(visit).invoke(game);
             out.push(visit.visitor);
         }
-        out
+        wardblocked
+    }
+    pub fn transport(&self, game: &mut Game, player1: PlayerReference, player2: PlayerReference) {
+        player1.push_night_message(game, ChatMessageVariant::Transported);
+        player2.push_night_message(game, ChatMessageVariant::Transported);
+        player1.set_night_transported(game, true);
+        player2.set_night_transported(game, true);
+
+        for player_ref in PlayerReference::all_players(game){
+            if player_ref == *self {continue;}
+            if player_ref.role(game) == Role::Transporter {continue;}
+
+
+            let new_visits = player_ref.all_night_visits_cloned(game).clone().into_iter().map(|mut v|{
+                if v.target == player1 {
+                    v.target = player2;
+                } else if v.target == player2{
+                    v.target = player1;
+                }
+                v
+            }).collect();
+            player_ref.set_night_visits(game, new_visits);
+        }
+    }
+    pub fn warp(&self, game: &mut Game, player1: PlayerReference, player2: PlayerReference) {
+        player1.push_night_message(game, ChatMessageVariant::Transported);
+        player1.set_night_transported(game, true);
+        for player_ref in PlayerReference::all_players(game){
+            if player_ref == *self {continue;}
+            if player_ref.role(game) == Role::Warper {continue;}
+            if player_ref.role(game) == Role::Transporter {continue;}
+
+            let new_visits = player_ref.all_night_visits_cloned(game).clone().into_iter().map(|mut v|{
+                if v.target == player1 {
+                    v.target = player2;
+                }
+                v
+            }).collect();
+            player_ref.set_night_visits(game, new_visits);
+        }
     }
 
 
@@ -185,7 +224,7 @@ impl PlayerReference{
                         found_first = true;
                     }
                 }
-
+                possessed_visit.target.set_night_possessed(game, true);
                 self.set_night_visits(game, new_witch_visits);
                 return Some(possessed_visit.target);
             },

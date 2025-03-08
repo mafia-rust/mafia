@@ -16,6 +16,7 @@ import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSp
 import { ControllerID, AbilitySelection, translateControllerID, controllerIdToLink } from "../game/abilityInput";
 import DetailsSummary from "./DetailsSummary";
 
+
 const ChatElement = React.memo((
     props: {
         message: ChatMessage,
@@ -434,7 +435,69 @@ export function translateChatMessage(
                         message.dayNumber
                     );
             }
+        case "playerConvertHistory":
+            let history = "";
+            if (message.crumbs.length !== 0) {
+                for(let i = 0; i<message.crumbs.length-1; i++) {
+                    let crumb = message.crumbs[i];
+                    history += translate("chatMessage.playerConvertHistory.formatCrumb",
+                        translateWinCondition(crumb.winCondition), 
+                        translate(`role.${crumb.role}.name`),
+                    ) + " → ";
+                }
+                let crumb = message.crumbs[message.crumbs.length-1];
+                history += translate("chatMessage.playerConvertHistory.formatCrumb",
+                    translateWinCondition(crumb.winCondition), 
+                    translate(`role.${crumb.role}.name`),
+                )
+            }
+            return translate("chatMessage.playerConvertHistory", message.player, history);
+            // for some reason the following always errors
+            // return message.crumbs.map(value => translate("chatMessage.gameOver.player.crumb",
+            //     translateWinCondition(value.winCondition), 
+            //     translate(`role.${value.role}.name`)
+            // )).join(" → ");
+        case "playerStatusEffects":
+            let effects = "";
+            if(message.confused)
+                effects += translate("chatMessage.playerStatusEffects.status.confused");
+            if(message.innocentAura)
+                effects += translate("chatMessage.playerStatusEffects.status.innocentAura");
+            if(message.susAura)
+                effects += translate("chatMessage.playerStatusEffects.status.susAura");
+            if(message.armor)
+                effects += translate("chatMessage.playerStatusEffects.status.armor");
+            if(message.silenced)
+                effects += translate("chatMessage.playerStatusEffects.status.silenced");
+            if(message.loveLinks.length === 1)
+                effects += translate("chatMessage.playerStatusEffects.status.loveLinks.1", playerNames[message.loveLinks[0]]);
+            else if(message.loveLinks.length === 2)
+                effects += translate("chatMessage.playerStatusEffects.status.loveLinks.2", playerNames[message.loveLinks[0]], playerNames[message.loveLinks[1]]);
+            else if(message.loveLinks.length !== 0)
+                effects += translate("chatMessage.playerStatusEffects.status.loveLinks.many", playerListToString(message.loveLinks, playerNames));
             
+            if(message.nightStatus !== null) {
+                effects += translate("chatMessage.playerStatusEffects.status.nightStatus.nightDefense."+message.nightStatus.nightDefense);
+                if(message.nightStatus.roleblocked)
+                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.roleblocked");
+                if(message.nightStatus.wardblocked)
+                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.wardblocked");
+                if(message.nightStatus.possessed)
+                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.possessed");
+                if(message.nightStatus.transported)
+                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.transported");
+                if(message.nightStatus.detained)
+                    effects += translate("chatMessage.playerStatusEffects.status.nightStatus.detained");
+            }
+            //I don't understand why tag is of type tag, but is a number. Its fine though because this works.
+            //Also the joiner is in the language file rather than here because of loveLink which is a tag, but is processed else where
+            for(let tag in message.tags) {
+                effects += translate("chatMessage.playerStatusEffects.status.tag."+message.tags[tag]);
+            }
+            let target = message.player === null ? translate("chatMessage.playerStatusEffects.unspecifiedTarget") : playerNames[message.player];
+            return effects.length === 0 ? 
+                translate("chatMessage.playerStatusEffects.none", target) :
+                translate("chatMessage.playerStatusEffects.some", target, effects);
         case "trialInformation":
             return translate("chatMessage.trialInformation",
                 message.requiredVotes,
@@ -716,7 +779,7 @@ export function translateChatMessage(
             return translate(`chatMessage.nextSantaAbility.${message.ability}`);
         case "nextKrampusAbility":
             return translate(`chatMessage.nextKrampusAbility.${message.ability}`);
-        case "addedToNaughtyList":
+        case  "addedToNaughtyList":
             return translate("chatMessage.addedToNaughtyList");
         case "santaAddedPlayerToNaughtyList":
             return translate("chatMessage.santaAddedPlayerToNaughtyList", playerNames[message.player]);
@@ -1026,6 +1089,32 @@ export type ChatMessageVariant = {
 } | {
     type: "godfatherBackupKilled",
     backup: PlayerIndex
+} | {
+    type: "playerConvertHistory",
+    player: PlayerIndex,
+    crumbs: {
+        night: number | null,
+        role: Role,
+        winCondition: WinCondition
+    }[],
+} | {
+    type: "playerStatusEffects",
+    player: PlayerIndex,
+    tags: Tag[],
+    loveLinks: PlayerIndex[],
+    innocentAura: boolean,
+    susAura: boolean,
+    armor: boolean,
+    confused: boolean,
+    silenced: boolean,
+    nightStatus: {
+        nightDefense: number
+        roleblocked: boolean,
+        wardblocked: boolean,
+        possessed: boolean,
+        transported: boolean,
+        detained: boolean,
+    } | null,
 } | {
     type: "silenced"
 } | {

@@ -294,7 +294,7 @@ impl RoleSet{
                     Role::Detective, Role::Philosopher, Role::Gossip, 
                     Role::Psychic, Role::Auditor, Role::Spy, 
                     Role::Lookout, Role::Tracker, Role::Snoop,
-                    Role::TallyClerk
+                    Role::TallyClerk, Role::Pathologist
                 ],
             RoleSet::TownProtective => 
                 vec![
@@ -324,7 +324,7 @@ impl RoleSet{
                 vec![
                     Role::Godfather, Role::Counterfeiter,
                     Role::Impostor, Role::Recruiter,
-                    Role::Mafioso
+                    Role::Mafioso,
                 ],
             RoleSet::MafiaSupport => 
                 vec![

@@ -69,7 +69,12 @@ struct PlayerVotingVariables{
 struct PlayerNightVariables{
     died: bool,
     attacked: bool,
-    blocked: bool,
+    
+    roleblocked: bool,
+    wardblocked: bool,
+    possessed: bool,
+    transported: bool,
+  
     upgraded_defense: Option<DefensePower>,
 
     convert_role_to: Option<RoleState>,
@@ -119,11 +124,15 @@ impl Player {
             night_variables: PlayerNightVariables{
                 died: false,
                 attacked: false,
-                blocked: false,
+                
+                roleblocked: false,
+                wardblocked: false,
+                possessed: false,
+                transported: false,
+              
                 upgraded_defense: None,
                 appeared_visits: None,
                 framed: false,
-
                 convert_role_to: None,
 
                 silenced: false,
@@ -179,7 +188,12 @@ pub mod test {
             night_variables: PlayerNightVariables{
                 died: false,
                 attacked: false,
-                blocked: false,
+
+                roleblocked: false,
+                wardblocked: false,
+                possessed: false,
+                transported: false,
+
                 upgraded_defense: None,
                 appeared_visits: None,
                 framed: false,

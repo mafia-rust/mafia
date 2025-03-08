@@ -45,6 +45,8 @@ export type RoleState = {
 } | {
     type: "tallyClerk"
 } | {
+    type: "pathologist"
+} | {
     type: "doctor",
     selfHealsRemaining: number,
 } | {

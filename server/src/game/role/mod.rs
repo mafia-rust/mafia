@@ -99,6 +99,7 @@ macros::roles! {
     Snoop : snoop,
     Gossip : gossip,
     TallyClerk : tally_clerk,
+    Pathologist : pathologist,
 
     Doctor : doctor,
     Bodyguard : bodyguard,

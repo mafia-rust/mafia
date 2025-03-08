@@ -1,11 +1,13 @@
+use serde::Serialize;
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash)]
 pub enum AttackPower {
     Basic = 1,
     ArmorPiercing = 2,
     ProtectionPiercing = 3
 }
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Serialize)]
 pub enum DefensePower {
     None = 0,
     Armor = 1,
@@ -18,7 +20,7 @@ impl AttackPower {
         self as u8 > defense as u8
     }
     pub fn is_stronger(self, other: AttackPower) -> bool {
-        self as u8 > other as u8
+        self > other
     }
 }
 impl DefensePower {
@@ -26,6 +28,6 @@ impl DefensePower {
         self as u8 >= attack as u8
     }
     pub fn is_stronger(self, other: DefensePower) -> bool {
-        self as u8 > other as u8
+        self > other
     }
 }
