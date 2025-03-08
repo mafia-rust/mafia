@@ -45,7 +45,7 @@ impl RoleStateImpl for SantaClaus {
                     };
 
                     if
-                        !AttackPower::ArmorPiercing.can_pierce(target_ref.defense(game)) ||
+                        !AttackPower::ShieldPiercing.can_pierce(target_ref.defense(game)) ||
                         !get_eligible_players(game, actor_ref).contains(&target_ref)
                     {
                         actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
@@ -73,7 +73,7 @@ impl RoleStateImpl for SantaClaus {
                     };
 
                     if
-                        !AttackPower::ArmorPiercing.can_pierce(target_ref.defense(game)) ||
+                        !AttackPower::ShieldPiercing.can_pierce(target_ref.defense(game)) ||
                         !get_eligible_players(game, actor_ref).contains(&target_ref)
                     {
                         actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);

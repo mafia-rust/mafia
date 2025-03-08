@@ -21,7 +21,7 @@ pub struct ClientRoleState;
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Shielded;
 
 impl RoleStateImpl for Pyrolisk {
     type ClientRoleState = ClientRoleState;
@@ -40,7 +40,7 @@ impl RoleStateImpl for Pyrolisk {
                         *other_player_ref != actor_ref
                     ).collect::<Vec<PlayerReference>>()
                 {
-                    let attack_success = other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Pyrolisk), AttackPower::ArmorPiercing, true);
+                    let attack_success = other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Pyrolisk), AttackPower::ShieldPiercing, true);
                     if attack_success {
                         tagged_for_obscure.insert(other_player_ref);
                         killed_at_least_once = true;
@@ -51,7 +51,7 @@ impl RoleStateImpl for Pyrolisk {
                 if !killed_at_least_once {
                     let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                     if let Some(visit) = actor_visits.first(){
-                        let attack_success = visit.target.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Pyrolisk), AttackPower::ArmorPiercing, true);
+                        let attack_success = visit.target.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Pyrolisk), AttackPower::ShieldPiercing, true);
                         if attack_success {
                             tagged_for_obscure.insert(visit.target);
                         }
