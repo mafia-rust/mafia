@@ -86,7 +86,7 @@ impl RoleStateImpl for Martyr {
             } ||
             actor_ref.ability_deactivated_from_death(game) || 
             Detained::is_detained(game, actor_ref) ||
-            game.day_number() <= 1,
+            !game.attack_convert_abilities_enabled(),
             Some(PhaseType::Obituary),
             false,
             vec_set!(actor_ref)

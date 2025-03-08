@@ -112,7 +112,7 @@ impl RoleStateImpl for Bodyguard {
             actor_ref,
             self.self_shields_remaining > 0,
             true,
-            !(game.day_number() > 1),
+            !game.attack_convert_abilities_enabled(),
             ControllerID::role(actor_ref, Role::Bodyguard, 0)
         )
     }
