@@ -78,11 +78,7 @@ impl RoleStateImpl for Disguiser {
             ControllerParametersMap::new_controller_fast(
                 game,
                 ControllerID::role(actor_ref, Role::Disguiser, 1),
-                AvailableAbilitySelection::new_role_option(
-                    Role::values().into_iter()
-                        .map(|role| Some(role))
-                        .collect()
-                ),
+                AvailableAbilitySelection::role_option_enabled(game, false),
                 AbilitySelection::new_role_option(Some(Role::Disguiser)),
                 actor_ref.ability_deactivated_from_death(game),
                 None,
