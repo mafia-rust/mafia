@@ -5,7 +5,6 @@ use serde::Serialize;
 use crate::game::attack_power::AttackPower;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::components::night_visits::NightVisits;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -35,34 +34,37 @@ impl RoleStateImpl for Ambusher {
         match priority {
             Priority::Kill => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-                let Some(ambush_visit) = actor_visits.first() else {return};
-                let target_ref = ambush_visit.target;
+                let Some(visit) = actor_visits.first() else {return};
+                let target_ref = visit.target;
 
-                let player_to_attacks_visit = 
-                if let Some(priority_visitor) = NightVisits::all_visits(game).into_iter()
-                    .filter(|visit|
-                        ambush_visit != *visit &&
-                        visit.target == target_ref &&
-                        visit.visitor.alive(game) &&
-                        visit.visitor.win_condition(game).is_loyalist_for(GameConclusion::Town)
-                    ).collect::<Vec<&Visit>>()
+                let player_to_attack = 
+                if let Some(priority_visitor) = PlayerReference::all_players(game)
+                    .filter(|other_player_ref|
+                        other_player_ref.alive(game) &&
+                        *other_player_ref != actor_ref &&
+                        other_player_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
+                        // Its probably this way rather than having it filter applied directly to target_ref.all_night_visitors_cloned(game) 
+                        // in order to prevent repeat players
+                        target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
+                    ).collect::<Vec<PlayerReference>>()
                     .choose(&mut rand::rng())
-                    .copied()
-                {
-                    Some(priority_visitor.visitor)
+                    .copied(){
+                    Some(priority_visitor)
                 } else {
-                    NightVisits::all_visits(game).into_iter()
-                        .filter(|visit|
-                            ambush_visit != *visit &&
-                            visit.target == target_ref &&
-                            visit.visitor.alive(game)
-                        ).collect::<Vec<&Visit>>()
+                    PlayerReference::all_players(game)
+                        .filter(|other_player_ref|
+                            other_player_ref.alive(game) &&
+                            *other_player_ref != actor_ref &&
+                            // Its probably this way rather than having it filter applied directly to target_ref.all_night_visitors_cloned(game) 
+                            // in order to prevent repeat players
+                            target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
+                        )
+                        .collect::<Vec<PlayerReference>>()
                         .choose(&mut rand::rng())
                         .copied()
-                        .map(|v|v.visitor)
                 };
 
-                if let Some(player_to_attack) = player_to_attacks_visit{
+                if let Some(player_to_attack) = player_to_attack{
                     player_to_attack.try_night_kill_single_attacker(
                         actor_ref,
                         game,
@@ -72,7 +74,7 @@ impl RoleStateImpl for Ambusher {
                     );
 
                     for visitor in target_ref.all_night_visitors_cloned(game){
-                        if visitor == player_to_attack || visitor == actor_ref {continue;}
+                        if visitor == player_to_attack {continue;}
                         visitor.push_night_message(game, ChatMessageVariant::AmbusherCaught { ambusher: actor_ref });
                     }
                 }
