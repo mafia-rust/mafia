@@ -197,6 +197,8 @@ Doomsayer
     type: "yer",
     starPassesRemaining: number
 } | {
+    type: "vampire"
+} | {
     type: "kira"
 } | {
     type: "fiendsWildcard"

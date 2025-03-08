@@ -36,6 +36,7 @@ use components::insider_group::InsiderGroupID;
 use components::insider_group::InsiderGroups;
 use components::syndicate_gun_item::SyndicateGunItem;
 use components::synopsis::SynopsisTracker;
+use components::vampire_tracker::VampireTracker;
 use components::verdicts_today::VerdictsToday;
 use event::on_tick::OnTick;
 use modifiers::ModifierType;
@@ -120,6 +121,7 @@ pub struct Game {
     pub detained: Detained,
     pub confused: Confused,
     pub drunk_aura: DrunkAura,
+    pub vampire_tracker: VampireTracker,
     pub synopsis_tracker: SynopsisTracker
 }
 
@@ -145,7 +147,7 @@ pub enum GameOverReason {
 
 impl Game {
     pub fn new(settings: Settings, players: Vec<PlayerInitializeParameters>, spectators: Vec<SpectatorInitializeParameters>) -> Result<Self, RejectStartReason>{
-        //check settings are not completly off the rails
+        //check settings are not completely off the rails
         if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
         }
@@ -235,6 +237,7 @@ impl Game {
                 detained: Detained::default(),
                 confused: Confused::default(),
                 drunk_aura: DrunkAura::default(),
+                vampire_tracker: VampireTracker::default(),
                 synopsis_tracker: SynopsisTracker::new(num_players)
             };
 
@@ -588,7 +591,7 @@ pub mod test {
     
     pub fn mock_game(settings: Settings, number_of_players: usize) -> Result<Game, RejectStartReason> {
 
-        //check settings are not completly off the rails
+        //check settings are not completely off the rails
         if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
         }
@@ -646,6 +649,7 @@ pub mod test {
             detained: Default::default(),
             confused: Default::default(),
             drunk_aura: Default::default(),
+            vampire_tracker: Default::default(),
             synopsis_tracker: SynopsisTracker::new(number_of_players as u8)
         };
 
