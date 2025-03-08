@@ -75,7 +75,7 @@ impl PlayerReference{
     pub fn untagged_night_visits_cloned(&self, game: &Game) -> Vec<Visit>{
         NightVisits::get_untagged_visits_from_visitor(game, *self)
             .into_iter()
-            .cloned()
+            .copied()
             .collect()
     }
     /// Returns all vists where the player is the visitor
@@ -83,7 +83,7 @@ impl PlayerReference{
         NightVisits::all_visits(game)
             .into_iter()
             .filter(|visit| visit.visitor == *self)
-            .cloned()
+            .copied()
             .collect()
     }
     /// Returns all vists where the player is the target

@@ -57,7 +57,7 @@ impl ControllerParametersMap{
         self.controllers.insert(id, ability_data);
     }
     pub fn combine_overwrite(&mut self, other: Self){
-        for (ability_id, ability_selection) in other.controllers.into_iter(){
+        for (ability_id, ability_selection) in other.controllers {
             self.controllers.insert(ability_id, ability_selection);
         }
     }

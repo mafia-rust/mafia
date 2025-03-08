@@ -95,7 +95,7 @@ impl SyndicateGunItem {
             }
             for insider in InsiderGroupID::Mafia.players(game).iter()
                 .filter(|p|p.alive(game))
-                .cloned()
+                .copied()
                 .collect::<Vec<_>>()
             {
                 SyndicateGunItem::give_gun(game, insider);

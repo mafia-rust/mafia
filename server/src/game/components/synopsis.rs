@@ -126,7 +126,7 @@ impl PartialPlayerSynopsis {
     }
 }
 
-#[derive(Clone, Debug, Serialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct SynopsisCrumb {
     night: Option<u8>,

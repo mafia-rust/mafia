@@ -122,7 +122,7 @@ impl SpectatorPointer {
             None=> return
         };
 
-        for msg in msgs.into_iter(){
+        for msg in msgs {
             s.queued_chat_messages.push(msg);
         }
     }

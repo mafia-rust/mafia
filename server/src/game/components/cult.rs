@@ -64,7 +64,7 @@ impl Cult{
         let mut cult = game.cult().clone();
 
         // Remove dead
-        cult.ordered_cultists = cult.ordered_cultists.iter().cloned().filter(|p|
+        cult.ordered_cultists = cult.ordered_cultists.iter().copied().filter(|p|
             RoleSet::Cult.get_roles().contains(&p.role(game)) &&
             InsiderGroupID::Cult.is_player_in_revealed_group(game, *p) &&
             p.alive(game)

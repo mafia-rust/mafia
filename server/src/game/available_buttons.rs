@@ -3,7 +3,7 @@ use serde::Serialize;
 use super::{player::PlayerReference, phase::PhaseType, Game};
 
 
-#[derive(Debug, Clone, Serialize, Default, PartialEq)]
+#[derive(Debug, Clone, Serialize, Default, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct AvailableButtons{
     pub vote: bool,

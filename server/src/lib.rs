@@ -1,6 +1,17 @@
 #![warn(clippy::allow_attributes)]
 #![warn(clippy::arithmetic_side_effects)]
 #![warn(clippy::cast_possible_truncation)]
+#![warn(clippy::cast_possible_wrap)]
+#![warn(clippy::cast_precision_loss)]
+#![warn(clippy::cast_sign_loss)]
+#![warn(clippy::clear_with_drain, clippy::cloned_instead_of_copied)]
+#![warn(clippy::collection_is_never_read)]
+#![warn(clippy::expect_used, clippy::unwrap_used)]
+#![warn(clippy::expl_impl_clone_on_copy)]
+#![warn(clippy::explicit_into_iter_loop)]
+#![warn(clippy::flat_map_option)]
+#![deny(clippy::indexing_slicing)]
+#![warn(clippy::panic)]
 
 pub mod game;
 pub mod websocket_connections;

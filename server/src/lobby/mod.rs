@@ -352,15 +352,17 @@ impl Lobby {
             },
             LobbyState::Game { game, clients: players } => {
                 players.iter()
-                    .filter(|(_, player)| matches!(player.client_location, GameClientLocation::Player(_)))
-                    .map(|(id, player)| {
+                    .filter_map(|(id, player)|
                         if let GameClientLocation::Player(player_index) = player.client_location {
-                            let player_ref = PlayerReference::new(game, player_index).unwrap();
-                            (*id, player_ref.name(game).clone())
-                        }else{
-                            unreachable!()
+                            if let Ok(player_ref) = PlayerReference::new(game, player_index) {
+                                Some((*id, player_ref.name(game).clone()))
+                            } else {
+                                None
+                            }
+                        } else {
+                            None
                         }
-                    })
+                    )
                     .collect()
             },
             LobbyState::Closed => Vec::new(),

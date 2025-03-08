@@ -127,7 +127,7 @@ impl Mafia{
             }
             Priority::Kill => {
 
-                let all_backup_visits: Vec<Visit> = NightVisits::all_visits(game).into_iter().filter(|v|v.tag == crate::game::visit::VisitTag::SyndicateBackupAttack).cloned().collect();
+                let all_backup_visits: Vec<Visit> = NightVisits::all_visits(game).into_iter().filter(|v|v.tag == crate::game::visit::VisitTag::SyndicateBackupAttack).copied().collect();
                 for backup_visit in all_backup_visits {
                     backup_visit.target.try_night_kill_single_attacker(
                         backup_visit.visitor, game, GraveKiller::RoleSet(RoleSet::Mafia),
@@ -166,7 +166,7 @@ impl Mafia{
 
         let backup = 
             game.saved_controllers.get_controller_current_selection_player_list(controller_id)
-            .and_then(|b|b.0.first().cloned());
+            .and_then(|b|b.0.first().copied());
 
         
         for player_ref in PlayerReference::all_players(game){

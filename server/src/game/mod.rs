@@ -251,7 +251,7 @@ impl Game {
                 
                 let insider_groups = match &assignment.insider_groups {
                     RoleOutlineOptionInsiderGroups::RoleDefault => assignment.role.default_state().default_revealed_groups(),
-                    RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().cloned().collect(),
+                    RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().copied().collect(),
                 };
                 
                 for group in insider_groups{
@@ -290,7 +290,7 @@ impl Game {
 
             let insider_groups = match &assignment.insider_groups {
                 RoleOutlineOptionInsiderGroups::RoleDefault => role_data.clone().default_revealed_groups(),
-                RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().cloned().collect(),
+                RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().copied().collect(),
             };
             
             InsiderGroupID::start_game_set_player_revealed_groups(
@@ -434,7 +434,7 @@ impl Game {
                     .collect();
 
                 if max_votes_players.len() == 1 {
-                    voted_player = max_votes_players.iter().next().cloned();
+                    voted_player = max_votes_players.iter().next().copied();
                 }
             }
         }
@@ -522,16 +522,13 @@ impl Game {
         OnTick::new().invoke(self);
     }
 
-    pub fn add_grave(&mut self, grave: Grave){
-        self.graves.push(grave.clone());
-        if let Some(grave_ref) = GraveReference::new(
-            self, 
-            self.graves.len()
-                .saturating_sub(1)
-                .try_into()
-                .expect("There can not be more than u8::MAX graves"))
-        {
-            OnGraveAdded::new(grave_ref).invoke(self);
+    pub fn add_grave(&mut self, grave: Grave) {
+        if let Ok(grave_index) = self.graves.len().try_into() {
+            self.graves.push(grave.clone());
+
+            if let Some(grave_ref) = GraveReference::new(self, grave_index) {
+                OnGraveAdded::new(grave_ref).invoke(self);
+            }
         }
     }
 
@@ -548,7 +545,7 @@ impl Game {
         }
     }
     pub fn add_messages_to_chat_group(&mut self, group: ChatGroup, messages: Vec<ChatMessageVariant>){
-        for message in messages.into_iter(){
+        for message in messages {
             self.add_message_to_chat_group(group.clone(), message);
         }
     }

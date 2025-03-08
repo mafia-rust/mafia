@@ -41,7 +41,7 @@ impl RoleStateImpl for Jester {
 
         let target_ref = if let Some(PlayerListSelection(selection)) = game.saved_controllers
             .get_controller_current_selection_player_list(ControllerID::role(actor_ref, Role::Jester, 0)){
-            selection.first().cloned()
+            selection.first().copied()
         }else{
             None
         };

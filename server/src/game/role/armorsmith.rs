@@ -83,7 +83,7 @@ impl RoleStateImpl for Armorsmith {
                     }
                 }
 
-                for player_armor in self.players_armor.clone().into_iter(){
+                for player_armor in self.players_armor.clone() {
                     if player_armor.night_attacked(game){
                         actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
                         player_armor.push_night_message(game, ChatMessageVariant::YouWereProtected);

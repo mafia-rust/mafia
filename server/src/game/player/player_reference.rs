@@ -30,10 +30,14 @@ impl PlayerReference{
         PlayerReference { index }
     }
     pub fn deref<'a>(&self, game: &'a Game)->&'a Player{
-        &game.players[self.index as usize]
+        unsafe { 
+            game.players.get_unchecked(self.index as usize)
+        }
     }
     pub fn deref_mut<'a>(&self, game: &'a mut Game)->&'a mut Player{
-        &mut game.players[self.index as usize]
+        unsafe {
+            game.players.get_unchecked_mut(self.index as usize)
+        }
     }
     pub fn index(&self) -> PlayerIndex {
         self.index

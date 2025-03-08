@@ -164,9 +164,13 @@ impl GraveReference{
         }
     }
     pub fn deref(self, game: &Game)->&Grave{
-        &game.graves[self.index as usize]
+        unsafe {
+            game.graves.get_unchecked(self.index as usize)
+        }
     }
     pub fn deref_mut(self, game: &mut Game)->&mut Grave{
-        &mut game.graves[self.index as usize]
+        unsafe {
+            game.graves.get_unchecked_mut(self.index as usize)
+        }
     }
 }

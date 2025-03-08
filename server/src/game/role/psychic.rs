@@ -65,6 +65,7 @@ impl Psychic {
 
         valid_players.shuffle(&mut rand::rng());
 
+        #[expect(clippy::indexing_slicing)]
         for i in 0..valid_players.len(){
             #[expect(clippy::arithmetic_side_effects)]
             for j in i+1..valid_players.len(){

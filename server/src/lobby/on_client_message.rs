@@ -197,7 +197,7 @@ impl Lobby {
                 let mut next_player_index: PlayerIndex = 0;
                 let mut next_spectator_index: SpectatorIndex = 0;
 
-                for (lobby_client_id, lobby_client) in clients.clone().into_iter() {
+                for (lobby_client_id, lobby_client) in clients.clone() {
                     
                     game_clients.insert(lobby_client_id, 
                         if let LobbyClientType::Spectator = lobby_client.client_type {
@@ -383,7 +383,7 @@ impl Lobby {
                 }
 
                 let mut new_clients = VecMap::new();
-                for (lobby_client_id, game_client) in clients.clone().into_iter() {
+                for (lobby_client_id, game_client) in clients.clone() {
                     new_clients.insert(lobby_client_id, LobbyClient::new_from_game_client(game, game_client));
                 }
 

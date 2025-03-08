@@ -16,7 +16,7 @@ pub struct AvailablePlayerListSelection{
 impl ValidateAvailableSelection for AvailablePlayerListSelection{
     type Selection = PlayerListSelection;
     fn validate_selection(&self, _game: &Game, selection: &PlayerListSelection)->bool{
-        self.available_players.is_superset(&selection.0.iter().cloned().collect()) && 
+        self.available_players.is_superset(&selection.0.iter().copied().collect()) && 
         (self.can_choose_duplicates || selection.0.len() == selection.0.iter().collect::<Vec<_>>().len()) &&
         self.max_players.is_none_or(|max| selection.0.len() <= max as usize)
     }

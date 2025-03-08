@@ -174,7 +174,7 @@ impl PlayerReference{
         self.add_chat_message(game, message.clone());
     }
     pub fn add_private_chat_messages(&self, game: &mut Game, messages: Vec<ChatMessageVariant>){
-        for message in messages.into_iter(){
+        for message in messages {
             self.add_private_chat_message(game, message);
         }
     }

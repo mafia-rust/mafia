@@ -22,7 +22,7 @@ impl PlayerReference{
     }
     pub fn ward(&self, game: &mut Game) -> Vec<PlayerReference> {
         let mut out = Vec::new();
-        for visit in NightVisits::all_visits_cloned(game).into_iter(){
+        for visit in NightVisits::all_visits_cloned(game) {
             if visit.target != *self {continue;}
             OnVisitWardblocked::new(visit).invoke(game);
             out.push(visit.visitor);

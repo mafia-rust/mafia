@@ -27,9 +27,12 @@ impl RoleOutlineReference{
     }
 
     pub fn deref<'a>(&self, game: &'a Game)->&'a RoleOutline{
-        &game.settings.role_list.0[self.index as usize]
+        unsafe {
+            game.settings.role_list.0.get_unchecked(self.index as usize)
+        }
     }
     pub fn deref_as_role_and_player_originally_generated(&self, game: &Game)->OriginallyGeneratedRoleAndPlayer{
+        #![expect(clippy::expect_used)]
         game.assignments
             .iter()
             .find(|(_, outline, _)| outline.index == self.index)
