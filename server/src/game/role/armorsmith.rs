@@ -46,8 +46,7 @@ impl RoleStateImpl for Armorsmith {
                 let Some(visit) = actor_visits.first() else {return};
                 let target = visit.target;
 
-                if self.open_shops_remaining <= 0 {return}
-                //
+                if self.open_shops_remaining == 0 {return}
                     
                 self.night_open_shop = true;
                 self.open_shops_remaining = self.open_shops_remaining.saturating_sub(1);
@@ -62,9 +61,9 @@ impl RoleStateImpl for Armorsmith {
                 }
 
                 if visitors.contains(&target){
-                    self.players_armor.push(target.clone());
+                    self.players_armor.push(target);
                 }else if let Some(random_visitor) = visitors.choose(&mut rand::rng()) {
-                    self.players_armor.push(random_visitor.clone());
+                    self.players_armor.push(*random_visitor);
                 }
 
                 self.night_protected_players = visitors;
@@ -84,7 +83,7 @@ impl RoleStateImpl for Armorsmith {
                     }
                 }
 
-                for player_armor in self.players_armor.clone().into_iter(){
+                for player_armor in self.players_armor.clone() {
                     if player_armor.night_attacked(game){
                         actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
                         player_armor.push_night_message(game, ChatMessageVariant::YouWereProtected);
@@ -105,7 +104,7 @@ impl RoleStateImpl for Armorsmith {
             actor_ref,
             false,
             true,
-            self.open_shops_remaining <= 0,
+            self.open_shops_remaining == 0,
             ControllerID::role(actor_ref, Role::Armorsmith, 0)
         )
     }

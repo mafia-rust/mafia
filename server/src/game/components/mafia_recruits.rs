@@ -9,7 +9,7 @@ use crate::{game::{
 }, vec_set::VecSet};
 
 impl Game{
-    pub fn mafia_recruits<'a>(&'a self)->&'a MafiaRecruits{
+    pub fn mafia_recruits(&self)->&MafiaRecruits{
         &self.mafia_recruits
     }
     pub fn set_recruiter_recruits(&mut self, mafia_recruits: MafiaRecruits){
@@ -47,7 +47,7 @@ impl MafiaRecruits{
                 .recruits
                 .iter()
                 .filter(|p|p.alive(game))
-                .map(|p|p.clone())
+                .copied()
                 .collect::<Vec<_>>();
 
                 MafiaRecruits::attack_players(game, marionettes, AttackPower::ProtectionPiercing);
@@ -56,7 +56,6 @@ impl MafiaRecruits{
         
         let recruiters: VecSet<_> = PlayerReference::all_players(game)
             .filter(|p|p.role(game)==Role::Recruiter)
-            .map(|p|p.clone())
             .collect();
 
         for player in players{
@@ -89,7 +88,6 @@ impl MafiaRecruits{
     pub fn mafia_members(game: &Game)->HashSet<PlayerReference>{
         PlayerReference::all_players(game)
             .filter(|p|InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p))
-            .map(|p|p.clone())
             .collect()
     }
     pub fn mafia_and_recruits(game: &Game)->HashSet<PlayerReference>{

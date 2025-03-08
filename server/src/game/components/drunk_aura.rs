@@ -9,23 +9,25 @@ pub struct DrunkAura {
     pub players: HashSet<PlayerReference>,
 }
 
-impl DrunkAura {
-    fn drunk_aura(game: &Game) -> &Self {
-        &game.drunk_aura
+impl Game {
+    fn drunk_aura(&self) -> &DrunkAura {
+        &self.drunk_aura
     }
-    fn drunk_aura_mut(game: &mut Game) -> &mut Self {
-        &mut game.drunk_aura
+    fn drunk_aura_mut(&mut self) -> &mut DrunkAura {
+        &mut self.drunk_aura
     }
+}
 
+impl DrunkAura {
     pub fn add_player(game: &mut Game, player: PlayerReference) {
-        Self::drunk_aura_mut(game).players.insert(player);
+        game.drunk_aura_mut().players.insert(player);
     }
     pub fn remove_player(game: &mut Game, player: PlayerReference) {
-        Self::drunk_aura_mut(game).players.remove(&player);
+        game.drunk_aura_mut().players.remove(&player);
     }
 
     pub fn has_drunk_aura(game: &Game, player: PlayerReference) -> bool {
-        Self::drunk_aura(game).players.contains(&player)
+        game.drunk_aura().players.contains(&player)
     }
 
     pub fn on_role_switch(game: &mut Game, player: PlayerReference) {

@@ -117,8 +117,6 @@ impl RoleStateImpl for Reeducator {
             ControllerID::role(actor_ref, Role::Reeducator, 0),
             AvailableAbilitySelection::new_player_list(
                 PlayerReference::all_players(game)
-                    .into_iter()
-                    // .filter(|p| *p != actor_ref)
                     .filter(|player| 
                         player.alive(game) &&
                         (
@@ -141,9 +139,9 @@ impl RoleStateImpl for Reeducator {
                 ControllerID::role(actor_ref, Role::Reeducator, 1),
                 AvailableAbilitySelection::new_role_option(
                     RoleSet::MafiaSupport.get_roles().into_iter()
-                        .filter(|p|game.settings.enabled_roles.contains(&p))
+                        .filter(|p|game.settings.enabled_roles.contains(p))
                         .filter(|p|*p!=Role::Reeducator)
-                        .map(|p|Some(p))
+                        .map(Some)
                         .collect()
                 ),
                 AbilitySelection::new_role_option(default),
@@ -217,7 +215,7 @@ impl RoleStateImpl for Reeducator {
 impl Reeducator {
     pub fn default_role(game: &Game) -> Option<Role> {
         RoleSet::MafiaSupport.get_roles().into_iter()
-            .filter(|p|game.settings.enabled_roles.contains(&p))
+            .filter(|p|game.settings.enabled_roles.contains(p))
             .filter(|p|*p!=Role::Reeducator)
             .choose(&mut rand::rng())
     }

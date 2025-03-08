@@ -53,7 +53,7 @@ impl RoleStateImpl for Medium {
                 Some(1)
             ),
             AbilitySelection::new_player_list(vec![]),
-            actor_ref.alive(game) || self.seances_remaining <= 0,
+            actor_ref.alive(game) || self.seances_remaining == 0,
             Some(PhaseType::Night),
             false,
             vec_set!(actor_ref)
@@ -101,7 +101,7 @@ impl RoleStateImpl for Medium {
                 let Some(target) = target.first() else {return};
                 
                 self.seances_remaining = self.seances_remaining.saturating_sub(1);
-                self.seanced_target = Some(target.clone());
+                self.seanced_target = Some(*target);
                 
                 actor_ref.set_role_state(game, self);
 

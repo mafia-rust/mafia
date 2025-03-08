@@ -28,6 +28,7 @@ impl ControllerParametersMap{
             controllers: vec_map!((id, ability_data))
         }
     }
+    #[expect(clippy::too_many_arguments, reason = "Grandfathered in, someone else can fix this")] // We should make a builder for this
     pub fn new_controller_fast(
         game: &Game,
         id: ControllerID,
@@ -56,7 +57,7 @@ impl ControllerParametersMap{
         self.controllers.insert(id, ability_data);
     }
     pub fn combine_overwrite(&mut self, other: Self){
-        for (ability_id, ability_selection) in other.controllers.into_iter(){
+        for (ability_id, ability_selection) in other.controllers {
             self.controllers.insert(ability_id, ability_selection);
         }
     }

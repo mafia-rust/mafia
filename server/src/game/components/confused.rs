@@ -7,26 +7,25 @@ use crate::game::{player::PlayerReference, Game};
 pub struct Confused{
     players: HashSet<PlayerReference>
 }
+
+impl Game {
+    fn confused(&self) -> &Confused {
+        &self.confused
+    }
+    fn confused_mut(&mut self) -> &mut Confused {
+        &mut self.confused
+    }
+}
+
 impl Confused{
-    fn confused<'a>(game: &'a Game)->&'a Self{
-        &game.confused
-    }
-    fn confused_mut<'a>(game: &'a mut Game)->&'a mut Self{
-        &mut game.confused
-    }
-
-
     pub fn add_player(game: &mut Game, player: PlayerReference){
-        let confused = Self::confused_mut(game);
-        confused.players.insert(player);
+        game.confused_mut().players.insert(player);
     }
     pub fn remove_player(game: &mut Game, player: PlayerReference){
-        let confused = Self::confused_mut(game);
-        confused.players.remove(&player);
+        game.confused_mut().players.remove(&player);
     }
 
     pub fn is_confused(game: &Game, player: PlayerReference)->bool{
-        let confused = Self::confused(game);
-        confused.players.contains(&player)
+        game.confused().players.contains(&player)
     }
 }

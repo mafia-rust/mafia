@@ -131,6 +131,9 @@ export default function messageListener(packet: ToClientPacket){
                 case "zeroTimeGame":
                     ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectStart"), body: translate("notification.rejectStart.zeroTimeGame") });
                 break;
+                case "tooManyCLients":
+                    ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectStart"), body: translate("notification.rejectStart.tooManyClients") });
+                break;
                 default:
                     ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectStart"), body: "" });
                     console.error(`${packet.type} message response not implemented: ${packet.reason}`);

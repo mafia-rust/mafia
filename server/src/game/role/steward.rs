@@ -103,7 +103,7 @@ impl RoleStateImpl for Steward {
             .into_iter()
             .filter(|role| self.self_heals_remaining>0 || role != &Role::Steward)
             .filter(|role| self.previous_input.0 != Some(*role) && self.previous_input.1 != Some(*role))
-            .map(|role|Some(role))
+            .map(Some)
             .chain(std::iter::once(None))
             .collect();
             

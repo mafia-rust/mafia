@@ -9,7 +9,7 @@ pub struct TestPlayer(PlayerReference, *mut Game);
 /// ```
 /// // In TestPlayer::can_day_target
 /// assert!(self.0.can_day_target(game!(self), target.0));
-
+/// 
 /// game!(self).on_client_message(self.0.index(), 
 ///     ToServerPacket::DayTarget { player_index: target.index() }
 /// );
