@@ -7,7 +7,7 @@ use vec1::{
 
 use crate::vec_set::VecSet;
 
-use super::{components::insider_group::InsiderGroupID, game_conclusion::GameConclusion, role::Role};
+use super::{components::insider_group::InsiderGroupID, game_conclusion::GameConclusion, role::Role, win_condition::WinCondition};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RoleList(pub Vec<RoleOutline>);
@@ -43,7 +43,17 @@ pub struct RoleAssignment {
     pub win_condition: RoleOutlineOptionWinCondition
 }
 
-
+impl RoleAssignment {
+    pub fn friends_with_town(&self)-> bool{
+        match self.win_condition.clone() {
+            RoleOutlineOptionWinCondition::GameConclusionReached { win_if_any } => 
+                WinCondition::GameConclusionReached{win_if_any: win_if_any.into()}.friends_with_resolution_state(GameConclusion::Town),
+            RoleOutlineOptionWinCondition::RoleDefault => {
+                self.role.default_state().default_win_condition().friends_with_resolution_state(GameConclusion::Town)
+            },
+        }
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct RoleOutline {

@@ -62,8 +62,8 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type":"sheriffResult","suspicious":true},
-            {"type":"sheriffResult","suspicious":false}
+            {"type": "detectiveResult","suspicious":true},
+            {"type":"detectiveResult","suspicious":false}
         ]
     },
     "lookout": {
@@ -88,8 +88,8 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "seerResult", "enemies": true},
-            {"type": "seerResult", "enemies": false}
+            {"type": "philosopherResult", "enemies": true},
+            {"type": "philosopherResult", "enemies": false}
         ]
     },
     "tracker": {
@@ -499,7 +499,7 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "targetsMessage", "message": 
-                {"type": "sheriffResult","suspicious":true}
+                {"type": "detectiveResult","suspicious":true}
             },
             {"type": "youWerePossessed", "immune": false},
             {"type": "youWerePossessed", "immune": true},
@@ -689,7 +689,7 @@
             {"type": "framerResult", "mafiaMember": 1, "visitors": ["gossip", "detective"]},
             {"type": "framerResult", "mafiaMember": 4, "visitors": ["doctor"]},
             {"type": "framerResult", "mafiaMember": 20, "visitors": []},
-            {"type": "sheriffResult","suspicious":true},
+            {"type": "detectiveResult","suspicious":true},
             {"type": "snoopResult", "townie":false},
             {"type": "snoopResult", "townie":false},
             {"type": "seerResult", "enemies": true}
@@ -750,7 +750,7 @@
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "targetsMessage", "message": 
-                {"type": "sheriffResult","suspicious":true}
+                {"type": "detectiveResult","suspicious":true}
             },
             {"type": "targetHasRole", "role":"detective"},
             {"type": "targetIsPossessionImmune"},
@@ -768,7 +768,7 @@
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
             {"type": "targetsMessage", "message": 
-                {"type": "sheriffResult","suspicious":true}
+                {"type": "detectiveResult","suspicious":true}
             },
             {"type": "targetIsPossessionImmune"},
             {"type": "youWerePossessed", "immune": false},
@@ -969,7 +969,7 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "targetsMessage", "message": 
-                {"type": "sheriffResult","suspicious":true}
+                {"type": "detectiveResult","suspicious":true}
             },
             {"type": "targetHasRole", "role":"detective"},
             {"type": "targetIsPossessionImmune"},
