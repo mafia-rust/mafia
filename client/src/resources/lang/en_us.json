@@ -1490,7 +1490,7 @@
     "wiki.article.role.tallyClerk.guide": "- At night, you are told how many players are not town loyalists from the players who voted guilty during any of the trials today\n- If any player has innocent aura, they register as a town loyalist\n- If any player has suspicious aura, they register as not a town loyalist",
     "wiki.article.role.tallyClerk.abilities":"- At night, you are told how many players are not town loyalists from the players who voted guilty today\n- If you are blocked, you aren't told anything\n- Your ability doesn't depend on visits",
     "wiki.article.role.tallyClerk.attributes":"- A suspicious aura makes a player register as not a town loyalist\n- An innocent aura makes a player register as a town loyalist\n- A suspicious aura overwrites innocent aura to the Tally Clerk",
-    "wiki.article.role.tallyClerk.extra":"- Can come from drunk.",
+    "wiki.article.role.tallyClerk.extra":"",
 
     "wiki.article.role.doctor.reminder": "At night, select a player to protect from attacks. You can protect yourself once per game.",
     "wiki.article.role.doctor.guide": "- At night, select a player to protect\n    - Whoever you protect doesn't die if they're attacked\n    - You and the player you protected are both told if they are attacked\n- You can select yourself to protect yourself once per game\n- If your target is attacked by a protection-piercing attack they still die\n\nYou should try to protect people you think are townies who will be attacked.",
