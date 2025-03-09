@@ -69,7 +69,7 @@ impl Detective {
         }
     }
     pub fn player_is_suspicious_confused(game: &Game, player_ref: PlayerReference, actor_ref: PlayerReference) -> bool {
-        player_ref.has_suspicious_aura(game) ||
+        player_ref.night_framed(game) ||
         Confused::is_red_herring(game, actor_ref, player_ref)
     }
 }
