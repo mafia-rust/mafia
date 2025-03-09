@@ -15,12 +15,11 @@ pub enum ControllerID{
         role: Role,
         id: RoleControllerID
     },
-    ForfeitVote{
-        player: PlayerReference
-    },
-    PitchforkVote{
-        player: PlayerReference
-    },
+    ForfeitVote{player: PlayerReference},
+    PitchforkVote{player: PlayerReference},
+
+    ForwardMessage{player: PlayerReference},
+
     SyndicateGunItemShoot,
     SyndicateGunItemGive,
     SyndicateChooseBackup,

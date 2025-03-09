@@ -116,7 +116,6 @@ impl PlayerReference{
                 //change all controller inputs to be selecting this player as well
                 for (controller_id, controller_data) in game.saved_controllers.all_controllers().clone().iter() {
                     match controller_data.selection() {
-                        AbilitySelection::Unit => {},
                         AbilitySelection::Boolean { .. } => {
                             if possessed_visit.target == possessed_into_visit.target {
                                 SavedControllersMap::set_selection_in_controller(
@@ -161,12 +160,14 @@ impl PlayerReference{
                                 true
                             );
                         },
-                        AbilitySelection::RoleOption { .. } => {},
-                        AbilitySelection::TwoRoleOption { .. } => {},
-                        AbilitySelection::TwoRoleOutlineOption { .. } => {},
-                        AbilitySelection::String { .. } => {},
-                        AbilitySelection::Integer { .. } => {},
-                        AbilitySelection::Kira { .. } => {},
+                        AbilitySelection::Unit |
+                        AbilitySelection::ChatMessage { .. } |
+                        AbilitySelection::RoleOption { .. } |
+                        AbilitySelection::TwoRoleOption { .. } |
+                        AbilitySelection::TwoRoleOutlineOption{ .. } |
+                        AbilitySelection::String { .. } |
+                        AbilitySelection::Integer { .. } |
+                        AbilitySelection::Kira { .. } => {}
                     }
                 }
 

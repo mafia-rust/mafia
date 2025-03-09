@@ -4,6 +4,7 @@ import { PhaseType, PlayerIndex } from "./gameState.d";
 import translate, { translateChecked } from "./lang";
 import { Role } from "./roleState.d";
 import abilitiesJson from "../resources/abilityId.json";
+import { ChatMessage } from "../components/ChatMessage";
 
 
 export type AbilityJsonData = Partial<Record<ControllerIDLink, SingleAbilityJsonData>>;
@@ -51,6 +52,9 @@ export type ControllerID = {
     player: PlayerIndex,
 } | {
     type: "pitchforkVote",
+    player: PlayerIndex,
+} | {
+    type: "forwardMessage",
     player: PlayerIndex,
 } | {
     type: "syndicateGunItemShoot",
@@ -180,7 +184,10 @@ export type AbilitySelection = {
 } | {
     type: "kira",
     selection: KiraSelection
-}
+} | {
+    type: "chatMessage",
+    selection: ChatMessageSelection
+};
 
 export function defaultAbilitySelection(available: AvailableAbilitySelection): AbilitySelection {
     switch (available.type) {
@@ -204,6 +211,8 @@ export function defaultAbilitySelection(available: AvailableAbilitySelection): A
             return {type: "integer", selection: 0};
         case "kira":
             return {type: "kira", selection: []};
+        case "chatMessage":
+            return {type: "chatMessage", selection: null};
     }
 }
 
@@ -235,6 +244,8 @@ export type AvailableAbilitySelection = {
 } | {
     type: "kira",
     selection: AvailableKiraSelection
+} | {
+    type: "chatMessage",
 }
 
 
@@ -276,7 +287,9 @@ export type AvailableIntegerSelection = {
     max: number
 };
 
-export type KiraSelection = ListMapData<PlayerIndex, KiraGuess>
+export type KiraSelection = ListMapData<PlayerIndex, KiraGuess>;
 export type AvailableKiraSelection = {
     countMustGuess: number
 };
+
+export type ChatMessageSelection = ChatMessage | null;
