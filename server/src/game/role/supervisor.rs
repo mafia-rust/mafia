@@ -36,13 +36,13 @@ impl RoleStateImpl for Supervisor {
                 0 => (),
                 1 => visitors = visitors.saturating_add(1).min(game.num_players()),
                 2 => visitors = visitors.saturating_sub(1).min(1u8), //includes yourself
-                _ => unreachable!("This is the most confident I've been while writing and unreachable. If you see this message feel free to call me a dumbass."),
+                _ => unreachable!("This is the most confident I've been while writing an unreachable. If you see this message feel free to call me a dumbass."),
             }
             match rand::random_range(0..4u8) {
                 0 => (),
                 1 => visited = visited.saturating_add(1).min(game.num_players()),
                 2|3 => visited = visited.saturating_sub(1),
-                _ => unreachable!("This is the most confident I've been while writing and unreachable. If you see this message feel free to call me a dumbass."),
+                _ => unreachable!("This is the most confident I've been while writing an unreachable. If you see this message feel free to call me a dumbass."),
             }
         }
 
