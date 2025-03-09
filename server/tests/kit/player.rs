@@ -171,3 +171,27 @@ impl From<TestPlayer> for Vec<TestPlayer> {
         vec![value]
     }
 }
+
+impl Into<PlayerReference> for TestPlayer {
+    fn into(self) -> PlayerReference {
+        self.0
+    }
+}
+
+impl Into<PlayerIndex> for TestPlayer {
+    fn into(self) -> PlayerIndex {
+        self.0.index()
+    }
+}
+
+impl<'a> Into<PlayerReference> for &'a TestPlayer {
+    fn into(self) -> PlayerReference {
+        self.0
+    }
+}
+
+impl<'a> Into<PlayerIndex> for &'a TestPlayer {
+    fn into(self) -> PlayerIndex {
+        self.0.index()
+    }
+}

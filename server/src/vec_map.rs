@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::{collections::HashMap, hash::Hash};
 
 #[derive(Clone, Debug)]
 pub struct VecMap<K, V> where K: Eq {
@@ -144,6 +145,25 @@ impl<K,  V> FromIterator<(K, V)> for VecMap<K, V> where K: Eq {
             vec.push((k, v));
         }
         VecMap { vec }
+    }
+}
+
+impl<K, V> Into<HashMap<K, V>> for VecMap<K, V> where K: Eq + Hash, V: Hash{
+    fn into(self) -> HashMap<K, V> {
+        let mut hash = HashMap::with_capacity(self.len());
+        for k in self {
+            assert!(hash.insert(k.0, k.1).is_none());
+        }
+        hash
+    }
+}
+impl<'a, K, V> Into<HashMap<&'a K, &'a V>> for &'a VecMap<K, V> where K: Eq + Hash, V: Hash{
+    fn into(self) -> HashMap<&'a K, &'a V> {
+        let mut hash = HashMap::with_capacity(self.len());
+        for k in self.iter() {
+            assert!(hash.insert(k.0, k.1).is_none());
+        }
+        hash
     }
 }
 

@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+use std::hash::Hash;
 use serde::{Deserialize, Serialize};
 
 use crate::vec_map::VecMap;
@@ -12,7 +14,7 @@ impl<K> Default for VecSet<K> where K: Eq {
     }
 }
 
-impl <K> VecSet<K> where K: Eq {
+impl<K> VecSet<K> where K: Eq {
     pub fn new() -> Self {
         VecSet { vec: VecMap::new() }
     }
@@ -92,6 +94,25 @@ impl<K> FromIterator<K> for VecSet<K> where K: Eq {
             set.insert(key);
         }
         set
+    }
+}
+
+impl<K> Into<HashSet<K>> for VecSet<K> where K: Eq + Hash{
+    fn into(self) -> HashSet<K> {
+        let mut hash = HashSet::with_capacity(self.len());
+        for k in self {
+            assert!(hash.insert(k));
+        }
+        hash
+    }
+}
+impl<'a, K> Into<HashSet<&'a K>> for &'a VecSet<K> where K: Eq + Hash{
+    fn into(self) -> HashSet<&'a K> {
+        let mut hash = HashSet::with_capacity(self.len());
+        for k in self.iter() {
+            assert!(hash.insert(k));
+        }
+        hash
     }
 }
 
