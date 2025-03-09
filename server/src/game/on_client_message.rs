@@ -130,8 +130,10 @@ impl Game {
                     break 'packet_match;
                 }
 
+                if !Modifiers::modifier_is_enabled(self, ModifierType::HiddenWhispers) {
+                    self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::BroadcastWhisper { whisperer: sender_player_index, whisperee: whispered_to_player_index });
+                }
 
-                self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::BroadcastWhisper { whisperer: sender_player_index, whisperee: whispered_to_player_index });
                 let message = ChatMessageVariant::Whisper { 
                     from_player_index: sender_player_index, 
                     to_player_index: whispered_to_player_index, 

@@ -149,7 +149,7 @@ impl PlayerReference{
             if let Some(msg) = msg_option{
                 chat_messages_out.push(msg.clone());
                 self.deref_mut(game).queued_chat_messages.remove(0);
-            }else{ break; }
+            } else {break}
         }
         
         self.send_packet(game, ToClientPacket::AddChatMessages { chat_messages: chat_messages_out });

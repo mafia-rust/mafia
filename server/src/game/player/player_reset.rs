@@ -54,8 +54,7 @@ impl PlayerReference{
             PhaseType::Night => {
                 self.set_night_died(game, false);
                 self.set_night_attacked(game, false);
-                self.set_night_roleblocked(game, false);
-                self.set_night_wardblocked(game, false);
+                self.set_night_blocked(game, false);
                 self.set_night_upgraded_defense(game, None);
                 self.set_night_appeared_visits(game, None);
                 self.set_night_framed(game, false);
