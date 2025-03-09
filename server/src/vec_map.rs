@@ -129,6 +129,42 @@ impl<K, V> PartialEq for VecMap<K, V> where K: Eq, V: Eq {
 }
 impl<K, V> Eq for VecMap<K, V> where K: Eq, V: Eq {}
 
+impl<'a, K, V> VecMap<K, &'a V> where K: Eq, V: Copy{
+    pub fn copied(self) -> VecMap<K, V> {
+        let mut copied = VecMap::with_capacity(self.len());
+        for item in self {
+            assert!(copied.insert(item.0, *item.1).is_none());
+        }
+        return copied;
+    }
+}
+impl<'a, K, V> VecMap<K, &'a mut V> where K: Eq, V: Copy{
+    pub fn copied(self) -> VecMap<K, V> {
+        let mut copied = VecMap::with_capacity(self.len());
+        for item in self {
+            assert!(copied.insert(item.0, *item.1).is_none());
+        }
+        return copied;
+    }
+}
+impl<'a, K, V> VecMap<K, &'a V> where K: Eq, V: Clone{
+    pub fn cloned(self) -> VecMap<K, V> {
+        let mut cloned = VecMap::with_capacity(self.len());
+        for item in self {
+            assert!(cloned.insert(item.0, item.1.clone()).is_none());
+        }
+        return cloned;
+    }
+}
+impl<'a, K, V> VecMap<K, &'a mut V> where K: Eq, V: Clone{
+    pub fn cloned(self) -> VecMap<K, V> {
+        let mut cloned = VecMap::with_capacity(self.len());
+        for item in self {
+            assert!(cloned.insert(item.0, item.1.clone()).is_none());
+        }
+        return cloned;
+    }
+}
 
 impl<K, V> IntoIterator for VecMap<K, V> where K: Eq {
     type Item = (K, V);

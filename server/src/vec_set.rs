@@ -79,6 +79,43 @@ impl<K> VecSet<K> where K: Eq {
     }
 }
 
+impl<'a, K> VecSet<&'a K> where K: Eq + Copy{
+    pub fn copied(self) -> VecSet<K> {
+        let mut copied: VecSet<K> = VecSet::with_capacity(self.len());
+        for key in self {
+            assert!(copied.insert(*key).is_none());
+        }
+        return copied;
+    }
+}
+impl<'a, K> VecSet<&'a mut K> where K: Eq + Copy{
+    pub fn copied(self) -> VecSet<K> {
+        let mut copied: VecSet<K> = VecSet::with_capacity(self.len());
+        for key in self {
+            assert!(copied.insert(*key).is_none());
+        }
+        return copied;
+    }
+}
+impl<'a, K> VecSet<&'a K> where K: Eq + Clone{
+    pub fn cloned(self) -> VecSet<K> {
+        let mut cloned = VecSet::with_capacity(self.len());
+        for key in self {
+            assert!(cloned.insert(key.clone()).is_none());
+        }
+        return cloned;
+    }
+}
+impl<'a, K> VecSet<&'a mut K> where K: Eq + Clone{
+    pub fn cloned(self) -> VecSet<K> {
+        let mut cloned = VecSet::with_capacity(self.len());
+        for key in self {
+            assert!(cloned.insert(key.clone()).is_none());
+        }
+        return cloned;
+    }
+}
+
 impl<K> IntoIterator for VecSet<K> where K: Eq {
     type Item = K;
     type IntoIter = std::iter::Map<std::vec::IntoIter<(K, ())>, fn((K, ())) -> K>;
