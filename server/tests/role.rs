@@ -38,6 +38,7 @@ pub use mafia_server::game::{
         psychic::Psychic,
         gossip::Gossip,
         auditor::Auditor,
+        supervisor::Supervisor,
         
         doctor::Doctor,
         bodyguard::Bodyguard,
@@ -535,19 +536,18 @@ fn tally_clerk_basic(){
 #[test]
 fn supervisor_basic(){
     kit::scenario!(game in Night 1 where
-        clerk: TallyClerk,
+        supervisor: Supervisor,
         detect: Detective,
         snoop: Snoop,
         _maf: Mafioso
     );
-    clerk.send_ability_input_player_list_typical(detect);
+    supervisor.send_ability_input_player_list_typical(detect);
     detect.send_ability_input_player_list_typical(snoop);
     snoop.send_ability_input_player_list_typical(detect);
 
-
     game.skip_to(Obituary, 2);
     assert_contains!(
-        clerk.get_messages_after_night(1),
+        supervisor.get_messages_after_night(1),
         ChatMessageVariant::SupervisorResult { visited: 1, visitors: 2 }
     );  
 }
