@@ -194,6 +194,19 @@
             {"type": "tallyClerkResult", "evilCount": 0}
         ]
     },
+    "supervisor": {
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townInvestigative"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "supervisorResult", "visitors": 1, "visited": 3},
+            {"type": "supervisorResult", "visitors": 0, "visited": 0}
+        ]
+    },
     "doctor": {
         "mainRoleSet": "town",
         "roleSets": ["town", "townCommon", "townProtective"],

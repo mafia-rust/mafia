@@ -511,6 +511,29 @@ fn psychic_auras(){
 
 #[test]
 fn tally_clerk_basic(){
+    kit::scenario!(game in Nomination 2 where
+        fg: TallyClerk,
+        townie: Detective,
+        mafioso: Mafioso
+    );
+
+    fg.vote_for_player(Some(townie));
+    mafioso.vote_for_player(Some(townie));
+
+    game.skip_to(Judgement, 2);
+
+    fg.set_verdict(Verdict::Guilty);
+    mafioso.set_verdict(Verdict::Guilty);
+
+    game.skip_to(Obituary, 3);
+    assert_contains!(
+        fg.get_messages_after_night(1),
+        ChatMessageVariant::TallyClerkResult { evil_count: 1 }
+    );
+}
+
+#[test]
+fn supervisor_basic(){
     kit::scenario!(game in Night 1 where
         clerk: TallyClerk,
         detect: Detective,
@@ -525,7 +548,7 @@ fn tally_clerk_basic(){
     game.skip_to(Obituary, 2);
     assert_contains!(
         clerk.get_messages_after_night(1),
-        ChatMessageVariant::TallyClerkResult { visited: 1, visitors: 2 }
+        ChatMessageVariant::SupervisorResult { visited: 1, visitors: 2 }
     );  
 }
 
