@@ -126,6 +126,9 @@ impl RoleStateImpl for Steward {
             previous_input: self.previous_input
         });
     }
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> crate::game::attack_type::AttackData {
+        crate::game::attack_type::AttackData::none()
+    }
 }
 impl GetClientRoleState<ClientRoleState> for Steward {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

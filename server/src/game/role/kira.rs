@@ -2,6 +2,7 @@ use kira_selection::{AvailableKiraSelection, KiraSelection};
 use serde::{Serialize, Deserialize};
 
 use crate::game::attack_power::AttackPower;
+use crate::game::attack_type::AttackData;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -213,5 +214,8 @@ impl RoleStateImpl for Kira {
                 ControllerParametersMap::default()
             }
         }        
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::attack(game, actor_ref, true, true)
     }
 }

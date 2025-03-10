@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::attack_type::AttackData;
 use crate::game::components::detained::Detained;
 use crate::game::{attack_power::DefensePower, phase::PhaseType};
 use crate::game::player::PlayerReference;
@@ -71,12 +72,15 @@ impl RoleStateImpl for MafiaWitch {
             actor_ref.set_role_state(game, MafiaWitch { currently_used_player: None });
         }
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+    fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
     fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::possess(game, actor_ref)
+    }
 }
 impl GetClientRoleState<ClientRoleState> for MafiaWitch {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

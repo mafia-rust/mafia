@@ -2,6 +2,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::attack_type::AttackData;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -131,6 +132,9 @@ impl RoleStateImpl for Bodyguard {
             self_shields_remaining: self.self_shields_remaining,
             redirected_player_refs, target_protected_ref
         });
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::reliant(game, actor_ref)
     }
 }
 impl GetClientRoleState<ClientRoleState> for Bodyguard {

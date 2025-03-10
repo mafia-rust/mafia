@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::attack_type::AttackData;
 use crate::game::components::detained::Detained;
 use crate::game::attack_power::DefensePower;
 use crate::game::game_conclusion::GameConclusion;
@@ -155,5 +156,8 @@ impl RoleStateImpl for Marksman {
         {
             actor_ref.set_role_state(game, Marksman{state: MarksmanState::Loaded})
         }
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::attack(game, actor_ref, true, true)
     }
 }

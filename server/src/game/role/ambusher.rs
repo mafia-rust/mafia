@@ -4,6 +4,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
 use crate::game::attack_power::DefensePower;
+use crate::game::attack_type::AttackData;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::night_visits::NightVisits;
 use crate::game::game_conclusion::GameConclusion;
@@ -102,5 +103,10 @@ impl RoleStateImpl for Ambusher {
        vec![
            crate::game::components::insider_group::InsiderGroupID::Mafia
        ].into_iter().collect()
-   }
+    }
+    /// Normally you'd have to specify stuff with syndicate gun and whether or not it can kill itself
+    /// and stuff but if it is has the gun, then it can just be possessed and stuff.
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::attack(game, actor_ref, false, false)
+    }
 }

@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::attack_type::AttackData;
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::player::PlayerReference;
 
@@ -54,5 +55,8 @@ impl RoleStateImpl for SerialKiller {
             ControllerID::role(actor_ref, Role::SerialKiller, 0),
             true
         )
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::attack(game, actor_ref, false, false)
     }
 }

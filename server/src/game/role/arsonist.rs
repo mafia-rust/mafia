@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::attack_type::AttackData;
 use crate::game::{attack_power::DefensePower, components::arsonist_doused::ArsonistDoused};
 use crate::game::player::PlayerReference;
 
@@ -68,5 +69,10 @@ impl RoleStateImpl for Arsonist {
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
         ArsonistDoused::clean_doused(game, actor_ref);
+    }
+    /// If arsonist is changed to having ignite as a separate button, and it will douse itself if it is transported/possessed into itself
+    /// then this needs to be changed
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::attack(game, actor_ref, false, false)
     }
 }

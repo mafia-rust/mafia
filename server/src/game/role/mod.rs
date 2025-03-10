@@ -14,7 +14,7 @@ use crate::game::attack_power::DefensePower;
 use serde::{Serialize, Deserialize};
 
 use super::{
-    ability_input::*, components::{insider_group::InsiderGroupID, night_visits::NightVisits}, grave::GraveReference, modifiers::{ModifierType, Modifiers}, visit::VisitTag, win_condition::WinCondition
+    ability_input::*, attack_type::AttackData, components::{insider_group::InsiderGroupID, night_visits::NightVisits}, grave::GraveReference, modifiers::{ModifierType, Modifiers}, visit::VisitTag, win_condition::WinCondition
 };
 
 pub trait GetClientRoleState<CRS> {
@@ -81,6 +81,8 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
             v.tag != VisitTag::Role || v.visitor != actor_ref
         );
     }
+
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData;
 }
 
 // Creates the Role enum

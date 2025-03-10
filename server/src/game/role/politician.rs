@@ -144,6 +144,9 @@ impl RoleStateImpl for Politician {
     fn default_win_condition(self) -> crate::game::win_condition::WinCondition where RoleState: From<Self> {
         WinCondition::GameConclusionReached{win_if_any: vec![GameConclusion::Politician].into_iter().collect()}
     }
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> crate::game::attack_type::AttackData {
+        crate::game::attack_type::AttackData::none()
+    }
 }
 
 impl GetClientRoleState<ClientRoleState> for Politician {

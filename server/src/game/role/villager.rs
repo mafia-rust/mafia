@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::attack_power::DefensePower;
+use crate::game::{attack_power::DefensePower, player::PlayerReference, Game};
 
 
 use super::RoleStateImpl;
@@ -16,5 +16,8 @@ pub type ClientRoleState = Villager;
 
 impl RoleStateImpl for Villager {
     type ClientRoleState = Villager;
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> crate::game::attack_type::AttackData {
+        crate::game::attack_type::AttackData::none()
+    }
 }
 

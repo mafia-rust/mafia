@@ -3,6 +3,7 @@ use std::collections::HashSet;
 use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
+use crate::game::attack_type::AttackData;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::detained::Detained;
 use crate::game::game_conclusion::GameConclusion;
@@ -160,4 +161,7 @@ impl RoleStateImpl for Jailor {
         }
     }
     fn on_visit_wardblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _visit: Visit) {}
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::attack(game, actor_ref, true, true)
+    }
 }

@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::attack_type::AttackData;
 use crate::game::components::detained::Detained;
 use crate::game::{
     attack_power::DefensePower,
@@ -120,5 +121,8 @@ impl RoleStateImpl for Puppeteer {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Puppeteer
         ].into_iter().collect()
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::attack(game, actor_ref, false, false)
     }
 }

@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
+use crate::game::attack_type::AttackData;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::components::insider_group::InsiderGroupID;
@@ -25,7 +26,6 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 impl RoleStateImpl for Apostle {
     type ClientRoleState = Apostle;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-
         match (priority, Cult::next_ability(game)) {
             (Priority::Kill, CultAbility::Kill) if game.cult().ordered_cultists.len() == 1 => {
 
@@ -85,5 +85,8 @@ impl RoleStateImpl for Apostle {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Cult
         ].into_iter().collect()
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::attack(game, actor_ref, false, false)
     }
 }

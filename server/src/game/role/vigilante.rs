@@ -2,6 +2,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::attack_type::AttackData;
 use crate::game::{attack_power::DefensePower, game_conclusion::GameConclusion};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -100,5 +101,20 @@ impl RoleStateImpl for Vigilante {
             ControllerID::role(actor_ref, Role::Vigilante, 0),
             true
         )
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        match self.state {
+            VigilanteState::NotLoaded => AttackData::wildcard(),
+            VigilanteState::Suicided => AttackData::none(),
+            VigilanteState::WillSuicide => AttackData::none(),
+            VigilanteState::Loaded { bullets } => {
+                if bullets > 0 {
+                    AttackData::none()
+                } else {
+                    AttackData::attack(game, actor_ref, false, false)
+                }
+            },
+        }
+
     }
 }

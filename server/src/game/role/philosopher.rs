@@ -70,6 +70,9 @@ impl RoleStateImpl for Philosopher {
             false
         )
     }
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> crate::game::attack_type::AttackData {
+        crate::game::attack_type::AttackData::none()
+    }
 }
 impl Philosopher{
     pub fn players_are_enemies(game: &Game, a: PlayerReference, b: PlayerReference) -> bool {

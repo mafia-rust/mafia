@@ -131,6 +131,9 @@ impl RoleStateImpl for Armorsmith {
             ..Self::default()
         }
     }
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> crate::game::attack_type::AttackData {
+        crate::game::attack_type::AttackData::none()
+    }
 }
 impl GetClientRoleState<ClientRoleState> for Armorsmith {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

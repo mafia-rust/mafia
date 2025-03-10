@@ -49,6 +49,9 @@ impl RoleStateImpl for TallyClerk {
         let message = ChatMessageVariant::TallyClerkResult{ evil_count };
         actor_ref.push_night_message(game, message);
     }
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> crate::game::attack_type::AttackData {
+        crate::game::attack_type::AttackData::none()
+    }
 }
 
 impl TallyClerk {

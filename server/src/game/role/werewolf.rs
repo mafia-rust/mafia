@@ -4,6 +4,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::{AbilitySelection, AvailableAbilitySelection};
 use crate::game::attack_power::{AttackPower, DefensePower};
+use crate::game::attack_type::AttackData;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::night_visits::NightVisits;
 use crate::game::grave::GraveKiller;
@@ -183,6 +184,9 @@ impl RoleStateImpl for Werewolf {
             },
             _ => {}
         }
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::attack(game, actor_ref, false, false)
     }
 }
 impl Werewolf{

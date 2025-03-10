@@ -3,6 +3,7 @@ use std::collections::HashSet;
 use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::AttackPower;
+use crate::game::attack_type::AttackData;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::Grave;
@@ -129,6 +130,9 @@ impl RoleStateImpl for Krampus {
     }
     fn default_win_condition(self) -> WinCondition where super::RoleState: From<Self> {
         WinCondition::GameConclusionReached { win_if_any: vec![GameConclusion::NaughtyList].into_iter().collect() }
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::attack(game, actor_ref, true, true)
     }
 }
 

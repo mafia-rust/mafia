@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::attack_type::AttackData;
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -95,6 +96,11 @@ impl RoleStateImpl for Veteran {
             Veteran { alerts_remaining: self.alerts_remaining, alerting_tonight: false });   
     }
     fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        //possess immune just means that you can't abuse possession to get kills and you can possess people into a veteran
+        //same for transport
+        AttackData::attack(game, actor_ref, false, false)
+    }
 }
 impl GetClientRoleState<ClientRoleState> for Veteran {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

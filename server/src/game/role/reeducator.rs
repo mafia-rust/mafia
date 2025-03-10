@@ -4,6 +4,7 @@ use vec1::vec1;
 
 use crate::game::ability_input::ControllerID;
 use crate::game::attack_power::AttackPower;
+use crate::game::attack_type::AttackData;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
 use crate::game::components::insider_group::InsiderGroupID;
@@ -207,10 +208,19 @@ impl RoleStateImpl for Reeducator {
         }
         
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+    fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        //because it can select ambusher
+        if self.convert_charges_remaining || InsiderGroupID::all_players_in_same_revealed_group_with_actor(game, actor_ref).len() > 1 {
+            //true because it can only convert players to syndicate
+            AttackData::attack(game, actor_ref, true, true)
+        } else {
+            AttackData::none()
+        }
     }
 }
 

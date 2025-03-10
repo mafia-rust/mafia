@@ -12,9 +12,30 @@ use crate::{game::{
     phase::{PhaseState, PhaseType}, player::PlayerReference,
     role_list::RoleSet, visit::Visit, win_condition::WinCondition,
     Game
-}, vec_set};
+}, vec_set::VecSet};
+use crate::vec_set;
 
 use super::{medium::Medium, reporter::Reporter, warden::Warden, InsiderGroupID, Role, RoleState};
+
+pub(super) fn player_set_typical(
+    game: &Game, 
+    actor_ref: PlayerReference, 
+    include_insiders: bool, 
+    include_self: bool, 
+) -> VecSet<PlayerReference>{
+    PlayerReference::all_players(game)
+                .into_iter()
+                .filter(|player|
+                    if !player.alive(game) {
+                        false
+                    } else if *player == actor_ref {
+                        include_self
+                    } else {
+                        include_insiders || !InsiderGroupID::in_same_revealed_group(game, actor_ref, *player)
+                    }
+                )
+                .collect()
+}
 
 pub fn controller_parameters_map_player_list_night_typical(
     game: &Game,
@@ -34,21 +55,7 @@ pub fn controller_parameters_map_player_list_night_typical(
         game,
         ability_id,
         AvailableAbilitySelection::new_player_list(
-            PlayerReference::all_players(game)
-                .into_iter()
-                .filter(|player|
-                    if !player.alive(game){
-                        false
-                    }else if *player == actor_ref{
-                        can_select_self
-                    }else if InsiderGroupID::in_same_revealed_group(game, actor_ref, *player){
-                        can_select_insiders
-                    }else{
-                        true
-                    }
-
-                )
-                .collect(),
+            super::common_role::player_set_typical(game, actor_ref, can_select_insiders, can_select_self),
                 false,
                 Some(1)
             ),

@@ -96,6 +96,9 @@ impl RoleStateImpl for Doctor {
             target_healed_ref: None
         });
     }
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> crate::game::attack_type::AttackData {
+        crate::game::attack_type::AttackData::none()
+    }
 }impl GetClientRoleState<ClientRoleState> for Doctor {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState{

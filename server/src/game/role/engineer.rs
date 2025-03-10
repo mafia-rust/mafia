@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::AttackPower;
+use crate::game::attack_type::AttackData;
 use crate::game::components::night_visits::NightVisits;
 use crate::game::grave::GraveKiller;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
@@ -184,7 +185,9 @@ impl RoleStateImpl for Engineer {
             _ => {}
         }
     }
-
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::attack(game, actor_ref, false, false)
+    }
 }
 impl GetClientRoleState<ClientRoleState> for Engineer {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

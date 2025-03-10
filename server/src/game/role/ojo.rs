@@ -2,6 +2,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::ControllerID;
 use crate::game::attack_power::DefensePower;
+use crate::game::attack_type::AttackData;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
 use crate::game::phase::PhaseType;
@@ -141,6 +142,9 @@ impl RoleStateImpl for Ojo {
         }
 
         out
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::attack(game, actor_ref, true, true)
     }
 }
 

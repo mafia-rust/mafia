@@ -2,16 +2,13 @@ use std::collections::HashSet;
 use rand::seq::SliceRandom;
 
 use crate::{game::{
-    ability_input::{AbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection, SavedControllersMap},
-    attack_power::{AttackPower, DefensePower},
-    chat::{ChatGroup, ChatMessage, ChatMessageVariant},
-    components::{
+    ability_input::{AbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection, SavedControllersMap}, attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
         arsonist_doused::ArsonistDoused,
         drunk_aura::DrunkAura,
         insider_group::InsiderGroupID, night_visits::NightVisits
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_player_roleblocked::OnPlayerRoleblocked, on_role_switch::OnRoleSwitch, on_visit_wardblocked::OnVisitWardblocked
-    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{armorsmith::Armorsmith, chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
+    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{armorsmith::Armorsmith, chronokaiser::Chronokaiser, Priority, Role, RoleState}, role_list::RoleSet, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
 }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
 use super::PlayerReference;
@@ -276,6 +273,14 @@ impl PlayerReference{
         }
     }
     
+    pub fn town_on_grave(&self, game: &Game) -> bool {
+        game.graves.iter().any(|grave|
+            grave.player == *self && 
+            if let Some(role) = grave.role(){
+                RoleSet::Town.get_roles().contains(&role)
+            } else {false}
+        )
+    }
     
     pub fn tracker_seen_visits(self, game: &Game) -> Vec<Visit> {
         if let Some(v) = self.night_appeared_visits(game) {

@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
+use crate::game::attack_type::AttackData;
 use crate::game::components::poison::{Poison, PoisonAlert};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -76,6 +77,9 @@ impl RoleStateImpl for Spiral {
         if player == actor_ref {
             actor_ref.remove_player_tag_on_all(game, Tag::Spiraling);
         }
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::attack(game, actor_ref, false, false)
     }
 }
 

@@ -3,8 +3,10 @@ use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
+use crate::game::attack_type::AttackData;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::detained::Detained;
+use crate::game::modifiers::{ModifierType, Modifiers};
 use crate::game::phase::{PhaseType, PhaseState};
 use crate::game::player::PlayerReference;
 
@@ -110,18 +112,30 @@ impl RoleStateImpl for Jester {
             PhaseState::Obituary => {
                 actor_ref.set_role_state(game, Jester { 
                     lynched_yesterday: false,
-                    won: self.won
+                    ..self
                 });
             }
             _ => {}
         }
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
-        if 
-            actor_ref == dead_player_ref && 
-            game.current_phase().phase() == PhaseType::FinalWords
-        {
-            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::JesterWon);
+        if actor_ref == dead_player_ref{
+            if game.current_phase().phase() == PhaseType::FinalWords {
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::JesterWon);
+            } else if Modifiers::modifier_is_enabled(game, ModifierType::Deathmatch) {
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::JesterWon);
+                actor_ref.set_role_state(game, Jester { 
+                    lynched_yesterday: true,
+                    won: true
+                });
+            }
+        }
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        if actor_ref.alive(game) {
+            AttackData::none()
+        } else {
+            AttackData::attack(game, actor_ref, true, true)
         }
     }
 }

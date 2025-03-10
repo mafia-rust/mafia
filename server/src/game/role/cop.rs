@@ -3,6 +3,7 @@ use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::attack_type::AttackData;
 use crate::game::components::night_visits::NightVisits;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::game_conclusion::GameConclusion;
@@ -13,6 +14,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
+use super::ambusher::Ambusher;
 use super::{
     ControllerID, ControllerParametersMap,
     GetClientRoleState, Priority, Role, RoleStateImpl
@@ -120,6 +122,9 @@ impl RoleStateImpl for Cop {
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         if phase != PhaseType::Night {return;}
         actor_ref.set_role_state(game, Cop {target_protected_ref: None});
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        return Ambusher::default().attack_data(game, actor_ref)
     }
 }
 impl GetClientRoleState<ClientRoleState> for Cop {

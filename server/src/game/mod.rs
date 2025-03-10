@@ -19,6 +19,7 @@ pub mod modifiers;
 pub mod win_condition;
 pub mod role_outline_reference;
 pub mod ability_input;
+pub mod attack_type;
 
 use std::time::Duration;
 use ability_input::saved_controllers_map::SavedControllersMap;
