@@ -30,7 +30,8 @@ pub struct ClientRoleState;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Shielded;
 
-const ENRAGED_PERCENT: f32 = 2f32/3f32;
+const ENRAGED_NUMBERATOR: usize = 2;
+const ENRAGED_DENOMINATOR: usize = 3;
 
 impl RoleStateImpl for Werewolf {
     type ClientRoleState = ClientRoleState;
@@ -42,9 +43,9 @@ impl RoleStateImpl for Werewolf {
                 let Some(first_visit) = visits.first() else {return};
 
                 let target_ref = first_visit.target;
-                let enraged = self.tracked_players.len() as f32 >= ENRAGED_PERCENT * PlayerReference::all_players(game)
+                let enraged = self.tracked_players.len().saturating_mul(ENRAGED_DENOMINATOR) >= PlayerReference::all_players(game)
                     .filter(|p|p.alive(game)||*p==actor_ref)
-                    .count() as f32;
+                    .count().saturating_mul(ENRAGED_NUMBERATOR);
                 if !enraged && target_ref.all_night_visits_cloned(game).is_empty() {return}
                     
                 NightVisits::all_visits_mut(game)
@@ -137,7 +138,6 @@ impl RoleStateImpl for Werewolf {
                 ControllerID::role(actor_ref, Role::Werewolf, 1),
                 AvailableAbilitySelection::new_player_list(
                     PlayerReference::all_players(game)
-                        .into_iter()
                         .filter(|player|
                             player.alive(game) && *player != actor_ref
                         )

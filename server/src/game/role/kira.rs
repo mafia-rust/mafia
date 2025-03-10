@@ -102,7 +102,7 @@ impl KiraGuess{
         }
     }
     fn is_in_game(&self, game: &Game)->bool{
-        PlayerReference::all_players(game).into_iter().any(|player_ref| {
+        PlayerReference::all_players(game).any(|player_ref| {
             let role = player_ref.role(game);
             self.guess_matches_role(role) && player_ref.alive(game)
         })
@@ -186,7 +186,7 @@ impl RoleStateImpl for Kira {
             Priority::Investigative => {
                 actor_ref.push_night_message(game, ChatMessageVariant::KiraResult { result });
             },
-            _ => return,
+            _ => {},
         }    
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {

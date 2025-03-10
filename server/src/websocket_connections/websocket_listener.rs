@@ -8,6 +8,7 @@ use tokio::sync::{mpsc, broadcast};
 use tokio::net::{TcpListener, TcpStream};
 
 pub async fn create_ws_server(server_address: &str) {
+    #[expect(clippy::panic, reason = "Server cannot start without TCP listener")]
     let tcp_listener = TcpListener::bind(&server_address).await.unwrap_or_else(|err| {
         panic!("Failed to bind websocket server to address {server_address}: {err}")
     });
