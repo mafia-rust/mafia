@@ -15,14 +15,14 @@ use crate::vec_set;
 
 use super::{AbilitySelection, ControllerID, ControllerParametersMap, Priority, Role, RoleState, RoleStateImpl};
 
-#[derive(PartialEq, Clone, Debug, Serialize)]
+#[derive(PartialEq, Eq, Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Martyr {
     pub state: MartyrState
 }
 
 
-#[derive(PartialEq, Clone, Debug, Serialize)]
+#[derive(PartialEq, Eq, Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum MartyrState {

@@ -40,7 +40,6 @@ impl RoleStateImpl for Cupid {
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
 
         let available_players: vec_set::VecSet<PlayerReference> = PlayerReference::all_players(game)
-            .into_iter()
             .filter(|p|
                 p.alive(game) &&
                 *p != actor_ref &&

@@ -65,10 +65,7 @@ impl ControllerID{
 
 impl ControllerID{
     pub fn should_send_chat_message(&self)->bool{
-        match self {
-            ControllerID::Nominate { .. } | ControllerID::ForwardMessage { .. } => false,
-            _ => true
-        }
+        !matches!(self, ControllerID::Nominate { .. } | ControllerID::ForwardMessage { .. })
     }
     fn get_controller<'a>(&self, game: &'a Game)->Option<&'a SavedController>{
         game.saved_controllers.get_controller(self.clone())

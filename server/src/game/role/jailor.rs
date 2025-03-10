@@ -99,7 +99,7 @@ impl RoleStateImpl for Jailor {
                 AbilitySelection::new_boolean(false),
                 actor_ref.ability_deactivated_from_death(game) ||
                 Detained::is_detained(game, actor_ref) || 
-                self.executions_remaining <= 0 ||
+                self.executions_remaining == 0 ||
                 game.day_number() <= 1 ||
                 self.jailed_target_ref.is_none(),
                 Some(PhaseType::Obituary),
@@ -112,7 +112,7 @@ impl RoleStateImpl for Jailor {
         let Some(AbilitySelection::Boolean {selection: BooleanSelection(true)}) = game.saved_controllers.get_controller_current_selection(
             ControllerID::role(actor_ref, Role::Jailor, 1)) else {return Vec::new()};
         let Some(target) = self.jailed_target_ref else {return Vec::new()};
-        return vec![Visit::new_none(actor_ref, target, true)]
+        vec![Visit::new_none(actor_ref, target, true)]
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, 

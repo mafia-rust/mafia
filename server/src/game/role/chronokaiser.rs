@@ -29,8 +29,8 @@ impl RoleStateImpl for Chronokaiser {
             );
         }
 
-        let new_speed_ratio = (Self::get_speed_up_percent(game) + 100) as f32 / 100.0;
-        game.phase_machine.time_remaining = game.phase_machine.time_remaining.div_f32(new_speed_ratio);
+        let new_speed_ratio = Self::get_speed_up_percent(game).saturating_add(100) as f64 / 100.0;
+        game.phase_machine.time_remaining = game.phase_machine.time_remaining.div_f64(new_speed_ratio);
     }
     fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> AttackData {
         AttackData::none()
@@ -40,7 +40,7 @@ impl RoleStateImpl for Chronokaiser {
 impl Chronokaiser {
     const SPEED_UP_PERCENT_PER_DAY: u32 = 60;
     pub fn get_speed_up_percent(game: &Game)->u32{
-        game.day_number().saturating_sub(1) as u32 * Self::SPEED_UP_PERCENT_PER_DAY
+        (game.day_number().saturating_sub(1) as u32).saturating_mul(Self::SPEED_UP_PERCENT_PER_DAY)
     }
     pub fn won(game: &Game, actor_ref: PlayerReference)->bool{
         actor_ref.alive(game)

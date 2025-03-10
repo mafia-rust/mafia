@@ -66,7 +66,6 @@ impl SyndicateGunItem {
                     ControllerID::syndicate_gun_item_give(),
                     AvailableAbilitySelection::new_player_list(
                         PlayerReference::all_players(game)
-                            .into_iter()
                             .filter(|target|
                                 player_with_gun != *target &&
                                 target.alive(game) &&
@@ -99,7 +98,7 @@ impl SyndicateGunItem {
             }
             for insider in InsiderGroupID::Mafia.players(game).iter()
                 .filter(|p|p.alive(game))
-                .cloned()
+                .copied()
                 .collect::<Vec<_>>()
             {
                 SyndicateGunItem::give_gun(game, insider);

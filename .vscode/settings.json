@@ -63,5 +63,6 @@
     ],
     "rust-analyzer.linkedProjects": [
         "./server/Cargo.toml",
-    ]
+    ],
+    "rust-analyzer.check.command": "clippy"
 }

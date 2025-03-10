@@ -83,7 +83,7 @@ impl RoleStateImpl for Bodyguard {
                 let target_ref = visit.target;
     
                 if actor_ref == target_ref {
-                    let self_shields_remaining = self.self_shields_remaining - 1;
+                    let self_shields_remaining = self.self_shields_remaining.saturating_sub(1);
                     actor_ref.set_role_state(game, Bodyguard{
                         self_shields_remaining, 
                         ..self
@@ -113,7 +113,7 @@ impl RoleStateImpl for Bodyguard {
             actor_ref,
             self.self_shields_remaining > 0,
             true,
-            !(game.day_number() > 1),
+            game.day_number() <= 1,
             ControllerID::role(actor_ref, Role::Bodyguard, 0)
         )
     }

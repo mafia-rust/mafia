@@ -73,7 +73,6 @@ impl RoleStateImpl for Deputy {
             ControllerID::role(actor_ref, Role::Deputy, 0),
             super::AvailableAbilitySelection::new_player_list(
                 PlayerReference::all_players(game)
-                    .into_iter()
                     .filter(|player| 
                         actor_ref != *player &&
                         player.alive(game)

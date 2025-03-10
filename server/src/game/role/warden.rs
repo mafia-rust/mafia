@@ -70,12 +70,11 @@ impl RoleStateImpl for Warden {
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> std::collections::HashSet<crate::game::chat::ChatGroup> {
         common_role::get_current_receive_chat_groups(game, actor_ref)
             .into_iter()
-            .chain(vec![crate::game::chat::ChatGroup::Warden].into_iter())
+            .chain([crate::game::chat::ChatGroup::Warden])
             .collect()
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         let available_players = PlayerReference::all_players(game)
-            .into_iter()
             .filter(|&p| p.alive(game))
             .collect::<VecSet<_>>();
         
@@ -132,14 +131,14 @@ impl RoleStateImpl for Warden {
 
                 if actor_ref.ability_deactivated_from_death(game) || players_in_prison.iter().any(|p|!p.alive(game)) {return};
                 
-                self.players_in_prison = players_in_prison.clone();
+                self.players_in_prison.clone_from(&players_in_prison);
                 
                 actor_ref.set_role_state(game, self);
 
                 game.add_message_to_chat_group(
                     crate::game::chat::ChatGroup::Warden,
                     ChatMessageVariant::WardenPlayersImprisoned{
-                        players: players_in_prison.iter().cloned().collect()
+                        players: players_in_prison.to_vec()
                     }
                 );
                 for &player in players_in_prison.iter(){
@@ -147,7 +146,7 @@ impl RoleStateImpl for Warden {
                         game,
                         player,
                         ChatMessageVariant::WardenPlayersImprisoned{
-                            players: players_in_prison.iter().cloned().collect()
+                            players: players_in_prison.to_vec()
                         },
                         false
                     );
@@ -180,7 +179,7 @@ impl Warden {
                 players_who_chose_die.insert(player);
             }
         }
-        if players_who_chose_die.len() == 0{
+        if players_who_chose_die.is_empty(){
             self.players_in_prison.clone().into_iter().collect()
         }else{
             players_who_chose_die

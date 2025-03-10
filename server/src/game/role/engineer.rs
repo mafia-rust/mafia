@@ -103,7 +103,7 @@ impl RoleStateImpl for Engineer {
             }
             Priority::Kill => {
                 if let Trap::Set { target, .. } = self.trap {
-                    for visit in NightVisits::all_visits(game).into_iter().cloned().collect::<Vec<_>>() {
+                    for visit in NightVisits::all_visits(game).into_iter().copied().collect::<Vec<_>>() {
                         if 
                             visit.attack &&
                             visit.target == target &&

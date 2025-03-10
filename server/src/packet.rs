@@ -149,9 +149,8 @@ pub enum ToClientPacket{
 }
 impl ToClientPacket {
     pub fn to_json_string(&self) -> Result<String, serde_json::Error> {
-        serde_json::to_string(self).map_err(|err|{
+        serde_json::to_string(self).inspect_err(|_|{
             log!(error "Serde error"; "Parsing JSON string: {:?}", self);
-            err
         })
     }
     pub fn new_player_votes(game: &mut Game)->ToClientPacket{
@@ -163,7 +162,7 @@ impl ToClientPacket {
                 if let Some(player_voted) = player_ref.chosen_vote(game){
 
                     if let Some(num_votes) = voted_for_player.get_mut(&player_voted.index()){
-                        *num_votes+=1;
+                        *num_votes = num_votes.saturating_add(1);
                     }else{
                         voted_for_player.insert(player_voted.index(), 1);
                     }

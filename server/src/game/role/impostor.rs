@@ -14,18 +14,10 @@ use super::godfather::Godfather;
 use super::{Priority, Role, RoleStateImpl};
 
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Default, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Impostor{
     pub backup: Option<PlayerReference>
-}
-
-impl Default for Impostor {
-    fn default() -> Self {
-        Self {
-            backup: None,
-        }
-    }
 }
 
 
@@ -58,7 +50,7 @@ impl RoleStateImpl for Impostor {
             ControllerID::role(actor_ref, Role::Impostor, 1),
             AvailableAbilitySelection::new_role_option(
                 Role::values().into_iter()
-                    .map(|role| Some(role))
+                    .map(Some)
                     .collect()
             ),
             AbilitySelection::new_role_option(Some(Role::Impostor)),
