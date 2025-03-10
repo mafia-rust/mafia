@@ -788,6 +788,8 @@
     "hiddenWhispers": "Hidden Whispers",
     "noNightChat": "No Night Chat",
     "noChat": "No Chat",
+    "deathmatch": "Deathmatch",
+
     "syndicateGunItem": "Syndicate Gun",
     "nightMessages": "Night Messages",
     
@@ -969,6 +971,7 @@
     "chatMessage.youWerePossessed.immune":"Someone tried to possess you but you are immune.",
     "chatMessage.targetHasRole":"Your target has the role \\0.",
     "chatMessage.targetHasWinCondition":"Your target has the win condition \\0.",
+    "chatMessage.playerHasWinCondition":"\\0 has the win condition \\1.",
     "chatMessage.targetIsPossessionImmune":"Your target was immune to possession.",
     "chatMessage.werewolfTrackingResult":"\\0 visited \\1.",
     "chatMessage.werewolfTracked":"A werewolf has caught your scent! They are tracking you.",
