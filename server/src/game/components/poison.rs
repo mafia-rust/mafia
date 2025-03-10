@@ -44,7 +44,7 @@ impl PlayerPoison{
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Eq)]
 pub enum PoisonAlert {
     NoAlert,
     Alert

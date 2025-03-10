@@ -35,7 +35,6 @@ pub fn controller_parameters_map_player_list_night_typical(
         ability_id,
         AvailableAbilitySelection::new_player_list(
             PlayerReference::all_players(game)
-                .into_iter()
                 .filter(|player|
                     if !player.alive(game){
                         false
@@ -118,7 +117,8 @@ pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: Pla
             for player in PlayerReference::all_players(game){
                 if Some(player.role(game)) == selection.0 {
                     out.push(Visit::new_none(actor_ref, player, attack));
-                }else if Some(player.role(game)) == selection.1 {
+                }
+                if Some(player.role(game)) == selection.1 {
                     out.push(Visit::new_none(actor_ref, player, attack));
                 }
             }

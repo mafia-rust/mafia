@@ -62,10 +62,10 @@ impl <K> VecSet<K> where K: Eq {
     }
 
     pub fn subtract(&self, other: &Self) -> Self where K: Clone {
-        self.vec.keys().cloned().filter(|k| !other.contains(k)).collect()
+        self.vec.keys().filter(|&k| !other.contains(k)).cloned().collect()
     }
     pub fn intersection(&self, other: &Self) -> Self where K: Clone {
-        self.vec.keys().cloned().filter(|k| other.contains(k)).collect()
+        self.vec.keys().filter(|&k| other.contains(k)).cloned().collect()
     }
     pub fn union(&self, other: &Self) -> Self where K: Clone {
         self.vec.keys().cloned().chain(other.vec.keys().cloned()).collect()
@@ -117,11 +117,7 @@ impl<T: Eq> PartialOrd for VecSet<T> {
 
 impl<T: Eq> Ord for VecSet<T> {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        match (self.len() as isize) - (other.len() as isize) {
-            1.. => std::cmp::Ordering::Greater,
-            0 => std::cmp::Ordering::Equal,
-            ..=-1 => std::cmp::Ordering::Less
-        }
+        self.len().cmp(&other.len())
     }
 }
 
@@ -140,7 +136,7 @@ mod macros {
     #[macro_export]
     macro_rules! vec_set {
         ($($key:expr),*) => {{
-            let mut map = crate::vec_set::VecSet::new();
+            let mut map = $crate::vec_set::VecSet::new();
             $(map.insert($key);)*
             map
         }};

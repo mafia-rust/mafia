@@ -31,7 +31,7 @@ impl RoleStateImpl for Snoop {
             }else{
                 visit.target.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
                 !visit.target.has_suspicious_aura(game) &&
-                actor_ref.all_night_visitors_cloned(game).len() == 0
+                actor_ref.all_night_visitors_cloned(game).is_empty()
             };
 
             actor_ref.push_night_message(game, 
