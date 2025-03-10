@@ -20,8 +20,8 @@ impl ValidateAvailableSelection for AvailableTwoRoleOutlineOptionSelection{
 }
 
 impl PartialOrd for AvailableTwoRoleOutlineOptionSelection{
-    fn partial_cmp(&self, _other: &Self) -> Option<std::cmp::Ordering>{
-        Some(std::cmp::Ordering::Equal)
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering>{
+        Some(self.cmp(other))
     }
 }
 impl Ord for AvailableTwoRoleOutlineOptionSelection{

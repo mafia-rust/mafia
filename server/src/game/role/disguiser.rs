@@ -14,17 +14,10 @@ use crate::vec_set::{vec_set, VecSet};
 use super::{InsiderGroupID, Priority, Role, RoleStateImpl};
 
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Disguiser{
     pub current_target: Option<PlayerReference>
-}
-impl Default for Disguiser{
-    fn default() -> Self {
-        Self{
-            current_target: None
-        }
-    }
 }
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
@@ -80,7 +73,7 @@ impl RoleStateImpl for Disguiser {
                 ControllerID::role(actor_ref, Role::Disguiser, 1),
                 AvailableAbilitySelection::new_role_option(
                     Role::values().into_iter()
-                        .map(|role| Some(role))
+                        .map(Some)
                         .collect()
                 ),
                 AbilitySelection::new_role_option(Some(Role::Disguiser)),

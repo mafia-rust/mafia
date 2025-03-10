@@ -74,7 +74,7 @@ pub fn _format_messages_debug(messages: Vec<ChatMessageVariant>) -> String{
         string += "\n";
     }
     string += "]";
-    return string;
+    string
 }
 
 /// Stuff that shouldn't be called directly - only in macro invocations.
@@ -101,7 +101,7 @@ pub mod _init {
             role_list: RoleList(role_list),
             enabled_roles: Role::values().into_iter().collect(),
             ..Default::default()
-        }, roles.len()){
+        }, roles.len() as u8){
             Ok(game) => game,
             Err(err) => panic!("Failed to create game: {:?}", err),
         };
