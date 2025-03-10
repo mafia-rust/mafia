@@ -16,3 +16,5 @@ pub mod night_visits;
 pub mod syndicate_gun_item;
 pub mod synopsis;
 pub mod dead_can_still_play_message;
+pub mod nomination_controller;
+pub mod forward_messages;

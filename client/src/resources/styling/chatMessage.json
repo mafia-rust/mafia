@@ -84,6 +84,7 @@
     "armorsmithArmorBroke": "result",
     "trapState": "special",
     "trapStateEndOfNight": "result",
+    "playerForwardedMessage": "special",
     "targetsMessage": "result",
     "targetIsPossessionImmune": "result",
     "youWerePossessed": "result",
