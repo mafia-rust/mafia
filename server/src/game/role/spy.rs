@@ -1,5 +1,5 @@
 use rand::seq::SliceRandom;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
@@ -14,7 +14,7 @@ use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Spy;
 
-#[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum SpyBug{
     Silenced, 
