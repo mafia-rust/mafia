@@ -1,7 +1,7 @@
 use std::iter::once;
 
 use rand::seq::IndexedRandom;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::components::confused::Confused;
 use crate::game::components::detained::Detained;
@@ -32,7 +32,7 @@ pub struct Auditor{
     pub grave_roles: Vec<Role>,
 }
 
-#[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum AuditorResult{

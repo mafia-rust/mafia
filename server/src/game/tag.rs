@@ -1,7 +1,7 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 
-#[derive(PartialOrd, Ord, Debug, Clone, PartialEq, Eq, Serialize, Copy)]
+#[derive(Deserialize, PartialOrd, Ord, Debug, Clone, PartialEq, Eq, Serialize, Copy)]
 #[serde(rename_all = "camelCase")]
 pub enum Tag{
     Enfranchised,
