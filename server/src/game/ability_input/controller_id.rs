@@ -63,6 +63,12 @@ impl ControllerID{
 
 
 impl ControllerID{
+    pub fn should_send_chat_message(&self)->bool{
+        match self {
+            ControllerID::Nominate { .. } => false,
+            _ => true
+        }
+    }
     fn get_controller<'a>(&self, game: &'a Game)->Option<&'a SavedController>{
         game.saved_controllers.get_controller(self.clone())
     }

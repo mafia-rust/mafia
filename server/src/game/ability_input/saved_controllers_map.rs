@@ -45,7 +45,9 @@ impl SavedControllersMap{
             return false;
         }
 
-        Self::send_selection_message(game, actor, id, incoming_selection);
+        if id.should_send_chat_message() {
+            Self::send_selection_message(game, actor, id, incoming_selection);
+        }
         
         Self::send_saved_controllers_to_clients(game);
 
