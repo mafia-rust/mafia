@@ -8,6 +8,7 @@ use crate::game::player::PlayerReference;
 
 use crate::game::Game;
 
+use super::detective::Detective;
 use super::{Priority, RoleStateImpl};
 
 
@@ -55,7 +56,6 @@ impl TallyClerk {
         }
     }
     pub fn player_is_suspicious_confused(game: &Game, player_ref: PlayerReference, actor_ref: PlayerReference) -> bool {
-        actor_ref.night_framed(game) ||
-        Confused::is_red_herring(game, actor_ref, player_ref)
+        Detective::player_is_suspicious_confused(game, player_ref, actor_ref)
     }
 }
