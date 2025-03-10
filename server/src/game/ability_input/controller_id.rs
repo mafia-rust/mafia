@@ -2,7 +2,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::game::{player::PlayerReference, role::Role, Game};
 
-use super::{AbilitySelection, BooleanSelection, IntegerSelection, KiraSelection, PlayerListSelection, RoleOptionSelection, SavedController, StringSelection, TwoPlayerOptionSelection, TwoRoleOptionSelection, TwoRoleOutlineOptionSelection};
+use super::{
+    AbilitySelection, BooleanSelection, IntegerSelection, KiraSelection, PlayerListSelection,
+    RoleOptionSelection, SavedController, StringSelection, TwoPlayerOptionSelection, TwoRoleOptionSelection, TwoRoleOutlineOptionSelection
+};
 
 pub type RoleControllerID = u8;
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Eq, Ord)]
@@ -17,8 +20,10 @@ pub enum ControllerID{
     },
     ForfeitVote{player: PlayerReference},
     PitchforkVote{player: PlayerReference},
+    Nominate{player: PlayerReference},
 
     ForwardMessage{player: PlayerReference},
+
 
     SyndicateGunItemShoot,
     SyndicateGunItemGive,
@@ -33,6 +38,9 @@ pub enum ControllerID{
 impl ControllerID{
     pub fn role(player: PlayerReference, role: Role, id: RoleControllerID)->Self{
         Self::Role{player, role, id}
+    }
+    pub fn nominate(player: PlayerReference)->Self{
+        Self::Nominate{player}
     }
     pub fn forfeit_vote(player: PlayerReference)->Self{
         Self::ForfeitVote{player}
@@ -56,6 +64,12 @@ impl ControllerID{
 
 
 impl ControllerID{
+    pub fn should_send_chat_message(&self)->bool{
+        match self {
+            ControllerID::Nominate { .. } | ControllerID::ForwardMessage { .. } => false,
+            _ => true
+        }
+    }
     fn get_controller<'a>(&self, game: &'a Game)->Option<&'a SavedController>{
         game.saved_controllers.get_controller(self.clone())
     }
