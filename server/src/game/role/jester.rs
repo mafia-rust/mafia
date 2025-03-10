@@ -51,11 +51,12 @@ impl RoleStateImpl for Jester {
         let target_ref = if let Some(target_ref) = target_ref {
             target_ref
         }else{
+            let deathmatch = Modifiers::modifier_is_enabled(game, ModifierType::Deathmatch);
             let all_killable_players: Vec<PlayerReference> = PlayerReference::all_players(game)
                 .filter(|player_ref|{
                     player_ref.alive(game) &&
                     *player_ref != actor_ref &&
-                    player_ref.verdict(game) != Verdict::Innocent
+                    (deathmatch || player_ref.verdict(game) != Verdict::Innocent)
                 })
                 .collect();
 
@@ -75,6 +76,7 @@ impl RoleStateImpl for Jester {
             actor_ref.alive(game) || 
             Detained::is_detained(game, actor_ref) ||
             !self.lynched_yesterday;
+        let deathmatch = Modifiers::modifier_is_enabled(game, ModifierType::Deathmatch);
 
         // Note: Sam, when you fix this, don't forget to fix Santa Claus in the same manner
         ControllerParametersMap::new_controller_fast(
@@ -86,7 +88,7 @@ impl RoleStateImpl for Jester {
                     .filter(|p| *p != actor_ref)
                     .filter(|player| 
                         player.alive(game) &&
-                        player.verdict(game) != Verdict::Innocent
+                        (deathmatch || player.verdict(game) != Verdict::Innocent)
                     )
                     .collect(),
                 false,
