@@ -24,7 +24,8 @@ pub enum AvailableAbilitySelection{
     TwoRoleOutlineOption{selection: AvailableTwoRoleOutlineOptionSelection},
     String,
     Integer{selection: AvailableIntegerSelection},
-    Kira{selection: AvailableKiraSelection}
+    Kira{selection: AvailableKiraSelection},
+    ChatMessage
 }
 impl AvailableAbilitySelection{
     pub fn new_unit()->Self{
@@ -112,6 +113,7 @@ impl ValidateAvailableSelection for AvailableAbilitySelection{
                 let AbilitySelection::Kira { selection } = selection else {return false};
                 available.validate_selection(game, selection)
             }
+            Self::ChatMessage => {true}
         }
     }
 }

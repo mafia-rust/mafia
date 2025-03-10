@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::{game_conclusion::GameConclusion, phase::PhaseType, player::PlayerReference, role::Role, win_condition::WinCondition, Game};
 
@@ -64,7 +64,7 @@ impl SynopsisTracker {
     }
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Synopsis {
     player_synopses: Vec<PlayerSynopsis>,
@@ -92,7 +92,7 @@ impl Ord for Synopsis {
     }
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PlayerSynopsis {
     crumbs: Vec<SynopsisCrumb>,
@@ -126,7 +126,7 @@ impl PartialPlayerSynopsis {
     }
 }
 
-#[derive(Clone, Debug, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct SynopsisCrumb {
     night: Option<u8>,

@@ -10,6 +10,14 @@ export default class ListMap<K, V> {
         this.list = list;
         this.equalsFn = equalsFn;
     }
+    contains(key: K): boolean {
+        for (const kvp of this.list) {
+            if (this.equalsFn(kvp[0], key)) {
+                return true
+            }
+        }
+        return false
+    }
     get(key: K): V | null {
         for (const [k, v] of this.list) {
             if (this.equalsFn(k, key)) {

@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::AttackPower;
 use crate::game::components::night_visits::NightVisits;
@@ -49,7 +49,7 @@ impl Trap {
         }
     }
 }
-#[derive(Default, Clone, Serialize, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Default, Clone, Serialize, Deserialize, Debug, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase", tag = "type")]
 pub enum TrapState {
     #[default]

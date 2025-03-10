@@ -157,6 +157,9 @@ impl InsiderGroupID{
 
 
     // Queries
+    pub fn in_any_group(game: &Game, player: PlayerReference)->bool{
+        InsiderGroupID::all().into_iter().any(|g|g.is_player_in_revealed_group(game, player))
+    }
     pub fn is_player_in_revealed_group(&self, game: &Game, player: PlayerReference)->bool{
         let players: &VecSet<PlayerReference> = self.revealed_group(game).into();
         players.contains(&player)
