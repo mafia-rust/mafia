@@ -20,7 +20,7 @@ impl RoleStateImpl for SerialKiller {
     type ClientRoleState = SerialKiller;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if priority != Priority::Kill {return}
-        if game.day_number() == 1 {return}
+        if !game.attack_convert_abilities_enabled() {return}
 
 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
@@ -43,7 +43,7 @@ impl RoleStateImpl for SerialKiller {
             actor_ref,
             false,
             true,
-            game.day_number() <= 1,
+            !game.attack_convert_abilities_enabled(),
             ControllerID::role(actor_ref, Role::SerialKiller, 0)
         )
     }

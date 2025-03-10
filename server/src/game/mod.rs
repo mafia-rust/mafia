@@ -484,6 +484,10 @@ impl Game {
         &self.phase_machine.current_state
     }
 
+    pub fn attack_convert_abilities_enabled(&self) -> bool {
+        self.day_number() != 1
+    }
+
     pub fn day_number(&self) -> u8 {
         self.phase_machine.day_number
     }

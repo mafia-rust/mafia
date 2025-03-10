@@ -45,7 +45,7 @@ impl RoleStateImpl for Veteran {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::TopPriority => {
-                let can_alert = self.alerts_remaining > 0 && game.day_number() > 1;
+                let can_alert = self.alerts_remaining > 0 && game.attack_convert_abilities_enabled();
                 let chose_to_alert = 
                     if let Some(BooleanSelection(true)) = game.saved_controllers.get_controller_current_selection_boolean(
                         ControllerID::role(actor_ref, Role::Veteran, 0)
@@ -85,7 +85,7 @@ impl RoleStateImpl for Veteran {
         common_role::controller_parameters_map_boolean(
             game,
             actor_ref,
-            self.alerts_remaining <= 0 || game.day_number() <= 1,
+            self.alerts_remaining <= 0 || !game.attack_convert_abilities_enabled(),
             ControllerID::role(actor_ref, Role::Veteran, 0)
         )
     }
