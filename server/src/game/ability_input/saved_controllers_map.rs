@@ -147,7 +147,7 @@ impl SavedControllersMap{
             let mut kept_old_selection = false;
             
 
-            if let Some(SavedController{selection: old_selection, ..}) = game.saved_controllers.saved_controllers.get(&id) {
+            if let Some(SavedController{selection: old_selection, ..}) = game.saved_controllers.saved_controllers.get(id) {
                 if 
                     controller_parameters.validate_selection(game, old_selection) &&
                     !controller_parameters.dont_save() &&
