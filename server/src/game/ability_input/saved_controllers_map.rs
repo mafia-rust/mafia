@@ -3,7 +3,10 @@ use serde::{Deserialize, Serialize};
 use crate::{
     game::{
         chat::ChatMessageVariant, components::{
-            forfeit_vote::ForfeitVote, insider_group::InsiderGroupID, mafia::Mafia, nomination_controller::NominationController, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem
+            forward_messages::ForwardMessages, insider_group::InsiderGroupID,
+            mafia::Mafia, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem,
+            forfeit_vote::ForfeitVote,
+            nomination_controller::NominationController,
         }, 
         event::{
             on_controller_selection_changed::OnControllerSelectionChanged,
@@ -91,6 +94,9 @@ impl SavedControllersMap{
         );
         new_controller_parameters_map.combine_overwrite(
             Pitchfork::controller_parameters_map(game)
+        );
+        new_controller_parameters_map.combine_overwrite(
+            ForwardMessages::controller_parameters_map(game)
         );
 
         let current_controller_parameters = &game.saved_controllers.controller_parameters();

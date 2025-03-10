@@ -1,12 +1,12 @@
 use std::collections::HashSet;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use super::game_conclusion::GameConclusion;
 
 /// Related functions require RoleStateWon to be independent of GameConclusion. 
 /// RoleStateWon needs to be able to win with any GameConclusion.
-#[derive(Clone, Debug, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase", tag = "type")]
 pub enum WinCondition{
     #[serde(rename_all = "camelCase")]
