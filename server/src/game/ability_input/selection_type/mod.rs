@@ -6,6 +6,7 @@ pub mod role_option_selection; pub use role_option_selection::*;
 pub mod kira_selection; pub use kira_selection::*;
 pub mod player_list_selection; pub use player_list_selection::*;
 pub mod integer_selection; pub use integer_selection::*;
+pub mod chat_message_selection; pub use chat_message_selection::*;
 
 use serde::{Deserialize, Serialize};
 
