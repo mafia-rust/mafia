@@ -101,7 +101,7 @@ const ChatElement = React.memo((
         case "playerForwardedMessage":
         case "targetsMessage":
             return <div className={"chat-message-div"}>
-                <span className="chat-message result">
+                <span className="chat-message">
                     <StyledText className={"chat-message " + style}
                         playerKeywordData={props.playerKeywordData}
                     >
