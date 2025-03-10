@@ -1377,7 +1377,6 @@
     "wiki.article.standard.claim.text":"When a player asks you to claim. They are likely asking you to say what your role is, and send your alibi in chat. This is not necessarily because they think your evil, but they want information from you.",
     "wiki.article.standard.claimswap.title":"Claim swap",
     "wiki.article.standard.claimswap.title:var.0":"Claimswap",
-    "wiki.article.standard.claimswap.title:var.1":"Claim swaped",
     "wiki.article.standard.claimswap.title:var.2":"Claim swapped",
     "wiki.article.standard.claimswap.title:var.3":"Claim swapping",
     "wiki.article.standard.claimswap.text":"When 2 players do a claim swap, they are both claiming each others roles. John Proctor is claiming engineer even though Deodat Lawson is engineer, and Deodat Lawson is claiming detective even thought John Proctor is detective. This is in order to hide information from evil players while still giving information to town. A doomsayer or kira can easily kill a lot of townies if they know the exact roles of townies. Claim swap might help a veteran kill evil players.",
