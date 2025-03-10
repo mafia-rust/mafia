@@ -31,6 +31,9 @@ impl AbilityInput{
     pub fn selection(&self)->AbilitySelection{
         self.selection.clone()
     }
+    pub fn id_and_selection(&self)->(ControllerID, AbilitySelection){
+        (self.id(), self.selection())
+    }
 }
 
 

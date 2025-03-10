@@ -1,9 +1,11 @@
 
-.chat-message-div-copy-button {
+.chat-message-div-small-button-div {
     position: absolute;
-    font-size: 1rem;
     right: 0;
     bottom: 0;
+}
+.chat-message-div-small-button {
+    font-size: 1rem;
     padding: 0.1rem;
     border-radius: 0.2rem;
 }
