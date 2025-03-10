@@ -1327,7 +1327,6 @@
     "wiki.article.modifier.randomLoveLinks.text":"Random Love Links is a game modifier that makes it so all players are love linked to a random player. The game is set up such that all players are love linked to at least 1 other player, and at most 1 player is love linked to more than 1 other player.",
     "wiki.article.modifier.skipDay1.title": "Skip Day 1",
     "wiki.article.modifier.skipDay1.text": "Skip Day 1 is a game modifier. While activated: All phases from Dusk 1 to Final Words 2 are fast forwarded, effectively starting the game at Dusk 2 instead.",
-
     "wiki.article.modifier.deadCanChat.title":"Dead Can Chat",
     "wiki.article.modifier.deadCanChat.text":"Dead Can Chat is a game modifier that changes the game such that dead players can still use chats as if they were alive. Dead players can not whisper or be whispered to.",
     "wiki.article.modifier.scheduledNominations.title":"Scheduled Nominations",
@@ -1352,6 +1351,9 @@
     "wiki.article.modifier.noNightChat.text": "No Night Chat is a game modifier that changes the game such that all living players cannot send messages during night - even if they are part of an insider group.",
     "wiki.article.modifier.noChat.title": "No Chat",
     "wiki.article.modifier.noChat.text": "No Chat is a game modifier that changes the game such that no players can send messages.",
+    "wiki.article.modifier.deathmatch.title": "Deathmatch",
+    "wiki.article.modifier.deathmatch.text": "Deathmatch is a game modifier that changes the game genre to turnbased team strategy (+ deputy). \nIt has the following effects:\n- The win conditions of all players are announced at the start of the game.\n- Nomination phases are skipped\n- Defense inherent to roles are ignored (i.e. a Godfather's armor).\n\nIt is recommended to disable most, if not all, TI roles when this modifier is enabled.",
+    
     "wiki.article.standard.syndicateGunItem.title":"Syndicate Gun",
     "wiki.article.standard.syndicateGunItem.text":"Syndicate Gun is an ability a syndicate member gets when theres no syndicate killing role present\n- A syndicate member is given a gun they can use to kill a player with a basic attack at night\n- The gun can't be used on the first night\n- The gun can be passed around between syndicate members, so a different syndicate member can shoot it every night\n- The gun still uses visits, so getting roleblocked still erases that visit, and transports still move it\n- The killer appears to be syndicate on the grave of the player who died to the gun",
     "syndicateGunItem.description":"Choose a player to shoot with the syndicate gun. Or choose to give it to another syndicate insider.",

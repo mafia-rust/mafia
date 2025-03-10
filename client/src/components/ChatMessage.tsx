@@ -691,6 +691,8 @@ export function translateChatMessage(
             return translate("chatMessage.targetHasRole", translate("role."+message.role+".name"));
         case "targetHasWinCondition":
             return translate("chatMessage.targetHasWinCondition", translateWinCondition(message.winCondition));
+        case "playerHasWinCondition":
+            return translate("chatMessage.playerHasWinCondition", playerNames[message.player], translateWinCondition(message.winCondition));
         case "werewolfTrackingResult":
             return translate("chatMessage.werewolfTrackingResult", 
                 playerNames[message.trackedPlayer],
@@ -1043,6 +1045,10 @@ export type ChatMessageVariant = {
     role: Role
 } | {
     type: "targetHasWinCondition",
+    winCondition: WinCondition
+} | {
+    type: "playerHasWinCondition",
+    player: PlayerIndex,
     winCondition: WinCondition
 } | {
     type: "targetsMessage",
