@@ -210,6 +210,8 @@ pub enum ChatMessageVariant {
     TargetHasRole { role: Role },
     #[serde(rename_all = "camelCase")]
     TargetHasWinCondition { win_condition: WinCondition },
+    #[serde(rename_all = "camelCase")]
+    PlayerHasWinCondition { player: PlayerIndex, win_condition: WinCondition },
 
     #[serde(rename_all = "camelCase")]
     WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},
