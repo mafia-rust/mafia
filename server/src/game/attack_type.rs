@@ -14,6 +14,7 @@ pub enum AttackType{
     Wildcard,
     Reliant,
 }
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct AttackData {
     pub attack_type: AttackType,
     //Only needs to be correct if the player can attack
@@ -68,6 +69,24 @@ impl AttackData {
         AttackData {
             attack_type: AttackType::Reliant,
             town_on_grave: actor_ref.town_on_grave(game)
+        }
+    }
+    pub fn is_attack(&self) -> bool {
+        match &self.attack_type {
+            AttackType::Attack{..} => true,
+            _ => false,
+        }
+    }
+    pub fn is_none(&self) -> bool {
+        match &self.attack_type {
+            AttackType::None => true,
+            _ => false,
+        }
+    }
+    pub fn is_wildcard(&self) -> bool {
+        match &self.attack_type {
+            AttackType::Wildcard => true,
+            _ => false,
         }
     }
 }

@@ -373,6 +373,11 @@ mod macros {
                         $(Self::$name(role_struct) => ClientRoleStateEnum::$name(role_struct.get_client_role_state(game, actor_ref))),*
                     }
                 }
+                pub fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.attack_data(game, actor_ref)),*
+                    }
+                }
             }
             $(
                 impl From<$file::$name> for RoleState where $name: RoleStateImpl {

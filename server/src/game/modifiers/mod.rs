@@ -94,7 +94,7 @@ pub enum ModifierType{
 impl ModifierType{
     pub fn default_state(&self)->ModifierState{
         match self{
-             Self::ObscuredGraves => ModifierState::ObscuredGraves(ObscuredGraves),
+            Self::ObscuredGraves => ModifierState::ObscuredGraves(ObscuredGraves),
             Self::RandomLoveLinks => ModifierState::RandomLoveLinks(RandomLoveLinks),
             Self::SkipDay1 => ModifierState::SkipDay1(SkipDay1),
             Self::DeadCanChat => ModifierState::DeadCanChat(DeadCanChat),

@@ -401,6 +401,10 @@ impl PlayerReference{
         GameConclusion::keeps_game_running(self.role(game))
     }
 
+    /// If they can kill then they keep the game running
+    pub fn keeps_game_running_deathmatch_quick(&self, game: &Game) -> bool {
+        self.role_state(game).attack_data(game, *self).is_attack()
+    }
     /*
         Role functions
     */
