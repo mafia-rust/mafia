@@ -1,6 +1,6 @@
 use std::{collections::VecDeque, time::{Duration, Instant}};
 
-use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
+use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game, RejectStartReason}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
 
 use super::{lobby_client::{LobbyClient, LobbyClientID, LobbyClientType, Ready}, name_validation::{self, sanitize_server_name}, Lobby, LobbyState};
 
@@ -12,7 +12,6 @@ impl Lobby {
 
         //RATE LIMITER
         match incoming_packet {
-            ToServerPacket::Vote { .. } |
             ToServerPacket::Judgement { .. } |
             ToServerPacket::SendChatMessage { .. } |
             ToServerPacket::SendLobbyMessage { .. } |
@@ -49,7 +48,7 @@ impl Lobby {
                         break;
                     }
                 }
-                if last_message_times.len() >= (MESSAGE_PER_SECOND_LIMIT_TIME.as_secs() * MESSAGE_PER_SECOND_LIMIT) as usize {
+                if last_message_times.len() as u64 >= MESSAGE_PER_SECOND_LIMIT_TIME.as_secs() * MESSAGE_PER_SECOND_LIMIT {
                     send.send(ToClientPacket::RateLimitExceeded);
                     return;
                 }
@@ -147,10 +146,10 @@ impl Lobby {
                 let mut ready = Vec::new();
                 for client in clients.iter() {
                     if client.1.ready == Ready::Ready {
-                        ready.push(client.0.clone());
+                        ready.push(*client.0);
                     }
                 }
-                Self::send_to_all(&self, ToClientPacket::PlayersReady { ready });
+                Self::send_to_all(self, ToClientPacket::PlayersReady { ready });
             },
             ToServerPacket::SetLobbyName{ name } => {
                 let LobbyState::Lobby { .. } = self.lobby_state else {
@@ -162,12 +161,12 @@ impl Lobby {
 
                 let name = sanitize_server_name(name);
                 let name = if name.is_empty() {
-                    self.name = name_validation::DEFAULT_SERVER_NAME.to_string();
-                    self.name.clone()
+                    name_validation::DEFAULT_SERVER_NAME.to_string()
                 } else {
-                    self.name = name.clone();
-                    self.name.clone()
+                    name
                 };
+
+                self.name.clone_from(&name);
                 
                 self.send_to_all(ToClientPacket::LobbyName { name })
             },
@@ -197,7 +196,7 @@ impl Lobby {
                 let mut next_player_index: PlayerIndex = 0;
                 let mut next_spectator_index: SpectatorIndex = 0;
 
-                for (lobby_client_id, lobby_client) in clients.clone().into_iter() {
+                for (lobby_client_id, lobby_client) in clients.clone() {
                     
                     game_clients.insert(lobby_client_id, 
                         if let LobbyClientType::Spectator = lobby_client.client_type {
@@ -222,14 +221,24 @@ impl Lobby {
                                 connection: lobby_client.connection,
                                 name: name.clone(),
                             });
-                            next_player_index += 1;
+                            if let Some(new_player_index) = next_player_index.checked_add(1) {
+                                next_player_index = new_player_index;
+                            } else {
+                                send.send(ToClientPacket::RejectStart { reason: RejectStartReason::TooManyClients });
+                                return;
+                            }
                         },
                         LobbyClientType::Spectator => {
                             game_spectator_params.push(SpectatorInitializeParameters{
                                 host: lobby_client.is_host(),
                                 connection: lobby_client.connection,
                             });
-                            next_spectator_index += 1;
+                            if let Some(new_spectator_index) = next_spectator_index.checked_add(1) {
+                                next_spectator_index = new_spectator_index;
+                            } else {
+                                send.send(ToClientPacket::RejectStart { reason: RejectStartReason::TooManyClients });
+                                return;
+                            }
                         }
                     }
                 }
@@ -373,8 +382,8 @@ impl Lobby {
                 }
 
                 let mut new_clients = VecMap::new();
-                for (lobby_client_id, game_client) in clients.clone().into_iter() {
-                    new_clients.insert(lobby_client_id, LobbyClient::new_from_game_client(&game, game_client));
+                for (lobby_client_id, game_client) in clients.clone() {
+                    new_clients.insert(lobby_client_id, LobbyClient::new_from_game_client(game, game_client));
                 }
 
 
@@ -383,12 +392,12 @@ impl Lobby {
                     clients: new_clients,
                 };
 
-                Self::send_to_all(&self, ToClientPacket::BackToLobby);
+                self.send_to_all(ToClientPacket::BackToLobby);
 
                 match &self.lobby_state {
                     LobbyState::Lobby { clients, settings } => {
                         for (id, client) in clients.iter() {
-                            client.send(ToClientPacket::YourId { player_id: id.clone() });
+                            client.send(ToClientPacket::YourId { player_id: *id });
                             Self::send_settings(client, settings, self.name.clone());
                         }
                         Self::send_players_lobby(clients);

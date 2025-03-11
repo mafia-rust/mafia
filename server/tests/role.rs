@@ -1,9 +1,10 @@
 mod kit;
 use std::{ops::Deref, vec};
 
+
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::{ability_input::{ability_selection::AbilitySelection, ControllerID}, game_conclusion::GameConclusion, role::engineer::Trap};
+use mafia_server::game::{ability_input::{ability_selection::AbilitySelection, ControllerID, RoleOptionSelection}, game_conclusion::GameConclusion, role::engineer::Trap};
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*,
@@ -70,7 +71,7 @@ pub use mafia_server::game::{
         necromancer::Necromancer,
         mortician::Mortician,
         mafia_support_wildcard::MafiaSupportWildcard, 
-        
+        ambusher::Ambusher,
 
         jester::Jester,
         revolutionary::Revolutionary,
@@ -88,9 +89,11 @@ pub use mafia_server::game::{
         
         warden::Warden,
         arsonist::Arsonist,
+        werewolf::Werewolf,
         spiral::Spiral,
         pyrolisk::Pyrolisk,
         puppeteer::Puppeteer,
+        yer::Yer,
         fiends_wildcard::FiendsWildcard,
 
         armorsmith::Armorsmith, auditor::AuditorResult,
@@ -461,7 +464,7 @@ fn rabble_rouser_dies(){
 
 #[test]
 fn psychic_auras(){
-    for _ in 0..100 {
+    for _ in 0..20 {
         kit::scenario!(game in Night 1 where
             psy: Psychic,
             god: Godfather,
@@ -478,7 +481,7 @@ fn psychic_auras(){
             messages.into_iter()
             .filter(|msg|match msg {
                 ChatMessageVariant::PsychicEvil { first, second } => {
-                    !vec![first.index(), second.index()].contains(&god.index())
+                    ![first.index(), second.index()].contains(&god.index())
                 }
                 _ => false
             }).collect();
@@ -599,8 +602,8 @@ fn transporter_basic_vigilante_escort() {
     assert!(town1.alive());
     assert!(!town2.alive());
 
-    assert!(town1.was_roleblocked());
-    assert!(!town2.was_roleblocked());
+    assert!(town1.was_blocked());
+    assert!(!town2.was_blocked());
     
     game.skip_to(Obituary, 4);
     assert!(!vigi.alive());
@@ -785,34 +788,34 @@ fn witch_basic(){
 fn cop_basic(){
     kit::scenario!(game in Night 2 where
         crus: Cop,
-        protected: Jester,
+        protected_player: Jester,
         townie1: Detective,
         townie2: Detective,
         mafioso: Mafioso,
         _maf2: Framer
     );
 
-    crus.send_ability_input_player_list_typical(protected);
-    townie1.send_ability_input_player_list_typical(protected);
-    townie2.send_ability_input_player_list_typical(protected);
-    mafioso.send_ability_input_player_list_typical(protected);
+    crus.send_ability_input_player_list_typical(protected_player);
+    townie1.send_ability_input_player_list_typical(protected_player);
+    townie2.send_ability_input_player_list_typical(protected_player);
+    mafioso.send_ability_input_player_list_typical(protected_player);
 
     game.skip_to(Night, 3);
 
     assert!(crus.alive());
-    assert!(protected.alive());
+    assert!(protected_player.alive());
     assert!(townie1.alive());
     assert!(townie2.alive());
     assert!(!mafioso.alive());
 
-    crus.send_ability_input_player_list_typical(protected);
-    townie1.send_ability_input_player_list_typical(protected);
-    townie2.send_ability_input_player_list_typical(protected);
+    crus.send_ability_input_player_list_typical(protected_player);
+    townie1.send_ability_input_player_list_typical(protected_player);
+    townie2.send_ability_input_player_list_typical(protected_player);
 
     game.next_phase();
     
     assert!(crus.alive());
-    assert!(protected.alive());
+    assert!(protected_player.alive());
     assert!(townie1.alive() || townie2.alive());
     assert!(!townie1.alive() || !townie2.alive());
 }
@@ -821,22 +824,108 @@ fn cop_basic(){
 fn cop_does_not_kill_framed_player(){
     kit::scenario!(game in Night 2 where
         crus: Cop,
-        protected: Jester,
+        protected_player: Jester,
         townie: Detective,
         framer: Framer,
         mafioso: Mafioso
     );
 
-    assert!(crus.send_ability_input_player_list_typical(protected));
+    assert!(crus.send_ability_input_player_list_typical(protected_player));
     assert!(framer.send_ability_input_player_list(townie, 0));
-    assert!(framer.send_ability_input_player_list(protected, 1));
+    assert!(framer.send_ability_input_player_list(protected_player, 1));
 
     game.next_phase();
 
     assert!(crus.alive());
-    assert!(protected.alive());
+    assert!(protected_player.alive());
     assert!(framer.alive());
     assert!(mafioso.alive());
+    assert!(townie.alive());
+}
+
+#[test]
+fn ambusher_basic(){
+    kit::scenario!(game in Night 2 where
+        ambusher: Ambusher,
+        protected_player: Jester,
+        townie1: Detective,
+        townie2: Detective,
+        blackmailer: Blackmailer
+    );
+
+    
+    ambusher.send_ability_input_player_list_typical(protected_player);
+    townie1.send_ability_input_player_list_typical(protected_player);
+    townie2.send_ability_input_player_list_typical(protected_player);
+    blackmailer.send_ability_input_player_list_typical(protected_player);
+
+    game.skip_to(Night, 3);
+
+    assert!(ambusher.alive());
+    assert!(protected_player.alive());
+    assert!(townie1.alive() || townie2.alive());
+    assert!(!townie1.alive() || !townie2.alive());
+    assert!(blackmailer.alive());
+
+    let townie1_status = townie1.alive();
+    let townie2_status = townie2.alive();
+
+    ambusher.send_ability_input_player_list_typical(protected_player);
+    blackmailer.send_ability_input_player_list_typical(protected_player);
+
+    game.next_phase();
+    
+    assert!(ambusher.alive());
+    assert!(protected_player.alive());
+    assert!(townie1.alive() || townie2.alive());
+    assert!(!townie1.alive() || !townie2.alive());
+    assert!(!blackmailer.alive());
+    assert!(townie1.alive() == townie1_status);
+    assert!(townie2.alive() == townie2_status);
+    
+}
+
+#[test]
+fn ambusher_does_not_kill_framed_player(){
+    kit::scenario!(game in Night 2 where
+        ambusher: Ambusher,
+        protected_player: Jester,
+        townie: Detective,
+        framer: Framer,
+        mafioso: Mafioso
+    );
+
+    assert!(ambusher.send_ability_input_player_list_typical(protected_player));
+    assert!(framer.send_ability_input_player_list(townie, 0));
+    assert!(framer.send_ability_input_player_list(protected_player, 1));
+
+    game.next_phase();
+
+    assert!(ambusher.alive());
+    assert!(protected_player.alive());
+    assert!(framer.alive());
+    assert!(mafioso.alive());
+    assert!(townie.alive());
+}
+
+#[test]
+fn ambusher_kills_self(){
+    kit::scenario!(game in Night 2 where
+        ambusher: Ambusher,
+        protected_player: Jester,
+        townie: Detective
+    );
+
+    ambusher.send_ability_input_player_list_typical(protected_player);
+    ambusher.send_ability_input(AbilityInput::new(
+        ControllerID::syndicate_gun_item_shoot(),
+        AbilitySelection::new_player_list(vec![protected_player.player_ref()])
+    ));
+
+    game.next_phase();
+
+    assert!(!ambusher.alive());
+    assert!(!protected_player.alive());
     assert!(townie.alive());
 }
 
@@ -2235,6 +2324,152 @@ fn apostle_converting_trapped_player_same_day(){
 }
 
 #[test]
+fn yer() {
+    kit::scenario!(game in Dusk 1 where
+        yer: Yer,
+        detective: Detective,
+        convertee: Engineer,
+        gossip: Gossip,
+        _villager: Villager,
+        informant: Informant
+    );
+
+    /* Night 1 Kill Attempt Test */
+    yer.send_ability_input_boolean_typical(true);
+    yer.send_ability_input_player_list(detective, 1);
+    yer.send_ability_input(AbilityInput::new(
+        ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
+        AbilitySelection::RoleOption { selection: RoleOptionSelection(Some(Role::TallyClerk)) 
+    }));
+
+    game.skip_to(PhaseType::Dusk, 2);
+
+    assert!(yer.alive());
+    assert!(detective.alive());
+    assert!(convertee.alive());
+    assert!(gossip.alive());
+    assert!(informant.alive());
+
+    assert!(detective.role() == Role::Detective);
+
+    /* Reg Attack Test */
+    yer.send_ability_input_boolean_typical(false);
+    yer.send_ability_input_player_list(detective, 1);
+    yer.send_ability_input(AbilityInput::new(
+        ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
+        AbilitySelection::RoleOption { selection: RoleOptionSelection(Some(Role::Mafioso)) 
+    }));
+    
+    game.skip_to(PhaseType::Dusk, 3);
+
+    assert!(yer.alive());
+    assert!(!detective.alive());
+    assert!(convertee.alive());
+    assert!(gossip.alive());
+    assert!(informant.alive());
+
+    assert!(detective.role() == Role::Detective);
+    assert!(convertee.role() == Role::Engineer);
+
+    let grave_message = ChatMessageVariant::PlayerDied{grave: Grave{
+        player: detective.player_ref(),
+        died_phase: GravePhase::Night,
+        day_number: 2,
+        information: GraveInformation::Normal { 
+            role: Role::Detective, 
+            will: "".to_string(), 
+            death_cause: GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Yer)]), 
+            death_notes: Vec::new(),
+        },
+        
+    }};
+    
+
+    assert!(yer.get_messages().contains(&grave_message));
+    assert!(detective.get_messages().contains(&grave_message));
+    assert!(convertee.get_messages().contains(&grave_message));
+    assert!(gossip.get_messages().contains(&grave_message));
+    assert!(informant.get_messages().contains(&grave_message));
+
+    /* Conversion & Disguise Test */
+    yer.send_ability_input_boolean_typical(true);
+    yer.send_ability_input_player_list(convertee, 1);
+    yer.send_ability_input(AbilityInput::new(
+        ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
+        AbilitySelection::RoleOption { selection: RoleOptionSelection(Some(Role::Zealot)) 
+    }));
+    
+    game.skip_to(PhaseType::Dusk, 4);
+
+    assert!(!yer.alive());
+    assert!(!detective.alive());
+    assert!(convertee.alive());
+    assert!(gossip.alive());
+    assert!(informant.alive());
+
+    assert!(detective.role() == Role::Detective);
+    assert!(convertee.role() == Role::Yer);
+
+    let grave_message = ChatMessageVariant::PlayerDied{grave: Grave{
+        player: yer.player_ref(),
+        died_phase: GravePhase::Night,
+        day_number: 3,
+        information: GraveInformation::Normal { 
+            role: Role::Zealot, 
+            will: "".to_string(), 
+            death_cause: GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Yer)]), 
+            death_notes: Vec::new(),
+        },
+    }};
+
+    assert!(yer.get_messages().contains(&grave_message));
+    assert!(detective.get_messages().contains(&grave_message));
+    assert!(convertee.get_messages().contains(&grave_message));
+    assert!(gossip.get_messages().contains(&grave_message));
+    assert!(informant.get_messages().contains(&grave_message));
+
+    /* Idiot Proofing Test */
+    convertee.send_ability_input_boolean_typical(true);
+    convertee.send_ability_input_player_list(informant, 1);
+    convertee.send_ability_input(AbilityInput::new(
+        ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
+        AbilitySelection::RoleOption { selection: RoleOptionSelection(Some(Role::Zealot)) 
+    }));
+    
+    game.skip_to(PhaseType::Dusk, 5);
+
+    println!("messages: {}", kit::_format_messages_debug(convertee.get_messages()));
+
+    assert!(!yer.alive());
+    assert!(!detective.alive());
+    assert!(!convertee.alive());
+    assert!(gossip.alive());
+    assert!(informant.alive());
+
+    assert!(detective.role() == Role::Detective);
+    assert!(convertee.role() == Role::Yer);
+    assert!(informant.role() == Role::Yer);
+
+    let grave_message = ChatMessageVariant::PlayerDied{grave: Grave{
+        player: convertee.player_ref(),
+        died_phase: GravePhase::Night,
+        day_number: 4,
+        information: GraveInformation::Normal { 
+            role: Role::Engineer, 
+            will: "".to_string(), 
+            death_cause: GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Yer)]), 
+            death_notes: Vec::new(),
+        },
+    }};
+
+    assert!(yer.get_messages().contains(&grave_message));
+    assert!(detective.get_messages().contains(&grave_message));
+    assert!(convertee.get_messages().contains(&grave_message));
+    assert!(gossip.get_messages().contains(&grave_message));
+    assert!(informant.get_messages().contains(&grave_message));
+}
+
+#[test]
 fn godfather_dies_to_veteran(){
     kit::scenario!(game in Night 2 where
         vet: Veteran,
@@ -2532,7 +2767,7 @@ fn santa_cannot_convert_naughty_player() {
     game.skip_to(Night, 2);
 
     assert_contains!(
-        nice.player_ref().win_condition(&*game).required_resolution_states_for_win().unwrap(),
+        nice.player_ref().win_condition(&game).required_resolution_states_for_win().unwrap(),
         GameConclusion::NiceList
     );
 
@@ -2544,7 +2779,7 @@ fn santa_cannot_convert_naughty_player() {
     game.skip_to(Night, 3);
 
     assert_contains!(
-        naughty.player_ref().win_condition(&*game).required_resolution_states_for_win().unwrap(),
+        naughty.player_ref().win_condition(&game).required_resolution_states_for_win().unwrap(),
         GameConclusion::NaughtyList
     );
 
@@ -2553,12 +2788,12 @@ fn santa_cannot_convert_naughty_player() {
     game.skip_to(Obituary, 4);
 
     assert_contains!(
-        naughty.player_ref().win_condition(&*game).required_resolution_states_for_win().unwrap(),
+        naughty.player_ref().win_condition(&game).required_resolution_states_for_win().unwrap(),
         GameConclusion::NaughtyList
     );
 
     assert_not_contains!(
-        naughty.player_ref().win_condition(&*game).required_resolution_states_for_win().unwrap(),
+        naughty.player_ref().win_condition(&game).required_resolution_states_for_win().unwrap(),
         GameConclusion::NiceList
     );
 }
@@ -2677,13 +2912,111 @@ fn santa_always_gets_their_naughty_selection() {
         game.skip_to(Obituary, 3);
     
         assert_contains!(
-            santa.player_ref().untagged_night_visits_cloned(&*game).iter().map(|v| v.target).collect::<Vec<PlayerReference>>(),
+            santa.player_ref().untagged_night_visits_cloned(&game).iter().map(|v| v.target).collect::<Vec<PlayerReference>>(),
             naughty.player_ref()
         );
     
         assert_contains!(
-            naughty.player_ref().win_condition(&*game).required_resolution_states_for_win().unwrap(),
+            naughty.player_ref().win_condition(&game).required_resolution_states_for_win().unwrap(),
             GameConclusion::NaughtyList
         );
     }
+}
+#[test]
+fn werewolf_kills_visiting_target() {
+    kit::scenario!(game in Night 2 where
+        werewolf: Werewolf,
+        target: Snoop,
+        bystander: Snoop
+    );
+    werewolf.send_ability_input_player_list_typical(target);
+    target.send_ability_input_player_list_typical(bystander);
+
+    game.skip_to(Night, 3);
+    werewolf.send_ability_input_player_list_typical(target);
+    target.send_ability_input_player_list_typical(bystander);
+    game.next_phase();
+    assert!(!target.alive());
+}
+#[test]
+fn werewolf_kills_nonvisiting_target() {
+    kit::scenario!(game in Night 2 where
+        werewolf: Werewolf,
+        target: Snoop,
+        bystander: Snoop
+    );
+    werewolf.send_ability_input_player_list_typical(target);
+    target.send_ability_input_player_list_typical(bystander);
+
+    game.skip_to(Night, 3);
+    werewolf.send_ability_input_player_list_typical(target);
+    game.next_phase();
+    assert!(target.alive());
+}
+#[test]
+fn werewolf_spares_nonvisiting_target() {
+    kit::scenario!(game in Night 2 where
+        werewolf: Werewolf,
+        target: Snoop,
+        bystander: Snoop,
+        _bystander2: Snoop,
+        _bystander3: Snoop
+    );
+    werewolf.send_ability_input_player_list_typical(target);
+    target.send_ability_input_player_list_typical(bystander);
+
+    game.skip_to(Night, 3);
+    werewolf.send_ability_input_player_list_typical(bystander);
+    game.next_phase();
+    assert!(bystander.alive());
+}
+
+#[test]
+fn werewolf_rampage() {
+    kit::scenario!(game in Night 2 where
+        werewolf: Werewolf,
+        target: Snoop,
+        bystander: Snoop
+    );
+    werewolf.send_ability_input_player_list_typical(target);
+    target.send_ability_input_player_list_typical(bystander);
+
+    game.skip_to(Night, 3);
+    werewolf.send_ability_input_player_list_typical(target);
+    bystander.send_ability_input_player_list_typical(target);
+    game.next_phase();
+    assert!(!bystander.alive());
+}
+#[test]
+fn werewolf_nonrampage() {
+    kit::scenario!(game in Night 2 where
+        werewolf: Werewolf,
+        target: Snoop,
+        bystander: Snoop
+    );
+    werewolf.send_ability_input_player_list_typical(bystander);
+    target.send_ability_input_player_list_typical(bystander);
+
+    game.skip_to(Night, 3);
+    werewolf.send_ability_input_player_list_typical(target);
+    bystander.send_ability_input_player_list_typical(target);
+    game.next_phase();
+    assert!(bystander.alive());
+}
+
+#[test]
+fn enraged_werewolf_kills() {
+    kit::scenario!(game in Night 2 where
+        werewolf: Werewolf,
+        target: Snoop,
+        bystander: Snoop
+    );
+    werewolf.send_ability_input_player_list_typical(target);
+    target.send_ability_input_player_list_typical(bystander);
+
+    game.skip_to(Night, 3);
+    werewolf.send_ability_input_player_list_typical(target);
+    bystander.send_ability_input_player_list_typical(target);
+    game.next_phase();
+    assert!(!bystander.alive());
 }

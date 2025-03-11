@@ -1084,6 +1084,7 @@
                 "trackedPlayer": 42,
                 "players":[]
             },
+            {"type": "werewolfTracked"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]

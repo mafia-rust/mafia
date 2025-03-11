@@ -3,6 +3,7 @@ use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::components::night_visits::NightVisits;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
@@ -34,7 +35,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 impl RoleStateImpl for Cop {
     type ClientRoleState = ClientRoleState;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if game.day_number() == 1 {return}
+        if game.day_number() <= 1 {return}
 
         match priority {
             Priority::Heal => {
@@ -49,35 +50,41 @@ impl RoleStateImpl for Cop {
             Priority::Kill => {
                 
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-                let Some(visit) = actor_visits.first() else {return};
-                let target_ref = visit.target;
+                let Some(ambush_visit) = actor_visits.first() else {return};
+                let target_ref = ambush_visit.target;
 
-                let player_to_attack =
-                if let Some(non_town_visitor) = PlayerReference::all_players(game)
-                    .filter(|other_player_ref|
-                        other_player_ref.alive(game) &&
-                        *other_player_ref != actor_ref &&
-                        !other_player_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
-                        target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
-                    ).collect::<Vec<PlayerReference>>()
+                let player_to_attacks_visit = 
+                if let Some(priority_visitor) = NightVisits::all_visits(game).into_iter()
+                    .filter(|visit|
+                        ambush_visit != *visit &&
+                        visit.target == target_ref &&
+                        visit.visitor.alive(game) &&
+                        !visit.visitor.win_condition(game).is_loyalist_for(GameConclusion::Town)
+                    ).collect::<Vec<&Visit>>()
                     .choose(&mut rand::rng())
-                    .copied(){
-                    Some(non_town_visitor)
-                }else if let Some(town_visitor) = PlayerReference::all_players(game)
-                    .filter(|other_player_ref|
-                        other_player_ref.alive(game) &&
-                        *other_player_ref != actor_ref &&
-                        target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
-                    ).collect::<Vec<PlayerReference>>()
-                    .choose(&mut rand::rng())
-                    .copied(){
-                    Some(town_visitor)
-                }else{
-                    None
+                    .copied()
+                {
+                    Some(priority_visitor.visitor)
+                } else {
+                    NightVisits::all_visits(game).into_iter()
+                        .filter(|visit|
+                            ambush_visit != *visit &&
+                            visit.target == target_ref &&
+                            visit.visitor.alive(game)
+                        ).collect::<Vec<&Visit>>()
+                        .choose(&mut rand::rng())
+                        .copied()
+                        .map(|v|v.visitor)
                 };
 
-                if let Some(player_to_attack) = player_to_attack{
-                    player_to_attack.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Cop), AttackPower::Basic, false);
+                if let Some(player_to_attack) = player_to_attacks_visit{
+                    player_to_attack.try_night_kill_single_attacker(
+                        actor_ref,
+                        game,
+                        GraveKiller::Role(Role::Cop),
+                        AttackPower::Basic,
+                        false
+                    );
                 }
             }
             Priority::Investigative => {
@@ -98,7 +105,7 @@ impl RoleStateImpl for Cop {
             actor_ref,
             false,
             true,
-            !(game.day_number() > 1),
+            game.day_number() <= 1,
             ControllerID::role(actor_ref, Role::Cop, 0)
         )
     }

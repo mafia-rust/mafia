@@ -9,13 +9,18 @@ pub struct Detained{
     //resets every obituary
     pub players: HashSet<PlayerReference>,
 }
+impl Game {
+    pub fn detained(&self)->&Detained{
+        &self.detained
+    }
+    pub fn detained_mut(&mut self)->&mut Detained{
+        &mut self.detained
+    }
+}
 impl Detained{
     pub fn on_phase_start(game: &mut Game, phase: PhaseType){
-        match phase {
-            PhaseType::Obituary => {
-                Detained::clear_detain(game);
-            }
-            _ => {}
+        if phase == PhaseType::Obituary {
+            Detained::clear_detain(game);
         }
     }
     pub fn on_night_priority(game: &mut Game, priority: Priority){
@@ -36,12 +41,6 @@ impl Detained{
             }
             _ => {}
         }
-    }
-    pub fn detained<'a>(game: &'a Game)->&'a Detained{
-        &game.detained
-    }
-    pub fn detained_mut<'a>(game: &'a mut Game)->&'a mut Detained{
-        &mut game.detained
     }
 
     pub fn add_detain(game: &mut Game, player: PlayerReference){

@@ -54,7 +54,13 @@ impl RoleStateImpl for Jailor {
     
                     let target_ref = visit.target;
                     if Detained::is_detained(game, target_ref){
-                        target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Jailor), AttackPower::ProtectionPiercing, false);
+                        target_ref.try_night_kill_single_attacker(
+                            actor_ref,
+                            game, 
+                            GraveKiller::Role(Role::Jailor), 
+                            AttackPower::ProtectionPiercing, 
+                            false
+                        );
         
                         self.executions_remaining = 
                             if target_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) {0} else {self.executions_remaining.saturating_sub(1)};
@@ -92,7 +98,7 @@ impl RoleStateImpl for Jailor {
                 AbilitySelection::new_boolean(false),
                 actor_ref.ability_deactivated_from_death(game) ||
                 Detained::is_detained(game, actor_ref) || 
-                self.executions_remaining <= 0 ||
+                self.executions_remaining == 0 ||
                 game.day_number() <= 1 ||
                 self.jailed_target_ref.is_none(),
                 Some(PhaseType::Obituary),
@@ -102,7 +108,8 @@ impl RoleStateImpl for Jailor {
         )
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
-        let Some(AbilitySelection::Boolean {selection: BooleanSelection(true)}) = game.saved_controllers.get_controller_current_selection(ControllerID::role(actor_ref, Role::Jailor, 1)) else {return Vec::new()};
+        let Some(AbilitySelection::Boolean {selection: BooleanSelection(true)}) = game.saved_controllers.get_controller_current_selection(
+            ControllerID::role(actor_ref, Role::Jailor, 1)) else {return Vec::new()};
         let Some(target) = self.jailed_target_ref else {return Vec::new()};
         vec![Visit::new_none(actor_ref, target, true)]
     }
@@ -152,4 +159,5 @@ impl RoleStateImpl for Jailor {
             _ => {}
         }
     }
+    fn on_visit_wardblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _visit: Visit) {}
 }

@@ -1,7 +1,7 @@
 import React, { JSXElementConstructor, ReactElement, useRef, createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import "../index.css";
 import "./anchor.css";
-import translate, { switchLanguage } from "../game/lang";
+import { switchLanguage } from "../game/lang";
 import GlobalMenu from "./GlobalMenu";
 import { loadSettingsParsed } from "../game/localStorage";
 import LoadingScreen from "./LoadingScreen";
@@ -12,7 +12,6 @@ import { ChatMessage } from "../components/ChatMessage";
 import WikiCoverCard from "../components/WikiCoverCard";
 import WikiArticle from "../components/WikiArticle";
 import AudioController from "./AudioController";
-import { Helmet } from "react-helmet";
 
 const MobileContext = createContext<boolean | undefined>(undefined);
 
@@ -105,12 +104,17 @@ export default function Anchor(props: Readonly<{
         document.documentElement.style.fontSize = `${n}em`;
     }
     const setAccessibilityFontEnabled = (enabled: boolean) => {
-        const font = enabled ? 'game-accessible' : 'game-base';
+
+        const getFont = (font: string, enabled: boolean) => enabled === true ? 'game-accessible-font' : font;
+
         const iconFactor = enabled ? '1.2' : '1';
 
-        document.documentElement.style.setProperty('--game-font', font);
-        document.documentElement.style.setProperty('--kira-font', font === `game-base` ? `game-kira` : font);
-        document.documentElement.style.setProperty('--spiral-font', font === `game-base` ? `game-spiral` : font);
+        document.documentElement.style.setProperty('--game-font', getFont('game-base-font', enabled));
+        document.documentElement.style.setProperty('--kira-font', getFont('game-kira-font', enabled));
+        document.documentElement.style.setProperty('--spiral-font', getFont('game-spiral-font', enabled));
+        document.documentElement.style.setProperty('--title-font', getFont('game-title-font', enabled));
+        document.documentElement.style.setProperty('--computer-font', getFont('computer-font', enabled));
+        document.documentElement.style.setProperty('--legible-computer-font', getFont('legible-computer-font', enabled));
         document.documentElement.style.setProperty('--icon-factor', iconFactor);
     }
 
@@ -230,16 +234,6 @@ export default function Anchor(props: Readonly<{
                     setTouchCurrent(null)
                 }}
             >
-                <Helmet>
-                    <title>🌹{translate("menu.start.title")}🔪</title>
-                    <meta name="twitter:site" content={translate("menu.start.title")}></meta>
-                    <meta name="og:site" content={translate("menu.start.title")}></meta>
-                    <meta name="twitter:title" content={translate("menu.start.title")}></meta>
-                    <meta name="og:title" content={translate("menu.start.title")}></meta>
-                    <meta name="twitter:description" content={translate("menu.start.description")}></meta>
-                    <meta name="og:description" content={translate("menu.start.description")}></meta>
-                    <meta name="twitter:card" content="summary_large_image"></meta>
-                </Helmet>
                 <Button className="global-menu-button" 
                     onClick={() => {
                         if (!globalMenuOpen) {

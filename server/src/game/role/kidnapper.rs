@@ -52,7 +52,13 @@ impl RoleStateImpl for Kidnapper {
     
                     let target_ref = visit.target;
                     if Detained::is_detained(game, target_ref){
-                        target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Jailor), AttackPower::ProtectionPiercing, false);
+                        target_ref.try_night_kill_single_attacker(
+                            actor_ref, 
+                            game, 
+                            GraveKiller::Role(Role::Jailor), 
+                            AttackPower::ProtectionPiercing, 
+                            false
+                        );
         
                         self.executions_remaining = self.executions_remaining.saturating_sub(1);
                         actor_ref.set_role_state(game, self);
@@ -89,7 +95,7 @@ impl RoleStateImpl for Kidnapper {
                 AbilitySelection::new_boolean(false),
                 actor_ref.ability_deactivated_from_death(game) ||
                 Detained::is_detained(game, actor_ref) || 
-                self.executions_remaining <= 0 ||
+                self.executions_remaining == 0 ||
                 game.day_number() <= 1 ||
                 self.jailed_target_ref.is_none(),
                 Some(PhaseType::Obituary),
@@ -99,7 +105,8 @@ impl RoleStateImpl for Kidnapper {
         )
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
-        let Some(AbilitySelection::Boolean {selection: BooleanSelection(true)}) = game.saved_controllers.get_controller_current_selection(ControllerID::role(actor_ref, Role::Kidnapper, 1)) else {return Vec::new()};
+        let Some(AbilitySelection::Boolean {selection: BooleanSelection(true)}) = game.saved_controllers.get_controller_current_selection(
+            ControllerID::role(actor_ref, Role::Kidnapper, 1)) else {return Vec::new()};
         let Some(target) = self.jailed_target_ref else {return Vec::new()};
         vec![Visit::new_none(actor_ref, target, true)]
     }
@@ -155,11 +162,12 @@ impl RoleStateImpl for Kidnapper {
                 .filter(|p|p.alive(game))
                 .filter(|p|p.keeps_game_running(game))
                 .all(|p|
-                    WinCondition::are_friends(&p.win_condition(game), actor_ref.win_condition(game))
+                    WinCondition::are_friends(p.win_condition(game), actor_ref.win_condition(game))
                 )
 
         {
             actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
+    fn on_visit_wardblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _visit: Visit) {}
 }

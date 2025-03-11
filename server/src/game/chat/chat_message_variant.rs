@@ -18,7 +18,7 @@ pub enum MessageSender {
 }
 
 // Determines message color
-#[derive(PartialOrd, Ord, Clone, Debug, Serialize, PartialEq, Eq)]
+#[derive(PartialOrd, Ord, Clone, Debug, Serialize, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum ChatMessageVariant {
@@ -127,6 +127,7 @@ pub enum ChatMessageVariant {
     DeputyShotYou,
     #[serde(rename_all = "camelCase")]
     WardenPlayersImprisoned{players: Vec<PlayerReference>},
+    WerewolfTracked,
     
     #[serde(rename_all = "camelCase")]
     PlayerDiedOfABrokenHeart{player: PlayerIndex, lover: PlayerIndex},
@@ -157,8 +158,7 @@ pub enum ChatMessageVariant {
     /*
     Night Information
     */
-    RoleBlocked { immune : bool },
-
+    RoleBlocked,
     Wardblocked,
 
     SheriffResult {suspicious: bool},
@@ -207,6 +207,7 @@ pub enum ChatMessageVariant {
     TargetIsPossessionImmune,
     YouWerePossessed { immune: bool },
     TargetsMessage{message: Box<ChatMessageVariant>},
+    PlayerForwardedMessage{forwarder: PlayerReference, message: Box<ChatMessageVariant>},
     TargetHasRole { role: Role },
     #[serde(rename_all = "camelCase")]
     TargetHasWinCondition { win_condition: WinCondition },
