@@ -921,6 +921,8 @@
     "chatMessage.mediumHauntStarted":"\\0 has brought the dead to haunt \\1!",
     "chatMessage.mediumExists":"There is some way to communicate with the living so don't leave! Your information could be very important!",
     "chatMessage.jesterWon":"The Jester will get their revenge from the grave!",
+    "chatmessage.cowardHid": "You hid with somebody tonight.",
+    "chatmessage.cowardSaved": "Your cowardice saved you tonight.",
     "chatMessage.revolutionaryWon":"The Revolutionary got their target executed and won!",
     "chatMessage.chronokaiserSpeedUp":"The Chronokaiser speeds up time. Each phase is \\0% faster.",
     "chatMessage.deputyKilled":"The Deputy killed \\0!",

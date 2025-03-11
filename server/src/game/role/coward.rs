@@ -12,7 +12,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_set::VecSet;
 use super::{
-	ControllerID, ControllerParametersMap, GetClientRoleState, PlayerListSelection, Priority, Role, RoleStateImpl
+	ControllerID, ControllerParametersMap, GetClientRoleState, Priority, Role, RoleStateImpl
 };
 
 #[derive(Clone, Debug, Default)]
