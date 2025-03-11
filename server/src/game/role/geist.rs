@@ -22,7 +22,7 @@ pub struct Geist {
 }
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::None;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Geist {
     type ClientRoleState = Geist;
@@ -107,10 +107,11 @@ impl RoleStateImpl for Geist {
             actor_ref,
             false,
             false,
+            true,
             ControllerID::role(actor_ref, Role::Geist, 0)
         )
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference, _target_refs: Vec<PlayerReference>) -> Vec<Visit> {
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,
