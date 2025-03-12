@@ -54,9 +54,6 @@ impl RoleStateImpl for Coward {
             }
             
             for player_ref in PlayerReference::all_players(game){
-                if player_ref == actor_ref {continue;}
-                if player_ref.role(game) == Role::Transporter {continue;}
-    
     
                 let new_visits = player_ref.all_night_visits_cloned(game).clone().into_iter().map(|mut v|{
                     if
