@@ -11,7 +11,7 @@ use crate::{game::{
 use super::insider_group::InsiderGroupID;
 
 impl Game{
-    pub fn puppeteer_marionette<'a>(&'a self)->&'a PuppeteerMarionette{
+    pub fn puppeteer_marionette(&self)->&PuppeteerMarionette{
         &self.puppeteer_marionette
     }
     pub fn set_puppeteer_marionette(&mut self, puppeteer_marionette: PuppeteerMarionette){
@@ -48,7 +48,7 @@ impl PuppeteerMarionette{
                 .to_be_converted
                 .iter()
                 .filter(|p|p.alive(game))
-                .map(|p|p.clone())
+                .copied()
                 .collect::<Vec<_>>();
 
         PuppeteerMarionette::attack_players(game, marionettes, AttackPower::ProtectionPiercing);
@@ -57,7 +57,6 @@ impl PuppeteerMarionette{
         
         let puppeteers: VecSet<_> = PlayerReference::all_players(game)
             .filter(|p|p.role(game)==Role::Puppeteer)
-            .map(|p|p.clone())
             .collect();
 
         for player in players{
@@ -90,7 +89,6 @@ impl PuppeteerMarionette{
     pub fn puppeteers(game: &Game)->HashSet<PlayerReference>{
         PlayerReference::all_players(game)
             .filter(|p|p.role(game)==Role::Puppeteer)
-            .map(|p|p.clone())
             .collect()
     }
     pub fn marionettes_and_puppeteer(game: &Game)->HashSet<PlayerReference>{
