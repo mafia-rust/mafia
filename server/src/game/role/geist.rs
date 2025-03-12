@@ -107,7 +107,7 @@ impl RoleStateImpl for Geist {
             actor_ref,
             false,
             false,
-            true,
+            false,
             ControllerID::role(actor_ref, Role::Geist, 0)
         )
     }
