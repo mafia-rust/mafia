@@ -445,6 +445,7 @@
     
     "role.coward.name": "Coward",
     "role.coward.name:var.0": "Cowards",
+    "controllerId.role.coward.0.name": "Hide",
     
     "role.doomsayer.name": "Doomsayer",
     "role.doomsayer.name:var.0": "Doomsayers",

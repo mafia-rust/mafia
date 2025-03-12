@@ -1,9 +1,9 @@
 
 use serde::Serialize;
 
-use crate::game::attack_power::{AttackPower, DefensePower};
+use crate::game::attack_power::DefensePower;
 use crate::game::components::night_visits::NightVisits;
-use crate::game::grave::{GraveInformation, GraveKiller, GraveReference};
+use crate::game::grave::{GraveInformation, GraveReference};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::player::PlayerReference;
 
@@ -86,7 +86,7 @@ impl RoleStateImpl for Coward {
         crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
             game,
             actor_ref,
-            true,
+            false,
             true,
             false,
             ControllerID::role(actor_ref, Role::Coward, 0)
