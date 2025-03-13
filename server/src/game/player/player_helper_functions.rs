@@ -11,7 +11,7 @@ use crate::{game::{
         insider_group::InsiderGroupID, night_visits::NightVisits
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_player_roleblocked::OnPlayerRoleblocked, on_role_switch::OnRoleSwitch, on_visit_wardblocked::OnVisitWardblocked
-    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
+    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{armorsmith::Armorsmith, chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
 }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
 use super::PlayerReference;
@@ -335,7 +335,10 @@ impl PlayerReference{
     pub fn defense(&self, game: &Game) -> DefensePower {
         if game.current_phase().is_night() {
             self.night_defense(game)
-        }else{
+        } else if Armorsmith::has_armorsmith_armor(*self, game){
+            //incase a role with invincible defense gets added
+            DefensePower::Protection.max(self.role(game).defense())
+        } else {
             self.role(game).defense()
         }
     }
