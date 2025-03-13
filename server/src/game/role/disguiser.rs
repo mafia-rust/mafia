@@ -14,17 +14,10 @@ use crate::vec_set::{vec_set, VecSet};
 use super::{InsiderGroupID, Priority, Role, RoleStateImpl};
 
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Disguiser{
     pub current_target: Option<PlayerReference>
-}
-impl Default for Disguiser{
-    fn default() -> Self {
-        Self{
-            current_target: None
-        }
-    }
 }
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);

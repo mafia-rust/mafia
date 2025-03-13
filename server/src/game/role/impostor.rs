@@ -13,18 +13,10 @@ use super::godfather::Godfather;
 use super::{Priority, Role, RoleStateImpl};
 
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Default, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Impostor{
     pub backup: Option<PlayerReference>
-}
-
-impl Default for Impostor {
-    fn default() -> Self {
-        Self {
-            backup: None,
-        }
-    }
 }
 
 

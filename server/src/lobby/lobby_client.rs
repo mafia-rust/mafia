@@ -84,10 +84,7 @@ impl LobbyClient {
     }
 
     pub fn is_spectator(&self) -> bool {
-        match self.client_type {
-            LobbyClientType::Spectator => true,
-            _ => false
-        }
+        matches!(self.client_type, LobbyClientType::Spectator)
     }
 
     pub fn send(&self, message: ToClientPacket) {

@@ -13,7 +13,7 @@ use crate::game::Game;
 use crate::vec_set;
 use super::godfather::Godfather;
 use super::{
-    AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, GetClientRoleState, IntegerSelection, Priority, Role, RoleOptionSelection, RoleStateImpl, StringSelection
+    AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, GetClientRoleState, IntegerSelection, Priority, Role, RoleStateImpl, StringSelection
 };
 
 
@@ -62,13 +62,9 @@ impl RoleStateImpl for Counterfeiter {
 
                 let target_ref = visit.target;
 
-                let fake_role = if let Some(RoleOptionSelection(fake_role)) = game.saved_controllers
-                    .get_controller_current_selection_role_option(ControllerID::role(actor_ref, Role::Counterfeiter, 1)) {
-                    fake_role
-                } else {
-                    None
-                };
-
+                let fake_role = game.saved_controllers
+                    .get_controller_current_selection_role_option(ControllerID::role(actor_ref, Role::Counterfeiter, 1))
+                    .and_then(|p| p.0);
                 target_ref.set_night_grave_role(game, fake_role);
 
                 let fake_alibi = if let Some(StringSelection(string)) = game.saved_controllers
@@ -81,8 +77,7 @@ impl RoleStateImpl for Counterfeiter {
 
                 actor_ref.set_role_state(game, Counterfeiter { 
                     forges_remaining: self.forges_remaining.saturating_sub(1), 
-                    forged_ref: Some(target_ref), 
-                    ..self
+                    forged_ref: Some(target_ref)
                 });
             },
             Priority::Kill => {
