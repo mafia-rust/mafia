@@ -84,10 +84,7 @@ impl GameConclusion {
         {
             true
         }else{
-            match role {
-                Role::Apostle | Role::Zealot => true,
-                _ => false
-            }
+            matches!(role, Role::Apostle | Role::Zealot)
         }
     }
 }

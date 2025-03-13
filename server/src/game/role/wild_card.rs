@@ -35,7 +35,7 @@ impl RoleStateImpl for Wildcard {
             AvailableAbilitySelection::new_role_option(
                 Role::values().into_iter().filter(|role|
                     game.settings.enabled_roles.contains(role) && *role != Role::Wildcard
-                ).map(|r|Some(r)).chain(std::iter::once(None)).collect()
+                ).map(Some).chain(std::iter::once(None)).collect()
             ),
             AbilitySelection::new_role_option(None),
             actor_ref.ability_deactivated_from_death(game),
