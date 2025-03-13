@@ -105,7 +105,7 @@ impl RoleStateImpl for Cop {
             actor_ref,
             false,
             true,
-            !(game.day_number() > 1),
+            game.day_number() <= 1,
             ControllerID::role(actor_ref, Role::Cop, 0)
         )
     }

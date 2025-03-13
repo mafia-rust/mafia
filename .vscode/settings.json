@@ -21,6 +21,7 @@
         "Mafiosos",
         "Necro",
         "necronomicon",
+        "Nicholases",
         "Ojos",
         "Parris",
         "Playerlist",
@@ -61,5 +62,6 @@
     ],
     "rust-analyzer.linkedProjects": [
         "./server/Cargo.toml",
-    ]
+    ],
+    "rust-analyzer.check.command": "clippy"
 }

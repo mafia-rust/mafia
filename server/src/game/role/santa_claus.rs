@@ -58,7 +58,6 @@ impl RoleStateImpl for SantaClaus {
 
                     actor_ref.set_role_state(game, Self {
                         ability_used_last_night: Some(SantaListKind::Nice),
-                        ..self
                     });
                 }
             }
@@ -86,7 +85,6 @@ impl RoleStateImpl for SantaClaus {
 
                     actor_ref.set_role_state(game, Self {
                         ability_used_last_night: Some(SantaListKind::Naughty),
-                        ..self
                     });
                     
                     for krampus in PlayerReference::all_players(game) {
