@@ -14,6 +14,13 @@ impl<K, V> VecMap<K, V> where K: Eq {
     pub fn new() -> Self {
         VecMap { vec: Vec::new() }
     }
+    pub fn new_from_vec(vec: Vec<(K, V)>) -> Self {
+        let mut out = VecMap::new();
+        for (k, v) in vec {
+            out.insert(k, v);
+        }
+        out
+    }
 
     /// returns the old value if the key already exists
     pub fn insert(&mut self, key: K, value: V) -> Option<(K, V)>{
@@ -103,6 +110,9 @@ impl<K, V> VecMap<K, V> where K: Eq {
 
     pub fn values(&self) -> impl Iterator<Item = &V> {
         self.vec.iter().map(|(_, v)| v)
+    }
+    pub fn values_mut(&mut self) -> impl Iterator<Item = &mut V> {
+        self.vec.iter_mut().map(|(_, v)| v)
     }
 
     pub fn contains(&self, key: &K) -> bool {

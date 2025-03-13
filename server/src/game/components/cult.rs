@@ -25,31 +25,28 @@ impl Cult{
     pub fn on_phase_start(game: &mut Game, phase: PhaseType){
         Cult::set_ordered_cultists(game);
         
-        match phase {
-            PhaseType::Night => {
-                if let Some(ability) = Cult::ability_used_last_night(game) {
-                    match ability {
-                        CultAbility::Kill => {
-                            Cult::set_next_ability(game, CultAbility::Convert);
-                        },
-                        CultAbility::Convert => {
-                            Cult::set_next_ability(game, CultAbility::Kill);
-                        }
-                    }
-                    Cult::set_ability_used_last_night(game, None);
-                }
-
-
-                match Cult::next_ability(game) {
+        if phase == PhaseType::Night {
+            if let Some(ability) = Cult::ability_used_last_night(game) {
+                match ability {
                     CultAbility::Kill => {
-                        game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::CultKillsNext);
+                        Cult::set_next_ability(game, CultAbility::Convert);
                     },
                     CultAbility::Convert => {
-                        game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::CultConvertsNext);
+                        Cult::set_next_ability(game, CultAbility::Kill);
                     }
                 }
-            },
-            _ => {}
+                Cult::set_ability_used_last_night(game, None);
+            }
+
+
+            match Cult::next_ability(game) {
+                CultAbility::Kill => {
+                    game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::CultKillsNext);
+                },
+                CultAbility::Convert => {
+                    game.add_message_to_chat_group(ChatGroup::Cult, ChatMessageVariant::CultConvertsNext);
+                }
+            }
         }
     }
     pub fn on_game_start(game: &mut Game) {
@@ -61,21 +58,13 @@ impl Cult{
     pub fn on_role_switch(game: &mut Game, _old: Role, _new: Role) {
         Cult::set_ordered_cultists(game);
     }
-    
-    
-    pub fn get_members(game: &Game)->Vec<PlayerReference>{
-        PlayerReference::all_players(game).filter(|p| 
-            RoleSet::Cult.get_roles().contains(&p.role(game)) &&
-            InsiderGroupID::Cult.is_player_in_revealed_group(game, *p)
-        ).collect()
-    }
 
     pub fn set_ordered_cultists(game: &mut Game){
 
         let mut cult = game.cult().clone();
 
         // Remove dead
-        cult.ordered_cultists = cult.ordered_cultists.iter().cloned().filter(|p|
+        cult.ordered_cultists = cult.ordered_cultists.iter().copied().filter(|p|
             RoleSet::Cult.get_roles().contains(&p.role(game)) &&
             InsiderGroupID::Cult.is_player_in_revealed_group(game, *p) &&
             p.alive(game)
@@ -96,7 +85,7 @@ impl Cult{
         for (i, player_ref) in cult.ordered_cultists.iter().enumerate(){
             let role = if i == 0 {
                 RoleState::Apostle(Apostle)
-            }else if i == cult.ordered_cultists.len() - 1 {
+            }else if cult.ordered_cultists.len().checked_sub(1).is_some_and(|last_index| last_index == i) {
                 RoleState::Zealot(Zealot)
             }else{
                 RoleState::Disciple(Disciple)

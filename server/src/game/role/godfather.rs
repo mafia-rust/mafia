@@ -28,6 +28,7 @@ impl RoleStateImpl for Godfather {
             game,
             actor_ref,
             false,
+            false,
             game.day_number() <= 1,
             ControllerID::role(actor_ref, Role::Godfather, 0)
         )
@@ -64,7 +65,7 @@ impl Godfather{
                     AttackPower::Basic, false
                 );
             },
-            _ => return
+            _ => {}
         }
     }
     pub (super) fn pass_role_state_down(

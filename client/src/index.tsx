@@ -1,12 +1,14 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import './index.css';
 import Anchor from './menu/Anchor';
 import { GameManager, createGameManager } from './game/gameManager';
 import LoadingScreen from './menu/LoadingScreen';
 import route from './routing';
 
-export type Theme = "player-list-menu-colors" | "will-menu-colors" | "role-specific-colors" | "graveyard-menu-colors" | "wiki-menu-colors"
+export const DEV_ENV = process.env.NODE_ENV !== 'production';
+
+export type Theme = "chat-menu-colors" | "player-list-menu-colors" | "will-menu-colors" | "role-specific-colors" | "graveyard-menu-colors" | "wiki-menu-colors"
 
 const THEME_CSS_ATTRIBUTES = [
     'background-color', 'fade-color', 'primary-color', 'secondary-color', 
@@ -17,7 +19,7 @@ const THEME_CSS_ATTRIBUTES = [
 
 export { THEME_CSS_ATTRIBUTES }
 
-const ROOT = ReactDOM.createRoot(document.querySelector("#root")!);
+const ROOT = createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
 const TIME_PERIOD = 1000;
 export default GAME_MANAGER;
@@ -25,6 +27,20 @@ export default GAME_MANAGER;
 setInterval(() => {
     GAME_MANAGER.tick(TIME_PERIOD);
 }, TIME_PERIOD);
+
+new MutationObserver(mutations => {
+    for (const mutation of mutations) {
+        if (mutation.type === "childList") {
+            const elem = mutation.target as Element;
+
+            for (const glitch of elem.querySelectorAll('.glitch')) {
+                if (!glitch.hasAttribute('data-text')) {
+                    glitch.setAttribute('data-text', glitch.textContent ?? "")
+                }
+            }
+        }
+    }
+}).observe(document.body, { subtree: true, childList: true });
 
 ROOT.render(
     <Anchor onMount={anchorController => route(anchorController, window.location)}>
@@ -51,15 +67,7 @@ export function regEscape(text: string) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
 }
 
-export function replaceMentions(rawText: string, playerNames?: string[]) {
-
-    if (playerNames === undefined) {
-        playerNames = GAME_MANAGER.getPlayerNames();
-        if (playerNames === undefined) {
-            return rawText;
-        }
-    }
-
+export function replaceMentions(rawText: string, playerNames: string[]) {
     let text = rawText;
     playerNames.forEach((player, i) => {
         text = text.replace(find(`@${i + 1}`), player);

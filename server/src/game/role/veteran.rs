@@ -47,13 +47,9 @@ impl RoleStateImpl for Veteran {
             Priority::TopPriority => {
                 let can_alert = self.alerts_remaining > 0 && game.day_number() > 1;
                 let chose_to_alert = 
-                    if let Some(BooleanSelection(true)) = game.saved_controllers.get_controller_current_selection_boolean(
+                    matches!(game.saved_controllers.get_controller_current_selection_boolean(
                         ControllerID::role(actor_ref, Role::Veteran, 0)
-                    ){
-                        true
-                    }else{
-                        false
-                    };
+                    ), Some(BooleanSelection(true)));
 
                 if can_alert && chose_to_alert{
                     actor_ref.set_role_state(game, Veteran { 
@@ -85,7 +81,7 @@ impl RoleStateImpl for Veteran {
         common_role::controller_parameters_map_boolean(
             game,
             actor_ref,
-            self.alerts_remaining <= 0 && game.day_number() <= 1,
+            self.alerts_remaining == 0 || game.day_number() <= 1,
             ControllerID::role(actor_ref, Role::Veteran, 0)
         )
     }
@@ -94,6 +90,7 @@ impl RoleStateImpl for Veteran {
             game,
             Veteran { alerts_remaining: self.alerts_remaining, alerting_tonight: false });   
     }
+    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
 impl GetClientRoleState<ClientRoleState> for Veteran {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

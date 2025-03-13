@@ -30,7 +30,7 @@ impl RoleStateImpl for Snoop {
                 false
             }else{
                 visit.target.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
-                    actor_ref.all_night_visitors_cloned(game).len() == 0 &&
+                    actor_ref.all_night_visitors_cloned(game).is_empty() &&
                     !visit.target.has_suspicious_aura(game)
             };
 
@@ -44,6 +44,7 @@ impl RoleStateImpl for Snoop {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Snoop, 0)
         )

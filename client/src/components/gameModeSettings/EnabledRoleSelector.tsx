@@ -1,10 +1,9 @@
-import { ReactElement, useCallback, useContext, useState } from "react"
+import React, { ReactElement, useCallback, useContext, useState } from "react"
 import translate from "../../game/lang"
-import React from "react"
 import StyledText from "../StyledText"
-import { RoleOutlineOption, getAllRoles, getRolesFromOutlineOption } from "../../game/roleListState.d";
+import { RoleOrRoleSet, getAllRoles, getRolesFromRoleOrRoleSet } from "../../game/roleListState.d";
 import { Role } from "../../game/roleState.d";
-import { RoleOutlineOptionSelector } from "./OutlineSelector";
+import { RoleOrRoleSetSelector } from "./OutlineSelector";
 import "./disabledRoleSelector.css"
 import Icon from "../Icon";
 import { Button } from "../Button";
@@ -13,22 +12,22 @@ import { GameModeContext } from "./GameModesEditor";
 
 
 
-export default function EnabledRoleSelector(props: {
+export default function EnabledRoleSelector(props: Readonly<{
     disabled?: boolean,
     onDisableRoles: (role: Role[]) => void,
     onEnableRoles: (role: Role[]) => void,
     onIncludeAll: () => void
-}): ReactElement {
+}>): ReactElement {
     const {enabledRoles} = useContext(GameModeContext);
 
-    const [roleOutlineOption, setRoleOutlineOption] = useState<RoleOutlineOption>({ type: "roleSet", roleSet: "town" });
+    const [roleOrRoleSet, setRoleOrRoleSet] = useState<RoleOrRoleSet>({ type: "roleSet", roleSet: "town" });
 
-    const disableOutlineOption = (outline: RoleOutlineOption) => {
-        props.onDisableRoles(getRolesFromOutlineOption(outline));
+    const disableOutlineOption = (outline: RoleOrRoleSet) => {
+        props.onDisableRoles(getRolesFromRoleOrRoleSet(outline));
     }
 
-    const enableOutlineOption = (outline: RoleOutlineOption) => {
-        props.onEnableRoles(getRolesFromOutlineOption(outline));
+    const enableOutlineOption = (outline: RoleOrRoleSet) => {
+        props.onEnableRoles(getRolesFromRoleOrRoleSet(outline));
     }
 
     const disableAll = () => {
@@ -37,7 +36,7 @@ export default function EnabledRoleSelector(props: {
 
     return <div className="role-specific-colors selector-section">
         <h2>{translate("menu.lobby.enabledRoles")}</h2>
-        <div>
+        {(props.disabled !== true) && <div>
             <Button
                 onClick={props.onIncludeAll}
                 disabled={props.disabled}
@@ -49,21 +48,20 @@ export default function EnabledRoleSelector(props: {
 
             <div className="disabled-role-selector-area">
                 <Button
-                    onClick={()=>{enableOutlineOption(roleOutlineOption)}}
+                    onClick={()=>{enableOutlineOption(roleOrRoleSet)}}
                     disabled={props.disabled}
                 >{translate("menu.enabledRoles.include")}</Button>
                 <Button
-                    onClick={()=>{disableOutlineOption(roleOutlineOption)}}
+                    onClick={()=>{disableOutlineOption(roleOrRoleSet)}}
                     disabled={props.disabled}
                 >{translate("menu.enabledRoles.exclude")}</Button>
-                <RoleOutlineOptionSelector
-                    excludeAny={true}
+                <RoleOrRoleSetSelector
                     disabled={props.disabled}
-                    roleOutlineOption={roleOutlineOption}
-                    onChange={setRoleOutlineOption}
+                    roleOrRoleSet={roleOrRoleSet}
+                    onChange={setRoleOrRoleSet}
                 />
             </div>
-        </div>
+        </div>}
 
         <EnabledRolesDisplay 
             enabledRoles={enabledRoles}
@@ -111,7 +109,7 @@ export function EnabledRolesDisplay(props: EnabledRolesDisplayProps): ReactEleme
                 >
                     {roleTextElement(role)}
                 </Button> 
-                : <div key={i} className={"disabled-role-element" + (!isEnabled(role) ? " disabled" : "")}>
+                : <div key={i} className={"placard" + (!isEnabled(role) ? " disabled" : "")}>
                     {roleTextElement(role)}
                 </div>
             

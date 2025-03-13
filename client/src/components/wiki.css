@@ -23,6 +23,9 @@
     flex: 1 1;
     padding-bottom: 1rem;
 }
+.wiki-search .masonry-item {
+    width: 100%;
+}
 .wiki-message-section {
     display: flex;
     flex-direction: column;
@@ -96,5 +99,12 @@
     text-align: left;
 }
 .wiki-cover-card, .anchor-cover-card .wiki-article {
-    max-width: 50rem;
+    width: 100%;
+}
+.wiki-cover-card {
+    width: 80rem;
+    min-height: 60vh;
+}
+.role-set-article .masonry-item {
+    text-align: center;
 }

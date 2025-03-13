@@ -53,6 +53,7 @@ impl RoleStateImpl for Arsonist {
             game,
             actor_ref,
             true,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Arsonist, 0)
         )

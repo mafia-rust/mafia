@@ -65,7 +65,8 @@ impl ArsonistDoused {
     pub fn has_suspicious_aura_douse(game: &Game, player: PlayerReference) -> bool {
         game.arsonist_doused().doused(player) &&
         PlayerReference::all_players(game).any(|player_ref|
-            player_ref.alive(game) && player_ref.role(game) == Role::Arsonist
+            !player_ref.ability_deactivated_from_death(game) &&
+            player_ref.role(game) == Role::Arsonist
         )
     }
     pub fn on_role_switch(game: &mut Game, player: PlayerReference, new: Role, old: Role) {

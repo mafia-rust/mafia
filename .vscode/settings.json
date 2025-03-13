@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "Armorsmith",
+        "burgered",
         "cancel",
         "chrono",
         "Chronokaiser",
@@ -16,9 +17,11 @@
         "killable",
         "Kira",
         "Kiras",
+        "Krampus",
         "Mafiosos",
         "Necro",
         "necronomicon",
+        "Nicholases",
         "Ojos",
         "Parris",
         "Playerlist",
@@ -45,17 +48,20 @@
         "Thanos",
         "Tidyable",
         "tungstenite",
+        "uncategorized",
         "unclicked",
         "Unswappable",
         "Uzumaki",
         "Uzumakis",
         "vigi",
         "votee",
+        "wardblock",
         "whisperee",
         "Worsencroft",
         "zealot"
     ],
     "rust-analyzer.linkedProjects": [
         "./server/Cargo.toml",
-    ]
+    ],
+    "rust-analyzer.check.command": "clippy"
 }

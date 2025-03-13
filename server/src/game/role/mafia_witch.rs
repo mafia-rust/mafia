@@ -52,7 +52,7 @@ impl RoleStateImpl for MafiaWitch {
                 true
             ),
             AbilitySelection::new_two_player_option(None),
-            !actor_ref.alive(game) || Detained::is_detained(game, actor_ref),
+            actor_ref.ability_deactivated_from_death(game) || Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),
             false,
             vec_set!(actor_ref)
@@ -76,6 +76,7 @@ impl RoleStateImpl for MafiaWitch {
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
+    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
 impl GetClientRoleState<ClientRoleState> for MafiaWitch {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

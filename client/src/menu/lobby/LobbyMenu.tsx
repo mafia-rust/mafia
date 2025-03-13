@@ -1,5 +1,5 @@
 import React, { ReactElement, useContext, useEffect, useMemo, useState } from "react";
-import GAME_MANAGER from "../../index";
+import GAME_MANAGER, { DEV_ENV } from "../../index";
 import LobbyPlayerList from "./LobbyPlayerList";
 import "./lobbyMenu.css";
 import translate from "../../game/lang";
@@ -18,7 +18,7 @@ import { GameModeSelector } from "../../components/gameModeSettings/GameModeSele
 import LobbyChatMenu from "./LobbyChatMenu";
 import { useLobbyState } from "../../components/useHooks";
 import { Button } from "../../components/Button";
-import { EnabledModifiersDisplay } from "../../components/gameModeSettings/EnabledModifiersDisplay";
+import { EnabledModifiersSelector } from "../../components/gameModeSettings/EnabledModifiersSelector";
 
 export default function LobbyMenu(): ReactElement {
     const isSpectator = useLobbyState(
@@ -26,7 +26,11 @@ export default function LobbyMenu(): ReactElement {
         ["playersHost", "lobbyClients"]
     )!;
     const isHost = useLobbyState(
-        lobbyState => lobbyState.players.get(lobbyState.myId!)?.ready === "host",
+        lobbyState => {
+            const myClient = lobbyState.players.get(lobbyState.myId!);
+            if (myClient === null) return true;
+            return myClient.ready === "host";
+        },
         ["playersHost", "lobbyClients", "yourId"]
     )!;
     const mobile = useContext(MobileContext)!;
@@ -37,27 +41,38 @@ export default function LobbyMenu(): ReactElement {
         setAdvancedView(isHost || mobile)
     }, [mobile, isHost])
 
+    useEffect(() => {
+        const onBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (!DEV_ENV) e.preventDefault()
+        };
+
+        window.addEventListener("beforeunload", onBeforeUnload);
+        return () => window.removeEventListener("beforeunload", onBeforeUnload);
+    }, [])
+
     return <div className="lm">
-        <LobbyMenuHeader advancedView={advancedView} setAdvancedView={setAdvancedView}/>
-        {advancedView 
-            ? <main>
-                <div>
-                    <LobbyPlayerList />
-                    <LobbyChatMenu spectator={isSpectator}/>
-                </div>
-                <div>
-                    <LobbyMenuSettings isHost={isHost}/>
-                </div>
-            </main>
-            : <main>
-                <div>
-                    <LobbyPlayerList />
-                </div>
-                <div>
-                    <LobbyChatMenu spectator={isSpectator}/>
-                </div>
-            </main>
-        }
+        <div>
+            <LobbyMenuHeader isHost={isHost} advancedView={advancedView} setAdvancedView={setAdvancedView}/>
+            {advancedView 
+                ? <main>
+                    <div>
+                        <LobbyPlayerList />
+                        <LobbyChatMenu spectator={isSpectator}/>
+                    </div>
+                    <div>
+                        <LobbyMenuSettings isHost={isHost}/>
+                    </div>
+                </main>
+                : <main>
+                    <div>
+                        <LobbyPlayerList />
+                    </div>
+                    <div>
+                        <LobbyChatMenu spectator={isSpectator}/>
+                    </div>
+                </main>
+            }
+        </div>
     </div>
 }
 
@@ -99,7 +114,7 @@ function LobbyMenuSettings(props: Readonly<{
     }, [setAnchorContent]);
 
     const sendRoleList = (newRoleList: RoleList) => {
-        const combinedRoleList = [...roleList];
+        const combinedRoleList = structuredClone(roleList);
         newRoleList.forEach((role, index) => {
             combinedRoleList[index] = role
         })
@@ -112,7 +127,7 @@ function LobbyMenuSettings(props: Readonly<{
 
     return <GameModeContext.Provider value={context}>
         {mobile && <h1>{translate("menu.lobby.settings")}</h1>}
-        {props.isHost && <GameModeSelector 
+        {props.isHost === true && <GameModeSelector 
             canModifySavedGameModes={false}
             loadGameMode={gameMode => {
                 GAME_MANAGER.sendSetPhaseTimesPacket(gameMode.phaseTimes);
@@ -121,7 +136,7 @@ function LobbyMenuSettings(props: Readonly<{
                 GAME_MANAGER.sendEnabledModifiersPacket(gameMode.enabledModifiers);
             }}
         />}
-        <EnabledModifiersDisplay
+        <EnabledModifiersSelector
             disabled={!props.isHost}
             onChange={modifiers => GAME_MANAGER.sendEnabledModifiersPacket(modifiers)}
         />
@@ -147,14 +162,11 @@ function LobbyMenuSettings(props: Readonly<{
 
 // There's probably a better way to do this that doesn't need the mobile check.
 function LobbyMenuHeader(props: Readonly<{
+    isHost: boolean,
     advancedView: boolean,
     setAdvancedView: (advancedView: boolean) => void
 }>): JSX.Element {
     const [lobbyName, setLobbyName] = useState<string>(GAME_MANAGER.state.stateType === "lobby" ? GAME_MANAGER.state.lobbyName : "Mafia Lobby");
-    const host = useLobbyState(
-        lobbyState => lobbyState.players.get(lobbyState.myId!)?.ready === "host",
-        ["lobbyClients", "yourId", "playersHost"]
-    )!;
     const mobile = useContext(MobileContext)!;
     const { setContent: setAnchorContent } = useContext(AnchorControllerContext)!;
 
@@ -174,22 +186,22 @@ function LobbyMenuHeader(props: Readonly<{
 
     return <header>
         <div>
-            <button disabled={!host} className="start" onClick={async ()=>{
+            <Button disabled={!props.isHost} className="start" onClick={async ()=>{
                 setAnchorContent(<LoadingScreen type="default"/>);
                 if (!await GAME_MANAGER.sendStartGamePacket()) {
                     setAnchorContent(<LobbyMenu/>)
                 }
             }}>
                 <Icon>play_arrow</Icon>{translate("menu.lobby.button.start")}
-            </button>
+            </Button>
             <RoomLinkButton/>
-            {mobile || host || <Button
+            {mobile || props.isHost || <Button
                 onClick={() => props.setAdvancedView(!props.advancedView)}
             >
                 <Icon>settings</Icon>{translate(`menu.lobby.button.advanced.${props.advancedView}`)}
             </Button>}
         </div>
-        { host ? 
+        {props.isHost ? 
             <input 
                 type="text" 
                 value={lobbyName}
@@ -210,7 +222,7 @@ function LobbyMenuHeader(props: Readonly<{
                     GAME_MANAGER.sendSetLobbyNamePacket(newLobbyName);
                 }}
             /> : 
-            <h1>{lobbyName}</h1>
+            <h3>{lobbyName}</h3>
         }
         
     </header>

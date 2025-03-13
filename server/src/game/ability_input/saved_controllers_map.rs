@@ -3,7 +3,10 @@ use serde::{Deserialize, Serialize};
 use crate::{
     game::{
         chat::ChatMessageVariant, components::{
-            forfeit_vote::ForfeitVote, insider_group::InsiderGroupID, mafia::Mafia, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem
+            forward_messages::ForwardMessages, insider_group::InsiderGroupID,
+            mafia::Mafia, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem,
+            forfeit_vote::ForfeitVote,
+            nomination_controller::NominationController,
         }, 
         event::{
             on_controller_selection_changed::OnControllerSelectionChanged,
@@ -45,11 +48,13 @@ impl SavedControllersMap{
             return false;
         }
 
-        OnValidatedAbilityInputReceived::new(actor, ability_input).invoke(game);
-
-        Self::send_selection_message(game, actor, id, incoming_selection);
+        if id.should_send_chat_message() {
+            Self::send_selection_message(game, actor, id, incoming_selection);
+        }
         
         Self::send_saved_controllers_to_clients(game);
+
+        OnValidatedAbilityInputReceived::new(actor, ability_input).invoke(game);
 
         true
     }
@@ -76,6 +81,9 @@ impl SavedControllersMap{
         }
 
         new_controller_parameters_map.combine_overwrite(
+            NominationController::controller_parameters_map(game)
+        );
+        new_controller_parameters_map.combine_overwrite(
             SyndicateGunItem::controller_parameters_map(game)
         );
         new_controller_parameters_map.combine_overwrite(
@@ -86,6 +94,9 @@ impl SavedControllersMap{
         );
         new_controller_parameters_map.combine_overwrite(
             Pitchfork::controller_parameters_map(game)
+        );
+        new_controller_parameters_map.combine_overwrite(
+            ForwardMessages::controller_parameters_map(game)
         );
 
         let current_controller_parameters = &game.saved_controllers.controller_parameters();
@@ -136,7 +147,7 @@ impl SavedControllersMap{
             let mut kept_old_selection = false;
             
 
-            if let Some(SavedController{selection: old_selection, ..}) = game.saved_controllers.saved_controllers.get(&id) {
+            if let Some(SavedController{selection: old_selection, ..}) = game.saved_controllers.saved_controllers.get(id) {
                 if 
                     controller_parameters.validate_selection(game, old_selection) &&
                     !controller_parameters.dont_save() &&
@@ -165,6 +176,8 @@ impl SavedControllersMap{
     }
 
     /// return true if selection was valid
+    /// return false if selection was invalid (ie wrong actor)
+    /// if selection is invalid then nothing happens, nothing is updated
     pub fn set_selection_in_controller(
         game: &mut Game,
         actor: PlayerReference,
@@ -265,11 +278,23 @@ impl SavedControllersMap{
             )
     }
 
-    pub fn get_controller_current_selection_player_list(&self,id: ControllerID)->Option<PlayerListSelection>{
+    pub fn get_controller_current_selection_player_list(&self, id: ControllerID)->Option<PlayerListSelection>{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
                 if let AbilitySelection::PlayerList { selection } = selection {
+                    Some(selection)
+                }else{
+                    None
+                }
+            )
+    }
+
+    pub fn get_controller_current_selection_two_player_option(&self,id: ControllerID)->Option<TwoPlayerOptionSelection>{
+        self
+            .get_controller_current_selection(id)
+            .and_then(|selection| 
+                if let AbilitySelection::TwoPlayerOption { selection } = selection {
                     Some(selection)
                 }else{
                     None

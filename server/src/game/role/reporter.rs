@@ -4,6 +4,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
@@ -31,7 +32,7 @@ impl RoleStateImpl for Reporter {
         if 
             priority == Priority::Investigative &&
             Self::get_public(game, actor_ref) && 
-            actor_ref.alive(game) &&
+            !actor_ref.ability_deactivated_from_death(game) &&
             !actor_ref.night_blocked(game) &&
             !actor_ref.night_silenced(game)
         {
@@ -54,7 +55,7 @@ impl RoleStateImpl for Reporter {
                 Some(1)
             ),
             AbilitySelection::new_player_list(vec![]),
-            !actor_ref.alive(game),
+            actor_ref.ability_deactivated_from_death(game),
             Some(PhaseType::Night),
             false,
             vec_set![actor_ref]
@@ -65,7 +66,7 @@ impl RoleStateImpl for Reporter {
                 ControllerID::role(actor_ref, Role::Reporter, 1),
                 AvailableAbilitySelection::new_boolean(),
                 AbilitySelection::new_boolean(false),
-                !actor_ref.alive(game),
+                actor_ref.ability_deactivated_from_death(game),
                 None,
                 false,
                 vec_set![actor_ref]
@@ -77,7 +78,7 @@ impl RoleStateImpl for Reporter {
                 ControllerID::role(actor_ref, Role::Reporter, 2),
                 AvailableAbilitySelection::new_string(),
                 AbilitySelection::new_string(String::new()),
-                !actor_ref.alive(game),
+                actor_ref.ability_deactivated_from_death(game),
                 None,
                 false,
                 vec_set![actor_ref]
@@ -88,7 +89,7 @@ impl RoleStateImpl for Reporter {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, 
             if 
                 game.current_phase().is_night() &&
-                actor_ref.alive(game) &&
+                !actor_ref.ability_deactivated_from_death(game) &&
                 self.interviewed_target.map_or_else(||false, |p|p.alive(game))
             {
                 vec![ChatGroup::Interview]
@@ -101,7 +102,7 @@ impl RoleStateImpl for Reporter {
         let mut out = crate::game::role::common_role::get_current_receive_chat_groups(game, actor_ref);
         if 
             game.current_phase().is_night() &&
-            actor_ref.alive(game) &&
+            !actor_ref.ability_deactivated_from_death(game) &&
             self.interviewed_target.map_or_else(||false, |p|p.alive(game))
         {
             out.insert(ChatGroup::Interview);
@@ -116,37 +117,18 @@ impl RoleStateImpl for Reporter {
                 ) else {return};
                 let Some(target) = target.first() else {return};
 
-                if !actor_ref.alive(game) || !target.alive(game) {return};
+                if actor_ref.ability_deactivated_from_death(game) || !target.alive(game) {return};
                 
                 self.interviewed_target = Some(*target);
                 
                 actor_ref.set_role_state(game, self);
-                actor_ref.add_private_chat_message(game, 
-                    ChatMessageVariant::PlayerIsBeingInterviewed{
-                        player_index: target.index()
-                    }
+
+                InsiderGroupID::send_message_in_available_insider_chat_or_private(
+                    game,
+                    *target,
+                    ChatMessageVariant::PlayerIsBeingInterviewed { player_index: target.index() },
+                    true
                 );
-
-
-                //send to teammates
-                let mut message_sent = false;
-                for chat_group in target.get_current_send_chat_groups(game){
-                    match chat_group {
-                        ChatGroup::All | ChatGroup::Jail | ChatGroup::Kidnapped | ChatGroup::Interview | ChatGroup::Dead => {},
-                        ChatGroup::Mafia | ChatGroup::Cult | ChatGroup::Puppeteer  => {
-                            game.add_message_to_chat_group(
-                                chat_group,
-                                ChatMessageVariant::PlayerIsBeingInterviewed { player_index: target.index() }
-                            );
-                            message_sent = true;
-                        },
-                    }
-                }
-                if !message_sent {
-                    target.add_private_chat_message(game, 
-                        ChatMessageVariant::PlayerIsBeingInterviewed { player_index: target.index() }
-                    );
-                }
             },
             PhaseType::Obituary => {
                 self.interviewed_target = None;
@@ -161,11 +143,11 @@ impl Reporter{
     fn get_report(game: &Game, actor_ref: PlayerReference)->String{
         game.saved_controllers.get_controller_current_selection_string(
             ControllerID::role(actor_ref, Role::Reporter, 2)
-        ).map_or_else(||String::new(), |s|s.0)
+        ).map_or_else(String::new, |s|s.0)
     }
     fn get_public(game: &Game, actor_ref: PlayerReference)->bool{
         game.saved_controllers.get_controller_current_selection_boolean(
             ControllerID::role(actor_ref, Role::Reporter, 1)
-        ).map_or_else(||false, |b|b.0)
+        ).is_some_and(|b|b.0)
     }
 }

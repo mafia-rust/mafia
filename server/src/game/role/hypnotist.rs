@@ -61,11 +61,7 @@ impl RoleStateImpl for Hypnotist {
             },
             Priority::Deception => {
                 if self.you_were_roleblocked_message {
-                    if target_ref.role(game).roleblock_immune() {
-                        target_ref.push_night_message(game, ChatMessageVariant::RoleBlocked { immune: true });
-                    } else {
-                        target_ref.push_night_message(game, ChatMessageVariant::RoleBlocked { immune: false });
-                    }
+                    target_ref.push_night_message(game, ChatMessageVariant::RoleBlocked);
                 }
                 if self.you_survived_attack_message {
                     target_ref.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
@@ -96,6 +92,7 @@ impl RoleStateImpl for Hypnotist {
             actor_ref,
             false,
             false,
+            false,
             ControllerID::role(actor_ref, Role::Hypnotist, 0)
         )
     }
@@ -112,6 +109,7 @@ impl RoleStateImpl for Hypnotist {
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
+    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
 impl Hypnotist {
     pub fn ensure_at_least_one_message(&mut self){

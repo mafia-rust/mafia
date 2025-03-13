@@ -49,7 +49,6 @@ impl RoleStateImpl for Transporter {
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
 
         let available_players: vec_set::VecSet<PlayerReference> = PlayerReference::all_players(game)
-            .into_iter()
             .filter(|p| p.alive(game))
             .collect();
 
@@ -63,7 +62,7 @@ impl RoleStateImpl for Transporter {
                 true
             ),
             super::AbilitySelection::new_two_player_option(None),
-            !actor_ref.alive(game) ||
+            actor_ref.ability_deactivated_from_death(game) ||
             Detained::is_detained(game, actor_ref),
             Some(crate::game::phase::PhaseType::Obituary),
             false,
@@ -78,4 +77,5 @@ impl RoleStateImpl for Transporter {
             false
         )
     }
+    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }

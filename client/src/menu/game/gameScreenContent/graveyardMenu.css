@@ -3,14 +3,7 @@
         width: 100%;
     }
 }
-.graveyard-menu-role-list {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1rem;
-    user-select: none;
-}
-.graveyard-menu-role-list > .role-list-button{
-    margin: 0;
+.graveyard-menu .role-list-button{
     text-align: left;
     text-wrap: wrap;
 }

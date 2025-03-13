@@ -34,6 +34,7 @@ impl RoleStateImpl for Blackmailer {
             actor_ref,
             false,
             false,
+            false,
             ControllerID::role(actor_ref, Role::Blackmailer, 0)
         )
     }

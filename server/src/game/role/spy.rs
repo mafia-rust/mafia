@@ -1,5 +1,5 @@
 use rand::seq::SliceRandom;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
@@ -14,7 +14,7 @@ use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Spy;
 
-#[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum SpyBug{
     Silenced, 
@@ -30,12 +30,10 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 impl RoleStateImpl for Spy {
     type ClientRoleState = Spy;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        
-        if !actor_ref.alive(game) {return;}
-
         match priority {
             Priority::Investigative => {
                 if actor_ref.night_blocked(game) {return;}
+                if actor_ref.ability_deactivated_from_death(game) {return;}
 
                 let mut mafia_visits = vec![];
                 for other_player in PlayerReference::all_players(game){
@@ -47,7 +45,7 @@ impl RoleStateImpl for Spy {
                             .collect()
                     );
                 }
-                mafia_visits.shuffle(&mut rand::thread_rng());
+                mafia_visits.shuffle(&mut rand::rng());
                 
                 actor_ref.push_night_message(game, ChatMessageVariant::SpyMafiaVisit { players: mafia_visits });               
             },
@@ -58,7 +56,7 @@ impl RoleStateImpl for Spy {
                 for message in visit.target.night_messages(game).clone(){
                     if let Some(message) = match message{
                         ChatMessageVariant::Silenced => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Silenced }),
-                        ChatMessageVariant::RoleBlocked { immune: _ } => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Roleblocked }),
+                        ChatMessageVariant::RoleBlocked => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Roleblocked }),
                         ChatMessageVariant::YouWereProtected => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Protected }),
                         ChatMessageVariant::Transported => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Transported }),
                         ChatMessageVariant::YouWerePossessed { immune: _ } => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Possessed }),
@@ -77,6 +75,7 @@ impl RoleStateImpl for Spy {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Spy, 0)
         )

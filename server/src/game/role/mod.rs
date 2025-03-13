@@ -1,5 +1,4 @@
-#![allow(clippy::single_match)]
-#![allow(clippy::get_first)]
+#![allow(clippy::single_match, reason = "May add more cases for more priorities later")]
 
 use std::collections::HashSet;
 use crate::vec_set::VecSet;
@@ -14,10 +13,7 @@ use crate::game::attack_power::DefensePower;
 use serde::{Serialize, Deserialize};
 
 use super::{
-    ability_input::*, 
-    components::insider_group::InsiderGroupID, 
-    grave::GraveReference, 
-    win_condition::WinCondition
+    ability_input::*, components::{insider_group::InsiderGroupID, night_visits::NightVisits}, grave::GraveReference, visit::VisitTag, win_condition::WinCondition
 };
 
 pub trait GetClientRoleState<CRS> {
@@ -70,6 +66,20 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference) {}
     fn on_game_start(self, _game: &mut Game, _actor_ref: PlayerReference) {}
     fn before_initial_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
+    fn on_player_roleblocked(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _invisible: bool) {
+        if player != actor_ref {return}
+
+        NightVisits::retain(game, |v|
+            v.tag != VisitTag::Role || v.visitor != actor_ref
+        );
+    }
+    fn on_visit_wardblocked(self, game: &mut Game, actor_ref: PlayerReference, visit: Visit) {
+        if actor_ref != visit.visitor {return};
+
+        NightVisits::retain(game, |v|
+            v.tag != VisitTag::Role || v.visitor != actor_ref
+        );
+    }
 }
 
 // Creates the Role enum
@@ -109,6 +119,7 @@ macros::roles! {
     Reporter : reporter,
     Mayor : mayor,
     Transporter : transporter,
+    Coxswain : coxswain,
 
     // Mafia
     Godfather : godfather,
@@ -143,6 +154,8 @@ macros::roles! {
     Wildcard : wild_card,
     TrueWildcard : true_wildcard,
     Martyr : martyr,
+    SantaClaus : santa_claus,
+    Krampus : krampus,
 
     Witch : witch,
     Scarecrow : scarecrow,
@@ -157,6 +170,8 @@ macros::roles! {
     Pyrolisk : pyrolisk,
     Spiral : spiral,
     Kira : kira,
+    Warden : warden,
+    Yer : yer,
     FiendsWildcard : fiends_wildcard,
     SerialKiller : serial_killer,
 
@@ -181,7 +196,7 @@ macros::priorities! {
 
     Heal,
     Kill,
-    Convert,
+    Convert,    //role swap & win condition change
     Poison,
     Investigative,
 
@@ -251,6 +266,16 @@ mod macros {
                     }
                 }
                 
+                pub fn on_player_roleblocked(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, invisible: bool){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_player_roleblocked(game, actor_ref, player, invisible)),*
+                    }
+                }
+                pub fn on_visit_wardblocked(self, game: &mut Game, actor_ref: PlayerReference, visit: Visit) {
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_visit_wardblocked(game, actor_ref, visit)),*
+                    }
+                }
                 pub fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority){
                     match self {
                         $(Self::$name(role_struct) => role_struct.do_night_action(game, actor_ref, priority)),*
@@ -376,45 +401,21 @@ mod macros {
 
     pub(super) use {roles, priorities};
 }
-#[allow(clippy::match_like_matches_macro)]
 impl Role{
     pub fn possession_immune(&self)->bool{
-        match self {
-            Role::TallyClerk
+        matches!(self, 
             | Role::Bouncer
-            | Role::Veteran
+            | Role::Veteran | Role::Coxswain
             | Role::Transporter | Role::Retributionist
             | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper
-            | Role::MafiaWitch | Role::Necromancer
-            | Role::Ojo => true,
-            _ => false,
-        }
-    }
-    pub fn roleblock_immune(&self)->bool{
-        match self {
-            Role::Bouncer |
-            Role::Veteran | 
-            Role::Transporter | Role::Escort | Role::Retributionist | 
-            Role::Jester | Role::Witch | Role::Scarecrow | Role::Warper |
-            Role::Hypnotist | Role::Consort | Role::MafiaWitch | Role::Necromancer => true,
-            _ => false,
-        }
-    }
-    pub fn wardblock_immune(&self)->bool{
-        match self {
-            Role::Jailor | Role::Kidnapper |
-            Role::Bouncer | Role::Scarecrow => true,
-            _ => false
-        }
+            | Role::MafiaWitch | Role::Necromancer 
+        )
     }
     pub fn has_innocent_aura(&self, game: &Game)->bool{
         match self {
             Role::Godfather => true,
             Role::Pyrolisk => {
                 game.day_number() == 1
-            },
-            Role::Werewolf => {
-                game.day_number() == 1 || game.day_number() == 3
             },
             _ => false,
         }

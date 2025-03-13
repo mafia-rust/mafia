@@ -1,7 +1,7 @@
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 
 use crate::{game::{ 
-    ability_input::{AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection}, attack_power::AttackPower, chat::{ChatGroup, ChatMessageVariant}, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::{Priority, RoleState}, role_list::RoleSet, tag::Tag, visit::Visit, Game
+    ability_input::{AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection}, attack_power::AttackPower, chat::{ChatGroup, ChatMessageVariant}, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::{Priority, RoleState}, role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, Game
 }, vec_set::{vec_set, VecSet}};
 
 use super::{detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits, syndicate_gun_item::SyndicateGunItem};
@@ -17,6 +17,17 @@ impl Game{
     }
 }
 impl Mafia{
+    pub fn on_visit_wardblocked(game: &mut Game, visit: Visit){
+        NightVisits::retain(game, |v|
+            v.tag != VisitTag::SyndicateBackupAttack || v.visitor != visit.visitor
+        );
+    }
+    pub fn on_player_roleblocked(game: &mut Game, player: PlayerReference){
+        NightVisits::retain(game, |v|
+            v.tag != VisitTag::SyndicateBackupAttack || v.visitor != player
+        );
+    }
+
     pub fn controller_parameters_map(game: &Game)->ControllerParametersMap{
         let mut out = ControllerParametersMap::default();
 
@@ -110,13 +121,13 @@ impl Mafia{
                 NightVisits::add_visit(game, new_visit);
             }
             Priority::Deception => {
-                if Self::players_with_gun(&game).into_iter().any(|p|!p.night_blocked(game) && p.alive(game)) {
-                    NightVisits::clear_visits_with_predicate(game, |v|v.tag == crate::game::visit::VisitTag::SyndicateBackupAttack);
+                if Self::players_with_gun(game).into_iter().any(|p|!p.night_blocked(game) && p.alive(game)) {
+                    NightVisits::retain(game, |v|v.tag != crate::game::visit::VisitTag::SyndicateBackupAttack);
                 }
             }
             Priority::Kill => {
 
-                let all_backup_visits: Vec<Visit> = NightVisits::all_visits(game).into_iter().filter(|v|v.tag == crate::game::visit::VisitTag::SyndicateBackupAttack).cloned().collect();
+                let all_backup_visits: Vec<Visit> = NightVisits::all_visits(game).into_iter().filter(|v|v.tag == crate::game::visit::VisitTag::SyndicateBackupAttack).copied().collect();
                 for backup_visit in all_backup_visits {
                     backup_visit.target.try_night_kill_single_attacker(
                         backup_visit.visitor, game, GraveKiller::RoleSet(RoleSet::Mafia),
@@ -144,7 +155,7 @@ impl Mafia{
                 .filter(|p| InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p))
                 .collect::<Vec<_>>();
 
-            let Some(insider) = insiders.choose(&mut rand::thread_rng()) else {return};
+            let Some(insider) = insiders.choose(&mut rand::rng()) else {return};
 
             SyndicateGunItem::give_gun(game, *insider);
         }
@@ -155,8 +166,7 @@ impl Mafia{
 
         let backup = 
             game.saved_controllers.get_controller_current_selection_player_list(controller_id)
-            .map(|b|b.0.first().cloned())
-            .flatten();
+            .and_then(|b|b.0.first().copied());
 
         
         for player_ref in PlayerReference::all_players(game){
@@ -189,12 +199,12 @@ impl Mafia{
         game: &mut Game,
         role: RoleState
     ){
-        let living_players_to_convert = PlayerReference::all_players(game).into_iter().filter(
-            |p|
-            InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p) &&
-            RoleSet::Mafia.get_roles().contains(&p.role(game)) &&
-            p.alive(game)
-        ).collect::<Vec<_>>();
+        let living_players_to_convert = PlayerReference::all_players(game)
+            .filter(|p|
+                p.alive(game) &&
+                InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p)
+            )
+            .collect::<Vec<_>>();
 
         //if they already have a mafia killing then return
         if living_players_to_convert.iter().any(|p|
@@ -202,7 +212,7 @@ impl Mafia{
         ) {return;}
         
         //choose random mafia to be mafia killing
-        let random_mafia = living_players_to_convert.choose(&mut rand::thread_rng());
+        let random_mafia = living_players_to_convert.choose(&mut rand::rng());
         
         if let Some(random_mafia) = random_mafia {
             random_mafia.set_role_and_win_condition_and_revealed_group(game, role);

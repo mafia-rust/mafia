@@ -5,8 +5,8 @@ import { RoleList } from "./roleListState.d";
 import { LobbyPreviewData } from "./packet";
 import { ChatFilter } from "../menu/game/gameScreenContent/ChatMenu";
 import { ControllerID, SavedController } from "./abilityInput";
-import { ListMapData } from "../ListMap";
-
+import translate from "./lang";
+import ListMap, { ListMapData } from "../ListMap";
 
 export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;
 
@@ -35,7 +35,7 @@ export type LobbyState = {
     enabledRoles: Role[],
     enabledModifiers: ModifierType[],
 
-    players: Map<LobbyClientID, LobbyClient>,
+    players: ListMap<LobbyClientID, LobbyClient>,
     chatMessages: ChatMessage[],
 }
 export type LobbyClient = {
@@ -52,9 +52,13 @@ export type PlayerClientType = {
 }
 
 type GameState = {
-    stateType: "game"
+    stateType: "game",
     roomCode: number,
     lobbyName: string,
+    
+    initialized: boolean,
+
+    myId: number | null,
 
     chatMessages : ChatMessage[],
     graves: Grave[],
@@ -76,6 +80,7 @@ type GameState = {
     clientState: PlayerGameState | {type: "spectator"},
     host: boolean,
 
+    missedChatMessages: boolean
 }
 export default GameState;
 
@@ -91,8 +96,6 @@ export type PlayerGameState = {
     crossedOutOutlines: number[],
     chatFilter: ChatFilter,
     deathNote: string,
-    targets: PlayerIndex[],
-    voted: PlayerIndex | null,
     judgement: Verdict,
 
     savedControllers: ListMapData<ControllerID, SavedController>,
@@ -101,14 +104,16 @@ export type PlayerGameState = {
 
     sendChatGroups: ChatGroup[],
     insiderGroups: InsiderGroup[],
+    
+    missedWhispers: PlayerIndex[]
 }
 
 export type PlayerIndex = number;
 export type LobbyClientID = number;
 export type Verdict = "innocent"|"guilty"|"abstain";
-export const PHASES = ["briefing", "obituary", "discussion", "nomination", "testimony", "judgement", "finalWords", "dusk", "night"] as const;
+export const PHASES = ["briefing", "obituary", "discussion", "nomination", "testimony", "judgement", "finalWords", "dusk", "night", "recess"] as const;
 export type PhaseType = (typeof PHASES)[number];
-export type PhaseState = {type: "briefing"} | {type: "dusk"} | {type: "night"} | {type: "obituary"} | {type: "discussion"} | 
+export type PhaseState = {type: "briefing"} | {type: "recess"} | {type: "dusk"} | {type: "night"} | {type: "obituary"} | {type: "discussion"} | 
 {
     type: "nomination",
     trialsLeft: number
@@ -128,7 +133,7 @@ export type PhaseState = {type: "briefing"} | {type: "dusk"} | {type: "night"} |
 export type ChatGroup = "all" | "dead" | "mafia" | "cult" | "jail" | "kidnapper" | "interview" | "puppeteer";
 export type InsiderGroup = (typeof INSIDER_GROUPS)[number];
 export const INSIDER_GROUPS = ["mafia", "cult", "puppeteer"] as const;
-export type PhaseTimes = Record<PhaseType, number>;
+export type PhaseTimes = Record<Exclude<PhaseType, "recess">, number>;
 
 export type Tag = 
     "disguise" |
@@ -146,18 +151,20 @@ export type Tag =
 
 export const MODIFIERS = [
     "obscuredGraves", "randomLoveLinks",
+    "skipDay1",
     "deadCanChat", "noAbstaining",
     "noDeathCause",
-    "roleSetGraveKillers"
+    "roleSetGraveKillers", "autoGuilty", 
+    "twoThirdsMajority", "noTrialPhases", 
+    "noWhispers", "hiddenWhispers",
+    "noNightChat", "noChat", 
+    "scheduledNominations"
 ] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 
 export type Player = {
     name: string,
-    index: number
-    buttons: {
-        vote: boolean,
-    },
+    index: number,
     numVoted: number,
     alive: boolean,
     roleLabel: Role | null,
@@ -166,4 +173,41 @@ export type Player = {
     toString(): string
 }
 
+export const CONCLUSIONS = ["town", "mafia", "cult", "fiends", "politician", "niceList", "naughtyList", "draw"] as const;
+export type Conclusion = (typeof CONCLUSIONS)[number];
 
+export type WinCondition = {
+    type: "gameConclusionReached"
+    winIfAny: Conclusion[]
+} | {
+    type: "roleStateWon"
+}
+
+export function translateConclusion(conclusion: Conclusion): string {
+    switch (conclusion) {
+        case "politician":
+            return translate("role.politician.name")
+        case "draw":
+            return translate("winCondition.draw")
+        default:
+            return translate(conclusion)
+    }
+}
+
+export function translateWinCondition(winCondition: WinCondition): string {
+    if (winCondition.type === "gameConclusionReached") {
+        if (winCondition.winIfAny.length === 0) {
+            return translate("winCondition.loser")
+        } else if (winCondition.winIfAny.length === 1) {
+            return translateConclusion(winCondition.winIfAny[0])
+        } else if (winCondition.winIfAny.length === 4 && 
+            (["mafia", "fiends", "cult", "politician"] as const).every(team => winCondition.winIfAny.includes(team))
+        ) {
+            return translate(`winCondition.evil`)
+        } else {
+            return winCondition.winIfAny.map(conclusion => translateConclusion(conclusion)).join(` ${translate('union')} `)
+        }
+    } else {
+        return translate("winCondition.independent");
+    }
+}

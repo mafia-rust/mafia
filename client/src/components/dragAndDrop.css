@@ -1,5 +1,6 @@
 div.draggable {
-    cursor: grab
+    cursor: grab;
+    touch-action: none;
 }
 
 div.draggable.dragged {

@@ -1,4 +1,3 @@
-use rand::thread_rng;
 use serde::Serialize;
 
 use crate::game::win_condition::WinCondition;
@@ -29,28 +28,31 @@ impl RoleStateImpl for Scarecrow {
         
 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-        if let Some(visit) = actor_visits.first(){
-            let target_ref = visit.target;
+        let Some(visit) = actor_visits.first() else {return};
 
-            let mut blocked_players = target_ref.ward(game);
-            blocked_players.shuffle(&mut thread_rng());
+        let target_ref = visit.target;
 
-            let message = ChatMessageVariant::ScarecrowResult { players:
-                PlayerReference::ref_vec_to_index(blocked_players.as_slice())
-            };
+        let mut blocked_players = target_ref.ward(game);
+        blocked_players.shuffle(&mut rand::rng());
 
-            for player_ref in blocked_players.iter(){
-                actor_ref.insert_role_label(game, *player_ref);
-            }
-            
-            actor_ref.push_night_message(game, message);
+        let message = ChatMessageVariant::ScarecrowResult { players:
+            PlayerReference::ref_vec_to_index(blocked_players.as_slice())
+        };
+
+        for player_ref in blocked_players.iter(){
+            actor_ref.insert_role_label(game, *player_ref);
         }
+        actor_ref.insert_role_label(game, target_ref);
+        
+        actor_ref.push_night_message(game, message);
+        
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Scarecrow, 0)
         )
@@ -70,11 +72,13 @@ impl RoleStateImpl for Scarecrow {
                 .filter(|p|p.alive(game))
                 .filter(|p|p.keeps_game_running(game))
                 .all(|p|
-                    WinCondition::are_friends(&p.win_condition(game), actor_ref.win_condition(game))
+                    WinCondition::are_friends(p.win_condition(game), actor_ref.win_condition(game))
                 )
 
         {
             actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
+    fn on_visit_wardblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _visit: Visit) {}
+    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }

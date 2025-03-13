@@ -30,8 +30,12 @@ export default function RoleSpecificSection(): ReactElement{
         gameState => gameState.dayNumber,
         ["phase"]
     )!;
+    const numPlayers = useGameState(
+        gameState => gameState.players.length,
+        ["gamePlayers"]
+    )!;
 
-    const inner = roleSpecificSectionInner(phaseState, dayNumber, roleState);
+    const inner = roleSpecificSectionInner(phaseState, dayNumber, roleState, numPlayers);
 
     return <>{inner===null ? null : 
         <DetailsSummary
@@ -42,11 +46,18 @@ export default function RoleSpecificSection(): ReactElement{
     }</>;
 }
 
+function abilityChargesCounter(numPlayers: number): number{
+    return Math.ceil(numPlayers/5);
+}
+
 function roleSpecificSectionInner(
     phaseState: PhaseState,
     dayNumber: number,
-    roleState: RoleState
+    roleState: RoleState,
+    numPlayers: number
 ): ReactElement | null{
+    let maxChargesCounter = abilityChargesCounter(numPlayers);
+
     switch(roleState.type){
         case "auditor":
             return <AuditorMenu roleState={roleState}/>;
@@ -56,7 +67,7 @@ function roleSpecificSectionInner(
             return <LargeDoomsayerMenu/>;
         case "jailor": 
             return <Counter 
-                max={3} 
+                max={maxChargesCounter} 
                 current={roleState.executionsRemaining}
             >
                 <StyledText>{translate("role.jailor.roleDataText.executionsRemaining", roleState.executionsRemaining)}</StyledText>
@@ -101,7 +112,7 @@ function roleSpecificSectionInner(
                     </div>
                 case "loaded":
                     return <Counter 
-                        max={3} 
+                        max={maxChargesCounter} 
                         current={roleState.state.bullets}
                     >
                         <StyledText>{translate("role.vigilante.roleDataText", roleState.state.bullets)}</StyledText>
@@ -111,14 +122,14 @@ function roleSpecificSectionInner(
             }
         case "veteran":
             return <Counter
-                max={3}
+                max={maxChargesCounter}
                 current={roleState.alertsRemaining}
             >
                 <StyledText>{translate("role.veteran.roleDataText", roleState.alertsRemaining)}</StyledText>
             </Counter>
         case "armorsmith":
             return <Counter
-                max={3}
+                max={maxChargesCounter}
                 current={roleState.openShopsRemaining}
             >
                 <StyledText>{translate("role.armorsmith.roleDataText", roleState.openShopsRemaining)}</StyledText>
@@ -128,14 +139,14 @@ function roleSpecificSectionInner(
         case "counterfeiter":
         case "forger":
             return <Counter
-                max={3}
+                max={maxChargesCounter}
                 current={roleState.forgesRemaining}
             >
                 <StyledText>{translate("role.forger.roleDataText", roleState.forgesRemaining)}</StyledText>
             </Counter>
         case "mortician":
             return <Counter
-                max={3}
+                max={maxChargesCounter}
                 current={roleState.cremationsRemaining}
             >
                 <StyledText>{translate("role.mortician.roleDataText", roleState.cremationsRemaining)}</StyledText>
@@ -147,10 +158,18 @@ function roleSpecificSectionInner(
         case "spiral": 
             return <SpiralMenu />;
         case "puppeteer":
-            return <SmallPuppeteerMenu 
+            return <SmallPuppeteerMenu
+                maxCharges={maxChargesCounter}
                 marionettesRemaining={roleState.marionettesRemaining}
                 phase={phaseState.type}
             />;
+        case "yer":
+            return <Counter
+                max={maxChargesCounter}
+                current={roleState.starPassesRemaining}
+            >
+                <StyledText>{translate("role.yer.shapeshiftsRemaining", roleState.starPassesRemaining)}</StyledText>
+            </Counter>;
         case "recruiter":
             return <RecruiterMenu 
                 remaining={roleState.recruitsRemaining}
@@ -164,7 +183,7 @@ function roleSpecificSectionInner(
                         <StyledText>{translate("role.martyr.roleDataText.eccentric")}</StyledText>
                     </div>
                     <Counter
-                        max={2}
+                        max={maxChargesCounter}
                         current={roleState.state.bullets}
                     >
                         <StyledText>{translate("role.martyr.roleDataText", roleState.state.bullets)}</StyledText>

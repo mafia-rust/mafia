@@ -1,8 +1,7 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useMemo } from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import { ContentMenu, ContentTab } from "../GameScreen";
-import "./willMenu.css";
 import { usePlayerState } from "../../../components/useHooks";
 import { getSingleRoleJsonData } from "../../../game/roleState.d";
 import { TextDropdownArea } from "../../../components/TextAreaDropdown";
@@ -13,7 +12,7 @@ export function defaultAlibi(): string {
 const DEFAULT_ALIBI = "ROLE\nNight 1: \nNight 2:";
 
 export default function WillMenu(): ReactElement {
-    const cantPost = usePlayerState(
+    const cantChat = usePlayerState(
         playerState => playerState.sendChatGroups.length === 0,
         ["yourSendChatGroups"]
     )!;
@@ -35,6 +34,10 @@ export default function WillMenu(): ReactElement {
         playerState => playerState.deathNote,
         ["yourDeathNote"]
     )!;
+
+    const cantPost = useMemo(() => {
+        return cantChat
+    }, [cantChat])
     
     return <div className="will-menu will-menu-colors">
         <ContentTab
@@ -46,14 +49,14 @@ export default function WillMenu(): ReactElement {
         <section>
             <TextDropdownArea
                 titleString={translate("menu.will.will")}
-                open={true}
+                defaultOpen={true}
                 savedText={alibi}
                 cantPost={cantPost}
                 onSave={(text) => {
                     GAME_MANAGER.sendSaveWillPacket(text);
                 }}
             />
-            {notes.map((note, i) => {
+            {(notes.length === 0 ? [""] : notes).map((note, i) => {
                 const title = note.split('\n')[0] || translate("menu.will.notes");
                 return <TextDropdownArea
                     key={title + i}

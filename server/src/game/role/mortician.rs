@@ -73,7 +73,7 @@ impl RoleStateImpl for Mortician {
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         let grayed_out = 
-            !actor_ref.alive(game) || 
+            actor_ref.ability_deactivated_from_death(game) || 
             Detained::is_detained(game, actor_ref);
 
         ControllerParametersMap::new_controller_fast(
@@ -81,11 +81,10 @@ impl RoleStateImpl for Mortician {
             ControllerID::role(actor_ref, Role::Mortician, 0),
             super::AvailableAbilitySelection::new_player_list(
                 PlayerReference::all_players(game)
-                    .into_iter()
                     .filter(|p| *p != actor_ref)
                     .filter(|player| 
                         player.alive(game) &&
-                        !self.obscured_players.contains(&player)
+                        !self.obscured_players.contains(player)
                     )
                     .collect(),
                 false,
@@ -113,7 +112,7 @@ impl RoleStateImpl for Mortician {
     }
     fn on_grave_added(mut self, game: &mut Game, actor_ref: PlayerReference, grave_ref: GraveReference){
         if
-            actor_ref.alive(game) &&
+            !actor_ref.ability_deactivated_from_death(game) &&
             self.obscured_players.contains(&grave_ref.deref(game).player) &&
             self.cremations_remaining > 0
         {

@@ -5,6 +5,7 @@ pub mod on_phase_start;
 pub mod on_grave_added;
 pub mod on_game_start;
 pub mod on_role_switch;
+pub mod on_convert;
 pub mod before_role_switch;
 pub mod before_phase_end;
 pub mod on_night_priority;
@@ -14,6 +15,8 @@ pub mod on_ability_input_received;
 pub mod on_validated_ability_input_received;
 pub mod on_controller_selection_changed;
 pub mod on_tick;
+pub mod on_player_roleblocked;
+pub mod on_visit_wardblocked;
 
 
 

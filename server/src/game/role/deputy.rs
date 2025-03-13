@@ -72,7 +72,6 @@ impl RoleStateImpl for Deputy {
             ControllerID::role(actor_ref, Role::Deputy, 0),
             super::AvailableAbilitySelection::new_player_list(
                 PlayerReference::all_players(game)
-                    .into_iter()
                     .filter(|player| 
                         actor_ref != *player &&
                         player.alive(game)
@@ -82,7 +81,7 @@ impl RoleStateImpl for Deputy {
                 Some(1)
             ),
             AbilitySelection::new_player_list(vec![]),
-            !actor_ref.alive(game) ||
+            actor_ref.ability_deactivated_from_death(game) ||
             self.bullets_remaining == 0 || 
             game.day_number() <= 1 || 
             !(PhaseType::Discussion == game.current_phase().phase() || PhaseType::Nomination == game.current_phase().phase()),

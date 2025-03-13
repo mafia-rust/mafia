@@ -2,9 +2,16 @@ use vec1::Vec1;
 
 use crate::{
     game::{
-        attack_power::DefensePower, chat::{
-            ChatGroup, ChatMessage, ChatMessageVariant
-        }, event::{on_fast_forward::OnFastForward, on_remove_role_label::OnRemoveRoleLabel}, grave::GraveKiller, modifiers::{ModifierType, Modifiers}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
+        attack_power::DefensePower,
+        chat::{
+            ChatMessage, ChatMessageVariant
+        },
+        event::{
+            on_convert::OnConvert, on_fast_forward::OnFastForward,
+            on_remove_role_label::OnRemoveRoleLabel
+        },
+        grave::GraveKiller, modifiers::{ModifierType, Modifiers}, role::{Role, RoleState},
+        tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
     }, 
     packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet, 
 };
@@ -40,7 +47,9 @@ impl PlayerReference{
             alive_players.push(player.deref(game).alive);
         }
         game.send_packet_to_all(ToClientPacket::PlayerAlive { alive: alive_players });
-        game.count_votes_and_start_trial();
+        game.count_nomination_and_start_trial(
+            !Modifiers::modifier_is_enabled(game, crate::game::modifiers::ModifierType::ScheduledNominations)
+        );
     }
 
     pub fn will<'a>(&self, game: &'a Game) -> &'a String {
@@ -107,9 +116,9 @@ impl PlayerReference{
     pub fn player_tags<'a>(&self, game: &'a Game) -> &'a VecMap<PlayerReference, Vec1<Tag>>{
         &self.deref(game).player_tags
     }
-    pub fn player_has_tag(&self, game: &Game, key: PlayerReference, value: Tag) -> u8{
+    pub fn player_has_tag(&self, game: &Game, key: PlayerReference, value: Tag) -> usize {
         if let Some(player_tags) = self.deref(game).player_tags.get(&key){
-            player_tags.iter().filter(|t|**t==value).count() as u8
+            player_tags.iter().filter(|t|**t==value).count()
         }else{
             0
         }
@@ -160,7 +169,10 @@ impl PlayerReference{
         &self.deref(game).win_condition
     }
     pub fn set_win_condition(&self, game: &mut Game, win_condition: WinCondition){
-        self.deref_mut(game).win_condition = win_condition;
+        let old_win_condition = self.win_condition(game).clone();
+        self.deref_mut(game).win_condition = win_condition.clone();
+
+        OnConvert::new(*self, old_win_condition, win_condition).invoke(game)
     }
 
     pub fn add_private_chat_message(&self, game: &mut Game, message: ChatMessageVariant) {
@@ -169,7 +181,7 @@ impl PlayerReference{
         self.add_chat_message(game, message.clone());
     }
     pub fn add_private_chat_messages(&self, game: &mut Game, messages: Vec<ChatMessageVariant>){
-        for message in messages.into_iter(){
+        for message in messages {
             self.add_private_chat_message(game, message);
         }
     }
@@ -208,48 +220,6 @@ impl PlayerReference{
     Voting
     */
 
-    pub fn chosen_vote(&self, game: &Game) -> Option<PlayerReference>{
-        self.deref(game).voting_variables.chosen_vote
-    }
-    /// Returns true if this player's vote was changed and packet was sent
-    pub fn set_chosen_vote(&self, game: &mut Game, chosen_vote: Option<PlayerReference>, send_chat_message: bool) -> bool{
-
-        if chosen_vote == self.deref(game).voting_variables.chosen_vote ||
-            !self.deref(game).alive || self.forfeit_vote(game) {
-            self.deref_mut(game).voting_variables.chosen_vote = None;
-            self.send_packet(game, ToClientPacket::YourVoting { 
-                player_index: None
-            });
-            return false;
-        }
-        
-        if let Some(chosen_vote) = chosen_vote {
-            if chosen_vote == *self || !chosen_vote.deref(game).alive {
-                self.deref_mut(game).voting_variables.chosen_vote = None;
-                self.send_packet(game, ToClientPacket::YourVoting { 
-                    player_index: None
-                });
-                return false;
-            }
-        }
-        
-        self.deref_mut(game).voting_variables.chosen_vote = chosen_vote;
-        self.send_packet(game, ToClientPacket::YourVoting { 
-            player_index: self.chosen_vote(game).as_ref().map(PlayerReference::index)
-        });
-        let player_votes_packet = ToClientPacket::new_player_votes(game);
-        game.send_packet_to_all(player_votes_packet);
-        
-        if send_chat_message {
-            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::Voted{
-                voter: self.index(), 
-                votee: chosen_vote.as_ref().map(PlayerReference::index)
-            });
-        }
-        
-        true
-    }
-
     
     pub fn verdict(&self, game: &Game) -> Verdict{
         self.deref(game).voting_variables.verdict
@@ -280,18 +250,11 @@ impl PlayerReference{
         self.deref_mut(game).night_variables.attacked = attacked;
     }
 
-    pub fn night_roleblocked(&self, game: &Game) -> bool {
-        self.deref(game).night_variables.roleblocked
+    pub fn night_blocked(&self, game: &Game) -> bool {
+        self.deref(game).night_variables.blocked
     }
-    pub fn set_night_roleblocked(&self, game: &mut Game, roleblocked: bool){
-        self.deref_mut(game).night_variables.roleblocked = roleblocked;
-    }
-
-    pub fn night_wardblocked(&self, game: &Game) -> bool {
-        self.deref(game).night_variables.roleblocked
-    }
-    pub fn set_night_wardblocked(&self, game: &mut Game, roleblocked: bool){
-        self.deref_mut(game).night_variables.roleblocked = roleblocked;
+    pub fn set_night_blocked(&self, game: &mut Game, roleblocked: bool){
+        self.deref_mut(game).night_variables.blocked = roleblocked;
     }
 
     pub fn night_defense(&self, game: &Game) -> DefensePower {

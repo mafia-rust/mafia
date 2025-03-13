@@ -1,16 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::{
-    ability_input::*,
-    grave::Grave, phase::PhaseState,
-    player::{PlayerIndex, PlayerReference},
-    role::{
-        auditor::AuditorResult, engineer::TrapState, kira::KiraResult,
-        spy::SpyBug, Role
-    },
-    role_list::RoleOutline,
-    tag::Tag,
-    verdict::Verdict,
+    ability_input::*, components::synopsis::Synopsis, grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
+        auditor::AuditorResult, engineer::TrapState, kira::KiraResult, krampus::KrampusAbility, santa_claus::SantaListKind, spy::SpyBug, Role
+    }, role_list::RoleOutline, tag::Tag, verdict::Verdict, win_condition::WinCondition
 };
 
 
@@ -25,7 +18,7 @@ pub enum MessageSender {
 }
 
 // Determines message color
-#[derive(PartialOrd, Ord, Clone, Debug, Serialize, PartialEq, Eq)]
+#[derive(PartialOrd, Ord, Clone, Debug, Serialize, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum ChatMessageVariant {
@@ -61,11 +54,9 @@ pub enum ChatMessageVariant {
     TagRemoved{player: PlayerIndex, tag: Tag},
     
     #[serde(rename_all = "camelCase")]
-    GameOver,
+    GameOver { synopsis: Synopsis },
     #[serde(rename_all = "camelCase")]
-    PlayerWonOrLost{player: PlayerIndex, won: bool, role: Role},
-    #[serde(rename_all = "camelCase")]
-    PlayerQuit{player_index: PlayerIndex},
+    PlayerQuit{player_index: PlayerIndex, game_over: bool},
 
 
     
@@ -117,14 +108,13 @@ pub enum ChatMessageVariant {
     /* Role-specific */
     #[serde(rename_all = "camelCase")]
     MayorRevealed{player_index: PlayerIndex},
-    MayorCantWhisper,
+    InvalidWhisper,
     #[serde(rename_all = "camelCase")]
     PoliticianCountdownStarted,
     #[serde(rename_all = "camelCase")]
     ReporterReport{report: String},
     #[serde(rename_all = "camelCase")]
     PlayerIsBeingInterviewed{player_index: PlayerIndex},
-
     #[serde(rename_all = "camelCase")]
     JailedTarget{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
@@ -135,6 +125,9 @@ pub enum ChatMessageVariant {
     DeputyKilled{shot_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
     DeputyShotYou,
+    #[serde(rename_all = "camelCase")]
+    WardenPlayersImprisoned{players: Vec<PlayerReference>},
+    WerewolfTracked,
     
     #[serde(rename_all = "camelCase")]
     PlayerDiedOfABrokenHeart{player: PlayerIndex, lover: PlayerIndex},
@@ -145,6 +138,12 @@ pub enum ChatMessageVariant {
     YourConvertFailed,
     CultConvertsNext,
     CultKillsNext,
+
+    NextSantaAbility { ability: SantaListKind },
+    AddedToNiceList,
+    NextKrampusAbility { ability: KrampusAbility },
+    AddedToNaughtyList,
+    SantaAddedPlayerToNaughtyList { player: PlayerReference },
 
     SomeoneSurvivedYourAttack,
     YouSurvivedAttack,
@@ -159,8 +158,7 @@ pub enum ChatMessageVariant {
     /*
     Night Information
     */
-    RoleBlocked { immune : bool },
-
+    RoleBlocked,
     Wardblocked,
 
     SheriffResult {suspicious: bool},
@@ -169,8 +167,8 @@ pub enum ChatMessageVariant {
     SeerResult{enemies: bool},
     SpyMafiaVisit{players: Vec<PlayerIndex>},
     SpyBug{bug: SpyBug},
-    PsychicGood{players: [PlayerIndex; 2]},
-    PsychicEvil{players: [PlayerIndex; 3]},
+    PsychicGood{player: PlayerReference},
+    PsychicEvil{first: PlayerReference, second: PlayerReference},
     PsychicFailed,
     #[serde(rename_all = "camelCase")]
     AuditorResult{role_outline: RoleOutline, result: AuditorResult},
@@ -209,7 +207,10 @@ pub enum ChatMessageVariant {
     TargetIsPossessionImmune,
     YouWerePossessed { immune: bool },
     TargetsMessage{message: Box<ChatMessageVariant>},
+    PlayerForwardedMessage{forwarder: PlayerReference, message: Box<ChatMessageVariant>},
     TargetHasRole { role: Role },
+    #[serde(rename_all = "camelCase")]
+    TargetHasWinCondition { win_condition: WinCondition },
 
     #[serde(rename_all = "camelCase")]
     WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},

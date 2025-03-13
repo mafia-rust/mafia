@@ -5,19 +5,22 @@ import { ContentMenu, ContentTab } from "../GameScreen";
 import "./graveyardMenu.css";
 import StyledText from "../../../components/StyledText";
 import { EnabledRolesDisplay } from "../../../components/gameModeSettings/EnabledRoleSelector";
-import { useGameState, usePlayerState } from "../../../components/useHooks";
+import { useGameState, usePlayerState, useSpectator } from "../../../components/useHooks";
 import { translateRoleOutline } from "../../../game/roleListState.d";
-import { EnabledModifiersDisplay } from "../../../components/gameModeSettings/EnabledModifiersDisplay";
 import { Button } from "../../../components/Button";
 import DetailsSummary from "../../../components/DetailsSummary";
+import { EnabledModifiersDisplay } from "../../../components/gameModeSettings/EnabledModifiersSelector";
 
 export default function GraveyardMenu(): ReactElement {
     return <div className="graveyard-menu graveyard-menu-colors">
         <ContentTab close={ContentMenu.GraveyardMenu} helpMenu={"standard/gameMode"}>{translate("menu.gameMode.title")}</ContentTab>
             
-        <div className="graveyard-menu-role-list">
+        <DetailsSummary
+            summary={translate("menu.lobby.roleList")}
+            defaultOpen={true}
+        >
             <RoleListDisplay />
-        </div>
+        </DetailsSummary>
         <EnabledRoles/>
         <EnabledModifiers/>
     </div>
@@ -30,37 +33,32 @@ function RoleListDisplay(): ReactElement {
     )!
     const crossedOutOutlines = usePlayerState(
         clientState => clientState.crossedOutOutlines,
-        ["yourCrossedOutOutlines"]
-    )
+        ["yourCrossedOutOutlines"],
+        []
+    )!
+
+    const spectator = useSpectator();
 
     return <>
-        { roleList.map((entry, index)=>{
-            const roleOutlineName = translateRoleOutline(entry);
-
-            return <Button 
-                className="role-list-button"
-                style={{ gridRow: index + 1 }} 
-                key={roleOutlineName + crossedOutOutlines?.includes(index) + index}
+        {roleList.map((entry, index)=>{
+            return <Button
+                className="role-list-button placard"
+                style={{ gridRow: index + 1 }}
+                key={index}
                 onClick={()=>{
-                    if (GAME_MANAGER.getMySpectator()) return;
+                    if (spectator) return;
 
-                    let newCrossedOutOutlines = crossedOutOutlines!;
-                    if(newCrossedOutOutlines.includes(index))
-                        newCrossedOutOutlines = newCrossedOutOutlines.filter(x=>x!==index);
+                    let newCrossedOutOutlines;
+                    if(crossedOutOutlines.includes(index))
+                        newCrossedOutOutlines = crossedOutOutlines.filter(x=>x!==index);
                     else
-                        newCrossedOutOutlines.push(index);
+                        newCrossedOutOutlines = crossedOutOutlines.concat(index);
 
                     GAME_MANAGER.sendSaveCrossedOutOutlinesPacket(newCrossedOutOutlines);
                 }}
-                onMouseDown={(e)=>{
-                    // on right click, show a list of all roles that can be in this bucket
-                    // if(e.button === 2){
-                    //     e.preventDefault();
-                    // }
-                }}
             >
                 {
-                    crossedOutOutlines?.includes(index) ? 
+                    crossedOutOutlines.includes(index) ? 
                     <s><StyledText>
                         {translateRoleOutline(entry)}
                     </StyledText></s> : 

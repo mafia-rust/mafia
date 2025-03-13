@@ -18,6 +18,8 @@ export type RoleState = {
 } | {
     type: "transporter"
 } | {
+    type: "coxswain"
+} | {
     type: "detective"
 } | {
     type: "lookout"
@@ -147,6 +149,13 @@ Doomsayer
 | {
     type: "politician"
 } | {
+    type: "santaClaus",
+    abilityUsedLastNight: "naughty" | "nice" | null
+} | {
+    type: "krampus",
+    lastUsedAbility: "doNothing" | "kill" | null,
+    ability: "doNothing" | "kill"
+} | {
     type: "witch"
 } | {
     type: "scarecrow"
@@ -182,6 +191,11 @@ Doomsayer
 } | {
     type: "puppeteer"
     marionettesRemaining: number
+} | {
+    type: "warden"
+} | {
+    type: "yer",
+    starPassesRemaining: number
 } | {
     type: "kira"
 } | {

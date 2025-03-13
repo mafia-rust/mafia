@@ -1,6 +1,6 @@
 import { VersionConverter } from ".";
 import { GameMode, GameModeData, GameModeStorage, ShareableGameMode } from "..";
-import { Settings } from "../../../../game/localStorage";
+import { getDefaultSettings, Settings } from "../../../../game/localStorage";
 import { RoleOutline, RoleOutlineOption } from "../../../../game/roleListState.d";
 import { Role } from "../../../../game/roleState.d";
 import { Failure, ParseResult, ParseSuccess, Success, isFailure } from "../parse";
@@ -16,6 +16,11 @@ const v3: VersionConverter = {
 
 export default v3;
 
+type v4GameModeData = GameModeData
+type v4ShareableGameMode = ShareableGameMode
+type v4GameMode = GameMode
+type v4GameModeStorage = GameModeStorage
+
 function parseSettings(json: NonNullable<any>): ParseResult<Settings> {
     if (typeof json !== "object" || Array.isArray(json)) {
         return Failure("settingsNotObject", json);
@@ -24,6 +29,13 @@ function parseSettings(json: NonNullable<any>): ParseResult<Settings> {
     for(const key of ['format', 'volume', 'fontSize', 'accessibilityFont', 'defaultName', 'language', 'roleSpecificMenus']) {
         if (!Object.keys(json).includes(key)) {
             return Failure(`${key as keyof Settings}KeyMissingFromSettings`, json);
+        }
+    }
+
+    for(const key of ['maxMenus', 'menuOrder']) {
+        if (!Object.keys(json).includes(key)) {
+            json.maxMenus = getDefaultSettings().maxMenus
+            json.menuOrder = getDefaultSettings().menuOrder
         }
     }
 
@@ -50,29 +62,29 @@ function parseRoleSpecificMenus(json: NonNullable<any>): ParseResult<Role[]> {
     return Success(roleList.map(success => (success as ParseSuccess<Role>).value));
 }
 
-function parseGameModeStorage(json: NonNullable<any>): ParseResult<GameModeStorage> {
+function parseGameModeStorage(json: NonNullable<any>): ParseResult<v4GameModeStorage> {
     if (typeof json !== "object" || Array.isArray(json)) {
         return Failure("gameModeStorageNotObject", json);
     }
 
     for (const key of ['format', 'gameModes']) {
         if (!Object.keys(json).includes(key)) {
-            return Failure(`${key as keyof GameModeStorage}KeyMissingFromGameModeStorage`, json)
+            return Failure(`${key as keyof v4GameModeStorage}KeyMissingFromGameModeStorage`, json)
         }
     }
 
-    const gameModeList = (json.gameModes as GameMode[]).map(parseGameMode);
+    const gameModeList = (json.gameModes as v4GameMode[]).map(parseGameMode);
     for (const gameMode of gameModeList) {
         if (isFailure(gameMode)) return gameMode;
     }
 
     return Success({
-        format: "v3",
-        gameModes: gameModeList.map(gameMode => (gameMode as ParseSuccess<GameMode>).value)
+        format: "v4",
+        gameModes: gameModeList.map(gameMode => (gameMode as ParseSuccess<v4GameMode>).value)
     })
 }
 
-function parseGameMode(json: NonNullable<any>): ParseResult<GameMode> {
+function parseGameMode(json: NonNullable<any>): ParseResult<v4GameMode> {
     for (const key of ['name', 'data']) {
         if (!Object.keys(json).includes(key)) {
             return Failure(`${key as keyof GameMode}KeyMissingFromGameMode`, json)
@@ -91,7 +103,7 @@ function parseGameMode(json: NonNullable<any>): ParseResult<GameMode> {
     })
 }
 
-function parseShareableGameModeData(json: NonNullable<any>): ParseResult<ShareableGameMode> {
+function parseShareableGameModeData(json: NonNullable<any>): ParseResult<v4ShareableGameMode> {
     const gameMode = parseGameModeData(json);
     if (isFailure(gameMode)) {
         return gameMode;
@@ -103,11 +115,11 @@ function parseShareableGameModeData(json: NonNullable<any>): ParseResult<Shareab
         const name = parseName(json.name);
         if (isFailure(name)) return name;
 
-        return Success({ format: "v3", name: name.value, ...gameMode.value });
+        return Success({ format: "v4", name: name.value, ...gameMode.value });
     }
 }
 
-function parseGameModeDataRecord(json: NonNullable<any>): ParseResult<Record<number, GameModeData>> {
+function parseGameModeDataRecord(json: NonNullable<any>): ParseResult<Record<number, v4GameModeData>> {
     if (typeof json !== "object" || Array.isArray(json)) {
         return Failure("gameModeDataRecordNotObject", json);
     }
@@ -137,14 +149,14 @@ function parseGameModeDataRecord(json: NonNullable<any>): ParseResult<Record<num
     return Success(parsedEntries);
 }
 
-function parseGameModeData(json: NonNullable<any>): ParseResult<GameModeData> {
+function parseGameModeData(json: NonNullable<any>): ParseResult<v4GameModeData> {
     if (typeof json !== "object" || Array.isArray(json)) {
         return Failure("gameModeDataNotObject", json);
     }
 
     for (const key of ['roleList', 'phaseTimes', 'enabledRoles', 'enabledModifiers']) {
         if (!Object.keys(json).includes(key)) {
-            return Failure(`${key as keyof GameModeData}KeyMissingFromGameModeData`, json)
+            return Failure(`${key as keyof v4GameModeData}KeyMissingFromGameModeData`, json)
         }
     }
 
@@ -193,8 +205,8 @@ function parseRoleOutline(json: NonNullable<any>): ParseResult<RoleOutline> {
 
     switch (json.type) {
         case "any":
-            return Success({ type: "any" })
-        case "roleOutlineOptions":
+            return Success([{ roleSet: "any" }])
+        case "roleOutlineOptions": {
             if (!Object.keys(json).includes('options')) {
                 return Failure("roleOutlineMissingOptionsKey", json);
             }
@@ -202,10 +214,8 @@ function parseRoleOutline(json: NonNullable<any>): ParseResult<RoleOutline> {
             const options = parseRoleOutlineOptionList(json.options);
             if (isFailure(options)) return options;
 
-            return Success({
-                type: "roleOutlineOptions",
-                options: options.value
-            });
+            return Success(options.value);
+        }
         default:
             return Failure("roleOutlineInvalidType", json);
     }
@@ -230,7 +240,7 @@ function parseRoleOutlineOption(json: NonNullable<any>): ParseResult<RoleOutline
     }
 
     switch (json.type) {
-        case "role":
+        case "role": {
             if (!Object.keys(json).includes('role')) {
                 return Failure("roleOutlineOptionMissingRoleKey", json);
             }
@@ -239,10 +249,10 @@ function parseRoleOutlineOption(json: NonNullable<any>): ParseResult<RoleOutline
             if (isFailure(role)) return role;
 
             return Success({
-                type: "role",
                 role: role.value
             });
-        case "roleSet":
+        }
+        case "roleSet": {
             if (!Object.keys(json).includes('roleSet')) {
                 return Failure("roleOutlineOptionMissingRoleSetKey", json);
             }
@@ -251,9 +261,9 @@ function parseRoleOutlineOption(json: NonNullable<any>): ParseResult<RoleOutline
             if (isFailure(roleSet)) return roleSet;
 
             return Success ({
-                type: "roleSet",
                 roleSet: roleSet.value
             });
+        }
         default:
             return Failure("roleOutlineOptionInvalidType", json);
     }

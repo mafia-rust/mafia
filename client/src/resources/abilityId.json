@@ -56,6 +56,9 @@
     "role/transporter/0": {
         "midnight": true
     },
+    "role/coxswain/0": {
+        "midnight": false
+    },
     "role/retributionist/0": {
         "midnight": true
     },
@@ -155,6 +158,12 @@
     "role/politician/0": {
         "midnight": false
     },
+    "role/santaClaus/0": {
+        "midnight": true
+    },
+    "role/santaClaus/1": {
+        "midnight": true
+    },
     "role/scarecrow/0": {
         "midnight": true
     },
@@ -189,6 +198,24 @@
         "midnight": true
     },
     "role/spiral/0": {
+        "midnight": true
+    },
+    "role/warden/0": {
+        "midnight": false
+    },
+    "role/warden/1": {
+        "midnight": true
+    },
+    "wardenLiveOrDie": {
+        "midnight": true
+    },
+    "role/yer/0": {
+        "midnight": true
+    },
+    "role/yer/1": {
+        "midnight": true
+    },
+    "role/yer/2": {
         "midnight": true
     },
     "role/kira/0": {

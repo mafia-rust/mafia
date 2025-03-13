@@ -1,3 +1,4 @@
+import ListMap from "../ListMap"
 import GameState, { LobbyClient, LobbyState, PhaseTimes, Player, LobbyClientID, PlayerGameState } from "./gameState.d"
 
 
@@ -28,7 +29,7 @@ export function createLobbyState(): LobbyState {
         enabledRoles: [],
         enabledModifiers: [],
 
-        players: new Map<LobbyClientID, LobbyClient>(),
+        players: new ListMap<LobbyClientID, LobbyClient>(),
         chatMessages: [],
     }
 }
@@ -38,6 +39,10 @@ export function createGameState(): GameState {
         stateType: "game",
         roomCode: 0,
         lobbyName: "",
+
+        initialized: false,
+
+        myId: null,
 
         chatMessages : [],
         graves: [],
@@ -57,8 +62,9 @@ export function createGameState(): GameState {
         ticking: true,
 
         clientState: createPlayerGameState(),
-        host: false
+        host: false,
 
+        missedChatMessages: false
     }
 }
 
@@ -77,14 +83,14 @@ export function createPlayerGameState(): PlayerGameState {
         crossedOutOutlines: [],
         chatFilter: null,
         deathNote: "",
-        targets: [],
-        voted: null,
         judgement: "abstain",
 
         fellowInsiders: [],
 
         sendChatGroups: [],
         insiderGroups: [],
+
+        missedWhispers: []
     }
 }
 
@@ -92,9 +98,6 @@ export function createPlayer(name: string, index: number): Player {
     return{
         name: name,
         index: index,
-        buttons: {
-            vote: false,
-        },
         numVoted: 0,
         alive: true,
         roleLabel: null,
