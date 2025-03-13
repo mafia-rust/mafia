@@ -1003,6 +1003,18 @@
             {"type": "targetHasRole", "role":"detective"}
         ]
     },
+    "wizard":{
+        "mainRoleSet": "minions",
+        "roleSets": ["minions"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+
+        ]
+    },
     "kidnapper":{
         "mainRoleSet": "minions",
         "roleSets": ["minions"],

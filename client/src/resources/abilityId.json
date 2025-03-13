@@ -173,6 +173,9 @@
     "role/warper/0": {
         "midnight": true
     },
+    "role/wizard/0": {
+        "midnight": true
+    },
     "role/kidnapper/0": {
         "midnight": false
     },

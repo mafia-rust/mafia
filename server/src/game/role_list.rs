@@ -335,7 +335,7 @@ impl RoleSet{
                 ],
             RoleSet::Minions => 
                 vec![
-                    Role::Witch, Role::Scarecrow, Role::Warper, Role::Kidnapper
+                    Role::Witch, Role::Scarecrow, Role::Warper, Role::Kidnapper, Role::Wizard
                 ],
             RoleSet::Neutral =>
                 vec![

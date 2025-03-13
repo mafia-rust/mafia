@@ -162,6 +162,8 @@ Doomsayer
 } | {
     type: "warper"
 } | {
+    type: "wizard"
+} | {
     type: "kidnapper"
     executionsRemaining: number,
     jailedTargetRef: number | null

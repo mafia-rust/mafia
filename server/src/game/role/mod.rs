@@ -162,6 +162,7 @@ macros::roles! {
     Warper : warper,
     Kidnapper : kidnapper,
     Chronokaiser : chronokaiser,
+    Wizard : wizard,
 
     Arsonist : arsonist,
     Werewolf : werewolf,
