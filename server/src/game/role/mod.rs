@@ -1,5 +1,4 @@
-#![allow(clippy::single_match)]
-#![allow(clippy::get_first)]
+#![allow(clippy::single_match, reason = "May add more cases for more priorities later")]
 
 use std::collections::HashSet;
 use crate::vec_set::VecSet;
@@ -403,17 +402,15 @@ mod macros {
 
     pub(super) use {roles, priorities};
 }
-#[allow(clippy::match_like_matches_macro)]
 impl Role{
     pub fn possession_immune(&self)->bool{
-        match self {
+        matches!(self, 
             | Role::Bouncer
             | Role::Veteran | Role::Coxswain
             | Role::Transporter | Role::Retributionist
             | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper
-            | Role::MafiaWitch | Role::Necromancer => true,
-            _ => false,
-        }
+            | Role::MafiaWitch | Role::Necromancer 
+        )
     }
     pub fn has_innocent_aura(&self, game: &Game)->bool{
         match self {

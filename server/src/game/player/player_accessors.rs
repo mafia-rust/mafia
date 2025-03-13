@@ -116,9 +116,9 @@ impl PlayerReference{
     pub fn player_tags<'a>(&self, game: &'a Game) -> &'a VecMap<PlayerReference, Vec1<Tag>>{
         &self.deref(game).player_tags
     }
-    pub fn player_has_tag(&self, game: &Game, key: PlayerReference, value: Tag) -> u8{
+    pub fn player_has_tag(&self, game: &Game, key: PlayerReference, value: Tag) -> usize {
         if let Some(player_tags) = self.deref(game).player_tags.get(&key){
-            player_tags.iter().filter(|t|**t==value).count() as u8
+            player_tags.iter().filter(|t|**t==value).count()
         }else{
             0
         }
@@ -181,7 +181,7 @@ impl PlayerReference{
         self.add_chat_message(game, message.clone());
     }
     pub fn add_private_chat_messages(&self, game: &mut Game, messages: Vec<ChatMessageVariant>){
-        for message in messages.into_iter(){
+        for message in messages {
             self.add_private_chat_message(game, message);
         }
     }
