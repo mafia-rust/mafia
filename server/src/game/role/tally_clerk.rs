@@ -27,16 +27,18 @@ impl RoleStateImpl for TallyClerk {
         if priority != Priority::Investigative {return;}
 
         let mut evil_count: u8 = 0;
+        let is_confused = Confused::is_confused(game, actor_ref);
+        
         for player in PlayerReference::all_players(game)
             .filter(|player|player.alive(game))
             .filter(|player|VerdictsToday::player_guiltied_today(game, player))
         {
-            if Confused::is_confused(game, actor_ref) {
+            if is_confused {
                 if Self::player_is_suspicious_confused(game, player, actor_ref) {
-                    evil_count += 1;
+                    evil_count = evil_count.saturating_add(1);
                 }
             } else if Self::player_is_suspicious(game, player) {
-                evil_count += 1;
+                evil_count =  evil_count.saturating_add(1);
             }
         }
         

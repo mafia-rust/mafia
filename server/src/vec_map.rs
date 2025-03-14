@@ -82,7 +82,7 @@ impl<K, V> VecMap<K, V> where K: Eq {
                 return Some(self.vec.swap_remove(i));
             }
         }
-        return None;
+        None
     }
 
     pub fn iter(&self) -> impl Iterator<Item = (&K, &V)> {
@@ -157,7 +157,7 @@ impl<K, V> VecMap<K, V> where K: Eq, V: PartialOrd {
    /// If the old value is greater than value, then it is not replaced
    pub fn keep_greater_unsized(&mut self, key: K, value: V) {
         if let Some(i) = self.vec.iter().position(|(k, _)| *k == key) {
-            if self.vec[i].1 < value {
+            if self.vec.get(i).expect("somehow got a position thats oob").1 < value {
                 self.vec.swap_remove(i);
                 self.vec.push((key, value));
             }
@@ -193,7 +193,7 @@ impl<K, V> VecMap<K, V> where K: Eq, V: PartialOrd {
     /// If the old value is lesser than value, then it is not replaced
    pub fn keep_lesser_unsized(&mut self, key: K, value: V) {
         if let Some(i) = self.vec.iter().position(|(k, _)| *k == key) {
-            if self.vec[i].1 > value {
+            if self.vec.get(i).expect("somehow got a position thats oob").1 > value {
                 self.vec.swap_remove(i);
                 self.vec.push((key, value));
             }

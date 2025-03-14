@@ -54,6 +54,7 @@ impl Confused {
     pub fn remove_player(game: &mut Game, player: PlayerReference) -> bool {
         match game.confused_mut().0.get_mut(&player) {
             Some(data) => {
+                #[expect(clippy::clone_on_copy, reason="clarity that it won't be updated when old is updated")]
                 let old = data.confused.clone();
                 data.confused = false;
                 old

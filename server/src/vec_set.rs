@@ -120,8 +120,9 @@ impl<T: Eq> Ord for VecSet<T> {
         self.len().cmp(&other.len())
     }
 }
-
+#[expect(clippy::from_over_into, reason="using into allows access of private variables, meaning K does not need to implement Clone nor does it need to be cloned or be accessed as a reference")]
 impl<K> Into<HashSet<K>> for VecSet<K> where K: Eq+Hash{
+    /// Is consuming
     fn into(self) -> HashSet<K> {
         let mut hash_set = HashSet::with_capacity(self.len());
         for key in self.vec {

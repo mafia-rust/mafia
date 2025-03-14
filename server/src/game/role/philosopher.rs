@@ -33,7 +33,7 @@ impl RoleStateImpl for Philosopher {
         if first_visit.target == second_visit.target {
             false
         } else if Confused::is_confused(game, actor_ref) {
-            Philosopher::players_are_enemies_confused(&game,first_visit.target, second_visit.target, actor_ref)
+            Philosopher::players_are_enemies_confused(game,first_visit.target, second_visit.target, actor_ref)
         } else {
             Philosopher::players_are_enemies(game, first_visit.target, second_visit.target)
         };

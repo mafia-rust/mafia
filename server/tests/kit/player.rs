@@ -168,7 +168,7 @@ impl From<TestPlayer> for Vec<TestPlayer> {
 
 impl PartialEq for TestPlayer {
     fn eq(&self, other: &TestPlayer) -> bool{
-        return self.0 == other.0
+        self.0 == other.0
     }
 }
 
