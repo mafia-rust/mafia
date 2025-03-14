@@ -155,6 +155,9 @@
     "role/jester/0": {
         "midnight": true
     },
+    "role/coward/0": {
+        "midnight": true
+    },
     "role/politician/0": {
         "midnight": false
     },
