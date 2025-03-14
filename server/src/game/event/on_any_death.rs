@@ -1,5 +1,5 @@
 use crate::game::{
-    components::{cult::Cult, dead_can_still_play_message::DeadCanStillPlayMessage, love_linked::LoveLinked, mafia::Mafia, syndicate_gun_item::SyndicateGunItem}, 
+    components::{cult::Cult, dead_can_still_play_message::DeadCanStillPlayMessage, love_linked::LoveLinked, mafia::Mafia, syndicate_gun_item::SyndicateGunItem, vampire_tracker::VampireTracker}, 
     modifiers::Modifiers,
     player::PlayerReference, Game
 };
@@ -23,6 +23,7 @@ impl OnAnyDeath{
         Modifiers::on_any_death(game, self.dead_player);
         SyndicateGunItem::on_any_death(game, self.dead_player);
         DeadCanStillPlayMessage::on_any_death(game, self.dead_player);
+        VampireTracker::on_any_death(game, self.dead_player);
 
         game.on_any_death(self.dead_player);
     }

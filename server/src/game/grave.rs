@@ -43,7 +43,7 @@ pub enum GraveDeathCause {
     Execution,
     LeftTown,
     BrokenHeart,
-    Killers(Vec<GraveKiller>)
+    Killers(Vec<GraveKiller>),
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[serde(rename_all = "camelCase")]
@@ -53,6 +53,7 @@ pub enum GraveKiller {
     Role(Role),
     Suicide,
     Quit,
+    Sun,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
@@ -146,6 +147,20 @@ impl Grave{
                 death_cause: GraveDeathCause::BrokenHeart, 
                 will: player_ref.will(game).clone(),
                 death_notes: vec![]
+            }
+        }
+    }
+
+    pub fn from_sun(game: &Game, player_ref: PlayerReference) -> Grave {
+        Grave {
+            player: player_ref,
+            died_phase: GravePhase::from_phase_type(game.current_phase().phase()), 
+            day_number: game.phase_machine.day_number,
+            information: GraveInformation::Normal { 
+                role: player_ref.role(game), 
+                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Sun]), 
+                death_notes: vec![],
+                will: player_ref.will(game).clone(), 
             }
         }
     }
