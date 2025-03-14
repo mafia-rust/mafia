@@ -25,16 +25,11 @@ impl RoleStateImpl for Gossip {
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
             
-            let enemies = if Confused::is_confused(game, actor_ref){
-                false
-            }else{
-                Gossip::enemies(game, visit.target)
-            };
-
-            let message = ChatMessageVariant::GossipResult{ enemies };
-            
+            let enemies = Self::visited_enemies(game, visit.target, actor_ref);
+            let message: ChatMessageVariant = ChatMessageVariant::GossipResult{ enemies };
             actor_ref.push_night_message(game, message);
         }
+        
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
@@ -57,16 +52,18 @@ impl RoleStateImpl for Gossip {
 }
 
 impl Gossip {
-    pub fn enemies(game: &Game, player_ref: PlayerReference) -> bool {
-
+    pub fn visited_enemies(game: &Game, player_ref: PlayerReference, actor_ref: PlayerReference) -> bool {
         match player_ref.night_appeared_visits(game) {
             Some(x) => x.clone(),
             None => player_ref.all_night_visits_cloned(game),
         }
             .iter()
-            .map(|v|v.target)
-            .any(|targets_target|
-                Detective::player_is_suspicious(game, targets_target)
+            .any(|visit: &Visit|
+                if Confused::is_confused(game, actor_ref) {
+                    Detective::player_is_suspicious_confused(game, visit.target, actor_ref)
+                } else {
+                    Detective::player_is_suspicious(game, visit.target)
+                }
             )
     }
 }

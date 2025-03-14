@@ -10,6 +10,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_set;
 
+use super::detective::Detective;
 use super::{common_role, AvailableAbilitySelection, ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -28,13 +29,16 @@ impl RoleStateImpl for Philosopher {
         let Some(first_visit) = actor_visits.get(0) else {return;};
         let Some(second_visit) = actor_visits.get(1) else {return;};
 
-        let enemies = if Confused::is_confused(game, actor_ref) {
+        let enemies = 
+        if first_visit.target == second_visit.target {
             false
+        } else if Confused::is_confused(game, actor_ref) {
+            Philosopher::players_are_enemies_confused(game,first_visit.target, second_visit.target, actor_ref)
         } else {
             Philosopher::players_are_enemies(game, first_visit.target, second_visit.target)
         };
 
-        let message = ChatMessageVariant::SeerResult{ enemies };
+        let message = ChatMessageVariant::PhilosopherResult{ enemies };
         
         actor_ref.push_night_message(game, message);
     }
@@ -79,5 +83,9 @@ impl Philosopher{
         }else{
             !WinCondition::are_friends(a.win_condition(game), b.win_condition(game))
         }
+    }
+    pub fn players_are_enemies_confused(game: &Game, a: PlayerReference, b: PlayerReference, actor_ref: PlayerReference) -> bool {
+        Detective::player_is_suspicious_confused(game, a, actor_ref) ^
+        Detective::player_is_suspicious_confused(game, b, actor_ref)
     }
 }
