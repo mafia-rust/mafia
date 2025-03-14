@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+use std::hash::Hash;
 use serde::{Deserialize, Serialize};
 
 use crate::vec_map::VecMap;
@@ -12,7 +14,7 @@ impl<K> Default for VecSet<K> where K: Eq {
     }
 }
 
-impl <K> VecSet<K> where K: Eq {
+impl<K> VecSet<K> where K: Eq {
     pub fn new() -> Self {
         VecSet { vec: VecMap::new() }
     }
@@ -77,6 +79,43 @@ impl <K> VecSet<K> where K: Eq {
     }
 }
 
+impl<'a, K> VecSet<&'a K> where K: Eq + Copy{
+    pub fn copied(self) -> VecSet<K> {
+        let mut copied: VecSet<K> = VecSet::with_capacity(self.len());
+        for key in self {
+            assert!(copied.insert(*key).is_none());
+        }
+        return copied;
+    }
+}
+impl<'a, K> VecSet<&'a mut K> where K: Eq + Copy{
+    pub fn copied(self) -> VecSet<K> {
+        let mut copied: VecSet<K> = VecSet::with_capacity(self.len());
+        for key in self {
+            assert!(copied.insert(*key).is_none());
+        }
+        return copied;
+    }
+}
+impl<'a, K> VecSet<&'a K> where K: Eq + Clone{
+    pub fn cloned(self) -> VecSet<K> {
+        let mut cloned = VecSet::with_capacity(self.len());
+        for key in self {
+            assert!(cloned.insert(key.clone()).is_none());
+        }
+        return cloned;
+    }
+}
+impl<'a, K> VecSet<&'a mut K> where K: Eq + Clone{
+    pub fn cloned(self) -> VecSet<K> {
+        let mut cloned = VecSet::with_capacity(self.len());
+        for key in self {
+            assert!(cloned.insert(key.clone()).is_none());
+        }
+        return cloned;
+    }
+}
+
 impl<K> IntoIterator for VecSet<K> where K: Eq {
     type Item = K;
     type IntoIter = std::iter::Map<std::vec::IntoIter<(K, ())>, fn((K, ())) -> K>;
@@ -92,6 +131,25 @@ impl<K> FromIterator<K> for VecSet<K> where K: Eq {
             set.insert(key);
         }
         set
+    }
+}
+
+impl<K> Into<HashSet<K>> for VecSet<K> where K: Eq + Hash{
+    fn into(self) -> HashSet<K> {
+        let mut hash = HashSet::with_capacity(self.len());
+        for k in self {
+            assert!(hash.insert(k));
+        }
+        hash
+    }
+}
+impl<'a, K> Into<HashSet<&'a K>> for &'a VecSet<K> where K: Eq + Hash{
+    fn into(self) -> HashSet<&'a K> {
+        let mut hash = HashSet::with_capacity(self.len());
+        for k in self.iter() {
+            assert!(hash.insert(k));
+        }
+        hash
     }
 }
 
