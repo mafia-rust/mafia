@@ -24,7 +24,7 @@ const MAX_PLAYERS_IN_PRISON: u8 = 3;
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Shielded;
 
 impl RoleStateImpl for Warden {
     type ClientRoleState = Warden;
@@ -59,7 +59,7 @@ impl RoleStateImpl for Warden {
                         actor_ref,
                         game,
                         GraveKiller::Role(Role::Warden),
-                        AttackPower::ArmorPiercing,
+                        AttackPower::ShieldPiercing,
                         true
                     );
                 }

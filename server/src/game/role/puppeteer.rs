@@ -27,7 +27,7 @@ impl Default for Puppeteer{
 }
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Shielded;
 
 impl RoleStateImpl for Puppeteer {
     type ClientRoleState = Puppeteer;
@@ -49,7 +49,7 @@ impl RoleStateImpl for Puppeteer {
                     ControllerID::role(actor_ref, Role::Puppeteer, 1)
                 ).unwrap_or(IntegerSelection(0)).0 == 1
             {
-                if !AttackPower::ArmorPiercing.can_pierce(target.defense(game)) {
+                if !AttackPower::ShieldPiercing.can_pierce(target.defense(game)) {
                     actor_ref.push_night_message(game, crate::game::chat::ChatMessageVariant::YourConvertFailed);
                 }else{
                     if PuppeteerMarionette::string(game, target){
@@ -62,7 +62,7 @@ impl RoleStateImpl for Puppeteer {
                     actor_ref,
                     game,
                     crate::game::grave::GraveKiller::Role(Role::Puppeteer),
-                    AttackPower::ArmorPiercing,
+                    AttackPower::ShieldPiercing,
                     true
                 );
             }

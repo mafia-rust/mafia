@@ -28,7 +28,7 @@ pub struct ClientRoleState;
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Shielded;
 
 const ENRAGED_NUMBERATOR: usize = 2;
 const ENRAGED_DENOMINATOR: usize = 3;
@@ -46,7 +46,6 @@ impl RoleStateImpl for Werewolf {
                 let enraged = self.tracked_players.len().saturating_mul(ENRAGED_DENOMINATOR) >= PlayerReference::all_players(game)
                     .filter(|p|p.alive(game)||*p==actor_ref)
                     .count().saturating_mul(ENRAGED_NUMBERATOR);
-
                 if !enraged && target_ref.all_night_visits_cloned(game).is_empty() {return}
                     
                 NightVisits::all_visits_mut(game)
@@ -86,7 +85,7 @@ impl RoleStateImpl for Werewolf {
                             actor_ref,
                             game,
                             GraveKiller::Role(Role::Werewolf),
-                            AttackPower::ArmorPiercing,
+                            AttackPower::ShieldPiercing,
                             true
                         );
                     }
@@ -97,7 +96,7 @@ impl RoleStateImpl for Werewolf {
                             actor_ref,
                             game,
                             GraveKiller::Role(Role::Werewolf),
-                            AttackPower::ArmorPiercing,
+                            AttackPower::ShieldPiercing,
                             true
                         );
                     } 
