@@ -22,6 +22,7 @@ export default function Credits(): ReactElement {
                 <span>Gabriel Arias</span>
                 <span>Thomas Berrios</span>
                 <span>Willow Thompson</span>
+                <span>Colin Linzer</span>
             </p>
             <h3>{translate("playTesters")}</h3>
             <p>
