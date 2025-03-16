@@ -93,7 +93,7 @@ impl RoleStateImpl for Coward {
             game,
             actor_ref,
             ControllerID::role(actor_ref, Role::Coward, 0),
-            false
+            true
         )
     }
     
