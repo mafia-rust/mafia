@@ -27,7 +27,7 @@ impl RoleStateImpl for Mafioso {
         if let Some(visit) = actor_visits.first(){
             let target_ref = visit.target;
     
-            target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::RoleSet(RoleSet::Mafia), AttackPower::Basic, false);
+            target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::RoleSet(RoleSet::Mafia), AttackPower::Basic, false, true);
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {

@@ -59,6 +59,7 @@ impl RoleStateImpl for Jailor {
                             game, 
                             GraveKiller::Role(Role::Jailor), 
                             AttackPower::ProtectionPiercing, 
+                            false,
                             false
                         );
         

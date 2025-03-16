@@ -87,7 +87,8 @@ impl RoleStateImpl for Werewolf {
                             game,
                             GraveKiller::Role(Role::Werewolf),
                             AttackPower::ArmorPiercing,
-                            true
+                            true,
+                            false
                         );
                     }
                     
@@ -98,6 +99,7 @@ impl RoleStateImpl for Werewolf {
                             game,
                             GraveKiller::Role(Role::Werewolf),
                             AttackPower::ArmorPiercing,
+                            true,
                             true
                         );
                     } 

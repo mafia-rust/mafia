@@ -179,7 +179,7 @@ impl RoleStateImpl for Kira {
                 
                 for (player, (guess, result)) in result.guesses.iter(){
                     if player.alive(game) && *result == KiraGuessResult::Correct && *guess != KiraGuess::None {
-                        player.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(super::Role::Kira), AttackPower::ArmorPiercing, true);
+                        player.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(super::Role::Kira), AttackPower::ArmorPiercing, true, false);
                     }
                 }
             },

@@ -71,7 +71,7 @@ impl RoleStateImpl for Veteran {
                         *other_player_ref != actor_ref
                     ).collect::<Vec<PlayerReference>>()
                 {
-                    other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Veteran), AttackPower::ArmorPiercing, false);
+                    other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Veteran), AttackPower::ArmorPiercing, false, false);
                 }
             }
             _=>{}

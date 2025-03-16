@@ -13,7 +13,7 @@ use crate::game::attack_power::DefensePower;
 use serde::{Serialize, Deserialize};
 
 use super::{
-    ability_input::*, components::{insider_group::InsiderGroupID, night_visits::NightVisits}, grave::GraveReference, visit::VisitTag, win_condition::WinCondition
+    ability_input::*, attack_power::AttackPower, components::{insider_group::InsiderGroupID, night_visits::NightVisits}, grave::GraveReference, visit::VisitTag, win_condition::WinCondition
 };
 
 pub trait GetClientRoleState<CRS> {
@@ -79,6 +79,9 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
         NightVisits::retain(game, |v|
             v.tag != VisitTag::Role || v.visitor != actor_ref
         );
+    }
+    fn redirect_attack(self, _: &mut Game, actor_ref: PlayerReference, attack: AttackPower, _: bool)  -> Option<(PlayerReference, AttackPower)> {
+    	return Some((actor_ref, attack));
     }
 }
 
@@ -365,6 +368,12 @@ mod macros {
                 pub fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
                     match self {
                         $(Self::$name(role_struct) => role_struct.before_initial_role_creation(game, actor_ref)),*
+                    }
+                }
+                pub fn redirect_attack(self, game: &mut Game, actor_ref: PlayerReference, attack: AttackPower, with_visit: bool)
+                -> Option<(PlayerReference, AttackPower)> {
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.redirect_attack(game, actor_ref, attack, with_visit)),*
                     }
                 }
                 pub fn get_client_role_state(self, game: &Game, actor_ref: PlayerReference) -> ClientRoleStateEnum {

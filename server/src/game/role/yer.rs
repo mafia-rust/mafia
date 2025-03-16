@@ -60,6 +60,7 @@ impl RoleStateImpl for Yer {
                     game,
                     GraveKiller::Role(Role::Yer),
                     AttackPower::ArmorPiercing,
+                    true,
                     true
                 );
             } else {
@@ -93,7 +94,8 @@ impl RoleStateImpl for Yer {
                     game,
                     GraveKiller::Role(Role::Yer),
                     AttackPower::ProtectionPiercing,
-                    true
+                    true,
+                    false
                 );
 
                 actor_ref.set_role_state(game, self);

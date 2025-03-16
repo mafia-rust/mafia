@@ -63,6 +63,7 @@ impl RoleStateImpl for Puppeteer {
                     game,
                     crate::game::grave::GraveKiller::Role(Role::Puppeteer),
                     AttackPower::ArmorPiercing,
+                    true,
                     true
                 );
             }

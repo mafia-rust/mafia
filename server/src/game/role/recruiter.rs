@@ -164,13 +164,14 @@ impl Recruiter {
         ){x==0}else{true};
 
         if choose_attack {
-            target_ref.try_night_kill_single_attacker(
+            return target_ref.try_night_kill_single_attacker(
                 actor_ref,
                 game,
                 GraveKiller::RoleSet(RoleSet::Mafia),
                 AttackPower::Basic,
-                false
-            )
+                false,
+                true
+            ) != None;
         }else if AttackPower::Basic.can_pierce(target_ref.defense(game)) {
             MafiaRecruits::recruit(game, target_ref)
         }else{

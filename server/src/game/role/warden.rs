@@ -60,7 +60,8 @@ impl RoleStateImpl for Warden {
                         game,
                         GraveKiller::Role(Role::Warden),
                         AttackPower::ArmorPiercing,
-                        true
+                        true,
+                        false
                     );
                 }
             },

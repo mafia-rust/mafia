@@ -1,8 +1,7 @@
 
 use serde::Serialize;
 
-use crate::game::attack_power::DefensePower;
-use crate::game::components::night_visits::NightVisits;
+use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::grave::{GraveInformation, GraveReference};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::player::PlayerReference;
@@ -16,7 +15,8 @@ use super::{
 
 #[derive(Clone, Debug, Default)]
 pub struct Coward {
-	pub obscure: Option<PlayerReference>
+	obscure: Option<PlayerReference>,
+	saved: bool
 }
 
 #[derive(Clone, Serialize, Debug)]
@@ -29,54 +29,53 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 impl RoleStateImpl for Coward {
     type ClientRoleState = ClientRoleState;
 
+    fn redirect_attack(self, game: &mut Game, actor_ref: PlayerReference, attack: AttackPower, with_visit: bool)  -> Option<(PlayerReference, AttackPower)> {
+    	if with_visit {
+	    	if let Some(target) = self.obscure {
+				actor_ref.set_role_state(
+	       			game,
+	          		Coward {
+	            		obscure: self.obscure,
+	              		saved: true
+	            	}
+	       		);
+				return Some((target, AttackPower::ProtectionPiercing));
+	    	}
+     	}
+      	return Some((actor_ref, attack));
+    }
+    
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         
-    	if priority != Priority::Heal {return;}
-    
-    	let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-    
-    	if let Some(target) = actor_visits.first(){
-	       	actor_ref.push_night_message(game, 
-	            ChatMessageVariant::CowardHid
-	        );
-			
-			let mut saved : bool = false;
-			let new_visits = NightVisits::all_visits(game).into_iter().copied().collect::<Vec<_>>();
-			for mut visit in new_visits {
-                if 
-                    visit.attack &&
-                    visit.target == actor_ref &&
-                    visit.visitor != actor_ref
-                {
-                	visit.target = target.target;
-                 	saved = true;
-                }
-            }
-            
-            for player_ref in PlayerReference::all_players(game){
-    
-                let new_visits = player_ref.all_night_visits_cloned(game).clone().into_iter().map(|mut v|{
-                    if
-                    	v.attack &&
-                    	v.target == actor_ref &&
-                    	v.visitor != actor_ref {
-                     	saved = true;
-                        v.target = target.target;
-                    }
-                    v
-                }).collect();
-                player_ref.set_night_visits(game, new_visits);
-                
-                let obscure = Some(target.target);
-                actor_ref.set_role_state(game, Coward{obscure});
-            }
-            
-            if saved {
-	           	actor_ref.push_night_message(game, 
-		            ChatMessageVariant::CowardSaved
-		        );
-            }
-        }
+    	match priority {
+     		Priority::Heal => {
+       			let obscure = match actor_ref.untagged_night_visits_cloned(game).first() {
+            		None => None,
+              		Some(target) => Some(target.target),
+          		};
+          		if let Some(_) = obscure {
+         			actor_ref.push_night_message(game, 
+			            ChatMessageVariant::CowardHid
+			        );
+               	}
+       			actor_ref.set_role_state(
+	       			game,
+	          		Coward {
+	            		obscure,
+	              		saved:false
+	            	}
+	       		)
+       		},
+         	// using SpyBug priority because it seems like it won't cause any issues/nothing else goes here.
+       		Priority::SpyBug => {
+         		if self.saved {
+        			actor_ref.push_night_message(game, 
+		            	ChatMessageVariant::CowardSaved
+           			);
+           		}
+         	}
+     		_ => {}
+     	}
     }
     
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
@@ -108,7 +107,7 @@ impl RoleStateImpl for Coward {
     fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: crate::game::phase::PhaseType) {
     	if let crate::game::phase::PhaseType::Night = _phase {
 	   		let obscure = None;
-	     	_actor_ref.set_role_state(_game, Coward{obscure});
+	     	_actor_ref.set_role_state(_game, Coward{obscure, saved: false});
      	}
     }
 }
