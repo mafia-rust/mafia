@@ -2,6 +2,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
 use crate::game::components::detained::Detained;
+use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::{
     attack_power::DefensePower,
     components::puppeteer_marionette::PuppeteerMarionette
@@ -49,13 +50,9 @@ impl RoleStateImpl for Puppeteer {
                     ControllerID::role(actor_ref, Role::Puppeteer, 1)
                 ).unwrap_or(IntegerSelection(0)).0 == 1
             {
-                if !AttackPower::ArmorPiercing.can_pierce(target.defense(game)) {
-                    actor_ref.push_night_message(game, crate::game::chat::ChatMessageVariant::YourConvertFailed);
-                }else{
-                    if PuppeteerMarionette::string(game, target){
-                        self.marionettes_remaining = self.marionettes_remaining.saturating_sub(1);
-                    }
-                    actor_ref.set_role_state(game, self);
+                if target.try_recruit(actor_ref, game, AttackPower::ArmorPiercing, true, InsiderGroupID::Puppeteer).is_some() {
+                	self.marionettes_remaining = self.marionettes_remaining.saturating_sub(1);
+                 	actor_ref.set_role_state(game, self);
                 }
             }else{
                 target.try_night_kill_single_attacker(

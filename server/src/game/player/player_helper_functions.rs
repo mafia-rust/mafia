@@ -31,7 +31,7 @@ impl PlayerReference{
     }
 
 
-    /// Returns true if attack overpowered defense
+    /// Returns Some(the person it killed) if attack overpowered defense, None if the defense was greater or the attack lost
     pub fn try_night_kill_single_attacker(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool, with_visit: bool) -> Option<PlayerReference> {
         self.try_night_kill(
             &vec![attacker_ref].into_iter().collect(),
@@ -43,41 +43,34 @@ impl PlayerReference{
         )
     }
     pub fn try_night_kill(&self, attacker_refs: &VecSet<PlayerReference>, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool, with_visit: bool) -> Option<PlayerReference> {
-	    let (target, power) = match self.role_state(game).clone().redirect_attack(game, *self, attack, with_visit) {
-			None => return None,
-	    	Some((target, power)) => (target, power)
-		};
-   		target.set_night_attacked(game, true);
-
-        if target.night_defense(game).can_block(power){
-            target.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
-            for attacker in attacker_refs.iter() {
-                attacker.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
-            }
-            return None;
-        }
-        
-        target.push_night_message(game, ChatMessageVariant::YouWereAttacked);
-        for attacker in attacker_refs.iter() {
-            attacker.push_night_message(game,ChatMessageVariant::YouAttackedSomeone);
-        }
-
-        target.push_night_grave_killers(game, grave_killer);
-            
-        if should_leave_death_note {
-            for attacker in attacker_refs.iter() {
-                if let Some(note) = attacker.death_note(game) {
-                    target.push_night_grave_death_notes(game, note.clone());
-                }
-            }
-        }
-        
-
-        if !target.alive(game) { return Some(target) }
-
-        target.set_night_died(game, true);
-
-      	return Some(target);
+	    
+    	if let Some(target) = self.try_attack(game, attack, with_visit) {
+		   	for attacker in attacker_refs.iter() {
+		        attacker.push_night_message(game,ChatMessageVariant::YouAttackedSomeone);
+		    }
+			
+			target.push_night_grave_killers(game, grave_killer);
+			
+			if should_leave_death_note {
+	            for attacker in attacker_refs.iter() {
+	                if let Some(note) = attacker.death_note(game) {
+	                    target.push_night_grave_death_notes(game, note.clone());
+	                }
+	            }
+	        }
+	        
+	
+	        if !target.alive(game) { return Some(target) }
+	
+	        target.set_night_died(game, true);
+	
+	      	return Some(target);
+     	} else {
+    		for attacker in attacker_refs.iter() {
+		        attacker.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
+		    }
+		    return None;
+      	}
     }
     pub fn try_night_kill_no_attacker(&self, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower) -> Option<PlayerReference> {
         self.try_night_kill(
@@ -89,6 +82,65 @@ impl PlayerReference{
             false
         )
     }
+    pub fn try_attack(&self, game: &mut Game, attack: AttackPower, with_visit: bool) -> Option<PlayerReference> {
+   		let (target, power) = match self.role_state(game).clone().redirect_attack(game, *self, attack, with_visit) {
+			None => return None,
+	    	Some((target, power)) => (target, power)
+		};
+     	target.set_night_attacked(game, true);
+      	
+     	if target.night_defense(game).can_block(power){
+      		target.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
+          	return None;
+      	}
+      
+      	return Some(target);
+    }
+    pub fn try_recruit(&self, actor_ref: PlayerReference, game: &mut Game, attack: AttackPower, with_visit: bool, group: InsiderGroupID) -> Option<PlayerReference> {
+    	if let Some(target) = self.try_attack(game, attack, with_visit) {
+     		if !group.is_player_in_revealed_group(game, target) {
+       			return None;
+       		}
+         	if !group.recruit(game, target) {
+          		return None;
+          	};
+         	return Some(target);
+     	} else {
+      		actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+      		return None;
+      	}
+    }
+    
+    pub fn try_convert(&self, actor_ref: PlayerReference, game: &mut Game, attack: AttackPower, with_visit: bool, new_state: RoleState) -> Option<PlayerReference> {
+  		if let Some(target) = self.try_attack(game, attack, with_visit) {
+    		if InsiderGroupID::in_same_revealed_group(game, actor_ref, target) {
+      			return None;
+      		}
+			target.set_night_convert_role_to(game, Some(new_state));
+			return Some(target);
+		} else {
+			return None;
+		}
+    }
+    
+    pub fn try_convert_friendly(&self, actor_ref: PlayerReference, game: &mut Game, attack: AttackPower, with_visit: bool, new_state: RoleState) -> Option<PlayerReference> {
+   		if let Some((target, _)) = self.role_state(game).clone().redirect_attack(game, *self, attack, with_visit) {
+   			if InsiderGroupID::in_same_revealed_group(game, actor_ref, target) {
+	   			target.set_night_convert_role_to(game, Some(new_state));
+				return Some(target);
+     		}
+     	}
+      	return None;
+    }
+    
+    pub fn try_convert_recruit(&self, actor_ref: PlayerReference, game: &mut Game, attack: AttackPower, with_visit: bool, group: InsiderGroupID, new_state: RoleState) -> Option<PlayerReference> {
+		if let Some(target) = self.try_recruit(actor_ref, game, attack, with_visit, group) {
+			target.set_night_convert_role_to(game, Some(new_state));
+			return Some(target);
+		} else {
+			return None;
+		}
+	}
 
     /**
     ### Example use in witch case
