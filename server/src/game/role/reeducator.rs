@@ -213,9 +213,9 @@ impl RoleStateImpl for Reeducator {
     }
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
         //because it can select ambusher
-        if self.convert_charges_remaining || InsiderGroupID::all_players_in_same_revealed_group_with_actor(game, actor_ref).len() > 1 {
+        if self.convert_charges_remaining {
             //true because it can only convert players to syndicate
-            AttackData::attack(game, actor_ref, true, true)
+            AttackData::attack(game, actor_ref, false)
         } else {
             AttackData::none()
         }

@@ -133,8 +133,10 @@ impl RoleStateImpl for Bodyguard {
             redirected_player_refs, target_protected_ref
         });
     }
-    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData::reliant(game, actor_ref)
+    
+    //can only attack if something else can
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> AttackData {
+        AttackData::none()
     }
 }
 impl GetClientRoleState<ClientRoleState> for Bodyguard {

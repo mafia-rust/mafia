@@ -104,14 +104,14 @@ impl RoleStateImpl for Vigilante {
     }
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
         match self.state {
-            VigilanteState::NotLoaded => AttackData::wildcard(),
+            VigilanteState::NotLoaded => AttackData::attack(game, actor_ref, false),
             VigilanteState::Suicided => AttackData::none(),
-            VigilanteState::WillSuicide => AttackData::none(),
+            VigilanteState::WillSuicide => AttackData::attack(game, actor_ref, true),
             VigilanteState::Loaded { bullets } => {
                 if bullets > 0 {
                     AttackData::none()
                 } else {
-                    AttackData::attack(game, actor_ref, false, false)
+                    AttackData::attack(game, actor_ref, false)
                 }
             },
         }

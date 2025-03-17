@@ -155,7 +155,8 @@ impl RoleStateImpl for Recruiter {
         ].into_iter().collect()
     }
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData::attack(game, actor_ref, false, false)
+        //recruits handled in deathmatch
+        AttackData::attack(game, actor_ref, false)
     }
 }
 

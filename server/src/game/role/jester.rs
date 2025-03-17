@@ -133,10 +133,10 @@ impl RoleStateImpl for Jester {
         }
     }
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        if actor_ref.alive(game) {
-            AttackData::none()
+        if self.lynched_yesterday{
+            AttackData::attack(game, actor_ref, true)
         } else {
-            AttackData::attack(game, actor_ref, true, true)
+            AttackData::none()
         }
     }
 }

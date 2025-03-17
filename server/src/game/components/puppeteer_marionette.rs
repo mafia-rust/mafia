@@ -96,8 +96,9 @@ impl PuppeteerMarionette{
         marionettes_and_puppeteer.extend(PuppeteerMarionette::puppeteers(game));
         marionettes_and_puppeteer
     }
-
-
+    pub fn any_marionettes(game: &Game) -> bool {
+        game.puppeteer_marionette.to_be_converted.iter().any(|p|p.alive(game))
+    }
 
     //event listeners
 

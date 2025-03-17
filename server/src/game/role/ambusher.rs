@@ -107,6 +107,6 @@ impl RoleStateImpl for Ambusher {
     /// Normally you'd have to specify stuff with syndicate gun and whether or not it can kill itself
     /// and stuff but if it is has the gun, then it can just be possessed and stuff.
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData::attack(game, actor_ref, false, false)
+        AttackData::attack(game, actor_ref, false)
     }
 }

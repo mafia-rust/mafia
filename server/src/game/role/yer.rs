@@ -144,7 +144,7 @@ impl RoleStateImpl for Yer {
         )
     }
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData::attack(game, actor_ref, false, false)
+        AttackData::attack(game, actor_ref, false)
     }
 }
 

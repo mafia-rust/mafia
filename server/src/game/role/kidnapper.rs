@@ -171,7 +171,11 @@ impl RoleStateImpl for Kidnapper {
         }
     }
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData::attack(game, actor_ref, true, true)
+        if actor_ref.alive(game) {
+            AttackData::attack(game, actor_ref, true)
+        } else {
+            AttackData::none()
+        }
     }
     fn on_visit_wardblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _visit: Visit) {}
 }

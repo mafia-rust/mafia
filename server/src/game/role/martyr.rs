@@ -136,7 +136,16 @@ impl RoleStateImpl for Martyr {
         }
     }
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData::attack(game, actor_ref, false, false)
+        match self.state {
+            MartyrState::StillPlaying{bullets} => if bullets > 0 {
+                AttackData::attack(game, actor_ref, false)
+            } else {
+                AttackData::none()
+            },
+            //I'm not 100% about these so made them attack_dead to be on the safe side
+            MartyrState::Won => AttackData::attack_dead(),
+            MartyrState::LeftTown => AttackData::attack_dead(),
+        }
     }
 }
 

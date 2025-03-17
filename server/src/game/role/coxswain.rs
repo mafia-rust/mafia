@@ -100,7 +100,7 @@ impl RoleStateImpl for Coxswain {
             _=>{}
         }
     }
-    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData::revive(game, actor_ref, true)
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> AttackData {
+        AttackData::revive(true)
     }
 }

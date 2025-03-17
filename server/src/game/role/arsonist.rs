@@ -70,9 +70,9 @@ impl RoleStateImpl for Arsonist {
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
         ArsonistDoused::clean_doused(game, actor_ref);
     }
-    /// If arsonist is changed to having ignite as a separate button, and it will douse itself if it is transported/possessed into itself
-    /// then this needs to be changed
+    /// If arsonist is changed to having ignite as a separate button, and it won't go off if it visits itself
+    /// this needs to change
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData::attack(game, actor_ref, false, false)
+        AttackData::attack(game, actor_ref, false)
     }
 }

@@ -169,6 +169,11 @@ impl Pitchfork{
     pub fn pitchfork_owners(game: &Game) -> VecSet<PlayerReference>{
         game.pitchfork().pitchfork_owners.clone()
     }
+    pub fn any_remaining_pitchforks(game: &Game) -> bool {
+        Self::pitchfork_uses_remaining(game) > 0 &&
+        Pitchfork::pitchfork_owners(game).iter()
+            .any(|p|p.alive(game))
+    }
     pub fn has_pitchfork(game: &Game, player_ref: PlayerReference) -> bool{
         game.pitchfork().pitchfork_owners.contains(&player_ref)
     }

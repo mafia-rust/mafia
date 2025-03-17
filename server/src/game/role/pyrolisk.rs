@@ -99,7 +99,7 @@ impl RoleStateImpl for Pyrolisk {
         actor_ref.set_role_state(game, Pyrolisk{tagged_for_obscure: VecSet::new()});
     }
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData::attack(game, actor_ref, false, false)
+        AttackData::attack(game, actor_ref, false)
     }
 }
 impl GetClientRoleState<ClientRoleState> for Pyrolisk {

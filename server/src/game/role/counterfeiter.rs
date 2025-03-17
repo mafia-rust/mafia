@@ -13,6 +13,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_set;
 use super::godfather::Godfather;
+use super::mafioso::Mafioso;
 use super::{
     AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, GetClientRoleState, IntegerSelection, Priority, Role, RoleStateImpl, StringSelection
 };
@@ -181,7 +182,7 @@ impl RoleStateImpl for Counterfeiter {
         ].into_iter().collect()
     }
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData::attack(game, actor_ref, false, false)
+        Mafioso.attack_data(game, actor_ref)
     }
 }
 impl GetClientRoleState<ClientRoleState> for Counterfeiter {

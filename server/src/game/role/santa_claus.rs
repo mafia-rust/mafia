@@ -171,7 +171,7 @@ impl RoleStateImpl for SantaClaus {
         WinCondition::GameConclusionReached { win_if_any: vec![GameConclusion::NiceList].into_iter().collect() }
     }
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData::attack(game, actor_ref, false, false)
+        AttackData::attack(game, actor_ref, false)
     }
 }
 

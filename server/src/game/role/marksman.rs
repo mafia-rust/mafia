@@ -156,6 +156,6 @@ impl RoleStateImpl for Marksman {
         }
     }
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData::attack(game, actor_ref, true, true)
+        AttackData::attack(game, actor_ref, true)
     }
 }

@@ -9,6 +9,7 @@ use crate::game::role_list::RoleSet;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
+use super::mafioso::Mafioso;
 use super::{ControllerID, PlayerListSelection, Priority, Role, RoleState, RoleStateImpl};
 
 
@@ -51,7 +52,7 @@ impl RoleStateImpl for Godfather {
         ].into_iter().collect()
     }
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData::attack(game, actor_ref, false, false)
+        Mafioso.attack_data(game, actor_ref)
     }
 }
 

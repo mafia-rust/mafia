@@ -3,18 +3,18 @@ use super::Game;
 
 
 
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, PartialEq, Eq, Debug)]
 pub enum AttackType{
     None,
-    Attack{possess_immune: bool, transport_immune: bool},
-    Possess,
-    Necro{town_only: bool},
+    //true if a possessed dead player cannot attack if this is active
+    Attack{possess_immune: bool},
+    //if you can attack when your dead
+    AttackDead,
+    NecroPossess{town_only: bool},
     Revive{town_only: bool},
-    Transport,
     Wildcard,
-    Reliant,
 }
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AttackData {
     pub attack_type: AttackType,
     //Only needs to be correct if the player can attack
@@ -35,58 +35,61 @@ impl AttackData {
             town_on_grave: false,
         }
     }
-    pub fn transporter(game: &Game, actor_ref: PlayerReference) -> AttackData {
+    pub fn attack(game: &Game, actor_ref: PlayerReference, possess_immune: bool) -> AttackData {
         AttackData {
-            attack_type: AttackType::Transport,
+            attack_type: AttackType::Attack{possess_immune},
             town_on_grave: actor_ref.town_on_grave(game),
         }
     }
-    pub fn attack(game: &Game, actor_ref: PlayerReference, possess_immune: bool, transport_immune: bool) -> AttackData {
+    pub fn necro(game: &Game, actor_ref: PlayerReference, town_only: bool) -> AttackData {
         AttackData {
-            attack_type: AttackType::Attack{possess_immune, transport_immune},
-            town_on_grave: actor_ref.town_on_grave(game),
-        }
-    }
-    pub fn possess(game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData {
-            attack_type: AttackType::Possess,
+            attack_type: AttackType::NecroPossess{town_only},
             town_on_grave: actor_ref.town_on_grave(game)
         }
     }
-    pub fn revive(game: &Game, actor_ref: PlayerReference, town_only: bool) -> AttackData {
+    pub fn revive(town_only: bool) -> AttackData {
         AttackData {
-            attack_type: AttackType::Revive{town_only},
-            town_on_grave: actor_ref.town_on_grave(game)
+            attack_type: AttackType::NecroPossess{town_only},
+            town_on_grave: false
         }
     }
-    pub fn necro(game: &Game, actor_ref: PlayerReference, town_only: bool) ->AttackData {
-        AttackData {
-            attack_type: AttackType::Necro{town_only},
-            town_on_grave: actor_ref.town_on_grave(game)
-        }
-    }
-    pub fn reliant(game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData {
-            attack_type: AttackType::Reliant,
-            town_on_grave: actor_ref.town_on_grave(game)
+    pub fn attack_dead() -> AttackData {
+        AttackData { 
+            attack_type: AttackType::AttackDead, 
+            town_on_grave: false
         }
     }
     pub fn is_attack(&self) -> bool {
-        match &self.attack_type {
-            AttackType::Attack{..} => true,
-            _ => false,
-        }
+        matches!(&self.attack_type, AttackType::Attack{..})
+    }
+    pub fn is_revive(&self) -> bool {
+        matches!(&self.attack_type, AttackType::Revive {..})
+    }
+    pub fn is_attack_dead(&self) -> bool {
+        matches!(&self.attack_type, AttackType::AttackDead)
     }
     pub fn is_none(&self) -> bool {
-        match &self.attack_type {
-            AttackType::None => true,
-            _ => false,
-        }
+        matches!(&self.attack_type, AttackType::None)
     }
     pub fn is_wildcard(&self) -> bool {
-        match &self.attack_type {
-            AttackType::Wildcard => true,
-            _ => false,
+        matches!(&self.attack_type, AttackType::Wildcard)
+    }
+
+    pub fn can_revive_to_attack(&self, other: &Self) -> bool {
+        match (&self.attack_type, &other.attack_type) {
+            (AttackType::Revive{town_only}, AttackType::Attack{..}) => {
+                !*town_only || other.town_on_grave
+            }
+            _=> false,
+        }
+    }
+
+    pub fn can_possess_to_attack(&self, other: &Self) -> bool {
+        match (&self.attack_type, &other.attack_type) {
+            (AttackType::NecroPossess{town_only}, AttackType::Attack{possess_immune}) => {
+                *possess_immune && (!*town_only || other.town_on_grave)
+            }
+            _=> false,
         }
     }
 }

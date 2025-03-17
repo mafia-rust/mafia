@@ -1,6 +1,5 @@
-use std::collections::HashMap;
 
-use crate::{game::{attack_type::{AttackData, AttackType}, chat::{ChatGroup, ChatMessageVariant}, game_conclusion::GameConclusion, phase::{PhaseState, PhaseType}, player::{self, PlayerReference}, role::Role, win_condition::{self, WinCondition}, Game}, vec_map::VecMap, vec_set::VecSet};
+use crate::game::{attack_type::{AttackData, AttackType}, chat::{ChatGroup, ChatMessageVariant}, components::{mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem}, phase::{PhaseState, PhaseType}, player::PlayerReference, Game};
 
 use super::{ModifierState, ModifierTrait, ModifierType, Modifiers};
 
@@ -40,144 +39,110 @@ impl ModifierTrait for Deathmatch {
 
 impl Deathmatch {
     /// Should only be called on games that use the deathmatch modifier
-    pub fn game_is_over(game: &Game) -> Option<GameConclusion>{
-        //if nobody is left to hold game hostage
-        if !PlayerReference::all_players(game)
-            .any(|player| 
-                if player.alive(game) {
-                    player.keeps_game_running_deathmatch_quick(game)
-                } else {
-                    player.role(game) == Role::Jester
-                }
-        ) {
-            return Some(GameConclusion::Draw);
-        }
-        //because a dead jester can keep the game running this has to be checked as well
-        if PlayerReference::all_players(game).all(|p|!p.alive(game)){
-            return Some(GameConclusion::Draw);
+    pub fn is_draw(game: &Game) -> bool {
+        if let Some(ModifierState::Deathmatch(deathmatch)) = Modifiers::get_modifier(game, ModifierType::Deathmatch) {
+            if deathmatch.day_of_last_death.saturating_add(5) >= game.day_number() {
+                return true
+            }
         }
 
-        let Some(ModifierState::Deathmatch(deathmatch)) = Modifiers::get_modifier(game, ModifierType::Deathmatch) else {
-            unreachable!("either Deathmatch::game_is_over has been called outside of a game with it enabled or the get modifier function managed not to return the right modifier.")
-        };
-
-        if deathmatch.day_of_last_death.saturating_add(5) >= game.day_number() {
-            return GameConclusion::find_conclusion(game)
-        } else if let Some(conclusion) = GameConclusion::find_conclusion(game) {
-            return Some(conclusion)
+        if MafiaRecruits::any_recruits(game) {
+            return false;
+        }
+        if Poison::any_players_poisoned(game) {
+            return false
+        }
+        if PuppeteerMarionette::any_marionettes(game) {
+            return false
+        }
+        if Pitchfork::any_remaining_pitchforks(game) {
+            return false
         }
 
-        let attack_data: HashMap<PlayerReference, AttackData> = HashMap::with_capacity(game.num_players() as usize);
-
-        let conclusion_info: VecMap<GameConclusion, ConclusionData> = VecMap::new();
-
-        let mut best_alive: VecSet<AttackData> = VecSet::new();
-        let mut best_dead: VecSet<AttackData> = VecSet::new();
-
-        for conclusion in GameConclusion::all() {
-            conclusion_info.insert(conclusion, ConclusionData::default());
-        }
+        let mut possessable_dead_attacker= AttackData::none();
+        let mut revivable_dead_attacker= AttackData::none();
+        let mut reviver= AttackData::none();
+        let mut possessor= AttackData::none();
+        let mut dead_wildcard: bool = false;
 
         for player in PlayerReference::all_players(game) {
-            let data = player.role_state(game).attack_data(game, player);
-            attack_data.insert(player, data);
+            let data = player.role_state(game).attack_data(game, player);           
+            match (&data.attack_type, player.alive(game)) {
+                (AttackType::None, _) | 
+                (AttackType::NecroPossess {..}, false) | (AttackType::Revive {..}, false) => (),
 
-            match &data.attack_type {
-                AttackType::None => (),
-                AttackType::Attack { possess_immune, transport_immune } => {
-                    match (possess_immune, transport_immune) {
-                        (false, false) => 
-                            if player.alive(game) {
-                                best_alive.insert(data);
-                            } else {
-                                best_dead.insert( data);
-                            }
-                        (true, false) => 
-                            if player.alive(game) {
-                                if !best_alive.iter().any(|d|
-                                    d.town_on_grave >= data.town_on_grave && 
-                                    if let AttackType::Attack { possess_immune, transport_immune } = d.attack_type {
-                                        possess_immune == true
-                                    } else {
-                                        false
-                                    }
-                                ) {
-                                    for d in best_alive.clone() {
-                                        if let AttackType::Attack { possess_immune, transport_immune } = d.attack_type {
-                                            if  d.town_on_grave <= data.town_on_grave && transport_immune == false {
-                                                best_alive.remove(&d);
-                                            }
-                                        }
-                                    }
-                                    best_alive.insert(data);
-                                }
-                            } else {
-                                if !best_dead.iter().any(|d|
-                                    d.town_on_grave >= data.town_on_grave && 
-                                    if let AttackType::Attack { possess_immune, transport_immune } = d.attack_type {
-                                        possess_immune == true
-                                    } else {
-                                        false
-                                    }
-                                ) {
-                                    for d in best_dead.clone() {
-                                        if let AttackType::Attack { possess_immune, transport_immune } = d.attack_type {
-                                            if  d.town_on_grave <= data.town_on_grave && transport_immune == false {
-                                                best_dead.remove(&d);
-                                            }
-                                        }
-                                    }
-                                    best_dead.insert(data);
-                                }
-                            }
-                            
+                (AttackType::AttackDead, _) | (AttackType::Attack{..}, true) |
+                (AttackType::Wildcard, true) => return false,
+
+                (AttackType::Attack{possess_immune: false}, false) => {
+                    if possessable_dead_attacker.is_none() || possessable_dead_attacker.town_on_grave <= data.town_on_grave {
+                        possessable_dead_attacker = data;
+                    }
+                },
+                (AttackType::Attack{possess_immune: true}, false) => {
+                    if revivable_dead_attacker.is_none() || revivable_dead_attacker.town_on_grave <= data.town_on_grave {
+                        revivable_dead_attacker = data;
+                    }
+                },
+
+                (AttackType::NecroPossess {town_only}, true) => {
+                    if possessor.is_none() ||
+                        if let AttackType::NecroPossess{town_only: necro_town_only } = possessor.attack_type {
+                            *town_only <= necro_town_only
+                        } else {
+                            unreachable!()
+                        }
+                    {
+                        possessor = data
                     }
                 }
-            }
-            match player.win_condition(game) {
-                WinCondition::RoleStateWon => (),
-                WinCondition::GameConclusionReached { win_if_any } => {
-                    for condition in win_if_any {
-                        let Some(data) = conclusion_info.get(condition) else {unreachable!("Conclusion that is not in Conclusion::all()")};
-                        data.insert(player);
+                
+                (AttackType::Revive{town_only}, true) => {
+                    if reviver.is_none() ||
+                        if let AttackType::Revive{town_only: reviver_town_only} = reviver.attack_type {
+                            *town_only <= reviver_town_only
+                        } else {
+                            unreachable!()
+                        }
+                    {
+                        reviver = data
                     }
                 }
+
+                (AttackType::Wildcard, false) => {
+                    dead_wildcard = true;
+                }
+            };
+        }
+        if let Some(gun) = SyndicateGunItem::player_with_gun(&game.syndicate_gun_item) {
+            if gun.alive(game) {
+                return false
+            }
+            let data = AttackData::attack(game, gun, false);
+            if possessor.can_possess_to_attack(&data) {
+                return false
+            }
+            if reviver.can_revive_to_attack(&data) {
+                return false
             }
         }
-        
-        
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        return ;
-    }
-}
-
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
-struct ConclusionData{
-    pub alive_players: VecSet<PlayerReference>,
-    pub dead_players: VecSet<PlayerReference>,
-    
-}
-
-impl ConclusionData{
-    pub fn insert(&mut self, player: PlayerReference){
-        if player.alive(game) {
-            self.alive_players.insert(player)
-        } else {
-            self.dead_players.insert(player)
+        if reviver.is_revive() {
+            if dead_wildcard {
+                return false
+            }
+            if reviver.can_revive_to_attack(&possessable_dead_attacker) {
+                return false
+            }
+            if reviver.can_revive_to_attack(&revivable_dead_attacker) {
+                return false
+            }
         }
+
+        if possessor.can_possess_to_attack(&possessable_dead_attacker) {
+            return false
+        }
+
+        true
     }
 }

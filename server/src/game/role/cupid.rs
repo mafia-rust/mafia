@@ -77,7 +77,7 @@ impl RoleStateImpl for Cupid {
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
-    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) ->AttackData {
-        AttackData::reliant(game, actor_ref)
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) ->AttackData {
+        AttackData::none()
     }
 }

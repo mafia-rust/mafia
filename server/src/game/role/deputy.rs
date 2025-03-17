@@ -92,6 +92,10 @@ impl RoleStateImpl for Deputy {
         )
     }
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData::attack(game, actor_ref, true, true)
+        if self.bullets_remaining > 0 && actor_ref.alive(game) {
+            AttackData::attack(game, actor_ref, true)
+        } else {
+            AttackData::none()
+        }
     }
 }

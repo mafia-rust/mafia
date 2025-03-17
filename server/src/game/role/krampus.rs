@@ -132,7 +132,7 @@ impl RoleStateImpl for Krampus {
         WinCondition::GameConclusionReached { win_if_any: vec![GameConclusion::NaughtyList].into_iter().collect() }
     }
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData::attack(game, actor_ref, true, true)
+        AttackData::attack(game, actor_ref, false)
     }
 }
 

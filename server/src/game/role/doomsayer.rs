@@ -154,7 +154,7 @@ impl RoleStateImpl for Doomsayer {
         Doomsayer::check_and_convert_to_jester(game, self, actor_ref);
     }
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData::attack(game, actor_ref, true, true)
+        AttackData::attack(game, actor_ref, true)
     }
 }
 impl GetClientRoleState<ClientRoleState> for Doomsayer {

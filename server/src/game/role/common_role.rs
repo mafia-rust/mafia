@@ -24,7 +24,6 @@ pub(super) fn player_set_typical(
     include_self: bool, 
 ) -> VecSet<PlayerReference>{
     PlayerReference::all_players(game)
-                .into_iter()
                 .filter(|player|
                     if !player.alive(game) {
                         false

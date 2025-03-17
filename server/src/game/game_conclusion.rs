@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{modifiers::{deathmatch::{self, Deathmatch}, ModifierType, Modifiers}, player::PlayerReference, role::Role, role_list::RoleSet, win_condition::WinCondition, Game};
+use super::{modifiers::{deathmatch::Deathmatch, ModifierType, Modifiers}, player::PlayerReference, role::Role, role_list::RoleSet, win_condition::WinCondition, Game};
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
@@ -51,18 +51,19 @@ impl GameConclusion {
             return None;
         }
 
-        let deathmatch = Modifiers::modifier_is_enabled(game, ModifierType::Deathmatch);
+        //if nobody is left to hold game hostage
+        if !PlayerReference::all_players(game).any(|player| player.alive(game) && player.keeps_game_running(game)){
+            return Some(GameConclusion::Draw);
+        }
 
-        if deathmatch {
-            Deathmatch::game_is_over(game)
+        if let Some(conclusion) = Self::find_conclusion(game) {
+            Some(conclusion)
+        } else if Modifiers::modifier_is_enabled(game, ModifierType::Deathmatch) && Deathmatch::is_draw(game) {
+            Some(GameConclusion::Draw)
         } else {
-            //if nobody is left to hold game hostage
-            if !PlayerReference::all_players(game).any(|player| player.alive(game) && player.keeps_game_running(game)){
-                return Some(GameConclusion::Draw);
-            }
-
-            Self::find_conclusion(game)
-        }       
+            None
+        }
+           
     }
 
     pub fn find_conclusion(game: &Game) -> Option<GameConclusion>{

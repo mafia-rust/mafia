@@ -95,7 +95,7 @@ impl RoleStateImpl for Veteran {
     fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
         //possess immune just means that you can't abuse possession to get kills and you can possess people into a veteran
         //same for transport
-        AttackData::attack(game, actor_ref, false, false)
+        AttackData::attack(game, actor_ref, false)
     }
 }
 impl GetClientRoleState<ClientRoleState> for Veteran {

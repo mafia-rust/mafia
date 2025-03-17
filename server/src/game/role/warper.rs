@@ -91,7 +91,7 @@ impl RoleStateImpl for Warper {
         )
     }
     fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
-    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
-        AttackData::transporter(game, actor_ref)
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> AttackData {
+        AttackData::none()
     }
 }

@@ -2,7 +2,7 @@ use std::collections::HashSet;
 use rand::seq::SliceRandom;
 
 use crate::{game::{
-    ability_input::{AbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection, SavedControllersMap}, attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
+    ability_input::{AbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection, SavedControllersMap}, attack_power::{AttackPower, DefensePower}, attack_type::AttackData, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
         arsonist_doused::ArsonistDoused,
         drunk_aura::DrunkAura,
         insider_group::InsiderGroupID, night_visits::NightVisits
@@ -274,6 +274,8 @@ impl PlayerReference{
     }
     
     pub fn town_on_grave(&self, game: &Game) -> bool {
+        //fast path
+        self.alive(game) &&
         game.graves.iter().any(|grave|
             grave.player == *self && 
             if let Some(role) = grave.role(){
@@ -396,15 +398,13 @@ impl PlayerReference{
     pub fn keeps_game_running(&self, game: &Game) -> bool {
         if InsiderGroupID::Mafia.is_player_in_revealed_group(game, *self) {return true;}
         if InsiderGroupID::Cult.is_player_in_revealed_group(game, *self) {return true;}
+        if Modifiers::modifier_is_enabled(game, ModifierType::Deathmatch) &&
+            self.attack_data(game).is_none() {return false;}
         if self.win_condition(game).is_loyalist_for(GameConclusion::Town) {return true;}
         
         GameConclusion::keeps_game_running(self.role(game))
     }
 
-    /// If they can kill then they keep the game running
-    pub fn keeps_game_running_deathmatch_quick(&self, game: &Game) -> bool {
-        self.role_state(game).attack_data(game, *self).is_attack()
-    }
     /*
         Role functions
     */
@@ -435,6 +435,9 @@ impl PlayerReference{
     }
     pub fn convert_selection_to_visits(&self, game: &Game) -> Vec<Visit> {
         self.role_state(game).clone().convert_selection_to_visits(game, *self)
+    }
+    pub fn attack_data(&self, game: &Game) -> AttackData {
+        self.role_state(game).attack_data(game, *self)
     }
 }
 
