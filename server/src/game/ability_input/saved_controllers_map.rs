@@ -3,16 +3,11 @@ use serde::{Deserialize, Serialize};
 use crate::{
     game::{
         chat::ChatMessageVariant, components::{
-            forward_messages::ForwardMessages, insider_group::InsiderGroupID,
-            mafia::Mafia, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem,
-            forfeit_vote::ForfeitVote,
-            nomination_controller::NominationController,
-        }, 
-        event::{
+            forfeit_vote::ForfeitVote, forward_messages::ForwardMessages, insider_group::InsiderGroupID, mafia::Mafia, nomination_controller::NominationController, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem
+        }, event::{
             on_controller_selection_changed::OnControllerSelectionChanged,
             on_validated_ability_input_received::OnValidatedAbilityInputReceived
-        }, 
-        phase::PhaseType, player::PlayerReference, Game
+        }, modifiers::deathmatch::Deathmatch, phase::PhaseType, player::PlayerReference, Game
     }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet
 };
 
@@ -97,6 +92,9 @@ impl SavedControllersMap{
         );
         new_controller_parameters_map.combine_overwrite(
             ForwardMessages::controller_parameters_map(game)
+        );
+        new_controller_parameters_map.combine_overwrite(
+            Deathmatch::controller_parameters_map(game)
         );
 
         let current_controller_parameters = &game.saved_controllers.controller_parameters();

@@ -1,6 +1,6 @@
 
-use crate::game::{attack_type::{AttackData, AttackType}, chat::{ChatGroup, ChatMessageVariant}, components::{mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem}, phase::{PhaseState, PhaseType}, player::PlayerReference, Game};
-
+use crate::game::{ability_input::{AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap}, attack_type::{AttackData, AttackType}, chat::{ChatGroup, ChatMessageVariant}, components::{mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem}, phase::{PhaseState, PhaseType}, player::PlayerReference, Game};
+use crate::vec_set;
 use super::{ModifierState, ModifierTrait, ModifierType, Modifiers};
 
 #[derive(Clone, Default, PartialEq, Eq, Hash)]
@@ -35,9 +35,42 @@ impl ModifierTrait for Deathmatch {
     fn on_any_death(self, game: &mut Game, _player:PlayerReference) {
         Modifiers::set_modifier(game, Deathmatch{day_of_last_death: game.day_number()}.into());
     }
+    fn on_ability_input_received(self,_game: &mut Game,_actor_ref:PlayerReference,_input:crate::game::ability_input::AbilityInput) {
+        
+    }
 }
 
 impl Deathmatch {
+    pub fn controller_parameters_map(game: &Game)-> ControllerParametersMap{
+        if !Modifiers::modifier_is_enabled(game, ModifierType::Deathmatch) {
+            return ControllerParametersMap::default();
+        }
+
+        let mut out = ControllerParametersMap::default();
+        
+        
+        for player in PlayerReference::all_players(game){
+            out.combine_overwrite(
+                ControllerParametersMap::new_controller_fast(
+                    game,
+                    ControllerID::OptForDraw{player},
+                    AvailableAbilitySelection::new_boolean(),
+                    AbilitySelection::new_boolean(false),
+                    player.alive(game),
+                    None,
+                    false,
+                    vec_set![player]
+                )
+            );
+        }
+        out
+    }
+    pub fn players_opt_for_draw(game: &Game) -> bool {
+        PlayerReference::all_players(game).all(|p|
+            !p.alive(game) || 
+            ControllerID::OptForDraw{player: p}.get_boolean_selection(game).is_some_and(|b|b.0)
+        )
+    }
     pub fn is_draw(game: &Game) -> bool {
         if let Some(ModifierState::Deathmatch(deathmatch)) = Modifiers::get_modifier(game, ModifierType::Deathmatch) {
             if deathmatch.day_of_last_death.saturating_add(5) >= game.day_number() {
@@ -45,6 +78,10 @@ impl Deathmatch {
             }
         }
 
+        
+        if Self::players_opt_for_draw(game) {
+            return true
+        }
         if MafiaRecruits::any_recruits(game) {
             return false;
         }

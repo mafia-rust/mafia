@@ -24,6 +24,7 @@ pub enum ControllerID{
 
     ForwardMessage{player: PlayerReference},
 
+    OptForDraw{player: PlayerReference},
 
     SyndicateGunItemShoot,
     SyndicateGunItemGive,
