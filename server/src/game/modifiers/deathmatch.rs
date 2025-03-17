@@ -38,7 +38,6 @@ impl ModifierTrait for Deathmatch {
 }
 
 impl Deathmatch {
-    /// Should only be called on games that use the deathmatch modifier
     pub fn is_draw(game: &Game) -> bool {
         if let Some(ModifierState::Deathmatch(deathmatch)) = Modifiers::get_modifier(game, ModifierType::Deathmatch) {
             if deathmatch.day_of_last_death.saturating_add(5) >= game.day_number() {
