@@ -98,10 +98,12 @@ impl PlayerReference{
     }
     pub fn try_recruit(&self, actor_ref: PlayerReference, game: &mut Game, attack: AttackPower, with_visit: bool, group: InsiderGroupID) -> Option<PlayerReference> {
     	if let Some(target) = self.try_attack(game, attack, with_visit) {
-     		if !group.is_player_in_revealed_group(game, target) {
+     		if group.is_player_in_revealed_group(game, target) {
+       			actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
        			return None;
        		}
          	if !group.recruit(game, target) {
+          		actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
           		return None;
           	};
          	return Some(target);
@@ -125,10 +127,12 @@ impl PlayerReference{
     
     pub fn try_convert_friendly(&self, actor_ref: PlayerReference, game: &mut Game, attack: AttackPower, with_visit: bool, new_state: RoleState) -> Option<PlayerReference> {
    		if let Some((target, _)) = self.role_state(game).clone().redirect_attack(game, *self, attack, with_visit) {
+     		println!("converting friendly");
    			if InsiderGroupID::in_same_revealed_group(game, actor_ref, target) {
 	   			target.set_night_convert_role_to(game, Some(new_state));
 				return Some(target);
      		}
+       		println!("was not in the same revealed group");
      	}
       	return None;
     }
