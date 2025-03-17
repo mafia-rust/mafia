@@ -81,11 +81,13 @@ impl RoleStateImpl for Retributionist {
 impl Retributionist {
     pub fn can_target(&self, game: &Game, actor_ref: PlayerReference) -> VecSet<PlayerReference>{
         PlayerReference::all_players(game)
-                    .filter(|p|
-                        *p != actor_ref &&
-                        (self.used_bodies.iter().filter(|body| **body == *p).count() < 2) &&
-                        p.town_on_grave(game)
-                    ).collect()
+                    .filter(|target|
+                        !target.alive(game) &&
+                        *target != actor_ref &&
+                        (self.used_bodies.iter().filter(|p| **p == *target).count() < 2) &&
+                        target.town_on_grave(game)
+                    )
+                    .collect()
     }
 }
 impl GetClientRoleState<ClientRoleState> for Retributionist {

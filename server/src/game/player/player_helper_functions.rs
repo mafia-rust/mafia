@@ -275,7 +275,7 @@ impl PlayerReference{
     
     pub fn town_on_grave(&self, game: &Game) -> bool {
         //fast path
-        self.alive(game) &&
+        !self.alive(game) &&
         game.graves.iter().any(|grave|
             grave.player == *self && 
             if let Some(role) = grave.role(){
