@@ -34,7 +34,7 @@ impl RoleStateImpl for Informant {
 
             let message = ChatMessageVariant::InformantResult{
                 role: target_ref.role(game), 
-                visited_by: PlayerReference::ref_vec_to_index(&visited_by.as_mut_slice()),
+                visited_by: PlayerReference::ref_vec_to_index(visited_by.as_mut_slice()),
                 visited: PlayerReference::ref_vec_to_index(visited.as_slice())
             };
             actor_ref.push_night_message(game, message);

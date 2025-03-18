@@ -63,7 +63,6 @@ impl SyndicateGunItem {
                     ControllerID::syndicate_gun_item_give(),
                     AvailableAbilitySelection::new_player_list(
                         PlayerReference::all_players(game)
-                            .into_iter()
                             .filter(|target|
                                 player_with_gun != *target &&
                                 target.alive(game) &&

@@ -67,7 +67,7 @@ impl Godfather{
                     AttackPower::Basic, false
                 );
             },
-            _ => return
+            _ => {}
         }
     }
     pub (super) fn pass_role_state_down(
