@@ -48,13 +48,13 @@ impl RoleStateImpl for Deputy {
         }
         target_ref.add_private_chat_message(game, ChatMessageVariant::DeputyShotYou);
         if target_ref.try_day_kill_single_attacker(actor_ref, game, grave.information, AttackPower::Basic) {
-            target_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
-            actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
-        }else{
             game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::DeputyKilled{shot_index: target_ref.index()});
             if target_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) {
                 actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
             }
+        } else {
+            target_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
+            actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
         }
 
         actor_ref.set_role_state(game, Deputy{bullets_remaining:self.bullets_remaining.saturating_sub(1)});
