@@ -692,7 +692,7 @@
             {"type": "detectiveResult","suspicious":true},
             {"type": "snoopResult", "townie":false},
             {"type": "snoopResult", "townie":false},
-            {"type": "seerResult", "enemies": true}
+            {"type": "philosopherResult", "enemies": true}
             
         ]
     },
