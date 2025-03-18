@@ -106,6 +106,14 @@ impl Grave{
             }
         }
     }
+    pub fn from_grave_info(game: &Game, player_ref: PlayerReference, grave_info: GraveInformation) -> Grave {
+        Grave { 
+            player: player_ref,
+            died_phase: GravePhase::from_phase_type(game.current_phase().phase()), 
+            day_number: game.phase_machine.day_number,
+            information: grave_info
+        }
+    }
 
     pub fn from_player_suicide(game: &Game, player_ref: PlayerReference) -> Grave {
         Grave {
