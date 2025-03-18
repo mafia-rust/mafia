@@ -16,6 +16,9 @@ impl RoleOutlineReference{
         if (index as usize) >= game.settings.role_list.0.len() { return None;} 
         unsafe { Some(RoleOutlineReference::new_unchecked(index)) }
     }
+    /// # Safety
+    /// If the index is too high, there might not be a role outline with that index.
+    /// Make sure that the index is valid: it should be less than the number of role outlines
     pub unsafe fn new_unchecked(index: OutlineIndex) -> RoleOutlineReference {
         RoleOutlineReference { index }
     }
@@ -24,12 +27,15 @@ impl RoleOutlineReference{
     }
 
     pub fn deref<'a>(&self, game: &'a Game)->&'a RoleOutline{
-        &game.settings.role_list.0[self.index as usize]
+        unsafe {
+            game.settings.role_list.0.get_unchecked(self.index as usize)
+        }
     }
     pub fn without_unavailable<'a>(&self, game: &'a Game)->&'a RoleOutlineGenData {
         &game.role_assignment_gen.0[self.index as usize]
     }
-    pub fn deref_as_role_and_player_originally_generated<'a>(&self, game: &'a Game)->OriginallyGeneratedRoleAndPlayer{
+
+    pub fn deref_as_role_and_player_originally_generated(&self, game: &Game)->OriginallyGeneratedRoleAndPlayer{
         game.assignments
             .iter()
             .find(|(_, outline, _)| outline.index == self.index)
@@ -40,7 +46,7 @@ impl RoleOutlineReference{
     pub fn all_outlines(game: &Game) -> RoleOutlineReferenceIterator {
         RoleOutlineReferenceIterator {
             current: 0,
-            end: game.settings.role_list.0.len() as OutlineIndex
+            end: game.settings.role_list.0.len().try_into().unwrap_or(OutlineIndex::MAX)
         }
     }
 }
@@ -74,14 +80,18 @@ impl Iterator for RoleOutlineReferenceIterator {
                 None
             } else {
                 let ret: RoleOutlineReference = RoleOutlineReference::new_unchecked(self.current);
-                self.current += 1;
+                if let Some(new) = self.current.checked_add(1) {
+                    self.current = new;
+                } else {
+                    return None;
+                }
                 Some(ret)
             }
         }
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        let size = (self.end - self.current) as usize;
+        let size = self.end.saturating_sub(self.current) as usize;
         (size, Some(size))
     }
 }
