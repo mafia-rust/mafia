@@ -12,8 +12,7 @@ use crate::{
     client_connection::ClientConnection, game::{
         player::PlayerReference, role_list::RoleOutline, settings::Settings, spectator::{spectator_pointer::SpectatorPointer, SpectatorInitializeParameters}, Game
     }, listener::RoomCode, lobby::game_client::GameClientLocation, packet::{
-        RejectJoinReason,
-        ToClientPacket,
+        HostDataPacketGameClient, RejectJoinReason, ToClientPacket
     }, vec_map::VecMap, websocket_connections::connection::ClientSender
 };
 
@@ -157,6 +156,8 @@ impl Lobby {
                         let new_client = GameClient::new_spectator(new_index, is_host);
     
                         clients.insert(lobby_client_id, new_client);
+
+                        Self::resend_host_data_to_all_hosts(game, clients);
         
                         // send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::GameAlreadyStarted});
                         // Err(RejectJoinReason::GameAlreadyStarted)
@@ -216,6 +217,8 @@ impl Lobby {
                         game.remove_spectator(idx);
                     }
                 }
+
+                Self::resend_host_data_to_all_hosts(game, clients);
             },
             LobbyState::Closed => {}
         }
@@ -253,6 +256,8 @@ impl Lobby {
                     if let Ok(player_ref) = PlayerReference::new(game, player_index) {
                         if !player_ref.is_disconnected(game) {
                             player_ref.lose_connection(game);
+
+                            Self::resend_host_data_to_all_hosts(game, players);
                         }
                     }
                 }
@@ -307,6 +312,8 @@ impl Lobby {
                             .map(|p|*p.0)
                             .collect()
                     });
+
+                    Self::resend_host_data_to_all_hosts(game, players);
 
                     Ok(())
                 }else{
@@ -494,5 +501,37 @@ impl Lobby {
             }
             LobbyState::Closed => {}
         }
+    }
+
+    fn resend_host_data_to_all_hosts(game: &Game, clients: &VecMap<LobbyClientID, GameClient>) {
+        for client in clients.values().filter(|client| client.host) {
+            let client_connection = match client.client_location {
+                GameClientLocation::Player(index) => PlayerReference::new(game, index).map(|p| p.connection(game).clone()).ok(),
+                GameClientLocation::Spectator(index) => Some(SpectatorPointer::new(index).connection(game))
+            };
+
+            if let Some(ClientConnection::Connected(host_sender)) = client_connection {
+                Self::resend_host_data(game, clients, &host_sender)
+            }
+        }
+    }
+    
+    fn resend_host_data(game: &Game, clients: &VecMap<LobbyClientID, GameClient>, send: &ClientSender) {
+        send.send(ToClientPacket::HostData { clients: clients.iter()
+            .map(|(id, client)| {
+                (*id, HostDataPacketGameClient {
+                    client_type: client.client_location.clone(),
+                    connection: match client.client_location {
+                        GameClientLocation::Player(index) => {
+                            unsafe { PlayerReference::new_unchecked(index) }.connection(game).clone()
+                        }
+                        GameClientLocation::Spectator(index) => {
+                            SpectatorPointer::new(index).connection(game)
+                        }
+                    },
+                    host: client.host
+                })
+            }).collect()
+        });
     }
 }

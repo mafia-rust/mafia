@@ -1,6 +1,6 @@
 use std::{collections::VecDeque, time::{Duration, Instant}};
 
-use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, event::{on_fast_forward::OnFastForward, on_game_ending::OnGameEnding}, game_conclusion::GameConclusion, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters, PlayerReference}, spectator::{spectator_pointer::{SpectatorIndex, SpectatorPointer}, SpectatorInitializeParameters}, Game, RejectStartReason}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{HostDataPacketGameClient, ToClientPacket, ToServerPacket}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
+use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, event::{on_fast_forward::OnFastForward, on_game_ending::OnGameEnding}, game_conclusion::GameConclusion, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters, PlayerReference}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game, RejectStartReason}, lobby::game_client::{GameClient, GameClientLocation}, log, packet::{ToClientPacket, ToServerPacket}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
 
 use super::{lobby_client::{LobbyClient, LobbyClientID, LobbyClientType, Ready}, name_validation::{self, sanitize_server_name}, Lobby, LobbyState};
 
@@ -428,22 +428,7 @@ impl Lobby {
                     if !player.host {return;}
                 }
 
-                send.send(ToClientPacket::HostData { clients: clients.iter()
-                    .map(|(id, client)| {
-                        (*id, HostDataPacketGameClient {
-                            client_type: client.client_location.clone(),
-                            connection: match client.client_location {
-                                GameClientLocation::Player(index) => {
-                                    unsafe { PlayerReference::new_unchecked(index) }.connection(game).clone()
-                                }
-                                GameClientLocation::Spectator(index) => {
-                                    SpectatorPointer::new(index).connection(game)
-                                }
-                            },
-                            host: client.host
-                        })
-                    }).collect()
-                });
+                Self::resend_host_data(game, clients, send);
             }
             ToServerPacket::HostForceSetPlayerName { id, name } => {
                 if let LobbyState::Game { game, clients } = &mut self.lobby_state {
