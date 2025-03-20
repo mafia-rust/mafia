@@ -132,7 +132,7 @@ function LobbyPlayerListPlayer(props: Readonly<{ player: PlayerDisplayData }>): 
                     open={renameOpen}
                     setOpenOrClosed={setRenameOpen}
                     onRender={dropdownPlacementFunction}
-                    anchorRef={renameButtonRef}
+                    anchorForPositionRef={renameButtonRef}
                 ><LobbyPlayerListPlayerRename {...props}/></Popover>
             </>}
         </div>

@@ -71,7 +71,7 @@ export type ToClientPacket = {
 } | {
     type: "gameInitializationComplete"
 } | {
-    type: "backToLobby",
+    type: "hostForceBackToLobby",
 } | {
     type: "gamePlayers",
     players: string[]
@@ -278,11 +278,11 @@ export type ToServerPacket = {
     type: "voteFastForwardPhase",
     fastForward: boolean
 } | {
-    type: "endGame",
+    type: "hostForceEndGame",
 } | {
-    type: "skipPhase",
+    type: "hostForceSkipPhase",
 } | {
-    type: "setPlayerName",
+    type: "hostForceSetPlayerName",
     id: number,
     name: string
 }

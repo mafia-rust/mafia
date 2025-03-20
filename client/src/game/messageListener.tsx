@@ -263,7 +263,7 @@ export default function messageListener(packet: ToClientPacket){
                 }
             }
             break;
-        case "backToLobby":
+        case "hostForceBackToLobby":
             GAME_MANAGER.setLobbyState();
             ANCHOR_CONTROLLER?.setContent(<LobbyMenu/>);
         break;

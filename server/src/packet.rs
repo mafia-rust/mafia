@@ -221,11 +221,11 @@ pub enum ToServerPacket{
     SetEnabledModifiers{modifiers: Vec<ModifierType>},
 
     // Host
-    BackToLobby,
     HostDataRequest,
-    EndGame,
-    SkipPhase,
-    SetPlayerName { id: LobbyClientID, name: String },
+    HostForceBackToLobby,
+    HostForceEndGame,
+    HostForceSkipPhase,
+    HostForceSetPlayerName { id: LobbyClientID, name: String },
 
     // Game
     #[serde(rename_all = "camelCase")]

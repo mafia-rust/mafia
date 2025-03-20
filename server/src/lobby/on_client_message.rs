@@ -362,7 +362,7 @@ impl Lobby {
             ToServerPacket::Leave => {
                 self.remove_player(lobby_client_id);
             }
-            ToServerPacket::BackToLobby => {
+            ToServerPacket::HostForceBackToLobby => {
                 let LobbyState::Game { game, clients } = &mut self.lobby_state else {
                     log!(error "Lobby"; "{} {}", "Can't go back to lobby from while in lobby", lobby_client_id);
                     return;
@@ -395,7 +395,7 @@ impl Lobby {
                     _ => unreachable!("LobbyState::Lobby was set to be to LobbyState::Lobby in the previous line")
                 }
             }
-            ToServerPacket::EndGame => {
+            ToServerPacket::HostForceEndGame => {
                 let LobbyState::Game { game, clients } = &mut self.lobby_state else {
                     log!(error "Lobby"; "{} {}", "Can't end game while in lobby", lobby_client_id);
                     return;
@@ -408,7 +408,7 @@ impl Lobby {
 
                 OnGameEnding::new(conclusion).invoke(game);
             }
-            ToServerPacket::SkipPhase => {
+            ToServerPacket::HostForceSkipPhase => {
                 let LobbyState::Game { game, clients } = &mut self.lobby_state else {
                     log!(error "Lobby"; "{} {}", "Can't skip phase while in lobby", lobby_client_id);
                     return;
@@ -445,7 +445,7 @@ impl Lobby {
                     }).collect()
                 });
             }
-            ToServerPacket::SetPlayerName { id, name } => {
+            ToServerPacket::HostForceSetPlayerName { id, name } => {
                 if let LobbyState::Game { game, clients } = &mut self.lobby_state {
                     if let Some(player) = clients.get(&lobby_client_id){
                         if !player.host {return;}

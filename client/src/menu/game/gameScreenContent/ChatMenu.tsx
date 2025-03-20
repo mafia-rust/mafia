@@ -214,7 +214,7 @@ export function ChatTextInput(props: Readonly<{
     );
     const stateType = useLobbyOrGameState(
         state => state.stateType,
-        ["acceptJoin", "gameInitializationComplete", "startGame", "backToLobby"]
+        ["acceptJoin", "gameInitializationComplete", "startGame", "hostForceBackToLobby"]
     )!;
     const playerStrings = useLobbyOrGameState(
         state => {

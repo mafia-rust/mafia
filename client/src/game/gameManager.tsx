@@ -457,17 +457,17 @@ export function createGameManager(): GameManager {
         },
         sendHostEndGamePacket() {
             this.server.sendPacket({
-                type: "endGame"
+                type: "hostForceEndGame"
             })
         },
         sendHostSkipPhase() {
             this.server.sendPacket({
-                type: "skipPhase"
+                type: "hostForceSkipPhase"
             })
         },
         sendHostSetPlayerNamePacket(playerId, name) {
             this.server.sendPacket({
-                type: "setPlayerName",
+                type: "hostForceSetPlayerName",
                 id: playerId,
                 name
             })
