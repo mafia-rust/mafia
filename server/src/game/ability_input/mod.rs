@@ -2,7 +2,7 @@ pub mod selection_type; pub use selection_type::*;
 pub mod ability_selection; pub use ability_selection::*;
 pub mod saved_controllers_map; pub use saved_controllers_map::*;
 pub mod controller_id; pub use controller_id::*;
-pub mod available_ability; pub use available_ability::*;
+pub mod controller_parameters; pub use controller_parameters::*;
 
 use serde::{Deserialize, Serialize};
 
@@ -40,9 +40,10 @@ impl AbilityInput{
 
 
 
-pub trait ValidateAvailableSelection{
-    type Selection;
+pub trait AvailableSelectionKind: Into<AvailableAbilitySelection>{
+    type Selection: Into<AbilitySelection>;
     fn validate_selection(&self, game: &Game, selection: &Self::Selection)->bool;
+    fn default_selection(&self, game: &Game) -> Self::Selection;
 }
 
 impl AbilityInput{

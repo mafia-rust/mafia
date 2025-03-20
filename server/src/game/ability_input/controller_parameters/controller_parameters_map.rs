@@ -1,14 +1,9 @@
+use super::builder::ControllerParametersBuilder;
 use serde::{Deserialize, Serialize};
 
-use crate::{
-    game::{phase::PhaseType, player::PlayerReference, Game},
-    vec_map::{vec_map, VecMap}, vec_set::VecSet
-};
+use crate::vec_map::{vec_map, VecMap};
 
-use super::super::{
-    controller_id::ControllerID,
-    ability_selection::AbilitySelection, AvailableAbilitySelection,
-};
+use super::super::controller_id::ControllerID;
 
 use super::controller_parameters::*;
 
@@ -28,30 +23,8 @@ impl ControllerParametersMap{
             controllers: vec_map!((id, ability_data))
         }
     }
-    #[expect(clippy::too_many_arguments, reason = "Grandfathered in, someone else can fix this")] // We should make a builder for this
-    pub fn new_controller_fast(
-        game: &Game,
-        id: ControllerID,
-        available: AvailableAbilitySelection,
-        default_selection: AbilitySelection,
-        grayed_out: bool,
-        reset_on_phase_start: Option<PhaseType>,
-        dont_save: bool,
-        allowed_players: VecSet<PlayerReference>
-    )->Self{
-        if let Some(single) = ControllerParameters::new(
-            game,
-            available,
-            grayed_out,
-            reset_on_phase_start,
-            dont_save,
-            default_selection,
-            allowed_players
-        ){
-            Self{controllers: vec_map![(id, single)]}
-        }else{
-            Self::default()
-        }
+    pub fn builder() -> ControllerParametersBuilder {
+        ControllerParametersBuilder::new()
     }
     pub fn insert_ability(&mut self, id: ControllerID, ability_data: ControllerParameters){
         self.controllers.insert(id, ability_data);
@@ -60,6 +33,15 @@ impl ControllerParametersMap{
         for (ability_id, ability_selection) in other.controllers {
             self.controllers.insert(ability_id, ability_selection);
         }
+    }
+    pub fn combine(maps: impl IntoIterator<Item=ControllerParametersMap>) -> Self {
+        let mut curr = ControllerParametersMap::new(VecMap::new());
+
+        for map in maps {
+            curr.combine_overwrite(map);
+        }
+        
+        curr
     }
     pub fn combine_overwrite_owned(self, other: Self)->Self{
         let mut out = self;

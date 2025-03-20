@@ -2,6 +2,7 @@ use std::collections::HashSet;
 
 use serde::Serialize;
 
+use crate::game::ability_input::AvailableBooleanSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::detained::Detained;
@@ -72,43 +73,28 @@ impl RoleStateImpl for Jailor {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Jailor, 0),
-            AvailableAbilitySelection::new_player_list(
-                PlayerReference::all_players(game)
-                    .filter(|target_ref|
-                        target_ref.alive(game) &&
-                        actor_ref != *target_ref
-                    )
-                    .collect(),
-                false,
-                Some(1)
-            ),
-            AbilitySelection::new_player_list(vec![]),
-            actor_ref.ability_deactivated_from_death(game),
-            Some(PhaseType::Night),
-            false,
-            vec_set!(actor_ref)
-        ).combine_overwrite_owned(
-            ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::role(actor_ref, Role::Jailor, 1),
-                AvailableAbilitySelection::new_boolean(),
-                AbilitySelection::new_boolean(false),
-                actor_ref.ability_deactivated_from_death(game) ||
-                Detained::is_detained(game, actor_ref) || 
-                self.executions_remaining == 0 ||
-                game.day_number() <= 1 ||
-                self.jailed_target_ref.is_none(),
-                Some(PhaseType::Obituary),
-                false,
-                vec_set!(actor_ref)
-            )
-        )
+        ControllerParametersMap::combine([
+            ControllerParametersMap::builder()
+                .id(ControllerID::role(actor_ref, Role::Jailor, 0))
+                .player_list_typical(game, actor_ref, false, true)
+                .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
+                .reset_on_phase_start(PhaseType::Night)
+                .allowed_players([actor_ref])
+                .build_map(game),
+            ControllerParametersMap::builder()
+                .id(ControllerID::role(actor_ref, Role::Jailor, 1))
+                .available_selection(game, AvailableBooleanSelection)
+                .night_typical(game, actor_ref)
+                .add_grayed_out_condition(
+                    self.executions_remaining == 0 ||
+                    game.day_number() <= 1 ||
+                    self.jailed_target_ref.is_none()
+                )
+                .build_map(game)
+        ])
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
-        let Some(AbilitySelection::Boolean {selection: BooleanSelection(true)}) = game.saved_controllers.get_controller_current_selection(
+        let Some(AbilitySelection::Boolean(BooleanSelection(true))) = game.saved_controllers.get_controller_current_selection(
             ControllerID::role(actor_ref, Role::Jailor, 1)) else {return Vec::new()};
         let Some(target) = self.jailed_target_ref else {return Vec::new()};
         vec![Visit::new_none(actor_ref, target, true)]

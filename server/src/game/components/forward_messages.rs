@@ -1,4 +1,4 @@
-use crate::{game::{ability_input::{AbilityInput, AbilitySelection, AvailableAbilitySelection, ChatMessageSelection, ControllerID, ControllerParametersMap}, chat::ChatMessageVariant, phase::PhaseState, player::PlayerReference, Game}, vec_set};
+use crate::game::{ability_input::{AbilityInput, AbilitySelection, AvailableChatMessageSelection, ControllerID, ControllerParametersMap}, chat::ChatMessageVariant, phase::PhaseState, player::PlayerReference, Game};
 
 use super::insider_group::InsiderGroupID;
 
@@ -8,7 +8,7 @@ impl ForwardMessages{
     pub fn on_validated_ability_input_received(game: &mut Game, actor: PlayerReference, input: AbilityInput){
         let (
             ControllerID::ForwardMessage{player},
-            AbilitySelection::ChatMessage { selection }
+            AbilitySelection::ChatMessage(selection)
         ) = input.id_and_selection() else {return};
         if actor != player {return}
         let Some(message) = selection.0 else {return};
@@ -27,16 +27,13 @@ impl ForwardMessages{
             .filter(|p|InsiderGroupID::in_any_group(game, *p))
             .fold(ControllerParametersMap::default(), |out, player|
                 out.combine_overwrite_owned(
-                    ControllerParametersMap::new_controller_fast(
-                        game,
-                        ControllerID::ForwardMessage { player },
-                        AvailableAbilitySelection::ChatMessage,
-                        AbilitySelection::new_chat_message(ChatMessageSelection(None)),
-                        !matches!(game.current_phase(), PhaseState::Night | PhaseState::Obituary),
-                        None,
-                        true,
-                        vec_set!(player)
-                    )
+                    ControllerParametersMap::builder()
+                        .id(ControllerID::ForwardMessage { player })
+                        .available_selection(game, AvailableChatMessageSelection)
+                        .add_grayed_out_condition(!matches!(game.current_phase(), PhaseState::Night | PhaseState::Obituary))
+                        .dont_save()
+                        .allowed_players([player])
+                        .build_map(game)
                 )
             )
     }

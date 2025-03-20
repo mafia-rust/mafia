@@ -182,9 +182,11 @@ impl SavedControllersMap{
         game: &mut Game,
         actor: PlayerReference,
         id: ControllerID,
-        selection: AbilitySelection,
+        selection: impl Into<AbilitySelection>,
         overwrite_gray_out: bool
     )->bool{
+        let selection = selection.into();
+        
         Self::update_controllers_from_parameters(game);
 
         // validate input using available selection
@@ -198,7 +200,7 @@ impl SavedControllersMap{
                 !available_ability_data.validate_selection(game, &selection) ||
                 (!overwrite_gray_out && available_ability_data.grayed_out()) ||
                 !available_ability_data.allowed_players().contains(&actor) ||
-                (*saved_selection == selection && selection != AbilitySelection::new_unit())
+                (*saved_selection == selection && selection != AbilitySelection::Unit(UnitSelection))
             {
                 return false;
             }
@@ -270,7 +272,7 @@ impl SavedControllersMap{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
-                if let AbilitySelection::Boolean { selection } = selection {
+                if let AbilitySelection::Boolean(selection) = selection {
                     Some(selection)
                 }else{
                     None
@@ -282,7 +284,7 @@ impl SavedControllersMap{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
-                if let AbilitySelection::PlayerList { selection } = selection {
+                if let AbilitySelection::PlayerList(selection) = selection {
                     Some(selection)
                 }else{
                     None
@@ -294,7 +296,7 @@ impl SavedControllersMap{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
-                if let AbilitySelection::TwoPlayerOption { selection } = selection {
+                if let AbilitySelection::TwoPlayerOption(selection) = selection {
                     Some(selection)
                 }else{
                     None
@@ -306,7 +308,7 @@ impl SavedControllersMap{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
-                if let AbilitySelection::RoleOption { selection } = selection {
+                if let AbilitySelection::RoleOption(selection) = selection {
                     Some(selection)
                 }else{
                     None
@@ -318,7 +320,7 @@ impl SavedControllersMap{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
-                if let AbilitySelection::TwoRoleOption { selection } = selection {
+                if let AbilitySelection::TwoRoleOption(selection) = selection {
                     Some(selection)
                 }else{
                     None
@@ -330,7 +332,7 @@ impl SavedControllersMap{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
-                if let AbilitySelection::TwoRoleOutlineOption { selection } = selection {
+                if let AbilitySelection::TwoRoleOutlineOption(selection) = selection {
                     Some(selection)
                 }else{
                     None
@@ -342,7 +344,7 @@ impl SavedControllersMap{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
-                if let AbilitySelection::String { selection } = selection {
+                if let AbilitySelection::String(selection) = selection {
                     Some(selection)
                 }else{
                     None
@@ -354,7 +356,7 @@ impl SavedControllersMap{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
-                if let AbilitySelection::Integer { selection } = selection {
+                if let AbilitySelection::Integer(selection) = selection {
                     Some(selection)
                 }else{
                     None
@@ -366,7 +368,7 @@ impl SavedControllersMap{
         self
             .get_controller_current_selection(id)
             .and_then(|selection| 
-                if let AbilitySelection::Kira { selection } = selection {
+                if let AbilitySelection::Kira(selection) = selection {
                     Some(selection)
                 }else{
                     None

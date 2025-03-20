@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::ability_input::ControllerParametersMap;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::cult::{Cult, CultAbility};
@@ -68,18 +69,15 @@ impl RoleStateImpl for Apostle {
         )
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        let grayed_out =
-            game.cult().ordered_cultists.len() != 1 &&
-            Cult::next_ability(game) == CultAbility::Kill;
-        
-        common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            false,
-            grayed_out,
-            ControllerID::role(actor_ref, Role::Apostle, 0)
-        )
+        ControllerParametersMap::builder()
+            .id(ControllerID::role(actor_ref, Role::Apostle, 0))
+            .player_list_typical(game, actor_ref, false, false)
+            .night_typical(game, actor_ref)
+            .add_grayed_out_condition(
+                game.cult().ordered_cultists.len() != 1 &&
+                Cult::next_ability(game) == CultAbility::Kill
+            )
+            .build_map(game)
     }
     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![

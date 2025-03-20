@@ -1,7 +1,7 @@
 use rand::seq::IndexedRandom;
 
 use crate::{game::{ 
-    ability_input::{AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection}, attack_power::AttackPower, chat::{ChatGroup, ChatMessageVariant}, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::{Priority, RoleState}, role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, Game
+    ability_input::{AvailablePlayerListSelection, ControllerID, ControllerParametersMap, PlayerListSelection}, attack_power::AttackPower, chat::{ChatGroup, ChatMessageVariant}, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::{Priority, RoleState}, role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, Game
 }, vec_set::{vec_set, VecSet}};
 
 use super::{detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits, syndicate_gun_item::SyndicateGunItem};
@@ -42,20 +42,15 @@ impl Mafia{
             .collect::<VecSet<_>>();
 
         out.combine_overwrite(
-            ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::syndicate_choose_backup(),
-                AvailableAbilitySelection::new_player_list(
-                    available_backup_players,
-                    false,
-                    Some(1)
-                ),
-                AbilitySelection::new_player_list(vec![]),
-                false,
-                None,
-                false,
-                players_with_gun.clone()
-            )
+            ControllerParametersMap::builder()
+                .id(ControllerID::syndicate_choose_backup())
+                .available_selection(game, AvailablePlayerListSelection {
+                    available_players: available_backup_players,
+                    can_choose_duplicates: false,
+                    max_players: Some(1)
+                })
+                .allowed_players(players_with_gun.clone())
+                .build_map(game)
         );
 
         if let Some(PlayerListSelection(player_list)) = game.saved_controllers.get_controller_current_selection_player_list(
@@ -73,20 +68,17 @@ impl Mafia{
                     .collect::<VecSet<_>>();
 
                 out.combine_overwrite(
-                    ControllerParametersMap::new_controller_fast(
-                        game,
-                        ControllerID::syndicate_backup_attack(),
-                        AvailableAbilitySelection::new_player_list(
-                            attackable_players,
-                            false,
-                            Some(1)
-                        ),
-                        AbilitySelection::new_player_list(vec![]),
-                        !backup.alive(game) || Detained::is_detained(game, *backup) || game.day_number() <= 1,
-                        Some(PhaseType::Obituary),
-                        false,
-                        vec_set!(*backup).union(&players_with_gun)
-                    )
+                    ControllerParametersMap::builder()
+                        .id(ControllerID::syndicate_backup_attack())
+                        .available_selection(game, AvailablePlayerListSelection {
+                            available_players: attackable_players,
+                            can_choose_duplicates: false,
+                            max_players: Some(1)
+                        })
+                        .add_grayed_out_condition(!backup.alive(game) || Detained::is_detained(game, *backup) || game.day_number() <= 1)
+                        .reset_on_phase_start(PhaseType::Obituary)
+                        .allowed_players(players_with_gun.union(&vec_set!(*backup)))
+                        .build_map(game)
                 );
             }
         }

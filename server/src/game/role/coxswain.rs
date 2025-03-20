@@ -10,7 +10,7 @@ use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::Game;
-use crate::vec_set::{vec_set, VecSet};
+use crate::vec_set::VecSet;
 
 use super::{
     Role, RoleStateImpl
@@ -30,25 +30,22 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 impl RoleStateImpl for Coxswain {
     type ClientRoleState = Coxswain;
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Coxswain, 0),
-            AvailableAbilitySelection::new_player_list(
-                PlayerReference::all_players(game)
+        ControllerParametersMap::builder()
+            .id(ControllerID::role(actor_ref, Role::Coxswain, 0))
+            .available_selection(game, AvailablePlayerListSelection {
+                available_players: PlayerReference::all_players(game)
                     .filter(|target_ref|
                         !target_ref.alive(game) &&
                         actor_ref != *target_ref
                     )
                     .collect(),
-                false,
-                Some(2)
-            ),
-            AbilitySelection::new_player_list(vec![]),
-            actor_ref.ability_deactivated_from_death(game),
-            Some(PhaseType::Night),
-            false,
-            vec_set!(actor_ref)
-        )
+                can_choose_duplicates: false,
+                max_players: Some(2)
+            })
+            .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
+            .reset_on_phase_start(PhaseType::Night)
+            .allowed_players([actor_ref])
+            .build_map(game)
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         let mut out = crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Dead]);

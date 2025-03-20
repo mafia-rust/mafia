@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::components::detained::Detained;
+use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
 use crate::game::{attack_power::DefensePower, components::love_linked::LoveLinked};
 use crate::game::player::PlayerReference;
 
@@ -8,7 +8,7 @@ use crate::game::visit::Visit;
 
 use crate::game::Game;
 use crate::vec_set;
-use super::{common_role, AvailableAbilitySelection, ControllerID, ControllerParametersMap, InsiderGroupID, Priority, Role, RoleStateImpl};
+use super::{common_role, ControllerID, ControllerParametersMap, InsiderGroupID, Priority, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -46,22 +46,16 @@ impl RoleStateImpl for Cupid {
             )
             .collect();
 
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Cupid, 0),
-            AvailableAbilitySelection::new_two_player_option(
-                available_players.clone(), 
-                available_players,
-                false,
-                true
-            ),
-            super::AbilitySelection::new_two_player_option(None),
-            actor_ref.ability_deactivated_from_death(game) ||
-            Detained::is_detained(game, actor_ref),
-            Some(crate::game::phase::PhaseType::Obituary),
-            false,
-            vec_set![actor_ref]
-        )
+        ControllerParametersMap::builder()
+            .id(ControllerID::role(actor_ref, Role::Cupid, 0))
+            .available_selection(game, AvailableTwoPlayerOptionSelection {
+                available_first_players: available_players.clone(), 
+                available_second_players: available_players,
+                can_choose_duplicates: false,
+                can_choose_none: true
+            })
+            .night_typical(game, actor_ref)
+            .build_map(game)
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         common_role::convert_controller_selection_to_visits(
