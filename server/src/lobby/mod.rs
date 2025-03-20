@@ -10,7 +10,7 @@ use lobby_client::Ready;
 
 use crate::{
     client_connection::ClientConnection, game::{
-        player::PlayerReference, role_list::RoleOutline, settings::Settings, spectator::{spectator_pointer::{SpectatorIndex, SpectatorPointer}, SpectatorInitializeParameters}, Game
+        player::PlayerReference, role_list::RoleOutline, settings::Settings, spectator::{spectator_pointer::SpectatorPointer, SpectatorInitializeParameters}, Game
     }, listener::RoomCode, lobby::game_client::GameClientLocation, packet::{
         RejectJoinReason,
         ToClientPacket,
@@ -43,7 +43,6 @@ pub const GAME_DISCONNECT_TIMER_SECS: u64 = 60 * 2;
 
 
 impl Lobby {
-    #[allow(clippy::new_without_default)]
     pub fn new(room_code: RoomCode) -> Lobby {
         Self { 
             room_code,
@@ -109,11 +108,13 @@ impl Lobby {
                 let name = name_validation::sanitize_name("".to_string(), &Self::get_player_names(clients));
                 
                 let mut new_player = LobbyClient::new(name.clone(), send.clone(), clients.is_empty());
-                let lobby_client_id: LobbyClientID =
-                    clients
+                let Some(lobby_client_id) =
+                    (clients
                         .iter()
                         .map(|(i,_)|*i)
-                        .fold(0u32, u32::max) as LobbyClientID + 1u32;
+                        .fold(0u32, u32::max) as LobbyClientID).checked_add(1) else {
+                            return Err(RejectJoinReason::RoomFull)
+                        };
 
                 //if there are no hosts, make this player the host
                 if !clients.iter().any(|p|p.1.is_host()) {
@@ -138,33 +139,35 @@ impl Lobby {
 
                 let is_host = !clients.iter().any(|p|p.1.host);
                 
-                let lobby_client_id: LobbyClientID = 
-                    clients
+                let Some(lobby_client_id) = 
+                    (clients
                         .iter()
                         .map(|(i,_)|*i)
-                        .fold(0u32, u32::max) as LobbyClientID + 1u32;
+                        .fold(0u32, u32::max) as LobbyClientID).checked_add(1) else {
+                            return Err(RejectJoinReason::RoomFull);
+                        };
 
-                send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id: lobby_client_id, spectator: true});
-
-                let new_index: SpectatorIndex = game.add_spectator(SpectatorInitializeParameters {
+                match game.add_spectator(SpectatorInitializeParameters {
                     connection: ClientConnection::Connected(send.clone()),
                     host: is_host,
-                });
+                }) {
+                    Ok(new_index) => {
+                        send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id: lobby_client_id, spectator: true});
 
-
-                let new_client = GameClient::new_spectator(new_index, is_host);
-
-
-
-                clients.insert(lobby_client_id, new_client);
-                
-
-                // send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::GameAlreadyStarted});
-                // Err(RejectJoinReason::GameAlreadyStarted)
-                Ok(lobby_client_id)
+                        let new_client = GameClient::new_spectator(new_index, is_host);
+    
+                        clients.insert(lobby_client_id, new_client);
+        
+                        // send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::GameAlreadyStarted});
+                        // Err(RejectJoinReason::GameAlreadyStarted)
+                        Ok(lobby_client_id)
+                    }
+                    Err(reason) => {
+                        Err(reason)
+                    }
+                }
             }
             LobbyState::Closed => {
-                send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::RoomDoesntExist});
                 Err(RejectJoinReason::RoomDoesntExist)
             }
         }
@@ -286,7 +289,8 @@ impl Lobby {
                 
                 if let GameClientLocation::Player(player_index) = game_player.client_location {
                     let Ok(player_ref) = PlayerReference::new(game, player_index) else {
-                        unreachable!()
+                        send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
+                        return Err(RejectJoinReason::PlayerDoesntExist)
                     };
                     if !player_ref.could_reconnect(game) {
                         send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerTaken});
@@ -395,15 +399,17 @@ impl Lobby {
             },
             LobbyState::Game { game, clients: players } => {
                 players.iter()
-                    .filter(|(_, player)| matches!(player.client_location, GameClientLocation::Player(_)))
-                    .map(|(id, player)| {
+                    .filter_map(|(id, player)|
                         if let GameClientLocation::Player(player_index) = player.client_location {
-                            let player_ref = PlayerReference::new(game, player_index).unwrap();
-                            (*id, player_ref.name(game).clone())
-                        }else{
-                            unreachable!()
+                            if let Ok(player_ref) = PlayerReference::new(game, player_index) {
+                                Some((*id, player_ref.name(game).clone()))
+                            } else {
+                                None
+                            }
+                        } else {
+                            None
                         }
-                    })
+                    )
                     .collect()
             },
             LobbyState::Closed => Vec::new(),

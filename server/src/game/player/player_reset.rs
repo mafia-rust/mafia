@@ -42,8 +42,7 @@ impl PlayerReference{
                         }
                     }
                 }
-
-                self.set_chosen_vote(game, None, false);
+                
                 self.set_verdict(game, Verdict::Abstain);
             },
             PhaseType::Testimony => {},
@@ -55,8 +54,7 @@ impl PlayerReference{
             PhaseType::Night => {
                 self.set_night_died(game, false);
                 self.set_night_attacked(game, false);
-                self.set_night_roleblocked(game, false);
-                self.set_night_wardblocked(game, false);
+                self.set_night_blocked(game, false);
                 self.set_night_upgraded_defense(game, None);
                 self.set_night_appeared_visits(game, None);
                 self.set_night_framed(game, false);

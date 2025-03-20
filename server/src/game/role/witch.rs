@@ -75,7 +75,7 @@ impl RoleStateImpl for Witch {
                 .filter(|p|p.alive(game))
                 .filter(|p|p.keeps_game_running(game))
                 .all(|p|
-                    WinCondition::are_friends(&p.win_condition(game), actor_ref.win_condition(game))
+                    WinCondition::are_friends(p.win_condition(game), actor_ref.win_condition(game))
                 )
 
         {
@@ -85,6 +85,7 @@ impl RoleStateImpl for Witch {
             actor_ref.set_role_state(game, Witch { currently_used_player: None });
         }
     }
+    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
 impl GetClientRoleState<ClientRoleState> for Witch {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

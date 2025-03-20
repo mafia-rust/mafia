@@ -111,8 +111,6 @@ export type PlayerGameState = {
     crossedOutOutlines: number[],
     chatFilter: ChatFilter,
     deathNote: string,
-    targets: PlayerIndex[],
-    voted: PlayerIndex | null,
     judgement: Verdict,
 
     savedControllers: ListMapData<ControllerID, SavedController>,
@@ -168,21 +166,20 @@ export type Tag =
 
 export const MODIFIERS = [
     "obscuredGraves", "randomLoveLinks",
+    "skipDay1",
     "deadCanChat", "noAbstaining",
     "noDeathCause",
     "roleSetGraveKillers", "autoGuilty", 
     "twoThirdsMajority", "noTrialPhases", 
-    "noWhispers", "noNightChat",
-    "noChat", "scheduledNominations"
+    "noWhispers", "hiddenWhispers",
+    "noNightChat", "noChat", 
+    "scheduledNominations"
 ] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 
 export type Player = {
     name: string,
-    index: number
-    buttons: {
-        vote: boolean,
-    },
+    index: number,
     numVoted: number,
     alive: boolean,
     roleLabel: Role | null,

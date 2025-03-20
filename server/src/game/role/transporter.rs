@@ -49,7 +49,6 @@ impl RoleStateImpl for Transporter {
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
 
         let available_players: vec_set::VecSet<PlayerReference> = PlayerReference::all_players(game)
-            .into_iter()
             .filter(|p| p.alive(game))
             .collect();
 
@@ -78,4 +77,5 @@ impl RoleStateImpl for Transporter {
             false
         )
     }
+    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }

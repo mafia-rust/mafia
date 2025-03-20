@@ -1,7 +1,7 @@
 use std::iter::once;
 
 use rand::seq::IndexedRandom;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::components::confused::Confused;
 use crate::game::components::detained::Detained;
@@ -26,7 +26,7 @@ pub struct Auditor{
     pub previously_given_results: VecMap<RoleOutlineReference, AuditorResult>,
 }
 
-#[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum AuditorResult{
@@ -58,7 +58,7 @@ impl RoleStateImpl for Auditor {
                 Self::get_result(game, chosen_outline)
             };
             actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                role_outline: chosen_outline.deref(&game).clone(),
+                role_outline: chosen_outline.deref(game).clone(),
                 result: result.clone()
             });
 
@@ -72,7 +72,7 @@ impl RoleStateImpl for Auditor {
                 Self::get_result(game, chosen_outline)
             };
             actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                role_outline: chosen_outline.deref(&game).clone(),
+                role_outline: chosen_outline.deref(game).clone(),
                 result: result.clone()
             });
 
@@ -88,7 +88,7 @@ impl RoleStateImpl for Auditor {
             AvailableAbilitySelection::new_two_role_outline_option(
                 RoleOutlineReference::all_outlines(game)
                     .filter(|o|!self.previously_given_results.contains(o))
-                    .map(|o|Some(o))
+                    .map(Some)
                     .chain(once(None))
                     .collect()
             ),
@@ -128,7 +128,7 @@ impl Auditor{
                 .filter(|x|*x != role)
                 .collect::<Vec<Role>>()
                 .choose(&mut rand::rng())
-                .cloned();
+                .copied();
 
             if let Some(fake_role) = fake_role{
                 let mut two = [role, fake_role];
@@ -151,7 +151,7 @@ impl Auditor{
                 .filter(|x|game.settings.enabled_roles.contains(x))
                 .collect::<Vec<Role>>()
                 .choose(&mut rand::rng())
-                .cloned();
+                .copied();
 
             if let Some(fake_role) = fake_role{
                 AuditorResult::One{role: fake_role}
@@ -168,7 +168,7 @@ impl Auditor{
             
             fake_roles.shuffle(&mut rand::rng());
 
-            let fake_roles = fake_roles.choose_multiple(&mut rand::rng(), 2).cloned().collect::<Vec<Role>>();
+            let fake_roles = fake_roles.choose_multiple(&mut rand::rng(), 2).copied().collect::<Vec<Role>>();
 
             match (fake_roles.get(0), fake_roles.get(1)){
                 (Some(role1), Some(role2)) => {

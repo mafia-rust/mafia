@@ -1,5 +1,5 @@
 use rand::seq::SliceRandom;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
@@ -14,7 +14,7 @@ use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Spy;
 
-#[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum SpyBug{
     Silenced, 
@@ -56,7 +56,7 @@ impl RoleStateImpl for Spy {
                 for message in visit.target.night_messages(game).clone(){
                     if let Some(message) = match message{
                         ChatMessageVariant::Silenced => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Silenced }),
-                        ChatMessageVariant::RoleBlocked { immune: _ } => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Roleblocked }),
+                        ChatMessageVariant::RoleBlocked => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Roleblocked }),
                         ChatMessageVariant::YouWereProtected => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Protected }),
                         ChatMessageVariant::Transported => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Transported }),
                         ChatMessageVariant::YouWerePossessed { immune: _ } => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Possessed }),

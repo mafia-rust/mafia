@@ -357,12 +357,6 @@ export function createGameManager(): GameManager {
                 verdict: judgement
             });
         },
-        sendVotePacket(voteeIndex) {
-            this.server.sendPacket({
-                type: "vote",
-                playerIndex: voteeIndex
-            });
-        },
 
         sendSaveWillPacket(will) {
             this.server.sendPacket({

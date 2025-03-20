@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
 use crate::game::game_conclusion::GameConclusion;
@@ -17,7 +17,7 @@ pub struct SantaClaus {
     pub ability_used_last_night: Option<SantaListKind>,
 }
 
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum SantaListKind{
     Naughty,
@@ -58,7 +58,6 @@ impl RoleStateImpl for SantaClaus {
 
                     actor_ref.set_role_state(game, Self {
                         ability_used_last_night: Some(SantaListKind::Nice),
-                        ..self
                     });
                 }
             }
@@ -86,7 +85,6 @@ impl RoleStateImpl for SantaClaus {
 
                     actor_ref.set_role_state(game, Self {
                         ability_used_last_night: Some(SantaListKind::Naughty),
-                        ..self
                     });
                     
                     for krampus in PlayerReference::all_players(game) {
