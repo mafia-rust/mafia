@@ -365,7 +365,7 @@ impl Lobby {
             LobbyState::Game { game, .. } => {
                 game.tick(time_passed);
                 
-                if !PlayerReference::all_players(game).any(|p| p.is_connected(game)) {
+                if !game.is_any_client_connected() {
                     self.lobby_state = LobbyState::Closed;
                 }
             }

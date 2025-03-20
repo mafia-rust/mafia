@@ -587,6 +587,11 @@ impl Game {
             spectator.send_packet(packet.clone());
         }
     }
+    
+    pub(crate) fn is_any_client_connected(&self) -> bool {
+        PlayerReference::all_players(self).any(|p| p.is_connected(self))
+        || SpectatorPointer::all_spectators(self).any(|s| s.is_connected(self))
+    }
 }
 
 pub mod test {
