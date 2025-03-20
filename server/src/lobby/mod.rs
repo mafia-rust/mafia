@@ -209,7 +209,7 @@ impl Lobby {
                         for client in clients.iter_mut() {
                             if let GameClientLocation::Spectator(index) = &mut client.1.client_location {
                                 if *index > idx {
-                                    *index -= 1;
+                                    *index = index.saturating_sub(1);
                                 }
                             }
                         }

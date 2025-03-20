@@ -430,7 +430,7 @@ impl Lobby {
 
                 send.send(ToClientPacket::HostData { clients: clients.iter()
                     .map(|(id, client)| {
-                        return (*id, HostDataPacketGameClient {
+                        (*id, HostDataPacketGameClient {
                             client_type: client.client_location.clone(),
                             connection: match client.client_location {
                                 GameClientLocation::Player(index) => {

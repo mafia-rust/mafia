@@ -1,5 +1,4 @@
-use crate::{lobby::LobbyClientID, strings::TidyableString, vec_map::VecMap};
-use super::{LobbyClient, LobbyClientType};
+use crate::strings::TidyableString;
 use lazy_static::lazy_static;
 use rand::seq::IndexedRandom;
 
@@ -28,7 +27,7 @@ pub const DEFAULT_SERVER_NAME: &str = "Mafia Lobby";
 /// Sanitizes a player name.
 /// If the desired name is invalid or taken, this generates a random acceptable name.
 /// Otherwise, this trims and returns the input name.
-pub fn sanitize_name(mut desired_name: String, other_names: &Vec<String>) -> String {
+pub fn sanitize_name(mut desired_name: String, other_names: &[String]) -> String {
     desired_name = desired_name
         .remove_newline()
         .trim_whitespace()
