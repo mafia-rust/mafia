@@ -71,7 +71,7 @@ export type ToClientPacket = {
 } | {
     type: "gameInitializationComplete"
 } | {
-    type: "hostForceBackToLobby",
+    type: "backToLobby",
 } | {
     type: "gamePlayers",
     players: string[]
@@ -222,8 +222,6 @@ export type ToServerPacket = {
 } | {
     type: "setEnabledModifiers",
     modifiers: ModifierType[]
-} | {
-    type: "backToLobby",
 } |
 // Game
 {
@@ -277,6 +275,8 @@ export type ToServerPacket = {
 } | {
     type: "voteFastForwardPhase",
     fastForward: boolean
+} | {
+    type: "hostForceBackToLobby"
 } | {
     type: "hostForceEndGame",
 } | {

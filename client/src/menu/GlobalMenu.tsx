@@ -107,7 +107,7 @@ export function RoomLinkButton(): JSX.Element {
             code.pathname = "/connect"
             code.searchParams.set("code", state.roomCode.toString(18))
             return code;
-        }, ["acceptJoin", "hostForceBackToLobby"]
+        }, ["acceptJoin", "backToLobby"]
     )!;
     
     return <CopyButton text={code.toString()}>

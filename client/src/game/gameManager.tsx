@@ -314,7 +314,7 @@ export function createGameManager(): GameManager {
         },
         sendBackToLobbyPacket() {
             this.server.sendPacket({
-                type: "backToLobby"
+                type: "hostForceBackToLobby"
             });
         },
         sendSetPhaseTimePacket(phase: PhaseType, time: number) {
