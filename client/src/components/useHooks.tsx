@@ -157,7 +157,7 @@ export function usePlayerNames(): string[] {
                 return []
             }
         },
-        [],
+        ["gamePlayers", "lobbyClients"],
         DUMMY_NAMES
     )!;
 }
