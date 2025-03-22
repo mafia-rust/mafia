@@ -1175,7 +1175,7 @@
     "wiki.article.standard.redirect.title:var.0": "redirected",
     "wiki.article.standard.redirect.title:var.1": "redirector",
     "wiki.article.standard.redirect.title:var.2": "redirects",
-    "wiki.article.standard.redirect.text": "Certain abilities may change who an attack targets.  Only a direct attack may be redirected, and a redirect attack becomes indirect.  Attack redirects do not affect visits, and the attacker is not told their attack was redirected.  Redirects may also change the tier of an attack.",
+    "wiki.article.standard.redirect.text": "Certain abilities may change who an attack targets.  Only a direct attack may be redirected, and a redirected attack becomes indirect.  Attack redirects do not affect visits, and the attacker is not told their attack was redirected.  Redirects may also change the tier of an attack.",
     "wiki.article.standard.defense.title": "Defense",
     "wiki.article.standard.defense.title:var.0": "Basic",
     "wiki.article.standard.defense.title:var.1": "Armor-piercing",
