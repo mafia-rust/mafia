@@ -1766,9 +1766,9 @@
 
     "wiki.article.role.coward.reminder": "Hide behind other people in order to survive the nights.  You win if you survive the game.",
     "wiki.article.role.coward.guide": "Hide behind other people to survive.  Anybody who dies while you are hiding with them is obscured.\n\nYou should try to stay innocuous and make the game end as soon as possible.",
-    "wiki.article.role.coward.abilities": "* Each night, select a player to visit them.\n* If you are visited and attacked, they take the attack for you.\n* Anybody who dies while you are hiding with them is obscured.\n* This ability does not affect attacks that are not from visiting you e.g. Jester or Veteran.",
-    "wiki.article.role.coward.attributes": "* If you are attacked while hiding behind somebody, they die.\n* You win if you survive until the end of the game.\n* Your ability does not affect indirect attacks.\n* Your visits are considered attacks.",
-    "wiki.article.role.coward.extra": "* Your ability affects visits.",
+    "wiki.article.role.coward.abilities": "* Each night, select a player to visit them.\n* If you are visited and attacked, redirect the attacks to them.\n* Anybody who dies while you are hiding with them is obscured.\n* This ability does not affect indirect attacks, e.g. Jester or Veteran, or an attack that has been redirected to you.",
+    "wiki.article.role.coward.attributes": "* If you are attacked directly while hiding behind somebody, they die.\n* You win if you survive until the end of the game.\n* Your ability does not affect indirect attacks.\n* Your visits are considered attacks.",
+    "wiki.article.role.coward.extra": "* Your ability does not affect visits.",
     
     "wiki.article.role.doomsayer.reminder": "Guess the role of three different players correctly to win. When you win you attack the players you guessed.",
     "wiki.article.role.doomsayer.guide": "- Guess the role of three different players correctly to win\n- If you get all your guesses correct and win, you attack all three players, and then leave town\n- You can't guess town investigative roles\n- If a player has a non town role, you don't need to guess their exact role, just that they are non town\n\n In order to counter a doomsayer, players often claimswap",
