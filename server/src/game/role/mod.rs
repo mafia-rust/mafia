@@ -159,7 +159,6 @@ macros::roles! {
     Martyr : martyr,
     SantaClaus : santa_claus,
     Krampus : krampus,
-    Coward: coward,
 
     Witch : witch,
     Scarecrow : scarecrow,
