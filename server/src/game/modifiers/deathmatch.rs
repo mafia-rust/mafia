@@ -5,7 +5,8 @@ use super::{ModifierState, ModifierTrait, ModifierType, Modifiers};
 
 #[derive(Clone, Default, PartialEq, Eq, Hash)]
 pub struct Deathmatch{
-    day_of_last_death: u8
+    day_of_last_death: u8,
+    game_started: bool,
 }
 
 /*
@@ -19,21 +20,22 @@ impl From<&Deathmatch> for ModifierType{
 }
 
 impl ModifierTrait for Deathmatch {
-    fn on_game_start(self, game: &mut Game) {
-        for player in PlayerReference::all_players(game){
-            game.add_message_to_chat_group(
-                ChatGroup::All, 
-                ChatMessageVariant::PlayerHasWinCondition{player: player.index(), win_condition: player.win_condition(game).clone()}
-            );
-        }
-    }
     fn on_phase_start(self, game: &mut Game, phase: PhaseState) {
         if phase.phase() == PhaseType::Nomination {
             game.on_fast_forward();
+        } else if phase.phase() == PhaseType::Briefing {
+            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::JesterWon);
+            for player in PlayerReference::all_players(game){
+                game.add_message_to_chat_group(
+                    ChatGroup::All, 
+                    ChatMessageVariant::PlayerHasWinCondition{player: player.index(), win_condition: player.win_condition(game).clone()}
+                );
+            }
+            Modifiers::set_modifier(game, ModifierState::Deathmatch(Deathmatch{day_of_last_death: self.day_of_last_death, game_started: true}));
         }
     }
     fn on_any_death(self, game: &mut Game, _player:PlayerReference) {
-        Modifiers::set_modifier(game, Deathmatch{day_of_last_death: game.day_number()}.into());
+        Modifiers::set_modifier(game, Deathmatch{day_of_last_death: game.day_number(), game_started: self.game_started}.into());
     }
     fn on_ability_input_received(self,_game: &mut Game,_actor_ref:PlayerReference,_input:crate::game::ability_input::AbilityInput) {
         
@@ -73,7 +75,7 @@ impl Deathmatch {
     }
     pub fn is_draw(game: &Game) -> bool {
         if let Some(ModifierState::Deathmatch(deathmatch)) = Modifiers::get_modifier(game, ModifierType::Deathmatch) {
-            if deathmatch.day_of_last_death.saturating_add(5) >= game.day_number() {
+            if deathmatch.day_of_last_death.saturating_add(5) < game.day_number() {
                 return true
             }
         }
