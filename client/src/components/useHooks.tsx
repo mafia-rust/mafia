@@ -4,7 +4,7 @@ import { StateEventType } from "../game/gameManager.d";
 import GameState, { LobbyState, PlayerGameState } from "../game/gameState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 
-function usePacketListener(listener: (type?: StateEventType) => void) {
+export function usePacketListener(listener: (type?: StateEventType) => void) {
     // Catch all the packets we miss between setState and useEffect
     const packets: StateEventType[] = [];
     const packetQueueListener = (type?: StateEventType) => {
@@ -157,7 +157,7 @@ export function usePlayerNames(): string[] {
                 return []
             }
         },
-        [],
+        ["gamePlayers", "lobbyClients"],
         DUMMY_NAMES
     )!;
 }
