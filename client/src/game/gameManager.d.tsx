@@ -103,6 +103,10 @@ export type GameManager = {
     ): void
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
+    sendHostDataRequest(): void;
+    sendHostEndGamePacket(): void;
+    sendHostSkipPhase(): void;
+    sendHostSetPlayerNamePacket(player_id: number, name: string): void;
 
     messageListener(serverMessage: ToClientPacket): void;
 
