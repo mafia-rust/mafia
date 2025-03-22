@@ -228,6 +228,4 @@ pub enum ChatMessageVariant {
     MartyrWon,
     MartyrFailed,
     WildcardConvertFailed{ role: Role },
-    CowardHid,
-    CowardSaved,
 }

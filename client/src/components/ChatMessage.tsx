@@ -789,8 +789,6 @@ export function translateChatMessage(
         case "youWereProtected":
         case "revolutionaryWon":
         case "jesterWon":
-        case "cowardHid":
-        case "cowardSaved":
         case "wardblocked":
         case "roleBlocked":
         case "yourConvertFailed":
@@ -828,295 +826,291 @@ export type ChatMessage = {
     chatGroup: ChatGroup | null
 }
 export type ChatMessageVariant = {
-	type: "lobbyMessage",
-	sender: string,
-	text: string
+    type: "lobbyMessage",
+    sender: string,
+    text: string
 } | {
-	type: "normal",
-	messageSender: MessageSender,
-	text: string,
-	block: boolean
+    type: "normal", 
+    messageSender: MessageSender,
+    text: string,
+    block: boolean
 } | {
-	type: "whisper",
-	fromPlayerIndex: PlayerIndex,
-	toPlayerIndex: PlayerIndex,
-	text: string
+    type: "whisper", 
+    fromPlayerIndex: PlayerIndex, 
+    toPlayerIndex: PlayerIndex, 
+    text: string
 } | {
-	type: "broadcastWhisper",
-	whisperer: PlayerIndex,
-	whisperee: PlayerIndex
-} |
+    type: "broadcastWhisper", 
+    whisperer: PlayerIndex, 
+    whisperee: PlayerIndex 
+} | 
 // System
 {
-	type: "roleAssignment",
-	role: Role
+    type: "roleAssignment", 
+    role: Role
 } | {
-	type: "playerDied",
-	grave: Grave
+    type: "playerDied", 
+    grave: Grave
 } | {
-	type: "playersRoleRevealed",
-	role: Role,
-	player: PlayerIndex
+    type: "playersRoleRevealed",
+    role: Role,
+    player: PlayerIndex
 } | {
-	type: "playersRoleConcealed",
-	player: PlayerIndex
+    type: "playersRoleConcealed",
+    player: PlayerIndex
 } | {
-	type: "tagAdded",
-	player: PlayerIndex,
-	tag: Tag
+    type: "tagAdded",
+    player: PlayerIndex,
+    tag: Tag
 } | {
-	type: "tagRemoved",
-	player: PlayerIndex,
-	tag: Tag
+    type: "tagRemoved",
+    player: PlayerIndex,
+    tag: Tag
 } | {
-	type: "gameOver"
-	synopsis: {
-		playerSynopses: {
-			crumbs: {
-				night: number | null,
-				role: Role,
-				winCondition: WinCondition
-			}[],
-			won: boolean
-		}[],
-		conclusion: Conclusion
-	}
+    type: "gameOver"
+    synopsis: {
+        playerSynopses: {
+            crumbs: {
+                night: number | null,
+                role: Role,
+                winCondition: WinCondition
+            }[],
+            won: boolean
+        }[],
+        conclusion: Conclusion
+    }
 } | {
-	type: "playerWonOrLost",
-	player: PlayerIndex,
-	won: boolean,
-	role: Role
+    type: "playerWonOrLost",
+    player: PlayerIndex,
+    won: boolean,
+    role: Role
 } | {
-	type: "playerQuit",
-	playerIndex: PlayerIndex
-	gameOver: boolean,
+    type: "playerQuit",
+    playerIndex: PlayerIndex
+    gameOver: boolean,
 } | {
-	type: "phaseChange",
-	phase: PhaseState,
-	dayNumber: number
-} |
+    type: "phaseChange", 
+    phase: PhaseState,
+    dayNumber: number
+} | 
 // Trial
 {
-	type: "trialInformation",
-	requiredVotes: number,
-	trialsLeft: number
+    type: "trialInformation", 
+    requiredVotes: number, 
+    trialsLeft: number
 } | {
-	type: "voted",
-	voter: PlayerIndex,
-	votee: PlayerIndex | null
+    type: "voted", 
+    voter: PlayerIndex, 
+    votee: PlayerIndex | null 
 } | {
-	type: "playerNominated",
-	playerIndex: PlayerIndex,
-	playersVoted: PlayerIndex[]
+    type: "playerNominated", 
+    playerIndex: PlayerIndex,
+    playersVoted: PlayerIndex[]
 } | {
-	type: "judgementVerdict",
-	voterPlayerIndex: PlayerIndex,
-	verdict: Verdict
+    type: "judgementVerdict", 
+    voterPlayerIndex: PlayerIndex, 
+    verdict: Verdict
 } | {
-	type: "trialVerdict",
-	playerOnTrial: PlayerIndex,
-	innocent: number,
-	guilty: number
-} |
+    type: "trialVerdict", 
+    playerOnTrial: PlayerIndex, 
+    innocent: number, 
+    guilty: number
+} | 
 // Misc.
 {
-	type: "abilityUsed",
-	player: PlayerIndex,
-	abilityId: ControllerID,
-	selection: AbilitySelection
+    type: "abilityUsed", 
+    player: PlayerIndex,
+    abilityId: ControllerID,
+    selection: AbilitySelection
     
 } | {
-	type: "phaseFastForwarded"
+    type: "phaseFastForwarded"
 } |
 // Role-specific
 {
-	type: "mayorRevealed",
-	playerIndex: PlayerIndex
+    type: "mayorRevealed", 
+    playerIndex: PlayerIndex
 } | {
-	type: "invalidWhisper"
+    type: "invalidWhisper"
 } | {
-	type: "politicianCountdownStarted"
+    type: "politicianCountdownStarted"
 } | {
-	type: "reporterReport",
-	report: string
+    type: "reporterReport",
+    report: string
 } | {
-	type: "playerIsBeingInterviewed",
-	playerIndex: PlayerIndex
+    type: "playerIsBeingInterviewed",
+    playerIndex: PlayerIndex
 } | {
-	type: "jailedTarget"
-	playerIndex: PlayerIndex
+    type: "jailedTarget"
+    playerIndex: PlayerIndex
 } | {
-	type: "jailedSomeone",
-	playerIndex: PlayerIndex
+    type: "jailedSomeone",
+    playerIndex: PlayerIndex
 } | {
-	type: "wardenPlayersImprisoned",
-	players: PlayerIndex[]
+    type: "wardenPlayersImprisoned",
+    players: PlayerIndex[]
 } | {
-	type: "yourConvertFailed"
+    type: "yourConvertFailed"
 } | {
-	type: "cultConvertsNext"
+    type: "cultConvertsNext"
 } | {
-	type: "cultKillsNext"
+    type: "cultKillsNext"
 } | {
-	type: "mediumHauntStarted",
-	medium: PlayerIndex,
-	player: PlayerIndex
+    type: "mediumHauntStarted",
+    medium: PlayerIndex,
+    player: PlayerIndex
 } | {
-	type: "mediumExists"
+    type: "mediumExists"
 } | {
-	type: "deputyKilled",
-	shotIndex: PlayerIndex
+    type: "deputyKilled",
+    shotIndex: PlayerIndex
 } | {
-	type: "deputyShotYou"
+    type: "deputyShotYou"
 } | {
-	type: "puppeteerPlayerIsNowMarionette",
-	player: PlayerIndex
+    type: "puppeteerPlayerIsNowMarionette",
+    player: PlayerIndex
 } | {
-	type: "recruiterPlayerIsNowRecruit",
-	player: PlayerIndex
+    type: "recruiterPlayerIsNowRecruit",
+    player: PlayerIndex
 } | {
-	type: "roleBlocked"
+    type: "roleBlocked"
 } | {
-	type: "someoneSurvivedYourAttack"
+    type: "someoneSurvivedYourAttack"
 } | {
-	type: "youSurvivedAttack"
+    type: "youSurvivedAttack"
 } | {
-	type: "youWereAttacked"
+    type: "youWereAttacked"
 } | {
-	type: "youAttackedSomeone"
+    type: "youAttackedSomeone"
 } | {
-	type: "youArePoisoned"
+    type: "youArePoisoned"
 } |
 /* Role-specific */
 {
-	type: "wardblocked"
+    type: "wardblocked"
 } | {
-	type: "sheriffResult",
-	suspicious: boolean
+    type: "sheriffResult", 
+    suspicious: boolean
 } | {
-	type: "snoopResult",
-	townie: boolean
+    type: "snoopResult", 
+    townie: boolean
 } | {
-	type: "gossipResult",
-	enemies: boolean
+    type: "gossipResult",
+    enemies: boolean
 } | {
-	type: "tallyClerkResult",
-	evilCount: number
+    type: "tallyClerkResult",
+    evilCount: number
 } | {
-	type: "lookoutResult",
-	players: PlayerIndex[]
+    type: "lookoutResult", 
+    players: PlayerIndex[]
 } | {
-	type: "spyMafiaVisit",
-	players: PlayerIndex[]
+    type: "spyMafiaVisit", 
+    players: PlayerIndex[]
 } | {
-	type: "spyBug",
-	bug: "silenced" | "roleblocked" | "protected" | "transported" | "possessed"
+    type: "spyBug", 
+    bug: "silenced" | "roleblocked" | "protected" | "transported" | "possessed"
 } | {
-	type: "trackerResult",
-	players: PlayerIndex[]
+    type: "trackerResult",
+    players: PlayerIndex[]
 } | {
-	type: "seerResult",
-	enemies: boolean
+    type: "seerResult",
+    enemies: boolean
 } | {
-	type: "psychicGood",
-	player: PlayerIndex
+    type: "psychicGood",
+    player: PlayerIndex
 } | {
-	type: "psychicEvil",
-	first: PlayerIndex,
-	second: PlayerIndex
+    type: "psychicEvil",
+    first: PlayerIndex,
+    second: PlayerIndex
 } | {
-	type: "psychicFailed"
+    type: "psychicFailed"
 } | {
-	type: "auditorResult",
-	roleOutline: RoleOutline,
-	result: AuditorResult,
+    type: "auditorResult",
+    roleOutline: RoleOutline,
+    result: AuditorResult,
 } | {
-	type: "engineerVisitorsRole",
-	role: Role
+    type: "engineerVisitorsRole",
+    role: Role
 } | {
-	type: "trapState",
-	state: {
-		type: "dismantled" | "ready" | "set"
-	}
+    type: "trapState",
+    state: {
+        type: "dismantled" | "ready" | "set"
+    }
 } | {
-	type: "trapStateEndOfNight",
-	state: {
-		type: "dismantled" | "ready" | "set"
-	}
+    type: "trapStateEndOfNight",
+    state: {
+        type: "dismantled" | "ready" | "set"
+    }
 } | {
-	type: "armorsmithArmorBroke"
+    type: "armorsmithArmorBroke"
 } | {
-	type: "targetWasAttacked"
+    type: "targetWasAttacked"
 } | {
-	type: "youAreLoveLinked",
-	player: PlayerIndex
+    type: "youAreLoveLinked",
+    player: PlayerIndex
 } | {
-	type: "playerDiedOfABrokenHeart",
-	player: PlayerIndex
-	lover: PlayerIndex
+    type: "playerDiedOfABrokenHeart",
+    player: PlayerIndex
+    lover: PlayerIndex
 } | {
-	type: "youWereProtected"
+    type: "youWereProtected"
 } | {
-	type: "youDied"
+    type: "youDied"
 } | {
-	type: "transported"
+    type: "transported"
 } | {
-	type: "godfatherBackup",
-	backup: PlayerIndex | null
+    type: "godfatherBackup",
+    backup: PlayerIndex | null
 } | {
-	type: "godfatherBackupKilled",
-	backup: PlayerIndex
+    type: "godfatherBackupKilled",
+    backup: PlayerIndex
 } | {
-	type: "silenced"
+    type: "silenced"
 } | {
-	type: "playerRoleAndAlibi",
-	player: PlayerIndex,
-	role: Role,
-	will: string
+    type: "playerRoleAndAlibi",
+    player: PlayerIndex,
+    role: Role,
+    will: string
 } | {
-	type: "informantResult",
-	role: Role,
-	visitedBy: PlayerIndex[],
-	visited: PlayerIndex[]
+    type: "informantResult", 
+    role: Role,
+    visitedBy: PlayerIndex[],
+    visited: PlayerIndex[]
 } | {
-	type: "framerResult",
-	mafiaMember: PlayerIndex,
-	visitors: Role[]
+    type: "framerResult", 
+    mafiaMember: PlayerIndex,
+    visitors: Role[]
 } | {
-	type: "scarecrowResult",
-	players: PlayerIndex[]
+    type: "scarecrowResult",
+    players: PlayerIndex[]
 } | {
-	type: "ambusherCaught",
-	ambusher: PlayerIndex
+    type: "ambusherCaught",
+    ambusher: PlayerIndex
 } | {
-	type: "targetIsPossessionImmune"
+    type: "targetIsPossessionImmune"
 } | {
-	type: "youWerePossessed",
-	immune: boolean
+    type: "youWerePossessed",
+    immune: boolean
 } | {
-	type: "targetHasRole",
-	role: Role
+    type: "targetHasRole",
+    role: Role
 } | {
-	type: "targetHasWinCondition",
-	winCondition: WinCondition
+    type: "targetHasWinCondition",
+    winCondition: WinCondition
 } | {
-	type: "targetsMessage",
-	message: ChatMessageVariant
+    type: "targetsMessage",
+    message: ChatMessageVariant
 } | {
-	type: "playerForwardedMessage",
-	forwarder: PlayerIndex,
-	message: ChatMessageVariant
+    type: "playerForwardedMessage",
+    forwarder: PlayerIndex,
+    message: ChatMessageVariant
 } | {
-	type: "werewolfTrackingResult",
-	trackedPlayer: PlayerIndex
-	players: PlayerIndex[]
+    type: "werewolfTrackingResult",
+    trackedPlayer: PlayerIndex
+    players: PlayerIndex[]
 } | {
-	type: "jesterWon"
+    type: "jesterWon"
 } | {
-	type: "cowardHid"
-} | {
-	type: "cowardSaved"
-} |{
     type: "wildcardConvertFailed",
     role: Role
 } | {

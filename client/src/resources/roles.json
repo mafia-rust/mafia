@@ -840,19 +840,6 @@
             {"type": "youSurvivedAttack"}
         ]
     },
-    "coward": {
-    	"mainRoleSet": "neutral",
-     	"roleSets": ["neutral"],
-			"armor": false,
-			"aura": null,
-			"maxCount": null,
-			"canWriteDeathNote": true,
-			"canBeConvertedTo": [],
-			"chatMessages":[
-				{"type": "cowardHid"},
-				{"type": "cowardSaved"}
-			]
-    },
     "politician":{
         "mainRoleSet": "neutral",
         "roleSets": ["neutral"],
