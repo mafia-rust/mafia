@@ -127,12 +127,10 @@ impl PlayerReference{
     
     pub fn try_convert_friendly(&self, actor_ref: PlayerReference, game: &mut Game, attack: AttackPower, with_visit: bool, new_state: RoleState) -> Option<PlayerReference> {
    		if let Some((target, _)) = self.role_state(game).clone().redirect_attack(game, *self, attack, with_visit) {
-     		println!("converting friendly");
    			if InsiderGroupID::in_same_revealed_group(game, actor_ref, target) {
 	   			target.set_night_convert_role_to(game, Some(new_state));
 				return Some(target);
      		}
-       		println!("was not in the same revealed group");
      	}
       	return None;
     }
