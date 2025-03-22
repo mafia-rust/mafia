@@ -1,6 +1,7 @@
 use serde::{Serialize, Deserialize};
 
 use crate::game::attack_power::{AttackPower, DefensePower};
+use crate::game::attack_type::AttackData;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -151,6 +152,9 @@ impl RoleStateImpl for Doomsayer {
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
         Doomsayer::check_and_convert_to_jester(game, self, actor_ref);
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::attack(game, actor_ref, true)
     }
 }
 impl GetClientRoleState<ClientRoleState> for Doomsayer {

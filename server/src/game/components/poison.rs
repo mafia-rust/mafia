@@ -95,4 +95,7 @@ impl Poison{
             poison.leave_death_note
         );
     }
+    pub fn any_players_poisoned(game: &Game) -> bool {
+        game.poison.poisons.iter().any(|p|p.player.alive(game))
+    }
 }

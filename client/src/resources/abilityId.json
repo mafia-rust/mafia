@@ -244,5 +244,8 @@
     },
     "syndicateBackupAttack": {
         "midnight": true
+    },
+    "optForDraw": {
+        "midnight": false
     }
 }

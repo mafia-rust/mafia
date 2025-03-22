@@ -46,6 +46,9 @@ impl SyndicateGunItem {
     pub fn player_with_gun(&self) -> Option<PlayerReference> {
         self.player_with_gun
     }
+    pub fn player_has_gun(&self, player: PlayerReference) -> bool {
+        self.player_with_gun().is_some_and(|p|p == player)
+    }
 
     //available ability
     pub fn controller_parameters_map(game: &Game) -> ControllerParametersMap {

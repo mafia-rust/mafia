@@ -26,6 +26,17 @@ impl <K> VecSet<K> where K: Eq {
             self.insert(key);
         }
     }
+    
+    pub fn including(&self, key: K) -> Self  where K: Clone{
+        let mut val = self.clone();
+        val.insert(key);
+        val
+    }
+    pub fn excluding(&self, key: &K) -> Self  where K: Clone{
+        let mut val = self.clone();
+        val.remove(key);
+        val
+    }
 
     pub fn contains(&self, key: &K) -> bool {
         self.vec.get_kvp(key).is_some()

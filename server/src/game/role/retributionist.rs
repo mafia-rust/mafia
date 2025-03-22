@@ -1,13 +1,14 @@
 use serde::Serialize;
 
+use crate::game::attack_type::AttackData;
 use crate::game::components::detained::Detained;
-use crate::game::role_list::RoleSet;
 use crate::game::{attack_power::DefensePower, phase::PhaseType};
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_set;
+use crate::vec_set::VecSet;
 
 use super::{
     common_role, AbilitySelection, AvailableAbilitySelection, ControllerID,
@@ -45,20 +46,7 @@ impl RoleStateImpl for Retributionist {
             game,
             ControllerID::role(actor_ref, Role::Retributionist, 0),
             AvailableAbilitySelection::new_two_player_option(
-                PlayerReference::all_players(game)
-                    .filter(|p|!p.alive(game))
-                    .filter(|target|
-                        game.graves.iter().any(|grave|
-                            grave.player == *target && 
-                            if let Some(role) = grave.role(){
-                                RoleSet::Town.get_roles().contains(&role)
-                            }else{false}
-                        ))
-                    .filter(|target|
-                        (self.used_bodies.iter().filter(|p| **p == *target).count() < 2)
-                    )
-                    .filter(|p|*p != actor_ref)
-                    .collect(),
+                self.can_target(game, actor_ref),
                 PlayerReference::all_players(game)
                     .filter(|p|p.alive(game))
                     .collect(),
@@ -86,6 +74,21 @@ impl RoleStateImpl for Retributionist {
         }
     }
     fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::necro(game, actor_ref, true)
+    }
+}
+impl Retributionist {
+    pub fn can_target(&self, game: &Game, actor_ref: PlayerReference) -> VecSet<PlayerReference>{
+        PlayerReference::all_players(game)
+                    .filter(|target|
+                        !target.alive(game) &&
+                        *target != actor_ref &&
+                        (self.used_bodies.iter().filter(|p| **p == *target).count() < 2) &&
+                        target.town_on_grave(game)
+                    )
+                    .collect()
+    }
 }
 impl GetClientRoleState<ClientRoleState> for Retributionist {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

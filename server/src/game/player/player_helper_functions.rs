@@ -2,16 +2,13 @@ use std::collections::HashSet;
 use rand::seq::SliceRandom;
 
 use crate::{game::{
-    ability_input::{AbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection, SavedControllersMap},
-    attack_power::{AttackPower, DefensePower},
-    chat::{ChatGroup, ChatMessage, ChatMessageVariant},
-    components::{
+    ability_input::{AbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection, SavedControllersMap}, attack_power::{AttackPower, DefensePower}, attack_type::AttackData, chat::{ChatGroup, ChatMessage, ChatMessageVariant}, components::{
         arsonist_doused::ArsonistDoused,
         drunk_aura::DrunkAura,
         insider_group::InsiderGroupID, night_visits::NightVisits
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_player_roleblocked::OnPlayerRoleblocked, on_role_switch::OnRoleSwitch, on_visit_wardblocked::OnVisitWardblocked
-    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{chronokaiser::Chronokaiser, Priority, Role, RoleState}, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
+    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{armorsmith::Armorsmith, chronokaiser::Chronokaiser, Priority, Role, RoleState}, role_list::RoleSet, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
 }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
 use super::PlayerReference;
@@ -276,6 +273,16 @@ impl PlayerReference{
         }
     }
     
+    pub fn town_on_grave(&self, game: &Game) -> bool {
+        //fast path
+        !self.alive(game) &&
+        game.graves.iter().any(|grave|
+            grave.player == *self && 
+            if let Some(role) = grave.role(){
+                RoleSet::Town.get_roles().contains(&role)
+            } else {false}
+        )
+    }
     
     pub fn tracker_seen_visits(self, game: &Game) -> Vec<Visit> {
         if let Some(v) = self.night_appeared_visits(game) {
@@ -335,9 +342,14 @@ impl PlayerReference{
     pub fn defense(&self, game: &Game) -> DefensePower {
         if game.current_phase().is_night() {
             self.night_defense(game)
-        }else{
-            self.role(game).defense()
+        } else if Armorsmith::has_armorsmith_armor(*self, game) {
+            //future proofing incase a role gets invincible armor
+            //or more tiers are added and a role gets one thats higher than protection
+            DefensePower::Protection.max(self.role(game).defense(game))
+        } else {
+            self.role(game).defense(game)
         }
+        
     }
     pub fn possession_immune(&self, game: &Game) -> bool {
         self.role(game).possession_immune()
@@ -386,6 +398,8 @@ impl PlayerReference{
     pub fn keeps_game_running(&self, game: &Game) -> bool {
         if InsiderGroupID::Mafia.is_player_in_revealed_group(game, *self) {return true;}
         if InsiderGroupID::Cult.is_player_in_revealed_group(game, *self) {return true;}
+        if Modifiers::modifier_is_enabled(game, ModifierType::Deathmatch) &&
+            self.attack_data(game).is_none() {return false;}
         if self.win_condition(game).is_loyalist_for(GameConclusion::Town) {return true;}
         
         GameConclusion::keeps_game_running(self.role(game))
@@ -421,6 +435,9 @@ impl PlayerReference{
     }
     pub fn convert_selection_to_visits(&self, game: &Game) -> Vec<Visit> {
         self.role_state(game).clone().convert_selection_to_visits(game, *self)
+    }
+    pub fn attack_data(&self, game: &Game) -> AttackData {
+        self.role_state(game).attack_data(game, *self)
     }
 }
 

@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
+use crate::game::attack_type::AttackData;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::detained::Detained;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
@@ -132,6 +133,18 @@ impl RoleStateImpl for Martyr {
             actor_ref.set_role_state(game, RoleState::Martyr(Martyr {
                 state: MartyrState::Won
             }));
+        }
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        match self.state {
+            MartyrState::StillPlaying{bullets} => if bullets > 0 {
+                AttackData::attack(game, actor_ref, false)
+            } else {
+                AttackData::none()
+            },
+            //I'm not 100% about these so made them attack_dead to be on the safe side
+            MartyrState::Won => AttackData::attack_dead(),
+            MartyrState::LeftTown => AttackData::attack_dead(),
         }
     }
 }

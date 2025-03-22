@@ -67,11 +67,14 @@ export type ControllerID = {
     type: "syndicateChooseBackup"
 } | {
     type: "syndicateBackupAttack"
+} | {
+    type: "optForDraw",
+    player: PlayerIndex
 }
 
 export type RoleControllerID = number;
 
-/// create a type that represnts all strings that look like "abilityId/role/1"
+/// create a type that represents all strings that look like "abilityId/role/1"
 
 export type ControllerIDLink = (
     `role/${Role}/${RoleControllerID}` | 
@@ -121,7 +124,8 @@ export function sortControllerIdCompare(
         syndicateChooseBackup: 4,
         syndicateBackupAttack: 5,
         forfeitVote: 6,
-        pitchforkVote: 7
+        pitchforkVote: 7,
+        optForDraw: 8,
     };
 
     // Get priority of types

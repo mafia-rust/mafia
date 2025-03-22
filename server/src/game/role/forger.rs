@@ -150,6 +150,9 @@ impl RoleStateImpl for Forger {
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> crate::game::attack_type::AttackData {
+        crate::game::attack_type::AttackData::none()
+    }
 }
 impl GetClientRoleState<ClientRoleState> for Forger {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

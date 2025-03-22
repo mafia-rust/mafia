@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
+use crate::game::attack_type::AttackData;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::{GraveInformation, GraveKiller, GraveReference};
 use crate::game::player::PlayerReference;
@@ -96,6 +97,9 @@ impl RoleStateImpl for Pyrolisk {
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: crate::game::phase::PhaseType) {
         actor_ref.set_role_state(game, Pyrolisk{tagged_for_obscure: VecSet::new()});
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::attack(game, actor_ref, false)
     }
 }
 impl GetClientRoleState<ClientRoleState> for Pyrolisk {

@@ -13,7 +13,7 @@ use crate::game::attack_power::DefensePower;
 use serde::{Serialize, Deserialize};
 
 use super::{
-    ability_input::*, components::{insider_group::InsiderGroupID, night_visits::NightVisits}, grave::GraveReference, visit::VisitTag, win_condition::WinCondition
+    ability_input::*, attack_type::AttackData, components::{insider_group::InsiderGroupID, night_visits::NightVisits}, grave::GraveReference, modifiers::{ModifierType, Modifiers}, visit::VisitTag, win_condition::WinCondition
 };
 
 pub trait GetClientRoleState<CRS> {
@@ -80,6 +80,8 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
             v.tag != VisitTag::Role || v.visitor != actor_ref
         );
     }
+
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData;
 }
 
 // Creates the Role enum
@@ -240,7 +242,7 @@ mod macros {
                         $(Self::$name => $file::MAXIMUM_COUNT),*
                     }
                 }
-                pub fn defense(&self) -> DefensePower {
+                pub fn role_defense(&self) -> DefensePower {
                     match self {
                         $(Self::$name => $file::DEFENSE),*
                     }
@@ -371,6 +373,11 @@ mod macros {
                         $(Self::$name(role_struct) => ClientRoleStateEnum::$name(role_struct.get_client_role_state(game, actor_ref))),*
                     }
                 }
+                pub fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.attack_data(game, actor_ref)),*
+                    }
+                }
             }
             $(
                 impl From<$file::$name> for RoleState where $name: RoleStateImpl {
@@ -422,5 +429,14 @@ impl Role{
     }
     pub fn has_suspicious_aura(&self, _game: &Game)->bool{
         false
+    }
+    /// It is set up this way rather than checking if deathmatch is enabled before calling this because otherwise
+    /// people will forget.
+    pub fn defense(&self, game: &Game) -> DefensePower{
+        if Modifiers::modifier_is_enabled(game, ModifierType::Deathmatch){
+            DefensePower::None
+        } else {
+            self.role_defense()
+        }
     }
 }

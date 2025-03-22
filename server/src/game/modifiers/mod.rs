@@ -13,6 +13,7 @@ pub mod no_chat;
 pub mod scheduled_nominations;
 pub mod skip_day_1;
 pub mod hidden_whispers;
+pub mod deathmatch;
 
 use dead_can_chat::DeadCanChat;
 use hidden_whispers::HiddenWhispers;
@@ -27,6 +28,7 @@ use random_love_links::RandomLoveLinks;
 use no_death_cause::NoDeathCause;
 use role_set_grave_killers::RoleSetGraveKillers;
 use scheduled_nominations::ScheduledNominations;
+use deathmatch::Deathmatch;
 
 use serde::{Deserialize, Serialize};
 use skip_day_1::SkipDay1;
@@ -67,6 +69,7 @@ pub enum ModifierState{
     NoChat(NoChat),
     HiddenWhispers(HiddenWhispers),
     ScheduledNominations(ScheduledNominations),
+    Deathmatch(Deathmatch),
 }
 #[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Debug, Hash)]
 #[serde(rename_all = "camelCase")]
@@ -86,6 +89,7 @@ pub enum ModifierType{
     NoChat,
     HiddenWhispers,
     ScheduledNominations,
+    Deathmatch,
 }
 impl ModifierType{
     pub fn default_state(&self)->ModifierState{
@@ -105,6 +109,7 @@ impl ModifierType{
             Self::NoChat => ModifierState::NoChat(NoChat),
             Self::HiddenWhispers => ModifierState::HiddenWhispers(HiddenWhispers),
             Self::ScheduledNominations => ModifierState::ScheduledNominations(ScheduledNominations),
+            Self::Deathmatch => ModifierState::Deathmatch(Deathmatch::default()),
         }
     }
 }
@@ -126,6 +131,7 @@ impl From<&ModifierState> for ModifierType{
             ModifierState::NoChat(_) => Self::NoChat,
             ModifierState::HiddenWhispers(_) => Self::HiddenWhispers,
             ModifierState::ScheduledNominations(_) => Self::ScheduledNominations,
+            ModifierState::Deathmatch(_) => Self::Deathmatch,
         }
     }
 }

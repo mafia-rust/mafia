@@ -1,6 +1,7 @@
 use serde::{Serialize, Deserialize};
 
 use crate::game::attack_power::DefensePower;
+use crate::game::attack_type::AttackData;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -48,6 +49,9 @@ impl RoleStateImpl for MafiaSupportWildcard {
             false,
             vec_set!(actor_ref)
         )
+    }
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> AttackData {
+        AttackData::wildcard()
     }
 }
 

@@ -115,4 +115,7 @@ impl RoleStateImpl for Medium {
             _=>{}
         }
     }
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> crate::game::attack_type::AttackData {
+        crate::game::attack_type::AttackData::none()
+    }
 }

@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::attack_type::AttackData;
 use crate::game::components::detained::Detained;
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, grave::Grave};
@@ -86,6 +87,9 @@ impl RoleStateImpl for Witch {
         }
     }
     fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> AttackData {
+        AttackData::none()
+    }
 }
 impl GetClientRoleState<ClientRoleState> for Witch {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

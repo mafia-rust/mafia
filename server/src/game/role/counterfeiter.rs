@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
+use crate::game::attack_type::AttackData;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -12,6 +13,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_set;
 use super::godfather::Godfather;
+use super::mafioso::Mafioso;
 use super::{
     AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, GetClientRoleState, IntegerSelection, Priority, Role, RoleStateImpl, StringSelection
 };
@@ -174,10 +176,13 @@ impl RoleStateImpl for Counterfeiter {
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
         Godfather::pass_role_state_down(game, actor_ref, dead_player_ref, self);
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+    fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        Mafioso.attack_data(game, actor_ref)
     }
 }
 impl GetClientRoleState<ClientRoleState> for Counterfeiter {

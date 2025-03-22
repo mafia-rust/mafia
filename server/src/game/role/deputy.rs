@@ -2,6 +2,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
+use crate::game::attack_type::AttackData;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
@@ -89,5 +90,12 @@ impl RoleStateImpl for Deputy {
             true,
             vec_set!(actor_ref)
         )
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        if self.bullets_remaining > 0 && actor_ref.alive(game) {
+            AttackData::attack(game, actor_ref, true)
+        } else {
+            AttackData::none()
+        }
     }
 }

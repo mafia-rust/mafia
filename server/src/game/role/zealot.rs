@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
+use crate::game::attack_type::AttackData;
 use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -53,9 +54,12 @@ impl RoleStateImpl for Zealot {
             true
         )
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+    fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Cult
         ].into_iter().collect()
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        AttackData::attack(game, actor_ref, game.cult().next_ability == CultAbility::Convert)
     }
 }

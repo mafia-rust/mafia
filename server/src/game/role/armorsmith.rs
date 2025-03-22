@@ -6,7 +6,7 @@ use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::Game;
-use super::{common_role, ControllerID, GetClientRoleState, Priority, Role, RoleStateImpl};
+use super::{common_role, ControllerID, GetClientRoleState, Priority, Role, RoleStateImpl, RoleState};
 
 #[derive(Clone, Debug)]
 pub struct Armorsmith {
@@ -130,11 +130,27 @@ impl RoleStateImpl for Armorsmith {
             ..Self::default()
         }
     }
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> crate::game::attack_type::AttackData {
+        crate::game::attack_type::AttackData::none()
+    }
 }
 impl GetClientRoleState<ClientRoleState> for Armorsmith {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
         ClientRoleState {
             open_shops_remaining: self.open_shops_remaining
         }
+    }
+}
+
+impl Armorsmith {
+    pub fn has_armorsmith_armor(player: PlayerReference, game: &Game) -> bool {
+        for other in PlayerReference::all_players(game){
+            if let RoleState::Armorsmith(state) = other.role_state(game) {
+                if state.players_armor.contains(&player) {
+                    return true;
+                }
+            }
+        }
+        false
     }
 }

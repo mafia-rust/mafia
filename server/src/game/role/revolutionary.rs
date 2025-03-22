@@ -97,6 +97,9 @@ impl RoleStateImpl for Revolutionary {
             actor_ref.set_role_and_win_condition_and_revealed_group(game, RoleState::Jester(Jester::default()))
         }
     }
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> crate::game::attack_type::AttackData {
+        crate::game::attack_type::AttackData::none()
+    }
 }
 impl GetClientRoleState<ClientRoleState> for Revolutionary {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

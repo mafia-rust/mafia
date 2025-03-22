@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{player::PlayerReference, role::Role, role_list::RoleSet, win_condition::WinCondition, Game};
+use super::{modifiers::{deathmatch::Deathmatch, ModifierType, Modifiers}, player::PlayerReference, role::Role, role_list::RoleSet, win_condition::WinCondition, Game};
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
@@ -50,12 +50,23 @@ impl GameConclusion {
         if living_roles.iter().all(|role|matches!(role, Role::Wildcard|Role::TrueWildcard)) && living_roles.len() > 1 {
             return None;
         }
-        
+
         //if nobody is left to hold game hostage
         if !PlayerReference::all_players(game).any(|player| player.alive(game) && player.keeps_game_running(game)){
             return Some(GameConclusion::Draw);
         }
 
+        if let Some(conclusion) = Self::find_conclusion(game) {
+            Some(conclusion)
+        } else if Modifiers::modifier_is_enabled(game, ModifierType::Deathmatch) && Deathmatch::is_draw(game) {
+            Some(GameConclusion::Draw)
+        } else {
+            None
+        }
+           
+    }
+
+    pub fn find_conclusion(game: &Game) -> Option<GameConclusion>{
         //find one end game condition that everyone agrees on
         GameConclusion::all().into_iter().find(|resolution| 
             PlayerReference::all_players(game)
@@ -69,7 +80,6 @@ impl GameConclusion {
                 )
         )
     }
-    
 
     ///Town, Mafia, Cult, NK
     /// Has the ability to consistently kill till the end of the game

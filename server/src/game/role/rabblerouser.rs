@@ -1,10 +1,7 @@
 use serde::Serialize;
 
 use crate::game::{
-    attack_power::DefensePower,
-    components::pitchfork::Pitchfork,
-    player::PlayerReference, 
-    Game
+    attack_power::DefensePower, components::pitchfork::Pitchfork, player::PlayerReference, Game
 };
 
 
@@ -26,6 +23,10 @@ impl RoleStateImpl for Rabblerouser {
         if player == actor_ref {
             Pitchfork::remove_pitchfork(game, actor_ref);
         }
+    }
+    /// handled in pitchfork
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> crate::game::attack_type::AttackData {
+        crate::game::attack_type::AttackData::none()
     }
 }
 

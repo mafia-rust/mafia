@@ -3,8 +3,10 @@ use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
+use crate::game::attack_type::AttackData;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::detained::Detained;
+use crate::game::modifiers::{ModifierType, Modifiers};
 use crate::game::phase::{PhaseType, PhaseState};
 use crate::game::player::PlayerReference;
 
@@ -49,11 +51,12 @@ impl RoleStateImpl for Jester {
         let target_ref = if let Some(target_ref) = target_ref {
             target_ref
         }else{
+            let deathmatch = Modifiers::modifier_is_enabled(game, ModifierType::Deathmatch);
             let all_killable_players: Vec<PlayerReference> = PlayerReference::all_players(game)
                 .filter(|player_ref|{
                     player_ref.alive(game) &&
                     *player_ref != actor_ref &&
-                    player_ref.verdict(game) != Verdict::Innocent
+                    (deathmatch || player_ref.verdict(game) != Verdict::Innocent)
                 })
                 .collect();
 
@@ -73,6 +76,7 @@ impl RoleStateImpl for Jester {
             actor_ref.alive(game) || 
             Detained::is_detained(game, actor_ref) ||
             !self.lynched_yesterday;
+        let deathmatch = Modifiers::modifier_is_enabled(game, ModifierType::Deathmatch);
 
         // Note: Sam, when you fix this, don't forget to fix Santa Claus in the same manner
         ControllerParametersMap::new_controller_fast(
@@ -83,7 +87,7 @@ impl RoleStateImpl for Jester {
                     .filter(|p| *p != actor_ref)
                     .filter(|player| 
                         player.alive(game) &&
-                        player.verdict(game) != Verdict::Innocent
+                        (deathmatch || player.verdict(game) != Verdict::Innocent)
                     )
                     .collect(),
                 false,
@@ -109,18 +113,30 @@ impl RoleStateImpl for Jester {
             PhaseState::Obituary => {
                 actor_ref.set_role_state(game, Jester { 
                     lynched_yesterday: false,
-                    won: self.won
+                    ..self
                 });
             }
             _ => {}
         }
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
-        if 
-            actor_ref == dead_player_ref && 
-            game.current_phase().phase() == PhaseType::FinalWords
-        {
-            game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::JesterWon);
+        if actor_ref == dead_player_ref{
+            if game.current_phase().phase() == PhaseType::FinalWords {
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::JesterWon);
+            } else if Modifiers::modifier_is_enabled(game, ModifierType::Deathmatch) {
+                game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::JesterWon);
+                actor_ref.set_role_state(game, Jester { 
+                    lynched_yesterday: true,
+                    won: true
+                });
+            }
+        }
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        if self.lynched_yesterday{
+            AttackData::attack(game, actor_ref, true)
+        } else {
+            AttackData::none()
         }
     }
 }

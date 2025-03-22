@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::attack_type::AttackData;
 use crate::game::chat::ChatGroup;
 use crate::game::phase::PhaseType;
 use crate::game::Game;
@@ -30,6 +31,9 @@ impl RoleStateImpl for Chronokaiser {
 
         let new_speed_ratio = Self::get_speed_up_percent(game).saturating_add(100) as f64 / 100.0;
         game.phase_machine.time_remaining = game.phase_machine.time_remaining.div_f64(new_speed_ratio);
+    }
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> AttackData {
+        AttackData::none()
     }
 }
 

@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::attack_type::AttackData;
 use crate::game::components::detained::Detained;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
@@ -78,4 +79,7 @@ impl RoleStateImpl for Transporter {
         )
     }
     fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> AttackData {
+        AttackData::none()
+    }
 }

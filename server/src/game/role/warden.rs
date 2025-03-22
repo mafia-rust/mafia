@@ -1,4 +1,5 @@
 use serde::Serialize;
+use crate::game::attack_type::AttackData;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::{game::attack_power::AttackPower, vec_set::VecSet};
 use crate::game::chat::ChatMessageVariant;
@@ -29,7 +30,6 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 impl RoleStateImpl for Warden {
     type ClientRoleState = Warden;
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-
         match priority {
             Priority::Ward => {
                 if let Some(BooleanSelection(chose_to_ward)) = game.saved_controllers
@@ -65,9 +65,7 @@ impl RoleStateImpl for Warden {
                 }
             },
             _ => {}
-        }
-
-        
+        }       
     }
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> std::collections::HashSet<crate::game::chat::ChatGroup> {
         common_role::get_current_receive_chat_groups(game, actor_ref)
@@ -159,6 +157,13 @@ impl RoleStateImpl for Warden {
                 actor_ref.set_role_state(game, self);
             },
             _ => {}
+        }
+    }
+    fn attack_data(&self, game: &Game, actor_ref: PlayerReference) -> AttackData {
+        if actor_ref.alive(game) {
+            AttackData::attack(game, actor_ref, true)
+        } else {
+            AttackData::none()
         }
     }
 }

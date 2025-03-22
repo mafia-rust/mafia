@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::attack_type::AttackData;
 use crate::game::components::detained::Detained;
 use crate::game::{attack_power::DefensePower, components::love_linked::LoveLinked};
 use crate::game::player::PlayerReference;
@@ -71,9 +72,12 @@ impl RoleStateImpl for Cupid {
             false
         )
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+    fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
+    }
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) ->AttackData {
+        AttackData::none()
     }
 }

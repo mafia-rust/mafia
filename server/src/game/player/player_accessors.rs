@@ -260,8 +260,8 @@ impl PlayerReference{
     pub fn night_defense(&self, game: &Game) -> DefensePower {
         if let Some(defense) = self.deref(game).night_variables.upgraded_defense {
             defense
-        }else{
-            self.role(game).defense()
+        } else {
+            self.role(game).defense(game)
         }
     }
     pub fn set_night_upgraded_defense(&self, game: &mut Game, defense: Option<DefensePower>){

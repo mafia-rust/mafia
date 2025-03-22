@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::attack_power::DefensePower;
+use crate::game::{attack_power::DefensePower, player::PlayerReference, Game};
 
 
 use super::RoleStateImpl;
@@ -21,5 +21,8 @@ impl RoleStateImpl for Goon {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
+    }
+    fn attack_data(&self, _game: &Game, _actor_ref: PlayerReference) -> crate::game::attack_type::AttackData {
+        crate::game::attack_type::AttackData::none()
     }
 }

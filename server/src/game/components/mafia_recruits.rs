@@ -96,7 +96,9 @@ impl MafiaRecruits{
         mafia_and_recruits
     }
 
-
+    pub fn any_recruits(game: &Game)->bool{
+        game.mafia_recruits.recruits.iter().any(|p|p.alive(game))
+    }
 
     //event listeners
 
