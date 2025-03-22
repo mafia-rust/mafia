@@ -68,7 +68,6 @@ impl RoleStateImpl for Ambusher {
                         game,
                         GraveKiller::Role(Role::Ambusher),
                         AttackPower::Basic,
-                        false,
                         false
                     );
 

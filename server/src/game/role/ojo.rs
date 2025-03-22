@@ -42,7 +42,6 @@ impl RoleStateImpl for Ojo {
                             actor_ref, game, 
                             GraveKiller::Role(Role::Ojo), 
                             AttackPower::ArmorPiercing, 
-                            true,
                             true
                         );
                     }

@@ -2,12 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::{game::{chat::{ChatGroup, ChatMessageVariant}, player::PlayerReference, Game}, packet::ToClientPacket, vec_set::VecSet};
 
-use super::mafia_recruits::MafiaRecruits;
-
-use crate::game::game_conclusion::GameConclusion;
-use crate::game::win_condition::WinCondition;
-use crate::game::components::puppeteer_marionette::PuppeteerMarionette;
-
 #[derive(Default)]
 pub struct InsiderGroups{
     mafia: InsiderGroup,
@@ -71,25 +65,6 @@ impl InsiderGroupID{
             }
         }
         None
-    }
-    pub fn recruit(&self, game: &mut Game, target_ref: PlayerReference) -> bool {
-    	let recruited = match self {
-	   		InsiderGroupID::Mafia=>MafiaRecruits::recruit(game, target_ref),
-		    InsiderGroupID::Cult=>true,
-		    InsiderGroupID::Puppeteer=>PuppeteerMarionette::string(game, target_ref)
-     	};
-     	if recruited {
-     		self.add_player_to_revealed_group(game, target_ref);
-       		target_ref.set_win_condition(game, WinCondition::new_loyalist(self.win_condition()));
-      	}
-     	return recruited;
-    }
-    fn win_condition(&self) -> GameConclusion {
-    	match self {
-   			InsiderGroupID::Mafia=>GameConclusion::Mafia,
-      		InsiderGroupID::Cult=>GameConclusion::Cult,
-        	InsiderGroupID::Puppeteer=>GameConclusion::Fiends
-     	}
     }
     fn revealed_group<'a>(&self, game: &'a Game)->&'a InsiderGroup{
         match self{

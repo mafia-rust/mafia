@@ -10,6 +10,7 @@ use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::phase::PhaseType;
 use crate::game::role_list::{RoleOutline, RoleOutlineOption, RoleOutlineOptionRoles, RoleSet};
+use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
 
 use crate::game::visit::{Visit, VisitTag};
@@ -76,24 +77,27 @@ impl RoleStateImpl for Reeducator {
                 };
 
                 let new_state = role.new_state(game);
-                
-                // because the original implementation checked defense, I am treating this as if it is an attack,
-                // despite the visit not being marked as such
-                // this is also not a try_convert_recruit because that is still somewhat special cased for recruiter.
-                if let Some(_) = target_ref.try_convert_friendly(
-                	actor_ref, game, AttackPower::Basic, true, new_state.clone()
-                ) {
-                	()
-                } else if !(self.convert_charges_remaining && game.day_number() > 1) {
-                	actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
-                } else if let Some(_) = target_ref.try_convert(
-               		actor_ref, game, AttackPower::Basic, true, new_state
-                ) {
-	               	InsiderGroupID::Mafia.add_player_to_revealed_group(game, target_ref);
-	               	self.convert_charges_remaining = false;
-             		actor_ref.set_role_state(game, self);
-                } else {
-                	actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+
+                if InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref) {
+
+                    target_ref.set_night_convert_role_to(game, Some(new_state));
+
+                }else if self.convert_charges_remaining && game.day_number() > 1{
+
+                    if target_ref.night_defense(game).can_block(AttackPower::Basic) {
+                        actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                        return
+                    }
+
+                    InsiderGroupID::Mafia.add_player_to_revealed_group(game, target_ref);
+                    target_ref.set_win_condition(
+                        game,
+                        WinCondition::new_loyalist(crate::game::game_conclusion::GameConclusion::Mafia)
+                    );
+                    target_ref.set_night_convert_role_to(game, Some(new_state));
+
+                    self.convert_charges_remaining = false;
+                    actor_ref.set_role_state(game, self);
                 }
             },
             _ => {}

@@ -65,7 +65,7 @@ impl RoleStateImpl for Jester {
         
         
         target_ref.try_night_kill_single_attacker(actor_ref, game, 
-            crate::game::grave::GraveKiller::Role(super::Role::Jester), AttackPower::ProtectionPiercing, true, false
+            crate::game::grave::GraveKiller::Role(super::Role::Jester), AttackPower::ProtectionPiercing, true
         );
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {

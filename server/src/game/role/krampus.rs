@@ -44,7 +44,7 @@ impl RoleStateImpl for Krampus {
                 if let Some(visit) = actor_visits.first() {
                     let target_ref = visit.target;
 
-                    target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Krampus), AttackPower::Basic, true, true);
+                    target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Krampus), AttackPower::Basic, true);
 
                     actor_ref.set_role_state(game, Krampus {
                         last_used_ability: Some(KrampusAbility::Kill),

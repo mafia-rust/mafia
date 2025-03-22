@@ -33,7 +33,6 @@ impl RoleStateImpl for SerialKiller {
                 game,
                 GraveKiller::Role(Role::SerialKiller),
                 AttackPower::ArmorPiercing,
-                true,
                 true
             );
         }

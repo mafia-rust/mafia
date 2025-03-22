@@ -1,13 +1,16 @@
 use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
+use crate::game::chat::ChatMessageVariant;
 use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
+use crate::game::game_conclusion::GameConclusion;
 
 use crate::game::role_list::RoleSet;
 use crate::game::visit::Visit;
+use crate::game::win_condition::WinCondition;
 use crate::game::Game;
 use super::{common_role, ControllerID, Priority, Role, RoleStateImpl};
 
@@ -30,8 +33,8 @@ impl RoleStateImpl for Apostle {
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
                 
-                if let Some(_) = target_ref.try_night_kill_single_attacker(
-                    actor_ref, game, GraveKiller::RoleSet(RoleSet::Cult), AttackPower::Basic, false, true
+                if target_ref.try_night_kill_single_attacker(
+                    actor_ref, game, GraveKiller::RoleSet(RoleSet::Cult), AttackPower::Basic, false
                 ) {
                     Cult::set_ability_used_last_night(game, Some(CultAbility::Kill));
                 }
@@ -42,9 +45,16 @@ impl RoleStateImpl for Apostle {
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 
-                if let Some(_) = target_ref.try_convert_recruit(actor_ref, game, AttackPower::Basic, true, InsiderGroupID::Cult, Role::Zealot.new_state(game)) {
-                	Cult::set_ability_used_last_night(game, Some(CultAbility::Convert));
+                if target_ref.night_defense(game).can_block(AttackPower::Basic) {
+                    actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                    return
                 }
+
+                target_ref.set_night_convert_role_to(game, Some(Role::Zealot.new_state(game)));
+                InsiderGroupID::Cult.add_player_to_revealed_group(game, target_ref);
+                target_ref.set_win_condition(game, WinCondition::new_loyalist(GameConclusion::Cult));
+                
+                Cult::set_ability_used_last_night(game, Some(CultAbility::Convert));
             }
             _ => {}
         }

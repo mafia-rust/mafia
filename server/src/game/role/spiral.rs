@@ -40,7 +40,6 @@ impl RoleStateImpl for Spiral {
                     game,
                     GraveKiller::Role(Role::Spiral),
                     AttackPower::ArmorPiercing,
-                    true,
                     true
                 );
                 Spiral::spiral_visitors(game, &mut new_spiraling, actor_ref, target_ref);

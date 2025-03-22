@@ -83,7 +83,6 @@ impl RoleStateImpl for Cop {
                         game,
                         GraveKiller::Role(Role::Cop),
                         AttackPower::Basic,
-                        false,
                         false
                     );
                 }

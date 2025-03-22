@@ -60,46 +60,43 @@ impl RoleStateImpl for Yer {
                     game,
                     GraveKiller::Role(Role::Yer),
                     AttackPower::ArmorPiercing,
-                    true,
                     true
                 );
             } else {
                 if priority != Priority::Convert {return}
                 if self.star_passes_remaining == 0 {return}
 
-                if let Some(target) = target_ref.try_convert(
-                	actor_ref, game, AttackPower::ArmorPiercing, true,
-                 	RoleState::Yer(Yer { 
-						star_passes_remaining: self.star_passes_remaining.saturating_sub(1), 
-						old_role: target_ref.role(game),
-					})
-                ) {
-	               	self.star_passes_remaining = self.star_passes_remaining.saturating_sub(1);
-	
-	                //role switching stuff
-	                let fake_role = self.current_fake_role(game, actor_ref);
-	
-	                actor_ref.set_night_grave_role(game, Some(fake_role));
-	                
-	                //convert & kill stuff
-	                target.set_win_condition(
-	                    game,
-	                    WinCondition::new_loyalist(crate::game::game_conclusion::GameConclusion::Fiends)
-	                );
-	
-	                actor_ref.try_night_kill_single_attacker(
-	                    actor_ref,
-	                    game,
-	                    GraveKiller::Role(Role::Yer),
-	                    AttackPower::ProtectionPiercing,
-	                    true,
-	                    false
-	                );
-	
-	                actor_ref.set_role_state(game, self);
-                } else {
-                	actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                if target_ref.night_defense(game).can_block(AttackPower::ArmorPiercing) {
+                    actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                    return
                 }
+
+                self.star_passes_remaining = self.star_passes_remaining.saturating_sub(1);
+
+                //role switching stuff
+                let fake_role = self.current_fake_role(game, actor_ref);
+
+                actor_ref.set_night_grave_role(game, Some(fake_role));
+                
+                //convert & kill stuff
+                target_ref.set_win_condition(
+                    game,
+                    WinCondition::new_loyalist(crate::game::game_conclusion::GameConclusion::Fiends)
+                );
+                target_ref.set_night_convert_role_to(game, Some(RoleState::Yer(Yer { 
+                    star_passes_remaining: self.star_passes_remaining, 
+                    old_role: target_ref.role(game),
+                })));
+
+                actor_ref.try_night_kill_single_attacker(
+                    actor_ref,
+                    game,
+                    GraveKiller::Role(Role::Yer),
+                    AttackPower::ProtectionPiercing,
+                    true
+                );
+
+                actor_ref.set_role_state(game, self);
             }
         }
     }

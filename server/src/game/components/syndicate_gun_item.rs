@@ -130,8 +130,7 @@ impl SyndicateGunItem {
                         game,
                         GraveKiller::RoleSet(RoleSet::Mafia),
                         AttackPower::Basic,
-                        false,
-                        true
+                        false
                     );
                 }
             }

@@ -81,7 +81,7 @@ impl KiraGuess{
             Role::Doomsayer |
             Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | Role::Chronokaiser |
             Role::Wildcard | Role::TrueWildcard | Role::Drunk | Role::Spiral |
-            Role::SantaClaus | Role::Krampus | Role::Coward => Some(Self::NonTown),
+            Role::SantaClaus | Role::Krampus => Some(Self::NonTown),
             Role::Martyr => None,
 
             //Fiends
@@ -179,7 +179,7 @@ impl RoleStateImpl for Kira {
                 
                 for (player, (guess, result)) in result.guesses.iter(){
                     if player.alive(game) && *result == KiraGuessResult::Correct && *guess != KiraGuess::None {
-                        player.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(super::Role::Kira), AttackPower::ArmorPiercing, true, false);
+                        player.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(super::Role::Kira), AttackPower::ArmorPiercing, true);
                     }
                 }
             },

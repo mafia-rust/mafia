@@ -1,11 +1,11 @@
 use std::collections::HashSet;
 
 use crate::{game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, 
+    attack_power::AttackPower, chat::ChatMessageVariant, game_conclusion::GameConclusion, 
     player::PlayerReference, 
     role::{
         Priority, Role
-    }, tag::Tag, Game
+    }, tag::Tag, win_condition::WinCondition, Game
 }, vec_set::VecSet};
 
 use super::insider_group::InsiderGroupID;
@@ -31,6 +31,8 @@ impl PuppeteerMarionette{
         if !puppeteer_marionette.to_be_converted.insert(player){return false;}
 
         game.set_puppeteer_marionette(puppeteer_marionette);
+        InsiderGroupID::Puppeteer.add_player_to_revealed_group(game, player);
+        player.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any: vec![GameConclusion::Fiends].into_iter().collect() });
 
         for fiend in PuppeteerMarionette::marionettes_and_puppeteer(game){
             fiend.push_night_message(game, ChatMessageVariant::PuppeteerPlayerIsNowMarionette{player: player.index()});
@@ -58,7 +60,7 @@ impl PuppeteerMarionette{
             .collect();
 
         for player in players{
-            player.try_night_kill(&puppeteers, game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), attack_power, true, false);
+            player.try_night_kill(&puppeteers, game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), attack_power, true);
         }
     }
 
