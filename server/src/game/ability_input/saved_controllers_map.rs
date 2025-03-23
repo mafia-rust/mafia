@@ -74,32 +74,20 @@ impl SavedControllersMap{
 
     // mutators
     fn update_controllers_from_parameters(game: &mut Game){
-        let mut new_controller_parameters_map = ControllerParametersMap::default();
-
-        for player in PlayerReference::all_players(game) {
-            new_controller_parameters_map.combine_overwrite(player.controller_parameters_map(game));
-        }
-
-        new_controller_parameters_map.combine_overwrite(
-            NominationController::controller_parameters_map(game)
-        );
-        new_controller_parameters_map.combine_overwrite(
-            SyndicateGunItem::controller_parameters_map(game)
-        );
-        new_controller_parameters_map.combine_overwrite(
-            Mafia::controller_parameters_map(game)
-        );
-        new_controller_parameters_map.combine_overwrite(
-            ForfeitVote::controller_parameters_map(game)
-        );
-        new_controller_parameters_map.combine_overwrite(
-            Pitchfork::controller_parameters_map(game)
-        );
-        new_controller_parameters_map.combine_overwrite(
-            ForwardMessages::controller_parameters_map(game)
-        );
-
         let current_controller_parameters = &game.saved_controllers.controller_parameters();
+
+        let new_controller_parameters_map = ControllerParametersMap::combine([
+            ControllerParametersMap::combine(
+                PlayerReference::all_players(game)
+                    .map(|player| player.controller_parameters_map(game))
+            ),
+            NominationController::controller_parameters_map(game),
+            SyndicateGunItem::controller_parameters_map(game),
+            Mafia::controller_parameters_map(game),
+            ForfeitVote::controller_parameters_map(game),
+            Pitchfork::controller_parameters_map(game),
+            ForwardMessages::controller_parameters_map(game)
+        ]);
 
         if *current_controller_parameters != new_controller_parameters_map {
             Self::set_controller_parameters(game, new_controller_parameters_map);

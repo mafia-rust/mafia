@@ -41,16 +41,12 @@ impl Pitchfork{
         }
     }
     pub fn controller_parameters_map(game: &Game)->ControllerParametersMap{
-        if
-            !game.settings.enabled_roles.contains(&Role::Rabblerouser)
-        {
+        if !game.settings.enabled_roles.contains(&Role::Rabblerouser) {
             return ControllerParametersMap::default();
         }
 
-        let mut out = ControllerParametersMap::default();
-        
-        for player in PlayerReference::all_players(game){
-            out.combine_overwrite(
+        ControllerParametersMap::combine(
+            PlayerReference::all_players(game).map(|player|
                 ControllerParametersMap::builder(game)
                     .id(ControllerID::pitchfork_vote(player))
                     .available_selection(AvailablePlayerListSelection{
@@ -68,10 +64,8 @@ impl Pitchfork{
                     .reset_on_phase_start(PhaseType::Obituary)
                     .allow_players([player])
                     .build_map()
-            );
-        }
-        
-        out
+            )
+        )
     }
     
 

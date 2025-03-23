@@ -36,18 +36,13 @@ impl ControllerParametersMap{
         }
     }
     pub fn combine(maps: impl IntoIterator<Item=ControllerParametersMap>) -> Self {
-        let mut curr = ControllerParametersMap::new(VecMap::new());
+        let mut curr = ControllerParametersMap::default();
 
         for map in maps {
             curr.combine_overwrite(map);
         }
         
         curr
-    }
-    pub fn combine_overwrite_owned(self, other: Self)->Self{
-        let mut out = self;
-        out.combine_overwrite(other);
-        out
     }
     pub fn controller_parameters(&self)->&VecMap<ControllerID, ControllerParameters>{
         &self.controllers

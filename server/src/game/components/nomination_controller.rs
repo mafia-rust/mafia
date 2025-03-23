@@ -8,12 +8,10 @@ pub struct NominationController;
 
 impl NominationController{
     pub fn controller_parameters_map(game: &mut Game)->ControllerParametersMap{
-        PlayerReference::all_players(game)
-            .map(|actor| Self::one_player_controller(game, actor))
-            .fold(ControllerParametersMap::default(), |mut acc, controller| {
-                acc.combine_overwrite(controller);
-                acc
-            })
+        ControllerParametersMap::combine(
+            PlayerReference::all_players(game)
+                .map(|actor| Self::one_player_controller(game, actor))
+        )
     }
     fn one_player_controller(game: &mut Game, actor: PlayerReference)->ControllerParametersMap{
         ControllerParametersMap::builder(game)

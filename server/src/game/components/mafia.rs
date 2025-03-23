@@ -29,8 +29,6 @@ impl Mafia{
     }
 
     pub fn controller_parameters_map(game: &Game)->ControllerParametersMap{
-        let mut out = ControllerParametersMap::default();
-
         let players_with_gun = Self::players_with_gun(game);
 
         let available_backup_players = PlayerReference::all_players(game)
@@ -41,17 +39,15 @@ impl Mafia{
             )
             .collect::<VecSet<_>>();
 
-        out.combine_overwrite(
-            ControllerParametersMap::builder(game)
-                .id(ControllerID::syndicate_choose_backup())
-                .available_selection(AvailablePlayerListSelection {
-                    available_players: available_backup_players,
-                    can_choose_duplicates: false,
-                    max_players: Some(1)
-                })
-                .allow_players(players_with_gun.clone())
-                .build_map()
-        );
+        let mut out = ControllerParametersMap::builder(game)
+            .id(ControllerID::syndicate_choose_backup())
+            .available_selection(AvailablePlayerListSelection {
+                available_players: available_backup_players,
+                can_choose_duplicates: false,
+                max_players: Some(1)
+            })
+            .allow_players(players_with_gun.clone())
+            .build_map();
 
         if let Some(PlayerListSelection(player_list)) = game.saved_controllers.get_controller_current_selection_player_list(
             ControllerID::syndicate_choose_backup()

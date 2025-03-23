@@ -22,11 +22,10 @@ impl ForwardMessages{
         )
     }
     pub fn controller_parameters_map(game: &Game)->ControllerParametersMap{
-
-        PlayerReference::all_players(game)
-            .filter(|p|InsiderGroupID::in_any_group(game, *p))
-            .fold(ControllerParametersMap::default(), |out, player|
-                out.combine_overwrite_owned(
+        ControllerParametersMap::combine(
+            PlayerReference::all_players(game)
+                .filter(|p| InsiderGroupID::in_any_group(game, *p))
+                .map(|player|
                     ControllerParametersMap::builder(game)
                         .id(ControllerID::ForwardMessage { player })
                         .available_selection(AvailableChatMessageSelection)
@@ -35,6 +34,6 @@ impl ForwardMessages{
                         .allow_players([player])
                         .build_map()
                 )
-            )
+        )
     }
 }
