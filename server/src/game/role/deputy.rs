@@ -10,8 +10,7 @@ use crate::game::player::PlayerReference;
 
 
 use crate::game::Game;
-use crate::vec_set;
-use super::{AbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection, Role, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, PlayerListSelection, Role, RoleStateImpl};
 
 
 
@@ -67,9 +66,9 @@ impl RoleStateImpl for Deputy {
         actor_ref.set_role_state(game, Deputy{bullets_remaining:self.bullets_remaining.saturating_sub(1)});
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        ControllerParametersMap::builder()
+        ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::Deputy, 0))
-            .player_list_typical(game, actor_ref, false, true)
+            .single_player_selection_typical(actor_ref, false, true)
             .add_grayed_out_condition(
                 actor_ref.ability_deactivated_from_death(game) ||
                 self.bullets_remaining == 0 || 
@@ -77,7 +76,7 @@ impl RoleStateImpl for Deputy {
                 !(PhaseType::Discussion == game.current_phase().phase() || PhaseType::Nomination == game.current_phase().phase())
             )
             .dont_save()
-            .allowed_players([actor_ref])
-            .build_map(game)
+            .allow_players([actor_ref])
+            .build_map()
     }
 }

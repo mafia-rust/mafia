@@ -81,12 +81,12 @@ impl RoleStateImpl for Ambusher {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        ControllerParametersMap::builder()
+        ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::Ambusher, 0))
-            .player_list_typical(game, actor_ref, false, false)
-            .night_typical(game, actor_ref)
+            .single_player_selection_typical(actor_ref, false, false)
+            .night_typical(actor_ref)
             .add_grayed_out_condition(game.day_number() <= 1)
-            .build_map(game)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(

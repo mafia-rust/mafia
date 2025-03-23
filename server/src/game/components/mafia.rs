@@ -42,15 +42,15 @@ impl Mafia{
             .collect::<VecSet<_>>();
 
         out.combine_overwrite(
-            ControllerParametersMap::builder()
+            ControllerParametersMap::builder(game)
                 .id(ControllerID::syndicate_choose_backup())
-                .available_selection(game, AvailablePlayerListSelection {
+                .available_selection(AvailablePlayerListSelection {
                     available_players: available_backup_players,
                     can_choose_duplicates: false,
                     max_players: Some(1)
                 })
-                .allowed_players(players_with_gun.clone())
-                .build_map(game)
+                .allow_players(players_with_gun.clone())
+                .build_map()
         );
 
         if let Some(PlayerListSelection(player_list)) = game.saved_controllers.get_controller_current_selection_player_list(
@@ -68,17 +68,17 @@ impl Mafia{
                     .collect::<VecSet<_>>();
 
                 out.combine_overwrite(
-                    ControllerParametersMap::builder()
+                    ControllerParametersMap::builder(game)
                         .id(ControllerID::syndicate_backup_attack())
-                        .available_selection(game, AvailablePlayerListSelection {
+                        .available_selection(AvailablePlayerListSelection {
                             available_players: attackable_players,
                             can_choose_duplicates: false,
                             max_players: Some(1)
                         })
                         .add_grayed_out_condition(!backup.alive(game) || Detained::is_detained(game, *backup) || game.day_number() <= 1)
                         .reset_on_phase_start(PhaseType::Obituary)
-                        .allowed_players(players_with_gun.union(&vec_set!(*backup)))
-                        .build_map(game)
+                        .allow_players(players_with_gun.union(&vec_set!(*backup)))
+                        .build_map()
                 );
             }
         }

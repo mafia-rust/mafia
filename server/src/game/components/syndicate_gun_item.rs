@@ -1,7 +1,7 @@
 use crate::game::{
     ability_input::*,
     attack_power::AttackPower, grave::GraveKiller, phase::PhaseType, player::PlayerReference,
-    role::{common_role, Priority},
+    role::Priority,
     role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, Game
 };
 
@@ -47,17 +47,16 @@ impl SyndicateGunItem {
     //available ability
     pub fn controller_parameters_map(game: &Game) -> ControllerParametersMap {
         if let Some(player_with_gun) = game.syndicate_gun_item.player_with_gun {
-            common_role::controller_parameters_map_player_list_night_typical(
-                game,
-                player_with_gun,
-                false,
-                false,
-                game.day_number() <= 1,
-                ControllerID::syndicate_gun_item_shoot()
-            ).combine_overwrite_owned(
-                ControllerParametersMap::builder()
+            ControllerParametersMap::combine([
+                ControllerParametersMap::builder(game)
+                    .id(ControllerID::syndicate_gun_item_shoot())
+                    .single_player_selection_typical(player_with_gun, false, false)
+                    .night_typical(player_with_gun)
+                    .add_grayed_out_condition(game.day_number() <= 1)
+                    .build_map(),
+                ControllerParametersMap::builder(game)
                     .id(ControllerID::syndicate_gun_item_give())
-                    .available_selection(game, AvailablePlayerListSelection {
+                    .available_selection(AvailablePlayerListSelection {
                         available_players: PlayerReference::all_players(game)
                             .filter(|target|
                                 player_with_gun != *target &&
@@ -73,9 +72,9 @@ impl SyndicateGunItem {
                     )
                     .reset_on_phase_start(PhaseType::Obituary)
                     .dont_save()
-                    .allowed_players([player_with_gun])
-                    .build_map(game)
-            )
+                    .allow_players([player_with_gun])
+                    .build_map()
+            ])
         }else{
             ControllerParametersMap::default()
         }

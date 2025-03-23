@@ -22,8 +22,8 @@ pub struct AbilityInput{
     selection: AbilitySelection
 }
 impl AbilityInput{
-    pub fn new(id: ControllerID, selection: AbilitySelection)->Self{
-        Self{id, selection}
+    pub fn new(id: ControllerID, selection: impl Into<AbilitySelection>)->Self{
+        Self{id, selection: selection.into()}
     }
     pub fn id(&self)->ControllerID{
         self.id.clone()

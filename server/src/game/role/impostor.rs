@@ -37,23 +37,23 @@ impl RoleStateImpl for Impostor {
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::combine([
-            ControllerParametersMap::builder()
+            ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Impostor, 0))
-                .player_list_typical(game, actor_ref, false, false)
-                .night_typical(game, actor_ref)
+                .single_player_selection_typical(actor_ref, false, false)
+                .night_typical(actor_ref)
                 .add_grayed_out_condition(game.day_number() <= 1)
-                .build_map(game),
-            ControllerParametersMap::builder()
+                .build_map(),
+            ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Impostor, 1))
-                .available_selection(game, AvailableRoleOptionSelection(
+                .available_selection(AvailableRoleOptionSelection(
                     Role::values().into_iter()
                         .map(Some)
                         .collect()
                 ))
                 .default_selection(RoleOptionSelection(Some(Role::Impostor)))
                 .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
-                .allowed_players([actor_ref])
-                .build_map(game)
+                .allow_players([actor_ref])
+                .build_map()
         ])
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: crate::game::grave::GraveReference) {

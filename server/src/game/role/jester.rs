@@ -5,16 +5,14 @@ use serde::Serialize;
 use crate::game::ability_input::AvailablePlayerListSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::components::detained::Detained;
 use crate::game::phase::{PhaseType, PhaseState};
 use crate::game::player::PlayerReference;
 
 use crate::game::verdict::Verdict;
 
 use crate::game::Game;
-use crate::vec_set;
 use super::{
-    AbilitySelection, ControllerID, ControllerParametersMap, GetClientRoleState, PlayerListSelection, Priority, Role, RoleStateImpl
+    ControllerID, ControllerParametersMap, GetClientRoleState, PlayerListSelection, Priority, Role, RoleStateImpl
 };
 
 #[derive(Clone, Debug, Default)]
@@ -70,9 +68,9 @@ impl RoleStateImpl for Jester {
         );
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        ControllerParametersMap::builder()
+        ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::Jester, 0))
-            .available_selection(game, AvailablePlayerListSelection {
+            .available_selection(AvailablePlayerListSelection {
                 available_players: PlayerReference::all_players(game)
                     .filter(|p| *p != actor_ref)
                     .filter(|player| 
@@ -83,9 +81,9 @@ impl RoleStateImpl for Jester {
                 can_choose_duplicates: false,
                 max_players: Some(1)
             })
-            .night_typical(game, actor_ref)
+            .night_typical(actor_ref)
             .add_grayed_out_condition(!self.lynched_yesterday)
-            .build_map(game)
+            .build_map()
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         match game.current_phase() {

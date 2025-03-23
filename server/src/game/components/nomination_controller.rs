@@ -16,9 +16,9 @@ impl NominationController{
             })
     }
     fn one_player_controller(game: &mut Game, actor: PlayerReference)->ControllerParametersMap{
-        ControllerParametersMap::builder()
+        ControllerParametersMap::builder(game)
             .id(crate::game::ability_input::ControllerID::Nominate { player: actor })
-            .available_selection(game, AvailablePlayerListSelection {
+            .available_selection(AvailablePlayerListSelection {
                 available_players: PlayerReference::all_players(game).filter(|p|p.alive(game)).collect(),
                 can_choose_duplicates: false,
                 max_players: Some(1)
@@ -29,8 +29,8 @@ impl NominationController{
                 game.current_phase().phase() != crate::game::phase::PhaseType::Nomination
             )
             .reset_on_phase_start(crate::game::phase::PhaseType::Nomination)
-            .allowed_players([actor])
-            .build_map(game)
+            .allow_players([actor])
+            .build_map()
     }
     pub fn on_validated_ability_input_received(game: &mut Game, player: PlayerReference, input: AbilityInput){
         if let Some(PlayerListSelection(voted)) = input.get_player_list_selection_if_id(ControllerID::Nominate{ player }){

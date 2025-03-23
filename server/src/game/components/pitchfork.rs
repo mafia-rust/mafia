@@ -51,9 +51,9 @@ impl Pitchfork{
         
         for player in PlayerReference::all_players(game){
             out.combine_overwrite(
-                ControllerParametersMap::builder()
+                ControllerParametersMap::builder(game)
                     .id(ControllerID::pitchfork_vote(player))
-                    .available_selection(game, AvailablePlayerListSelection{
+                    .available_selection(AvailablePlayerListSelection{
                         available_players: PlayerReference::all_players(game)
                             .filter(|p|p.alive(game))
                             .collect(),
@@ -66,8 +66,8 @@ impl Pitchfork{
                         !player.win_condition(game).is_loyalist_for(GameConclusion::Town)
                     )
                     .reset_on_phase_start(PhaseType::Obituary)
-                    .allowed_players([player])
-                    .build_map(game)
+                    .allow_players([player])
+                    .build_map()
             );
         }
         

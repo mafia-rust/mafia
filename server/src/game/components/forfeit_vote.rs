@@ -14,13 +14,13 @@ impl ForfeitVote{
 
         for player in PlayerReference::all_players(game) {
             out.combine_overwrite(
-                ControllerParametersMap::builder()
+                ControllerParametersMap::builder(game)
                     .id(ControllerID::forfeit_vote(player))
-                    .available_selection(game, AvailableBooleanSelection)
+                    .available_selection(AvailableBooleanSelection)
                     .add_grayed_out_condition(!player.alive(game) || game.current_phase().phase() != PhaseType::Discussion)
                     .reset_on_phase_start(PhaseType::Obituary)
-                    .allowed_players(vec_set![player])
-                    .build_map(game)
+                    .allow_players(vec_set![player])
+                    .build_map()
             );
         }
 

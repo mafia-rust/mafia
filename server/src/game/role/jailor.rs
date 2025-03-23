@@ -14,9 +14,8 @@ use crate::game::player::PlayerReference;
 use crate::game::role::BooleanSelection;
 use crate::game::visit::Visit;
 use crate::game::Game;
-use crate::vec_set;
 
-use super::{AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection, Priority, Role, RoleStateImpl};
+use super::{AbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection, Priority, Role, RoleStateImpl};
 
 
 #[derive(Serialize, Clone, Debug)]
@@ -74,23 +73,23 @@ impl RoleStateImpl for Jailor {
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         ControllerParametersMap::combine([
-            ControllerParametersMap::builder()
+            ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Jailor, 0))
-                .player_list_typical(game, actor_ref, false, true)
+                .single_player_selection_typical(actor_ref, false, true)
                 .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
                 .reset_on_phase_start(PhaseType::Night)
-                .allowed_players([actor_ref])
-                .build_map(game),
-            ControllerParametersMap::builder()
+                .allow_players([actor_ref])
+                .build_map(),
+            ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Jailor, 1))
-                .available_selection(game, AvailableBooleanSelection)
-                .night_typical(game, actor_ref)
+                .available_selection(AvailableBooleanSelection)
+                .night_typical(actor_ref)
                 .add_grayed_out_condition(
                     self.executions_remaining == 0 ||
                     game.day_number() <= 1 ||
                     self.jailed_target_ref.is_none()
                 )
-                .build_map(game)
+                .build_map()
         ])
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {

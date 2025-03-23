@@ -1,8 +1,6 @@
 use serde::Serialize;
 
 use crate::game::ability_input::AvailablePlayerListSelection;
-use crate::game::components::detained::Detained;
-use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::role_list::RoleSet;
 use crate::game::tag::Tag;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
@@ -10,8 +8,8 @@ use crate::game::{attack_power::DefensePower, player::PlayerReference};
 use crate::game::visit::{Visit, VisitTag};
 
 use crate::game::Game;
-use crate::vec_set::{vec_set, VecSet};
-use super::{AbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection, Priority, Role, RoleStateImpl};
+use crate::vec_set::VecSet;
+use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -76,26 +74,26 @@ impl RoleStateImpl for Framer {
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::combine([
-            ControllerParametersMap::builder()
+            ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Framer, 0))
-                .player_list_typical(game, actor_ref, false, false)
-                .night_typical(game, actor_ref)
-                .build_map(game),
-            ControllerParametersMap::builder()
+                .single_player_selection_typical(actor_ref, false, false)
+                .night_typical(actor_ref)
+                .build_map(),
+            ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Framer, 1))
-                .available_selection(game, AvailablePlayerListSelection {
+                .available_selection(AvailablePlayerListSelection {
                     available_players: PlayerReference::all_players(game).collect(),
                     can_choose_duplicates: false,
                     max_players: Some(1)
                 })
-                .night_typical(game, actor_ref)
+                .night_typical(actor_ref)
                 .add_grayed_out_condition(
                     // Framed player is not selected
                     game.saved_controllers
                         .get_controller_current_selection_player_list(ControllerID::role(actor_ref, Role::Framer, 0))
                         .is_none_or(|selection| selection.0.is_empty())
                 )
-                .build_map(game)
+                .build_map()
         ])
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {

@@ -30,9 +30,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 impl RoleStateImpl for Coxswain {
     type ClientRoleState = Coxswain;
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        ControllerParametersMap::builder()
+        ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::Coxswain, 0))
-            .available_selection(game, AvailablePlayerListSelection {
+            .available_selection(AvailablePlayerListSelection {
                 available_players: PlayerReference::all_players(game)
                     .filter(|target_ref|
                         !target_ref.alive(game) &&
@@ -44,8 +44,8 @@ impl RoleStateImpl for Coxswain {
             })
             .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
             .reset_on_phase_start(PhaseType::Night)
-            .allowed_players([actor_ref])
-            .build_map(game)
+            .allow_players([actor_ref])
+            .build_map()
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         let mut out = crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Dead]);

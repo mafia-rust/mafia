@@ -14,7 +14,6 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_map::VecMap;
-use crate::vec_set::vec_set;
 
 use rand::prelude::SliceRandom;
 use super::{common_role, Priority, Role, RoleStateImpl};
@@ -82,19 +81,19 @@ impl RoleStateImpl for Auditor {
         actor_ref.set_role_state(game, self);
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        ControllerParametersMap::builder()
+        ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::Auditor, 0))
-            .available_selection(game, AvailableTwoRoleOutlineOptionSelection(
+            .available_selection(AvailableTwoRoleOutlineOptionSelection(
                 RoleOutlineReference::all_outlines(game)
                     .filter(|o|!self.previously_given_results.contains(o))
                     .map(Some)
                     .chain(once(None))
                     .collect()
             ))
-            .allowed_players([actor_ref])
+            .allow_players([actor_ref])
             .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game) || Detained::is_detained(game, actor_ref))
             .reset_on_phase_start(PhaseType::Obituary)
-            .build_map(game)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         common_role::convert_controller_selection_to_visits(

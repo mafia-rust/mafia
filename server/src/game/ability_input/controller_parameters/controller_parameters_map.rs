@@ -1,11 +1,12 @@
 use super::builder::ControllerParametersBuilder;
 use serde::{Deserialize, Serialize};
 
+use crate::game::Game;
 use crate::vec_map::{vec_map, VecMap};
 
 use super::super::controller_id::ControllerID;
 
-use super::controller_parameters::*;
+use super::*;
 
 
 
@@ -23,8 +24,8 @@ impl ControllerParametersMap{
             controllers: vec_map!((id, ability_data))
         }
     }
-    pub fn builder() -> ControllerParametersBuilder {
-        ControllerParametersBuilder::new()
+    pub fn builder(game: &Game) -> ControllerParametersBuilder {
+        ControllerParametersBuilder::new(game)
     }
     pub fn insert_ability(&mut self, id: ControllerID, ability_data: ControllerParameters){
         self.controllers.insert(id, ability_data);

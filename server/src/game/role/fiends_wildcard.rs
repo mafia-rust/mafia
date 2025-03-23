@@ -30,16 +30,16 @@ impl RoleStateImpl for FiendsWildcard {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        ControllerParametersMap::builder()
+        ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::FiendsWildcard, 0))
-            .available_selection(game, AvailableRoleOptionSelection(
+            .available_selection(AvailableRoleOptionSelection(
                 RoleSet::Fiends.get_roles().into_iter().filter(|role|
                     game.settings.enabled_roles.contains(role) && *role != Role::FiendsWildcard
                 ).map(Some).chain(std::iter::once(None)).collect()
             ))
             .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
-            .allowed_players([actor_ref])
-            .build_map(game)
+            .allow_players([actor_ref])
+            .build_map()
     }
 }
 

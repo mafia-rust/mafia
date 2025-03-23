@@ -27,13 +27,13 @@ impl ForwardMessages{
             .filter(|p|InsiderGroupID::in_any_group(game, *p))
             .fold(ControllerParametersMap::default(), |out, player|
                 out.combine_overwrite_owned(
-                    ControllerParametersMap::builder()
+                    ControllerParametersMap::builder(game)
                         .id(ControllerID::ForwardMessage { player })
-                        .available_selection(game, AvailableChatMessageSelection)
+                        .available_selection(AvailableChatMessageSelection)
                         .add_grayed_out_condition(!matches!(game.current_phase(), PhaseState::Night | PhaseState::Obituary))
                         .dont_save()
-                        .allowed_players([player])
-                        .build_map(game)
+                        .allow_players([player])
+                        .build_map()
                 )
             )
     }

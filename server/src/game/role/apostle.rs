@@ -69,15 +69,15 @@ impl RoleStateImpl for Apostle {
         )
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        ControllerParametersMap::builder()
+        ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::Apostle, 0))
-            .player_list_typical(game, actor_ref, false, false)
-            .night_typical(game, actor_ref)
+            .single_player_selection_typical(actor_ref, false, false)
+            .night_typical(actor_ref)
             .add_grayed_out_condition(
                 game.cult().ordered_cultists.len() != 1 &&
                 Cult::next_ability(game) == CultAbility::Kill
             )
-            .build_map(game)
+            .build_map()
     }
     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![

@@ -46,16 +46,16 @@ impl RoleStateImpl for Cupid {
             )
             .collect();
 
-        ControllerParametersMap::builder()
+        ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::Cupid, 0))
-            .available_selection(game, AvailableTwoPlayerOptionSelection {
+            .available_selection(AvailableTwoPlayerOptionSelection {
                 available_first_players: available_players.clone(), 
                 available_second_players: available_players,
                 can_choose_duplicates: false,
                 can_choose_none: true
             })
-            .night_typical(game, actor_ref)
-            .build_map(game)
+            .night_typical(actor_ref)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         common_role::convert_controller_selection_to_visits(

@@ -11,10 +11,9 @@ use crate::game::role_list::RoleSet;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use crate::vec_set;
 use super::godfather::Godfather;
 use super::{
-    AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, GetClientRoleState, IntegerSelection, Priority, Role, RoleStateImpl, StringSelection
+    ControllerID, ControllerParametersMap, GetClientRoleState, IntegerSelection, Priority, Role, RoleStateImpl, StringSelection
 };
 
 
@@ -115,16 +114,16 @@ impl RoleStateImpl for Counterfeiter {
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         ControllerParametersMap::combine([
-            ControllerParametersMap::builder()
+            ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Counterfeiter, 0))
-                .player_list_typical(game, actor_ref, false, false)
-                .night_typical(game, actor_ref)
+                .single_player_selection_typical(actor_ref, false, false)
+                .night_typical(actor_ref)
                 .add_grayed_out_condition(game.day_number() <= 1)
-                .build_map(game),
+                .build_map(),
             // Role
-            ControllerParametersMap::builder()
+            ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Counterfeiter, 1))
-                .available_selection(game, AvailableRoleOptionSelection(
+                .available_selection(AvailableRoleOptionSelection(
                     Role::values().into_iter()
                         .map(Some)
                         .collect()
@@ -134,25 +133,25 @@ impl RoleStateImpl for Counterfeiter {
                     self.forges_remaining == 0 ||
                     actor_ref.ability_deactivated_from_death(game)
                 )
-                .allowed_players([actor_ref])
-                .build_map(game),
+                .allow_players([actor_ref])
+                .build_map(),
             // Alibi
-            ControllerParametersMap::builder()
+            ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Counterfeiter, 2))
-                .available_selection(game, AvailableStringSelection)
+                .available_selection(AvailableStringSelection)
                 .add_grayed_out_condition(
                     self.forges_remaining == 0 ||
                     actor_ref.ability_deactivated_from_death(game)
                 )
-                .allowed_players([actor_ref])
-                .build_map(game),
-            ControllerParametersMap::builder()
+                .allow_players([actor_ref])
+                .build_map(),
+            ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Counterfeiter, 3))
-                .available_selection(game, AvailableIntegerSelection {
+                .available_selection(AvailableIntegerSelection {
                     min: 0, max: if self.forges_remaining > 0 {1} else {0}
                 })
-                .allowed_players([actor_ref])
-                .build_map(game)
+                .allow_players([actor_ref])
+                .build_map()
         ])
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){

@@ -10,8 +10,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use crate::vec_set;
-use super::{AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, GetClientRoleState, Role, StringSelection};
+use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Role, StringSelection};
 use super::{Priority, RoleState, RoleStateImpl};
 
 
@@ -95,16 +94,16 @@ impl RoleStateImpl for Forger {
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::combine([
             // Player
-            ControllerParametersMap::builder()
+            ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Forger, 0))
-                .player_list_typical(game, actor_ref, false, false)
-                .night_typical(game, actor_ref)
+                .single_player_selection_typical(actor_ref, false, false)
+                .night_typical(actor_ref)
                 .add_grayed_out_condition(self.forges_remaining == 0)
-                .build_map(game),
+                .build_map(),
             // Role
-            ControllerParametersMap::builder()
+            ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Forger, 1))
-                .available_selection(game, AvailableRoleOptionSelection(
+                .available_selection(AvailableRoleOptionSelection(
                     Role::values().into_iter()
                         .map(Some)
                         .collect()
@@ -114,18 +113,18 @@ impl RoleStateImpl for Forger {
                     self.forges_remaining == 0 ||
                     actor_ref.ability_deactivated_from_death(game)
                 )
-                .allowed_players([actor_ref])
-                .build_map(game),
+                .allow_players([actor_ref])
+                .build_map(),
             // Alibi
-            ControllerParametersMap::builder()
+            ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Forger, 2))
-                .available_selection(game, AvailableStringSelection)
+                .available_selection(AvailableStringSelection)
                 .add_grayed_out_condition(
                     self.forges_remaining == 0 ||
                     actor_ref.ability_deactivated_from_death(game)
                 )
-                .allowed_players([actor_ref])
-                .build_map(game)
+                .allow_players([actor_ref])
+                .build_map()
         ])
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {

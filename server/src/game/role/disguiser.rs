@@ -49,9 +49,9 @@ impl RoleStateImpl for Disguiser {
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::combine([
-            ControllerParametersMap::builder()
+            ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Disguiser, 0))
-                .available_selection(game, AvailablePlayerListSelection {
+                .available_selection(AvailablePlayerListSelection {
                     available_players: PlayerReference::all_players(game)
                         .filter(|p|
                             p.alive(game) &&
@@ -61,19 +61,19 @@ impl RoleStateImpl for Disguiser {
                     can_choose_duplicates: false,
                     max_players: Some(1)
                 })
-                .night_typical(game, actor_ref)
-                .build_map(game),
-            ControllerParametersMap::builder()
+                .night_typical(actor_ref)
+                .build_map(),
+            ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Disguiser, 1))
-                .available_selection(game, AvailableRoleOptionSelection(
+                .available_selection(AvailableRoleOptionSelection(
                     Role::values().into_iter()
                         .map(Some)
                         .collect()
                 ))
                 .default_selection(RoleOptionSelection(Some(Role::Disguiser)))
                 .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
-                .allowed_players(self.players_with_disguiser_menu(actor_ref))
-                .build_map(game)
+                .allow_players(self.players_with_disguiser_menu(actor_ref))
+                .build_map()
         ])
     }
     fn on_any_death(mut self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference) {

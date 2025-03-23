@@ -105,14 +105,12 @@ impl RoleStateImpl for Krampus {
             KrampusAbility::DoNothing => 1
         };
 
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            false,
-            false,
-            ControllerID::role(actor_ref, Role::Krampus, ability_index)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Krampus, ability_index))
+            .single_player_selection_typical(actor_ref, false, false)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(false)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         let ability_index = match self.ability {

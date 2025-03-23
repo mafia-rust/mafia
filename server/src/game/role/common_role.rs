@@ -16,38 +16,6 @@ use crate::game::{
 
 use super::{medium::Medium, reporter::Reporter, warden::Warden, InsiderGroupID, Role, RoleState};
 
-#[deprecated]
-pub fn controller_parameters_map_player_list_night_typical(
-    game: &Game,
-    actor_ref: PlayerReference,
-    can_select_self: bool,
-    can_select_insiders: bool,
-    grayed_out: bool,
-    ability_id: ControllerID,
-) -> ControllerParametersMap {
-    ControllerParametersMap::builder()
-        .id(ability_id)
-        .player_list_typical(game, actor_ref, can_select_self, can_select_insiders)
-        .night_typical(game, actor_ref)
-        .add_grayed_out_condition(grayed_out)
-        .build_map(game)
-}
-
-#[deprecated]
-pub fn controller_parameters_map_boolean(
-    game: &Game,
-    actor_ref: PlayerReference,
-    grayed_out: bool,
-    ability_id: ControllerID,
-) -> ControllerParametersMap {
-    ControllerParametersMap::builder()
-        .id(ability_id)
-        .available_selection(game, AvailableBooleanSelection)
-        .night_typical(game, actor_ref)
-        .add_grayed_out_condition(grayed_out)
-        .build_map(game)
-}
-
 
 /// This function uses defaults. When using this function, consider if you need to override the defaults.
 pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: PlayerReference, ability_id: ControllerID, attack: bool) -> Vec<Visit> {

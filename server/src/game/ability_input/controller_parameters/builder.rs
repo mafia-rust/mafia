@@ -17,7 +17,8 @@ pub trait IDState {}
 impl IDState for () {}
 impl IDState for ControllerID {}
 
-pub struct ControllerParametersBuilder<A: BuilderTypeState = NoAbilitySelection, I: IDState = ()> {
+pub struct ControllerParametersBuilder<'a, A: BuilderTypeState = NoAbilitySelection, I: IDState = ()> {
+    game: &'a Game,
     available: A,
     grayed_out: bool,
     reset_on_phase_start: Option<PhaseType>,
@@ -27,9 +28,10 @@ pub struct ControllerParametersBuilder<A: BuilderTypeState = NoAbilitySelection,
     id: I
 }
 
-impl ControllerParametersBuilder<NoAbilitySelection, ()> {
-    pub fn new() -> Self {
+impl<'a> ControllerParametersBuilder<'a, NoAbilitySelection, ()> {
+    pub fn new(game: &'a Game) -> Self {
         ControllerParametersBuilder {
+            game,
             available: NoAbilitySelection,
             grayed_out: false,
             reset_on_phase_start: None,
@@ -41,11 +43,13 @@ impl ControllerParametersBuilder<NoAbilitySelection, ()> {
     }
 }
 
-impl<I: IDState> ControllerParametersBuilder<NoAbilitySelection, I> {
-    pub fn available_selection<A: AvailableSelectionKind>(self, game: &Game, available: A) -> ControllerParametersBuilder<A, I> {
+impl<'a, I: IDState> ControllerParametersBuilder<'a, NoAbilitySelection, I> {
+    pub fn available_selection<A: AvailableSelectionKind>(self, available: A) -> ControllerParametersBuilder<'a, A, I> {
+        let game = self.game;
         let default_selection = available.default_selection(game);
 
         ControllerParametersBuilder {
+            game: self.game,
             available,
             grayed_out: self.grayed_out,
             reset_on_phase_start: self.reset_on_phase_start,
@@ -56,14 +60,15 @@ impl<I: IDState> ControllerParametersBuilder<NoAbilitySelection, I> {
         }
     }
 
-    pub fn player_list_typical(
+    pub fn single_player_selection_typical(
         self,
-        game: &Game,
         actor_ref: PlayerReference,
         can_select_self: bool,
         can_select_insiders: bool,
-    ) -> ControllerParametersBuilder<AvailablePlayerListSelection, I> {
-        self.available_selection(game, AvailablePlayerListSelection {
+    ) -> ControllerParametersBuilder<'a, AvailablePlayerListSelection, I> {
+        let game = self.game;
+
+        self.available_selection(AvailablePlayerListSelection {
             available_players: PlayerReference::all_players(game)
                 .filter(|player|
                     if !player.alive(game){
@@ -84,12 +89,13 @@ impl<I: IDState> ControllerParametersBuilder<NoAbilitySelection, I> {
     }
 }
 
-impl<A: BuilderTypeState, I: IDState> ControllerParametersBuilder<A, I> {
-    pub fn night_typical(self, game: &Game, actor_ref: PlayerReference) -> Self {
+impl<A: BuilderTypeState, I: IDState> ControllerParametersBuilder<'_, A, I> {
+    pub fn night_typical(self, actor_ref: PlayerReference) -> Self {
+        let game = self.game;
         self
             .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game) || Detained::is_detained(game, actor_ref))
             .reset_on_phase_start(PhaseType::Obituary)
-            .allowed_players([actor_ref])
+            .allow_players([actor_ref])
     }
 
     pub fn reset_on_phase_start(self, phase: PhaseType) -> Self {
@@ -113,15 +119,15 @@ impl<A: BuilderTypeState, I: IDState> ControllerParametersBuilder<A, I> {
         }
     }
 
-    pub fn allowed_players(self, players: impl IntoIterator<Item=PlayerReference>) -> Self {
+    pub fn allow_players(self, players: impl IntoIterator<Item=PlayerReference>) -> Self {
         Self {
-            allowed_players: players.into_iter().collect(),
+            allowed_players: self.allowed_players.into_iter().chain(players).collect(),
             ..self
         }
     }
 }
 
-impl<A: AvailableSelectionKind, I: IDState> ControllerParametersBuilder<A, I> {
+impl<A: AvailableSelectionKind, I: IDState> ControllerParametersBuilder<'_, A, I> {
     pub fn default_selection(self, default_selection: A::Selection) -> Self {
         Self {
             default_selection,
@@ -129,8 +135,9 @@ impl<A: AvailableSelectionKind, I: IDState> ControllerParametersBuilder<A, I> {
         }
     }
 
-    pub fn try_build(self, game: &Game) -> Option<ControllerParameters> {
-        ControllerParameters::new(game, 
+    pub fn try_build(self) -> Option<ControllerParameters> {
+        ControllerParameters::new(
+            self.game, 
             self.available.into(), 
             self.grayed_out, 
             self.reset_on_phase_start, 
@@ -141,9 +148,10 @@ impl<A: AvailableSelectionKind, I: IDState> ControllerParametersBuilder<A, I> {
     }
 }
 
-impl<A: BuilderTypeState> ControllerParametersBuilder<A, ()> {
-    pub fn id(self, id: ControllerID) -> ControllerParametersBuilder<A, ControllerID> {
+impl<'a, A: BuilderTypeState> ControllerParametersBuilder<'a, A, ()> {
+    pub fn id(self, id: ControllerID) -> ControllerParametersBuilder<'a, A, ControllerID> {
         ControllerParametersBuilder {
+            game: self.game,
             available: self.available,
             grayed_out: self.grayed_out,
             reset_on_phase_start: self.reset_on_phase_start,
@@ -155,10 +163,10 @@ impl<A: BuilderTypeState> ControllerParametersBuilder<A, ()> {
     }
 }
 
-impl<A: AvailableSelectionKind> ControllerParametersBuilder<A, ControllerID> {
-    pub fn build_map(self, game: &Game) -> ControllerParametersMap {
+impl<A: AvailableSelectionKind> ControllerParametersBuilder<'_, A, ControllerID> {
+    pub fn build_map(self) -> ControllerParametersMap {
         if let Some(single) = ControllerParameters::new(
-            game,
+            self.game,
             self.available.into(),
             self.grayed_out,
             self.reset_on_phase_start,

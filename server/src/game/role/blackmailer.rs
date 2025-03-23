@@ -29,11 +29,11 @@ impl RoleStateImpl for Blackmailer {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        ControllerParametersMap::builder()
+        ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::Blackmailer, 0))
-            .player_list_typical(game, actor_ref, false, false)
-            .night_typical(game, actor_ref)
-            .build_map(game)
+            .single_player_selection_typical(actor_ref, false, false)
+            .night_typical(actor_ref)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
