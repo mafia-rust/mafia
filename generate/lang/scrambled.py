@@ -26,7 +26,7 @@ def scramble(key: str, value: str, cache: dict[str, str]) -> str:
     if key == "language":
         return "Scrambled"
     
-    random.seed = key
+    random.seed(key)
     
     return "".join([
         scramble_word(word, cache) 
