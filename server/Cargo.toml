@@ -16,4 +16,3 @@ rand = "0.9.0"
 chrono = { version = "0.4.25", default-features = false, features = ["clock"] }
 vec1 = { version = "1.12.1", features = ["serde"] }
 enum_delegate = "0.2.0"
-itertools = "0.14.0"
