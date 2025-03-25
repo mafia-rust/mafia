@@ -108,10 +108,6 @@ function LobbyPlayerListPlayer(props: Readonly<{ player: PlayerDisplayData }>): 
         ["playersHost", "lobbyClients", "yourId", "playersReady", "hostData"]
     )!;
 
-    const myId = useLobbyOrGameState(
-        state => state.myId
-    );
-
     const [renameOpen, setRenameOpen] = useState(false);
     const renameButtonRef = useRef<HTMLButtonElement>(null);
 

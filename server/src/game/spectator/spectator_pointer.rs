@@ -27,7 +27,7 @@ impl SpectatorPointer {
     pub fn host(&self, game: &Game)->bool {
         self.deref(game).map(|s|s.host).unwrap_or(false)
     }
-    pub fn set_host(&self, game: &mut Game, host: bool){ {
+    pub fn set_host(&self, game: &mut Game, host: bool) {
         if let Some(spectator) = self.deref_mut(game) {
             spectator.host = host;
         }

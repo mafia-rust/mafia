@@ -474,7 +474,7 @@ impl Lobby {
                         if !player.host {return;}
                         player.relinquish_host();
                     }
-                    Self::ensure_host_game(clients);
+                    Self::ensure_host_game(game, clients);
                     Self::send_players_game(game);
                 } else if let LobbyState::Lobby { clients, .. } = &mut self.lobby_state {
                     if let Some(player) = clients.get_mut(&lobby_client_id) {

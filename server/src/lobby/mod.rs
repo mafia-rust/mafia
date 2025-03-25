@@ -106,7 +106,7 @@ impl Lobby {
 
                 let name = name_validation::sanitize_name("".to_string(), &Self::get_player_names(clients));
                 
-                let mut new_player = LobbyClient::new(name.clone(), send.clone(), clients.is_empty());
+                let new_player = LobbyClient::new(name.clone(), send.clone(), clients.is_empty());
                 let Some(lobby_client_id) =
                     (clients
                         .iter()
@@ -115,9 +115,9 @@ impl Lobby {
                             return Err(RejectJoinReason::RoomFull)
                         };
 
-                Self::ensure_host_lobby(clients);
-
                 clients.insert(lobby_client_id, new_player);
+
+                Self::ensure_host_lobby(clients);
 
                 Lobby::set_rolelist_length(settings, clients);
 
@@ -143,7 +143,7 @@ impl Lobby {
                             return Err(RejectJoinReason::RoomFull);
                         };
 
-                Self::ensure_host_game(clients);
+                Self::ensure_host_game(game, clients);
 
                 match game.add_spectator(SpectatorInitializeParameters {
                     connection: ClientConnection::Connected(send.clone()),
@@ -213,7 +213,7 @@ impl Lobby {
                     }
                 }
 
-                Self::ensure_host_game(clients);
+                Self::ensure_host_game(game, clients);
 
                 Self::resend_host_data_to_all_hosts(game, clients);
             },
@@ -250,7 +250,7 @@ impl Lobby {
                         if !player_ref.is_disconnected(game) {
                             player_ref.lose_connection(game);
 
-                            Self::ensure_host_game(clients);
+                            Self::ensure_host_game(game, players);
                             Self::resend_host_data_to_all_hosts(game, players);
                         }
                     }
@@ -537,7 +537,7 @@ impl Lobby {
         }
     }
 
-    fn ensure_host_game(clients: &mut VecMap<LobbyClientID, GameClient>) {
+    fn ensure_host_game(game: &mut Game, clients: &mut VecMap<LobbyClientID, GameClient>) {
         if !clients.iter().any(|p|p.1.host) {
             if let Some(new_host) = clients.values_mut().next(){
                 new_host.set_host();
