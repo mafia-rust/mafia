@@ -10,6 +10,8 @@ use crate::{
     websocket_connections::connection::Connection
 };
 
+use itertools::chain;
+
 pub type RoomCode = usize;
 
 struct ListenerClient {
@@ -114,8 +116,9 @@ impl Listener{
     }
 
     fn create_lobby(&mut self) -> Option<RoomCode>{
-        let room_code = ((random::<u16>() as usize)..usize::MAX).find(
-            |code| !self.lobbies.contains_key(code)
+    	let start = random::<u16>() as usize;
+        let room_code = chain!(start..=usize::MAX, 0..start).find(
+            |code| {println!("{}", code); false}
         )?;
 
         let lobby = Lobby::new(room_code);
