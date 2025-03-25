@@ -33,7 +33,7 @@ export default function LobbyPlayerList(): ReactElement {
                         connection: player.connection,
                         host: player.ready === "host",
                         name,
-                        displayName: name ?? "Spectator"
+                        displayName: name ?? "Spectator",
                     }
                 })
             } else if (state.host !== null) {
@@ -108,6 +108,10 @@ function LobbyPlayerListPlayer(props: Readonly<{ player: PlayerDisplayData }>): 
         ["playersHost", "lobbyClients", "yourId", "playersReady", "hostData"]
     )!;
 
+    const myId = useLobbyOrGameState(
+        state => state.myId
+    );
+
     const [renameOpen, setRenameOpen] = useState(false);
     const renameButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -120,6 +124,9 @@ function LobbyPlayerListPlayer(props: Readonly<{ player: PlayerDisplayData }>): 
             <StyledText>{props.player.displayName}</StyledText>
         </div>
         <div>
+            {host && !props.player.host && <button
+                onClick={() => GAME_MANAGER.sendSetPlayerHostPacket(props.player.id)}
+            ><Icon>add_moderator</Icon></button>}
             {host && props.player.connection !== "disconnected" && <button 
                 onClick={() => GAME_MANAGER.sendKickPlayerPacket(props.player.id)}
             ><Icon>person_remove</Icon></button>}

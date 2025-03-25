@@ -449,6 +449,42 @@ impl Lobby {
                     Self::set_player_name(id, name, clients);
                 };
             }
+            ToServerPacket::SetPlayerHost { player_id } => {
+                if let LobbyState::Game { game, clients } = &mut self.lobby_state {
+                    if let Some(player) = clients.get(&lobby_client_id){
+                        if !player.host {return;}
+                    }
+                    if let Some(player) = clients.get_mut(&player_id) {
+                        player.set_host();
+                    }
+                    Self::send_players_game(game);
+                } else if let LobbyState::Lobby { clients, .. } = &mut self.lobby_state {
+                    if let Some(player) = clients.get(&lobby_client_id) {
+                        if !player.is_host() { return }
+                    }
+                    if let Some(player) = clients.get_mut(&player_id) {
+                        player.set_host();
+                    }
+                    Self::send_players_lobby(clients);
+                }
+            }
+            ToServerPacket::RelinquishHost => {
+                if let LobbyState::Game { game, clients } = &mut self.lobby_state {
+                    if let Some(player) = clients.get_mut(&lobby_client_id){
+                        if !player.host {return;}
+                        player.relinquish_host();
+                    }
+                    Self::ensure_host_game(clients);
+                    Self::send_players_game(game);
+                } else if let LobbyState::Lobby { clients, .. } = &mut self.lobby_state {
+                    if let Some(player) = clients.get_mut(&lobby_client_id) {
+                        if !player.is_host() { return }
+                        player.relinquish_host();
+                    }
+                    Self::ensure_host_lobby(clients);
+                    Self::send_players_lobby(clients);
+                }
+            }
             _ => {
                 let LobbyState::Game { game, clients } = &mut self.lobby_state else {
                     log!(error "Lobby"; "{} {:?}", "ToServerPacket not implemented for lobby was sent during lobby: ", incoming_packet);
