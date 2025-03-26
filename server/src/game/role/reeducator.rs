@@ -11,6 +11,7 @@ use crate::game::game_conclusion::GameConclusion;
 use crate::game::phase::PhaseType;
 use crate::game::role_list::{RoleOutline, RoleOutlineOption, RoleOutlineOptionRoles, RoleSet};
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
+use crate::game::win_condition::WinCondition;
 
 use crate::game::visit::{Visit, VisitTag};
 
@@ -90,6 +91,7 @@ impl RoleStateImpl for Reeducator {
                		actor_ref, game, AttackPower::Basic, true, new_state
                 ) {
 	               	InsiderGroupID::Mafia.add_player_to_revealed_group(game, target_ref);
+					target_ref.set_win_condition(game, WinCondition::new_loyalist(GameConclusion::Mafia));
 	               	self.convert_charges_remaining = false;
              		actor_ref.set_role_state(game, self);
                 } else {
