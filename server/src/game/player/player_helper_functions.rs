@@ -114,34 +114,27 @@ impl PlayerReference{
     }
     
     pub fn try_convert(&self, actor_ref: PlayerReference, game: &mut Game, attack: AttackPower, with_visit: bool, new_state: RoleState) -> Option<PlayerReference> {
-  		if let Some(target) = self.try_attack(game, attack, with_visit) {
-    		if InsiderGroupID::in_same_revealed_group(game, actor_ref, target) {
-      			return None;
-      		}
-			target.set_night_convert_role_to(game, Some(new_state));
-			return Some(target);
-		} else {
-			return None;
-		}
+  		let target = self.try_attack(game, attack, with_visit)?;
+  		if InsiderGroupID::in_same_revealed_group(game, actor_ref, target) {
+     			return None;
+  		}
+		target.set_night_convert_role_to(game, Some(new_state));
+		return Some(target);
     }
     
     pub fn try_convert_friendly(&self, actor_ref: PlayerReference, game: &mut Game, attack: AttackPower, with_visit: bool, new_state: RoleState) -> Option<PlayerReference> {
-   		if let Some((target, _)) = self.role_state(game).clone().redirect_attack(game, *self, attack, with_visit) {
-   			if InsiderGroupID::in_same_revealed_group(game, actor_ref, target) {
-	   			target.set_night_convert_role_to(game, Some(new_state));
-				return Some(target);
-     		}
-     	}
+   		let (target, _) = self.role_state(game).clone().redirect_attack(game, *self, attack, with_visit)?;
+        if InsiderGroupID::in_same_revealed_group(game, actor_ref, target) {
+   			target.set_night_convert_role_to(game, Some(new_state));
+			return Some(target);
+  		}
       	return None;
     }
     
     pub fn try_convert_recruit(&self, actor_ref: PlayerReference, game: &mut Game, attack: AttackPower, with_visit: bool, group: InsiderGroupID, new_state: RoleState) -> Option<PlayerReference> {
-		if let Some(target) = self.try_recruit(actor_ref, game, attack, with_visit, group) {
-			target.set_night_convert_role_to(game, Some(new_state));
-			return Some(target);
-		} else {
-			return None;
-		}
+		let target = self.try_recruit(actor_ref, game, attack, with_visit, group)?;
+		target.set_night_convert_role_to(game, Some(new_state));
+		return Some(target);
 	}
 
     /**
