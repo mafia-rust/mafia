@@ -10,7 +10,7 @@ macro_rules! selection_kinds {
     ) => {
         #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
         #[serde(rename_all = "camelCase")]
-        #[serde(tag="type")]
+        #[serde(tag="type", content="selection")]
         pub enum AvailableAbilitySelection {
             $($name($available_kind)),*
         }
@@ -25,7 +25,7 @@ macro_rules! selection_kinds {
 
         #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Ord, Eq)]
         #[serde(rename_all = "camelCase")]
-        #[serde(tag="type")]
+        #[serde(tag="type", content="selection")]
         pub enum AbilitySelection{
             $($name($kind)),*
         }
