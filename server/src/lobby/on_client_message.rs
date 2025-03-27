@@ -458,6 +458,7 @@ impl Lobby {
                         player.set_host();
                     }
                     Self::send_players_game(game);
+                    Self::resend_host_data_to_all_hosts(game, clients);
                 } else if let LobbyState::Lobby { clients, .. } = &mut self.lobby_state {
                     if let Some(player) = clients.get(&lobby_client_id) {
                         if !player.is_host() { return }
@@ -474,14 +475,15 @@ impl Lobby {
                         if !player.host {return;}
                         player.relinquish_host();
                     }
-                    Self::ensure_host_game(game, clients);
+                    Self::ensure_host_game(game, clients, Some(lobby_client_id));
                     Self::send_players_game(game);
+                    Self::resend_host_data_to_all_hosts(game, clients);
                 } else if let LobbyState::Lobby { clients, .. } = &mut self.lobby_state {
                     if let Some(player) = clients.get_mut(&lobby_client_id) {
                         if !player.is_host() { return }
                         player.relinquish_host();
                     }
-                    Self::ensure_host_lobby(clients);
+                    Self::ensure_host_lobby(clients, Some(lobby_client_id));
                     Self::send_players_lobby(clients);
                 }
             }
