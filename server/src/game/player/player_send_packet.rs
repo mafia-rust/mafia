@@ -4,7 +4,7 @@ use crate::{
     client_connection::ClientConnection, 
     game::{
         chat::ChatMessageVariant, components::insider_group::InsiderGroupID,
-        phase::PhaseState, Game, GameOverReason
+        Game, GameOverReason
     },
     lobby::GAME_DISCONNECT_TIMER_SECS,
     packet::ToClientPacket, websocket_connections::connection::ClientSender
@@ -74,13 +74,6 @@ impl PlayerReference{
             self.send_packet(game, ToClientPacket::GameOver { reason: GameOverReason::Draw })
         }
 
-        if let PhaseState::Testimony { player_on_trial, .. }
-            | PhaseState::Judgement { player_on_trial, .. }
-            | PhaseState::FinalWords { player_on_trial } = game.current_phase() {
-            self.send_packet(game, ToClientPacket::PlayerOnTrial{
-                player_index: player_on_trial.index()
-            });
-        }
         let votes_packet = ToClientPacket::new_player_votes(game);
         self.send_packet(game, votes_packet);
         for grave in game.graves.iter(){

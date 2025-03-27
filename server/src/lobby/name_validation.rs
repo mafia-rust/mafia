@@ -1,5 +1,4 @@
-use crate::{lobby::LobbyClientID, strings::TidyableString, vec_map::VecMap};
-use super::{LobbyClient, LobbyClientType};
+use crate::strings::TidyableString;
 use lazy_static::lazy_static;
 use rand::seq::IndexedRandom;
 
@@ -28,33 +27,21 @@ pub const DEFAULT_SERVER_NAME: &str = "Mafia Lobby";
 /// Sanitizes a player name.
 /// If the desired name is invalid or taken, this generates a random acceptable name.
 /// Otherwise, this trims and returns the input name.
-pub fn sanitize_name(mut desired_name: String, players: &VecMap<LobbyClientID, LobbyClient>) -> String {
+pub fn sanitize_name(mut desired_name: String, other_names: &[String]) -> String {
     desired_name = desired_name
         .remove_newline()
         .trim_whitespace()
         .truncate(MAX_NAME_LENGTH)
         .truncate_lines(1);
 
-    let name_already_taken = players.values().any(|existing_player|
-        if let LobbyClientType::Player { name } = &existing_player.client_type {
-            desired_name == *name
-        }else{
-            false
-        }
+    let name_already_taken = other_names.iter().any(|name|
+        desired_name == *name
     );
     
     if !desired_name.is_empty() && !name_already_taken {
         desired_name
     } else {
-        generate_random_name(&players.values()
-            .filter_map(|p|
-                if let LobbyClientType::Player { name } = &p.client_type {
-                    Some(name.as_str())
-                }else{
-                    None
-                }
-            )
-            .collect::<Vec<&str>>())
+        generate_random_name(&other_names.iter().map(|s| s.as_str()).collect::<Vec<&str>>())
     }
 }
 

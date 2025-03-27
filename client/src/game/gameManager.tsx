@@ -13,6 +13,7 @@ import PlayMenu from "../menu/main/PlayMenu";
 import { createGameState, createLobbyState } from "./gameState";
 import { deleteReconnectData } from "./localStorage";
 import AudioController from "../menu/AudioController";
+import ListMap from "../ListMap";
 
 export function createGameManager(): GameManager {
 
@@ -77,7 +78,11 @@ export function createGameManager(): GameManager {
                 GAME_MANAGER.state.roleList = lobbyState.roleList;
                 GAME_MANAGER.state.phaseTimes = lobbyState.phaseTimes;
                 GAME_MANAGER.state.enabledRoles = lobbyState.enabledRoles;
-                GAME_MANAGER.state.host = lobbyState.players.get(lobbyState.myId!)?.ready === "host";
+                if (lobbyState.players.get(lobbyState.myId!)?.ready === "host") {
+                    GAME_MANAGER.state.host = {
+                        clients: new ListMap()
+                    };
+                }
                 GAME_MANAGER.state.myId = lobbyState.myId
             }
         },
@@ -309,7 +314,7 @@ export function createGameManager(): GameManager {
         },
         sendBackToLobbyPacket() {
             this.server.sendPacket({
-                type: "backToLobby"
+                type: "hostForceBackToLobby"
             });
         },
         sendSetPhaseTimePacket(phase: PhaseType, time: number) {
@@ -443,6 +448,29 @@ export function createGameManager(): GameManager {
                 type: "voteFastForwardPhase",
                 fastForward: fastForward
             });
+        },
+
+        sendHostDataRequest() {
+            this.server.sendPacket({
+                type: "hostDataRequest"
+            })
+        },
+        sendHostEndGamePacket() {
+            this.server.sendPacket({
+                type: "hostForceEndGame"
+            })
+        },
+        sendHostSkipPhase() {
+            this.server.sendPacket({
+                type: "hostForceSkipPhase"
+            })
+        },
+        sendHostSetPlayerNamePacket(playerId, name) {
+            this.server.sendPacket({
+                type: "hostForceSetPlayerName",
+                id: playerId,
+                name
+            })
         },
 
         messageListener(serverMessage) {

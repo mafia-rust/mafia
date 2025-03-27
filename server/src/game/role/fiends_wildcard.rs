@@ -50,8 +50,6 @@ impl FiendsWildcard {
             ControllerID::role(actor_ref, Role::FiendsWildcard, 0)
         ) else {return};
 
-        println!("role: {:?}", role);
-
         if
             role_can_generate(
                 role, 
