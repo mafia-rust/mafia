@@ -78,6 +78,9 @@ impl LobbyClient {
     pub fn set_host(&mut self) {
         self.ready = Ready::Host;
     }
+    pub fn relinquish_host(&mut self) {
+        self.ready = Ready::NotReady;
+    }
 
     pub fn is_host(&self) -> bool {
         self.ready == Ready::Host

@@ -31,4 +31,7 @@ impl GameClient {
     pub fn set_host(&mut self) {
         self.host = true;
     }
+    pub fn relinquish_host(&mut self) {
+        self.host = false;
+    }
 }

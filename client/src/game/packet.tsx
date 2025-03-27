@@ -181,6 +181,11 @@ export type ToServerPacket = {
 } | {
     type: "kick",
     playerId: number
+} | {
+    type: "setPlayerHost",
+    playerId: number
+} | {
+    type: "relinquishHost",
 }
 // Lobby
 | {
