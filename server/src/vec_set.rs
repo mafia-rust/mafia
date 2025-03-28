@@ -19,11 +19,6 @@ impl <K> VecSet<K> where K: Eq {
     pub fn with_capacity(capacity: usize) -> Self {
         VecSet { vec: VecMap::with_capacity(capacity) }
     }
-    pub fn with_first(key: K) -> Self {
-        let mut new = Self::new();
-        new.vec.insert(key, ());
-        new
-    }
 
     pub fn insert(&mut self, key: K) -> Option<K> {
         self.vec.insert(key, ()).map(|(k, _)| k)

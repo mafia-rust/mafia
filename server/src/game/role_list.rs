@@ -8,6 +8,7 @@ use vec1::{
 };
 
 use crate::vec_set::VecSet;
+use crate::vec_set::vec_set;
 
 use super::{components::insider_group::InsiderGroupID, game_conclusion::GameConclusion, role::Role};
 
@@ -325,11 +326,11 @@ impl RoleOutlineOption {
         match self.roles.clone() {
             RoleOutlineOptionRoles::Role { role } => {
                 if role_can_generate(role, enabled_roles, &[]) {
-                    return VecSet::with_first(RoleAssignment{
+                    return vec_set![RoleAssignment{
                         role,
                         insider_groups: self.insider_groups.clone(),
                         win_condition: self.win_condition.clone(),
-                    });
+                    }];
                 } else {
                     return VecSet::new();
                 }
@@ -437,7 +438,7 @@ pub enum RoleSet {
     Minions
 }
 impl RoleSet{
-    pub fn get_roles(self) -> Vec<Role> {
+    pub fn get_roles(&self) -> Vec<Role> {
         match self {
             RoleSet::Any => Role::values(),
             RoleSet::Town => 
