@@ -456,12 +456,44 @@ impl Role{
     }
     pub fn enabled(game: &Game) -> &VecSet<Role>{
         &game.settings.enabled_roles
-    }
-    pub fn enabled_include_pseudo(game: &Game) -> VecSet<Role>{
+    } 
+    fn enabled_include_pseudo(game: &Game) -> VecSet<Role>{
         let mut roles = Self::enabled(game).clone();
         for role in roles.clone().iter() {
             roles.extend(role.pseudo_enables());
         }
         roles
+    }
+    
+    /// It is preferred that you use this rather than get_pseudo_enabled when ever possible 
+    /// (calling .clone on this is always faster or equal to get_pseudo_enabled).
+    /// This stores what roles are pseudo enable in the game when its first called.
+    /// Every time this is called after the first it simply returns the VecSet it stored it in the game.
+    pub fn pseudo_enabled(game: &mut Game) -> &VecSet<Role> {
+        if game.pseudo_enabled_roles.is_some() {
+            if let Some(roles) = &game.pseudo_enabled_roles {
+                roles
+            } else {
+                unreachable!("")
+            }
+        } else {
+            game.pseudo_enabled_roles = Some(Role::enabled_include_pseudo(game));
+            if let Some(roles) = &game.pseudo_enabled_roles {
+                roles
+            } else {
+                unreachable!("literally just set the value")
+            }
+        }
+    }
+
+    /// It is preferred that you use pseudo_enabled rather than this when possible.
+    /// This stores what roles are pseudo enable in the game when its first called.
+    /// (calling .clone on that is always faster or equal to get_pseudo_enabled).
+    /// Otherwise identical to pseudo_enabled
+    pub fn get_pseudo_enabled(game: &Game) -> VecSet<Role> {
+        if let Some(roles) = &game.pseudo_enabled_roles {
+            return roles.clone();
+        }
+        Role::enabled_include_pseudo(game)
     }
 }
