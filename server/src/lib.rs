@@ -126,28 +126,3 @@ pub mod strings{
         }
     }
 }
-
-pub mod misc{
-    trait AsResult<T> {
-        fn as_result(self) -> Result<T, ()>;
-    }
-    impl<T> AsResult<T> for Option<T> {
-        fn as_result(self) -> Result<T, ()> {
-            match self {
-                Some(t) => Ok(t),
-                None => Err(()),
-            }
-        }
-    }
-    trait AsOption<T> {
-        fn as_option(self) -> Option<T>;
-    }
-    impl<T> AsOption<T> for Result<T, ()> {
-        fn as_option(self) -> Option<T> {
-            match self {
-                Ok(t) => Some(t),
-                Err(()) => None,
-            }
-        }
-    }
-}
