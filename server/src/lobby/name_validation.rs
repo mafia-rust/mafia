@@ -62,9 +62,8 @@ pub fn generate_random_name(taken_names: &[&str]) -> String{
         .truncate(MAX_NAME_LENGTH)
         .truncate_lines(1)
     ).collect::<Vec<String>>();
-    let btns = &taken_names_str;
     let available_random_names = RANDOM_NAMES.iter().filter(|new_random_name| 
-        !btns.contains(new_random_name)
+        !taken_names_str.contains(new_random_name)
     ).collect::<Vec<&String>>();
 
     if let Some(random_name) = available_random_names.choose(&mut rand::rng()) {
