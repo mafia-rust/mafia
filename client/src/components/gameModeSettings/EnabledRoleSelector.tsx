@@ -1,10 +1,9 @@
-import { ReactElement, useCallback, useContext, useState } from "react"
+import React, { ReactElement, useCallback, useContext, useState } from "react"
 import translate from "../../game/lang"
-import React from "react"
 import StyledText from "../StyledText"
-import { ROLE_SETS, RoleOutlineOption, getAllRoles, getRolesFromOutlineOption } from "../../game/roleListState.d";
+import { ROLE_SETS, RoleOrRoleSet, getAllRoles, getRolesFromRoleOrRoleSet } from "../../game/roleListState.d";
 import { Role, roleJsonData } from "../../game/roleState.d";
-import { RoleOutlineOptionSelector } from "./OutlineSelector";
+import { RoleOrRoleSetSelector } from "./OutlineSelector";
 import "./disabledRoleSelector.css"
 import Icon from "../Icon";
 import { Button } from "../Button";
@@ -22,14 +21,14 @@ export default function EnabledRoleSelector(props: Readonly<{
 }>): ReactElement {
     const {enabledRoles} = useContext(GameModeContext);
 
-    const [roleOutlineOption, setRoleOutlineOption] = useState<RoleOutlineOption>({ type: "roleSet", roleSet: "town" });
+    const [roleOrRoleSet, setRoleOrRoleSet] = useState<RoleOrRoleSet>({ type: "roleSet", roleSet: "town" });
 
-    const disableOutlineOption = (outline: RoleOutlineOption) => {
-        props.onDisableRoles(getRolesFromOutlineOption(outline));
+    const disableOutlineOption = (outline: RoleOrRoleSet) => {
+        props.onDisableRoles(getRolesFromRoleOrRoleSet(outline));
     }
 
-    const enableOutlineOption = (outline: RoleOutlineOption) => {
-        props.onEnableRoles(getRolesFromOutlineOption(outline));
+    const enableOutlineOption = (outline: RoleOrRoleSet) => {
+        props.onEnableRoles(getRolesFromRoleOrRoleSet(outline));
     }
 
     const disableAll = () => {
@@ -50,18 +49,17 @@ export default function EnabledRoleSelector(props: Readonly<{
 
             <div className="disabled-role-selector-area">
                 <Button
-                    onClick={()=>{enableOutlineOption(roleOutlineOption)}}
+                    onClick={()=>{enableOutlineOption(roleOrRoleSet)}}
                     disabled={props.disabled}
                 >{translate("menu.enabledRoles.include")}</Button>
                 <Button
-                    onClick={()=>{disableOutlineOption(roleOutlineOption)}}
+                    onClick={()=>{disableOutlineOption(roleOrRoleSet)}}
                     disabled={props.disabled}
                 >{translate("menu.enabledRoles.exclude")}</Button>
-                <RoleOutlineOptionSelector
-                    excludeAny={true}
+                <RoleOrRoleSetSelector
                     disabled={props.disabled}
-                    roleOutlineOption={roleOutlineOption}
-                    onChange={setRoleOutlineOption}
+                    roleOrRoleSet={roleOrRoleSet}
+                    onChange={setRoleOrRoleSet}
                 />
             </div>
         </div>}

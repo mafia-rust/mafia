@@ -1,4 +1,4 @@
-import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, LobbyClientID, ChatGroup, PhaseState, LobbyClient, ModifierType, InsiderGroup } from "./gameState.d"
+import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, LobbyClientID, ChatGroup, PhaseState, LobbyClient, ModifierType, InsiderGroup, GameClient } from "./gameState.d"
 import { Grave } from "./graveState"
 import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
@@ -16,6 +16,9 @@ export type LobbyPreviewData = {
 
 export type ToClientPacket = {
     type: "pong",
+} | {
+    type: "hostData",
+    clients: ListMapData<LobbyClientID, GameClient>
 } | {
     type: "rateLimitExceeded",
 } | {
@@ -102,9 +105,6 @@ export type ToClientPacket = {
     type: "phaseTimeLeft",
     secondsLeft: number
 } |{
-    type: "playerOnTrial",
-    playerIndex: PlayerIndex
-} | {
     type: "playerAlive", 
     alive: [boolean]
 } | {
@@ -119,11 +119,6 @@ export type ToClientPacket = {
 } | {
     type: "yourAllowedControllers",
     save: ListMapData<ControllerID, SavedController>,
-} | {
-    type: "yourButtons", 
-    buttons: [{
-        vote: boolean,
-    }]
 } | {
     type: "yourRoleLabels",
     roleLabels: ListMapData<PlayerIndex, Role> 
@@ -145,12 +140,6 @@ export type ToClientPacket = {
 } | {
     type: "yourRoleState",
     roleState: RoleState
-} | {
-    type: "yourSelection",
-    playerIndices: [PlayerIndex]
-} | {
-    type: "yourVoting",
-    playerIndex: PlayerIndex | null
 } | {
     type: "yourJudgement",
     verdict: Verdict
@@ -178,6 +167,8 @@ export type ToServerPacket = {
     type: "ping",
 } | {
     type: "lobbyListRequest",
+} | {
+    type: "hostDataRequest",
 } | {
     type: "reJoin",
     roomCode: number,
@@ -231,14 +222,9 @@ export type ToServerPacket = {
 } | {
     type: "setEnabledModifiers",
     modifiers: ModifierType[]
-} | {
-    type: "backToLobby",
 } |
 // Game
 {
-    type: "vote", 
-    playerIndex: PlayerIndex | null
-} | {
     type: "judgement", 
     verdict: Verdict
 } | {
@@ -289,4 +275,14 @@ export type ToServerPacket = {
 } | {
     type: "voteFastForwardPhase",
     fastForward: boolean
+} | {
+    type: "hostForceBackToLobby"
+} | {
+    type: "hostForceEndGame",
+} | {
+    type: "hostForceSkipPhase",
+} | {
+    type: "hostForceSetPlayerName",
+    id: number,
+    name: string
 }

@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::AttackPower;
 use crate::game::components::night_visits::NightVisits;
@@ -49,7 +49,7 @@ impl Trap {
         }
     }
 }
-#[derive(Default, Clone, Serialize, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Default, Clone, Serialize, Deserialize, Debug, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase", tag = "type")]
 pub enum TrapState {
     #[default]
@@ -102,7 +102,7 @@ impl RoleStateImpl for Engineer {
             }
             Priority::Kill => {
                 if let Trap::Set { target, .. } = self.trap {
-                    for visit in NightVisits::all_visits(game).into_iter().cloned().collect::<Vec<_>>() {
+                    for visit in NightVisits::all_visits(game).into_iter().copied().collect::<Vec<_>>() {
                         if 
                             visit.attack &&
                             visit.target == target &&
@@ -121,6 +121,7 @@ impl RoleStateImpl for Engineer {
                     if target.night_attacked(game){
                         actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
                         target.push_night_message(game, ChatMessageVariant::YouWereProtected);
+                        should_dismantle = true;
                     }
 
                     for visitor in target.all_night_visitors_cloned(game) {
@@ -135,7 +136,9 @@ impl RoleStateImpl for Engineer {
                     }
                 }
 
-                actor_ref.push_night_message(game, ChatMessageVariant::TrapStateEndOfNight { state: self.trap.state() });
+                if let RoleState::Engineer(Engineer { trap }) = actor_ref.role_state(game){
+                    actor_ref.push_night_message(game, ChatMessageVariant::TrapStateEndOfNight { state: trap.state() });
+                }
             }
             _ => {}
         }
@@ -147,6 +150,7 @@ impl RoleStateImpl for Engineer {
                     game,
                     actor_ref,
                     false,
+                    true,
                     false,
                     ControllerID::role(actor_ref, Role::Engineer, 0)
                 )

@@ -62,7 +62,7 @@ impl RoleStateImpl for Ojo {
                     if let Some(chosen_outline) = a{
                         let result = Self::get_result(game, chosen_outline);
                         actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                            role_outline: chosen_outline.deref(&game).clone(),
+                            role_outline: chosen_outline.deref(game).clone(),
                             result: result.clone()
                         });
                         self.previously_given_results.insert(chosen_outline, result);
@@ -71,7 +71,7 @@ impl RoleStateImpl for Ojo {
                     if let Some(chosen_outline) = b{
                         let result = Self::get_result(game, chosen_outline);
                         actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                            role_outline: chosen_outline.deref(&game).clone(),
+                            role_outline: chosen_outline.deref(game).clone(),
                             result: result.clone()
                         });
                         self.previously_given_results.insert(chosen_outline, result);
@@ -91,12 +91,12 @@ impl RoleStateImpl for Ojo {
             AvailableAbilitySelection::new_two_role_outline_option(
                 RoleOutlineReference::all_outlines(game)
                     .filter(|o|!self.previously_given_results.contains(o))
-                    .map(|o|Some(o))
+                    .map(Some)
                     .chain(std::iter::once(None))
                     .collect()
             ),
             AbilitySelection::new_two_role_outline_option(None, None),
-            !actor_ref.alive(game) || 
+            actor_ref.ability_deactivated_from_death(game) || 
             Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),
             false,
@@ -106,10 +106,10 @@ impl RoleStateImpl for Ojo {
                 game,
                 ControllerID::role(actor_ref, Role::Ojo, 1),
                 AvailableAbilitySelection::new_role_option(
-                    Role::values().into_iter().map(|r|Some(r)).chain(std::iter::once(None)).collect()
+                    Role::values().into_iter().map(Some).chain(std::iter::once(None)).collect()
                 ),
                 AbilitySelection::new_role_option(None),
-                !actor_ref.alive(game) || 
+                actor_ref.ability_deactivated_from_death(game) || 
                 Detained::is_detained(game, actor_ref) ||
                 game.day_number() == 1,
                 Some(PhaseType::Obituary),
@@ -120,14 +120,14 @@ impl RoleStateImpl for Ojo {
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         let mut out = vec![];
-
+        //Auditor visits
         out.extend(common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,
             ControllerID::role(actor_ref, Role::Ojo, 0),
             false
         ));
-
+        //Kira/Doomsayer visits
         if game.day_number() > 1 {
             if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
                 ControllerID::role(actor_ref, Role::Ojo, 1)

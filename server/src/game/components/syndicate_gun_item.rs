@@ -16,6 +16,17 @@ pub struct SyndicateGunItem {
 }
 
 impl SyndicateGunItem {
+    pub fn on_visit_wardblocked(game: &mut Game, visit: Visit){
+        NightVisits::retain(game, |v|
+            v.tag != VisitTag::SyndicateGunItem || v.visitor != visit.visitor
+        );
+    }
+    pub fn on_player_roleblocked(game: &mut Game, player: PlayerReference){
+        NightVisits::retain(game, |v|
+            v.tag != VisitTag::SyndicateGunItem || v.visitor != player
+        );
+    }
+
     pub fn give_gun(game: &mut Game, player: PlayerReference) {
         Self::take_gun(game);
         game.syndicate_gun_item.player_with_gun = Some(player);
@@ -43,6 +54,7 @@ impl SyndicateGunItem {
                 game,
                 player_with_gun,
                 false,
+                false,
                 game.day_number() <= 1,
                 ControllerID::syndicate_gun_item_shoot()
             ).combine_overwrite_owned(
@@ -51,7 +63,6 @@ impl SyndicateGunItem {
                     ControllerID::syndicate_gun_item_give(),
                     AvailableAbilitySelection::new_player_list(
                         PlayerReference::all_players(game)
-                            .into_iter()
                             .filter(|target|
                                 player_with_gun != *target &&
                                 target.alive(game) &&
@@ -84,7 +95,7 @@ impl SyndicateGunItem {
             }
             for insider in InsiderGroupID::Mafia.players(game).iter()
                 .filter(|p|p.alive(game))
-                .cloned()
+                .copied()
                 .collect::<Vec<_>>()
             {
                 SyndicateGunItem::give_gun(game, insider);
@@ -140,7 +151,7 @@ impl SyndicateGunItem {
         else {return};
         let Some(target) = target.first() else {return};
 
-        if 
+        if
             actor_ref != *target &&
             target.alive(game) &&
             InsiderGroupID::Mafia.is_player_in_revealed_group(game, *target) 

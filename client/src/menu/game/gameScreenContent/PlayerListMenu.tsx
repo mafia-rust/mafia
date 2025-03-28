@@ -8,23 +8,16 @@ import { ContentMenu, ContentTab } from "../GameScreen";
 import StyledText from "../../../components/StyledText";
 import Icon from "../../../components/Icon";
 import { Button } from "../../../components/Button";
-import { useGameState, usePlayerState } from "../../../components/useHooks";
+import { useGameState, usePlayerNames, usePlayerState, useSpectator } from "../../../components/useHooks";
 import PlayerNamePlate from "../../../components/PlayerNamePlate";
 import ChatMessage, { translateChatMessage } from "../../../components/ChatMessage";
 import GraveComponent, { translateGraveRole } from "../../../components/grave";
 import { ChatMessageSection, ChatTextInput } from "./ChatMenu";
 
-function usePlayerVotedFor(): PlayerIndex | null {
-    return usePlayerState(
-        (playerState, gameState) => gameState.phaseState.type === "nomination" ? playerState.voted ?? null : null,
-        ["phase", "yourVoting"]
-    ) ?? null;
-}
-
 export default function PlayerListMenu(): ReactElement {
     const players = useGameState(
         gameState => gameState.players,
-        ["gamePlayers", "yourButtons", "playerAlive", "yourPlayerTags", "yourRoleLabels", "playerVotes"]
+        ["gamePlayers", "playerAlive", "yourPlayerTags", "yourRoleLabels", "playerVotes"]
     )!
 
     const graves = useGameState(
@@ -82,7 +75,7 @@ function PlayerCard(props: Readonly<{
     )!;
     const phaseState = useGameState(
         gameState => gameState.phaseState,
-        ["phase", "playerOnTrial"]
+        ["phase"]
     )!
     const numVoted = useGameState(
         gameState => gameState.players[props.playerIndex].numVoted,
@@ -92,6 +85,7 @@ function PlayerCard(props: Readonly<{
         playerState => playerState.sendChatGroups,
         ["yourSendChatGroups"]
     );
+    const playerNames = usePlayerNames();
 
     type NonAnonymousBlockMessage = {
         variant: {
@@ -145,6 +139,8 @@ function PlayerCard(props: Readonly<{
         false
     );
 
+    const spectator = useSpectator();
+
     return <><div 
         className={`player-card`}
         key={props.playerIndex}
@@ -155,7 +151,7 @@ function PlayerCard(props: Readonly<{
             <Button onClick={()=>setAlibiOpen(!alibiOpen)}>
                 <StyledText noLinks={true}>
                     {
-                        translateChatMessage(mostRecentBlockMessage.variant)
+                        translateChatMessage(mostRecentBlockMessage.variant, playerNames)
                             .split("\n")[1]
                             .trim()
                             .substring(0,30)
@@ -176,8 +172,7 @@ function PlayerCard(props: Readonly<{
             phaseState.type === "nomination" && playerAlive && 
             <StyledText>{translate("menu.playerList.player.votes", numVoted)}</StyledText>
         }
-        <VoteButton playerIndex={props.playerIndex} />
-        {GAME_MANAGER.getMySpectator() ||
+        {spectator ||
             <Button 
                 disabled={isPlayerSelf || whispersDisabled}
                 onClick={()=>{
@@ -195,7 +190,7 @@ function PlayerCard(props: Readonly<{
                 {whisperNotification===true && <div className="chat-notification highlighted">!</div>}
             </Button>
         }
-        {GAME_MANAGER.getMySpectator() || (() => {
+        {spectator || (() => {
             const filter = props.playerIndex;
             const isFilterSet = chatFilter?.type === "playerNameInMessage" && (chatFilter.player === filter);
             
@@ -232,32 +227,6 @@ function PlayerCard(props: Readonly<{
         />}
     </div>}
     </>
-}
-
-function VoteButton(props: Readonly<{
-    playerIndex: PlayerIndex
-}>): ReactElement | null {
-    const playerVotedFor = usePlayerVotedFor();
-
-    const canVote = usePlayerState(
-        (playerState, gameState) => gameState.players[props.playerIndex].buttons.vote,
-        ["yourButtons"],
-        false
-    )!;
-        
-
-    if (canVote) {
-        return <Button 
-            onClick={()=>GAME_MANAGER.sendVotePacket(props.playerIndex)}
-        >{translate("menu.playerList.button.vote")}</Button>
-    } else if (playerVotedFor === props.playerIndex) {
-        return <Button
-            highlighted={true}
-            onClick={() => GAME_MANAGER.sendVotePacket(null)}
-        >{translate("button.clear")}</Button>
-    } else {
-        return null
-    }
 }
 
 function findLast<T>(array: T[], predicate: (e: T, i: number, array: T[])=>boolean): T | undefined {

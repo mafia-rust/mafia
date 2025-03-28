@@ -1,11 +1,16 @@
-use std::{ops::DivAssign, time::Duration};
+use std::{ops::{Div, DivAssign}, time::Duration};
 
 use serde::{Serialize, Deserialize};
 
 use crate::{game::modifiers::{ModifierType, Modifiers}, packet::ToClientPacket};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant}, event::{before_phase_end::BeforePhaseEnd, on_any_death::OnAnyDeath, on_night_priority::OnNightPriority, on_phase_start::OnPhaseStart}, grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
+    chat::{ChatGroup, ChatMessageVariant},
+    event::{
+        before_phase_end::BeforePhaseEnd, on_any_death::OnAnyDeath,
+        on_night_priority::OnNightPriority, on_phase_start::OnPhaseStart
+    },
+    grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
 };
 
 
@@ -86,6 +91,7 @@ impl PhaseStateMachine {
     pub fn get_phase_time_length(game: &Game, phase: PhaseType) -> Duration {
         let mut time = game.settings.phase_times.get_time_for(phase);
         //if there are less than 3 players alive then the game is sped up by 2x
+        #[expect(clippy::arithmetic_side_effects, reason = "Dividing by two cannot panic")]
         if PlayerReference::all_players(game).filter(|p|p.alive(game)).count() <= 3{
             time /= 2;
         }
@@ -145,7 +151,9 @@ impl PhaseState {
                 for player_ref in PlayerReference::all_players(game) {
                     if player_ref.night_died(game) {
                         let new_grave = Grave::from_player_night(game, player_ref);
-                        events.push(player_ref.die_return_event(game, new_grave));
+                        if let Some(event) = player_ref.die_return_event(game, new_grave){
+                            events.push(event);
+                        }
                     }
                 }
 
@@ -173,7 +181,6 @@ impl PhaseState {
                             .collect()
                     }
                 );
-                game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() });
             },
             PhaseState::Briefing 
             | PhaseState::Night
@@ -207,9 +214,6 @@ impl PhaseState {
                 if Modifiers::modifier_is_enabled(game, ModifierType::ScheduledNominations){
                     
                     if let Some(player_on_trial) = game.count_nomination_and_start_trial(false){    
-
-                        game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
-    
                         Self::Testimony{
                             trials_left: trials_left.saturating_sub(1), 
                             player_on_trial, 
@@ -254,7 +258,7 @@ impl PhaseState {
                 });
 
                 let hang = if Modifiers::modifier_is_enabled(game, ModifierType::TwoThirdsMajority) {
-                    innocent <= 2 * guilty
+                    innocent <= guilty.div(2)
                 } else {
                     innocent < guilty
                 };

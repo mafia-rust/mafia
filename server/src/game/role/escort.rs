@@ -32,6 +32,7 @@ impl RoleStateImpl for Escort {
             game,
             actor_ref,
             false,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Escort, 0)
         )
@@ -44,4 +45,5 @@ impl RoleStateImpl for Escort {
             false
         )
     }
+    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }

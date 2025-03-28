@@ -77,6 +77,7 @@ impl RoleStateImpl for Doctor {
             game,
             actor_ref,
             self.self_heals_remaining > 0,
+            true,
             false,
             ControllerID::role(actor_ref, Role::Doctor, 0)
         )

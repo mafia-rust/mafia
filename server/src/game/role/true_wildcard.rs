@@ -22,7 +22,7 @@ impl RoleStateImpl for TrueWildcard {
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Night => {
-                if !actor_ref.alive(game) {return;}
+                if actor_ref.ability_deactivated_from_death(game) {return;}
                 self.become_role(game, actor_ref);
             },
             _ => {}
@@ -35,10 +35,10 @@ impl RoleStateImpl for TrueWildcard {
             AvailableAbilitySelection::new_role_option(
                 Role::values().into_iter().filter(|role|
                     game.settings.enabled_roles.contains(role) && *role != Role::TrueWildcard
-                ).map(|r|Some(r)).chain(std::iter::once(None)).collect()
+                ).map(Some).chain(std::iter::once(None)).collect()
             ),
             AbilitySelection::new_role_option(None),
-            !actor_ref.alive(game),
+            actor_ref.ability_deactivated_from_death(game),
             None,
             false,
             vec_set!(actor_ref)
@@ -57,9 +57,7 @@ impl TrueWildcard {
             role_can_generate(
                 role, 
                 &game.settings.enabled_roles, 
-                &PlayerReference::all_players(game)
-                    .map(|player_ref| player_ref.role(game))
-                    .collect::<Vec<Role>>()
+                &Vec::new(),    //True wildcard can be whatever they want
             )
         {
             actor_ref.set_role_and_win_condition_and_revealed_group(game, role.new_state(game));

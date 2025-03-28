@@ -4,7 +4,7 @@ import { ANCHOR_CONTROLLER, chatMessageToAudio } from "./../menu/Anchor";
 import GAME_MANAGER from "./../index";
 import GameScreen from "./../menu/game/GameScreen";
 import { ToClientPacket } from "./packet";
-import { PlayerIndex, Tag } from "./gameState.d";
+import { GameClient, PlayerIndex, Tag } from "./gameState.d";
 import { Role } from "./roleState.d";
 import translate from "./lang";
 import { computePlayerKeywordData, computePlayerKeywordDataForLobby } from "../components/StyledText";
@@ -23,7 +23,6 @@ import { defaultAlibi } from "../menu/game/gameScreenContent/WillMenu";
 import ListMap from "../ListMap";
 import { sortControllerIdCompare } from "./abilityInput";
 
-
 function sendDefaultName() {
     const defaultName = loadSettingsParsed().defaultName;
     if(defaultName !== null && defaultName !== undefined && defaultName !== ""){
@@ -32,9 +31,7 @@ function sendDefaultName() {
 } 
 
 export default function messageListener(packet: ToClientPacket){
-
     console.log(JSON.stringify(packet, null, 2));
-
 
     switch(packet.type) {
         case "pong":
@@ -131,6 +128,9 @@ export default function messageListener(packet: ToClientPacket){
                 case "zeroTimeGame":
                     ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectStart"), body: translate("notification.rejectStart.zeroTimeGame") });
                 break;
+                case "tooManyCLients":
+                    ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectStart"), body: translate("notification.rejectStart.tooManyClients") });
+                break;
                 default:
                     ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectStart"), body: "" });
                     console.error(`${packet.type} message response not implemented: ${packet.reason}`);
@@ -149,7 +149,19 @@ export default function messageListener(packet: ToClientPacket){
                 }
                 GAME_MANAGER.state.players = new ListMap(GAME_MANAGER.state.players.entries());
             }else if(GAME_MANAGER.state.stateType === "game"){
-                GAME_MANAGER.state.host = packet.hosts.includes(GAME_MANAGER.state.myId===null?-1:GAME_MANAGER.state.myId)
+                if (packet.hosts.includes(GAME_MANAGER.state.myId ?? -1)) {
+                    if (GAME_MANAGER.state.host === null) {
+                        GAME_MANAGER.state.host = {
+                            clients: new ListMap()
+                        }
+                    }
+
+                    for (const [id, client] of GAME_MANAGER.state.host.clients.entries()) {
+                        client.host = packet.hosts.includes(id);
+                    }
+                } else {
+                    GAME_MANAGER.state.host = null
+                }
             }
         break;
         case "playersReady":
@@ -193,14 +205,13 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "lobbyClients":
             if(GAME_MANAGER.state.stateType === "lobby"){
-
-                let oldMySpectator = GAME_MANAGER.getMySpectator();
+                const oldMySpectator = GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId!)?.clientType.type === "spectator";
 
                 GAME_MANAGER.state.players = new ListMap();
-                for(let [clientId, lobbyClient] of packet.clients){
+                for(const [clientId, lobbyClient] of packet.clients){
                     GAME_MANAGER.state.players.insert(clientId, lobbyClient);
                 }
-                let newMySpectator = GAME_MANAGER.getMySpectator();
+                const newMySpectator = GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId!)?.clientType.type === "spectator";
 
                 
                 if (oldMySpectator && !newMySpectator){
@@ -215,33 +226,43 @@ export default function messageListener(packet: ToClientPacket){
                 );
             }
         break;
+        case "hostData":
+            if (GAME_MANAGER.state.stateType === "game") {
+                GAME_MANAGER.state.host = {
+                    clients: new ListMap<number, GameClient>(packet.clients)
+                }
+            } 
+        break;
         case "lobbyName":
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
                 GAME_MANAGER.state.lobbyName = packet.name;
             }
         break;
-        case "startGame": {
-            const isSpectator = GAME_MANAGER.getMySpectator();
-            if(isSpectator){
-                GAME_MANAGER.setSpectatorGameState();
-                ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
-            }else{
-                GAME_MANAGER.setGameState();
-                ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
+        case "startGame": 
+            if (GAME_MANAGER.state.stateType === "lobby") {
+                const isSpectator = GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId!)?.clientType.type === "spectator";
+                if(isSpectator){
+                    GAME_MANAGER.setSpectatorGameState();
+                    ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
+                }else{
+                    GAME_MANAGER.setGameState();
+                    ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
+                }
+    
+                AudioController.queueFile("audio/start_game.mp3");
             }
-
-            AudioController.queueFile("audio/start_game.mp3");
-        }
-        break;
-        case "gameInitializationComplete": {
-            const isSpectator = GAME_MANAGER.getMySpectator();
-            if(isSpectator){
-                ANCHOR_CONTROLLER?.setContent(<SpectatorGameScreen/>);
-            }else{
-                ANCHOR_CONTROLLER?.setContent(<GameScreen/>);
+            break;
+        case "gameInitializationComplete":
+            if (GAME_MANAGER.state.stateType === "game") {
+                const isSpectator = GAME_MANAGER.state.clientState.type === "spectator";
+                GAME_MANAGER.state.initialized = true;
+                if(isSpectator){
+                    ANCHOR_CONTROLLER?.setContent(<SpectatorGameScreen/>);
+                }else{
+                    ANCHOR_CONTROLLER?.setContent(<GameScreen/>);
+                }
             }
-        }
-        break;
+            break;
         case "backToLobby":
             GAME_MANAGER.setLobbyState();
             ANCHOR_CONTROLLER?.setContent(<LobbyMenu/>);
@@ -319,14 +340,6 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game")
                 GAME_MANAGER.state.timeLeftMs = packet.secondsLeft * 1000;
         break;
-        case "playerOnTrial":
-            if(GAME_MANAGER.state.stateType === "game" && (
-                GAME_MANAGER.state.phaseState.type === "testimony" || 
-                GAME_MANAGER.state.phaseState.type === "judgement" || 
-                GAME_MANAGER.state.phaseState.type === "finalWords"
-            ))
-                GAME_MANAGER.state.phaseState.playerOnTrial = packet.playerIndex;
-        break;
         case "playerAlive":
             if(GAME_MANAGER.state.stateType === "game"){
                 for(let i = 0; i < GAME_MANAGER.state.players.length && i < packet.alive.length; i++){
@@ -365,14 +378,6 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 GAME_MANAGER.state.clientState.savedControllers = 
                     packet.save.sort((a, b) => sortControllerIdCompare(a[0],b[0]));
-            }
-        break;
-        case "yourButtons":
-            if(GAME_MANAGER.state.stateType === "game"){
-                for(let i = 0; i < GAME_MANAGER.state.players.length && i < packet.buttons.length; i++){
-                    GAME_MANAGER.state.players[i].buttons = packet.buttons[i];
-                    GAME_MANAGER.state.players = [...GAME_MANAGER.state.players];
-                }
             }
         break;
         case "yourRoleLabels":
@@ -419,19 +424,20 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 GAME_MANAGER.state.clientState.notes = packet.notes;
                 
-                if(GAME_MANAGER.state.clientState.notes.length === 0){
-                    const myIndex = GAME_MANAGER.state.clientState.myIndex;
-                    const myRoleKey = `role.${GAME_MANAGER.state.clientState.roleState.type}.name`;
+                // old default notes
+                // if(GAME_MANAGER.state.clientState.notes.length === 0){
+                //     const myIndex = GAME_MANAGER.state.clientState.myIndex;
+                //     const myRoleKey = `role.${GAME_MANAGER.state.clientState.roleState.type}.name`;
 
-                    GAME_MANAGER.sendSaveNotesPacket([
-                        "Claims\n" + 
-                        GAME_MANAGER.state.players
-                            .map(player => 
-                                `@${player.index + 1} - ${player.index === myIndex ? translate(myRoleKey) : ''}\n`
-                            )
-                            .join('')
-                    ]);
-                }
+                //     GAME_MANAGER.sendSaveNotesPacket([
+                //         "Claims\n" + 
+                //         GAME_MANAGER.state.players
+                //             .map(player => 
+                //                 `@${player.index + 1} - ${player.index === myIndex ? translate(myRoleKey) : ''}\n`
+                //             )
+                //             .join('')
+                //     ]);
+                // }
             }
         break;
         case "yourCrossedOutOutlines":
@@ -446,14 +452,6 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 GAME_MANAGER.state.clientState.roleState = packet.roleState;
             }
-        break;
-        case "yourSelection":
-            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
-                GAME_MANAGER.state.clientState.targets = packet.playerIndices;
-        break;
-        case "yourVoting":
-            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
-                GAME_MANAGER.state.clientState.voted = packet.playerIndex;
         break;
         case "yourJudgement":
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player")
@@ -482,10 +480,12 @@ export default function messageListener(packet: ToClientPacket){
                     }
                 }
 
-                for(let chatMessage of packet.chatMessages){
-                    let audioSrc = chatMessageToAudio(chatMessage);
-                    if(audioSrc)
-                        AudioController.queueFile(audioSrc);
+                if (GAME_MANAGER.state.stateType !== "game" || GAME_MANAGER.state.initialized === true) {
+                    for(let chatMessage of packet.chatMessages){
+                        let audioSrc = chatMessageToAudio(chatMessage);
+                        if(audioSrc)
+                            AudioController.queueFile(audioSrc);
+                    }
                 }
             }
         break;

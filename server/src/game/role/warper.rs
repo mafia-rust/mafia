@@ -52,7 +52,7 @@ impl RoleStateImpl for Warper {
                 .filter(|p|p.alive(game))
                 .filter(|p|p.keeps_game_running(game))
                 .all(|p|
-                    WinCondition::are_friends(&p.win_condition(game), actor_ref.win_condition(game))
+                    WinCondition::are_friends(p.win_condition(game), actor_ref.win_condition(game))
                 )
 
         {
@@ -75,7 +75,7 @@ impl RoleStateImpl for Warper {
                 true
             ),
             AbilitySelection::new_two_player_option(None),
-            !actor_ref.alive(game) || Detained::is_detained(game, actor_ref),
+            actor_ref.ability_deactivated_from_death(game) || Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),
             false, 
             vec_set!(actor_ref)
@@ -89,4 +89,5 @@ impl RoleStateImpl for Warper {
             false
         )
     }
+    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }

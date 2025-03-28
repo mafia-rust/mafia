@@ -34,7 +34,7 @@ impl ListenerClient{
         self.last_ping.elapsed() > Self::PONG_INTERVAL.mul(2)
     }
     fn tick(&mut self) {
-        if self.last_ping + Self::PONG_INTERVAL < tokio::time::Instant::now() {
+        if Self::PONG_INTERVAL < tokio::time::Instant::now().saturating_duration_since(self.last_ping) {
             self.connection.send(ToClientPacket::Pong);
         }
     }
@@ -54,7 +54,6 @@ pub struct Listener {
     clients: HashMap<SocketAddr, ListenerClient>,
 }
 impl Listener{
-    #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
         Self {
             lobbies: HashMap::new(),
@@ -77,7 +76,7 @@ impl Listener{
                     return;
                 }
 
-                tokio::time::sleep(DESIRED_FRAME_TIME.saturating_sub(tokio::time::Instant::now() - frame_start_time)).await;
+                tokio::time::sleep(DESIRED_FRAME_TIME.saturating_sub(tokio::time::Instant::now().saturating_duration_since(frame_start_time))).await;
             }
         });
     }
@@ -115,11 +114,10 @@ impl Listener{
     }
 
     fn create_lobby(&mut self) -> Option<RoomCode>{
-        let Some(room_code) = ((random::<u16>() as usize)..usize::MAX).find(
+    	let start = random::<u16>() as usize;
+        let room_code = (start..=usize::MAX).chain(0..start).find(
             |code| !self.lobbies.contains_key(code)
-        ) else {
-            return None;
-        };
+        )?;
 
         let lobby = Lobby::new(room_code);
         self.lobbies.insert(room_code, lobby);
@@ -158,11 +156,16 @@ impl Listener{
             return;
         };
 
-        if let Ok(lobby_client_id) = lobby.join_player(&connection.get_sender()) {
-            *sender_player_location = ListenerClientLocation::InLobby { room_code, lobby_client_id };
-        }
+        match lobby.join_player(&connection.get_sender()) {
+            Ok(lobby_client_id) => {
+                *sender_player_location = ListenerClientLocation::InLobby { room_code, lobby_client_id };
         
-        connection.send(ToClientPacket::LobbyName { name: lobby.name.clone() })
+                connection.send(ToClientPacket::LobbyName { name: lobby.name.clone() })
+            }
+            Err(reason) => {
+                connection.get_sender().send(ToClientPacket::RejectJoin { reason });
+            }
+        }
     }
     fn set_player_in_lobby_reconnect(&mut self, connection: &Connection, room_code: RoomCode, lobby_client_id: LobbyClientID){
 
@@ -347,8 +350,7 @@ impl Listener{
                     if let Some(lobby) = self.lobbies.get_mut(room_code){
                         lobby.on_client_message(&connection.get_sender(), *lobby_client_id, incoming_packet);
                     } else {
-                        //Player is in a lobby that doesn't exist
-                        panic!("Recieved a message from a player in a lobby that doesnt exist")
+                        log!(error "listener.rs"; "Received a message from a player in a lobby that doesnt exist");
                     }
                 }
             }

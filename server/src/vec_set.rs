@@ -60,10 +60,10 @@ impl <K> VecSet<K> where K: Eq {
     }
 
     pub fn subtract(&self, other: &Self) -> Self where K: Clone {
-        self.vec.keys().cloned().filter(|k| !other.contains(k)).collect()
+        self.vec.keys().filter(|&k| !other.contains(k)).cloned().collect()
     }
     pub fn intersection(&self, other: &Self) -> Self where K: Clone {
-        self.vec.keys().cloned().filter(|k| other.contains(k)).collect()
+        self.vec.keys().filter(|&k| other.contains(k)).cloned().collect()
     }
     pub fn union(&self, other: &Self) -> Self where K: Clone {
         self.vec.keys().cloned().chain(other.vec.keys().cloned()).collect()
@@ -107,13 +107,24 @@ impl<'de, K> Deserialize<'de> for VecSet<K> where K: Eq, K: Deserialize<'de> {
     }
 }
 
+impl<T: Eq> PartialOrd for VecSet<T> {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl<T: Eq> Ord for VecSet<T> {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.len().cmp(&other.len())
+    }
+}
 
 pub use macros::vec_set;
 mod macros {
     #[macro_export]
     macro_rules! vec_set {
         ($($key:expr),*) => {{
-            let mut map = crate::vec_set::VecSet::new();
+            let mut map = $crate::vec_set::VecSet::new();
             $(map.insert($key);)*
             map
         }};

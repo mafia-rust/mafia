@@ -14,14 +14,14 @@ use crate::vec_set;
 
 use super::{AbilitySelection, ControllerID, ControllerParametersMap, Priority, Role, RoleState, RoleStateImpl};
 
-#[derive(PartialEq, Clone, Debug, Serialize)]
+#[derive(PartialEq, Eq, Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Martyr {
     pub state: MartyrState
 }
 
 
-#[derive(PartialEq, Clone, Debug, Serialize)]
+#[derive(PartialEq, Eq, Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum MartyrState {
@@ -84,7 +84,7 @@ impl RoleStateImpl for Martyr {
                 MartyrState::StillPlaying { bullets } => bullets == 0,
                 _ => true
             } ||
-            !actor_ref.alive(game) || 
+            actor_ref.ability_deactivated_from_death(game) || 
             Detained::is_detained(game, actor_ref) ||
             game.day_number() <= 1,
             Some(PhaseType::Obituary),

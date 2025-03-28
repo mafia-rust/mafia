@@ -46,7 +46,7 @@ impl RoleStateImpl for Steward {
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
 
         if actor_ref.night_blocked(game) {return}
-        if !actor_ref.alive(game) {return}
+        if actor_ref.ability_deactivated_from_death(game) {return}
 
         match priority {
             Priority::Heal => {
@@ -103,7 +103,7 @@ impl RoleStateImpl for Steward {
             .into_iter()
             .filter(|role| self.self_heals_remaining>0 || role != &Role::Steward)
             .filter(|role| self.previous_input.0 != Some(*role) && self.previous_input.1 != Some(*role))
-            .map(|role|Some(role))
+            .map(Some)
             .chain(std::iter::once(None))
             .collect();
             
@@ -113,7 +113,7 @@ impl RoleStateImpl for Steward {
             ControllerID::role(actor_ref, Role::Steward, 0),
             AvailableAbilitySelection::new_two_role_option(valid_roles, false),
             AbilitySelection::new_two_role_option(None, None),
-            !actor_ref.alive(game) || Detained::is_detained(game, actor_ref),
+            actor_ref.ability_deactivated_from_death(game) || Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),
             false,
             vec_set!(actor_ref)

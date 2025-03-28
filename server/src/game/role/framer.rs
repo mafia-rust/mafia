@@ -76,7 +76,6 @@ impl RoleStateImpl for Framer {
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         
         let frame_players = PlayerReference::all_players(game)
-            .into_iter()
             .filter(|p| 
                 p.alive(game) && 
                 *p != actor_ref && 
@@ -85,7 +84,7 @@ impl RoleStateImpl for Framer {
             .collect::<VecSet<_>>();
         
         let grayed_out = 
-            !actor_ref.alive(game) || 
+            actor_ref.ability_deactivated_from_death(game) || 
             Detained::is_detained(game, actor_ref);
         
         
@@ -108,14 +107,14 @@ impl RoleStateImpl for Framer {
         let framed_player_exists = if let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(
             ControllerID::role(actor_ref, Role::Framer, 0)
         ){
-            target.len() > 0
+            !target.is_empty()
         }else{
             false
         };
 
 
         let grayed_out = 
-            !actor_ref.alive(game) || 
+            actor_ref.ability_deactivated_from_death(game) || 
             Detained::is_detained(game, actor_ref) ||
             !framed_player_exists;
         
@@ -123,7 +122,7 @@ impl RoleStateImpl for Framer {
             game,
             ControllerID::role(actor_ref, Role::Framer, 1),
             super::AvailableAbilitySelection::new_player_list(
-                PlayerReference::all_players(game).into_iter().collect(),
+                PlayerReference::all_players(game).collect(),
                 false,
                 Some(1)
             ),

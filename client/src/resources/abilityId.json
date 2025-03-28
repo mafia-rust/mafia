@@ -56,6 +56,9 @@
     "role/transporter/0": {
         "midnight": true
     },
+    "role/coxswain/0": {
+        "midnight": false
+    },
     "role/retributionist/0": {
         "midnight": true
     },

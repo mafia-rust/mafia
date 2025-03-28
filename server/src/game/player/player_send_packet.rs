@@ -3,9 +3,8 @@ use std::time::Duration;
 use crate::{
     client_connection::ClientConnection, 
     game::{
-        available_buttons::AvailableButtons,
         chat::ChatMessageVariant, components::insider_group::InsiderGroupID,
-        phase::PhaseState, Game, GameOverReason
+        Game, GameOverReason
     },
     lobby::GAME_DISCONNECT_TIMER_SECS,
     packet::ToClientPacket, websocket_connections::connection::ClientSender
@@ -26,7 +25,7 @@ impl PlayerReference{
         if self.alive(game) {
             game.add_message_to_chat_group(
                 crate::game::chat::ChatGroup::All, 
-                ChatMessageVariant::PlayerQuit{player_index: self.index()}
+                ChatMessageVariant::PlayerQuit{player_index: self.index(), game_over: game.game_is_over()}
             );
         }
     }
@@ -54,7 +53,6 @@ impl PlayerReference{
     }
     pub fn send_repeating_data(&self, game: &mut Game){
         self.send_chat_messages(game);
-        self.send_available_buttons(game);
     }
     pub fn send_join_game_data(&self, game: &mut Game){
         // General
@@ -76,13 +74,6 @@ impl PlayerReference{
             self.send_packet(game, ToClientPacket::GameOver { reason: GameOverReason::Draw })
         }
 
-        if let PhaseState::Testimony { player_on_trial, .. }
-            | PhaseState::Judgement { player_on_trial, .. }
-            | PhaseState::FinalWords { player_on_trial } = game.current_phase() {
-            self.send_packet(game, ToClientPacket::PlayerOnTrial{
-                player_index: player_on_trial.index()
-            });
-        }
         let votes_packet = ToClientPacket::new_player_votes(game);
         self.send_packet(game, votes_packet);
         for grave in game.graves.iter(){
@@ -92,7 +83,6 @@ impl PlayerReference{
         // Player specific
         self.requeue_chat_messages(game);
         self.send_chat_messages(game);
-        self.send_available_buttons(game);
         InsiderGroupID::send_player_insider_groups(game, *self);
         InsiderGroupID::send_fellow_insiders(game, *self);
 
@@ -118,9 +108,6 @@ impl PlayerReference{
             ToClientPacket::YourAllowedControllers { 
                 save: game.saved_controllers.controllers_allowed_to_player(*self).all_controllers().clone(),
             },
-            ToClientPacket::YourVoting{ 
-                player_index: PlayerReference::ref_option_to_index(&self.chosen_vote(game))
-            },
             ToClientPacket::YourWill{
                 will: self.will(game).clone()
             },
@@ -129,9 +116,6 @@ impl PlayerReference{
             },
             ToClientPacket::YourCrossedOutOutlines{
                 crossed_out_outlines: self.crossed_out_outlines(game).clone()
-            },
-            ToClientPacket::YourButtons{
-                buttons: AvailableButtons::from_player(game, *self)
             },
             ToClientPacket::Phase { 
                 phase: game.current_phase().clone(),
@@ -158,7 +142,7 @@ impl PlayerReference{
             if let Some(msg) = msg_option{
                 chat_messages_out.push(msg.clone());
                 self.deref_mut(game).queued_chat_messages.remove(0);
-            }else{ break; }
+            } else {break}
         }
         
         self.send_packet(game, ToClientPacket::AddChatMessages { chat_messages: chat_messages_out });
@@ -166,20 +150,9 @@ impl PlayerReference{
 
         self.send_chat_messages(game);
     }
-    #[allow(unused)]
+    #[expect(clippy::assigning_clones, reason = "Reference rules prevents this")]
     fn requeue_chat_messages(&self, game: &mut Game){
         self.deref_mut(game).queued_chat_messages = self.deref(game).chat_messages.clone();
-    }   
-
-    fn send_available_buttons(&self, game: &mut Game){
-        let new_buttons = AvailableButtons::from_player(game, *self);
-        if new_buttons == self.deref(game).last_sent_buttons{
-            return;
-        }
-        
-        self.send_packet(game, ToClientPacket::YourButtons { buttons: new_buttons.clone() });
-        self.deref_mut(game).last_sent_buttons = new_buttons
     }
-
 }
 

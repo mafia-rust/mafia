@@ -1,7 +1,5 @@
-use std::{collections::HashSet, vec};
-
-use rand::seq::SliceRandom;
-use serde::{Serialize, Deserialize};
+use rand::seq::IndexedRandom;
+use serde::{Deserialize, Serialize};
 use vec1::{
     vec1,
     Vec1
@@ -9,21 +7,24 @@ use vec1::{
 
 use crate::vec_set::VecSet;
 
-use super::role::Role;
+use super::{components::insider_group::InsiderGroupID, game_conclusion::GameConclusion, role::Role};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RoleList(pub Vec<RoleOutline>);
 impl RoleList {
-    pub fn create_random_roles(&self, enabled_roles: &VecSet<Role>) -> Option<Vec<Role>> {
-        let mut taken_roles = Vec::new();
+    /// Output is the same order as the rolelist
+    pub fn create_random_role_assignments(&self, enabled_roles: &VecSet<Role>) -> Option<Vec<RoleAssignment>> {
+        let mut generated_data = Vec::<RoleAssignment>::new();
         for entry in self.0.iter(){
-            if let Some(role) = entry.get_random_role(enabled_roles, &taken_roles){
-                taken_roles.push(role);
+            if let Some(player_initialization_data) = entry.get_random_role_assignments(
+                enabled_roles, &generated_data.iter().map(|datum| datum.role).collect::<Vec<Role>>()
+            ){
+                generated_data.push(player_initialization_data);
             }else{
                 return None;
             }
         }
-        Some(taken_roles)
+        Some(generated_data)
     }
     pub fn simplify(&mut self){
         for entry in self.0.iter_mut(){
@@ -31,91 +32,215 @@ impl RoleList {
         }
     }
     pub fn sort(&mut self){
-        self.0.sort_by_key(|r| r.get_roles().len());
+        self.0.sort_by_key(|r| r.get_role_assignments().len());
     }
+}
+
+#[derive(Clone, PartialEq, Eq)]
+pub struct RoleAssignment {
+    pub role: Role,
+    pub insider_groups: RoleOutlineOptionInsiderGroups,
+    pub win_condition: RoleOutlineOptionWinCondition
 }
 
 
 
-#[derive(Default, Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize, PartialOrd, Ord)]
-#[serde(tag = "type", rename_all = "camelCase")]
-pub enum RoleOutline{
-    #[default]
-    Any,
-    RoleOutlineOptions{
-        options: Vec1<RoleOutlineOption>
-    },
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct RoleOutline {
+    pub options: Vec1<RoleOutlineOption>
+}
+impl Serialize for RoleOutline {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer {
+        self.options.serialize(serializer)
+    }
+}
+impl<'de> Deserialize<'de> for RoleOutline {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de> {
+        Ok(Self {
+            options: Vec1::<RoleOutlineOption>::deserialize(deserializer)?
+        })
+    }
+}
+
+impl Default for RoleOutline {
+    fn default() -> Self {
+        Self {options: vec1![RoleOutlineOption{
+            win_condition: Default::default(),
+            insider_groups: Default::default(),
+            roles: RoleOutlineOptionRoles::RoleSet { role_set: RoleSet::Any }
+        }]}
+    }
 }
 impl RoleOutline{
     pub fn new_exact(role: Role)->RoleOutline{
-        RoleOutline::RoleOutlineOptions{options: vec1![RoleOutlineOption::Role{role}]}
+        RoleOutline{options: vec1![RoleOutlineOption{
+            win_condition: Default::default(),
+            insider_groups: Default::default(),
+            roles: RoleOutlineOptionRoles::Role{role}
+        }]}
     }
-    pub fn get_roles(&self) -> Vec<Role> {
-        match self {
-            RoleOutline::RoleOutlineOptions{options} => 
-                options.iter().flat_map(|r| r.get_roles()).collect(),
-            RoleOutline::Any => 
-                Role::values(),
-        }
+    pub fn get_role_assignments(&self) -> Vec<RoleAssignment> {
+        self.options.iter()
+            .flat_map(|r| 
+                r.roles.get_roles().into_iter()
+                    .map(|role| RoleAssignment{
+                        role,
+                        insider_groups: r.insider_groups.clone(),
+                        win_condition: r.win_condition.clone()
+                    })
+            ).collect()
     }
-    pub fn get_random_role(&self, enabled_roles: &VecSet<Role>, taken_roles: &[Role]) -> Option<Role> {
-        let options = self.get_roles().into_iter().filter(|r|role_can_generate(*r, enabled_roles, taken_roles)).collect::<Vec<_>>();
-        options.choose(&mut rand::thread_rng()).cloned()
+    pub fn get_random_role_assignments(&self, enabled_roles: &VecSet<Role>, taken_roles: &[Role]) -> Option<RoleAssignment> {
+        let options = self.get_role_assignments()
+            .into_iter()
+            .filter(|r|role_can_generate(r.role, enabled_roles, taken_roles))
+            .collect::<Vec<_>>();
+        options.choose(&mut rand::rng()).cloned()
     }
     pub fn simplify(&mut self){
-        if let RoleOutline::RoleOutlineOptions{options} = self {
-            let mut new_options = options.to_vec();
+        let mut new_options = self.options.to_vec();
 
-            new_options = new_options.into_iter().collect::<HashSet<_>>().into_iter().collect();
+        new_options = new_options.into_iter().collect::<VecSet<_>>().into_iter().collect();
 
-            for option_a in options.iter(){
-                for option_b in options.iter(){
-                    if option_a.is_subset(option_b) && option_a != option_b{
-                        new_options.retain(|r| r != option_a);
-                    }
+        for option_a in self.options.iter(){
+            for option_b in self.options.iter(){
+                if option_a.roles.is_subset(&option_b.roles) && option_a != option_b {
+                    new_options.retain(|r| r != option_a);
                 }
             }
-
-            let mut new_options = Vec1::try_from_vec(new_options)
-                .expect("It is impossible to have two sets that are not equal but are subsets of each other, role_list.rs: RoleOutline::simplify");
-
-            new_options.sort();
-
-            *self = RoleOutline::RoleOutlineOptions{options: new_options};
         }
+
+        let mut new_options = Vec1::try_from_vec(new_options)
+            .expect("It is impossible to have two sets that are not equal but are subsets of each other, role_list.rs: RoleOutline::simplify");
+
+        new_options.sort();
+
+        *self = RoleOutline{options: new_options};
     }
 }
 
 
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, PartialOrd, Ord)]
+#[serde(untagged, rename_all = "camelCase")]
+pub enum RoleOutlineOptionWinCondition {
+    #[default] RoleDefault,
+    #[serde(rename_all = "camelCase")]
+    GameConclusionReached { win_if_any: VecSet<GameConclusion> },
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, PartialOrd, Ord)]
+#[serde(untagged, rename_all = "camelCase")]
+pub enum RoleOutlineOptionInsiderGroups {
+    #[default] RoleDefault,
+    #[serde(rename_all = "camelCase")]
+    Custom { insider_groups: VecSet<InsiderGroupID> },
+}
+
+impl RoleOutlineOptionWinCondition {
+    pub fn is_default(&self) -> bool {
+        matches!(self, Self::RoleDefault)
+    }
+}
+
+impl RoleOutlineOptionInsiderGroups {
+    pub fn is_default(&self) -> bool {
+        matches!(self, Self::RoleDefault)
+    }
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, PartialOrd, Ord)]
+#[serde(rename_all = "camelCase")]
+pub struct RoleOutlineOption {
+    #[serde(flatten)]
+    pub roles: RoleOutlineOptionRoles,
+    #[serde(flatten, skip_serializing_if = "RoleOutlineOptionWinCondition::is_default")]
+    pub win_condition: RoleOutlineOptionWinCondition,
+    #[serde(flatten, skip_serializing_if = "RoleOutlineOptionInsiderGroups::is_default")]
+    pub insider_groups: RoleOutlineOptionInsiderGroups,
+}
+
+/// Watch this!
+impl<'de> Deserialize<'de> for RoleOutlineOption {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de> {
+
+        let mut option = RoleOutlineOption::default();
+        
+        let json = serde_json::Value::deserialize(deserializer)?;
+
+        if let serde_json::Value::Object(map) = json {
+            if let Some(value) = map.get("winIfAny") {
+                if let Ok(string_win_condition) = serde_json::to_string(value) {
+                    if let Ok(win_if_any) = serde_json::from_str(string_win_condition.as_str()) {
+                        option.win_condition = RoleOutlineOptionWinCondition::GameConclusionReached { win_if_any}
+                    }
+                }
+            }
+            if let Some(value) = map.get("insiderGroups") {
+                if let Ok(string_insider_groups) = serde_json::to_string(value) {
+                    if let Ok(insider_groups) = serde_json::from_str(string_insider_groups.as_str()) {
+                        option.insider_groups = RoleOutlineOptionInsiderGroups::Custom { insider_groups }
+                    }
+                }
+            }
+            if let Some(value) = map.get("roleSet") {
+                if let Ok(string_role_set) = serde_json::to_string(value) {
+                    if let Ok(role_set) = serde_json::from_str(string_role_set.as_str()) {
+                        option.roles = RoleOutlineOptionRoles::RoleSet { role_set }
+                    }
+                }
+            } else if let Some(value) = map.get("role") {
+                if let Ok(string_role) = serde_json::to_string(value) {
+                    if let Ok(role) = serde_json::from_str(string_role.as_str()) {
+                        option.roles = RoleOutlineOptionRoles::Role { role }
+                    }
+                }
+            }
+        }
+
+        Ok(option)
+    }
+}
+
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(tag = "type", rename_all = "camelCase")]
-pub enum RoleOutlineOption {
+#[serde(untagged, rename_all = "camelCase")]
+pub enum RoleOutlineOptionRoles {
     #[serde(rename_all = "camelCase")]
     RoleSet{role_set: RoleSet},
     #[serde(rename_all = "camelCase")]
     Role{role: Role},
 }
-impl RoleOutlineOption{
+impl Default for RoleOutlineOptionRoles {
+    fn default() -> Self {
+        Self::RoleSet { role_set: RoleSet::Any }
+    }
+}
+impl RoleOutlineOptionRoles{
     pub fn get_roles(&self) -> Vec<Role> {
         match self {
-            RoleOutlineOption::RoleSet { role_set } => {
+            RoleOutlineOptionRoles::RoleSet { role_set } => {
                 role_set.get_roles()
             }
-            RoleOutlineOption::Role { role } => 
+            RoleOutlineOptionRoles::Role { role } => 
                 vec![*role]
         }
     }
-    pub fn is_subset(&self, other: &RoleOutlineOption) -> bool {
+    pub fn is_subset(&self, other: &RoleOutlineOptionRoles) -> bool {
         self.get_roles().iter().all(|r|other.get_roles().contains(r))
     }
 }
-impl PartialOrd for RoleOutlineOption {
+impl PartialOrd for RoleOutlineOptionRoles {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))
     }
 }
-impl Ord for RoleOutlineOption {
+impl Ord for RoleOutlineOptionRoles {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         other.get_roles().len().cmp(&self.get_roles().len())
     }
@@ -125,6 +250,8 @@ impl Ord for RoleOutlineOption {
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum RoleSet {
+    Any,
+
     Town,
     TownCommon,
     TownInvestigative,
@@ -145,20 +272,21 @@ pub enum RoleSet {
 impl RoleSet{
     pub fn get_roles(&self) -> Vec<Role> {
         match self {
+            RoleSet::Any => Role::values(),
             RoleSet::Town => 
                 vec![
                     Role::Jailor, Role::Villager, Role::Drunk
                 ].into_iter().chain(
-                    RoleSet::TownCommon.get_roles().into_iter()
+                    RoleSet::TownCommon.get_roles()
                 ).collect(),
             RoleSet::TownCommon => {
                 RoleSet::TownInvestigative.get_roles().into_iter()
                 .chain(
-                    RoleSet::TownProtective.get_roles().into_iter()
+                    RoleSet::TownProtective.get_roles()
                 ).chain(
-                    RoleSet::TownKilling.get_roles().into_iter()
+                    RoleSet::TownKilling.get_roles()
                 ).chain(
-                    RoleSet::TownSupport.get_roles().into_iter()
+                    RoleSet::TownSupport.get_roles()
                 ).collect()
             },
             RoleSet::TownInvestigative => 
@@ -179,14 +307,18 @@ impl RoleSet{
                     Role::Vigilante, Role::Veteran, Role::Deputy, Role::Marksman, Role::Rabblerouser
                 ],
             RoleSet::TownSupport => 
-                vec![Role::Medium, Role::Retributionist, Role::Transporter, Role::Escort, Role::Mayor, Role::Reporter],
+                vec![
+                    Role::Medium, Role::Coxswain,
+                    Role::Retributionist, Role::Transporter, Role::Escort, 
+                    Role::Mayor, Role::Reporter
+                ],
             RoleSet::Mafia =>
                 vec![
                     Role::Goon, Role::MafiaSupportWildcard, Role::MafiaKillingWildcard
                 ].into_iter().chain(
-                    RoleSet::MafiaKilling.get_roles().into_iter()
+                    RoleSet::MafiaKilling.get_roles()
                 ).chain(
-                    RoleSet::MafiaSupport.get_roles().into_iter()
+                    RoleSet::MafiaSupport.get_roles()
                 ).collect(),
             RoleSet::MafiaKilling => 
                 vec![

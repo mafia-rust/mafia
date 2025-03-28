@@ -13,7 +13,7 @@ use crate::game::Game;
 use crate::vec_set;
 use super::godfather::Godfather;
 use super::{
-    AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, GetClientRoleState, IntegerSelection, Priority, Role, RoleOptionSelection, RoleStateImpl, StringSelection
+    AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, GetClientRoleState, IntegerSelection, Priority, Role, RoleStateImpl, StringSelection
 };
 
 
@@ -62,13 +62,9 @@ impl RoleStateImpl for Counterfeiter {
 
                 let target_ref = visit.target;
 
-                let fake_role = if let Some(RoleOptionSelection(fake_role)) = game.saved_controllers
-                    .get_controller_current_selection_role_option(ControllerID::role(actor_ref, Role::Counterfeiter, 1)) {
-                    fake_role
-                } else {
-                    None
-                };
-
+                let fake_role = game.saved_controllers
+                    .get_controller_current_selection_role_option(ControllerID::role(actor_ref, Role::Counterfeiter, 1))
+                    .and_then(|p| p.0);
                 target_ref.set_night_grave_role(game, fake_role);
 
                 let fake_alibi = if let Some(StringSelection(string)) = game.saved_controllers
@@ -81,8 +77,7 @@ impl RoleStateImpl for Counterfeiter {
 
                 actor_ref.set_role_state(game, Counterfeiter { 
                     forges_remaining: self.forges_remaining.saturating_sub(1), 
-                    forged_ref: Some(target_ref), 
-                    ..self
+                    forged_ref: Some(target_ref)
                 });
             },
             Priority::Kill => {
@@ -122,6 +117,7 @@ impl RoleStateImpl for Counterfeiter {
             game,
             actor_ref,
             false,
+            false,
             game.day_number() <= 1,
             ControllerID::role(actor_ref, Role::Counterfeiter, 0)
         ).combine_overwrite_owned(
@@ -131,12 +127,12 @@ impl RoleStateImpl for Counterfeiter {
                 ControllerID::role(actor_ref, Role::Counterfeiter, 1),
                 AvailableAbilitySelection::new_role_option(
                     Role::values().into_iter()
-                        .map(|role| Some(role))
+                        .map(Some)
                         .collect()
                 ),
                 AbilitySelection::new_role_option(Some(Role::Counterfeiter)),
                 self.forges_remaining == 0 ||
-                !actor_ref.alive(game),
+                actor_ref.ability_deactivated_from_death(game),
                 None,
                 false,
                 vec_set![actor_ref]
@@ -149,7 +145,7 @@ impl RoleStateImpl for Counterfeiter {
                 AvailableAbilitySelection::new_string(),
                 AbilitySelection::new_string(String::new()),
                 self.forges_remaining == 0 ||
-                !actor_ref.alive(game),
+                actor_ref.ability_deactivated_from_death(game),
                 None,
                 false,
                 vec_set![actor_ref]

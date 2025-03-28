@@ -1,5 +1,5 @@
 
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
@@ -41,7 +41,7 @@ impl RoleStateImpl for Jester {
 
         let target_ref = if let Some(PlayerListSelection(selection)) = game.saved_controllers
             .get_controller_current_selection_player_list(ControllerID::role(actor_ref, Role::Jester, 0)){
-            selection.first().cloned()
+            selection.first().copied()
         }else{
             None
         };
@@ -58,7 +58,7 @@ impl RoleStateImpl for Jester {
                 .collect();
 
             let Some(target_ref) = all_killable_players
-                .choose(&mut rand::thread_rng()) else {return};
+                .choose(&mut rand::rng()) else {return};
             
             *target_ref
         };
@@ -80,7 +80,6 @@ impl RoleStateImpl for Jester {
             ControllerID::role(actor_ref, Role::Jester, 0),
             super::AvailableAbilitySelection::new_player_list(
                 PlayerReference::all_players(game)
-                    .into_iter()
                     .filter(|p| *p != actor_ref)
                     .filter(|player| 
                         player.alive(game) &&

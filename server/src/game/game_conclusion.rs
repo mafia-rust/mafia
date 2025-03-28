@@ -1,8 +1,8 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use super::{player::PlayerReference, role::Role, role_list::RoleSet, win_condition::WinCondition, Game};
 
-#[derive(Clone, Debug, Serialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum GameConclusion {
     Town,
@@ -69,24 +69,26 @@ impl GameConclusion {
                 )
         )
     }
+
+    pub fn get_premature_conclusion(game: &Game) -> GameConclusion {
+        GameConclusion::game_is_over(game).unwrap_or(GameConclusion::Draw)
+    }
     
 
     ///Town, Mafia, Cult, NK
-    /// Is either town, or has the ability to consistently kill till the end of the game
+    /// Has the ability to consistently kill till the end of the game
     /// *has the ability to change what the set of living players win conditions are until game over (convert, marionette, kill)*
-    /// A detective and a witch game never ends
+    /// A detective and a witch game never ends so this needs to make sure they dont keep the game running
+    /// For simplicity, i will just say only fiends, MK, apostle and zealot keep the game running
     pub fn keeps_game_running(role: Role)->bool{
-
-        match role {
-            Role::Drunk => true,
-            Role::Politician => true,
-            Role::SantaClaus => true,
-            Role::Krampus => true,
-            _ => !(RoleSet::Neutral.get_roles().contains(&role) || RoleSet::Minions.get_roles().contains(&role))
+        if
+            RoleSet::Fiends.get_roles().contains(&role) ||
+            RoleSet::MafiaKilling.get_roles().contains(&role)  
+        {
+            true
+        }else{
+            matches!(role, Role::Apostle | Role::Zealot)
         }
-
-
-        
     }
 }
 

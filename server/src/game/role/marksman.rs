@@ -26,7 +26,7 @@ pub struct Marksman {
 #[derive(Clone, Debug, Serialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
-pub(self) enum MarksmanState{
+enum MarksmanState{
     #[default]
     NotLoaded,
     Loaded,
@@ -71,12 +71,11 @@ impl RoleStateImpl for Marksman {
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         
         let gray_out_mark = 
-            !actor_ref.alive(game) || 
+            actor_ref.ability_deactivated_from_death(game) || 
             Detained::is_detained(game, actor_ref) ||
             self.state != MarksmanState::Loaded;
 
         let available_mark_players = PlayerReference::all_players(game)
-            .into_iter()
             .filter(|p|
                 p.alive(game) && 
                 *p != actor_ref
@@ -106,17 +105,16 @@ impl RoleStateImpl for Marksman {
 
 
         let gray_out_camp = 
-            !actor_ref.alive(game) || 
+            actor_ref.ability_deactivated_from_death(game) || 
             Detained::is_detained(game, actor_ref) ||
             self.state != MarksmanState::Loaded ||
             if let Some(marked_players) = marked_players {
-                marked_players.0.len() == 0
+                marked_players.0.is_empty()
             }else{
                 true
             };
 
             let available_camp_players = PlayerReference::all_players(game)
-            .into_iter()
             .filter(|p|
                 p.alive(game) && 
                 *p != actor_ref

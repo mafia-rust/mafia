@@ -40,6 +40,7 @@ impl RoleStateImpl for Zealot {
             game,
             actor_ref,
             false,
+            false,
             Cult::next_ability(game) != CultAbility::Kill,
             ControllerID::role(actor_ref, Role::Zealot, 0)
         )

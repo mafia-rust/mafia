@@ -18,7 +18,7 @@ use crate::{
         chat::ChatMessageVariant, 
         visit::Visit, 
         grave::GraveKiller, 
-        verdict::Verdict, available_buttons::AvailableButtons
+        verdict::Verdict,
     },
     websocket_connections::connection::ClientSender,
 };
@@ -52,9 +52,6 @@ pub struct Player {
     queued_chat_messages: Vec<ChatMessage>, // Not yet sent to the client
 
     win_condition: WinCondition,
- 
-    last_sent_buttons: Vec<AvailableButtons>,
-
 
     fast_forward_vote: bool,
     forfeit_vote: bool,
@@ -63,13 +60,12 @@ pub struct Player {
     night_variables: PlayerNightVariables,
 }
 struct PlayerVotingVariables{
-    chosen_vote:    Option<PlayerReference>,
     verdict:        Verdict,
 }
 struct PlayerNightVariables{
     died: bool,
     attacked: bool,
-    roleblocked: bool,
+    blocked: bool,
     upgraded_defense: Option<DefensePower>,
 
     convert_role_to: Option<RoleState>,
@@ -87,7 +83,7 @@ struct PlayerNightVariables{
     grave_death_notes: Vec<String>,
 }
 impl Player {
-    pub fn new(name: String, sender: ClientSender, role: Role) -> Self {
+    pub fn new(name: String, sender: ClientSender, role: Role, win_condition: WinCondition) -> Self {
         Self {
             connection: ClientConnection::Connected(sender),
 
@@ -102,24 +98,21 @@ impl Player {
             role_labels: VecSet::new(),
             player_tags: VecMap::new(),
 
-            win_condition: role.default_state().default_win_condition(),
+            win_condition,
 
             chat_messages: Vec::new(),
             queued_chat_messages: Vec::new(),
             
-            last_sent_buttons: Vec::new(),
-
             fast_forward_vote: false,
             forfeit_vote: false,
 
             voting_variables: PlayerVotingVariables{
-                chosen_vote : None,
                 verdict : Verdict::Abstain,
             },
             night_variables: PlayerNightVariables{
                 died: false,
                 attacked: false,
-                roleblocked: false,
+                blocked: false,
                 upgraded_defense: None,
                 appeared_visits: None,
                 framed: false,
@@ -166,20 +159,17 @@ pub mod test {
 
             chat_messages: Vec::new(),
             queued_chat_messages: Vec::new(),
-            
-            last_sent_buttons: Vec::new(),
 
             fast_forward_vote: false,
             forfeit_vote: false,
 
             voting_variables: PlayerVotingVariables{
-                chosen_vote : None,
                 verdict : Verdict::Abstain,
             },
             night_variables: PlayerNightVariables{
                 died: false,
                 attacked: false,
-                roleblocked: false,
+                blocked: false,
                 upgraded_defense: None,
                 appeared_visits: None,
                 framed: false,

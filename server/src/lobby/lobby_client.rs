@@ -54,7 +54,7 @@ impl LobbyClient {
 
         match game_client.client_location {
             GameClientLocation::Player(index) => {
-                let player_ref = PlayerReference::new_unchecked(index);
+                let player_ref = unsafe { PlayerReference::new_unchecked(index) };
                 LobbyClient{
                     connection: player_ref.connection(game).clone(),
                     ready: if game_client.host { Ready::Host } else { Ready::NotReady },
@@ -84,10 +84,7 @@ impl LobbyClient {
     }
 
     pub fn is_spectator(&self) -> bool {
-        match self.client_type {
-            LobbyClientType::Spectator => true,
-            _ => false
-        }
+        matches!(self.client_type, LobbyClientType::Spectator)
     }
 
     pub fn send(&self, message: ToClientPacket) {

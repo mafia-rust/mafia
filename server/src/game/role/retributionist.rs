@@ -66,7 +66,7 @@ impl RoleStateImpl for Retributionist {
                 true
             ),
             AbilitySelection::new_two_player_option(None),
-            !actor_ref.alive(game) || Detained::is_detained(game, actor_ref),
+            actor_ref.ability_deactivated_from_death(game) || Detained::is_detained(game, actor_ref),
             Some(PhaseType::Obituary),
             false, 
             vec_set!(actor_ref)
@@ -85,6 +85,7 @@ impl RoleStateImpl for Retributionist {
             actor_ref.set_role_state(game, Retributionist { currently_used_player: None, ..self });
         }
     }
+    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
 impl GetClientRoleState<ClientRoleState> for Retributionist {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

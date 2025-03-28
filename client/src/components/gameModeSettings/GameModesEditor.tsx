@@ -11,7 +11,6 @@ import { Role } from "../../game/roleState.d";
 import "./selectorSection.css";
 import { defaultPhaseTimes } from "../../game/gameState";
 import { GameModeSelector } from "./GameModeSelector";
-import { Helmet } from "react-helmet";
 import { ShareableGameMode } from "./gameMode";
 import { EnabledModifiersSelector } from "./EnabledModifiersSelector";
 
@@ -61,7 +60,7 @@ export default function GameModesEditor(props: Readonly<{
     }, [roleList]);
     
     const addOutline = () => {
-        setRoleList([...roleList, {type: "any"}]);
+        setRoleList([...roleList, [{ roleSet: "any" }]]);
     }
     const removeOutline = (index: number) => {
         let newRoleList = [...roleList];
@@ -92,10 +91,6 @@ export default function GameModesEditor(props: Readonly<{
     
     
     return <div className="game-modes-editor">
-        <Helmet>
-            <meta name="twitter:title" content={props.initialGameMode?.name}></meta>
-            <meta name="og:title" content={props.initialGameMode?.name}></meta>
-        </Helmet>
         <header>
             <h1>{translate("menu.globalMenu.gameSettingsEditor")}</h1>
         </header>

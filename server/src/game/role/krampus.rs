@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
@@ -24,7 +24,7 @@ pub struct Krampus {
     last_used_ability: Option<KrampusAbility>
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Default, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum KrampusAbility {
     #[default] DoNothing,
@@ -108,6 +108,7 @@ impl RoleStateImpl for Krampus {
         crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
             game,
             actor_ref,
+            false,
             false,
             false,
             ControllerID::role(actor_ref, Role::Krampus, ability_index)

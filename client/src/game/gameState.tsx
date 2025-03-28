@@ -40,6 +40,8 @@ export function createGameState(): GameState {
         roomCode: 0,
         lobbyName: "",
 
+        initialized: false,
+
         myId: null,
 
         chatMessages : [],
@@ -60,7 +62,7 @@ export function createGameState(): GameState {
         ticking: true,
 
         clientState: createPlayerGameState(),
-        host: false,
+        host: null,
 
         missedChatMessages: false
     }
@@ -81,8 +83,6 @@ export function createPlayerGameState(): PlayerGameState {
         crossedOutOutlines: [],
         chatFilter: null,
         deathNote: "",
-        targets: [],
-        voted: null,
         judgement: "abstain",
 
         fellowInsiders: [],
@@ -98,9 +98,6 @@ export function createPlayer(name: string, index: number): Player {
     return{
         name: name,
         index: index,
-        buttons: {
-            vote: false,
-        },
         numVoted: 0,
         alive: true,
         roleLabel: null,
