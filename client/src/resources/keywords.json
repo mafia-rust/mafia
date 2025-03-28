@@ -52,6 +52,9 @@
     "random.gay": { "style": "keyword-pride","replacement": "random.gay","link": "role/transporter"},
     "random.trans": { "style": "keyword-trans","replacement": "random.trans","link": "role/transporter"},
     
+    "random.small": { "style": "keyword-good","link": "role/medium","replacement": "random.small" },
+    "random.large": { "style": "keyword-good","link": "role/medium","replacement": "random.large" },
+    
     "role.wildcard.name": { "style": "keyword-pride", "replacement": "role.wildcard.name", "link":"role/wildcard"},
     "role.trueWildcard.name": { "style": "keyword-pride", "replacement": "role.trueWildcard.name", "link":"role/trueWildcard"},
     "role.kira.name": { "style": "keyword-kira keyword-fiends", "replacement": "role.kira.name", "link":"role/kira"},
