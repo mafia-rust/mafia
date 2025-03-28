@@ -104,7 +104,7 @@ export function EnabledRolesDisplay(props: EnabledRolesDisplayProps): ReactEleme
     const [hideDisabled, setHideDisabled] = useState(true);
 
     return <div>
-        {!props.modifiable && <label>
+        {!props.modifiable && <label className="centered-label">
             {translate("hideDisabled")}
             <CheckBox
                 checked={hideDisabled}
@@ -114,7 +114,7 @@ export function EnabledRolesDisplay(props: EnabledRolesDisplayProps): ReactEleme
         <div>
             {getAllRoles()
                 .filter(role => isEnabled(role) || !hideDisabled || props.modifiable)
-                .sort((a, b) => (isEnabled(a) ? -1 : 1) - (isEnabled(b) ? -1 : 1))
+                .sort((a, b) => props.modifiable ? 0 : (isEnabled(a) ? -1 : 1) - (isEnabled(b) ? -1 : 1))
                 .sort((a, b) => ROLE_SETS.indexOf(roleJsonData()[a].mainRoleSet) - ROLE_SETS.indexOf(roleJsonData()[b].mainRoleSet))
                 .map((role, i) => 
                     props.modifiable 

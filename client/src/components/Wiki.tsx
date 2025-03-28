@@ -160,7 +160,7 @@ function WikiSearchResults(props: Readonly<{
     [props.searchQuery, getSearchResults])
 
     return <div className="wiki-results" tabIndex={-1}>
-        {!props.static && <label>
+        {!props.static && <label className="centered-label">
             {translate("hideDisabled")}
             <CheckBox 
                 checked={hideDisabled} 

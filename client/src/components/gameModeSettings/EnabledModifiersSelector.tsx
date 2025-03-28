@@ -65,7 +65,7 @@ export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): Re
     const [hideDisabled, setHideDisabled] = useState(true);
 
     return <div>
-        {!props.modifiable && <label>
+        {!props.modifiable && <label className="centered-label">
             {translate("hideDisabled")}
             <CheckBox
                 checked={hideDisabled}
@@ -75,7 +75,7 @@ export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): Re
         <div>
             {MODIFIERS
                 .filter(role => isEnabled(role) || !hideDisabled || props.modifiable)
-                .sort((a, b) => (isEnabled(a) ? -1 : 1) - (isEnabled(b) ? -1 : 1))
+                .sort((a, b) => props.modifiable ? 0 : (isEnabled(a) ? -1 : 1) - (isEnabled(b) ? -1 : 1))
                 .map((modifier, i) => 
                 props.modifiable 
                     ? <Button key={modifier}
