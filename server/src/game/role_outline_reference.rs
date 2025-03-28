@@ -32,7 +32,7 @@ impl RoleOutlineReference{
         }
     }
     pub fn without_unavailable<'a>(&self, game: &'a Game)->&'a RoleOutlineGenData {
-        &game.role_assignment_gen.0[self.index as usize]
+        game.role_assignment_gen.0.get(self.index as usize).expect("")
     }
 
     pub fn deref_as_role_and_player_originally_generated(&self, game: &Game)->OriginallyGeneratedRoleAndPlayer{

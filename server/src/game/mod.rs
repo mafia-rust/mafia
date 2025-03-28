@@ -159,7 +159,7 @@ impl Game {
         
         //Simplifying the role list makes the role generation quicker, and successful more often
         //let role_list_generator = settings.role_list.generator();
-        let Ok(role_assignment_gen) = settings.role_list.generator(&settings.enabled_roles) else {
+        let Some(role_assignment_gen) = settings.role_list.generator(&settings.enabled_roles) else {
             return Err(RejectStartReason::RoleAssignmentsMustExceedLimits);
         };
 
@@ -172,8 +172,8 @@ impl Game {
             }
 
             let random_outline_assignments = match role_assignment_gen.clone().create_random_role_assignments(){
-                Ok(roles) => {roles},
-                Err(_) => {
+                Some(roles) => {roles},
+                None => {
                     role_generation_tries = role_generation_tries.saturating_add(1);
                     continue;
                 }
@@ -620,13 +620,13 @@ pub mod test {
         let settings = settings.clone();
         // let role_list = settings.role_list.clone();
         
-        let Ok(role_assignment_gen) = settings.role_list.generator(&settings.enabled_roles) else {
+        let Some(role_assignment_gen) = settings.role_list.generator(&settings.enabled_roles) else {
             return Err(RejectStartReason::RoleAssignmentsMustExceedLimits);
         };
 
         let random_outline_assignments = match role_assignment_gen.create_random_role_assignments(){
-            Ok(roles) => {roles},
-            Err(_) => {return Err(RejectStartReason::RoleListCannotCreateRoles);}
+            Some(roles) => {roles},
+            None => {return Err(RejectStartReason::RoleListCannotCreateRoles)}
         };
 
         let assignments = Game::assign_players_to_assignments(random_outline_assignments);
@@ -657,7 +657,7 @@ pub mod test {
             graves: Vec::new(),
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
-            role_assignment_gen: role_assignment_gen,
+            role_assignment_gen,
 
             saved_controllers: SavedControllersMap::default(),
             night_visits: NightVisits::default(),

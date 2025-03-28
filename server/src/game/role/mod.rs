@@ -424,6 +424,6 @@ impl Role{
         false
     }
     pub fn role_limit_1(&self)->bool{
-        return self.maximum_count().is_some_and(|max|max==1);
+        self.maximum_count().is_some_and(|max|max==1)
     }
 }

@@ -31,7 +31,7 @@ impl ModifierTrait for RoleSetGraveKillers{
                                 ].iter().find(|set| set.get_roles().contains(&killer_role));
     
                                 if let Some(role_set) = killer_role_set {
-                                    GraveKiller::RoleSet(role_set.clone())
+                                    GraveKiller::RoleSet(*role_set)
                                 } else {
                                     killer
                                 }

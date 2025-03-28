@@ -1,5 +1,3 @@
-use std::ops::AddAssign;
-
 use rand::seq::IndexedRandom;
 use serde::{Deserialize, Serialize};
 use vec1::{
@@ -26,15 +24,15 @@ impl RoleList {
         self.0.sort_by_key(|r| r.get_role_assignments().len());
     }
     /// Output is the same order as the rolelist
-    pub fn generator(&self, enabled_roles: &VecSet<Role>) -> Result<RoleAssignmentGen, ()>{
+    pub fn generator(&self, enabled_roles: &VecSet<Role>) -> Option<RoleAssignmentGen>{
         let mut taken_roles = Vec::new();
         let mut outline_gens = Vec::new();
         for outline in self.0.iter() {
             let gen = outline.generator(enabled_roles);
-            if gen.0.is_empty() {return Err(())};
+            if gen.0.is_empty() {return None};
             outline_gens.push(gen.clone());
             if gen.0.len() > 1 {continue}
-            let Some(option) = gen.0.first() else {return Err(())};
+            let option = gen.0.first()?;
             if option.role.role_limit_1() {
                 taken_roles.push(option.role);
             }
@@ -42,14 +40,12 @@ impl RoleList {
         let new_taken_roles = &mut Vec::new();
         loop {
             for i in 0..outline_gens.len() {
-                let outline = &mut outline_gens[i];
+                let outline = outline_gens.get_mut(i).expect("");
                 if outline.0.len() == 1 {continue;}
                 outline.0.retain(|option|!taken_roles.contains(&option.role));
-                if outline.0.len() == 0 {return Err(())}
-                if outline.0.len() == 1 {
-                    if outline.0[0].role.role_limit_1() {
-                        taken_roles.push(outline.0[0].role);
-                    }
+                if outline.0.is_empty() {return None}
+                if outline.0.len() == 1 && outline.0.first().expect("").role.role_limit_1() {
+                    taken_roles.push(outline.0.first().expect("").role);
                 }
             }
 
@@ -61,52 +57,49 @@ impl RoleList {
         //using new taken roles because its guaranteed to be empty and it doesn't need to reallocate
         for outline in outline_gens.iter() {
             if outline.0.len() > 1 {continue;}
-            let Some(role_assignment) = outline.0.first() else {return Err(())};
+            let role_assignment = outline.0.first()?;
             if !role_assignment.role.role_limit_1() {continue}
-            if new_taken_roles.contains(&role_assignment.role) {return Err(())};
+            if new_taken_roles.contains(&role_assignment.role) {return None};
             new_taken_roles.push(role_assignment.role);
         }
         
-        return Ok(RoleAssignmentGen(outline_gens));
+        Some(RoleAssignmentGen(outline_gens))
     }
 }
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct RoleAssignmentGen(pub Vec<RoleOutlineGenData>);
 impl RoleAssignmentGen {
-    pub fn create_random_role_assignments(&self) -> Result<Vec<RoleAssignment>, ()> {
+    pub fn create_random_role_assignments(&self) -> Option<Vec<RoleAssignment>> {
         let mut generated_data = Vec::<RoleAssignment>::new();
         let rng = &mut rand::rng();
-        for entry in self.0.iter(){
+        for entry in self.0.iter() {
             if let Some(assignment) = entry.0.choose(rng){
                 let role = assignment.role;
-                match role.maximum_count() {
-                    Some(max) => {
-                        //Makes sure it doesn't go over the role limit
-                        //starts at 1 because the current data has not been pushed 
-                        let count = &mut 1;
-                        if generated_data.iter().any(|data| 
-                            if data.role == role {
-                                if *count == max {
-                                    true
-                                } else {
-                                    count.add_assign(1);
-                                    false
-                                }
+                if let Some(max) = role.maximum_count() {
+                    //Makes sure it doesn't go over the role limit
+                    //starts at 1 because the current data has not been pushed 
+                    let mut count = 1;
+                    if generated_data.iter().any(|data| 
+                        if data.role == role {
+                            if count == max {
+                                true
                             } else {
+                                count = count.saturating_add(1);
                                 false
                             }
-                        ) {
-                            return Err(());
+                        } else {
+                            false
                         }
+                    ) {
+                        return None;
                     }
-                    _=>(),
                 }
                 generated_data.push(assignment.clone());
             } else {
-                return Err(());
+                return None;
             }
         }
-        Ok(generated_data)
+        Some(generated_data)
     }
     ///Returns true if the role is guaranteed to exist with the default win condition and insider group
     pub fn specifies_role_with_defaults(&self, role: Role) -> bool {
@@ -186,7 +179,7 @@ impl RoleOutline{
             .filter(|option|
                 role_can_generate(option.role, enabled_roles, taken_roles)
             ).collect::<Vec<&RoleAssignment>>()
-            .choose(&mut rand::rng()).cloned().cloned()
+            .choose(&mut rand::rng()).copied().cloned()
     }
     pub fn simplify(&mut self){
         let mut new_options = self.options.to_vec();
@@ -196,7 +189,7 @@ impl RoleOutline{
         for option_a in self.options.iter(){
             if !option_a.roles.is_role_set() {continue};
             for option_b in self.options.iter(){
-                if option_a != option_b && option_b.subset_of(&option_a) {
+                if option_a != option_b && option_b.subset_of(option_a) {
                     new_options.retain(|r| r != option_a);
                 }
             }
@@ -209,10 +202,10 @@ impl RoleOutline{
 
         *self = RoleOutline{options: new_options};
     }
-    pub fn simplified(&self) -> Self{
+    pub fn simplified(&self) -> Self {
         let mut clone = self.clone();
         clone.simplify();
-        return clone;
+        clone
     }
     /// Reduces the number of roles that can generate from this to a value closer to the actual possible number
     /// This
@@ -326,13 +319,13 @@ impl RoleOutlineOption {
         match self.roles.clone() {
             RoleOutlineOptionRoles::Role { role } => {
                 if role_can_generate(role, enabled_roles, &[]) {
-                    return vec_set![RoleAssignment{
+                    vec_set![RoleAssignment{
                         role,
                         insider_groups: self.insider_groups.clone(),
                         win_condition: self.win_condition.clone(),
-                    }];
+                    }]
                 } else {
-                    return VecSet::new();
+                    VecSet::new()
                 }
             },
             RoleOutlineOptionRoles::RoleSet {role_set} => {
@@ -348,7 +341,7 @@ impl RoleOutlineOption {
                         );
                     }
                 }
-                return options;
+                options
             },
         }
     }
@@ -408,10 +401,7 @@ impl Ord for RoleOutlineOptionRoles {
 }
 impl RoleOutlineOptionRoles {
     pub fn is_role_set(&self) -> bool {
-        match self {
-            Self::RoleSet{..} => true,
-            _=>false,
-        }
+        matches!(self, Self::RoleSet{..})
     }
 }
 
@@ -525,7 +515,7 @@ impl RoleSet{
         }
     }
     pub fn contains(self, role: &Role) -> bool {
-        return self.get_roles().contains(role);
+        self.get_roles().contains(role)
     }
     /// Returns a number that is an estimate of how many roles are often enabled for a given role set,
     /// or slightly smaller than that if the role set's roles have role limits
