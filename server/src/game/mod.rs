@@ -454,8 +454,6 @@ impl Game {
         
         if start_trial_instantly {
             if let Some(player_on_trial) = voted_player {
-                self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
-                
                 PhaseStateMachine::next_phase(self, Some(PhaseState::Testimony {
                     trials_left: trials_left.saturating_sub(1), 
                     player_on_trial, 
@@ -579,7 +577,9 @@ impl Game {
         Ok(spectator_pointer.index)
     }
     pub fn remove_spectator(&mut self, i: SpectatorIndex){
-        self.spectators.remove(i as usize);
+        if (i as usize) < self.spectators.len() {
+            self.spectators.remove(i as usize);
+        }
     }
 
     pub fn send_packet_to_all(&self, packet: ToClientPacket){
@@ -589,6 +589,11 @@ impl Game {
         for spectator in self.spectators.iter(){
             spectator.send_packet(packet.clone());
         }
+    }
+    
+    pub(crate) fn is_any_client_connected(&self) -> bool {
+        PlayerReference::all_players(self).any(|p| p.is_connected(self))
+        || SpectatorPointer::all_spectators(self).any(|s| s.is_connected(self))
     }
 }
 

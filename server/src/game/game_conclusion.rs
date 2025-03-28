@@ -70,6 +70,10 @@ impl GameConclusion {
                 )
         )
     }
+
+    pub fn get_premature_conclusion(game: &Game) -> GameConclusion {
+        GameConclusion::game_is_over(game).unwrap_or(GameConclusion::Draw)
+    }
     
 
     ///Town, Mafia, Cult, NK
