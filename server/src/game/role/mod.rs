@@ -425,12 +425,12 @@ impl Role{
         false
     }
     pub fn pseudo_enables(&self) -> VecSet<Role>{
-        // Its like this instead of just using _=> to force people to remember to add it to this
+        // It is like this instead of just using _=> to force people to remember to add it to this when they see there's an error
         match self {
             Role::Apostle => vec_set![Role::Disciple, Role::Zealot],
             Role::Disciple => vec_set![Role::Apostle, Role::Zealot],
             Role::Zealot => vec_set![Role::Apostle, Role::Disciple],
-            Role::Revolutionary => vec_set![Role::Jester],
+            Role::Revolutionary | Role::Doomsayer => vec_set![Role::Jester],
 
             Role::Jailor | Role::Villager | Role::Drunk | 
 
@@ -446,7 +446,7 @@ impl Role{
             
             Role::Goon | Role::Consort | Role::Hypnotist | Role::Blackmailer | Role::Informant | Role::MafiaWitch | Role::Necromancer | Role::Mortician | Role::Framer | Role::Disguiser | Role::Forger | Role::Reeducator | Role::Cupid | Role::Ambusher | Role::MafiaSupportWildcard | 
             
-            Role::Jester | Role::Politician | Role::Doomsayer | Role::Chronokaiser | Role::Martyr | Role::SantaClaus | Role::Krampus | Role::Wildcard | Role::TrueWildcard |
+            Role::Jester | Role::Politician | Role::Chronokaiser | Role::Martyr | Role::SantaClaus | Role::Krampus | Role::Wildcard | Role::TrueWildcard |
             
             Role::Witch | Role::Scarecrow | Role::Warper | Role::Kidnapper | 
 
