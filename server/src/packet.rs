@@ -21,21 +21,7 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 use vec1::Vec1;
 
-use crate::{
-    game::{
-        ability_input::*,
-        chat::{ChatGroup, ChatMessage},
-        components::insider_group::InsiderGroupID,
-        grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType},
-        player::{PlayerIndex, PlayerReference}, 
-        role::{
-            doomsayer::DoomsayerGuess,
-            ClientRoleStateEnum, Role
-        },
-        role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings,
-        tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
-    }, listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log, vec_map::VecMap, vec_set::VecSet
-};
+use crate::{client_connection::ClientConnection, game::{ability_input::{AbilityInput, ControllerID, SavedController}, chat::{ChatGroup, ChatMessage}, components::insider_group::InsiderGroupID, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{doomsayer::DoomsayerGuess, ClientRoleStateEnum, Role}, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason}, listener::RoomCode, lobby::{game_client::GameClientLocation, lobby_client::{LobbyClient, LobbyClientID}}, log, vec_map::VecMap, vec_set::VecSet};
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -43,6 +29,14 @@ pub struct LobbyPreviewData {
     pub name: String,
     pub in_game: bool,
     pub players: Vec<(LobbyClientID, String)>
+}
+
+#[derive(Serialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct HostDataPacketGameClient {
+    pub client_type: GameClientLocation,
+    pub connection: ClientConnection,
+    pub host: bool,
 }
 
 #[derive(Serialize, Debug, Clone)]
@@ -65,22 +59,20 @@ pub enum ToClientPacket{
     RejectJoin{reason: RejectJoinReason},
     
     // Lobby
+    LobbyName{name: String},
     #[serde(rename_all = "camelCase")]
     YourId{player_id: LobbyClientID},
     #[serde(rename_all = "camelCase")]
     LobbyClients{clients: VecMap<LobbyClientID, LobbyClient>},
-    LobbyName{name: String},
-    #[serde(rename_all = "camelCase")]
-    RejectStart{reason: RejectStartReason},
     PlayersHost{hosts: Vec<LobbyClientID>},
     PlayersReady{ready: Vec<LobbyClientID>},
     #[serde(rename_all = "camelCase")]
     PlayersLostConnection{lost_connection: Vec<LobbyClientID>},
     StartGame,
-    GameInitializationComplete,
-    BackToLobby,
+    #[serde(rename_all = "camelCase")]
+    RejectStart{reason: RejectStartReason},
 
-    GamePlayers{players: Vec<String>},
+    // Settings
     #[serde(rename_all = "camelCase")]
     RoleList{role_list: RoleList},
     #[serde(rename_all = "camelCase")]
@@ -94,8 +86,13 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     EnabledModifiers{modifiers: Vec<ModifierType>},
 
+    // Host
+    HostData { clients: VecMap<LobbyClientID, HostDataPacketGameClient> },
+
     // Game
-    
+    GamePlayers{players: Vec<String>},
+    GameInitializationComplete,
+    BackToLobby,
     #[serde(rename_all = "camelCase")]
     YourPlayerIndex{player_index: PlayerIndex},
     #[serde(rename_all = "camelCase")]
@@ -104,8 +101,6 @@ pub enum ToClientPacket{
     Phase{phase: PhaseState, day_number: u8},
     #[serde(rename_all = "camelCase")]
     PhaseTimeLeft{seconds_left: u64},
-    #[serde(rename_all = "camelCase")]
-    PlayerOnTrial{player_index: PlayerIndex},
 
     PlayerAlive{alive: Vec<bool>},
     #[serde(rename_all = "camelCase")]
@@ -149,9 +144,8 @@ pub enum ToClientPacket{
 }
 impl ToClientPacket {
     pub fn to_json_string(&self) -> Result<String, serde_json::Error> {
-        serde_json::to_string(self).map_err(|err|{
+        serde_json::to_string(self).inspect_err(|_|{
             log!(error "Serde error"; "Parsing JSON string: {:?}", self);
-            err
         })
     }
     pub fn new_player_votes(game: &mut Game)->ToClientPacket{
@@ -163,7 +157,7 @@ impl ToClientPacket {
                 if let Some(player_voted) = player_ref.chosen_vote(game){
 
                     if let Some(num_votes) = voted_for_player.get_mut(&player_voted.index()){
-                        *num_votes+=1;
+                        *num_votes = num_votes.saturating_add(1);
                     }else{
                         voted_for_player.insert(player_voted.index(), 1);
                     }
@@ -209,6 +203,8 @@ pub enum ToServerPacket{
     ReadyUp{ready: bool},
     SetLobbyName{name: String},
     StartGame,
+
+    // Settings
     #[serde(rename_all = "camelCase")]
     SetRoleList{role_list: RoleList},
     #[serde(rename_all = "camelCase")]
@@ -224,7 +220,12 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SetEnabledModifiers{modifiers: Vec<ModifierType>},
 
-    BackToLobby,
+    // Host
+    HostDataRequest,
+    HostForceBackToLobby,
+    HostForceEndGame,
+    HostForceSkipPhase,
+    HostForceSetPlayerName { id: LobbyClientID, name: String },
 
     // Game
     #[serde(rename_all = "camelCase")]

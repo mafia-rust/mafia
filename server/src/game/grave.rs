@@ -86,7 +86,7 @@ impl Grave{
             died_phase: GravePhase::Night,
             day_number:  game.phase_machine.day_number,
             information: GraveInformation::Normal{
-                role: player_ref.night_grave_role(game).clone().unwrap_or(player_ref.role(game)),
+                role: player_ref.night_grave_role(game).unwrap_or(player_ref.role(game)),
                 will: player_ref.night_grave_will(game).clone(),
                 death_cause: GraveDeathCause::Killers(player_ref.night_grave_killers(game).clone()),
                 death_notes: player_ref.night_grave_death_notes(game).clone()
@@ -163,10 +163,14 @@ impl GraveReference{
             None
         }
     }
-    pub fn deref<'a>(self, game: &'a Game)->&'a Grave{
-        &game.graves[self.index as usize]
+    pub fn deref(self, game: &Game)->&Grave{
+        unsafe {
+            game.graves.get_unchecked(self.index as usize)
+        }
     }
-    pub fn deref_mut<'a>(self, game: &'a mut Game)->&'a mut Grave{
-        &mut game.graves[self.index as usize]
+    pub fn deref_mut(self, game: &mut Game)->&mut Grave{
+        unsafe {
+            game.graves.get_unchecked_mut(self.index as usize)
+        }
     }
 }

@@ -18,7 +18,7 @@ export default function HeaderMenu(props: Readonly<{
     
     const phaseState = useGameState(
         gameState => gameState.phaseState,
-        ["phase", "playerOnTrial"]
+        ["phase"]
     )!
 
     const backgroundStyle = 
@@ -27,7 +27,7 @@ export default function HeaderMenu(props: Readonly<{
         "background-day";
 
     const host = useGameState(
-        state => state.host,
+        state => state.host !== null,
         ["playersHost"]
     )!;
 
@@ -78,7 +78,7 @@ function Information(): ReactElement {
     )!
     const phaseState = useGameState(
         gameState => gameState.phaseState,
-        ["phase", "playerOnTrial"]
+        ["phase"]
     )!
     const players = useGameState(
         gameState => gameState.players,

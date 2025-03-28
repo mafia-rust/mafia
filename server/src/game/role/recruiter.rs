@@ -45,7 +45,6 @@ impl RoleStateImpl for Recruiter {
     fn new_state(game: &Game) -> Self {
         Self{
             recruits_remaining: game.num_players().div_ceil(5),
-            ..Self::default()
         }
     }
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
@@ -54,11 +53,8 @@ impl RoleStateImpl for Recruiter {
             ControllerID::role(actor_ref, Role::Recruiter, 1)
         ){x==0}else{true};
 
-        if choose_attack{
-            if !game.attack_convert_abilities_enabled() {return}
-        }else{
-            if self.recruits_remaining == 0 {return}
-        }
+        if choose_attack && self.recruits_remaining == 0 {return}
+        if !game.attack_convert_abilities_enabled() {return}
 
         match priority {
             Priority::Kill => {
@@ -66,14 +62,14 @@ impl RoleStateImpl for Recruiter {
                 if let Some(visit) = actor_visits.first(){
                     if Recruiter::night_ability(self.clone(), game, actor_ref, visit.target) {
                         if choose_attack {
-                            actor_ref.set_role_state(game, Recruiter{recruits_remaining: self.recruits_remaining.saturating_add(1), ..self})
+                            actor_ref.set_role_state(game, Recruiter{recruits_remaining: self.recruits_remaining.saturating_add(1)})
                         }else{
-                            actor_ref.set_role_state(game, Recruiter{recruits_remaining: self.recruits_remaining.saturating_sub(1), ..self});
+                            actor_ref.set_role_state(game, Recruiter{recruits_remaining: self.recruits_remaining.saturating_sub(1)});
                         }
                     }
                 }
             },
-            _ => {return}
+            _ => {}
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
@@ -174,12 +170,10 @@ impl Recruiter {
                 AttackPower::Basic,
                 false
             )
+        }else if AttackPower::Basic.can_pierce(target_ref.defense(game)) {
+            MafiaRecruits::recruit(game, target_ref)
         }else{
-            if AttackPower::Basic.can_pierce(target_ref.defense(game)) {
-                MafiaRecruits::recruit(game, target_ref)
-            }else{
-                false
-            }
+            false
         }
     }
 }

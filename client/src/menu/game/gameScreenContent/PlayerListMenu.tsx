@@ -75,7 +75,7 @@ function PlayerCard(props: Readonly<{
     )!;
     const phaseState = useGameState(
         gameState => gameState.phaseState,
-        ["phase", "playerOnTrial"]
+        ["phase"]
     )!
     const numVoted = useGameState(
         gameState => gameState.players[props.playerIndex].numVoted,

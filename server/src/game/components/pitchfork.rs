@@ -1,5 +1,3 @@
-use std::ops::Mul;
-
 use crate::{
     game::{
         ability_input::*, attack_power::AttackPower, game_conclusion::GameConclusion, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::{Priority, Role}, role_list::RoleSet, Game
@@ -58,7 +56,6 @@ impl Pitchfork{
                     ControllerID::pitchfork_vote(player),
                     AvailableAbilitySelection::new_player_list(
                         PlayerReference::all_players(game)
-                            .into_iter()
                             .filter(|p|p.alive(game))
                             .collect(),
                             false,
@@ -80,22 +77,19 @@ impl Pitchfork{
     
 
     pub fn before_phase_end(game: &mut Game, phase: PhaseType){
-        match phase{
-            PhaseType::Night => {
-                Pitchfork::set_angry_mobbed_player(game, None);
-                if Pitchfork::pitchfork_uses_remaining(game) > 0 {
-                    if let Some(target) = Pitchfork::player_is_voted(game){
-                        Pitchfork::set_angry_mobbed_player(game, Some(target));
-                    }
+        if phase == PhaseType::Night {
+            Pitchfork::set_angry_mobbed_player(game, None);
+            if Pitchfork::pitchfork_uses_remaining(game) > 0 {
+                if let Some(target) = Pitchfork::player_is_voted(game){
+                    Pitchfork::set_angry_mobbed_player(game, Some(target));
                 }
-            },
-            _ => {}
+            }
         }
     }
     pub fn on_night_priority(game: &mut Game, priority: Priority){
         if priority != Priority::Kill {return;}
-        if !game.attack_convert_abilities_enabled() {return;}
-        if Pitchfork::usable_pitchfork_owners(game).len() < 1 {return;}
+        if game.day_number() <= 1 {return;}
+        if Pitchfork::usable_pitchfork_owners(game).is_empty() {return;}
         
         if let Some(target) = Pitchfork::angry_mobbed_player(game) {
             target.try_night_kill(
@@ -114,7 +108,7 @@ impl Pitchfork{
     pub fn usable_pitchfork_owners(game: &Game) -> VecSet<PlayerReference> {
         Pitchfork::pitchfork_owners(game).iter()
             .filter(|p|p.alive(game) && !p.night_blocked(game))
-            .map(|p|*p).collect()
+            .copied().collect()
     }
 
     
@@ -134,8 +128,8 @@ impl Pitchfork{
             {continue;}
 
 
-            let count: u8 = if let Some(count) = votes.get(&target){
-                *count + 1
+            let count: u8 = if let Some(count) = votes.get(target){
+                count.saturating_add(1)
             }else{
                 1
             };
@@ -146,10 +140,21 @@ impl Pitchfork{
     }
 
     pub fn number_of_votes_needed(game: &Game) -> u8 {
-        let x = PlayerReference::all_players(game).filter(|p|
+        let eligible_voters = PlayerReference::all_players(game).filter(|p|
             p.alive(game) && p.win_condition(game).is_loyalist_for(GameConclusion::Town)
-        ).count().mul(2).div_ceil(3) as u8;
-        if x == 0 {1} else {x}
+        ).count().try_into().unwrap_or(u8::MAX);
+        // equivalent to x - (x - (x + 1)/3)/2 to prevent overflow issues
+        let two_thirds = eligible_voters
+        .saturating_sub(
+            eligible_voters
+            .saturating_sub(
+                eligible_voters
+                .saturating_add(1)
+                .saturating_div(3)
+            )
+            .saturating_div(2)
+        );
+        if two_thirds == 0 {1} else {two_thirds}
     }
 
 

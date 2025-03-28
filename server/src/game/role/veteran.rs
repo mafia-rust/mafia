@@ -47,13 +47,9 @@ impl RoleStateImpl for Veteran {
             Priority::TopPriority => {
                 let can_alert = self.alerts_remaining > 0 && game.attack_convert_abilities_enabled();
                 let chose_to_alert = 
-                    if let Some(BooleanSelection(true)) = game.saved_controllers.get_controller_current_selection_boolean(
+                    matches!(game.saved_controllers.get_controller_current_selection_boolean(
                         ControllerID::role(actor_ref, Role::Veteran, 0)
-                    ){
-                        true
-                    }else{
-                        false
-                    };
+                    ), Some(BooleanSelection(true)));
 
                 if can_alert && chose_to_alert{
                     actor_ref.set_role_state(game, Veteran { 

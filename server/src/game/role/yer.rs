@@ -44,11 +44,9 @@ impl RoleStateImpl for Yer {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if !game.attack_convert_abilities_enabled() {return}
 
-        let chose_to_convert = if let Some(BooleanSelection(bool)) = game.saved_controllers.get_controller_current_selection_boolean(
+        let chose_to_convert = game.saved_controllers.get_controller_current_selection_boolean(
             ControllerID::role(actor_ref, Role::Yer, 0)
-        ){
-            bool
-        }else{false};
+        ).map(|selection| selection.0).unwrap_or(false);
 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
@@ -66,7 +64,7 @@ impl RoleStateImpl for Yer {
                 );
             } else {
                 if priority != Priority::Convert {return}
-                if self.star_passes_remaining <= 0 {return}
+                if self.star_passes_remaining == 0 {return}
 
                 if target_ref.night_defense(game).can_block(AttackPower::ArmorPiercing) {
                     actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
@@ -76,7 +74,7 @@ impl RoleStateImpl for Yer {
                 self.star_passes_remaining = self.star_passes_remaining.saturating_sub(1);
 
                 //role switching stuff
-                let fake_role = self.current_fake_role(&game, actor_ref);
+                let fake_role = self.current_fake_role(game, actor_ref);
 
                 actor_ref.set_night_grave_role(game, Some(fake_role));
                 
@@ -127,7 +125,7 @@ impl RoleStateImpl for Yer {
                         .collect::<VecSet<Option<Role>>>()
                 ),
                 AbilitySelection::new_role_option(Some(self.old_role)),
-                self.star_passes_remaining <= 0 ||
+                self.star_passes_remaining == 0 ||
                 actor_ref.ability_deactivated_from_death(game) ||
                 !game.attack_convert_abilities_enabled(),
                 None,
