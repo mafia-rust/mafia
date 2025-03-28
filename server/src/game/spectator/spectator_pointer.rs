@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use crate::{
-    client_connection::ClientConnection, game::{chat::{ChatGroup, ChatMessage}, phase::PhaseState, player::PlayerReference, Game, GameOverReason}, packet::ToClientPacket
+    client_connection::ClientConnection, game::{chat::{ChatGroup, ChatMessage}, player::PlayerReference, Game, GameOverReason}, packet::ToClientPacket
 };
 
 use super::Spectator;
@@ -29,6 +29,10 @@ impl SpectatorPointer {
     }
     pub fn connection(&self, game: &Game) -> ClientConnection {
         self.deref(game).map(|s|s.connection.clone()).unwrap_or(ClientConnection::Disconnected)
+    }
+
+    pub fn is_connected(&self, game: &Game) -> bool {
+        matches!(self.connection(game), ClientConnection::Connected(..))
     }
 
     pub fn send_packet(&self, game: &Game, packet: ToClientPacket){
@@ -86,14 +90,7 @@ impl SpectatorPointer {
         if !game.ticking {
             self.send_packet(game, ToClientPacket::GameOver { reason: GameOverReason::Draw })
         }
-
-        if let PhaseState::Testimony { player_on_trial, .. }
-            | PhaseState::Judgement { player_on_trial, .. }
-            | PhaseState::FinalWords { player_on_trial } = game.current_phase() {
-            self.send_packet(game, ToClientPacket::PlayerOnTrial{
-                player_index: player_on_trial.index()
-            });
-        }
+        
         let votes_packet = ToClientPacket::new_player_votes(game);
         self.send_packet(game, votes_packet);
         for grave in game.graves.iter(){
