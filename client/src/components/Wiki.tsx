@@ -275,7 +275,7 @@ export function partitionWikiPages(
             "standard/protect", "standard/rampage", "standard/report", "standard/roleblock", "standard/silenced",
             "standard/spiral", "standard/syndicateGunItem", "standard/transport", "standard/ward",
             "standard/forfeitVote", "standard/aura", "standard/fastForward", "standard/appearedVisit", 
-            "standard/defense", "standard/confused", "standard/trial",
+            "standard/defense", "standard/confused", "standard/trial", "standard/redirect"
         ].includes(wikiPage)) {
             category = "abilities"
         }

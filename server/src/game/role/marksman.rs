@@ -59,9 +59,9 @@ impl RoleStateImpl for Marksman {
         for mark in marks {
             if !visiting_players.contains(&mark) {continue};
             
-            let killed = mark.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Marksman), AttackPower::Basic, false);
+            let killed = mark.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Marksman), AttackPower::Basic, false, false);
 
-            if killed && mark.win_condition(game).is_loyalist_for(GameConclusion::Town) {
+            if (killed != None) && mark.win_condition(game).is_loyalist_for(GameConclusion::Town) {
                 self.state = MarksmanState::ShotTownie;
             }
         }
