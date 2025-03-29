@@ -41,7 +41,7 @@ impl TestPlayer {
         self.send_ability_input(
             AbilityInput::new(
                 ControllerID::role(self.player_ref(), self.role(), 0),
-                AbilitySelection::new_unit()
+                UnitSelection
             )
         );
         true
@@ -51,9 +51,7 @@ impl TestPlayer {
         self.send_ability_input(
             AbilityInput::new(
                 ControllerID::role(self.player_ref(), self.role(), 0),
-                AbilitySelection::new_two_player_option(
-                    Some((a.player_ref(), b.player_ref()))
-                )
+                TwoPlayerOptionSelection(Some((a.player_ref(), b.player_ref())))
             )
         );
         true
@@ -63,7 +61,7 @@ impl TestPlayer {
         self.send_ability_input(
             AbilityInput::new(
                 ControllerID::role(self.player_ref(), self.role(), 0),
-                AbilitySelection::new_player_list(selection.into().iter().map(TestPlayer::player_ref).collect())
+                PlayerListSelection(selection.into().iter().map(TestPlayer::player_ref).collect())
             )
         );
         true
@@ -73,7 +71,7 @@ impl TestPlayer {
         self.send_ability_input(
             AbilityInput::new(
                 ControllerID::role(self.player_ref(), self.role(), 0),
-                AbilitySelection::new_boolean(selection)
+                BooleanSelection(selection)
             )
         );
         true
@@ -83,7 +81,7 @@ impl TestPlayer {
         self.send_ability_input(
             AbilityInput::new(
                 ControllerID::role(self.player_ref(), self.role(), id),
-                AbilitySelection::new_player_list(selection.into().iter().map(|p| p.player_ref()).collect())
+                PlayerListSelection(selection.into().iter().map(|p| p.player_ref()).collect())
             )
         );
         true
@@ -93,7 +91,7 @@ impl TestPlayer {
         self.send_ability_input(
             AbilityInput::new(
                 ControllerID::nominate(self.player_ref()),
-                AbilitySelection::new_player_list(target.into().iter().map(|p| p.player_ref()).collect())
+                PlayerListSelection(target.into().iter().map(|p| p.player_ref()).collect())
             )
         );
     }

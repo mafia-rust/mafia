@@ -1,14 +1,14 @@
 use serde::{Serialize, Deserialize};
 
+use crate::game::ability_input::AvailableRoleOptionSelection;
 use crate::game::{attack_power::DefensePower, role_list::RoleSet};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::role_can_generate;
 use crate::game::Game;
-use crate::vec_set;
 
-use super::{AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, Role, RoleOptionSelection, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Role, RoleOptionSelection, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
@@ -30,20 +30,16 @@ impl RoleStateImpl for FiendsWildcard {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::FiendsWildcard, 0),
-            AvailableAbilitySelection::new_role_option(
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::FiendsWildcard, 0))
+            .available_selection(AvailableRoleOptionSelection(
                 RoleSet::Fiends.get_roles().into_iter().filter(|role|
                     game.settings.enabled_roles.contains(role) && *role != Role::FiendsWildcard
                 ).map(Some).chain(std::iter::once(None)).collect()
-            ),
-            AbilitySelection::new_role_option(None),
-            actor_ref.ability_deactivated_from_death(game),
-            None,
-            false,
-            vec_set!(actor_ref)
-        )
+            ))
+            .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
+            .allow_players([actor_ref])
+            .build_map()
     }
 }
 

@@ -416,12 +416,6 @@ impl Game {
             }
         }
 
-        self.send_packet_to_all(
-            ToClientPacket::PlayerVotes { votes_for_player: 
-                PlayerReference::ref_vec_map_to_index(voted_player_votes.clone())
-            }
-        );
-
         voted_player_votes
     }
     /// Returns the player who is meant to be put on trial
@@ -433,6 +427,7 @@ impl Game {
         let &PhaseState::Nomination { trials_left, .. } = self.current_phase() else {return None};
 
         let voted_player_votes = self.create_voted_player_map();
+        self.send_packet_to_all(ToClientPacket::PlayerVotes { votes_for_player: voted_player_votes.clone()});
 
         let mut voted_player = None;
 
