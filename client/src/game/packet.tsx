@@ -103,7 +103,7 @@ export type ToClientPacket = {
     dayNumber: number, 
 } | {
     type: "phaseTimeLeft",
-    secondsLeft: number
+    secondsLeft: number | null
 } |{
     type: "playerAlive", 
     alive: [boolean]

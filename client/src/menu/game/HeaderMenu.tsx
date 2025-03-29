@@ -75,7 +75,7 @@ function Information(): ReactElement {
     const timeLeftMs = useGameState(
         gameState => gameState.timeLeftMs,
         ["phaseTimeLeft", "tick"]
-    )!
+    ) ?? null;
     const phaseState = useGameState(
         gameState => gameState.phaseState,
         ["phase"]
@@ -99,7 +99,7 @@ function Information(): ReactElement {
 
 
     const timeLeftText = useMemo(() => {
-        if (timeLeftMs >= 1000000000000000000) {
+        if (timeLeftMs === null) {
             return "∞"
         } else {
             return Math.floor(timeLeftMs/1000);
