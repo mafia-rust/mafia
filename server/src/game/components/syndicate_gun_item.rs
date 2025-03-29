@@ -83,11 +83,11 @@ impl SyndicateGunItem {
     //event listeners
     pub fn on_any_death(game: &mut Game, player: PlayerReference) {
         if game.syndicate_gun_item.player_with_gun.is_some_and(|p|p==player) {
-            Self::give_gun_any(game);
+            Self::give_gun_to_insider(game);
         }
     }
 
-    pub fn give_gun_any(game: &mut Game){
+    pub fn give_gun_to_insider(game: &mut Game){
         if game.syndicate_gun_item.player_with_gun.is_some_and(|p|p.alive(game)) {return}
         game.syndicate_gun_item.player_with_gun = None;
 
@@ -96,7 +96,7 @@ impl SyndicateGunItem {
         }
         for insider in InsiderGroupID::Mafia.players(game).iter()
             .filter(|p|p.alive(game))
-            .cloned()
+            .copied()
             .collect::<Vec<_>>()
         {
             SyndicateGunItem::give_gun(game, insider);

@@ -80,16 +80,17 @@ impl Godfather{
             .get_controller_current_selection_player_list(
             ControllerID::syndicate_choose_backup()
         )else {return};
-        let Some(backup) = backup.first() else {return};
-        
-        if Modifiers::modifier_is_enabled(game, ModifierType::PlayerDrops) {
-            if backup.alive(game) {
-                SyndicateGunItem::give_gun(game, *backup);
+        if Modifiers::modifier_is_enabled(game, ModifierType::BackupGetsGun) {
+            if backup.first().is_some_and(|b|b.alive(game)) {
+                SyndicateGunItem::give_gun(game, unsafe{*backup.get_unchecked(0)});
             } else {
-                SyndicateGunItem::give_gun_any(game);
+                SyndicateGunItem::give_gun_to_insider(game);
             }
             return;
         }
+        let Some(backup) = backup.first() else {return};
+        
+        
 
         //convert backup to godfather
         backup.set_role(game, new_role_data);

@@ -69,7 +69,7 @@ pub enum ModifierState{
     NoChat(NoChat),
     HiddenWhispers(HiddenWhispers),
     ScheduledNominations(ScheduledNominations),
-    PlayerDrops(BackupGetsGun),
+    BackupGetsGun(BackupGetsGun),
 }
 #[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Debug, Hash)]
 #[serde(rename_all = "camelCase")]
@@ -89,7 +89,7 @@ pub enum ModifierType{
     NoChat,
     HiddenWhispers,
     ScheduledNominations,
-    PlayerDrops,
+    BackupGetsGun,
 }
 impl ModifierType{
     pub fn default_state(&self)->ModifierState{
@@ -109,7 +109,7 @@ impl ModifierType{
             Self::NoChat => ModifierState::NoChat(NoChat),
             Self::HiddenWhispers => ModifierState::HiddenWhispers(HiddenWhispers),
             Self::ScheduledNominations => ModifierState::ScheduledNominations(ScheduledNominations),
-            Self::PlayerDrops => ModifierState::PlayerDrops(BackupGetsGun)
+            Self::BackupGetsGun => ModifierState::BackupGetsGun(BackupGetsGun)
         }
     }
 }
@@ -131,7 +131,7 @@ impl From<&ModifierState> for ModifierType{
             ModifierState::NoChat(_) => Self::NoChat,
             ModifierState::HiddenWhispers(_) => Self::HiddenWhispers,
             ModifierState::ScheduledNominations(_) => Self::ScheduledNominations,
-            ModifierState::PlayerDrops(_) => Self::PlayerDrops,
+            ModifierState::BackupGetsGun(_) => Self::BackupGetsGun,
         }
     }
 }

@@ -5,7 +5,7 @@ pub struct BackupGetsGun;
 
 impl From<&BackupGetsGun> for ModifierType{
     fn from(_: &BackupGetsGun) -> Self {
-        ModifierType::PlayerDrops
+        ModifierType::BackupGetsGun
     }
 }
 
