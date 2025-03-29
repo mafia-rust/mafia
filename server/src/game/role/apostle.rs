@@ -30,9 +30,9 @@ impl RoleStateImpl for Apostle {
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
                 
-                if let Some(_) = target_ref.try_night_kill_single_attacker(
+                if target_ref.try_night_kill_single_attacker(
                     actor_ref, game, GraveKiller::RoleSet(RoleSet::Cult), AttackPower::Basic, false, true
-                ) {
+                ).is_some() {
                     Cult::set_ability_used_last_night(game, Some(CultAbility::Kill));
                 }
             }
@@ -42,7 +42,7 @@ impl RoleStateImpl for Apostle {
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 
-                if let Some(_) = target_ref.try_convert_recruit(actor_ref, game, AttackPower::Basic, true, InsiderGroupID::Cult, Role::Zealot.new_state(game)) {
+                if target_ref.try_convert_recruit(actor_ref, game, AttackPower::Basic, true, InsiderGroupID::Cult, Role::Zealot.new_state(game)).is_some() {
                 	Cult::set_ability_used_last_night(game, Some(CultAbility::Convert));
                 }
             }

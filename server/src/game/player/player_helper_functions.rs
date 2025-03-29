@@ -64,12 +64,12 @@ impl PlayerReference{
 	
 	        target.set_night_died(game, true);
 	
-	      	return Some(target);
+	      	Some(target)
      	} else {
     		for attacker in attacker_refs.iter() {
 		        attacker.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
 		    }
-		    return None;
+		    None
       	}
     }
     pub fn try_night_kill_no_attacker(&self, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower) -> Option<PlayerReference> {
@@ -94,47 +94,47 @@ impl PlayerReference{
           	return None;
       	}
       
-      	return Some(target);
+      	Some(target)
     }
     pub fn try_recruit(&self, actor_ref: PlayerReference, game: &mut Game, attack: AttackPower, with_visit: bool, group: InsiderGroupID) -> Option<PlayerReference> {
-    	if let Some(target) = self.try_attack(game, attack, with_visit) {
-     		if group.is_player_in_revealed_group(game, target) {
-       			actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
-       			return None;
-       		}
-         	if !group.recruit(game, target) {
-          		actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
-          		return None;
-          	};
-         	return Some(target);
-     	} else {
-      		actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
-      		return None;
+        if let Some(target) = self.try_attack(game, attack, with_visit) {
+            if group.is_player_in_revealed_group(game, target) {
+               	actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+               	return None;
+           	}
+            if !group.recruit(game, target) {
+                actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                return None;
+            };
+            Some(target)
+        } else {
+            actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+            None
       	}
     }
     
     pub fn try_convert(&self, actor_ref: PlayerReference, game: &mut Game, attack: AttackPower, with_visit: bool, new_state: RoleState) -> Option<PlayerReference> {
-  		let target = self.try_attack(game, attack, with_visit)?;
-  		if InsiderGroupID::in_same_revealed_group(game, actor_ref, target) {
-     			return None;
-  		}
-		target.set_night_convert_role_to(game, Some(new_state));
-		return Some(target);
+        let target = self.try_attack(game, attack, with_visit)?;
+        if InsiderGroupID::in_same_revealed_group(game, actor_ref, target) {
+            return None;
+        }
+        target.set_night_convert_role_to(game, Some(new_state));
+        Some(target)
     }
     
     pub fn try_convert_friendly(&self, actor_ref: PlayerReference, game: &mut Game, attack: AttackPower, with_visit: bool, new_state: RoleState) -> Option<PlayerReference> {
-   		let (target, _) = self.role_state(game).clone().redirect_attack(game, *self, attack, with_visit)?;
+       	let (target, _) = self.role_state(game).clone().redirect_attack(game, *self, attack, with_visit)?;
         if InsiderGroupID::in_same_revealed_group(game, actor_ref, target) {
-   			target.set_night_convert_role_to(game, Some(new_state));
-			return Some(target);
-  		}
-      	return None;
+           	target.set_night_convert_role_to(game, Some(new_state));
+            return Some(target);
+        }
+        None
     }
     
     pub fn try_convert_recruit(&self, actor_ref: PlayerReference, game: &mut Game, attack: AttackPower, with_visit: bool, group: InsiderGroupID, new_state: RoleState) -> Option<PlayerReference> {
-		let target = self.try_recruit(actor_ref, game, attack, with_visit, group)?;
-		target.set_night_convert_role_to(game, Some(new_state));
-		return Some(target);
+        let target = self.try_recruit(actor_ref, game, attack, with_visit, group)?;
+        target.set_night_convert_role_to(game, Some(new_state));
+        Some(target)
 	}
 
     /**

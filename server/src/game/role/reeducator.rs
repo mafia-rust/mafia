@@ -81,15 +81,15 @@ impl RoleStateImpl for Reeducator {
                 // because the original implementation checked defense, I am treating this as if it is an attack,
                 // despite the visit not being marked as such
                 // this is also not a try_convert_recruit because that is still somewhat special cased for recruiter.
-                if let Some(_) = target_ref.try_convert_friendly(
+                if target_ref.try_convert_friendly(
                 	actor_ref, game, AttackPower::Basic, true, new_state.clone()
-                ) {
-                	()
+                ).is_some() {
+                	
                 } else if !(self.convert_charges_remaining && game.day_number() > 1) {
                 	actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
-                } else if let Some(_) = target_ref.try_convert(
+                } else if target_ref.try_convert(
                		actor_ref, game, AttackPower::Basic, true, new_state
-                ) {
+                ).is_some() {
 	               	InsiderGroupID::Mafia.add_player_to_revealed_group(game, target_ref);
 					target_ref.set_win_condition(game, WinCondition::new_loyalist(GameConclusion::Mafia));
 	               	self.convert_charges_remaining = false;
