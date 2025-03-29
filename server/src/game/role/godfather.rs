@@ -2,9 +2,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::ControllerParametersMap;
 use crate::game::attack_power::{AttackPower, DefensePower};
-use crate::game::components::syndicate_gun_item::SyndicateGunItem;
 use crate::game::grave::GraveKiller;
-use crate::game::modifiers::{ModifierType, Modifiers};
 use crate::game::player::PlayerReference;
 
 use crate::game::role_list::RoleSet;
@@ -80,18 +78,9 @@ impl Godfather{
             .get_controller_current_selection_player_list(
             ControllerID::syndicate_choose_backup()
         )else {return};
-        if Modifiers::modifier_is_enabled(game, ModifierType::BackupGetsGun) {
-            if backup.first().is_some_and(|b|b.alive(game)) {
-                SyndicateGunItem::give_gun(game, unsafe{*backup.get_unchecked(0)});
-            } else {
-                SyndicateGunItem::give_gun_to_insider(game);
-            }
-            return;
-        }
+        
         let Some(backup) = backup.first() else {return};
         
-        
-
         //convert backup to godfather
         backup.set_role(game, new_role_data);
     }
