@@ -168,8 +168,7 @@ impl PhaseState {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::TrialInformation { required_votes, trials_left });
                 
 
-                let packet = ToClientPacket::new_player_votes(game);
-                game.send_packet_to_all(packet);
+                game.send_packet_to_all(ToClientPacket::PlayerVotes{votes_for_player: game.create_voted_player_map()});
             },
             PhaseState::Testimony { player_on_trial, .. } => {
                 game.add_message_to_chat_group(ChatGroup::All, 
@@ -181,7 +180,6 @@ impl PhaseState {
                             .collect()
                     }
                 );
-                game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() });
             },
             PhaseState::Briefing 
             | PhaseState::Night
@@ -215,9 +213,6 @@ impl PhaseState {
                 if Modifiers::modifier_is_enabled(game, ModifierType::ScheduledNominations){
                     
                     if let Some(player_on_trial) = game.count_nomination_and_start_trial(false){    
-
-                        game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
-    
                         Self::Testimony{
                             trials_left: trials_left.saturating_sub(1), 
                             player_on_trial, 

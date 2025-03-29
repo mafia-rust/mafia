@@ -416,12 +416,6 @@ impl Game {
             }
         }
 
-        self.send_packet_to_all(
-            ToClientPacket::PlayerVotes { votes_for_player: 
-                PlayerReference::ref_vec_map_to_index(voted_player_votes.clone())
-            }
-        );
-
         voted_player_votes
     }
     /// Returns the player who is meant to be put on trial
@@ -433,6 +427,7 @@ impl Game {
         let &PhaseState::Nomination { trials_left, .. } = self.current_phase() else {return None};
 
         let voted_player_votes = self.create_voted_player_map();
+        self.send_packet_to_all(ToClientPacket::PlayerVotes { votes_for_player: voted_player_votes.clone()});
 
         let mut voted_player = None;
 
@@ -451,8 +446,6 @@ impl Game {
         
         if start_trial_instantly {
             if let Some(player_on_trial) = voted_player {
-                self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
-                
                 PhaseStateMachine::next_phase(self, Some(PhaseState::Testimony {
                     trials_left: trials_left.saturating_sub(1), 
                     player_on_trial, 
@@ -576,7 +569,9 @@ impl Game {
         Ok(spectator_pointer.index)
     }
     pub fn remove_spectator(&mut self, i: SpectatorIndex){
-        self.spectators.remove(i as usize);
+        if (i as usize) < self.spectators.len() {
+            self.spectators.remove(i as usize);
+        }
     }
 
     pub fn send_packet_to_all(&self, packet: ToClientPacket){
@@ -586,6 +581,11 @@ impl Game {
         for spectator in self.spectators.iter(){
             spectator.send_packet(packet.clone());
         }
+    }
+    
+    pub(crate) fn is_any_client_connected(&self) -> bool {
+        PlayerReference::all_players(self).any(|p| p.is_connected(self))
+        || SpectatorPointer::all_spectators(self).any(|s| s.is_connected(self))
     }
 }
 

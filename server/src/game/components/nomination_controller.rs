@@ -1,37 +1,34 @@
 use crate::{
     game::{
-        ability_input::{AbilityInput, ControllerID, ControllerParametersMap, PlayerListSelection}, chat::{ChatGroup, ChatMessageVariant}, modifiers::{ModifierType, Modifiers}, player::PlayerReference, Game
-    }, packet::ToClientPacket, vec_set
+        ability_input::{AbilityInput, AvailablePlayerListSelection, ControllerID, ControllerParametersMap, PlayerListSelection}, chat::{ChatGroup, ChatMessageVariant}, modifiers::{ModifierType, Modifiers}, player::PlayerReference, Game
+    }, packet::ToClientPacket
 };
 
 pub struct NominationController;
 
 impl NominationController{
     pub fn controller_parameters_map(game: &mut Game)->ControllerParametersMap{
-        PlayerReference::all_players(game)
-            .map(|actor| Self::one_player_controller(game, actor))
-            .fold(ControllerParametersMap::default(), |mut acc, controller| {
-                acc.combine_overwrite(controller);
-                acc
-            })
+        ControllerParametersMap::combine(
+            PlayerReference::all_players(game)
+                .map(|actor| Self::one_player_controller(game, actor))
+        )
     }
     fn one_player_controller(game: &mut Game, actor: PlayerReference)->ControllerParametersMap{
-        ControllerParametersMap::new_controller_fast(
-            game,
-            crate::game::ability_input::ControllerID::Nominate { player: actor },
-            crate::game::ability_input::AvailableAbilitySelection::new_player_list(
-                PlayerReference::all_players(game).filter(|p|p.alive(game)).collect(),
-                false,
-                Some(1)
-            ),
-            crate::game::ability_input::AbilitySelection::new_player_list(vec![]),
-            !actor.alive(game) ||
-            actor.forfeit_vote(game) ||
-            game.current_phase().phase() != crate::game::phase::PhaseType::Nomination,
-            Some(crate::game::phase::PhaseType::Nomination),
-            false,
-            vec_set!(actor)
-        )
+        ControllerParametersMap::builder(game)
+            .id(crate::game::ability_input::ControllerID::Nominate { player: actor })
+            .available_selection(AvailablePlayerListSelection {
+                available_players: PlayerReference::all_players(game).filter(|p|p.alive(game)).collect(),
+                can_choose_duplicates: false,
+                max_players: Some(1)
+            })
+            .add_grayed_out_condition(
+                !actor.alive(game) ||
+                actor.forfeit_vote(game) ||
+                game.current_phase().phase() != crate::game::phase::PhaseType::Nomination
+            )
+            .reset_on_phase_start(crate::game::phase::PhaseType::Nomination)
+            .allow_players([actor])
+            .build_map()
     }
     pub fn on_validated_ability_input_received(game: &mut Game, player: PlayerReference, input: AbilityInput){
         if let Some(PlayerListSelection(voted)) = input.get_player_list_selection_if_id(ControllerID::Nominate{ player }){
@@ -45,8 +42,9 @@ impl NominationController{
                 !Modifiers::modifier_is_enabled(game, ModifierType::ScheduledNominations)
             );
 
-            let packet = ToClientPacket::new_player_votes(game);
-            game.send_packet_to_all(packet);
+            game.send_packet_to_all(ToClientPacket::PlayerVotes {
+                votes_for_player: game.create_voted_player_map()
+            });
         }
     }
 }
