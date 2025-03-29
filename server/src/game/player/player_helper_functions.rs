@@ -88,12 +88,18 @@ impl PlayerReference{
             Some((target, power)) => (target, power)
         };
 
-        if game.current_phase().is_night() {
+        let night = game.current_phase().is_night();
+        
+        if night {
            	target.set_night_attacked(game, true);
         }
       	
         if target.defense(game).can_block(power){
-            target.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
+            if night {
+                target.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
+            } else {
+                target.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
+            }
             return None;
         }
 
