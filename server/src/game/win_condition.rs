@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use serde::{Deserialize, Serialize};
 
-use super::game_conclusion::GameConclusion;
+use super::{game_conclusion::GameConclusion, player::PlayerReference};
 
 /// Related functions require RoleStateWon to be independent of GameConclusion. 
 /// RoleStateWon needs to be able to win with any GameConclusion.
@@ -14,6 +14,7 @@ pub enum WinCondition{
         win_if_any: HashSet<GameConclusion>
     },
     RoleStateWon,
+    Mimic(PlayerReference),
 }
 
 impl PartialOrd for WinCondition {
@@ -35,6 +36,7 @@ impl WinCondition{
         match self{
             WinCondition::GameConclusionReached{win_if_any} => Some(win_if_any.clone()),
             WinCondition::RoleStateWon => None,
+            WinCondition::Mimic(_) => None,
         }
     }
     pub fn are_friends(a: &WinCondition, b: &WinCondition)->bool{
@@ -50,18 +52,21 @@ impl WinCondition{
         match self{
             WinCondition::GameConclusionReached{win_if_any} => win_if_any.contains(&resolution_state),
             WinCondition::RoleStateWon => true,
+            WinCondition::Mimic(_) => true,
         }
     }
     pub fn is_loyalist_for(&self, resolution_state: GameConclusion)->bool{
         match self{
             WinCondition::GameConclusionReached{win_if_any} => win_if_any.len() == 1 && win_if_any.contains(&resolution_state),
             WinCondition::RoleStateWon => false,
+            WinCondition::Mimic(_) => false,
         }
     }
     pub fn is_loyalist(&self)->bool{
         match self{
             WinCondition::GameConclusionReached{win_if_any} => win_if_any.len() == 1,
             WinCondition::RoleStateWon => false,
+            WinCondition::Mimic(_) => false,
         }
     }
     
