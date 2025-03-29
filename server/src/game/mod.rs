@@ -44,6 +44,7 @@ use modifiers::ModifierType;
 use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
 use rand::seq::SliceRandom;
+use role::Role;
 use role_list::RoleAssignment;
 use role_list::RoleOutlineOptionInsiderGroups;
 use role_list::RoleOutlineOptionWinCondition;
@@ -88,6 +89,7 @@ use self::verdict::Verdict;
 
 pub struct Game {
     pub settings : Settings,
+    pub pseudo_enabled_roles : Option<VecSet<Role>>,
 
     pub spectators: Vec<Spectator>,
     pub spectator_chat_messages: Vec<ChatMessageVariant>,
@@ -150,7 +152,7 @@ pub enum GameOverReason {
 impl Game {
     /// `players` must have length 255 or lower.
     pub fn new(settings: Settings, players: Vec<PlayerInitializeParameters>, spectators: Vec<SpectatorInitializeParameters>) -> Result<Self, RejectStartReason>{
-        //check settings are not completly off the rails
+        //check settings are not completely off the rails
         if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
         }
@@ -224,6 +226,7 @@ impl Game {
                 phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
                 modifiers: Modifiers::default_from_settings(settings.enabled_modifiers.clone()),
                 settings,
+                pseudo_enabled_roles: None,
 
                 saved_controllers: SavedControllersMap::default(),
                 night_visits: NightVisits::default(),
@@ -416,12 +419,6 @@ impl Game {
             }
         }
 
-        self.send_packet_to_all(
-            ToClientPacket::PlayerVotes { votes_for_player: 
-                PlayerReference::ref_vec_map_to_index(voted_player_votes.clone())
-            }
-        );
-
         voted_player_votes
     }
     /// Returns the player who is meant to be put on trial
@@ -433,6 +430,7 @@ impl Game {
         let &PhaseState::Nomination { trials_left, .. } = self.current_phase() else {return None};
 
         let voted_player_votes = self.create_voted_player_map();
+        self.send_packet_to_all(ToClientPacket::PlayerVotes { votes_for_player: voted_player_votes.clone()});
 
         let mut voted_player = None;
 
@@ -613,7 +611,7 @@ pub mod test {
     
     pub fn mock_game(settings: Settings, number_of_players: u8) -> Result<Game, RejectStartReason> {
 
-        //check settings are not completly off the rails
+        //check settings are not completely off the rails
         if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
         }
@@ -643,7 +641,7 @@ pub mod test {
             players.push(new_player);
         }
 
-        let mut game = Game{
+        let mut game = Game {
             pitchfork: Pitchfork::new(number_of_players),
             
             assignments,
@@ -654,6 +652,7 @@ pub mod test {
             graves: Vec::new(),
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
+            pseudo_enabled_roles: None,
 
             saved_controllers: SavedControllersMap::default(),
             night_visits: NightVisits::default(),
