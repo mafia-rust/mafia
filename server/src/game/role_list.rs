@@ -6,26 +6,15 @@ use vec1::{
 };
 
 use crate::vec_set::VecSet;
+use crate::vec_set::vec_set;
 
 use super::{components::insider_group::InsiderGroupID, game_conclusion::GameConclusion, role::Role};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RoleList(pub Vec<RoleOutline>);
+
 impl RoleList {
     /// Output is the same order as the rolelist
-    pub fn create_random_role_assignments(&self, enabled_roles: &VecSet<Role>) -> Option<Vec<RoleAssignment>> {
-        let mut generated_data = Vec::<RoleAssignment>::new();
-        for entry in self.0.iter(){
-            if let Some(player_initialization_data) = entry.get_random_role_assignments(
-                enabled_roles, &generated_data.iter().map(|datum| datum.role).collect::<Vec<Role>>()
-            ){
-                generated_data.push(player_initialization_data);
-            }else{
-                return None;
-            }
-        }
-        Some(generated_data)
-    }
     pub fn simplify(&mut self){
         for entry in self.0.iter_mut(){
             entry.simplify();
@@ -34,21 +23,113 @@ impl RoleList {
     pub fn sort(&mut self){
         self.0.sort_by_key(|r| r.get_role_assignments().len());
     }
+    /// Output is the same order as the rolelist
+    pub fn generator(&self, enabled_roles: &VecSet<Role>) -> Option<RoleAssignmentGen>{
+        let mut taken_roles = Vec::new();
+        let mut outline_gens = Vec::new();
+        for outline in self.0.iter() {
+            let gen = outline.generator(enabled_roles);
+            if gen.options.is_empty() {return None};
+            outline_gens.push(gen.clone());
+            if gen.options.len() > 1 {continue}
+            let option = gen.options.first()?;
+            if option.role.role_limit_1() {
+                taken_roles.push(option.role);
+            }
+        }
+        let mut new_taken_roles = Vec::new();
+        loop {
+            for outline in outline_gens.iter_mut() {
+                //let outline = outline_gens.get_mut(i).expect("");
+                if outline.options.len() == 1 {continue}
+                if !outline.any_rl1 {continue}
+                outline.options.retain(|option|!taken_roles.contains(&option.role) && !new_taken_roles.contains(&option.role));
+                if outline.options.is_empty() {return None}
+                if outline.options.len() == 1 && outline.options.first().expect("literally just checked").role.role_limit_1() {
+                    new_taken_roles.push(outline.options.first().expect("literally just checked").role);
+                }
+            }
+
+            if new_taken_roles.is_empty() {break}
+
+            taken_roles = new_taken_roles.clone();
+            new_taken_roles.clear();
+        }
+        //using new taken roles because its guaranteed to be empty and it doesn't need to reallocate
+        for outline in outline_gens.iter() {
+            if outline.options.len() > 1 {continue;}
+            let role_assignment = outline.options.first()?;
+            if !role_assignment.role.role_limit_1() {continue}
+            if new_taken_roles.contains(&role_assignment.role) {return None};
+            new_taken_roles.push(role_assignment.role);
+        }
+        
+        Some(RoleAssignmentGen(outline_gens))
+    }
+}
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub struct RoleAssignmentGen(pub Vec<RoleOutlineGenData>);
+impl RoleAssignmentGen {
+    pub fn create_random_role_assignments(&self) -> Option<Vec<RoleAssignment>>  {
+        let mut generated_data = Vec::<RoleAssignment>::new();
+        let rng = &mut rand::rng();
+        for entry in self.0.iter() {
+            if let Some(assignment) = entry.options.choose(rng){
+                let role = assignment.role;
+                if let Some(max) = role.maximum_count() {
+                    //Makes sure it doesn't go over the role limit
+                    //starts at 1 because the current data has not been pushed 
+                    let mut count = 1u8;
+                    if generated_data.iter().any(|data| 
+                        if data.role == role {
+                            if count == max {
+                                true
+                            } else {
+                                count = count.saturating_add(1);
+                                false
+                            }
+                        } else {
+                            false
+                        }
+                    ) {
+                        return None;
+                    }
+                }
+                generated_data.push(assignment.clone());
+            } else {
+                return None;
+            }
+        }
+        Some(generated_data)
+    }
+    ///Returns true if the role is guaranteed to exist with the default win condition and insider group
+    pub fn role_by_itself_with_default_assignment_data(&self, role: Role) -> bool {
+        self.0.contains(&RoleOutlineGenData{options: vec![RoleAssignment::new_from_default(role)], any_rl1: role.role_limit_1()})
+    }
 }
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, Debug, PartialOrd, Ord)]
 pub struct RoleAssignment {
     pub role: Role,
     pub insider_groups: RoleOutlineOptionInsiderGroups,
     pub win_condition: RoleOutlineOptionWinCondition
 }
-
+impl RoleAssignment {
+    pub fn new_from_default(role: Role)->RoleAssignment{
+        RoleAssignment{
+            role,
+            win_condition: RoleOutlineOptionWinCondition::default(),
+            insider_groups: RoleOutlineOptionInsiderGroups::default(),
+        }
+    }
+}
 
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct RoleOutline {
     pub options: Vec1<RoleOutlineOption>
 }
+
 impl Serialize for RoleOutline {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -94,12 +175,12 @@ impl RoleOutline{
                     })
             ).collect()
     }
-    pub fn get_random_role_assignments(&self, enabled_roles: &VecSet<Role>, taken_roles: &[Role]) -> Option<RoleAssignment> {
-        let options = self.get_role_assignments()
-            .into_iter()
-            .filter(|r|role_can_generate(r.role, enabled_roles, taken_roles))
-            .collect::<Vec<_>>();
-        options.choose(&mut rand::rng()).cloned()
+    pub fn get_random_role_assignment(&self, enabled_roles: &VecSet<Role>, taken_roles: &[Role]) -> Option<RoleAssignment> {
+        self.get_role_assignments().iter()
+            .filter(|option|
+                role_can_generate(option.role, enabled_roles, taken_roles)
+            ).collect::<Vec<&RoleAssignment>>()
+            .choose(&mut rand::rng()).copied().cloned()
     }
     pub fn simplify(&mut self){
         let mut new_options = self.options.to_vec();
@@ -107,8 +188,9 @@ impl RoleOutline{
         new_options = new_options.into_iter().collect::<VecSet<_>>().into_iter().collect();
 
         for option_a in self.options.iter(){
+            if !option_a.roles.is_role_set() {continue};
             for option_b in self.options.iter(){
-                if option_a.roles.is_subset(&option_b.roles) && option_a != option_b {
+                if option_a != option_b && option_b.subset_of(option_a) {
                     new_options.retain(|r| r != option_a);
                 }
             }
@@ -121,8 +203,38 @@ impl RoleOutline{
 
         *self = RoleOutline{options: new_options};
     }
+    pub fn simplified(&self) -> Self {
+        let mut clone = self.clone();
+        clone.simplify();
+        clone
+    }
+    /// Reduces the number of roles that can generate from this to a value closer to the actual possible number
+    /// This
+    /// - Speeds up picking roles from outlines
+    /// - Allows for more fail-fast cases when trying to start game with a role list that cannot generate
+    /// - Makes the probability of picking any given combination of roles more uniform
+    /// - Reduces the probability of failing even when there is a valid way to generate roles from the role list
+    pub fn generator(&self, enabled_roles:&VecSet<Role>) -> RoleOutlineGenData {
+        let mut any_rl1  = false;
+        let options = self.simplified().options;
+        let mut new_options = VecSet::with_capacity(options.len());
+        for option in options {
+            let opt_gen = option.generator(enabled_roles);
+            new_options = new_options.union(&opt_gen.0);
+            if opt_gen.1 {
+                any_rl1 = true;
+            }
+        };
+        let new_options: Vec<RoleAssignment> = new_options.into_iter().collect();
+        RoleOutlineGenData{options: new_options, any_rl1}
+    }
 }
-
+//Don't be stupid, make sure the game doesn't start if there isn't anything in the outline
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct RoleOutlineGenData{
+    pub options: Vec<RoleAssignment>,
+    pub any_rl1: bool
+}
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, PartialOrd, Ord)]
 #[serde(untagged, rename_all = "camelCase")]
@@ -206,6 +318,52 @@ impl<'de> Deserialize<'de> for RoleOutlineOption {
         Ok(option)
     }
 }
+impl RoleOutlineOption {
+    /// Makes it so that all roles are specified individually. <br>
+    /// Example: if the only town roles enabled are Doctor, Jailor & Auditor and Jailor has been taken then the outline option Town becomes Doctor U Auditor. <br>
+    /// Does not include disabled roles or roles whose cap is reached so an empty vector may be returned
+    /// The second value is if any roles are role limit 1
+    pub fn generator(&self, enabled_roles: &VecSet<Role>) -> (VecSet<RoleAssignment>, bool) {
+        match self.roles.clone() {
+            RoleOutlineOptionRoles::Role { role } => {
+                if role_can_generate(role, enabled_roles, &[]) {
+                    (vec_set![RoleAssignment{
+                        role,
+                        insider_groups: self.insider_groups.clone(),
+                        win_condition: self.win_condition.clone(),
+                    }], role.role_limit_1())
+                } else {
+                    (VecSet::new(), false)
+                }
+            },
+            RoleOutlineOptionRoles::RoleSet {role_set} => {
+                let mut any_rl1 = false;
+                let mut options = VecSet::with_capacity(role_set.capacity_hint());                
+                for role in role_set.get_roles() {
+                    if role_can_generate(role, enabled_roles, &[]){
+                        options.insert(
+                            RoleAssignment{
+                                role,
+                                insider_groups: self.insider_groups.clone(),
+                                win_condition: self.win_condition.clone(),
+                            }
+                        );
+                        if role.role_limit_1() {
+                            any_rl1 = true;
+                        }
+                    }
+                }
+                (options, any_rl1)
+            },
+        }
+    }
+    /// Returns true if the the win condition & insider groups are the same & the role of lhs are a subset of rhs
+    pub fn subset_of(&self, rhs: &RoleOutlineOption) -> bool {
+        self.insider_groups == rhs.insider_groups && 
+        self.win_condition == rhs.win_condition && 
+        self.roles.subset_of(&rhs.roles)
+    }
+}
 
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
@@ -231,8 +389,26 @@ impl RoleOutlineOptionRoles{
                 vec![*role]
         }
     }
-    pub fn is_subset(&self, other: &RoleOutlineOptionRoles) -> bool {
-        self.get_roles().iter().all(|r|other.get_roles().contains(r))
+    ///Returns true if this is a subset of rhs
+    pub fn subset_of(&self, rhs: &RoleOutlineOptionRoles) -> bool {
+        if self == rhs {return true};
+        let Self::RoleSet {role_set: rhs} = rhs else {
+            let Self::RoleSet {role_set} = self else {return false};
+            if role_set.capacity_hint() <= 1 && role_set.get_roles().len() == 1 {
+                let Self::Role { role: rhs } = rhs else {unreachable!()};
+                unsafe {
+                    return role_set.get_roles().get_unchecked(0) == rhs
+                }
+            } else {
+                return false;
+            }
+        };
+        if *rhs == RoleSet::Any {return true};
+
+        match self {
+            Self::Role{role}=> rhs.contains(role),
+            Self::RoleSet{role_set} => role_set.subset_of(*rhs),
+        }
     }
 }
 impl PartialOrd for RoleOutlineOptionRoles {
@@ -245,9 +421,13 @@ impl Ord for RoleOutlineOptionRoles {
         other.get_roles().len().cmp(&self.get_roles().len())
     }
 }
+impl RoleOutlineOptionRoles {
+    pub fn is_role_set(&self) -> bool {
+        matches!(self, Self::RoleSet{..})
+    }
+}
 
-
-#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum RoleSet {
     Any,
@@ -324,14 +504,14 @@ impl RoleSet{
                 vec![
                     Role::Godfather, Role::Counterfeiter,
                     Role::Impostor, Role::Recruiter,
-                    Role::Mafioso
+                    Role::Mafioso, Role::MafiaKillingWildcard
                 ],
             RoleSet::MafiaSupport => 
                 vec![
                     Role::Blackmailer, Role::Informant, Role::Hypnotist, Role::Consort,
                     Role::Forger, Role::Framer, Role::Mortician, Role::Disguiser,
                     Role::MafiaWitch, Role::Necromancer, Role::Cupid, Role::Reeducator,
-                    Role::Ambusher,
+                    Role::Ambusher, Role::MafiaSupportWildcard
                 ],
             RoleSet::Minions => 
                 vec![
@@ -341,6 +521,7 @@ impl RoleSet{
                 vec![
                     Role::Jester, Role::Revolutionary, Role::Politician, Role::Doomsayer,
                     Role::Martyr, Role::Chronokaiser, Role::SantaClaus, Role::Krampus,
+                    Role::Wildcard, Role::TrueWildcard,
                 ],
             RoleSet::Fiends =>
                 vec![
@@ -353,6 +534,67 @@ impl RoleSet{
                 vec![
                     Role::Apostle, Role::Disciple, Role::Zealot
                 ],
+        }
+    }
+    pub fn contains(self, role: &Role) -> bool {
+        self.get_roles().contains(role)
+    }
+    /// Returns a number that is an estimate of how many roles are often enabled for a given role set,
+    /// or slightly smaller than that if the role set's roles have role limits
+    /// For each role set there is comment in the code explaining my thought process
+    /// (rl#) mean role limit #
+    pub fn capacity_hint(self) -> usize {
+        match self {
+            // idk what to put here, most games with any are either joke games with everything enabled or 
+            // test games where I'm to lazy to select each role, and have like 2 roles enabled.
+            RoleSet::Any => 20,
+            // I assumed that if you have town instead of town common its because they're the same for you
+            // I assumed that the roles that would probably be enabled are:
+            //    TI: Auditor, Gossip, Lookout, Philosopher, Psychic, & Snoop or Detective
+            //    TP: Armorsmith, Bouncer (rl1), Cop, Doctor, & Engineer
+            //    TK: Deputy(rl1), Marksman, Veteran(rl1) & Vigilante
+            //    TS: Coxswain or Medium or Retributionist, Transporter, Escort, & Mayor(rl1) or Reporter
+            RoleSet::Town | RoleSet::TownCommon => 19,
+            // See the Town Common list for reasoning
+            RoleSet::TownInvestigative => 6,
+            RoleSet::TownProtective => 5,
+            RoleSet::TownKilling => 3,
+            RoleSet::TownSupport => 4,
+            // I assumed that the roles that would probably be enabled is 1 because having it set at mafia means that it could generate SS or SK, 
+            // which is incredibly unbalanced so its probably only for testing ig. idk
+            RoleSet::Mafia => 1,
+            //Godfather, Imposter, Recruiter(assuming my nerf is accepted), or Counterfeiter
+            RoleSet::MafiaKilling => 4,
+            //Ambusher, Disguiser, Forger, Framer, Hypnotist or Consort, Informant, Mortician
+            RoleSet::MafiaSupport => 7,
+            //Scarecrow, Warper, Witch
+            RoleSet::Minions => 3,
+            //Jester & something else
+            RoleSet::Neutral => 2,
+            //Arsonist, Ojo, Pyrolisk, UZUMAKI, Warden, Werewolf, Yer
+            RoleSet::Fiends => 2,
+            // Its never really random with cult.
+            RoleSet::Cult => 1,
+        }
+    }
+    pub fn subset_of(self, rhs: Self) -> bool {
+        if self == rhs {return true};
+        if self == RoleSet::Any {return false};
+        match rhs {
+            Self::Cult | Self::Neutral | 
+            Self::MafiaKilling | Self::MafiaSupport |
+            Self::Minions | Self::Fiends | 
+            Self::TownInvestigative | Self::TownKilling |
+            Self::TownProtective | Self::TownSupport => false,
+
+            Self::Any => true,
+
+            Self::TownCommon => self == Self::TownInvestigative || self == Self::TownKilling || self == Self::TownSupport || self == Self::TownProtective,
+            
+            //intentionally not Self::TownCommon | Self::Town => ... because this also checks for lhs being town common
+            Self::Town => self.subset_of(Self::TownCommon),
+
+            Self::Mafia => self == Self::MafiaKilling || self == Self::MafiaSupport,
         }
     }
 }
