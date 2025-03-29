@@ -1,8 +1,6 @@
 use crate::game::{
     ability_input::saved_controllers_map::SavedControllersMap, components::{
-        cult::Cult, detained::Detained,
-        mafia::Mafia, night_visits::NightVisits,
-        verdicts_today::VerdictsToday
+        cult::Cult, detained::Detained, mafia::Mafia, night_visits::NightVisits, verdicts_today::VerdictsToday
     }, modifiers::Modifiers, phase::PhaseState, player::PlayerReference, Game
 };
 

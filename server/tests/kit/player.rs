@@ -165,3 +165,11 @@ impl From<TestPlayer> for Vec<TestPlayer> {
         vec![value]
     }
 }
+
+impl PartialEq for TestPlayer {
+    fn eq(&self, other: &TestPlayer) -> bool{
+        self.0 == other.0
+    }
+}
+
+impl Eq for TestPlayer {}
