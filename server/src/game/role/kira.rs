@@ -175,7 +175,7 @@ impl RoleStateImpl for Kira {
 
         match priority {
             Priority::Kill if result.all_correct() => {
-                if game.day_number() == 1 {return};
+                if !game.attack_convert_abilities_enabled() {return};
                 
                 for (player, (guess, result)) in result.guesses.iter(){
                     if player.alive(game) && *result == KiraGuessResult::Correct && *guess != KiraGuess::None {

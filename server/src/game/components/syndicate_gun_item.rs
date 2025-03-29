@@ -55,7 +55,7 @@ impl SyndicateGunItem {
                 player_with_gun,
                 false,
                 false,
-                game.day_number() <= 1,
+                !game.attack_convert_abilities_enabled(),
                 ControllerID::syndicate_gun_item_shoot()
             ).combine_overwrite_owned(
                 ControllerParametersMap::new_controller_fast(
@@ -103,7 +103,7 @@ impl SyndicateGunItem {
         }
     }
     pub fn on_night_priority(game: &mut Game, priority: Priority) {
-        if game.day_number() <= 1 {return}
+        if !game.attack_convert_abilities_enabled() {return}
         match priority {
             Priority::TopPriority => {
                 let Some(player_with_gun) = game.syndicate_gun_item.player_with_gun else {return}; 

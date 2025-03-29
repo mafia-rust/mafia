@@ -62,7 +62,7 @@ impl Pitchfork{
                             Some(1)
                     ),
                     AbilitySelection::new_player_list(vec![]),
-                    game.day_number() == 1 ||
+                    !game.attack_convert_abilities_enabled() ||
                         !player.alive(game) ||
                         !player.win_condition(game).is_loyalist_for(GameConclusion::Town),
                         Some(PhaseType::Obituary),
