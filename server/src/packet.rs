@@ -93,7 +93,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     RoleOutline{index: u8, role_outline: RoleOutline},
     #[serde(rename_all = "camelCase")]
-    PhaseTime{phase: PhaseType, time: u64},
+    PhaseTime{phase: PhaseType, time: u16},
     #[serde(rename_all = "camelCase")]
     PhaseTimes{phase_time_settings: PhaseTimeSettings},
     #[serde(rename_all = "camelCase")]
@@ -115,7 +115,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     Phase{phase: PhaseState, day_number: u8},
     #[serde(rename_all = "camelCase")]
-    PhaseTimeLeft{seconds_left: u64},
+    PhaseTimeLeft{seconds_left: Option<u16>},
 
     PlayerAlive{alive: Vec<bool>},
     #[serde(rename_all = "camelCase")]
@@ -211,7 +211,7 @@ pub enum ToServerPacket{
     #[serde(rename_all = "camelCase")]
     SimplifyRoleList,
     #[serde(rename_all = "camelCase")]
-    SetPhaseTime{phase: PhaseType, time: u64},
+    SetPhaseTime{phase: PhaseType, time: u16},
     #[serde(rename_all = "camelCase")]
     SetPhaseTimes{phase_time_settings: PhaseTimeSettings},
     #[serde(rename_all = "camelCase")]

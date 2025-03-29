@@ -22,7 +22,7 @@ impl Game {
         #[expect(clippy::single_match, reason = "More cases will likely be added later")]
         match incoming_packet {
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
-                if sender_pointer.host(self) && fast_forward && !self.phase_machine.time_remaining.is_zero(){
+                if sender_pointer.host(self) && fast_forward && !self.phase_machine.time_remaining.is_some_and(|d|d.is_zero()){
                     OnFastForward::invoke(self);
                 }
             },

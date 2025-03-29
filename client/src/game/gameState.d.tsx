@@ -78,7 +78,7 @@ type GameState = {
     players: Player[],
     
     phaseState: PhaseState,
-    timeLeftMs: number,
+    timeLeftMs: number | null,
     dayNumber: number,
 
     fastForward: boolean,
