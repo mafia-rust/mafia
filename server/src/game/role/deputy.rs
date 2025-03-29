@@ -42,26 +42,19 @@ impl RoleStateImpl for Deputy {
         )else{return};
         let Some(target_ref) = target_ref.first() else {return};
         
-        
+        let mut grave = Grave::from_player_lynch(game, *target_ref);
+        if let GraveInformation::Normal{death_cause, ..} = &mut grave.information {
+            *death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Deputy)]);
+        }
         target_ref.add_private_chat_message(game, ChatMessageVariant::DeputyShotYou);
-        if target_ref.defense(game).can_block(AttackPower::Basic) {
-            target_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
-            actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
-
-        }else{
+        if target_ref.try_day_kill_single_attacker(actor_ref, game, grave.information, AttackPower::Basic) {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::DeputyKilled{shot_index: target_ref.index()});
-            
-            
-            let mut grave = Grave::from_player_lynch(game, *target_ref);
-            if let GraveInformation::Normal{death_cause, ..} = &mut grave.information {
-                *death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Deputy)]);
-            }
-            target_ref.die(game, grave);
-            
-
             if target_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) {
                 actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
             }
+        } else {
+            target_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
+            actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
         }
 
         actor_ref.set_role_state(game, Deputy{bullets_remaining:self.bullets_remaining.saturating_sub(1)});
