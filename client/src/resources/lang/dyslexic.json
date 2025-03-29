@@ -239,6 +239,8 @@
     "controllerId.role.escort.0.name": "Rloekocbl",
     "role.medium.name": "Eduimm",
     "role.medium.name:var.0": "Mmiudse",
+    "role.medium.name:var.1": "Lmals",
+    "role.medium.name:var.2": "Eagrl",
     "role.medium.roleDataText.hauntsRemaining": "\\0 tuhsna egnimainr",
     "role.medium.roleDataText.nobody": "You dtidn' cdiede ot htuna yyoanbd.",
     "role.medium.roleDataText": "You ddeicde ot htuna \\0.",
@@ -1653,7 +1655,5 @@
     "otherContributors": "Eohtr Rcrbonsiuott",
     "playTesters": "Ypal Ttrsees",
     "random.gay": "YGA",
-    "random.trans": "STNRA",
-    "random.small": "Lmals",
-    "random.large": "Elgra"
+    "random.trans": "STNRA"
 }

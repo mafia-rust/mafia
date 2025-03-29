@@ -239,6 +239,8 @@
     "controllerId.role.escort.0.name": "Rlblck",
     "role.medium.name": "Mdm",
     "role.medium.name:var.0": "Mdms",
+    "role.medium.name:var.1": "Smll",
+    "role.medium.name:var.2": "Lrg",
     "role.medium.roleDataText.hauntsRemaining": "\\0 hnts rmnng",
     "role.medium.roleDataText.nobody": "Y ddn't dcd t hnt nybdy.",
     "role.medium.roleDataText": "Y dcdd t hnt \\0.",
@@ -1653,7 +1655,5 @@
     "otherContributors": "thr Cntrbtrs",
     "playTesters": "Ply Tstrs",
     "random.gay": "GY",
-    "random.trans": "TRNS",
-    "random.small": "Smll",
-    "random.large": "Lrg"
+    "random.trans": "TRNS"
 }

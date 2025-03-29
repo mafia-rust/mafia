@@ -290,6 +290,8 @@
 
     "role.medium.name": "Medium",
     "role.medium.name:var.0": "Mediums",
+    "role.medium.name:var.1": "Small",
+    "role.medium.name:var.2": "Large",
     "role.medium.roleDataText.hauntsRemaining": "\\0 haunts remaining",
     "role.medium.roleDataText.nobody": "You didn't decide to haunt anybody.",
     "role.medium.roleDataText": "You decided to haunt \\0.",
@@ -1907,8 +1909,5 @@
     
     
     "random.gay":"GAY",
-    "random.trans":"TRANS",
-    
-    "random.small":"Small",
-    "random.large":"Large"
+    "random.trans":"TRANS"
 }
