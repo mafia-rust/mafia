@@ -9,7 +9,6 @@ use crate::game::player::PlayerReference;
 use crate::game::Game;
 use crate::vec_map::VecMap;
 use crate::game::ability_input::*;
-use crate::vec_set;
 use super::{Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -192,22 +191,17 @@ impl RoleStateImpl for Kira {
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         match PlayerReference::all_players(game).filter(|p|p.alive(game)).count().saturating_sub(1).try_into() {
             Ok(count) => {
-
-                let default_players = PlayerReference::all_players(game)
-                    .filter(|p|p.alive(game) && *p != actor_ref)
-                    .map(|p|(p, KiraGuess::None))
-                    .collect();
-
-                ControllerParametersMap::new_controller_fast(
-                    game,
-                    ControllerID::role(actor_ref, Role::Kira, 0),
-                    AvailableAbilitySelection::new_kira(AvailableKiraSelection::new(count)),
-                    AbilitySelection::new_kira(KiraSelection::new(default_players)),
-                    false,
-                    None,
-                    false,
-                    vec_set![actor_ref]
-                )
+                ControllerParametersMap::builder(game)
+                    .id(ControllerID::role(actor_ref, Role::Kira, 0))
+                    .available_selection(AvailableKiraSelection::new(count))
+                    .default_selection(KiraSelection::new(
+                        PlayerReference::all_players(game)
+                            .filter(|p|p.alive(game) && *p != actor_ref)
+                            .map(|p|(p, KiraGuess::None))
+                            .collect()
+                    ))
+                    .allow_players([actor_ref])
+                    .build_map()
             }
             Err(_) => {
                 ControllerParametersMap::default()
