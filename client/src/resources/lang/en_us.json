@@ -1035,8 +1035,8 @@
     "hideDisabled": "Hide Disabled",
 
     "wiki.category.uncategorized": "Other",
-    "wiki.category.categories": "Composite pages",
-    "wiki.category.categories.text": "These are the composite pages used to help organize the midnight manual.",
+    "wiki.category.categories": "Category pages",
+    "wiki.category.categories.text": "These are the catagory pages used to help organize the midnight manual.",
     "wiki.category.town": "Town",
     "wiki.category.town:var.0": "Town",
     "wiki.category.town.text": "These are the roles in the Town role set. By default, most people with these roles are town loyalists, and not insiders.",
@@ -1049,7 +1049,7 @@
     "wiki.category.cult": "Cult",
     "wiki.category.cult.text": "These are the roles in the cult role set. By default, most people with these roles are cult loyalists, cult insiders, and are part of the Cult hierarchy.",
     "wiki.category.fiends": "Fiend",
-    "wiki.category.fiends.text": "Fiends win by eliminating all opposing teams. Fiends are on the same team, but they can't communicate at night. Fiends are usually very powerful and can kill multiple players in one night. Unlike syndicate and cult, most games should have at most one fiend, in addition to the town and syndicate. These are the roles in the fiends role set. By default, most people with these roles are fiends loyalists and insiders.",
+    "wiki.category.fiends.text": "These are the roles in the fiends role set. By default, most people with these roles are fiends loyalists, but not insiders.",
     "wiki.category.modifiers": "Modifiers",
     "wiki.category.modifiers.text": "These are options that can be enabled which change the behavior of the game.",
     "wiki.category.abilities":"Abilities",
@@ -1059,8 +1059,6 @@
     "wiki.category.strategies:var.0":"Strategy",
     "wiki.category.strategies.text":"There are a lot of helpful strategies that players use in order to help them win. New strategies are created every day.",
     
-    "wiki.article.standard.town.title": "Town",
-    "wiki.article.standard.town.text": "Town is the main good faction. Usually, the majority of the players in each game are town loyalists. They don't start knowing who each other are, unlike the syndicate or the cult. Town wins by eliminating all opposing teams (syndicate, cult, arsonist, werewolf, etc). The townies need to work together to find out who the evils are. Their main power is in communication and voting, so if you are a townie who does not communicate, you are not helping your team win.",
     "wiki.article.standard.mafia.title": "Syndicate Hierarchy",
     "wiki.article.standard.mafia.title:var.0": "Syndicate",
     "wiki.article.standard.mafia.title:var.1": "Mafia Hierarchy",
@@ -1069,6 +1067,7 @@
     "wiki.article.standard.cult.title": "Cult Hierarchy",
     "wiki.article.standard.cult.title:var.0": "Cult",
     "wiki.article.standard.cult.text": "The cult hierarchy is the system which keeps the cult being able to either kill or convert each night. The cult hierarchy is a collection of players who are usually also cult insiders and cult loyalists. The cult hierarchy maintains 2 abilities, kill and convert. They alternate, converting first, and killing after.\n* The cult can only kill after they have successfully converted someone. After that, they can only convert after successfully killing someone.\n* If for some reason a kill or convert doesn't work (e.g. the killer/converter was blocked), then the same ability is tried again the next night - it doesn't switch. Because of this, killing/converting is not inherently \"every other night\".\n\nThese are how the cult roles execute the duties of the cult:\n* Apostle: The cult hierarchy guarantees there is always an apostle. If the apostle dies, the player who has been in the cult hierarchy the longest becomes the apostle. The apostle's ability is to convert players, however if there is no zealot, then the apostle kills.\n* Disciple: The disciple has no ability. A disciple may become an apostle if the apostle dies.\n* Zealot: The player who has been in the cult hierarchy the shortest is the only zealot. If there is a zealot, it will perform killings rather than the apostle.", 
+
     "wiki.article.standard.whisper.title": "Whisper",
     "wiki.article.standard.whisper.title:var.0": "Whispers",
     "wiki.article.standard.whisper.title:var.1": "Whispering",
