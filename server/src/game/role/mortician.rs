@@ -1,22 +1,19 @@
 
 use serde::Serialize;
 
+use crate::game::ability_input::AvailablePlayerListSelection;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::components::detained::Detained;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::grave::GraveInformation;
 use crate::game::grave::GraveReference;
-use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use crate::vec_set;
 use crate::vec_set::VecSet;
-use super::AbilitySelection;
 use super::ControllerID;
 use super::ControllerParametersMap;
 use super::Role;
@@ -72,30 +69,21 @@ impl RoleStateImpl for Mortician {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        let grayed_out = 
-            actor_ref.ability_deactivated_from_death(game) || 
-            Detained::is_detained(game, actor_ref);
-
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Mortician, 0),
-            super::AvailableAbilitySelection::new_player_list(
-                PlayerReference::all_players(game)
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Mortician, 0))
+            .available_selection(AvailablePlayerListSelection {
+                available_players: PlayerReference::all_players(game)
                     .filter(|p| *p != actor_ref)
                     .filter(|player| 
                         player.alive(game) &&
                         !self.obscured_players.contains(player)
                     )
                     .collect(),
-                false,
-                Some(1)
-            ),
-            AbilitySelection::new_player_list(vec![]),
-            grayed_out,
-            Some(PhaseType::Obituary),
-            false,
-            vec_set![actor_ref]
-        )
+                can_choose_duplicates: false,
+                max_players: Some(1)
+            })
+            .night_typical(actor_ref)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
