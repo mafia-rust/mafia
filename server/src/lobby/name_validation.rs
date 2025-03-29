@@ -54,28 +54,25 @@ pub fn sanitize_server_name(desired_name: String) -> String {
 }
 
 pub fn generate_random_name(taken_names: &[&str]) -> String{
-    let available_random_names = RANDOM_NAMES.iter().filter(|new_random_name| {
-        !taken_names.iter()
-            .any(|existing_name| {
-                let new_random_name = new_random_name
-                    .remove_newline()
-                    .trim_whitespace()
-                    .truncate(MAX_NAME_LENGTH)
-                    .truncate_lines(1);
-
-                let existing_name = existing_name.to_string()
-                    .remove_newline()
-                    .trim_whitespace()
-                    .truncate(MAX_NAME_LENGTH)
-                    .truncate_lines(1);
-
-                new_random_name == existing_name
-            })
-    }).collect::<Vec<&String>>();
+    let taken_names_str = taken_names.iter().map(
+        |existing_name|
+        existing_name.to_string()
+        .remove_newline()
+        .trim_whitespace()
+        .truncate(MAX_NAME_LENGTH)
+        .truncate_lines(1)
+    ).collect::<Vec<String>>();
+    let available_random_names = RANDOM_NAMES.iter().filter(|new_random_name| 
+        !taken_names_str.contains(new_random_name)
+    ).collect::<Vec<&String>>();
 
     if let Some(random_name) = available_random_names.choose(&mut rand::rng()) {
         (*random_name).clone()
     } else {
-        (taken_names.len()).to_string()
+        let mut i = 0;
+        while taken_names_str.contains(&i.to_string()) {
+            i += 1;
+        }
+        return i.to_string();
     }
 }
