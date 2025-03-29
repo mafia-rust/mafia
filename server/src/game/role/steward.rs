@@ -2,16 +2,14 @@
 use serde::Serialize;
 
 use crate::game::ability_input::selection_type::two_role_option_selection::TwoRoleOptionSelection;
-use crate::game::ability_input::ControllerID;
-use crate::game::components::detained::Detained;
+use crate::game::ability_input::{AvailableTwoRoleOptionSelection, ControllerID};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 
 use crate::game::Game;
-use crate::vec_set;
-use super::{AbilitySelection, AvailableAbilitySelection, ControllerParametersMap, GetClientRoleState, Priority, Role, RoleStateImpl};
+use super::{ControllerParametersMap, GetClientRoleState, Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Debug)]
 pub struct Steward {
@@ -99,25 +97,20 @@ impl RoleStateImpl for Steward {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        let valid_roles = Role::values()
-            .into_iter()
-            .filter(|role| self.self_heals_remaining>0 || role != &Role::Steward)
-            .filter(|role| self.previous_input.0 != Some(*role) && self.previous_input.1 != Some(*role))
-            .map(Some)
-            .chain(std::iter::once(None))
-            .collect();
-            
-        
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Steward, 0),
-            AvailableAbilitySelection::new_two_role_option(valid_roles, false),
-            AbilitySelection::new_two_role_option(None, None),
-            actor_ref.ability_deactivated_from_death(game) || Detained::is_detained(game, actor_ref),
-            Some(PhaseType::Obituary),
-            false,
-            vec_set!(actor_ref)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Steward, 0))
+            .available_selection(AvailableTwoRoleOptionSelection {
+                available_roles: Role::values()
+                    .into_iter()
+                    .filter(|role| self.self_heals_remaining>0 || role != &Role::Steward)
+                    .filter(|role| self.previous_input.0 != Some(*role) && self.previous_input.1 != Some(*role))
+                    .map(Some)
+                    .chain(std::iter::once(None))
+                    .collect(),
+                can_choose_duplicates: false
+            })
+            .night_typical(actor_ref)
+            .build_map()
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         actor_ref.set_role_state(game, Steward{

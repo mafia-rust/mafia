@@ -1,6 +1,7 @@
 
 use serde::Serialize;
 
+use crate::game::ability_input::{AvailableRoleOptionSelection, AvailableStringSelection, RoleOptionSelection};
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::phase::PhaseType;
@@ -9,8 +10,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use crate::vec_set;
-use super::{AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, GetClientRoleState, Role, StringSelection};
+use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Role, StringSelection};
 use super::{Priority, RoleState, RoleStateImpl};
 
 
@@ -92,44 +92,40 @@ impl RoleStateImpl for Forger {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            false,
-            self.forges_remaining == 0,
-            ControllerID::role(actor_ref, Role::Forger, 0)
-        ).combine_overwrite_owned(
-            //role
-            ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::role(actor_ref, Role::Forger, 1),
-                AvailableAbilitySelection::new_role_option(
+        ControllerParametersMap::combine([
+            // Player
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Forger, 0))
+                .single_player_selection_typical(actor_ref, false, false)
+                .night_typical(actor_ref)
+                .add_grayed_out_condition(self.forges_remaining == 0)
+                .build_map(),
+            // Role
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Forger, 1))
+                .available_selection(AvailableRoleOptionSelection(
                     Role::values().into_iter()
                         .map(Some)
                         .collect()
-                ),
-                AbilitySelection::new_role_option(Some(Role::Forger)),
-                self.forges_remaining == 0 ||
-                actor_ref.ability_deactivated_from_death(game),
-                None,
-                false,
-                vec_set![actor_ref]
-            )
-        ).combine_overwrite_owned(
-            //alibi
-            ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::role(actor_ref, Role::Forger, 2),
-                AvailableAbilitySelection::new_string(),
-                AbilitySelection::new_string(String::new()),
-                self.forges_remaining == 0 ||
-                actor_ref.ability_deactivated_from_death(game),
-                None,
-                false,
-                vec_set![actor_ref]
-            )
-        )
+                ))
+                .default_selection(RoleOptionSelection(Some(Role::Forger)))
+                .add_grayed_out_condition(
+                    self.forges_remaining == 0 ||
+                    actor_ref.ability_deactivated_from_death(game)
+                )
+                .allow_players([actor_ref])
+                .build_map(),
+            // Alibi
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Forger, 2))
+                .available_selection(AvailableStringSelection)
+                .add_grayed_out_condition(
+                    self.forges_remaining == 0 ||
+                    actor_ref.ability_deactivated_from_death(game)
+                )
+                .allow_players([actor_ref])
+                .build_map()
+        ])
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(

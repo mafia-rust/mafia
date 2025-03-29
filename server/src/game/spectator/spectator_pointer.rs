@@ -27,6 +27,11 @@ impl SpectatorPointer {
     pub fn host(&self, game: &Game)->bool {
         self.deref(game).map(|s|s.host).unwrap_or(false)
     }
+    pub fn set_host(&self, game: &mut Game, host: bool) {
+        if let Some(spectator) = self.deref_mut(game) {
+            spectator.host = host;
+        }
+    }
     pub fn connection(&self, game: &Game) -> ClientConnection {
         self.deref(game).map(|s|s.connection.clone()).unwrap_or(ClientConnection::Disconnected)
     }
@@ -90,9 +95,8 @@ impl SpectatorPointer {
         if !game.ticking {
             self.send_packet(game, ToClientPacket::GameOver { reason: GameOverReason::Draw })
         }
-        
-        let votes_packet = ToClientPacket::new_player_votes(game);
-        self.send_packet(game, votes_packet);
+
+        self.send_packet(game, ToClientPacket::PlayerVotes{votes_for_player: game.create_voted_player_map()});
         for grave in game.graves.iter(){
             self.send_packet(game, ToClientPacket::AddGrave { grave: grave.clone() });
         }
