@@ -42,8 +42,9 @@ impl NominationController{
                 !Modifiers::modifier_is_enabled(game, ModifierType::ScheduledNominations)
             );
 
-            let packet = ToClientPacket::new_player_votes(game);
-            game.send_packet_to_all(packet);
+            game.send_packet_to_all(ToClientPacket::PlayerVotes {
+                votes_for_player: game.create_voted_player_map()
+            });
         }
     }
 }
