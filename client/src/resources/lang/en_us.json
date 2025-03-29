@@ -403,6 +403,8 @@
 
     "role.mafiaWitch.name": "Syndicate Witch",
     "role.mafiaWitch.name:var.0": "Syndicate Witches",
+    "role.mafiaWitch.name:var.1": "Mafia Witch",
+    "role.mafiaWitch.name:var.2": "Mafia Witches",
     "controllerId.role.mafiaWitch.0.name": "Possess",
     
     "role.mortician.name": "Mortician",
@@ -536,6 +538,14 @@
     "controllerId.role.yer.1.name": "Choose Target",
     "controllerId.role.yer.2.name": "Disguise as Role",
 
+    "role.vampire.name": "Vampire",
+    "role.vampire.name:var.0": "Vampires",
+    "role.vampire.name:var.1": "Vampiric",
+    "role.vampire.name:var.2": "Vamp",
+    "role.vampire.name:var.3": "Vamps",
+    "role.vampire.name:var.4": "Vampirism",
+    "controllerId.role.vampire.0.name": "Bite",
+
     "role.serialKiller.name": "Serial Killer",
     "role.serialKiller.name:var.0": "Serial Killers",
     "controllerId.role.serialKiller.0.name": "Attack",
@@ -619,6 +629,8 @@
     "grave.killer.quit:var.0": "Quit",
     "grave.killer.quit:var.1": "Quits",
     "grave.killer.suicide": "Suicide",
+    "grave.killer.sun": "Sun",
+    "grave.killer.sun:var.0": "Suns",
     "grave.deathNote": "A note was found with the body",
     "graveyard": "Graveyard",
     "grave.icon": "🪦",
@@ -784,6 +796,7 @@
     "pitchfork.description": "Vote for a player before midnight. If two-thirds of town loyalists vote for a player, that player dies.",
     "nobodyDiedLastNight": "Nobody died last night.",
     "nobody": "nobody",
+    "sun": "sun",
     "modifiers": "Modifiers",
     "obscuredGraves": "Obscured Graves",
     "randomLoveLinks": "Random Love Links",
@@ -1013,6 +1026,9 @@
     "chatMessage.kiraSelection": "Kira selection",
     "chatMessage.cultConvertsNext": "The cult will attempt to indoctrinate and convert someone tonight.",
     "chatMessage.cultKillsNext": "The cult will attempt to sacrifice and kill someone tonight.",
+    "chatMessage.currentVampires": "With your vampiric transformation, you've joined the ranks of \\0.",
+    "chatMessage.newVampires": "\\0 have joined our ranks.",
+    "chatMessage.vampireCanConvert": "You will convert your target tonight.",
     "chatMessage.addedToNiceList": "You've been good this year, so you have been added to the nice list.",
     "chatMessage.addedToNaughtyList": "You've been bad this year - you have been added to the naughty list.",
     "chatMessage.nextSantaAbility.nice": "Tonight you will add zero or one players to the nice list.",
@@ -1377,6 +1393,10 @@
     "wiki.article.standard.nobody.title:var.2":"Noone",
     "wiki.article.standard.nobody.text":"Nobody means nobody. If you have further questions, please find an english dictionary.",
 
+    "wiki.article.standard.sun.title": "Sun",
+    "wiki.article.standard.sun.title.var.0": "Suns.",
+    "wiki.article.standard.sun.text": "You know, that thing that kills vampires.",
+    
     "wiki.article.standard.vfr.title":"Vote-For-Role",
     "wiki.article.standard.vfr.title:var.0":"VFR",
     "wiki.article.standard.vfr.text":"Vote for role is the name of a common strategy. Players will choose a player and force them to claim under the threat of getting voted out. If that player claims they will likely be spared. Usually there is not much of a reason why a specific player is chosen, the strategy is often used to just get starting information.",
@@ -1875,6 +1895,12 @@
     "wiki.article.role.yer.abilities":"",
     "wiki.article.role.yer.attributes":"",
     "wiki.article.role.yer.extra":"- You visit the player you choose\n- You can't attack or convert night 1",
+
+    "wiki.article.role.vampire.reminder":"Each night*, bite a player.\n- The player bitten will be converted to vampire if you are one of the oldest living vampires, otherwise you will attack them.\n- The number of vampires that convert their target is the number of vampires there were at the beginning of the game plus the number of wildcards that converted to a vampire.",
+    "wiki.article.role.vampire.guide":"- At night choose who to bite. ",
+    "wiki.article.role.vampire.abilities":"",
+    "wiki.article.role.vampire.attributes":"* Your attack is armor piercing.\n    * If you are nominated you are instantly killed by the sun*.",
+    "wiki.article.role.vampire.extra":"- You visit the player you choose\n-You are immune to the sun on day 2 \n- You can't attack or convert night 1. The number of vampires considered old is the number of vampires role outlines that generate vampire plus the number of wildcards that converted to a vampire.",
 
     "wiki.article.role.fiendsWildcard.reminder": "Choose a fiends role to become at start of night.",
     "wiki.article.role.fiendsWildcard.guide": "* Choose a fiends role to become that role\n    * You become that role when night starts\n* You can't become a role that has exceeded its role limit",

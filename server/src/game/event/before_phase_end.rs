@@ -1,5 +1,5 @@
 use crate::game::{
-    components::{pitchfork::Pitchfork, verdicts_today::VerdictsToday},
+    components::{pitchfork::Pitchfork, vampire_tracker::VampireTracker, verdicts_today::VerdictsToday},
     modifiers::Modifiers, phase::PhaseType, Game
 };
 
@@ -15,5 +15,6 @@ impl BeforePhaseEnd{
         VerdictsToday::before_phase_end(game, self.phase);
         Pitchfork::before_phase_end(game, self.phase);
         Modifiers::before_phase_end(game, self.phase);
+        VampireTracker::before_phase_end(game, self.phase);
     }
 }

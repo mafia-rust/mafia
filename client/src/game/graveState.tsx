@@ -36,6 +36,8 @@ export type GraveKiller = {
 } | {
     type: "role"
     value: Role
+} | {
+    type: "sun"
 };
 
 export type GravePhase = "day" | "night"

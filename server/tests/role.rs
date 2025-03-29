@@ -4,7 +4,9 @@ use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::{ability_input::{ability_selection::AbilitySelection, ControllerID, RoleOptionSelection}, game_conclusion::GameConclusion, role::engineer::Trap};
+
+use mafia_server::game::{ability_input::{ability_selection::AbilitySelection, ControllerID, RoleOptionSelection}, components::vampire_tracker::VampireTracker, game_conclusion::GameConclusion, role::engineer::Trap};
+
 pub use mafia_server::game::{
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
     grave::*,
@@ -88,6 +90,7 @@ pub use mafia_server::game::{
         
         warden::Warden,
         arsonist::Arsonist,
+        vampire::Vampire,
         werewolf::Werewolf,
         spiral::Spiral,
         pyrolisk::Pyrolisk,
@@ -2608,6 +2611,169 @@ fn godfather_dies_to_veteran_after_possessed(){
     assert!(!gf.alive());
     assert!(vet.alive());
     assert!(min.alive());
+}
+
+#[test]
+fn vampire_dies_to_sun(){
+    kit::scenario!(game in Nomination 2 where
+        vamp: Vampire,
+        townie1: Vigilante,
+        townie2: Villager
+    );
+
+    assert!(VampireTracker::is_tracked(&*game, vamp.player_ref()));
+
+    townie1.vote_for_player(vamp);
+    townie2.vote_for_player(vamp);
+
+    game.next_phase();
+
+    assert!(game.current_phase().phase() == PhaseType::Judgement);
+
+    assert!(vamp.alive());
+    assert!(townie1.alive());
+    assert!(townie2.alive());
+
+    game.skip_to(PhaseType::Nomination, 3);
+
+    townie1.vote_for_player(vamp);
+    townie2.vote_for_player(vamp);
+
+    game.next_phase();
+    //Even though the phase gets fast forwarded, the judgement phase must be skipped manually because 
+    //fast forwarding just sets the remaining time to 0
+    game.next_phase();
+
+    assert!(game.current_phase().phase() == PhaseType::Nomination);
+
+    assert!(!vamp.alive());
+    assert!(townie1.alive());
+    assert!(townie2.alive());
+}
+
+#[test]
+fn vampire_basic(){
+    kit::scenario!(game in Dusk 1 where
+        vamp: Vampire,
+        detective: Detective,
+        engineer: Engineer,
+        gossip: Gossip,
+        villager: Villager,
+        informant: Informant
+    );
+
+    /* No kills or converts Night 1 Test */  
+    assert!(VampireTracker::is_tracked(&*game, vamp.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, detective.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, engineer.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, gossip.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, villager.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, informant.player_ref()));
+
+    vamp.send_ability_input_player_list_typical(detective);
+
+    game.skip_to(PhaseType::Dusk, 2);
+
+    assert!(vamp.alive());
+    assert!(detective.alive());
+    assert!(engineer.alive());
+    assert!(gossip.alive());
+    assert!(villager.alive());
+    assert!(informant.alive());
+
+    assert!(vamp.role() == Role::Vampire);
+    assert!(detective.role() == Role::Detective);
+    assert!(engineer.role() == Role::Engineer);
+    assert!(gossip.role() == Role::Gossip);
+    assert!(villager.role() == Role::Villager);
+    assert!(informant.role() == Role::Informant);
+    
+    assert!(VampireTracker::is_tracked(&*game, vamp.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, detective.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, engineer.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, gossip.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, villager.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, informant.player_ref()));
+
+    /* Convert Test */
+    vamp.send_ability_input_player_list_typical(detective);
+
+    game.skip_to(PhaseType::Dusk, 3);
+
+    assert!(vamp.alive());
+    assert!(detective.alive());
+    assert!(engineer.alive());
+    assert!(gossip.alive());
+    assert!(villager.alive());
+    assert!(informant.alive());
+
+    assert!(vamp.role() == Role::Vampire);
+    assert!(detective.role() == Role::Vampire);
+    assert!(engineer.role() == Role::Engineer);
+    assert!(gossip.role() == Role::Gossip);
+    assert!(villager.role() == Role::Villager);
+    assert!(informant.role() == Role::Informant);
+    
+    assert!(VampireTracker::is_tracked(&*game, vamp.player_ref()));
+    assert!(VampireTracker::is_tracked(&*game, detective.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, engineer.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, gossip.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, villager.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, informant.player_ref()));
+
+    /* Convert & Attack Test */
+    vamp.send_ability_input_player_list_typical(engineer);
+    detective.send_ability_input_player_list_typical(gossip);
+
+    game.skip_to(PhaseType::Dusk, 4);
+
+    assert!(vamp.alive());
+    assert!(detective.alive());
+    assert!(engineer.alive());
+    assert!(!gossip.alive());
+    assert!(villager.alive());
+    assert!(informant.alive());
+
+    assert!(vamp.role() == Role::Vampire);
+    assert!(detective.role() == Role::Vampire);
+    assert!(engineer.role() == Role::Vampire);
+    assert!(gossip.role() == Role::Gossip);
+    assert!(villager.role() == Role::Villager);
+    assert!(informant.role() == Role::Informant);
+    
+    assert!(VampireTracker::is_tracked(&*game, vamp.player_ref()));
+    assert!(VampireTracker::is_tracked(&*game, detective.player_ref()));
+    assert!(VampireTracker::is_tracked(&*game, engineer.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, gossip.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, villager.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, informant.player_ref()));
+
+    /* Convert & Attack Same player */
+    vamp.send_ability_input_player_list_typical(informant);
+    detective.send_ability_input_player_list_typical(informant);
+
+    game.skip_to(PhaseType::Dusk, 5);
+
+    assert!(vamp.alive());
+    assert!(detective.alive());
+    assert!(engineer.alive());
+    assert!(!gossip.alive());
+    assert!(villager.alive());
+    assert!(informant.alive());
+
+    assert!(vamp.role() == Role::Vampire);
+    assert!(detective.role() == Role::Vampire);
+    assert!(engineer.role() == Role::Vampire);
+    assert!(gossip.role() == Role::Gossip);
+    assert!(villager.role() == Role::Villager);
+    assert!(informant.role() == Role::Vampire);
+    
+    assert!(VampireTracker::is_tracked(&*game, vamp.player_ref()));
+    assert!(VampireTracker::is_tracked(&*game, detective.player_ref()));
+    assert!(VampireTracker::is_tracked(&*game, engineer.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, gossip.player_ref()));
+    assert!(!VampireTracker::is_tracked(&*game, villager.player_ref()));
+    assert!(VampireTracker::is_tracked(&*game, informant.player_ref()));
 }
 
 #[test]

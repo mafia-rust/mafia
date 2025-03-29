@@ -650,6 +650,12 @@ export function translateChatMessage(
             } else {
                 return translate("chatMessage.godfatherBackup.nobody");
             }
+        case "currentVampires":
+            return translate("chatMessage.currentVampires", playerListToString(message.vampires, playerNames));
+        case "newVampires":
+            return translate("chatMessage.newVampires", playerListToString(message.vampires, playerNames));
+        case "vampireCanConvert":
+            return translate("chatMessage.vampireCanConvert");
         /* NIGHT */
         case "godfatherBackupKilled":
             return translate("chatMessage.godfatherBackupKilled", playerNames[message.backup]);
@@ -955,6 +961,14 @@ export type ChatMessageVariant = {
     type: "cultConvertsNext"
 } | {
     type: "cultKillsNext"
+} | {
+    type: "currentVampires",
+    vampires: PlayerIndex[]
+} | {
+    type: "newVampires",
+    vampires: PlayerIndex[]
+} | {
+    type: "vampireCanConvert"
 } | {
     type: "mediumHauntStarted",
     medium: PlayerIndex,
