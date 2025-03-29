@@ -500,10 +500,8 @@
 
     "role.ojo.name": "Ojo",
     "role.ojo.name:var.0": "Ojos",
-    "role.ojo.audit": "Select an outline to find what role initially generated from that outline.",
     "role.ojo.attack": "Select a role to attack all players with that role.",
-    "controllerId.role.ojo.0.name": "Audit",
-    "controllerId.role.ojo.1.name": "Attack",
+    "controllerId.role.ojo.0.name": "Attack",
     
     "role.pyrolisk.name": "Pyrolisk",
     "role.pyrolisk.name:var.0": "Pyrolisks",
@@ -1835,11 +1833,11 @@
     "wiki.article.role.werewolf.attributes":"* You enrage once at least 2/3rds of the living players are either tracked or are yourself. While enraged, you always attack when visiting\n* You are told who each player you have tracked visits.\n* You still track players after you die\n* Your attack is armor-piercing",
     "wiki.article.role.werewolf.extra":"* At the start of every night, every tracked player is told they are tracked",
 
-    "wiki.article.role.ojo.reminder": "Each night, select up to two outlines to learn the roles generated from them. Each night*, attack all players with a role you select.",
-    "wiki.article.role.ojo.guide":"- You have multiple night abilities\n - Each night, select up to 2 outlines, for each outline, you are told what role generated from that outline\n - Each night except the first, select a role, you attack all players with that role\n - You see the role of all players who visit you, their role is revealed to you, this is a passive ability",
-    "wiki.article.role.ojo.abilities":"- You have multiple night abilities\n - Each night, select up to 2 outlines, for each outline, you are told what role generated from that outline\n - Each night except the first, select a role, you attack all players with that role\n - You see the role of all players who visit you, their role is revealed to you, this is a passive ability",
-    "wiki.article.role.ojo.attributes":"- If you are dead, you cant select to use your ability\n* If you are blocked, you have no ability\n* Your attack is an armor-piercing attack\n* You can't attack anybody on night 1",
-    "wiki.article.role.ojo.extra":"- Your attack ability works on the person you actually visited, so if a transporter transports a player you visit with someone else, you attack the other player, this only applies to the attack ability, not any other ability of yours\n- You wont visit dead players using your attack ability",
+    "wiki.article.role.ojo.reminder": "Each night*, attack a player. Everyones roles are revealed to you, and you track everyone.",
+    "wiki.article.role.ojo.guide":"- Each night*, attack a player. Everyones roles are revealed to you, and you track everyone.",
+    "wiki.article.role.ojo.abilities":"- Each night except the first, attack a player.\n- Everyones roles are revealed to you. When a player is concealed, they get revealed again\n- You are told who every player visits.",
+    "wiki.article.role.ojo.attributes":"",
+    "wiki.article.role.ojo.extra":"- If you are blocked, you are still told who visits who.",
 
     "wiki.article.role.puppeteer.reminder": "Each night, select a player to either kill them or recruit them.",
     "wiki.article.role.puppeteer.guide":"- You may choose to do one of the following\n    - Select and attack a player\n    - Select a player to string up into a marionette\n        - They are told they are strung up, and are now a fiends loyalist\n        - They are attacked the following night, and every night until they die\n - At night all puppeteers and marionettes can chat in the puppeteer chat, even if dead\n    - The players in the puppeteer chat that are dead can chat during the day or night\n- Your attack and convert are both armor-piercing",
