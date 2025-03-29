@@ -1039,7 +1039,7 @@
 
     "wiki.category.uncategorized": "Other",
     "wiki.category.categories": "Category pages",
-    "wiki.category.categories.text": "These are the catagory pages used to help organize the midnight manual.",
+    "wiki.category.categories.text": "These are the category pages used to help organize the midnight manual.",
     "wiki.category.town": "Town",
     "wiki.category.town:var.0": "Town",
     "wiki.category.town.text": "These are the roles in the Town role set. By default, most people with these roles are town loyalists, and not insiders.",
@@ -1061,7 +1061,10 @@
     "wiki.category.strategies":"Strategies",
     "wiki.category.strategies:var.0":"Strategy",
     "wiki.category.strategies.text":"There are a lot of helpful strategies that players use in order to help them win. New strategies are created every day.",
-    
+    "wiki.category.menus":"Menus",
+    "wiki.category.menus:var.0":"Menu",
+    "wiki.category.menus.text":"THese are different menus used to give inputs to the game.",
+
     "wiki.article.standard.mafia.title": "Syndicate Hierarchy",
     "wiki.article.standard.mafia.title:var.0": "Syndicate",
     "wiki.article.standard.mafia.title:var.1": "Mafia Hierarchy",
