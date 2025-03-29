@@ -112,9 +112,8 @@ impl RoleStateImpl for Recruiter {
     }
     fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
         
-        if game.role_assignment_gen.specifies_role_with_defaults(Role::Recruiter) {
-            return;
-        }
+        if game.role_assignment_gen.role_by_itself_with_default_assignment_data(Role::Recruiter) {return}
+        if !self.default_win_condition().wins_with_resolution_state(GameConclusion::Mafia) {return}
 
         //get random mafia player and turn them info a random town role
 

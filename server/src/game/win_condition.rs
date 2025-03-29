@@ -46,10 +46,18 @@ impl WinCondition{
             _ => true
         }
     }
+    /// Returns true for role based wincons
     pub fn friends_with_resolution_state(&self, resolution_state: GameConclusion)->bool{
-        match self{
+        match self {
             WinCondition::GameConclusionReached{win_if_any} => win_if_any.contains(&resolution_state),
             WinCondition::RoleStateWon => true,
+        }
+    }
+    /// Returns false for role based wincons
+    pub fn wins_with_resolution_state(&self, resolution_state: GameConclusion)->bool{
+        match self {
+            WinCondition::GameConclusionReached{win_if_any} => win_if_any.contains(&resolution_state),
+            WinCondition::RoleStateWon => false,
         }
     }
     pub fn is_loyalist_for(&self, resolution_state: GameConclusion)->bool{

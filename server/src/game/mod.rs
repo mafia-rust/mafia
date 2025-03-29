@@ -157,8 +157,6 @@ impl Game {
             return Err(RejectStartReason::ZeroTimeGame);
         }
         
-        //Simplifying the role list makes the role generation quicker, and successful more often
-        //let role_list_generator = settings.role_list.generator();
         let Some(role_assignment_gen) = settings.role_list.generator(&settings.enabled_roles) else {
             return Err(RejectStartReason::RoleAssignmentsMustExceedLimits);
         };

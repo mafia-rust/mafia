@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{role_list::{RoleOutline, RoleOutlineGenData}, Game};
+use super::{role_list::{RoleAssignment, RoleOutline}, Game};
 
 
 pub type OutlineIndex = u8;
@@ -31,8 +31,14 @@ impl RoleOutlineReference{
             game.settings.role_list.0.get_unchecked(self.index as usize)
         }
     }
-    pub fn without_unavailable<'a>(&self, game: &'a Game)->&'a RoleOutlineGenData {
-        game.role_assignment_gen.0.get(self.index as usize).expect("")
+    /// If a role was included as something that can generate from outline by the host but can't because its role limit 1
+    /// and a different outline is guaranteed to include it then it is not included here.
+    /// it's possible for this to include roles that are guaranteed not to generate but it won't include any that weren't in the base role outline
+    /// (e.g. if all outlines but this one can only generate mafia wincons and this outline was Psychic U Informant, 
+    /// the informant would be impossible to generate because then the game would end instantly 
+    /// but it still would be included here because nothing checks for that)
+    pub fn possible_assignments<'a>(&self, game: &'a Game)->&'a Vec<RoleAssignment> {
+        &game.role_assignment_gen.0.get(self.index as usize).expect("the role outline index is oob").options
     }
 
     pub fn deref_as_role_and_player_originally_generated(&self, game: &Game)->OriginallyGeneratedRoleAndPlayer{

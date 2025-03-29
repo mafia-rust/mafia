@@ -165,7 +165,8 @@ impl RoleStateImpl for Reeducator {
     }
     fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
 
-        if game.role_assignment_gen.specifies_role_with_defaults(Role::Reeducator) {return}
+        if game.role_assignment_gen.role_by_itself_with_default_assignment_data(Role::Reeducator) {return}
+        if self.default_win_condition().wins_with_resolution_state(GameConclusion::Mafia) {return}
 
         //get random mafia player and turn them info a random town role
 
