@@ -245,7 +245,7 @@ function WikiMainPage(props: Readonly<{
 }
 
 export const WIKI_CATEGORIES = [
-    "categories", "town", "mafia", "cult", "neutral", "minions", "fiends", "modifiers", "abilities", "strategies"
+    "categories", "town", "mafia", "cult", "neutral", "minions", "fiends", "modifiers", "abilities", "strategies", "menus"
 ] as const;
 export type WikiCategory = (typeof WIKI_CATEGORIES)[number]
 
@@ -299,6 +299,12 @@ export function partitionWikiPages(
             "standard/claim", "standard/claimswap", "standard/vfr", "standard/passcode",
         ].includes(wikiPage)) {
             category = "strategies"
+        }
+
+        if ([
+            "standard/playerList", "standard/gameMode", "standard/outlineList", "standard/alibi", "standard/chat",
+        ].includes(wikiPage)) {
+            category = "menus"
         }
 
         if (category === null) {
