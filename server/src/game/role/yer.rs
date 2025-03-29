@@ -10,7 +10,6 @@ use crate::game::visit::Visit;
 
 use crate::game::Game;
 use crate::vec_set::vec_set;
-use crate::vec_set::VecSet;
 use super::{Priority, Role, RoleState, RoleStateImpl};
 use crate::game::ability_input::*;
 

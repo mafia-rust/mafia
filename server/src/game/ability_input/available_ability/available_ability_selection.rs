@@ -27,6 +27,17 @@ pub enum AvailableAbilitySelection{
     Kira{selection: AvailableKiraSelection},
     ChatMessage
 }
+pub struct RoleOptionOrderAndInclusion {
+    pub include_none: bool,
+    pub enabled_disabled_enum: RoleOptionOrderAndInclusionEnabledDisabled,
+}
+/// If pseudo_enabled is true, how this affects the order is decided by this
+pub enum RoleOptionOrderAndInclusionEnabledDisabled {
+    All,
+    ExcludeDisabled{pseudo_enabled: bool},
+    MoveDisabledToEnd{pseudo_enabled: bool}
+}
+
 impl AvailableAbilitySelection{
     pub fn new_unit()->Self{
         Self::Unit
@@ -57,14 +68,26 @@ impl AvailableAbilitySelection{
     pub fn new_role_option(selection: VecSet<Option<Role>>)->Self{
         Self::RoleOption{selection: AvailableRoleOptionSelection(selection)}
     }
-    pub fn role_option_enabled(game: &Game, allow_none: bool)->Self{
-        let mut selection: VecSet<Option<Role>> = game.settings.enabled_roles.iter().map(|role|Some(*role)).collect();
-        if allow_none {
+    pub fn role_option(game: &Game, inclusion: RoleOptionOrderAndInclusion)->Self{
+        let mut selection: VecSet<Option<Role>> = .iter().map(|role|Some(*role)).collect();
+        if inclusion.include_none {
             selection.insert(None);
         }
         Self::new_role_option(
             selection
         )
+    }
+    pub fn role_option_fast(game: &mut Game, inclusion: RoleOptionOrderAndInclusion)->Self{
+        let mut selection: VecSet<Option<Role>> = game.settings.enabled_roles.iter().map(|role|Some(*role)).collect();
+        if inclusion.include_none {
+            selection.insert(None);
+        }
+        Self::new_role_option(
+            selection
+        )
+    }
+    fn role_option_with_given_pseudo_enabled(){
+        
     }
     pub fn new_two_role_option(first: VecSet<Option<Role>>, can_choose_duplicates: bool)->Self{
         Self::TwoRoleOption{selection: AvailableTwoRoleOptionSelection{
