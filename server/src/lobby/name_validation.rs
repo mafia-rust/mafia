@@ -69,10 +69,12 @@ pub fn generate_random_name(taken_names: &[&str]) -> String{
     if let Some(random_name) = available_random_names.choose(&mut rand::rng()) {
         (*random_name).clone()
     } else {
-        let mut i = 0;
-        while taken_names_str.contains(&i.to_string()) {
-            i += 1;
+        let mut i: u16 = 0;
+        loop {
+            i = i.saturating_add(1);
+            if !taken_names_str.contains(&i.to_string()) {
+                return i.to_string()
+            }
         }
-        return i.to_string();
     }
 }

@@ -4,20 +4,20 @@ use super::ControllerParametersMap;
 
 pub struct NoAbilitySelection;
 
-pub trait BuilderTypeState {
+pub trait BuilderAvailableAbilitySelectionState {
     type Selection;
 }
-impl<A: AvailableSelectionKind> BuilderTypeState for A {
+impl<A: AvailableSelectionKind> BuilderAvailableAbilitySelectionState for A {
     type Selection = A::Selection;
 }
-impl BuilderTypeState for NoAbilitySelection {
+impl BuilderAvailableAbilitySelectionState for NoAbilitySelection {
     type Selection = NoAbilitySelection;
 }
-pub trait IDState {}
-impl IDState for () {}
-impl IDState for ControllerID {}
+pub trait BuilderIDState {}
+impl BuilderIDState for () {}
+impl BuilderIDState for ControllerID {}
 
-pub struct ControllerParametersBuilder<'a, A: BuilderTypeState = NoAbilitySelection, I: IDState = ()> {
+pub struct ControllerParametersBuilder<'a, A: BuilderAvailableAbilitySelectionState = NoAbilitySelection, I: BuilderIDState = ()> {
     game: &'a Game,
     available: A,
     grayed_out: bool,
@@ -43,7 +43,7 @@ impl<'a> ControllerParametersBuilder<'a, NoAbilitySelection, ()> {
     }
 }
 
-impl<'a, I: IDState> ControllerParametersBuilder<'a, NoAbilitySelection, I> {
+impl<'a, I: BuilderIDState> ControllerParametersBuilder<'a, NoAbilitySelection, I> {
     pub fn available_selection<A: AvailableSelectionKind>(self, available: A) -> ControllerParametersBuilder<'a, A, I> {
         let game = self.game;
         let default_selection = available.default_selection(game);
@@ -89,7 +89,7 @@ impl<'a, I: IDState> ControllerParametersBuilder<'a, NoAbilitySelection, I> {
     }
 }
 
-impl<A: BuilderTypeState, I: IDState> ControllerParametersBuilder<'_, A, I> {
+impl<A: BuilderAvailableAbilitySelectionState, I: BuilderIDState> ControllerParametersBuilder<'_, A, I> {
     pub fn night_typical(self, actor_ref: PlayerReference) -> Self {
         let game = self.game;
         self
@@ -127,7 +127,7 @@ impl<A: BuilderTypeState, I: IDState> ControllerParametersBuilder<'_, A, I> {
     }
 }
 
-impl<A: AvailableSelectionKind, I: IDState> ControllerParametersBuilder<'_, A, I> {
+impl<A: AvailableSelectionKind, I: BuilderIDState> ControllerParametersBuilder<'_, A, I> {
     pub fn default_selection(self, default_selection: A::Selection) -> Self {
         Self {
             default_selection,
@@ -148,7 +148,7 @@ impl<A: AvailableSelectionKind, I: IDState> ControllerParametersBuilder<'_, A, I
     }
 }
 
-impl<'a, A: BuilderTypeState> ControllerParametersBuilder<'a, A, ()> {
+impl<'a, A: BuilderAvailableAbilitySelectionState> ControllerParametersBuilder<'a, A, ()> {
     pub fn id(self, id: ControllerID) -> ControllerParametersBuilder<'a, A, ControllerID> {
         ControllerParametersBuilder {
             game: self.game,

@@ -4,11 +4,9 @@ use rand::seq::IndexedRandom;
 use serde::{Deserialize, Serialize};
 
 use crate::game::components::confused::Confused;
-use crate::game::components::detained::Detained;
 use crate::game::role_outline_reference::RoleOutlineReference;
 use crate::game::ability_input::*;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
-use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
@@ -90,9 +88,7 @@ impl RoleStateImpl for Auditor {
                     .chain(once(None))
                     .collect()
             ))
-            .allow_players([actor_ref])
-            .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game) || Detained::is_detained(game, actor_ref))
-            .reset_on_phase_start(PhaseType::Obituary)
+            .night_typical(actor_ref)
             .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
