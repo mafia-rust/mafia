@@ -191,6 +191,9 @@ pub enum ToServerPacket{
     Leave,
     #[serde(rename_all = "camelCase")]
     Kick{player_id: LobbyClientID},
+    #[serde(rename_all = "camelCase")]
+    SetPlayerHost{player_id: LobbyClientID},
+    RelinquishHost,
 
     // Lobby
     SendLobbyMessage{text: String},
