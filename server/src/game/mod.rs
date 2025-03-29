@@ -44,6 +44,7 @@ use modifiers::ModifierType;
 use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
 use rand::seq::SliceRandom;
+use role::Role;
 use role_list::RoleAssignment;
 use role_list::RoleOutlineOptionInsiderGroups;
 use role_list::RoleOutlineOptionWinCondition;
@@ -88,6 +89,7 @@ use self::verdict::Verdict;
 
 pub struct Game {
     pub settings : Settings,
+    pub pseudo_enabled_roles : Option<VecSet<Role>>,
 
     pub spectators: Vec<Spectator>,
     pub spectator_chat_messages: Vec<ChatMessageVariant>,
@@ -150,7 +152,7 @@ pub enum GameOverReason {
 impl Game {
     /// `players` must have length 255 or lower.
     pub fn new(settings: Settings, players: Vec<PlayerInitializeParameters>, spectators: Vec<SpectatorInitializeParameters>) -> Result<Self, RejectStartReason>{
-        //check settings are not completly off the rails
+        //check settings are not completely off the rails
         if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
         }
@@ -224,6 +226,7 @@ impl Game {
                 phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
                 modifiers: Modifiers::default_from_settings(settings.enabled_modifiers.clone()),
                 settings,
+                pseudo_enabled_roles: None,
 
                 saved_controllers: SavedControllersMap::default(),
                 night_visits: NightVisits::default(),
@@ -613,7 +616,7 @@ pub mod test {
     
     pub fn mock_game(settings: Settings, number_of_players: u8) -> Result<Game, RejectStartReason> {
 
-        //check settings are not completly off the rails
+        //check settings are not completely off the rails
         if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
         }
@@ -643,7 +646,7 @@ pub mod test {
             players.push(new_player);
         }
 
-        let mut game = Game{
+        let mut game = Game {
             pitchfork: Pitchfork::new(number_of_players),
             
             assignments,
@@ -654,6 +657,7 @@ pub mod test {
             graves: Vec::new(),
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
+            pseudo_enabled_roles: None,
 
             saved_controllers: SavedControllersMap::default(),
             night_visits: NightVisits::default(),
