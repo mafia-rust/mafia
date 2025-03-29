@@ -81,7 +81,7 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
         );
     }
     fn redirect_attack(self, _: &mut Game, actor_ref: PlayerReference, attack: AttackPower, _: bool)  -> Option<(PlayerReference, AttackPower)> {
-    	return Some((actor_ref, attack));
+        Some((actor_ref, attack))
     }
 }
 
