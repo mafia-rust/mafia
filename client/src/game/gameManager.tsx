@@ -256,6 +256,17 @@ export function createGameManager(): GameManager {
                 playerId: playerId
             });
         },
+        sendSetPlayerHostPacket(playerId: number) {
+            this.server.sendPacket({
+                type: "setPlayerHost",
+                playerId: playerId
+            });
+        },
+        sendRelinquishHostPacket() {
+            this.server.sendPacket({
+                type: "relinquishHost",
+            });
+        },
 
         sendSetSpectatorPacket(spectator) {
             this.server.sendPacket({
