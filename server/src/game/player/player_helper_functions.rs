@@ -83,17 +83,20 @@ impl PlayerReference{
         )
     }
     pub fn try_attack(&self, game: &mut Game, attack: AttackPower, with_visit: bool) -> Option<PlayerReference> {
-   		let (target, power) = match self.role_state(game).clone().redirect_attack(game, *self, attack, with_visit) {
-			None => return None,
-	    	Some((target, power)) => (target, power)
-		};
-     	target.set_night_attacked(game, true);
+       	let (target, power) = match self.role_state(game).clone().redirect_attack(game, *self, attack, with_visit) {
+            None => return None,
+            Some((target, power)) => (target, power)
+        };
+
+        if game.current_phase().is_night() {
+           	target.set_night_attacked(game, true);
+        }
       	
-     	if target.night_defense(game).can_block(power){
-      		target.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
-          	return None;
-      	}
-      
+        if target.defense(game).can_block(power){
+            target.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
+            return None;
+        }
+
       	Some(target)
     }
     pub fn try_recruit(&self, actor_ref: PlayerReference, game: &mut Game, attack: AttackPower, with_visit: bool, group: InsiderGroupID) -> Option<PlayerReference> {

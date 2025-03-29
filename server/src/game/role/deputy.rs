@@ -44,11 +44,10 @@ impl RoleStateImpl for Deputy {
         
         
         target_ref.add_private_chat_message(game, ChatMessageVariant::DeputyShotYou);
-        if target_ref.defense(game).can_block(AttackPower::Basic) {
-            target_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
+        if target_ref.try_attack(game, AttackPower::Basic, false).is_none() {
             actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
-
-        }else{
+        } else {
+            // the attack is indirect, so cannot be redirected and contents of Option can be ignored
             game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::DeputyKilled{shot_index: target_ref.index()});
             
             
