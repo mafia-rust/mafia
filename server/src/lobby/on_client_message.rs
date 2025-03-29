@@ -4,7 +4,7 @@ use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, event::{on_fast_forw
 
 use super::{lobby_client::{LobbyClient, LobbyClientID, LobbyClientType, Ready}, name_validation::{self, sanitize_server_name}, Lobby, LobbyState};
 
-pub const MESSAGE_PER_SECOND_LIMIT: u64 = 1;
+pub const MESSAGE_PER_SECOND_LIMIT: u16 = 1;
 pub const MESSAGE_PER_SECOND_LIMIT_TIME: Duration = Duration::from_secs(10);
 
 impl Lobby {
@@ -48,7 +48,7 @@ impl Lobby {
                         break;
                     }
                 }
-                if last_message_times.len() as u64 >= MESSAGE_PER_SECOND_LIMIT_TIME.as_secs() * MESSAGE_PER_SECOND_LIMIT {
+                if last_message_times.len() as u64 >= MESSAGE_PER_SECOND_LIMIT_TIME.as_secs().saturating_mul(MESSAGE_PER_SECOND_LIMIT.into()) {
                     send.send(ToClientPacket::RateLimitExceeded);
                     return;
                 }

@@ -106,7 +106,7 @@ impl SpectatorPointer {
                 phase: game.current_phase().clone(),
                 day_number: game.phase_machine.day_number 
             },
-            ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.as_secs() }
+            ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.map(|o|o.as_secs().try_into().expect("Phase time should be below 18 hours")) }
         ]);
 
         self.requeue_chat_messages(game);

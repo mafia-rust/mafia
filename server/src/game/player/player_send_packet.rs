@@ -18,7 +18,7 @@ impl PlayerReference{
         self.send_join_game_data(game);
     }
     pub fn lose_connection(&self, game: &mut Game){
-        self.deref_mut(game).connection = ClientConnection::CouldReconnect { disconnect_timer: Duration::from_secs(GAME_DISCONNECT_TIMER_SECS) };
+        self.deref_mut(game).connection = ClientConnection::CouldReconnect { disconnect_timer: Duration::from_secs(GAME_DISCONNECT_TIMER_SECS as u64) };
     }
     pub fn quit(&self, game: &mut Game) {
         self.deref_mut(game).connection = ClientConnection::Disconnected;
@@ -121,7 +121,7 @@ impl PlayerReference{
                 phase: game.current_phase().clone(),
                 day_number: game.phase_machine.day_number 
             },
-            ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.as_secs() },
+            ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.map(|o|o.as_secs().try_into().expect("Phase time should be below 18 hours")) },
             ToClientPacket::GameInitializationComplete
         ]);
     }

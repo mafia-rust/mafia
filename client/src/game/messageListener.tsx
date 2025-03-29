@@ -338,7 +338,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "phaseTimeLeft":
             if(GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.timeLeftMs = packet.secondsLeft * 1000;
+                GAME_MANAGER.state.timeLeftMs = packet.secondsLeft!==null?(packet.secondsLeft * 1000):null;
         break;
         case "playerAlive":
             if(GAME_MANAGER.state.stateType === "game"){

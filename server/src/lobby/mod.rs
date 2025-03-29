@@ -38,7 +38,7 @@ enum LobbyState {
 }
 
 pub const LOBBY_DISCONNECT_TIMER_SECS: u64 = 5;
-pub const GAME_DISCONNECT_TIMER_SECS: u64 = 60 * 2;
+pub const GAME_DISCONNECT_TIMER_SECS: u16 = 60 * 2;
 
 
 impl Lobby {

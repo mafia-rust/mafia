@@ -11,7 +11,7 @@ impl Game{
             phase: self.current_phase().clone(),
             day_number: self.phase_machine.day_number,
         });
-        self.send_packet_to_all(ToClientPacket::PhaseTimeLeft{ seconds_left: self.phase_machine.time_remaining.as_secs() });
+        self.send_packet_to_all(ToClientPacket::PhaseTimeLeft{ seconds_left: self.phase_machine.time_remaining.map(|o|o.as_secs().try_into().expect("Phase time should be below 18 hours")) });
         for player in PlayerReference::all_players(self){
             player.send_packet(self, ToClientPacket::YourSendChatGroups { send_chat_groups: 
                 player.get_current_send_chat_groups(self).into_iter().collect()
@@ -35,10 +35,10 @@ impl Game{
         self.ticking = false;
     }
     pub fn on_fast_forward(&mut self){
-        self.phase_machine.time_remaining = std::time::Duration::from_secs(0);
+        self.phase_machine.time_remaining = Some(std::time::Duration::from_secs(0));
         
         self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::PhaseFastForwarded);
-        self.send_packet_to_all(ToClientPacket::PhaseTimeLeft{ seconds_left: self.phase_machine.time_remaining.as_secs() });
+        self.send_packet_to_all(ToClientPacket::PhaseTimeLeft{ seconds_left: self.phase_machine.time_remaining.map(|o|o.as_secs().try_into().expect("Phase time should be below 18 hours")) });
     }
     pub fn on_grave_added(&mut self, grave: GraveReference){   
         let grave = grave.deref(self).clone();     
