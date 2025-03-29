@@ -11,7 +11,7 @@ use crate::game::Game;
 use crate::vec_set;
 
 use super::detective::Detective;
-use super::{common_role, AvailableAbilitySelection, ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
+use super::{common_role, ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Philosopher;

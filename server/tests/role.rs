@@ -17,7 +17,7 @@ pub use mafia_server::game::{
         },
         AbilityInput,
     }, 
-    components::{cult::CultAbility, insider_group::InsiderGroupID},  
+    components::{cult::CultAbility, insider_group::InsiderGroupID, confused::Confused, drunk_aura::DrunkAura},  
     role_list::RoleSet, 
     role_outline_reference::RoleOutlineReference,
      
@@ -74,6 +74,7 @@ pub use mafia_server::game::{
         mortician::Mortician,
         mafia_support_wildcard::MafiaSupportWildcard, 
         ambusher::Ambusher,
+        reeducator::Reeducator,
 
         jester::Jester,
         revolutionary::Revolutionary,
