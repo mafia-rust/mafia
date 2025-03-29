@@ -152,7 +152,6 @@ impl RoleStateImpl for Doomsayer {
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, _dead_player_ref: PlayerReference){
         Doomsayer::check_and_convert_to_jester(game, self, actor_ref);
     }
-    
 }
 impl GetClientRoleState<ClientRoleState> for Doomsayer {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
