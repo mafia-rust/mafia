@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::components::detained::Detained;
+use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, grave::Grave};
 use crate::game::phase::PhaseType;
@@ -8,10 +8,9 @@ use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
-use crate::vec_set;
 use super::{
-    common_role, AbilitySelection,
-    AvailableAbilitySelection, ControllerID,
+    common_role,
+    ControllerID,
     ControllerParametersMap, GetClientRoleState,
     Priority, Role, RoleStateImpl
 };
@@ -39,26 +38,21 @@ impl RoleStateImpl for Witch {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Witch, 0),
-            AvailableAbilitySelection::new_two_player_option(
-                PlayerReference::all_players(game)
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Witch, 0))
+            .available_selection(AvailableTwoPlayerOptionSelection {
+                available_first_players: PlayerReference::all_players(game)
                     .filter(|p|p.alive(game))
                     .filter(|p|*p != actor_ref)
                     .collect(),
-                PlayerReference::all_players(game)
+                available_second_players: PlayerReference::all_players(game)
                     .filter(|p|p.alive(game))
                     .collect(),
-                true,
-                true
-            ),
-            AbilitySelection::new_two_player_option(None),
-            actor_ref.ability_deactivated_from_death(game) || Detained::is_detained(game, actor_ref),
-            Some(PhaseType::Obituary),
-            false, 
-            vec_set!(actor_ref)
-        )
+                can_choose_duplicates: true,
+                can_choose_none: true
+            })
+            .night_typical(actor_ref)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         common_role::convert_controller_selection_to_visits(

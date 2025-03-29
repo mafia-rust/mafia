@@ -168,8 +168,7 @@ impl PhaseState {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::TrialInformation { required_votes, trials_left });
                 
 
-                let packet = ToClientPacket::new_player_votes(game);
-                game.send_packet_to_all(packet);
+                game.send_packet_to_all(ToClientPacket::PlayerVotes{votes_for_player: game.create_voted_player_map()});
             },
             PhaseState::Testimony { player_on_trial, .. } => {
                 game.add_message_to_chat_group(ChatGroup::All, 

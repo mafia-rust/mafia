@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::ability_input::ControllerParametersMap;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::components::poison::{Poison, PoisonAlert};
 use crate::game::grave::GraveKiller;
@@ -10,7 +11,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_set::VecSet;
 
-use super::{common_role, ControllerID, GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
+use super::{ControllerID, GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
 
 #[derive(Debug, Clone, Default)]
 pub struct Spiral{
@@ -55,14 +56,12 @@ impl RoleStateImpl for Spiral {
         actor_ref.set_role_state(game, RoleState::Spiral(Spiral{spiraling: new_spiraling}));
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            true,
-            game.day_number() <= 1 || !self.spiraling.is_empty(),
-            ControllerID::role(actor_ref, Role::Spiral, 0)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Spiral, 0))
+            .single_player_selection_typical(actor_ref, false, true)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(game.day_number() <= 1 || !self.spiraling.is_empty())
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
