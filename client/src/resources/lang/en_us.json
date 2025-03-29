@@ -1833,9 +1833,9 @@
     "wiki.article.role.werewolf.attributes":"* You enrage once at least 2/3rds of the living players are either tracked or are yourself. While enraged, you always attack when visiting\n* You are told who each player you have tracked visits.\n* You still track players after you die\n* Your attack is armor-piercing",
     "wiki.article.role.werewolf.extra":"* At the start of every night, every tracked player is told they are tracked",
 
-    "wiki.article.role.ojo.reminder": "Each night*, attack a player. Everyones roles are revealed to you, and you track everyone.",
-    "wiki.article.role.ojo.guide":"- Each night*, attack a player. Everyones roles are revealed to you, and you track everyone.",
-    "wiki.article.role.ojo.abilities":"- Each night except the first, attack a player.\n- Everyones roles are revealed to you. When a player is concealed, they get revealed again\n- You are told who every player visits.",
+    "wiki.article.role.ojo.reminder": "Each night*, attack a player. Everyones roles are revealed to you, you track everyone, and you can read other players whispers.",
+    "wiki.article.role.ojo.guide":"- Each night*, attack a player. Everyones roles are revealed to you, and you track everyone, and you can read other players whispers.",
+    "wiki.article.role.ojo.abilities":"- Each night except the first, attack a player.\n- Everyones roles are revealed to you. When a player is concealed, they get revealed again\n- You are told who every player visits.\n- You are sent whispers that were not sent to you.",
     "wiki.article.role.ojo.attributes":"",
     "wiki.article.role.ojo.extra":"- If you are blocked, you are still told who visits who.",
 
