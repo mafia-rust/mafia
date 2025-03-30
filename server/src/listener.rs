@@ -163,7 +163,7 @@ impl Listener{
                 connection.send(ToClientPacket::LobbyName { name: lobby.name.clone() })
             }
             Err(reason) => {
-                connection.get_sender().send(ToClientPacket::RejectJoin { reason });
+                connection.send(ToClientPacket::RejectJoin { reason });
             }
         }
     }
