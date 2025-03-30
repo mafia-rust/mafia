@@ -82,7 +82,7 @@ impl RoleStateImpl for Bodyguard {
                 let target_ref = visit.target;
     
                 if actor_ref == target_ref {
-                    let self_shields_remaining = self.self_shields_remaining - 1;
+                    let self_shields_remaining = self.self_shields_remaining.saturating_sub(1);
                     actor_ref.set_role_state(game, Bodyguard{
                         self_shields_remaining, 
                         ..self
@@ -107,14 +107,12 @@ impl RoleStateImpl for Bodyguard {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            self.self_shields_remaining > 0,
-            true,
-            !(game.day_number() > 1),
-            ControllerID::role(actor_ref, Role::Bodyguard, 0)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Bodyguard, 0))
+            .single_player_selection_typical(actor_ref, self.self_shields_remaining > 0, true)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(game.day_number() <= 1)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(

@@ -1,15 +1,15 @@
 use serde::Serialize;
+use crate::game::ability_input::{AvailableBooleanSelection, AvailablePlayerListSelection};
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::{game::attack_power::AttackPower, vec_set::VecSet};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
-use crate::vec_set;
 use crate::game::attack_power::DefensePower;
 use crate::game::player::PlayerReference;
 use crate::game::Game;
 use super::{
-    common_role, AbilitySelection, AvailableAbilitySelection, BooleanSelection, ControllerID, ControllerParametersMap, PlayerListSelection, Priority, Role, RoleStateImpl
+    common_role, BooleanSelection, ControllerID, ControllerParametersMap, PlayerListSelection, Priority, Role, RoleStateImpl
 };
 
 
@@ -72,58 +72,46 @@ impl RoleStateImpl for Warden {
     fn get_current_receive_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> std::collections::HashSet<crate::game::chat::ChatGroup> {
         common_role::get_current_receive_chat_groups(game, actor_ref)
             .into_iter()
-            .chain(vec![crate::game::chat::ChatGroup::Warden].into_iter())
+            .chain([crate::game::chat::ChatGroup::Warden])
             .collect()
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        let available_players = PlayerReference::all_players(game)
-            .into_iter()
-            .filter(|&p| p.alive(game))
-            .collect::<VecSet<_>>();
-        
-        let mut out = 
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Warden, 0),
-            super::AvailableAbilitySelection::new_player_list(
-                available_players,
-                false,
-                Some(MAX_PLAYERS_IN_PRISON),
-            ),
-            AbilitySelection::new_player_list(vec![]),
-            actor_ref.ability_deactivated_from_death(game) || game.day_number() <= 1,
-            Some(crate::game::phase::PhaseType::Night),
-            false,
-            vec_set!(actor_ref)
-        );
-
-        out.combine_overwrite(
-            ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::role(actor_ref, Role::Warden, 1),
-                super::AvailableAbilitySelection::new_boolean(),
-                AbilitySelection::new_boolean(false),
-                actor_ref.ability_deactivated_from_death(game),
-                Some(crate::game::phase::PhaseType::Obituary),
-                false,
-                vec_set!(actor_ref)
+        ControllerParametersMap::combine([
+            ControllerParametersMap::combine([
+                // Put players in prison
+                ControllerParametersMap::builder(game)
+                    .id(ControllerID::role(actor_ref, Role::Warden, 0))
+                    .available_selection(AvailablePlayerListSelection {
+                        available_players: PlayerReference::all_players(game)
+                            .filter(|&p| p.alive(game))
+                            .collect::<VecSet<_>>(),
+                        can_choose_duplicates: false,
+                        max_players: Some(MAX_PLAYERS_IN_PRISON)
+                    })
+                    .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game) || game.day_number() <= 1)
+                    .reset_on_phase_start(PhaseType::Night)
+                    .allow_players([actor_ref])
+                    .build_map(),
+                // Ward
+                ControllerParametersMap::builder(game)
+                    .id(ControllerID::role(actor_ref, Role::Warden, 1))
+                    .available_selection(AvailableBooleanSelection)
+                    .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
+                    .reset_on_phase_start(PhaseType::Obituary)
+                    .allow_players([actor_ref])
+                    .build_map(),
+            ]),
+            ControllerParametersMap::combine(
+                self.players_in_prison.iter().map(|&player|
+                    // Live or die
+                    ControllerParametersMap::builder(game)
+                        .id(ControllerID::WardenLiveOrDie{warden: actor_ref, player})
+                        .available_selection(AvailableBooleanSelection)
+                        .allow_players([player])
+                        .build_map()
+                )
             )
-        );
-
-        for &player in self.players_in_prison.iter() {
-            out.combine_overwrite(ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::WardenLiveOrDie{warden: actor_ref, player},
-                AvailableAbilitySelection::new_boolean(),
-                AbilitySelection::new_boolean(true),
-                false,
-                None,
-                false,
-                vec_set!(player)
-            ));
-        }
-
-        out
+        ])
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
@@ -134,14 +122,14 @@ impl RoleStateImpl for Warden {
 
                 if actor_ref.ability_deactivated_from_death(game) || players_in_prison.iter().any(|p|!p.alive(game)) {return};
                 
-                self.players_in_prison = players_in_prison.clone();
+                self.players_in_prison.clone_from(&players_in_prison);
                 
                 actor_ref.set_role_state(game, self);
 
                 game.add_message_to_chat_group(
                     crate::game::chat::ChatGroup::Warden,
                     ChatMessageVariant::WardenPlayersImprisoned{
-                        players: players_in_prison.iter().cloned().collect()
+                        players: players_in_prison.to_vec()
                     }
                 );
                 for &player in players_in_prison.iter(){
@@ -149,7 +137,7 @@ impl RoleStateImpl for Warden {
                         game,
                         player,
                         ChatMessageVariant::WardenPlayersImprisoned{
-                            players: players_in_prison.iter().cloned().collect()
+                            players: players_in_prison.to_vec()
                         },
                         false
                     );
@@ -179,7 +167,7 @@ impl Warden {
                 players_who_chose_die.insert(player);
             }
         }
-        if players_who_chose_die.len() == 0{
+        if players_who_chose_die.is_empty(){
             self.players_in_prison.clone().into_iter().collect()
         }else{
             players_who_chose_die

@@ -4,11 +4,9 @@ use rand::seq::IndexedRandom;
 use serde::{Deserialize, Serialize};
 
 use crate::game::components::confused::Confused;
-use crate::game::components::detained::Detained;
 use crate::game::role_outline_reference::RoleOutlineReference;
 use crate::game::ability_input::*;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
-use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
@@ -64,7 +62,7 @@ impl RoleStateImpl for Auditor {
                 Self::get_result(game, chosen_outline)
             };
             actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                role_outline: chosen_outline.deref(&game).clone(),
+                role_outline: chosen_outline.deref(game).clone(),
                 result: result.clone()
             });
 
@@ -78,7 +76,7 @@ impl RoleStateImpl for Auditor {
                 Self::get_result(game, chosen_outline)
             };
             actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                role_outline: chosen_outline.deref(&game).clone(),
+                role_outline: chosen_outline.deref(game).clone(),
                 result: result.clone()
             });
 
@@ -88,23 +86,17 @@ impl RoleStateImpl for Auditor {
         actor_ref.set_role_state(game, self);
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Auditor, 0),
-            AvailableAbilitySelection::new_two_role_outline_option(
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Auditor, 0))
+            .available_selection(AvailableTwoRoleOutlineOptionSelection(
                 RoleOutlineReference::all_outlines(game)
                     .filter(|o|!self.previously_given_results.contains(o))
-                    .map(|o|Some(o))
+                    .map(Some)
                     .chain(once(None))
                     .collect()
-            ),
-            AbilitySelection::new_two_role_outline_option(None, None),
-            actor_ref.ability_deactivated_from_death(game) ||
-            Detained::is_detained(game, actor_ref),
-            Some(PhaseType::Obituary),
-            false,
-            vec_set![actor_ref],
-        )
+            ))
+            .night_typical(actor_ref)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         common_role::convert_controller_selection_to_visits(
@@ -151,7 +143,7 @@ impl Auditor{
                 .filter(|x|*x != role)
                 .collect::<Vec<Role>>()
                 .choose(&mut rand::rng())
-                .cloned();
+                .copied();
 
             if let Some(fake_role) = fake_role{
                 let mut two = [role, fake_role];
@@ -174,7 +166,7 @@ impl Auditor{
                 .filter(|x|game.settings.enabled_roles.contains(x))
                 .collect::<Vec<Role>>()
                 .choose(&mut rand::rng())
-                .cloned();
+                .copied();
 
             if let Some(fake_role) = fake_role{
                 AuditorResult::One{role: fake_role}

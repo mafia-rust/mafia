@@ -2,7 +2,6 @@ use rand::seq::SliceRandom;
 
 use serde::Serialize;
 
-use crate::game::ability_input::{AbilitySelection, AvailableAbilitySelection};
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::night_visits::NightVisits;
@@ -14,7 +13,7 @@ use crate::game::visit::{Visit, VisitTag};
 use crate::game::phase::PhaseType;
 
 use crate::game::Game;
-use crate::vec_set::{vec_set, VecSet};
+use crate::vec_set::VecSet;
 use super::{ControllerID, ControllerParametersMap, PlayerListSelection, GetClientRoleState, Priority, Role, RoleStateImpl};
 
 
@@ -30,7 +29,8 @@ pub struct ClientRoleState;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-const ENRAGED_PERCENT: f32 = 2f32/3f32;
+const ENRAGED_NUMBERATOR: usize = 2;
+const ENRAGED_DENOMINATOR: usize = 3;
 
 impl RoleStateImpl for Werewolf {
     type ClientRoleState = ClientRoleState;
@@ -42,9 +42,9 @@ impl RoleStateImpl for Werewolf {
                 let Some(first_visit) = visits.first() else {return};
 
                 let target_ref = first_visit.target;
-                let enraged = self.tracked_players.len() as f32 >= ENRAGED_PERCENT * PlayerReference::all_players(game)
+                let enraged = self.tracked_players.len().saturating_mul(ENRAGED_DENOMINATOR) >= PlayerReference::all_players(game)
                     .filter(|p|p.alive(game)||*p==actor_ref)
-                    .count() as f32;
+                    .count().saturating_mul(ENRAGED_NUMBERATOR);
 
                 if !enraged && target_ref.all_night_visits_cloned(game).is_empty() {return}
                     
@@ -125,34 +125,20 @@ impl RoleStateImpl for Werewolf {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            true,
-            false,
-            ControllerID::role(actor_ref, Role::Werewolf, 0)
-        ).combine_overwrite_owned(
-            ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::role(actor_ref, Role::Werewolf, 1),
-                AvailableAbilitySelection::new_player_list(
-                    PlayerReference::all_players(game)
-                        .into_iter()
-                        .filter(|player|
-                            player.alive(game) && *player != actor_ref
-                        )
-                        .collect(),
-                        false,
-                        Some(1)
-                    ),
-                AbilitySelection::new_player_list(Vec::new()),
-                actor_ref.ability_deactivated_from_death(game),
-                Some(PhaseType::Night),
-                false,
-                vec_set!(actor_ref)
-            )
-        )
+        ControllerParametersMap::combine([
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Werewolf, 0))
+                .single_player_selection_typical(actor_ref, false, true)
+                .night_typical(actor_ref)
+                .build_map(),
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Werewolf, 1))
+                .single_player_selection_typical(actor_ref, false, true)
+                .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
+                .reset_on_phase_start(PhaseType::Night)
+                .allow_players([actor_ref])
+                .build_map()
+        ])
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(

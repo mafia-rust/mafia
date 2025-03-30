@@ -48,14 +48,12 @@ impl RoleStateImpl for Scarecrow {
         
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            true,
-            false,
-            ControllerID::role(actor_ref, Role::Scarecrow, 0)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Scarecrow, 0))
+            .single_player_selection_typical(actor_ref, false, true)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(false)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
@@ -72,7 +70,7 @@ impl RoleStateImpl for Scarecrow {
                 .filter(|p|p.alive(game))
                 .filter(|p|p.keeps_game_running(game))
                 .all(|p|
-                    WinCondition::are_friends(&p.win_condition(game), actor_ref.win_condition(game))
+                    WinCondition::are_friends(p.win_condition(game), actor_ref.win_condition(game))
                 )
 
         {

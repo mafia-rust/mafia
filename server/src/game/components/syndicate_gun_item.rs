@@ -1,11 +1,8 @@
-use crate::{
-    game::{
-        ability_input::*,
-        attack_power::AttackPower, grave::GraveKiller, phase::PhaseType, player::PlayerReference,
-        role::{common_role, Priority},
-        role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, Game
-    }, 
-    vec_set::vec_set
+use crate::game::{
+    ability_input::*,
+    attack_power::AttackPower, grave::GraveKiller, phase::PhaseType, player::PlayerReference,
+    role::Priority,
+    role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, Game
 };
 
 use super::{detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits};
@@ -50,36 +47,34 @@ impl SyndicateGunItem {
     //available ability
     pub fn controller_parameters_map(game: &Game) -> ControllerParametersMap {
         if let Some(player_with_gun) = game.syndicate_gun_item.player_with_gun {
-            common_role::controller_parameters_map_player_list_night_typical(
-                game,
-                player_with_gun,
-                false,
-                false,
-                game.day_number() <= 1,
-                ControllerID::syndicate_gun_item_shoot()
-            ).combine_overwrite_owned(
-                ControllerParametersMap::new_controller_fast(
-                    game,
-                    ControllerID::syndicate_gun_item_give(),
-                    AvailableAbilitySelection::new_player_list(
-                        PlayerReference::all_players(game)
-                            .into_iter()
+            ControllerParametersMap::combine([
+                ControllerParametersMap::builder(game)
+                    .id(ControllerID::syndicate_gun_item_shoot())
+                    .single_player_selection_typical(player_with_gun, false, false)
+                    .night_typical(player_with_gun)
+                    .add_grayed_out_condition(game.day_number() <= 1)
+                    .build_map(),
+                ControllerParametersMap::builder(game)
+                    .id(ControllerID::syndicate_gun_item_give())
+                    .available_selection(AvailablePlayerListSelection {
+                        available_players: PlayerReference::all_players(game)
                             .filter(|target|
                                 player_with_gun != *target &&
                                 target.alive(game) &&
                                 InsiderGroupID::Mafia.is_player_in_revealed_group(game, *target))
                             .collect(),
-                            false,
-                            Some(1)
-                    ),
-                    AbilitySelection::new_player_list(vec![]),
-                    Detained::is_detained(game, player_with_gun) ||
-                    !player_with_gun.alive(game),
-                    Some(PhaseType::Obituary),
-                    true,
-                    vec_set![player_with_gun],
-                )
-            )
+                        can_choose_duplicates: false,
+                        max_players: Some(1)
+                    })
+                    .add_grayed_out_condition(
+                        Detained::is_detained(game, player_with_gun) ||
+                        !player_with_gun.alive(game)
+                    )
+                    .reset_on_phase_start(PhaseType::Obituary)
+                    .dont_save()
+                    .allow_players([player_with_gun])
+                    .build_map()
+            ])
         }else{
             ControllerParametersMap::default()
         }
@@ -96,7 +91,7 @@ impl SyndicateGunItem {
             }
             for insider in InsiderGroupID::Mafia.players(game).iter()
                 .filter(|p|p.alive(game))
-                .cloned()
+                .copied()
                 .collect::<Vec<_>>()
             {
                 SyndicateGunItem::give_gun(game, insider);

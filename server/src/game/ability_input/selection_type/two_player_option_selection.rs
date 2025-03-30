@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{game::{ability_input::ValidateAvailableSelection, player::PlayerReference, Game}, vec_set::VecSet};
+use crate::{game::{ability_input::AvailableSelectionKind, player::PlayerReference, Game}, vec_set::VecSet};
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct TwoPlayerOptionSelection(pub Option<(PlayerReference, PlayerReference)>);
@@ -44,8 +44,8 @@ pub struct AvailableTwoPlayerOptionSelection{
     pub can_choose_none: bool
 }
 impl PartialOrd for AvailableTwoPlayerOptionSelection{
-    fn partial_cmp(&self, _other: &Self) -> Option<std::cmp::Ordering>{
-        Some(Ordering::Equal)
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering>{
+        Some(self.cmp(other))
     }
 }
 impl Ord for AvailableTwoPlayerOptionSelection{
@@ -53,15 +53,11 @@ impl Ord for AvailableTwoPlayerOptionSelection{
         Ordering::Equal
     }
 }
-impl ValidateAvailableSelection for AvailableTwoPlayerOptionSelection{
+impl AvailableSelectionKind for AvailableTwoPlayerOptionSelection{
     type Selection = TwoPlayerOptionSelection;
     fn validate_selection(&self, _game: &Game, selection: &TwoPlayerOptionSelection)->bool{
         let Some((first, second)) = selection.0 else {
-            if self.can_choose_none{
-                return true
-            }else{
-                return false
-            }
+            return self.can_choose_none
         };
 
         if !self.can_choose_duplicates && first == second{
@@ -76,5 +72,9 @@ impl ValidateAvailableSelection for AvailableTwoPlayerOptionSelection{
         }
         
         true
+    }
+    
+    fn default_selection(&self, _: &Game) -> Self::Selection {
+        TwoPlayerOptionSelection(None)
     }
 }

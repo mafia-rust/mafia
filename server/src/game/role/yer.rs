@@ -9,7 +9,6 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use crate::vec_set::vec_set;
 use crate::vec_set::VecSet;
 use super::{Priority, Role, RoleState, RoleStateImpl};
 use crate::game::ability_input::*;
@@ -44,11 +43,9 @@ impl RoleStateImpl for Yer {
     fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         if game.day_number() == 1 {return}
 
-        let chose_to_convert = if let Some(BooleanSelection(bool)) = game.saved_controllers.get_controller_current_selection_boolean(
+        let chose_to_convert = game.saved_controllers.get_controller_current_selection_boolean(
             ControllerID::role(actor_ref, Role::Yer, 0)
-        ){
-            bool
-        }else{false};
+        ).map(|selection| selection.0).unwrap_or(false);
 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
@@ -66,7 +63,7 @@ impl RoleStateImpl for Yer {
                 );
             } else {
                 if priority != Priority::Convert {return}
-                if self.star_passes_remaining <= 0 {return}
+                if self.star_passes_remaining == 0 {return}
 
                 if target_ref.night_defense(game).can_block(AttackPower::ArmorPiercing) {
                     actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
@@ -76,7 +73,7 @@ impl RoleStateImpl for Yer {
                 self.star_passes_remaining = self.star_passes_remaining.saturating_sub(1);
 
                 //role switching stuff
-                let fake_role = self.current_fake_role(&game, actor_ref);
+                let fake_role = self.current_fake_role(game, actor_ref);
 
                 actor_ref.set_night_grave_role(game, Some(fake_role));
                 
@@ -103,42 +100,35 @@ impl RoleStateImpl for Yer {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        let mut role_options = Role::values().into_iter()
-            .map(|role| Some(role))
-            .collect::<VecSet<Option<Role>>>();
-        role_options.insert(None);
-        crate::game::role::common_role::controller_parameters_map_boolean(
-            game,
-            actor_ref,
-            self.star_passes_remaining <= 0 || game.day_number() <= 1,
-            ControllerID::role(actor_ref, Role::Yer, 0)
-        ).combine_overwrite_owned(
-            crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-                game,
-                actor_ref,
-                false,
-                true,
-                game.day_number() <= 1,
-                ControllerID::role(actor_ref, Role::Yer, 1)
-            )
-        ).combine_overwrite_owned(
-            ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::role(actor_ref, Role::Yer, 2),
-                AvailableAbilitySelection::new_role_option(
+        ControllerParametersMap::combine([
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Yer, 0))
+                .available_selection(AvailableBooleanSelection)
+                .add_grayed_out_condition(self.star_passes_remaining == 0 || game.day_number() <= 1)
+                .night_typical(actor_ref)
+                .build_map(),
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Yer, 1))
+                .single_player_selection_typical(actor_ref, false, true)
+                .night_typical(actor_ref)
+                .add_grayed_out_condition(game.day_number() <= 1)
+                .build_map(),
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Yer, 2))
+                .available_selection(AvailableRoleOptionSelection(
                     game.settings.enabled_roles.iter()
                         .map(|role| Some(*role))
                         .collect::<VecSet<Option<Role>>>()
-                ),
-                AbilitySelection::new_role_option(Some(self.old_role)),
-                self.star_passes_remaining <= 0 ||
-                actor_ref.ability_deactivated_from_death(game) ||
-                game.day_number() <= 1,
-                None,
-                false,
-                vec_set!(actor_ref)
-            )
-        )
+                ))
+                .default_selection(RoleOptionSelection(Some(self.old_role)))
+                .add_grayed_out_condition(
+                    self.star_passes_remaining == 0 ||
+                    actor_ref.ability_deactivated_from_death(game) ||
+                    game.day_number() <= 1
+                )
+                .allow_players([actor_ref])
+                .build_map()
+        ])
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(

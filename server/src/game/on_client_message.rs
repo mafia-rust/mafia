@@ -19,10 +19,10 @@ impl Game {
     pub fn on_spectator_message(&mut self, sender_index: SpectatorIndex, incoming_packet: ToServerPacket){
         let sender_pointer = SpectatorPointer::new(sender_index);
 
-        #[allow(clippy::single_match)]
+        #[expect(clippy::single_match, reason = "More cases will likely be added later")]
         match incoming_packet {
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
-                if sender_pointer.host(self) && fast_forward && !self.phase_machine.time_remaining.is_zero(){
+                if sender_pointer.host(self) && fast_forward && !self.phase_machine.time_remaining.is_some_and(|d|d.is_zero()){
                     OnFastForward::invoke(self);
                 }
             },

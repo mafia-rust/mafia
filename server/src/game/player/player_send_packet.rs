@@ -4,7 +4,7 @@ use crate::{
     client_connection::ClientConnection, 
     game::{
         chat::ChatMessageVariant, components::insider_group::InsiderGroupID,
-        phase::PhaseState, Game, GameOverReason
+        Game, GameOverReason
     },
     lobby::GAME_DISCONNECT_TIMER_SECS,
     packet::ToClientPacket, websocket_connections::connection::ClientSender
@@ -18,7 +18,7 @@ impl PlayerReference{
         self.send_join_game_data(game);
     }
     pub fn lose_connection(&self, game: &mut Game){
-        self.deref_mut(game).connection = ClientConnection::CouldReconnect { disconnect_timer: Duration::from_secs(GAME_DISCONNECT_TIMER_SECS) };
+        self.deref_mut(game).connection = ClientConnection::CouldReconnect { disconnect_timer: Duration::from_secs(GAME_DISCONNECT_TIMER_SECS as u64) };
     }
     pub fn quit(&self, game: &mut Game) {
         self.deref_mut(game).connection = ClientConnection::Disconnected;
@@ -74,15 +74,8 @@ impl PlayerReference{
             self.send_packet(game, ToClientPacket::GameOver { reason: GameOverReason::Draw })
         }
 
-        if let PhaseState::Testimony { player_on_trial, .. }
-            | PhaseState::Judgement { player_on_trial, .. }
-            | PhaseState::FinalWords { player_on_trial } = game.current_phase() {
-            self.send_packet(game, ToClientPacket::PlayerOnTrial{
-                player_index: player_on_trial.index()
-            });
-        }
-        let votes_packet = ToClientPacket::new_player_votes(game);
-        self.send_packet(game, votes_packet);
+
+        self.send_packet(game, ToClientPacket::PlayerVotes{votes_for_player: game.create_voted_player_map()});
         for grave in game.graves.iter(){
             self.send_packet(game, ToClientPacket::AddGrave { grave: grave.clone() });
         }
@@ -128,7 +121,7 @@ impl PlayerReference{
                 phase: game.current_phase().clone(),
                 day_number: game.phase_machine.day_number 
             },
-            ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.as_secs() },
+            ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.map(|o|o.as_secs().try_into().expect("Phase time should be below 18 hours")) },
             ToClientPacket::GameInitializationComplete
         ]);
     }
@@ -157,7 +150,7 @@ impl PlayerReference{
 
         self.send_chat_messages(game);
     }
-    #[allow(unused)]
+    #[expect(clippy::assigning_clones, reason = "Reference rules prevents this")]
     fn requeue_chat_messages(&self, game: &mut Game){
         self.deref_mut(game).queued_chat_messages = self.deref(game).chat_messages.clone();
     }

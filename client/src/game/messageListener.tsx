@@ -4,7 +4,7 @@ import { ANCHOR_CONTROLLER, chatMessageToAudio } from "./../menu/Anchor";
 import GAME_MANAGER from "./../index";
 import GameScreen from "./../menu/game/GameScreen";
 import { ToClientPacket } from "./packet";
-import { PlayerIndex, Tag } from "./gameState.d";
+import { GameClient, PlayerIndex, Tag } from "./gameState.d";
 import { Role } from "./roleState.d";
 import translate from "./lang";
 import { computePlayerKeywordData, computePlayerKeywordDataForLobby } from "../components/StyledText";
@@ -23,7 +23,6 @@ import { defaultAlibi } from "../menu/game/gameScreenContent/WillMenu";
 import ListMap from "../ListMap";
 import { sortControllerIdCompare } from "./abilityInput";
 
-
 function sendDefaultName() {
     const defaultName = loadSettingsParsed().defaultName;
     if(defaultName !== null && defaultName !== undefined && defaultName !== ""){
@@ -32,9 +31,7 @@ function sendDefaultName() {
 } 
 
 export default function messageListener(packet: ToClientPacket){
-
     console.log(JSON.stringify(packet, null, 2));
-
 
     switch(packet.type) {
         case "pong":
@@ -131,6 +128,9 @@ export default function messageListener(packet: ToClientPacket){
                 case "zeroTimeGame":
                     ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectStart"), body: translate("notification.rejectStart.zeroTimeGame") });
                 break;
+                case "tooManyCLients":
+                    ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectStart"), body: translate("notification.rejectStart.tooManyClients") });
+                break;
                 default:
                     ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectStart"), body: "" });
                     console.error(`${packet.type} message response not implemented: ${packet.reason}`);
@@ -149,7 +149,19 @@ export default function messageListener(packet: ToClientPacket){
                 }
                 GAME_MANAGER.state.players = new ListMap(GAME_MANAGER.state.players.entries());
             }else if(GAME_MANAGER.state.stateType === "game"){
-                GAME_MANAGER.state.host = packet.hosts.includes(GAME_MANAGER.state.myId ?? -1)
+                if (packet.hosts.includes(GAME_MANAGER.state.myId ?? -1)) {
+                    if (GAME_MANAGER.state.host === null) {
+                        GAME_MANAGER.state.host = {
+                            clients: new ListMap()
+                        }
+                    }
+
+                    for (const [id, client] of GAME_MANAGER.state.host.clients.entries()) {
+                        client.host = packet.hosts.includes(id);
+                    }
+                } else {
+                    GAME_MANAGER.state.host = null
+                }
             }
         break;
         case "playersReady":
@@ -193,11 +205,10 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "lobbyClients":
             if(GAME_MANAGER.state.stateType === "lobby"){
-
                 const oldMySpectator = GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId!)?.clientType.type === "spectator";
 
                 GAME_MANAGER.state.players = new ListMap();
-                for(let [clientId, lobbyClient] of packet.clients){
+                for(const [clientId, lobbyClient] of packet.clients){
                     GAME_MANAGER.state.players.insert(clientId, lobbyClient);
                 }
                 const newMySpectator = GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId!)?.clientType.type === "spectator";
@@ -214,6 +225,13 @@ export default function messageListener(packet: ToClientPacket){
                         .map(client => (client.clientType as { type: "player", name: string }).name)
                 );
             }
+        break;
+        case "hostData":
+            if (GAME_MANAGER.state.stateType === "game") {
+                GAME_MANAGER.state.host = {
+                    clients: new ListMap<number, GameClient>(packet.clients)
+                }
+            } 
         break;
         case "lobbyName":
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
@@ -320,15 +338,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "phaseTimeLeft":
             if(GAME_MANAGER.state.stateType === "game")
-                GAME_MANAGER.state.timeLeftMs = packet.secondsLeft * 1000;
-        break;
-        case "playerOnTrial":
-            if(GAME_MANAGER.state.stateType === "game" && (
-                GAME_MANAGER.state.phaseState.type === "testimony" || 
-                GAME_MANAGER.state.phaseState.type === "judgement" || 
-                GAME_MANAGER.state.phaseState.type === "finalWords"
-            ))
-                GAME_MANAGER.state.phaseState.playerOnTrial = packet.playerIndex;
+                GAME_MANAGER.state.timeLeftMs = packet.secondsLeft!==null?(packet.secondsLeft * 1000):null;
         break;
         case "playerAlive":
             if(GAME_MANAGER.state.stateType === "game"){

@@ -34,21 +34,19 @@ impl RoleStateImpl for Informant {
 
             let message = ChatMessageVariant::InformantResult{
                 role: target_ref.role(game), 
-                visited_by: PlayerReference::ref_vec_to_index(&visited_by.as_mut_slice()),
+                visited_by: PlayerReference::ref_vec_to_index(visited_by.as_mut_slice()),
                 visited: PlayerReference::ref_vec_to_index(visited.as_slice())
             };
             actor_ref.push_night_message(game, message);
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            false,
-            false,
-            ControllerID::role(actor_ref, Role::Informant, 0)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Informant, 0))
+            .single_player_selection_typical(actor_ref, false, false)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(false)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(

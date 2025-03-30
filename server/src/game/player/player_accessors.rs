@@ -22,6 +22,13 @@ impl PlayerReference{
     pub fn name<'a>(&self, game: &'a Game) -> &'a String {
         &self.deref(game).name
     }
+    pub fn set_name(&self, game: &mut Game, new_name: String) {
+        self.deref_mut(game).name = new_name;
+
+        game.send_packet_to_all(ToClientPacket::GamePlayers { 
+            players: PlayerReference::all_players(game).map(|p| p.name(game)).cloned().collect()
+        });
+    }
     
     pub fn role(&self, game: &Game) -> Role {
         self.deref(game).role_state.role()
@@ -116,9 +123,9 @@ impl PlayerReference{
     pub fn player_tags<'a>(&self, game: &'a Game) -> &'a VecMap<PlayerReference, Vec1<Tag>>{
         &self.deref(game).player_tags
     }
-    pub fn player_has_tag(&self, game: &Game, key: PlayerReference, value: Tag) -> u8{
+    pub fn player_has_tag(&self, game: &Game, key: PlayerReference, value: Tag) -> usize {
         if let Some(player_tags) = self.deref(game).player_tags.get(&key){
-            player_tags.iter().filter(|t|**t==value).count() as u8
+            player_tags.iter().filter(|t|**t==value).count()
         }else{
             0
         }
@@ -181,7 +188,7 @@ impl PlayerReference{
         self.add_chat_message(game, message.clone());
     }
     pub fn add_private_chat_messages(&self, game: &mut Game, messages: Vec<ChatMessageVariant>){
-        for message in messages.into_iter(){
+        for message in messages {
             self.add_private_chat_message(game, message);
         }
     }
@@ -198,7 +205,7 @@ impl PlayerReference{
 
         self.send_packet(game, ToClientPacket::YourVoteFastForwardPhase { fast_forward: fast_forward_vote });
 
-        if fast_forward_vote && !game.phase_machine.time_remaining.is_zero() && PlayerReference::all_players(game)
+        if fast_forward_vote && !game.phase_machine.time_remaining.is_some_and(|d|d.is_zero()) && PlayerReference::all_players(game)
             .filter(|p|p.alive(game)&&(p.could_reconnect(game)||p.is_connected(game)))
             .all(|p| p.fast_forward_vote(game))
         {

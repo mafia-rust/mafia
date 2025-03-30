@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use crate::game::ability_input::{AvailableBooleanSelection, ControllerParametersMap};
 use crate::game::attack_power::AttackPower;
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::phase::PhaseType;
@@ -7,7 +8,7 @@ use crate::game::player::PlayerReference;
 
 use crate::game::Game;
 
-use super::{common_role, BooleanSelection, ControllerID, GetClientRoleState, Priority, Role, RoleStateImpl};
+use super::{BooleanSelection, ControllerID, GetClientRoleState, Priority, Role, RoleStateImpl};
 
 #[derive(Debug, Clone)]
 pub struct Veteran { 
@@ -47,13 +48,9 @@ impl RoleStateImpl for Veteran {
             Priority::TopPriority => {
                 let can_alert = self.alerts_remaining > 0 && game.day_number() > 1;
                 let chose_to_alert = 
-                    if let Some(BooleanSelection(true)) = game.saved_controllers.get_controller_current_selection_boolean(
+                    matches!(game.saved_controllers.get_controller_current_selection_boolean(
                         ControllerID::role(actor_ref, Role::Veteran, 0)
-                    ){
-                        true
-                    }else{
-                        false
-                    };
+                    ), Some(BooleanSelection(true)));
 
                 if can_alert && chose_to_alert{
                     actor_ref.set_role_state(game, Veteran { 
@@ -82,12 +79,12 @@ impl RoleStateImpl for Veteran {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        common_role::controller_parameters_map_boolean(
-            game,
-            actor_ref,
-            self.alerts_remaining <= 0 || game.day_number() <= 1,
-            ControllerID::role(actor_ref, Role::Veteran, 0)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Veteran, 0))
+            .available_selection(AvailableBooleanSelection)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(self.alerts_remaining == 0 || game.day_number() <= 1)
+            .build_map()
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         actor_ref.set_role_state(

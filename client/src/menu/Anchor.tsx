@@ -12,6 +12,7 @@ import { ChatMessage } from "../components/ChatMessage";
 import WikiCoverCard from "../components/WikiCoverCard";
 import WikiArticle from "../components/WikiArticle";
 import AudioController from "./AudioController";
+import { computeKeywordData } from "../components/StyledText";
 
 const MobileContext = createContext<boolean | undefined>(undefined);
 
@@ -121,6 +122,7 @@ export default function Anchor(props: Readonly<{
         setFontSize(settings.fontSize);
         setAccessibilityFontEnabled(settings.accessibilityFont);
         switchLanguage(settings.language)
+        computeKeywordData()
     }, [])
 
     const reload = useCallback(() => {

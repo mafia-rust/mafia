@@ -8,23 +8,14 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use crate::vec_set;
 use super::godfather::Godfather;
 use super::{Priority, Role, RoleStateImpl};
 
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Default, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Impostor{
     pub backup: Option<PlayerReference>
-}
-
-impl Default for Impostor {
-    fn default() -> Self {
-        Self {
-            backup: None,
-        }
-    }
 }
 
 
@@ -45,27 +36,25 @@ impl RoleStateImpl for Impostor {
         )
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            false,
-            game.day_number() <= 1,
-            ControllerID::role(actor_ref, Role::Impostor, 0)
-        ).combine_overwrite_owned(ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Impostor, 1),
-            AvailableAbilitySelection::new_role_option(
-                Role::values().into_iter()
-                    .map(|role| Some(role))
-                    .collect()
-            ),
-            AbilitySelection::new_role_option(Some(Role::Impostor)),
-            actor_ref.ability_deactivated_from_death(game),
-            None,
-            false,
-            vec_set!(actor_ref)
-        ))
+        ControllerParametersMap::combine([
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Impostor, 0))
+                .single_player_selection_typical(actor_ref, false, false)
+                .night_typical(actor_ref)
+                .add_grayed_out_condition(game.day_number() <= 1)
+                .build_map(),
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Impostor, 1))
+                .available_selection(AvailableRoleOptionSelection(
+                    Role::values().into_iter()
+                        .map(Some)
+                        .collect()
+                ))
+                .default_selection(RoleOptionSelection(Some(Role::Impostor)))
+                .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
+                .allow_players([actor_ref])
+                .build_map()
+        ])
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: crate::game::grave::GraveReference) {
         let Some(role) = Self::current_fake_role(game, actor_ref) else {return};

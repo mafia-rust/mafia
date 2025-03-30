@@ -1,4 +1,4 @@
-use std::{ops::DivAssign, time::Duration};
+use std::{ops::Div, time::Duration};
 
 use serde::{Serialize, Deserialize};
 
@@ -36,11 +36,11 @@ pub enum PhaseState {
     Obituary,
     Discussion,
     #[serde(rename_all = "camelCase")]
-    Nomination { trials_left: u8, nomination_time_remaining: Duration },
+    Nomination { trials_left: u8, nomination_time_remaining: Option<Duration> },
     #[serde(rename_all = "camelCase")]
-    Testimony { trials_left: u8, player_on_trial: PlayerReference, nomination_time_remaining: Duration },
+    Testimony { trials_left: u8, player_on_trial: PlayerReference, nomination_time_remaining: Option<Duration> },
     #[serde(rename_all = "camelCase")]
-    Judgement { trials_left: u8, player_on_trial: PlayerReference, nomination_time_remaining: Duration },
+    Judgement { trials_left: u8, player_on_trial: PlayerReference, nomination_time_remaining: Option<Duration> },
     #[serde(rename_all = "camelCase")]
     FinalWords { player_on_trial: PlayerReference },
     Dusk,
@@ -49,7 +49,7 @@ pub enum PhaseState {
 }
 
 pub struct PhaseStateMachine {
-    pub time_remaining: Duration,
+    pub time_remaining: Option<Duration>,
     pub current_state: PhaseState,
     pub day_number: u8, // Hopefully nobody is having more than 256 days anyway
 }
@@ -65,11 +65,11 @@ impl PhaseStateMachine {
         }
     }
 
-    pub fn get_time_remaining(&self) -> Duration {
+    pub fn get_time_remaining(&self) -> Option<Duration> {
         self.time_remaining
     }
 
-    pub fn set_time_remaining(&mut self, time: Duration) {
+    pub fn set_time_remaining(&mut self, time: Option<Duration>) {
         self.time_remaining = time;
     }
 
@@ -88,18 +88,18 @@ impl PhaseStateMachine {
         OnPhaseStart::new(game.current_phase().clone()).invoke(game);
     }
 
-    pub fn get_phase_time_length(game: &Game, phase: PhaseType) -> Duration {
+    pub fn get_phase_time_length(game: &Game, phase: PhaseType) -> Option<Duration> {
         let mut time = game.settings.phase_times.get_time_for(phase);
         //if there are less than 3 players alive then the game is sped up by 2x
         if PlayerReference::all_players(game).filter(|p|p.alive(game)).count() <= 3{
-            time /= 2;
+            time = time.map(|o|o.div(2));
         }
 
         if
             phase == PhaseType::Nomination &&
             Modifiers::modifier_is_enabled(game, ModifierType::ScheduledNominations)
         {
-            time.div_assign(3);
+            time = time.map(|o|o.div(3));
         }
 
         time
@@ -167,8 +167,7 @@ impl PhaseState {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::TrialInformation { required_votes, trials_left });
                 
 
-                let packet = ToClientPacket::new_player_votes(game);
-                game.send_packet_to_all(packet);
+                game.send_packet_to_all(ToClientPacket::PlayerVotes{votes_for_player: game.create_voted_player_map()});
             },
             PhaseState::Testimony { player_on_trial, .. } => {
                 game.add_message_to_chat_group(ChatGroup::All, 
@@ -180,7 +179,6 @@ impl PhaseState {
                             .collect()
                     }
                 );
-                game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() });
             },
             PhaseState::Briefing 
             | PhaseState::Night
@@ -214,9 +212,6 @@ impl PhaseState {
                 if Modifiers::modifier_is_enabled(game, ModifierType::ScheduledNominations){
                     
                     if let Some(player_on_trial) = game.count_nomination_and_start_trial(false){    
-
-                        game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
-    
                         Self::Testimony{
                             trials_left: trials_left.saturating_sub(1), 
                             player_on_trial, 
@@ -261,7 +256,7 @@ impl PhaseState {
                 });
 
                 let hang = if Modifiers::modifier_is_enabled(game, ModifierType::TwoThirdsMajority) {
-                    innocent <= 2 * guilty
+                    innocent <= guilty.div(2)
                 } else {
                     innocent < guilty
                 };

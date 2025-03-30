@@ -3,8 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     game::{
         ability_input::{
-            ability_selection::AbilitySelection, ControllerID,
-            AbilityInput, ValidateAvailableSelection
+            ability_selection::AbilitySelection, AbilityInput, ControllerID, AvailableSelectionKind
         },
         player::PlayerReference, role::kira::KiraGuess, Game
     },
@@ -20,8 +19,8 @@ impl KiraSelection{
 }
 
 impl PartialOrd for KiraSelection{
-    fn partial_cmp(&self, _other: &Self) -> Option<std::cmp::Ordering> {
-        Some(std::cmp::Ordering::Equal)
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
     }
 }
 impl Ord for KiraSelection{
@@ -34,14 +33,18 @@ impl Ord for KiraSelection{
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct AvailableKiraSelection{
-    count_must_guess: u8
+    pub count_must_guess: u8
 }
-impl ValidateAvailableSelection for AvailableKiraSelection{
+impl AvailableSelectionKind for AvailableKiraSelection{
     type Selection = KiraSelection;
     fn validate_selection(&self, game: &Game, selection: &KiraSelection)->bool{
         let count: usize = self.count_must_guess.into();
         selection.0.len() == count &&
         selection.0.iter().all(|p|p.0.alive(game))
+    }
+    
+    fn default_selection(&self, _: &Game) -> Self::Selection {
+        KiraSelection(VecMap::new())
     }
 }
 
@@ -55,7 +58,7 @@ impl AvailableKiraSelection{
 impl AbilityInput{
     pub fn get_kira_selection_if_id(&self, id: ControllerID)->Option<KiraSelection>{
         if id != self.id() {return None};
-        let AbilitySelection::Kira { selection } = self.selection() else {return None};
+        let AbilitySelection::Kira(selection) = self.selection() else {return None};
         Some(selection)
     }
 }

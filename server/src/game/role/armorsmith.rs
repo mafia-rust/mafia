@@ -1,6 +1,7 @@
 use rand::seq::IndexedRandom;
 use serde::Serialize;
 
+use crate::game::ability_input::ControllerParametersMap;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -46,8 +47,7 @@ impl RoleStateImpl for Armorsmith {
                 let Some(visit) = actor_visits.first() else {return};
                 let target = visit.target;
 
-                if self.open_shops_remaining <= 0 {return}
-                //
+                if self.open_shops_remaining == 0 {return}
                     
                 self.night_open_shop = true;
                 self.open_shops_remaining = self.open_shops_remaining.saturating_sub(1);
@@ -62,9 +62,9 @@ impl RoleStateImpl for Armorsmith {
                 }
 
                 if visitors.contains(&target){
-                    self.players_armor.push(target.clone());
+                    self.players_armor.push(target);
                 }else if let Some(random_visitor) = visitors.choose(&mut rand::rng()) {
-                    self.players_armor.push(random_visitor.clone());
+                    self.players_armor.push(*random_visitor);
                 }
 
                 self.night_protected_players = visitors;
@@ -84,7 +84,7 @@ impl RoleStateImpl for Armorsmith {
                     }
                 }
 
-                for player_armor in self.players_armor.clone().into_iter(){
+                for player_armor in self.players_armor.clone() {
                     if player_armor.night_attacked(game){
                         actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
                         player_armor.push_night_message(game, ChatMessageVariant::YouWereProtected);
@@ -99,15 +99,13 @@ impl RoleStateImpl for Armorsmith {
             _ => {}
         }
     }
-    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            true,
-            self.open_shops_remaining <= 0,
-            ControllerID::role(actor_ref, Role::Armorsmith, 0)
-        )
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Armorsmith, 0))
+            .single_player_selection_typical(actor_ref, false, true)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(self.open_shops_remaining == 0)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<crate::game::visit::Visit> {
         common_role::convert_controller_selection_to_visits(

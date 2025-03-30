@@ -2,7 +2,6 @@ use serde::Serialize;
 
 use crate::game::ability_input::*;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::components::detained::Detained;
 use crate::game::grave::GraveInformation;
 use crate::game::phase::PhaseType;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
@@ -14,17 +13,10 @@ use crate::vec_set::{vec_set, VecSet};
 use super::{InsiderGroupID, Priority, Role, RoleStateImpl};
 
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Disguiser{
     pub current_target: Option<PlayerReference>
-}
-impl Default for Disguiser{
-    fn default() -> Self {
-        Self{
-            current_target: None
-        }
-    }
 }
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
@@ -56,40 +48,33 @@ impl RoleStateImpl for Disguiser {
         )
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Disguiser, 0),
-            AvailableAbilitySelection::new_player_list(PlayerReference::all_players(game)
-                    .filter(|p|
-                        p.alive(game) &&
-                        InsiderGroupID::in_same_revealed_group(game, actor_ref, *p)
-                    )
-                    .collect(),
-                    false,
-                    Some(1)
-                ),
-            AbilitySelection::new_player_list(vec![]),
-            actor_ref.ability_deactivated_from_death(game) ||
-            Detained::is_detained(game, actor_ref),
-            Some(PhaseType::Obituary),
-            false,
-            vec_set!(actor_ref)
-        ).combine_overwrite_owned(
-            ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::role(actor_ref, Role::Disguiser, 1),
-                AvailableAbilitySelection::new_role_option(
+        ControllerParametersMap::combine([
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Disguiser, 0))
+                .available_selection(AvailablePlayerListSelection {
+                    available_players: PlayerReference::all_players(game)
+                        .filter(|p|
+                            p.alive(game) &&
+                            InsiderGroupID::in_same_revealed_group(game, actor_ref, *p)
+                        )
+                        .collect(),
+                    can_choose_duplicates: false,
+                    max_players: Some(1)
+                })
+                .night_typical(actor_ref)
+                .build_map(),
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Disguiser, 1))
+                .available_selection(AvailableRoleOptionSelection(
                     Role::values().into_iter()
-                        .map(|role| Some(role))
+                        .map(Some)
                         .collect()
-                ),
-                AbilitySelection::new_role_option(Some(Role::Disguiser)),
-                actor_ref.ability_deactivated_from_death(game),
-                None,
-                false,
-                self.players_with_disguiser_menu(actor_ref)
-            )
-        )
+                ))
+                .default_selection(RoleOptionSelection(Some(Role::Disguiser)))
+                .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
+                .allow_players(self.players_with_disguiser_menu(actor_ref))
+                .build_map()
+        ])
     }
     fn on_any_death(mut self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference) {
         if

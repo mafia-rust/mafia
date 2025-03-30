@@ -1,7 +1,7 @@
 use serde::Serialize;
 
+use crate::game::ability_input::AvailablePlayerListSelection;
 use crate::game::attack_power::AttackPower;
-use crate::game::components::detained::Detained;
 use crate::game::attack_power::DefensePower;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
@@ -11,9 +11,9 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use crate::vec_set::{vec_set, VecSet};
+use crate::vec_set::VecSet;
 use super::{
-    AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap,
+    ControllerID, ControllerParametersMap,
     PlayerListSelection, Priority, Role, RoleStateImpl
 };
 
@@ -26,7 +26,7 @@ pub struct Marksman {
 #[derive(Clone, Debug, Serialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
-pub(self) enum MarksmanState{
+enum MarksmanState{
     #[default]
     NotLoaded,
     Loaded,
@@ -69,76 +69,45 @@ impl RoleStateImpl for Marksman {
         actor_ref.set_role_state(game, self);
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        
-        let gray_out_mark = 
-            actor_ref.ability_deactivated_from_death(game) || 
-            Detained::is_detained(game, actor_ref) ||
-            self.state != MarksmanState::Loaded;
-
-        let available_mark_players = PlayerReference::all_players(game)
-            .into_iter()
-            .filter(|p|
-                p.alive(game) && 
-                *p != actor_ref
-            )
-            .collect::<VecSet<_>>();
-        
-        let mark_controller_param = ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Marksman, 0),
-            AvailableAbilitySelection::new_player_list(
-                available_mark_players,
-                false,
-                Some(3)
-            ),
-            AbilitySelection::new_player_list(vec![]),
-            gray_out_mark,
-            Some(PhaseType::Obituary),
-            false,
-            vec_set!(actor_ref)
-        );
-
-
-        let marked_players = 
-            game.saved_controllers.get_controller_current_selection_player_list(
-                ControllerID::role(actor_ref, Role::Marksman, 0)
-            );
-
-
-        let gray_out_camp = 
-            actor_ref.ability_deactivated_from_death(game) || 
-            Detained::is_detained(game, actor_ref) ||
-            self.state != MarksmanState::Loaded ||
-            if let Some(marked_players) = marked_players {
-                marked_players.0.len() == 0
-            }else{
-                true
-            };
-
-            let available_camp_players = PlayerReference::all_players(game)
-            .into_iter()
-            .filter(|p|
-                p.alive(game) && 
-                *p != actor_ref
-            )
-            .collect::<VecSet<_>>();
-        
-        let camp_controller_param = ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Marksman, 1),
-            AvailableAbilitySelection::new_player_list(
-                available_camp_players,
-                false,
-                Some(3)
-            ),
-            AbilitySelection::new_player_list(vec![]),
-            gray_out_camp,
-            Some(PhaseType::Obituary),
-            false,
-            vec_set!(actor_ref)
-        );
-
-        mark_controller_param.combine_overwrite_owned(camp_controller_param)
+        ControllerParametersMap::combine([
+            // Mark
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Marksman, 0))
+                .available_selection(AvailablePlayerListSelection {
+                    available_players: PlayerReference::all_players(game)
+                        .filter(|p|
+                            p.alive(game) && 
+                            *p != actor_ref
+                        )
+                        .collect::<VecSet<_>>(),
+                    can_choose_duplicates: false,
+                    max_players: Some(3)
+                })
+                .night_typical(actor_ref)
+                .add_grayed_out_condition(self.state != MarksmanState::Loaded)
+                .build_map(),
+            // Camp
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Marksman, 1))
+                .available_selection(AvailablePlayerListSelection {
+                    available_players: PlayerReference::all_players(game)
+                        .filter(|p|
+                            p.alive(game) && 
+                            *p != actor_ref
+                        )
+                        .collect::<VecSet<_>>(),
+                    can_choose_duplicates: false,
+                    max_players: Some(3)
+                })
+                .night_typical(actor_ref)
+                .add_grayed_out_condition(
+                    self.state != MarksmanState::Loaded 
+                    || game.saved_controllers
+                        .get_controller_current_selection_player_list(ControllerID::role(actor_ref, Role::Marksman, 0))
+                        .is_none_or(|players| players.0.is_empty())
+                )
+                .build_map()
+        ])
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(

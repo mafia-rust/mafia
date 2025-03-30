@@ -78,16 +78,16 @@ impl LobbyClient {
     pub fn set_host(&mut self) {
         self.ready = Ready::Host;
     }
+    pub fn relinquish_host(&mut self) {
+        self.ready = Ready::NotReady;
+    }
 
     pub fn is_host(&self) -> bool {
         self.ready == Ready::Host
     }
 
     pub fn is_spectator(&self) -> bool {
-        match self.client_type {
-            LobbyClientType::Spectator => true,
-            _ => false
-        }
+        matches!(self.client_type, LobbyClientType::Spectator)
     }
 
     pub fn send(&self, message: ToClientPacket) {

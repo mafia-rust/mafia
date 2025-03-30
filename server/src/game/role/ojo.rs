@@ -1,10 +1,8 @@
 use serde::Serialize;
 
-use crate::game::ability_input::ControllerID;
+use crate::game::ability_input::{AvailableRoleOptionSelection, AvailableTwoRoleOutlineOptionSelection, ControllerID};
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::components::detained::Detained;
-use crate::game::phase::PhaseType;
 use crate::game::role_outline_reference::RoleOutlineReference;
 use crate::game::visit::Visit;
 use crate::game::{attack_power::AttackPower, grave::GraveKiller};
@@ -12,9 +10,8 @@ use crate::game::player::PlayerReference;
 
 use crate::game::Game;
 use crate::vec_map::VecMap;
-use crate::vec_set;
 use super::auditor::AuditorResult;
-use super::{common_role, AbilitySelection, AvailableAbilitySelection, ControllerParametersMap, Priority, Role, RoleOptionSelection, RoleStateImpl, TwoRoleOutlineOptionSelection};
+use super::{common_role, ControllerParametersMap, Priority, Role, RoleOptionSelection, RoleStateImpl, TwoRoleOutlineOptionSelection};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -62,7 +59,7 @@ impl RoleStateImpl for Ojo {
                     if let Some(chosen_outline) = a{
                         let result = Self::get_result(game, chosen_outline);
                         actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                            role_outline: chosen_outline.deref(&game).clone(),
+                            role_outline: chosen_outline.deref(game).clone(),
                             result: result.clone()
                         });
                         self.previously_given_results.insert(chosen_outline, result);
@@ -71,7 +68,7 @@ impl RoleStateImpl for Ojo {
                     if let Some(chosen_outline) = b{
                         let result = Self::get_result(game, chosen_outline);
                         actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                            role_outline: chosen_outline.deref(&game).clone(),
+                            role_outline: chosen_outline.deref(game).clone(),
                             result: result.clone()
                         });
                         self.previously_given_results.insert(chosen_outline, result);
@@ -85,38 +82,27 @@ impl RoleStateImpl for Ojo {
     }
     
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Ojo, 0),
-            AvailableAbilitySelection::new_two_role_outline_option(
-                RoleOutlineReference::all_outlines(game)
-                    .filter(|o|!self.previously_given_results.contains(o))
-                    .map(|o|Some(o))
-                    .chain(std::iter::once(None))
-                    .collect()
-            ),
-            AbilitySelection::new_two_role_outline_option(None, None),
-            actor_ref.ability_deactivated_from_death(game) || 
-            Detained::is_detained(game, actor_ref),
-            Some(PhaseType::Obituary),
-            false,
-            vec_set![actor_ref],
-        ).combine_overwrite_owned(
-            ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::role(actor_ref, Role::Ojo, 1),
-                AvailableAbilitySelection::new_role_option(
-                    Role::values().into_iter().map(|r|Some(r)).chain(std::iter::once(None)).collect()
-                ),
-                AbilitySelection::new_role_option(None),
-                actor_ref.ability_deactivated_from_death(game) || 
-                Detained::is_detained(game, actor_ref) ||
-                game.day_number() == 1,
-                Some(PhaseType::Obituary),
-                false,
-                vec_set![actor_ref],
-            )
-        )
+        ControllerParametersMap::combine([
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Ojo, 0))
+                .available_selection(AvailableTwoRoleOutlineOptionSelection(
+                    RoleOutlineReference::all_outlines(game)
+                        .filter(|o|!self.previously_given_results.contains(o))
+                        .map(Some)
+                        .chain(std::iter::once(None))
+                        .collect()
+                ))
+                .night_typical(actor_ref)
+                .build_map(),
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Ojo, 1))
+                .available_selection(AvailableRoleOptionSelection(
+                    Role::values().into_iter().map(Some).chain(std::iter::once(None)).collect()
+                ))
+                .night_typical(actor_ref)
+                .add_grayed_out_condition(game.day_number() == 1)
+                .build_map()
+        ])
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         let mut out = vec![];
