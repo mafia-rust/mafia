@@ -563,7 +563,6 @@ impl Game {
         self.spectators.push(Spectator::new(params));
         let spectator_pointer = SpectatorPointer::new(spectator_index);
 
-        // spectator_pointer.send_join_game_data(self);
 
         AddSpectatorResponse(Ok((spectator_pointer, self)))
     }
