@@ -145,25 +145,21 @@ impl Lobby {
 
                 Self::ensure_host_game(game, clients, None);
 
-                match &mut game.add_spectator(SpectatorInitializeParameters {
+                let new_spectator = game.join_spectator(SpectatorInitializeParameters {
                     connection: ClientConnection::Connected(send.clone()),
                     host: is_host,
-                }).0 {
-                    Ok((new_index, game)) => {
-                        send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id: lobby_client_id, spectator: true});
+                })?;
 
-                        let new_client = GameClient::new_spectator(new_index.index(), is_host);
-    
-                        clients.insert(lobby_client_id, new_client);
+                send.send(ToClientPacket::AcceptJoin{room_code: self.room_code, in_game: true, player_id: lobby_client_id, spectator: true});
+                new_spectator.send_join_game_data(game);
+                
+                let new_client = GameClient::new_spectator(new_spectator.index(), is_host);
 
-                        Self::resend_host_data_to_all_hosts(game, clients);
-        
-                        Ok(lobby_client_id)
-                    }
-                    Err(reason) => {
-                        Err(*reason)
-                    }
-                }
+                clients.insert(lobby_client_id, new_client);
+
+                Self::resend_host_data_to_all_hosts(game, clients);
+
+                Ok(lobby_client_id)
             }
             LobbyState::Closed => {
                 Err(RejectJoinReason::RoomDoesntExist)

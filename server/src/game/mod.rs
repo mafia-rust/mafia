@@ -558,13 +558,12 @@ impl Game {
         }
         self.spectator_chat_messages.push(message);
     }
-    pub fn add_spectator(&mut self, params: SpectatorInitializeParameters) -> AddSpectatorResponse {
-        let Ok(spectator_index) = SpectatorIndex::try_from(self.spectators.len()) else {return AddSpectatorResponse(Err(RejectJoinReason::RoomFull))};
+    pub fn join_spectator(&mut self, params: SpectatorInitializeParameters) -> Result<SpectatorPointer, RejectJoinReason> {
+        let spectator_index = SpectatorIndex::try_from(self.spectators.len()).map_err(|_|RejectJoinReason::RoomFull)?;
         self.spectators.push(Spectator::new(params));
         let spectator_pointer = SpectatorPointer::new(spectator_index);
 
-
-        AddSpectatorResponse(Ok((spectator_pointer, self)))
+        Ok(spectator_pointer)
     }
     pub fn remove_spectator(&mut self, i: SpectatorIndex){
         if (i as usize) < self.spectators.len() {
@@ -584,13 +583,6 @@ impl Game {
     pub(crate) fn is_any_client_connected(&self) -> bool {
         PlayerReference::all_players(self).any(|p| p.is_connected(self))
         || SpectatorPointer::all_spectators(self).any(|s| s.is_connected(self))
-    }
-}
-//bruh
-pub struct AddSpectatorResponse<'a>(pub Result<(SpectatorPointer, &'a mut Game), RejectJoinReason>);
-impl Drop for AddSpectatorResponse<'_>{
-    fn drop(&mut self) {
-        self.0.iter_mut().for_each(|r|r.0.send_join_game_data(r.1));
     }
 }
 pub mod test {
