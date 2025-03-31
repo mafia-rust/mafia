@@ -51,13 +51,14 @@ impl RoleStateImpl for Gossip {
 
 impl Gossip {
     pub fn visited_enemies(game: &Game, player_ref: PlayerReference, actor_ref: PlayerReference) -> bool {
+        let is_confused = Confused::is_confused(game, actor_ref);
         match player_ref.night_appeared_visits(game) {
             Some(x) => x.clone(),
             None => player_ref.all_night_visits_cloned(game),
         }
-            .iter()
-            .any(|visit: &Visit|
-                if Confused::is_confused(game, actor_ref) {
+            .into_iter()
+            .any(|visit: Visit|
+                if is_confused {
                     Detective::player_is_suspicious_confused(game, visit.target, actor_ref)
                 } else {
                     Detective::player_is_suspicious(game, visit.target)

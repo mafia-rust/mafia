@@ -70,11 +70,11 @@ impl RoleStateImpl for Philosopher {
 }
 impl Philosopher{
     pub fn players_are_enemies(game: &Game, a: PlayerReference, b: PlayerReference) -> bool {
-        if a.has_suspicious_aura(game) || b.has_suspicious_aura(game){
+        if a.has_suspicious_aura(game) || b.has_suspicious_aura(game) {
             true
-        }else if a.has_innocent_aura(game) || b.has_innocent_aura(game){
+        } else if a.has_innocent_aura(game) || b.has_innocent_aura(game) {
             false
-        }else{
+        } else {
             !WinCondition::are_friends(a.win_condition(game), b.win_condition(game))
         }
     }
