@@ -55,16 +55,14 @@ impl RoleStateImpl for Counterfeiter {
 
         match priority {
             Priority::Deception => {
-                if self.forges_remaining == 0 || chose_no_forge(game, actor_ref) {return}
+                if self.forges_remaining == 0 || Self::chose_no_forge(game, actor_ref) {return}
                 
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else{return};
 
                 let target_ref = visit.target;
 
-                let fake_role = game.saved_controllers
-                    .get_controller_current_selection_role_option(ControllerID::role(actor_ref, Role::Counterfeiter, 1))
-                    .and_then(|p| p.0);
+                let fake_role = Self::selected_forge_role(game, actor_ref);
                 target_ref.set_night_grave_role(game, fake_role);
 
                 let fake_alibi = if let Some(StringSelection(string)) = game.saved_controllers
@@ -163,7 +161,7 @@ impl RoleStateImpl for Counterfeiter {
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
         Godfather::pass_role_state_down(game, actor_ref, dead_player_ref, self);
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+    fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
@@ -177,12 +175,19 @@ impl GetClientRoleState<ClientRoleState> for Counterfeiter {
     }
 }
 
-fn chose_no_forge(game: &Game, actor_ref: PlayerReference)->bool{
-    if let Some(IntegerSelection(x)) = game.saved_controllers.get_controller_current_selection_integer(
-        ControllerID::role(actor_ref, Role::Counterfeiter, 3)
-    ){
-        x == 0
-    }else{
-        true
+impl Counterfeiter {
+    fn chose_no_forge(game: &Game, actor_ref: PlayerReference)->bool{
+        if let Some(IntegerSelection(x)) = game.saved_controllers.get_controller_current_selection_integer(
+            ControllerID::role(actor_ref, Role::Counterfeiter, 3)
+        ){
+            x == 0
+        }else{
+            true
+        }
+    }
+    pub fn selected_forge_role(game: &Game, actor_ref: PlayerReference)->Option<Role>{
+        game.saved_controllers
+            .get_controller_current_selection_role_option(ControllerID::role(actor_ref, Role::Counterfeiter, 1))
+            .and_then(|p| p.0)
     }
 }

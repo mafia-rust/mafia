@@ -58,9 +58,7 @@ impl RoleStateImpl for Forger {
 
                 let target_ref = visit.target;
 
-                let fake_role = game.saved_controllers
-                    .get_controller_current_selection_role_option(ControllerID::role(actor_ref, Role::Forger, 1))
-                    .and_then(|p| p.0);
+                let fake_role = Self::selected_forge_role(game, actor_ref);
 
                 target_ref.set_night_grave_role(game, fake_role);
 
@@ -152,5 +150,12 @@ impl GetClientRoleState<ClientRoleState> for Forger {
         ClientRoleState {
             forges_remaining: self.forges_remaining,
         }
+    }
+}
+impl Forger {
+    pub fn selected_forge_role(game: &Game, actor_ref: PlayerReference) -> Option<Role> {
+        game.saved_controllers
+            .get_controller_current_selection_role_option(ControllerID::role(actor_ref, Role::Forger, 1))
+            .and_then(|p| p.0)
     }
 }

@@ -57,10 +57,7 @@ impl RoleStateImpl for Impostor {
         ])
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: crate::game::grave::GraveReference) {
-        let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
-            ControllerID::role(actor_ref, Role::Impostor, 1)
-        )else{return};
-        
+        let Some(role) = Self::selected_fib_role(game, actor_ref) else {return};
         
         if grave.deref(game).player == actor_ref {
             let grave = grave.deref_mut(game);
@@ -75,9 +72,17 @@ impl RoleStateImpl for Impostor {
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
         Godfather::pass_role_state_down(game, actor_ref, dead_player_ref, self);
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+    fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
+    }
+}
+
+impl Impostor {
+    pub fn selected_fib_role(game: &Game, actor_ref: PlayerReference) -> Option<Role>{
+        game.saved_controllers.get_controller_current_selection_role_option(
+            ControllerID::role(actor_ref, Role::Impostor, 1)
+        ).and_then(|r|r.0)
     }
 }

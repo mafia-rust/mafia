@@ -73,7 +73,7 @@ impl RoleStateImpl for Yer {
                 self.star_passes_remaining = self.star_passes_remaining.saturating_sub(1);
 
                 //role switching stuff
-                let fake_role = self.current_fake_role(game, actor_ref);
+                let fake_role = self.selected_fib_role(game, actor_ref);
 
                 actor_ref.set_night_grave_role(game, Some(fake_role));
                 
@@ -142,7 +142,7 @@ impl RoleStateImpl for Yer {
 
 
 impl Yer{
-    pub fn current_fake_role(&self, game: &Game, actor_ref: PlayerReference) -> Role {
+    pub fn selected_fib_role(&self, game: &Game, actor_ref: PlayerReference) -> Role {
         if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
             ControllerID::role(actor_ref, Role::Yer, 2)
         ){
