@@ -1185,7 +1185,7 @@
     "wiki.article.standard.protect.title:var.2": "Protecting",
     "wiki.article.standard.protect.text": "Protect means to increase someone's defense to protected. The protection will only last the night unless otherwise indicated. A protected player is told when they are attacked but saved by protection",
     "wiki.article.standard.dead.title": "Dead",
-    "wiki.article.standard.dead.text": "If a player is dead, they can't vote, their grave will likely be in the graveyard, and they usually can't use their ability anymore. Dead players can only speak with other dead players with the exception of the Medium and its target. A player needs to die to become dead. All players start the game alive! (What did you expect…)",
+    "wiki.article.standard.dead.text": "When a player dies:\n- Their grave is added to the graveyard\n\nWhile a player is dead:\n- Most of their abilities don't work\n- They can't vote\n- They can't chat in all chat\n- They can chat in dead chat.",
     "wiki.article.standard.silenced.title": "Silence",
     "wiki.article.standard.silenced.title:var.0": "Silences",
     "wiki.article.standard.silenced.title:var.1": "Silencer",
