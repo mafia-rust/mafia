@@ -258,7 +258,7 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
                 onClick={()=>{
                     GAME_MANAGER.sendAbilityInput({
                         id, 
-                        selection: {type: "unit"}
+                        selection: {type: "unit", selection: null}
                     });
                 }}
             >
