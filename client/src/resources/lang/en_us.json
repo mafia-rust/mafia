@@ -455,6 +455,10 @@
     "role.revolutionary.name": "Revolutionary",
     "role.revolutionary.name:var.0": "Revolutionaries",
     
+    "role.coward.name": "Coward",
+    "role.coward.name:var.0": "Cowards",
+    "controllerId.role.coward.0.name": "Hide",
+    
     "role.doomsayer.name": "Doomsayer",
     "role.doomsayer.name:var.0": "Doomsayers",
 
@@ -931,6 +935,8 @@
     "chatMessage.mediumHauntStarted":"\\0 has brought the dead to haunt \\1!",
     "chatMessage.mediumExists":"There is some way to communicate with the living so don't leave! Your information could be very important!",
     "chatMessage.jesterWon":"The Jester will get their revenge from the grave!",
+    "chatMessage.cowardHid": "You hid with somebody tonight.",
+    "chatMessage.cowardSaved": "Your cowardice saved you tonight.",
     "chatMessage.revolutionaryWon":"The Revolutionary got their target executed and won!",
     "chatMessage.chronokaiserSpeedUp":"The Chronokaiser speeds up time. Each phase is \\0% faster.",
     "chatMessage.deputyKilled":"The Deputy killed \\0!",
@@ -1757,6 +1763,12 @@
     "wiki.article.role.revolutionary.attributes":"* When your execution target is executed, you win\n* After you win, you leave town at the start of final words\n* You are armored",
     "wiki.article.role.revolutionary.extra":"* If your target dies by something other than execution, you convert to a jester immediately, even while dead\n* If there are no valid targets in the game when you become the Revolutionary, you convert to a Jester",
 
+    "wiki.article.role.coward.reminder": "Hide behind other people in order to survive the nights.  You win if you survive the game.",
+    "wiki.article.role.coward.guide": "Hide behind other people to survive.  Anybody who dies while you are hiding with them is obscured.\n\nYou should try to stay innocuous and make the game end as soon as possible.",
+    "wiki.article.role.coward.abilities": "* Each night, select a player to visit them.\n* If you are visited and attacked, redirect the attacks to them.\n* Anybody who dies while you are hiding with them is obscured.\n* This ability does not affect indirect attacks, e.g. Jester or Veteran, or an attack that has been redirected to you.",
+    "wiki.article.role.coward.attributes": "* If you are attacked directly while hiding behind somebody, they die.\n* You win if you survive until the end of the game.\n* Your ability does not affect indirect attacks.\n* Your visits are considered attacks.",
+    "wiki.article.role.coward.extra": "* Your ability does not affect visits.",
+    
     "wiki.article.role.doomsayer.reminder": "Guess the role of three different players correctly to win. When you win you attack the players you guessed.",
     "wiki.article.role.doomsayer.guide": "- Guess the role of three different players correctly to win\n- If you get all your guesses correct and win, you attack all three players, and then leave town\n- You can't guess town investigative roles\n- If a player has a non town role, you don't need to guess their exact role, just that they are non town\n\n In order to counter a doomsayer, players often claimswap",
     "wiki.article.role.doomsayer.abilities":"* Use the Doomsayer menu to guess the role of three different living players in one night, attacking them and winning",

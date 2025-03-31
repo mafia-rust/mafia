@@ -789,6 +789,8 @@ export function translateChatMessage(
         case "youWereProtected":
         case "revolutionaryWon":
         case "jesterWon":
+        case "cowardHid":
+        case "cowardSaved":
         case "wardblocked":
         case "roleBlocked":
         case "yourConvertFailed":
@@ -1110,6 +1112,10 @@ export type ChatMessageVariant = {
     players: PlayerIndex[]
 } | {
     type: "jesterWon"
+} | {
+    type: "cowardHid"
+} | {
+    type: "cowardSaved"
 } | {
     type: "wildcardConvertFailed",
     role: Role
