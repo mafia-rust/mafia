@@ -144,7 +144,7 @@ impl Game {
 
                 for player in PlayerReference::all_players(self){
                     if 
-                        player.role(self) == Role::Informant ||
+                        matches!(player.role(self), Role::Informant |  Role::Ojo) ||
                         whisperee_ref == player
                     {
                         player.add_private_chat_message(self, message.clone());

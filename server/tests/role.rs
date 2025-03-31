@@ -1678,10 +1678,7 @@ fn bouncer_ojo_block() {
         det4: Detective
     );
 
-    ojo.send_ability_input(AbilityInput::new(
-        ControllerID::role(ojo.player_ref(), Role::Ojo, 1),
-        RoleOptionSelection(Some(Role::Detective))
-    ));
+    ojo.send_ability_input_player_list_typical(det1);
     b.send_ability_input_player_list_typical(det1);
 
     game.next_phase();
@@ -2264,10 +2261,7 @@ fn ojo_transporter(){
         gf: Godfather
     );
 
-    ojo.send_ability_input(AbilityInput::new(
-        ControllerID::role(ojo.player_ref(), Role::Ojo, 1),
-        RoleOptionSelection(Some(Role::Philosopher))
-    ));
+    ojo.send_ability_input_player_list_typical(player1);
 
     transporter.send_ability_input_two_player_typical(player1, player2);
     gf.send_ability_input_player_list_typical(ojo);
@@ -2276,7 +2270,7 @@ fn ojo_transporter(){
 
     assert!(player1.alive());
     assert!(!player2.alive());
-    assert!(!player3.alive());
+    assert!(player3.alive());
     assert!(gf.alive());
 }
 

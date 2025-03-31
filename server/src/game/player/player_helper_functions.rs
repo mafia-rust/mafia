@@ -401,6 +401,9 @@ impl PlayerReference{
     pub fn do_night_action(&self, game: &mut Game, priority: Priority) {
         self.role_state(game).clone().do_night_action(game, *self, priority)
     }
+    pub fn on_remove_role_label(&self, game: &mut Game, player: PlayerReference, concealed_player: PlayerReference) {
+        self.role_state(game).clone().on_remove_role_label(game, *self, player, concealed_player)
+    }
     pub fn on_role_creation(&self, game: &mut Game) {
         self.role_state(game).clone().on_role_creation(game, *self)
     }

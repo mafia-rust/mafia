@@ -187,7 +187,6 @@ Doomsayer
     type: "werewolf",
 } | {
     type: "ojo"
-    previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "puppeteer"
     marionettesRemaining: number

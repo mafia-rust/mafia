@@ -10,11 +10,16 @@ pub type SpectatorIndex = u8;
 ///
 /// This does not guarantee that the spectator exists
 pub struct SpectatorPointer {
-    pub index: SpectatorIndex,
+    index: SpectatorIndex,
 }
 impl SpectatorPointer {
     pub fn new(index: SpectatorIndex) -> Self {
         SpectatorPointer { index }
+    }
+
+    #[must_use]
+    pub fn index(&self) -> SpectatorIndex {
+        self.index
     }
 
     pub fn deref_mut<'a>(&self, game: &'a mut Game)->Option<&'a mut Spectator>{
