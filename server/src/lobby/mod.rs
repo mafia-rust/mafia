@@ -11,7 +11,7 @@ use lobby_client::Ready;
 use crate::{
     client_connection::ClientConnection, game::{
         player::PlayerReference, role_list::RoleOutline, settings::Settings, spectator::{spectator_pointer::SpectatorPointer, SpectatorInitializeParameters}, Game
-    }, listener::RoomCode, lobby::game_client::GameClientLocation, packet::{
+    }, websocket_listener::RoomCode, lobby::game_client::GameClientLocation, packet::{
         RejectJoinReason,
         ToClientPacket,
     }, vec_map::VecMap, websocket_connections::connection::ClientSender
@@ -203,9 +203,6 @@ impl Lobby {
         }
     }
     pub fn remove_player_rejoinable(&mut self, id: LobbyClientID) {
-
-        
-
         match &mut self.lobby_state {
             LobbyState::Lobby {clients, settings: _settings} => {
                 let Some(client) = clients.get_mut(&id) else {return};
