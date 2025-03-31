@@ -10,24 +10,18 @@ impl ForfeitVote{
             return ControllerParametersMap::default();
         }
 
-        let mut out = ControllerParametersMap::default();
-
-        for player in PlayerReference::all_players(game) {
-            out.combine_overwrite(
-                ControllerParametersMap::new_controller_fast(
-                    game,
-                    ControllerID::forfeit_vote(player),
-                    AvailableAbilitySelection::new_boolean(),
-                    AbilitySelection::new_boolean(false),
-                    !player.alive(game) || game.current_phase().phase() != PhaseType::Discussion,
-                    Some(PhaseType::Obituary),
-                    false,
-                    vec_set![player]
+        ControllerParametersMap::combine(
+            PlayerReference::all_players(game)
+                .map(|player|
+                    ControllerParametersMap::builder(game)
+                        .id(ControllerID::forfeit_vote(player))
+                        .available_selection(AvailableBooleanSelection)
+                        .add_grayed_out_condition(!player.alive(game) || game.current_phase().phase() != PhaseType::Discussion)
+                        .reset_on_phase_start(PhaseType::Obituary)
+                        .allow_players(vec_set![player])
+                        .build_map()
                 )
-            );
-        }
-
-        out
+        )
     }
 
     pub fn on_validated_ability_input_received(game: &mut Game, actor_ref: PlayerReference, input: AbilityInput){

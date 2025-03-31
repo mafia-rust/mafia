@@ -109,12 +109,13 @@ impl Listener{
         }
         for key in closed_clients {
             log!(important "Connection"; "Closed {key} due to ping timed out");
-            let _ = self.delete_player(&key, true);
+            self.delete_player(&key, true);
         }
     }
 
     fn create_lobby(&mut self) -> Option<RoomCode>{
-        let room_code = ((random::<u16>() as usize)..usize::MAX).find(
+    	let start = random::<u16>() as usize;
+        let room_code = (start..=usize::MAX).chain(0..start).find(
             |code| !self.lobbies.contains_key(code)
         )?;
 
@@ -162,7 +163,7 @@ impl Listener{
                 connection.send(ToClientPacket::LobbyName { name: lobby.name.clone() })
             }
             Err(reason) => {
-                connection.get_sender().send(ToClientPacket::RejectJoin { reason });
+                connection.send(ToClientPacket::RejectJoin { reason });
             }
         }
     }
@@ -209,16 +210,12 @@ impl Listener{
     }
     
     pub fn create_player(&mut self, connection: &Connection) {
-        let _ = self.delete_player(connection.get_address(), true);
+        self.delete_player(connection.get_address(), true);
         self.clients.insert(*connection.get_address(), ListenerClient::new(connection.clone()));
     }
 
-    pub fn delete_player(&mut self, address: &SocketAddr, rejoinable: bool) -> Result<(), &'static str> {
-        let Some(listener_client) = self.clients
-            .remove(address)
-        else{
-            return Err("Player doesn't exist");
-        };
+    pub fn delete_player(&mut self, address: &SocketAddr, rejoinable: bool) {
+        let Some(listener_client) = self.clients.remove(address) else { return };
 
         //This produces a warning in the logs because sometimes the player is already disconnected
         //This ToClientPacket is still useful in the *rare* case that the player is still connected when they're being forced to disconnect
@@ -233,8 +230,6 @@ impl Listener{
                 }
             }
         }
-
-        Ok(())
     }
 
     fn get_address_from_location(&self, location: ListenerClientLocation) -> Option<SocketAddr> {
@@ -251,7 +246,7 @@ impl Listener{
     }
 
     pub fn on_disconnect(&mut self, connection: Connection) -> Result<(), &'static str> {
-        let _ = self.delete_player(connection.get_address(), true);
+        self.delete_player(connection.get_address(), true);
         Ok(())
     }
 

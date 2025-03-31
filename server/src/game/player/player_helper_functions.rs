@@ -2,7 +2,7 @@ use std::collections::HashSet;
 use rand::seq::SliceRandom;
 
 use crate::{game::{
-    ability_input::{AbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection, SavedControllersMap},
+    ability_input::{AbilitySelection, BooleanSelection, ControllerID, ControllerParametersMap, PlayerListSelection, SavedControllersMap, TwoPlayerOptionSelection},
     attack_power::{AttackPower, DefensePower},
     chat::{ChatGroup, ChatMessage, ChatMessageVariant},
     components::{
@@ -152,18 +152,18 @@ impl PlayerReference{
                 //change all controller inputs to be selecting this player as well
                 for (controller_id, controller_data) in game.saved_controllers.all_controllers().clone().iter() {
                     match controller_data.selection() {
-                        AbilitySelection::Boolean { .. } => {
+                        AbilitySelection::Boolean(..) => {
                             if possessed_visit.target == possessed_into_visit.target {
                                 SavedControllersMap::set_selection_in_controller(
                                     game,
                                     possessed_visit.target,
                                     controller_id.clone(),
-                                    AbilitySelection::new_boolean(true),
+                                    BooleanSelection(true),
                                     true
                                 );
                             }
                         },
-                        AbilitySelection::TwoPlayerOption { selection } => {
+                        AbilitySelection::TwoPlayerOption(selection) => {
 
                             let mut selection = selection.0;
                             if let Some((_, second)) = selection {
@@ -174,11 +174,11 @@ impl PlayerReference{
                                 game,
                                 possessed_visit.target,
                                 controller_id.clone(),
-                                AbilitySelection::new_two_player_option(selection),
+                                TwoPlayerOptionSelection(selection),
                                 true
                             );
                         },
-                        AbilitySelection::PlayerList { selection } => {
+                        AbilitySelection::PlayerList(selection) => {
 
                             let mut selection = selection.0.clone();
                             if let Some(first) = selection.first_mut(){
@@ -192,18 +192,18 @@ impl PlayerReference{
                                 game,
                                 possessed_visit.target,
                                 controller_id.clone(),
-                                AbilitySelection::new_player_list(selection),
+                                PlayerListSelection(selection),
                                 true
                             );
                         },
-                        AbilitySelection::Unit |
-                        AbilitySelection::ChatMessage { .. } |
-                        AbilitySelection::RoleOption { .. } |
-                        AbilitySelection::TwoRoleOption { .. } |
-                        AbilitySelection::TwoRoleOutlineOption{ .. } |
-                        AbilitySelection::String { .. } |
-                        AbilitySelection::Integer { .. } |
-                        AbilitySelection::Kira { .. } => {}
+                        AbilitySelection::Unit(..) |
+                        AbilitySelection::ChatMessage(..) |
+                        AbilitySelection::RoleOption(..) |
+                        AbilitySelection::TwoRoleOption(..) |
+                        AbilitySelection::TwoRoleOutlineOption(..) |
+                        AbilitySelection::String(..) |
+                        AbilitySelection::Integer(..) |
+                        AbilitySelection::Kira(..) => {}
                     }
                 }
 
@@ -451,6 +451,9 @@ impl PlayerReference{
     }
     pub fn do_night_action(&self, game: &mut Game, priority: Priority) {
         self.role_state(game).clone().do_night_action(game, *self, priority)
+    }
+    pub fn on_remove_role_label(&self, game: &mut Game, player: PlayerReference, concealed_player: PlayerReference) {
+        self.role_state(game).clone().on_remove_role_label(game, *self, player, concealed_player)
     }
     pub fn on_role_creation(&self, game: &mut Game) {
         self.role_state(game).clone().on_role_creation(game, *self)

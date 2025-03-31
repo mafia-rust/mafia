@@ -63,6 +63,8 @@ export type GameManager = {
      */
     sendJoinPacket(roomCode: number): Promise<boolean>;
     sendKickPlayerPacket(playerId: number): void;
+    sendSetPlayerHostPacket(playerId: number): void;
+    sendRelinquishHostPacket(): void;
     sendSetSpectatorPacket(spectator: boolean): void;
     sendSetNamePacket(name: string): void;
     sendReadyUpPacket(ready: boolean): void;
@@ -103,6 +105,10 @@ export type GameManager = {
     ): void
 
     sendVoteFastForwardPhase(fastForward: boolean): void;
+    sendHostDataRequest(): void;
+    sendHostEndGamePacket(): void;
+    sendHostSkipPhase(): void;
+    sendHostSetPlayerNamePacket(player_id: number, name: string): void;
 
     messageListener(serverMessage: ToClientPacket): void;
 
