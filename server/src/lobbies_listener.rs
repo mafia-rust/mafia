@@ -1,3 +1,40 @@
+use std::{collections::HashMap, net::SocketAddr};
+
+use tokio_tungstenite::tungstenite::Message;
+
+use crate::{lobby::Lobby, websocket_connections::{connection::Connection, websocket_listeners::WebsocketListener}};
+
+
+
+struct LobbiesListener{
+    lobbies: HashMap<RoomCode, Lobby>,
+    clients: HashMap<SocketAddr, Client>,
+}
+
+struct Client{
+    connection: Connection 
+}
+
+pub type RoomCode = usize;
+impl WebsocketListener for LobbiesListener {
+    fn on_connect(&mut self, connection: &Connection) {}
+    fn on_disconnect(&mut self, connection: Connection) {}
+    fn on_message(&mut self, connection: &Connection, message: &Message) {}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 use std::{collections::HashMap, net::SocketAddr, ops::Mul, sync::{Arc, Mutex}, time::Duration};
 
 use rand::random;
@@ -10,7 +47,15 @@ use crate::{
     websocket_connections::connection::Connection
 };
 
-pub type RoomCode = usize;
+
+pub trait WebsocketListener{
+    fn on_connect(&mut self, connection: &Connection)
+
+    fn on_disconnect(&mut self, connection: Connection) -> Result<(), &'static str>
+
+    fn on_message(&mut self, connection: &Connection, message: &Message)
+}
+
 
 struct ListenerClient {
     connection: Connection,
@@ -49,11 +94,14 @@ enum ListenerClientLocation {
     OutsideLobby
 }
 
-pub struct Listener {
+pub struct WebsocketListeners {
+    listeners: Vec<Box<dyn WebsocketListener>>,
+
+
     lobbies: HashMap<RoomCode, Lobby>,
     clients: HashMap<SocketAddr, ListenerClient>,
 }
-impl Listener{
+impl WebsocketListeners{
     pub fn new() -> Self {
         Self {
             lobbies: HashMap::new(),
@@ -84,7 +132,7 @@ impl Listener{
         let mut closed_lobbies = Vec::new();
         let mut closed_clients = Vec::new();
                     
-        let Listener { ref mut lobbies, ref mut clients} = *self;
+        let WebsocketListeners { ref mut lobbies, ref mut clients} = *self;
 
         // log!(info "Listener"; "lobbies: {:?} players: {:?}", lobbies.keys(), _players.len());
 
@@ -242,6 +290,9 @@ impl Listener{
     }
 
     pub fn on_connect(&mut self, connection: &Connection) {
+        for listener in &mut self.listeners{
+            listener.on_connect(connection);
+        }
         self.create_player(connection);
     }
 

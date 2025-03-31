@@ -1,4 +1,4 @@
-use crate::{websocket_connections::{connection::Connection, ForceLock}, listener::Listener, log};
+use crate::{websocket_connections::{connection::Connection, ForceLock}, websocket_connections::websocket_listeners::WebsocketListeners, log};
 use tokio_tungstenite::tungstenite::Message;
 use std::{net::SocketAddr, sync::{Arc, Mutex}, pin::pin};
 
@@ -27,8 +27,8 @@ pub async fn create_ws_server(server_address: &str) {
         }))
     }
 
-    let event_listener = Arc::new(Mutex::new(Listener::new()));
-    Listener::start(event_listener.clone());
+    let event_listener = Arc::new(Mutex::new(WebsocketListeners::new()));
+    WebsocketListeners::start(event_listener.clone());
 
     log!(important "Server"; "Started listening on {server_address}");
 
@@ -67,7 +67,7 @@ struct ConnectionError;
 async fn handle_connection(
     raw_stream: TcpStream, 
     client_address: SocketAddr, 
-    listener: Arc<Mutex<Listener>>,
+    listener: Arc<Mutex<WebsocketListeners>>,
     mut crash_signal: (broadcast::Sender<()>, broadcast::Receiver<()>)
 ) -> Result<Connection, ConnectionError> {
     let ws_stream = match tokio_tungstenite::accept_async(raw_stream).await {

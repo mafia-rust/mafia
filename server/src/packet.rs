@@ -35,7 +35,7 @@ use crate::{
         },
         role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings,
         tag::Tag, verdict::Verdict, GameOverReason, RejectStartReason
-    }, listener::RoomCode, lobby::{game_client::GameClientLocation, lobby_client::{LobbyClient, LobbyClientID}}, log, vec_map::VecMap, vec_set::VecSet
+    }, lobbies_listener::RoomCode, lobby::{game_client::GameClientLocation, lobby_client::{LobbyClient, LobbyClientID}}, log, vec_map::VecMap, vec_set::VecSet
 };
 
 #[derive(Serialize, Debug, Clone)]

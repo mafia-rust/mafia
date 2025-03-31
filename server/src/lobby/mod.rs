@@ -11,7 +11,7 @@ use lobby_client::Ready;
 use crate::{
     client_connection::ClientConnection, game::{
         player::PlayerReference, role_list::RoleOutline, settings::Settings, spectator::{spectator_pointer::SpectatorPointer, SpectatorInitializeParameters}, Game
-    }, listener::RoomCode, lobby::game_client::GameClientLocation, packet::{
+    }, lobbies_listener::RoomCode, lobby::game_client::GameClientLocation, packet::{
         HostDataPacketGameClient, RejectJoinReason, ToClientPacket
     }, vec_map::VecMap, websocket_connections::connection::ClientSender
 };
