@@ -160,6 +160,7 @@ export function sortControllerIdCompare(
 
 export type AbilitySelection = {
     type: "unit",
+    selection: UnitSelection
 } | {
     type: "boolean"
     selection: BooleanSelection
@@ -195,7 +196,7 @@ export type AbilitySelection = {
 export function defaultAbilitySelection(available: AvailableAbilitySelection): AbilitySelection {
     switch (available.type) {
         case "unit":
-            return {type: "unit"};
+            return {type: "unit", selection: null};
         case "boolean":
             return {type: "boolean", selection: false};
         case "twoPlayerOption":
@@ -252,6 +253,7 @@ export type AvailableAbilitySelection = {
 }
 
 
+export type UnitSelection = null;
 export type BooleanSelection = boolean;
 
 export type TwoPlayerOptionSelection = [number, number] | null;
