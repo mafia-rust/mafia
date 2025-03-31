@@ -4,17 +4,14 @@ use rand::seq::IndexedRandom;
 use serde::{Deserialize, Serialize};
 
 use crate::game::components::confused::Confused;
-use crate::game::components::detained::Detained;
 use crate::game::role_outline_reference::RoleOutlineReference;
 use crate::game::ability_input::*;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
-use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_map::VecMap;
-use crate::vec_set::vec_set;
 
 use rand::prelude::SliceRandom;
 use super::{common_role, Priority, Role, RoleStateImpl};
@@ -82,23 +79,17 @@ impl RoleStateImpl for Auditor {
         actor_ref.set_role_state(game, self);
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Auditor, 0),
-            AvailableAbilitySelection::new_two_role_outline_option(
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Auditor, 0))
+            .available_selection(AvailableTwoRoleOutlineOptionSelection(
                 RoleOutlineReference::all_outlines(game)
                     .filter(|o|!self.previously_given_results.contains(o))
                     .map(Some)
                     .chain(once(None))
                     .collect()
-            ),
-            AbilitySelection::new_two_role_outline_option(None, None),
-            actor_ref.ability_deactivated_from_death(game) ||
-            Detained::is_detained(game, actor_ref),
-            Some(PhaseType::Obituary),
-            false,
-            vec_set![actor_ref],
-        )
+            ))
+            .night_typical(actor_ref)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         common_role::convert_controller_selection_to_visits(

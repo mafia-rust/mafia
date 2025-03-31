@@ -418,12 +418,6 @@ impl Game {
             }
         }
 
-        self.send_packet_to_all(
-            ToClientPacket::PlayerVotes { votes_for_player: 
-                PlayerReference::ref_vec_map_to_index(voted_player_votes.clone())
-            }
-        );
-
         voted_player_votes
     }
     /// Returns the player who is meant to be put on trial
@@ -435,6 +429,7 @@ impl Game {
         let &PhaseState::Nomination { trials_left, .. } = self.current_phase() else {return None};
 
         let voted_player_votes = self.create_voted_player_map();
+        self.send_packet_to_all(ToClientPacket::PlayerVotes { votes_for_player: voted_player_votes.clone()});
 
         let mut voted_player = None;
 
@@ -453,8 +448,6 @@ impl Game {
         
         if start_trial_instantly {
             if let Some(player_on_trial) = voted_player {
-                self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
-                
                 PhaseStateMachine::next_phase(self, Some(PhaseState::Testimony {
                     trials_left: trials_left.saturating_sub(1), 
                     player_on_trial, 
@@ -523,13 +516,13 @@ impl Game {
             return;
         }
 
-        while self.phase_machine.time_remaining <= Duration::ZERO {
+        while self.phase_machine.time_remaining.is_some_and(|d| d.is_zero()) {
             PhaseStateMachine::next_phase(self, None);
         }
         PlayerReference::all_players(self).for_each(|p|p.tick(self, time_passed));
         SpectatorPointer::all_spectators(self).for_each(|s|s.tick(self, time_passed));
 
-        self.phase_machine.time_remaining = self.phase_machine.time_remaining.saturating_sub(time_passed);
+        self.phase_machine.time_remaining = self.phase_machine.time_remaining.map(|d|d.saturating_sub(time_passed));
 
         OnTick::new().invoke(self);
     }
@@ -567,18 +560,17 @@ impl Game {
         }
         self.spectator_chat_messages.push(message);
     }
-
-    pub fn add_spectator(&mut self, params: SpectatorInitializeParameters) -> Result<SpectatorIndex, RejectJoinReason> {
-        let spectator_index = SpectatorIndex::try_from(self.spectators.len()).map_err(|_| RejectJoinReason::RoomFull)?;
+    pub fn join_spectator(&mut self, params: SpectatorInitializeParameters) -> Result<SpectatorPointer, RejectJoinReason> {
+        let spectator_index = SpectatorIndex::try_from(self.spectators.len()).map_err(|_|RejectJoinReason::RoomFull)?;
         self.spectators.push(Spectator::new(params));
         let spectator_pointer = SpectatorPointer::new(spectator_index);
 
-        spectator_pointer.send_join_game_data(self);
-
-        Ok(spectator_pointer.index)
+        Ok(spectator_pointer)
     }
     pub fn remove_spectator(&mut self, i: SpectatorIndex){
-        self.spectators.remove(i as usize);
+        if (i as usize) < self.spectators.len() {
+            self.spectators.remove(i as usize);
+        }
     }
 
     pub fn send_packet_to_all(&self, packet: ToClientPacket){
@@ -589,8 +581,12 @@ impl Game {
             spectator.send_packet(packet.clone());
         }
     }
+    
+    pub(crate) fn is_any_client_connected(&self) -> bool {
+        PlayerReference::all_players(self).any(|p| p.is_connected(self))
+        || SpectatorPointer::all_spectators(self).any(|s| s.is_connected(self))
+    }
 }
-
 pub mod test {
 
     use super::{

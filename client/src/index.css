@@ -161,6 +161,12 @@ s {
     background-color: #220000;
 }
 
+.centered-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 button, .button, input, select, option, textarea, .textarea, summary {
     border-radius: 0.4rem;
     margin: .13rem;
