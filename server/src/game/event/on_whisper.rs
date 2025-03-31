@@ -56,7 +56,8 @@ impl Event for OnWhisper {
     fn listeners() -> Vec<super::EventListenerFunction<Self>> {
         vec![
             Game::on_whisper,
-            Modifiers::on_whisper
+            Modifiers::on_whisper,
+            PlayerReference::on_whisper,
         ]
     }
 

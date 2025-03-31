@@ -71,7 +71,7 @@ impl RoleStateImpl for Mayor {
         if priority == WhisperPriority::Cancel && (
             event.sender == actor_ref || 
             event.receiver == actor_ref
-        ) {
+        ) && self.revealed {
             fold.cancelled = true;
             fold.hide_broadcast = true;
         }
