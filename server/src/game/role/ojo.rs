@@ -4,6 +4,7 @@ use serde::Serialize;
 use crate::game::ability_input::ControllerParametersMap;
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
+use crate::game::event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority};
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::player::{PlayerIndex, PlayerReference};
 
@@ -80,5 +81,14 @@ impl RoleStateImpl for Ojo {
         if player != actor_ref {return};
 
         actor_ref.insert_role_label(game, concealed_player);
+    }
+    fn on_whisper(self, game: &mut Game, actor_ref: PlayerReference, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority) {
+        if priority == WhisperPriority::Send && !fold.cancelled && event.receiver != actor_ref && event.sender != actor_ref {
+            actor_ref.add_private_chat_message(game, ChatMessageVariant::Whisper {
+                from_player_index: event.sender.into(),
+                to_player_index: event.receiver.into(),
+                text: event.message.clone()
+            });
+        }
     }
 }
