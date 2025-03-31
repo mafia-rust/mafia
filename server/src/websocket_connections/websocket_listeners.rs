@@ -44,21 +44,8 @@ impl ListenerClient{
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
-enum ListenerClientLocation {
-    InLobby{
-        room_code: RoomCode,
-        lobby_client_id: LobbyClientID,
-    },
-    OutsideLobby
-}
-
 pub struct WebsocketListeners {
     listeners: Vec<Box<dyn WebsocketListener>>,
-
-
-    lobbies: HashMap<RoomCode, Lobby>,
-    clients: HashMap<SocketAddr, ListenerClient>,
 }
 impl WebsocketListeners{
     pub fn on_connect(&mut self, connection: &Connection) {

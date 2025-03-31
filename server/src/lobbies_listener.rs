@@ -14,49 +14,14 @@ struct LobbiesListener{
 struct Client{
     connection: Connection 
 }
-
-pub type RoomCode = usize;
-impl WebsocketListener for LobbiesListener {
-    fn on_connect(&mut self, connection: &Connection) {}
-    fn on_disconnect(&mut self, connection: Connection) {}
-    fn on_message(&mut self, connection: &Connection, message: &Message) {}
+#[derive(Debug, PartialEq, Eq)]
+enum ListenerClientLocation {
+    InLobby{
+        room_code: RoomCode,
+        lobby_client_id: LobbyClientID,
+    },
+    OutsideLobby
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-use std::{collections::HashMap, net::SocketAddr, ops::Mul, sync::{Arc, Mutex}, time::Duration};
-
-use rand::random;
-use tokio_tungstenite::tungstenite::Message;
-
-use crate::{
-    lobby::{lobby_client::LobbyClientID, Lobby}, 
-    log, 
-    packet::{LobbyPreviewData, RejectJoinReason, ToClientPacket, ToServerPacket}, 
-    websocket_connections::connection::Connection
-};
-
-
-pub trait WebsocketListener{
-    fn on_connect(&mut self, connection: &Connection)
-
-    fn on_disconnect(&mut self, connection: Connection) -> Result<(), &'static str>
-
-    fn on_message(&mut self, connection: &Connection, message: &Message)
-}
-
-
 struct ListenerClient {
     connection: Connection,
     location: ListenerClientLocation,
@@ -85,23 +50,14 @@ impl ListenerClient{
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
-enum ListenerClientLocation {
-    InLobby{
-        room_code: RoomCode,
-        lobby_client_id: LobbyClientID,
-    },
-    OutsideLobby
+
+pub type RoomCode = usize;
+impl WebsocketListener for LobbiesListener {
+    fn on_connect(&mut self, connection: &Connection) {}
+    fn on_disconnect(&mut self, connection: Connection) {}
+    fn on_message(&mut self, connection: &Connection, message: &Message) {}
 }
-
-pub struct WebsocketListeners {
-    listeners: Vec<Box<dyn WebsocketListener>>,
-
-
-    lobbies: HashMap<RoomCode, Lobby>,
-    clients: HashMap<SocketAddr, ListenerClient>,
-}
-impl WebsocketListeners{
+impl LobbiesListener{
     pub fn new() -> Self {
         Self {
             lobbies: HashMap::new(),
