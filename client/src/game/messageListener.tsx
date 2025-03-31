@@ -76,7 +76,7 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "lobby" || GAME_MANAGER.state.stateType === "game"){
                 GAME_MANAGER.state.roomCode = packet.roomCode;
                 GAME_MANAGER.state.myId = packet.playerId;
-            }        
+            }
 
             saveReconnectData(packet.roomCode, packet.playerId);
             sendDefaultName();
