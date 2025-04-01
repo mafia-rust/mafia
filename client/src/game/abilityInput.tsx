@@ -51,6 +51,9 @@ export type ControllerID = {
     type: "nominate",
     player: PlayerIndex,
 } | {
+    type: "fastForwardVote",
+    player: PlayerIndex,
+} | {
     type: "forfeitVote",
     player: PlayerIndex,
 } | {

@@ -31,11 +31,21 @@ export default function HeaderMenu(props: Readonly<{
         ["playersHost"]
     )!;
 
-    const spectator = useSpectator();
+    const spectatorAndHost = useGameState(
+        state => state.clientState.type === "spectator" && state.host !== null,
+        ["playersHost", "gamePlayers"]
+    )!;
+
+    const fastForwardVote = usePlayerState(
+        state => state.savedControllers.some(([id, controller]) => {
+            return id.type === "fastForwardVote" && controller.selection.type === "boolean" && controller.selection.selection
+        }),
+        ["yourAllowedControllers"]
+    );
 
 
     return <div className={"header-menu " + backgroundStyle}>
-        {!(spectator && !host) && <FastForwardButton />}
+        {((fastForwardVote !== undefined) || spectatorAndHost) && <FastForwardButton fastForwardVote={fastForwardVote}/>}
         <Information />
         {!mobile && <MenuButtons chatMenuNotification={props.chatMenuNotification}/>}
         <Timer />
@@ -219,16 +229,25 @@ export function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>):
     </div>
 }
 
-export function FastForwardButton(): ReactElement {
-    const fastForward = useGameState(
-        gameState => gameState.fastForward,
-        ["yourVoteFastForwardPhase"]
-    )!
+export function FastForwardButton(props: { fastForwardVote: boolean | undefined }): ReactElement {
+    const myIndex = usePlayerState(
+        gameState => gameState.myIndex,
+        ["yourPlayerIndex"]
+    )!;
 
     return <Button 
-        onClick={()=>GAME_MANAGER.sendVoteFastForwardPhase(!fastForward)}
+        onClick={() => GAME_MANAGER.sendAbilityInput({
+            id: { 
+                type: "fastForwardVote",
+                player: myIndex
+            },
+            selection: {
+                type: "boolean",
+                selection: !props.fastForwardVote
+            }
+        })}
         className="fast-forward-button"
-        highlighted={fastForward}
+        highlighted={props.fastForwardVote}
     >
         <Icon>double_arrow</Icon>
     </Button>

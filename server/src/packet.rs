@@ -257,7 +257,4 @@ pub enum ToServerPacket{
         you_were_possessed_message: bool,
         your_target_was_jailed_message: bool,
     },
-
-    #[serde(rename_all = "camelCase")]
-    VoteFastForwardPhase{fast_forward: bool},
 }

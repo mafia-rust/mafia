@@ -7,7 +7,7 @@ use crate::{
             ChatMessage, ChatMessageVariant
         },
         event::{
-            on_convert::OnConvert, on_fast_forward::OnFastForward,
+            on_convert::OnConvert,
             on_remove_role_label::OnRemoveRoleLabel
         },
         grave::GraveKiller, modifiers::{ModifierType, Modifiers}, role::{Role, RoleState},
@@ -198,22 +198,6 @@ impl PlayerReference{
     }
     pub fn chat_messages<'a>(&self, game: &'a Game) -> &'a Vec<ChatMessage> {
         &self.deref(game).chat_messages
-    }
-
-    pub fn set_fast_forward_vote(&self, game: &mut Game, fast_forward_vote: bool) {
-        self.deref_mut(game).fast_forward_vote = fast_forward_vote;
-
-        self.send_packet(game, ToClientPacket::YourVoteFastForwardPhase { fast_forward: fast_forward_vote });
-
-        if fast_forward_vote && !game.phase_machine.time_remaining.is_some_and(|d|d.is_zero()) && PlayerReference::all_players(game)
-            .filter(|p|p.alive(game)&&(p.could_reconnect(game)||p.is_connected(game)))
-            .all(|p| p.fast_forward_vote(game))
-        {
-            OnFastForward::invoke(game);
-        }
-    }
-    pub fn fast_forward_vote(&self, game: &Game) -> bool{
-        self.deref(game).fast_forward_vote
     }
 
     pub fn set_forfeit_vote(&self, game: &mut Game, forfeit: bool) {
