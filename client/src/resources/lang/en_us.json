@@ -614,7 +614,7 @@
     "controllerId.role.loki.0.integer.5": "Enable Abstaining",
     "controllerId.role.loki.0.integer.6": "Disable Scheduled Nominations",
     "controllerId.role.loki.0.integer.7": "Remove Judgement",
-    "controllerId.role.loki.0.integer.8": "Make Voting Two-Thirds-Majority",
+    "controllerId.role.loki.0.integer.8": "Make Voting Two-Thirds Majority",
     "controllerId.role.loki.0.integer.9": "Remove Night Chat",
     "controllerId.role.loki.0.integer.10": "Hide Whisper Broadcasts",
     "controllerId.role.loki.0.integer.11": "Disable Whispers",
