@@ -112,9 +112,12 @@ impl WebsocketListener{
 
 
     fn generate_roomcode(&self)->Option<RoomCode>{
-        ((random::<u16>() as usize)..usize::MAX).find(
-            |code| !self.lobbies.contains_key(code)
-        )
+        let start = random::<u16>() as usize;
+        (start..=usize::MAX)
+            .chain(0..start)
+            .find(
+                |code| !self.lobbies.contains_key(code)
+            )
     }
     pub(super) fn create_lobby(&mut self) -> Option<RoomCode>{
         let room_code = self.generate_roomcode()?;
