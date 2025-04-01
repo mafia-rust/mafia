@@ -4,6 +4,7 @@ use serde::Serialize;
 use crate::game::ability_input::AvailableUnitSelection;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority};
 use crate::game::modifiers::Modifiers;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -65,6 +66,15 @@ impl RoleStateImpl for Mayor {
             .dont_save()
             .allow_players([actor_ref])
             .build_map()
+    }
+    fn on_whisper(self, _game: &mut Game, actor_ref: PlayerReference, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority) {
+        if priority == WhisperPriority::Cancel && (
+            event.sender == actor_ref || 
+            event.receiver == actor_ref
+        ) && self.revealed {
+            fold.cancelled = true;
+            fold.hide_broadcast = true;
+        }
     }
 }
 impl GetClientRoleState<ClientRoleState> for Mayor {
