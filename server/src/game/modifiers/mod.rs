@@ -34,7 +34,7 @@ use two_thirds_majority::TwoThirdsMajority;
 
 use crate::{vec_map::VecMap, vec_set::VecSet};
 
-use super::{ability_input::AbilityInput, grave::GraveReference, player::PlayerReference, role::Priority, Game};
+use super::{ability_input::AbilityInput, event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority}, grave::GraveReference, player::PlayerReference, role::Priority, Game};
 
 
 #[enum_delegate::register]
@@ -47,6 +47,7 @@ pub trait ModifierTrait where Self: Clone + Sized{
     fn on_game_start(self, _game: &mut Game) {}
     fn on_any_death(self, _game: &mut Game, _player: PlayerReference) {}
     fn before_initial_role_creation(self, _game: &mut Game) {}
+    fn on_whisper(self, _game: &mut Game, _event: &OnWhisper, _fold: &mut WhisperFold, _priority: WhisperPriority) {}
 }
 
 #[enum_delegate::implement(ModifierTrait)]
@@ -206,6 +207,11 @@ impl Modifiers{
     pub fn before_initial_role_creation(game: &mut Game){
         for modifier in game.modifiers.modifiers.clone(){
             modifier.1.before_initial_role_creation(game);
+        }
+    }
+    pub fn on_whisper(game: &mut Game, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority) {
+        for modifier in game.modifiers.modifiers.clone(){
+            modifier.1.on_whisper(game, event, fold, priority);
         }
     }
 }
