@@ -2,13 +2,14 @@ use serde::Serialize;
 
 use crate::game::ability_input::{AvailableBooleanSelection, ControllerParametersMap};
 use crate::game::attack_power::AttackPower;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::Game;
 
-use super::{BooleanSelection, ControllerID, GetClientRoleState, Priority, Role, RoleStateImpl};
+use super::{BooleanSelection, ControllerID, GetClientRoleState, Role, RoleStateImpl};
 
 #[derive(Debug, Clone)]
 pub struct Veteran { 
@@ -43,9 +44,9 @@ impl RoleStateImpl for Veteran {
             ..Self::default()
         }
     }
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::TopPriority => {
+            OnMidnightPriority::TopPriority => {
                 let can_alert = self.alerts_remaining > 0 && game.day_number() > 1;
                 let chose_to_alert = 
                     matches!(game.saved_controllers.get_controller_current_selection_boolean(
@@ -59,11 +60,11 @@ impl RoleStateImpl for Veteran {
                     });
                 }
             }
-            Priority::Heal=>{
+            OnMidnightPriority::Heal=>{
                 if !self.alerting_tonight {return}
                 actor_ref.increase_defense_to(game, DefensePower::Protection);
             }
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 if !self.alerting_tonight {return}
 
                 for other_player_ref in actor_ref.all_night_visitors_cloned(game)

@@ -10,7 +10,7 @@ pub mod on_role_switch;
 pub mod on_convert;
 pub mod before_role_switch;
 pub mod before_phase_end;
-pub mod on_night_priority;
+pub mod on_midnight;
 pub mod on_remove_role_label;
 pub mod before_initial_role_creation;
 pub mod on_ability_input_received;
@@ -26,6 +26,12 @@ pub trait EventPriority: Sized + Copy {
     fn values() -> Vec<Self>;
 }
 
+///
+/// 
+/// 
+/// // Event listener type
+/// // pub type EventListenerFunction<E: Event> = fn(&mut Game, &E, &mut E::FoldValue, E::Priority);
+/// 
 pub trait Event: Sized {
     type FoldValue;
     type Priority: EventPriority;
@@ -64,7 +70,7 @@ macro_rules! event_priority {
         pub enum $name {
             $($variant),*
         }
-        impl EventPriority for $name {
+        impl $crate::game::event::EventPriority for $name {
             fn values() -> Vec<Self> {
                 vec![$(Self::$variant),*]
             }

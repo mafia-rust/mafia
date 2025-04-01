@@ -8,9 +8,9 @@ use super::{
     chat::{ChatGroup, ChatMessageVariant},
     event::{
         before_phase_end::BeforePhaseEnd, on_any_death::OnAnyDeath,
-        on_night_priority::OnNightPriority, on_phase_start::OnPhaseStart
+        on_midnight::OnMidnight, on_phase_start::OnPhaseStart, Event
     },
-    grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
+    grave::Grave, player::PlayerReference, settings::PhaseTimeSettings, Game
 };
 
 
@@ -287,12 +287,7 @@ impl PhaseState {
                     player_ref.set_night_visits(game, visits.clone());
                 }
 
-                for priority in Priority::values(){
-                    OnNightPriority::new(priority).invoke(game);
-                    for player_ref in PlayerReference::all_players(game){
-                        player_ref.do_night_action(game, priority);
-                    }
-                }
+                OnMidnight::new().invoke(game);
 
                 for player_ref in PlayerReference::all_players(game){
                     player_ref.push_night_messages_to_player(game);

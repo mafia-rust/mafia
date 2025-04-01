@@ -1,9 +1,9 @@
 use serde::Serialize;
 
-use crate::game::{ability_input::{AvailableIntegerSelection, ControllerID, ControllerParametersMap, IntegerSelection}, attack_power::DefensePower, grave::Grave, modifiers::{ModifierType, Modifiers}, phase::PhaseType, player::PlayerReference, win_condition::WinCondition, Game};
+use crate::game::{ability_input::{AvailableIntegerSelection, ControllerID, ControllerParametersMap, IntegerSelection}, attack_power::DefensePower, event::on_midnight::OnMidnightPriority, grave::Grave, modifiers::{ModifierType, Modifiers}, phase::PhaseType, player::PlayerReference, win_condition::WinCondition, Game};
 
 
-use super::{GetClientRoleState, Priority, Role, RoleStateImpl};
+use super::{GetClientRoleState, Role, RoleStateImpl};
 
 
 #[derive(Debug, Clone, Serialize, Default)]
@@ -31,11 +31,11 @@ impl Loki {
 impl RoleStateImpl for Loki {
     type ClientRoleState = ClientRoleState;
 
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: super::Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if actor_ref.night_blocked(game) { return }
 
         match priority {
-            Priority::BottomPriority => {
+            OnMidnightPriority::BottomPriority => {
                 if let Some(IntegerSelection(action)) = game.saved_controllers.get_controller_current_selection_integer(ControllerID::Role { player: actor_ref, role: Role::Loki, id: 0 }) {
                     match LokiAction::try_from(action) {
                         Ok(action) => {
