@@ -920,12 +920,12 @@
         ]
     },
     "loki": {
-        "mainRoleSet": "fiends",
-        "roleSets": ["fiends"],
+        "mainRoleSet": "neutral",
+        "roleSets": ["neutral"],
         "armor": true,
         "aura": null,
         "maxCount": 1,
-        "canWriteDeathNote": true,
+        "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "modifierChanged", "modifier": "skipDay1", "enabled": true},
