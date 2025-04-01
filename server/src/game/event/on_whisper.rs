@@ -1,5 +1,5 @@
-use crate::{event_priority, game::{modifiers::Modifiers, player::PlayerReference, Game}};
-use super::{Event, EventPriority};
+use crate::{game::{modifiers::Modifiers, player::PlayerReference, Game}, event_priority};
+use super::Event;
 
 #[derive(Clone)]
 pub struct OnWhisper {

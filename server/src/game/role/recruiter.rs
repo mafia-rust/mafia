@@ -6,6 +6,7 @@ use crate::game::ability_input::AvailableIntegerSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::components::mafia_recruits::MafiaRecruits;
 use crate::game::components::insider_group::InsiderGroupID;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 use crate::game::game_conclusion::GameConclusion;
@@ -16,7 +17,7 @@ use crate::game::Game;
 use super::godfather::Godfather;
 use super::{
     ControllerID,
-    ControllerParametersMap, IntegerSelection, Priority, Role, RoleStateImpl
+    ControllerParametersMap, IntegerSelection, Role, RoleStateImpl
 };
 
 use vec1::vec1;
@@ -47,7 +48,7 @@ impl RoleStateImpl for Recruiter {
             recruits_remaining: game.num_players().div_ceil(5),
         }
     }
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         let choose_attack = if let Some(IntegerSelection(x)) = game.saved_controllers.get_controller_current_selection_integer(
             ControllerID::role(actor_ref, Role::Recruiter, 1)
@@ -58,7 +59,7 @@ impl RoleStateImpl for Recruiter {
         } else if self.recruits_remaining == 0 {return}
 
         match priority {
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 if let Some(visit) = actor_visits.first(){
                     if Recruiter::night_ability(self.clone(), game, actor_ref, visit.target) {

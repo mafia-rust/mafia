@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, phase::PhaseType};
 use crate::game::player::PlayerReference;
 
@@ -10,7 +11,7 @@ use crate::game::Game;
 use super::{
     common_role,
     ControllerID, ControllerParametersMap, GetClientRoleState,
-    InsiderGroupID, Priority, Role, RoleStateImpl
+    InsiderGroupID, Role, RoleStateImpl
 };
 
 
@@ -27,7 +28,7 @@ pub struct ClientRoleState;
 
 impl RoleStateImpl for MafiaWitch {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
             actor_ref.set_role_state(game, MafiaWitch{
                 currently_used_player: Some(currently_used_player)

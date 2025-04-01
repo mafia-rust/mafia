@@ -4,6 +4,7 @@ use serde::Serialize;
 use crate::game::ability_input::ControllerParametersMap;
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority};
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::player::{PlayerIndex, PlayerReference};
@@ -11,7 +12,7 @@ use crate::game::player::{PlayerIndex, PlayerReference};
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{common_role, ControllerID, Priority, Role, RoleStateImpl};
+use super::{common_role, ControllerID, Role, RoleStateImpl};
 
 
 #[derive(Debug, Clone, Serialize, Default)]
@@ -23,9 +24,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Ojo {
     type ClientRoleState = Ojo;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 if game.day_number() == 1 {return}
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 if let Some(visit) = actor_visits.first(){
@@ -40,7 +41,7 @@ impl RoleStateImpl for Ojo {
                     );
                 }
             },
-            Priority::Investigative => {
+            OnMidnightPriority::Investigative => {
                 PlayerReference::all_players(game)
                     .for_each(|player_ref|{
 
