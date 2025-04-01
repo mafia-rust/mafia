@@ -2,7 +2,7 @@ use crate::{log, packet::ToServerPacket, strings::TidyableString};
 
 use super::{
     chat::{ChatGroup, ChatMessageVariant, MessageSender},
-    event::{on_fast_forward::OnFastForward, on_whisper::OnWhisper, Event},
+    event::{on_whisper::OnWhisper, Event},
     phase::PhaseType,
     player::{PlayerIndex, PlayerReference},
     role::{
@@ -15,18 +15,12 @@ use super::{
 
 
 impl Game {
+    #[expect(clippy::match_single_binding, unused, reason="Surely spectators will do something in the future")]
     pub fn on_spectator_message(&mut self, sender_index: SpectatorIndex, incoming_packet: ToServerPacket){
         let sender_pointer = SpectatorPointer::new(sender_index);
 
-        #[expect(clippy::single_match, reason = "More cases will likely be added later")]
         match incoming_packet {
-            ToServerPacket::VoteFastForwardPhase { fast_forward } => {
-                if sender_pointer.host(self) && fast_forward && !self.phase_machine.time_remaining.is_some_and(|d|d.is_zero()){
-                    OnFastForward::invoke(self);
-                }
-            },
-            _ => {
-            }
+            _ => {}
         }
     }
     pub fn on_client_message(&mut self, sender_player_index: PlayerIndex, incoming_packet: ToServerPacket){
