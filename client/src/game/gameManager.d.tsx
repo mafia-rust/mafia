@@ -104,7 +104,6 @@ export type GameManager = {
         yourTargetWasJailedMessage: boolean
     ): void
 
-    sendVoteFastForwardPhase(fastForward: boolean): void;
     sendHostDataRequest(): void;
     sendHostEndGamePacket(): void;
     sendHostSkipPhase(): void;
