@@ -11,15 +11,20 @@ export default function IntegerSelectionMenu(props: Readonly<{
     available: AvailableIntegerSelection,
     onChoose: (number: number)=>void,
 }>): ReactElement {
-
-    ///make array with numbers from available.min to available.max
-    let options = [];
-    for(let i = props.available.min; i <= props.available.max; i++){
-        options.push(i);
+    const options = [];
+    
+    if (props.available.type === "bounded") {
+        for(let i = props.available.min; i <= props.available.max; i++){
+            options.push(i);
+        }
+    } else {
+        for(const i of props.available.values){
+            options.push(i);
+        }
     }
 
     let optionsSearch = new Map<number, [React.ReactNode, string]>();
-    for(let i = props.available.min; i <= props.available.max; i++){
+    for(const i of options){
         let out: [React.ReactNode, string] = [<>{i}</>, i.toString()];
 
         if(props.id !== undefined){

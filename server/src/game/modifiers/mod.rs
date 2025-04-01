@@ -32,9 +32,9 @@ use serde::{Deserialize, Serialize};
 use skip_day_1::SkipDay1;
 use two_thirds_majority::TwoThirdsMajority;
 
-use crate::{vec_map::VecMap, vec_set::VecSet};
+use crate::{packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
-use super::{ability_input::AbilityInput, event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority}, grave::GraveReference, player::PlayerReference, role::Priority, Game};
+use super::{ability_input::AbilityInput, chat::{ChatGroup, ChatMessageVariant}, event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority}, grave::GraveReference, player::PlayerReference, role::Priority, Game};
 
 
 #[enum_delegate::register]
@@ -69,7 +69,7 @@ pub enum ModifierState{
     HiddenWhispers(HiddenWhispers),
     ScheduledNominations(ScheduledNominations),
 }
-#[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Debug, Hash)]
+#[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Debug, Hash, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum ModifierType{
     ObscuredGraves,
@@ -161,6 +161,18 @@ impl Modifiers{
             <&ModifierState as Into<ModifierType>>::into(&state).clone(),
             state
         );
+    }
+    pub fn enable_modifier(game: &mut Game, modifier: ModifierType){
+        game.modifiers.modifiers.insert(modifier.clone(), modifier.default_state());
+
+        game.send_packet_to_all(ToClientPacket::EnabledModifiers { modifiers: game.modifiers.modifiers.keys().cloned().collect() });
+        game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::ModifierChanged { modifier, enabled: true });
+    }
+    pub fn disable_modifier(game: &mut Game, modifier: ModifierType){
+        game.modifiers.modifiers.remove(&modifier);
+
+        game.send_packet_to_all(ToClientPacket::EnabledModifiers { modifiers: game.modifiers.modifiers.keys().cloned().collect() });
+        game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::ModifierChanged { modifier, enabled: false });
     }
     pub fn default_from_settings(modifiers: VecSet<ModifierType>)->Self{
         let modifiers = modifiers

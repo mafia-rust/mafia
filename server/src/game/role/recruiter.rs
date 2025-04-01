@@ -92,7 +92,7 @@ impl RoleStateImpl for Recruiter {
             // Attack or Recruit
             ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Recruiter, 1))
-                .available_selection(AvailableIntegerSelection {
+                .available_selection(AvailableIntegerSelection::Bounded {
                     min: 0,
                     max: if self.recruits_remaining > 0 {1} else {0}
                 })

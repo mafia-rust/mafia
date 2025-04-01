@@ -84,6 +84,7 @@
     "trapState": "special",
     "trapStateEndOfNight": "result",
     "playerForwardedMessage": "special",
+    "modifierChanged": "special",
     "targetsMessage": "result",
     "targetIsPossessionImmune": "result",
     "youWerePossessed": "result",

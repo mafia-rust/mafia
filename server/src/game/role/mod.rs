@@ -158,6 +158,7 @@ macros::roles! {
     Martyr : martyr,
     SantaClaus : santa_claus,
     Krampus : krampus,
+    Loki: loki,
 
     Witch : witch,
     Scarecrow : scarecrow,
@@ -205,7 +206,9 @@ macros::priorities! {
     Cupid,
     SpyBug,
 
-    StealMessages
+    StealMessages,
+
+    BottomPriority
 }
 
 pub(crate) mod common_role;

@@ -147,7 +147,7 @@ impl RoleStateImpl for Counterfeiter {
                 .build_map(),
             ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Counterfeiter, 3))
-                .available_selection(AvailableIntegerSelection {
+                .available_selection(AvailableIntegerSelection::Bounded {
                     min: 0, max: if self.forges_remaining > 0 {1} else {0}
                 })
                 .allow_players([actor_ref])
