@@ -22,7 +22,7 @@ impl Game {
         #[expect(clippy::single_match, reason = "More cases will likely be added later")]
         match incoming_packet {
             ToServerPacket::VoteFastForwardPhase { fast_forward } => {
-                if sender_pointer.host(self) && fast_forward && !self.phase_machine.time_remaining.is_zero(){
+                if sender_pointer.host(self) && fast_forward && !self.phase_machine.time_remaining.is_some_and(|d|d.is_zero()){
                     OnFastForward::invoke(self);
                 }
             },
@@ -144,7 +144,7 @@ impl Game {
 
                 for player in PlayerReference::all_players(self){
                     if 
-                        player.role(self) == Role::Informant ||
+                        matches!(player.role(self), Role::Informant |  Role::Ojo) ||
                         whisperee_ref == player
                     {
                         player.add_private_chat_message(self, message.clone());

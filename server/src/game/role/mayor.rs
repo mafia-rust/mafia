@@ -1,6 +1,7 @@
 
 use serde::Serialize;
 
+use crate::game::ability_input::AvailableUnitSelection;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::modifiers::Modifiers;
@@ -10,7 +11,6 @@ use crate::game::player::PlayerReference;
 
 use crate::game::tag::Tag;
 use crate::game::Game;
-use crate::vec_set;
 use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Default)]
@@ -53,19 +53,18 @@ impl RoleStateImpl for Mayor {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Mayor, 0),
-            super::AvailableAbilitySelection::Unit,
-            super::AbilitySelection::new_unit(),
-            actor_ref.ability_deactivated_from_death(game) ||
-            self.revealed || 
-            PhaseType::Night == game.current_phase().phase() ||
-            PhaseType::Briefing == game.current_phase().phase(),
-            None,
-            true,
-            vec_set![actor_ref]
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Mayor, 0))
+            .available_selection(AvailableUnitSelection)
+            .add_grayed_out_condition(
+                actor_ref.ability_deactivated_from_death(game) ||
+                self.revealed || 
+                PhaseType::Night == game.current_phase().phase() ||
+                PhaseType::Briefing == game.current_phase().phase()
+            )
+            .dont_save()
+            .allow_players([actor_ref])
+            .build_map()
     }
 }
 impl GetClientRoleState<ClientRoleState> for Mayor {
