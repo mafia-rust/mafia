@@ -1,35 +1,5 @@
-use crate::game::{modifiers::Modifiers, player::PlayerReference, Game};
-
+use crate::{event_priority, game::{modifiers::Modifiers, player::PlayerReference, Game}};
 use super::{Event, EventPriority};
-
-
-
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub enum WhisperPriority {
-    Cancel,
-    Broadcast,
-    Send
-}
-
-impl EventPriority for WhisperPriority {
-    fn first() -> Self {
-        WhisperPriority::Cancel
-    }
-
-    fn next(self) -> Option<Self> {
-        match self {
-            WhisperPriority::Cancel => Some(WhisperPriority::Broadcast),
-            WhisperPriority::Broadcast => Some(WhisperPriority::Send),
-            WhisperPriority::Send => None
-        }
-    }
-}
-
-pub struct WhisperFold {
-    pub cancelled: bool,
-    pub hide_broadcast: bool
-}
-
 
 #[derive(Clone)]
 pub struct OnWhisper {
@@ -37,6 +7,11 @@ pub struct OnWhisper {
     pub receiver: PlayerReference,
     pub message: String,
 }
+pub struct WhisperFold {
+    pub cancelled: bool,
+    pub hide_broadcast: bool
+}
+event_priority!(WhisperPriority{Cancel, Broadcast, Send});
 
 impl OnWhisper {
     pub fn new(sender: PlayerReference, receiver: PlayerReference, message: String) -> Self {
@@ -50,7 +25,6 @@ impl OnWhisper {
 
 impl Event for OnWhisper {
     type FoldValue = WhisperFold;
-    type Inner = Self;
     type Priority = WhisperPriority;
 
     fn listeners() -> Vec<super::EventListenerFunction<Self>> {
@@ -66,9 +40,5 @@ impl Event for OnWhisper {
             cancelled: false,
             hide_broadcast: false,
         }
-    }
-
-    fn inner(&self) -> Self::Inner {
-        self.clone()
     }
 }

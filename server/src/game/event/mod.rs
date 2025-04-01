@@ -23,42 +23,51 @@ pub mod on_whisper;
 
 
 pub trait EventPriority: Sized + Copy {
-    fn first() -> Self;
-    fn next(self) -> Option<Self>;
+    fn values() -> Vec<Self>;
 }
 
 pub trait Event: Sized {
     type FoldValue;
-    type Inner;
     type Priority: EventPriority;
 
     fn listeners() -> Vec<EventListenerFunction<Self>>;
     fn initial_fold_value(&self) -> Self::FoldValue;
-    fn inner(&self) -> Self::Inner;
     fn invoke(self, game: &mut Game) {
-        let mut priority = Self::Priority::first();
         let mut fold = self.initial_fold_value();
 
-        loop {
+        for priority in Self::Priority::values() {
             for listener in Self::listeners() {
-                listener(game, &self.inner(), &mut fold, priority);
+                listener(game, &self, &mut fold, priority);
             }
-
-            priority = match priority.next() {
-                Some(p) => p,
-                None => break,
-            };
         }
     }
 }
 
 #[expect(type_alias_bounds, reason="This is fine")]
-pub type EventListenerFunction<E: Event> = fn(&mut Game, &E::Inner, &mut E::FoldValue, E::Priority);
+pub type EventListenerFunction<E: Event> = fn(&mut Game, &E, &mut E::FoldValue, E::Priority);
 
 impl EventPriority for () {
-    fn first() -> Self {
-    }
-    fn next(self) -> Option<Self> {
-        None
-    }
+    fn values() -> Vec<Self> {vec![()]}
+}
+
+
+
+
+#[macro_export]
+macro_rules! event_priority {
+    (
+        $name:ident{
+            $($variant:ident),*
+        }
+    ) => {
+        #[derive(Clone, Copy, PartialEq, Eq)]
+        pub enum $name {
+            $($variant),*
+        }
+        impl EventPriority for $name {
+            fn values() -> Vec<Self> {
+                vec![$(Self::$variant),*]
+            }
+        }
+    };
 }

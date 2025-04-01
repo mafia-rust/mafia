@@ -63,7 +63,8 @@ impl Game{
             WhisperPriority::Cancel => {
                 if 
                     !self.current_phase().is_day() || 
-                    event.receiver.alive(self) != event.sender.alive(self) ||
+                    !event.receiver.alive(self) ||
+                    !event.sender.alive(self) ||
                     event.receiver == event.sender || 
                     !event.sender.get_current_send_chat_groups(self).contains(&ChatGroup::All) ||
                     event.message.replace(['\n', '\r'], "").trim().is_empty()
