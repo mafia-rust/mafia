@@ -27,8 +27,8 @@ pub async fn create_ws_server(server_address: &str) {
         }))
     }
 
-    let event_listener = Arc::new(Mutex::new(WebsocketListener::new()));
-    WebsocketListener::start(event_listener.clone());
+    let event_listener: Arc<Mutex<_>> = Arc::new(Mutex::new(WebsocketListener::new()));
+    WebsocketListener::start_tick(event_listener.clone());
 
     log!(important "Server"; "Started listening on {server_address}");
 

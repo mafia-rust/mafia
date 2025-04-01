@@ -15,10 +15,10 @@ impl Connection {
         Self { tx: ClientSender { tx }, address }
     }
 
-    pub fn get_address(&self) -> &SocketAddr {
+    pub fn address(&self) -> &SocketAddr {
         &self.address
     }
-    pub fn get_sender(&self) -> ClientSender {
+    pub fn sender(&self) -> ClientSender {
         self.tx.clone()
     }
     pub fn send(&self, message: ToClientPacket) {

@@ -1,21 +1,18 @@
-use std::{collections::HashMap, net::SocketAddr, sync::{Arc, Mutex}, time::Duration};
-
-use client::{Client, ClientLocation, ClientReference, GetLobbyError};
-use rand::random;
-
-use crate::{
-    lobby::{lobby_client::LobbyClientID, Lobby},
-    log,
-    packet::{RejectJoinReason, ToClientPacket},
-    websocket_connections::connection::Connection
-};
-
-
 mod event;
 mod client;
 mod handle_message;
 
 pub type RoomCode = usize;
+
+
+use std::{collections::HashMap, net::SocketAddr, sync::{Arc, Mutex}, time::Duration};
+
+use crate::{lobby::{lobby_client::LobbyClientID, Lobby}, packet::{RejectJoinReason, ToClientPacket}, websocket_connections::connection::Connection};
+
+use self::client::{Client, ClientLocation, ClientReference, GetLobbyError};
+use rand::random;
+
+
 
 pub struct WebsocketListener {
     // Clients that are currently connected, if a client isnt connected it isnt here
@@ -29,7 +26,115 @@ impl WebsocketListener{
             clients: HashMap::new(),
         }
     }
+    fn clients(&self) -> &HashMap<SocketAddr, Client> {
+        &self.clients
+    }
+    fn lobbies(&self) -> &HashMap<RoomCode, Lobby> {
+        &self.lobbies
+    }
+    fn lobbies_mut(&mut self) -> &mut HashMap<RoomCode, Lobby> {
+        &mut self.lobbies
+    }
+    fn get_client<'a>(&'a self, address: &SocketAddr) -> Option<&'a Client> {
+        self.clients.get(address)
+    }
+    fn get_client_mut<'a>(&'a mut self, address: &SocketAddr) -> Option<&'a mut Client> {
+        self.clients.get_mut(address)
+    }
+    pub(super) fn get_lobby<'a>(&'a self, room_code: &RoomCode) -> Option<&'a Lobby> {
+        self.lobbies.get(room_code)
+    }
+    pub(super) fn get_lobby_mut<'a>(&'a mut self, room_code: &RoomCode) -> Option<&'a mut Lobby> {
+        self.lobbies.get_mut(room_code)
+    }
 
+
+    pub(super) fn create_client(&mut self, connection: &Connection) {
+
+        if let Some(client_already_exists) = ClientReference::new(connection.address(), self){
+            self.delete_client(&client_already_exists);
+        }
+
+        self.clients.insert(*connection.address(), Client::new(connection.clone()));
+    }
+    fn delete_client(&mut self, client: &ClientReference) {
+        let Some(client) = self.clients.remove(&client.address(self).clone()) else {return};
+
+        //This produces a warning in the logs because sometimes the player is already disconnected
+        //This ToClientPacket is still useful in the *rare* case that the player is still connected when they're being forced to disconnect
+        //A player can be forced to disconnect if a seperate connection is made with the same ip and port address
+        client.send(ToClientPacket::ForcedDisconnect);
+
+
+        let ClientLocation::InLobby { room_code, lobby_client_id } = client.location() else {return};
+        let Some(lobby) = self.lobbies.get_mut(room_code) else {return};
+
+        lobby.remove_player_rejoinable(*lobby_client_id);
+    }
+
+
+    fn set_client_in_lobby(&mut self, client: &ClientReference, room_code: RoomCode){
+
+        let sender = &client.sender(self).clone();
+        let Some(lobby) = self.get_lobby_mut(&room_code) else {
+            client.send(self, ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomDoesntExist });
+            return
+        };
+        let Ok(lobby_client_id) = lobby.join_player(sender) else {return};
+
+        client.set_location(self, ClientLocation::InLobby { room_code, lobby_client_id });
+    }
+    fn set_client_in_lobby_reconnect(&mut self, client: ClientReference, room_code: RoomCode, lobby_client_id: LobbyClientID){
+
+        let sender = &client.sender(self).clone();
+        let Some(lobby) = self.get_lobby_mut(&room_code) else {
+            client.send(self, ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomDoesntExist });
+            return
+        };
+        let Ok(()) = lobby.rejoin_player(sender, lobby_client_id) else {return};
+
+        client.set_location(self, ClientLocation::InLobby { room_code, lobby_client_id });
+    }
+    fn set_client_outside_lobby(&mut self, client: &ClientReference, rejoinable: bool) {
+        client.send(self, ToClientPacket::ForcedOutsideLobby);
+        
+        if let Ok((lobby, _, id)) = client.get_lobby_mut(self) {
+            if rejoinable {
+                lobby.remove_player_rejoinable(id);
+            }else{
+                lobby.remove_player(id)
+            }
+        }
+
+        client.set_location(self, ClientLocation::OutsideLobby);
+    }
+
+
+
+    fn generate_roomcode(&self)->Option<RoomCode>{
+        ((random::<u16>() as usize)..usize::MAX).find(
+            |code| !self.lobbies.contains_key(code)
+        )
+    }
+    pub(super) fn create_lobby(&mut self) -> Option<RoomCode>{
+        let room_code = self.generate_roomcode()?;
+
+        let lobby = Lobby::new(room_code);
+        self.lobbies.insert(room_code, lobby);
+        Some(room_code)
+    }
+    pub(super) fn delete_lobby(&mut self, room_code: RoomCode){
+
+        for client in ClientReference::all_clients(self){
+            if client.in_room(self, room_code) {
+                self.set_client_outside_lobby(&client, false);
+            }
+        }
+
+        self.lobbies.remove(&room_code);
+    }
+
+    
     pub fn start_tick(listener: Arc<Mutex<Self>>) {
         const DESIRED_FRAME_TIME: Duration = Duration::from_secs(1);
 
@@ -50,131 +155,17 @@ impl WebsocketListener{
         });
     }
 
-    fn create_lobby(&mut self) -> Option<RoomCode>{
-        let room_code = ((random::<u16>() as usize)..usize::MAX).find(
-            |code| !self.lobbies.contains_key(code)
-        )?;
 
-        let lobby = Lobby::new(room_code);
-        self.lobbies.insert(room_code, lobby);
-        Some(room_code)
-    }
-    fn delete_lobby(&mut self, room_code: RoomCode){
-        let clients_to_remove: Vec<_> = self.clients.iter()
-            .filter(|p| 
-                if let ClientLocation::InLobby{room_code: player_room_code, ..} = p.1.location() {
-                    player_room_code == room_code 
-                }else{
-                    false
-                }
-            )
-            .map(|f|*f.0)
-            .collect();
-
-        for client_address in clients_to_remove{
-            self.set_player_outside_lobby(&client_address, false);
-        }
-        self.lobbies.remove(&room_code);
-    }
-
-    fn set_player_in_lobby_initial_connect(&mut self, connection: &Connection, room_code: RoomCode){
-        let Some(lobby) = self.lobbies.get_mut(&room_code) else {
-            connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomDoesntExist });
-            return;
-        };
-
-        let Some(sender_player_location) = self.clients
-            .get_mut(connection.get_address())
-            .map(|p|&mut p.location)
-        else{
-            log!(error "Listener"; "{} {}", "Received packet from unconnected player!", connection.get_address());
-            connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::ServerBusy });
-            return;
-        };
-
-        match lobby.join_player(&connection.get_sender()) {
-            Ok(lobby_client_id) => {
-                *sender_player_location = ListenerClientLocation::InLobby { room_code, lobby_client_id };
-        
-                connection.send(ToClientPacket::LobbyName { name: lobby.name.clone() })
-            }
-            Err(reason) => {
-                connection.get_sender().send(ToClientPacket::RejectJoin { reason });
-            }
-        }
-    }
-    fn set_player_in_lobby_reconnect(&mut self, connection: &Connection, room_code: RoomCode, lobby_client_id: LobbyClientID){
-
-        let Some(lobby) = self.lobbies.get_mut(&room_code) else {
-            connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomDoesntExist });
-            return;
-        };
-
-        let Some(sender_player_location) = 
-            self.clients
-            .get_mut(connection.get_address())
-            .map(|p|&mut p.location)
-        else{
-            log!(error "Listener"; "{} {}", "Received packet from unconnected player!", connection.get_address());
-            connection.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::ServerBusy });
-            return;
-        };
-
-        if lobby.rejoin_player(&connection.get_sender(), lobby_client_id).is_ok() {
-            *sender_player_location = ListenerClientLocation::InLobby { room_code, lobby_client_id };
-        }
-        
-        connection.send(ToClientPacket::LobbyName { name: lobby.name.clone() })
-    }
-    //returns if player was in the lobby
-    fn set_player_outside_lobby(&mut self, address: &SocketAddr, rejoinable: bool) -> bool {
-        let Some(listener_client) = self.clients.get_mut(address) else {
-            log!(error "Listener"; "{} {}", "Attempted set_player_outside_lobby with address that isn't in the map", address);
-            return false;
-        };
-        listener_client.connection.send(ToClientPacket::ForcedOutsideLobby);
-        let ListenerClientLocation::InLobby { ref mut room_code, ref mut lobby_client_id } = listener_client.location else {return false};
-        if let Some(lobby) = self.lobbies.get_mut(room_code) {
-            if rejoinable {
-                lobby.remove_player_rejoinable(*lobby_client_id);
-            }else{
-                lobby.remove_player(*lobby_client_id)
-            }
-        }
-        listener_client.location = ListenerClientLocation::OutsideLobby;
-        true
+    fn validate_client(&self, addr: &SocketAddr)->Result<ClientReference,ValidateClientError>{
+        let Some(client) = ClientReference::new(addr, self) else {return Err(ValidateClientError::ClientDoesntExist)};
+        if let Err(GetLobbyError::LobbyDoesntExist) = client.get_lobby(self) {return Err(ValidateClientError::InLobbyThatDoesntExist)};
+        Ok(client)
     }
     
-    pub fn create_client(&mut self, connection: &Connection) {
-        let _ = self.delete_client(connection.get_address());
-        self.clients.insert(*connection.get_address(), Client::new(connection.clone()));
-    }
-    pub fn delete_client(&mut self, address: &SocketAddr) -> Result<(), &'static str> {
-        let Some(listener_client) = self.clients.remove(address) else {return Err("Player doesn't exist")};
-
-        //This produces a warning in the logs because sometimes the player is already disconnected
-        //This ToClientPacket is still useful in the *rare* case that the player is still connected when they're being forced to disconnect
-        //A player can be forced to disconnect if a seperate connection is made with the same ip and port address
-        listener_client.send(ToClientPacket::ForcedDisconnect);
-
-
-        let ClientLocation::InLobby { room_code, lobby_client_id } = listener_client.location() else {return Ok(())};
-        let Some(lobby) = self.lobbies.get_mut(&room_code) else {return Ok(())};
-
-        lobby.remove_player_rejoinable(*lobby_client_id);
-
-        Ok(())
-    }
-
-
-    fn valid_client(&self, addr: &SocketAddr)->Result<ClientReference,ValidateClientError>{
-        let Some(client_ref) = ClientReference::new(addr, self) else {return Err(ValidateClientError::ClientDoesntExist)};
-        if let Err(GetLobbyError::LobbyDoesntExist) = client.get_lobby(self) {return Err(ValidateClientError::InLobbyThatDoesntExist)};
-        Ok(client_ref)
-    }
 }
 
-enum ValidateClientError{
+
+pub(super) enum ValidateClientError{
     ClientDoesntExist,
     InLobbyThatDoesntExist
 }

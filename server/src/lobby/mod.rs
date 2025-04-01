@@ -103,6 +103,7 @@ impl Lobby {
                         .iter()
                         .map(|(i,_)|*i)
                         .fold(0u32, u32::max) as LobbyClientID).checked_add(1) else {
+                            send.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomFull });
                             return Err(RejectJoinReason::RoomFull)
                         };
 
@@ -123,6 +124,7 @@ impl Lobby {
                     Self::send_settings(player.1, settings, self.name.clone())
                 }
                 
+                send.send(ToClientPacket::LobbyName { name: self.name.clone() });
                 Ok(lobby_client_id)
             },
             LobbyState::Game{ clients, game} => {
@@ -134,6 +136,7 @@ impl Lobby {
                         .iter()
                         .map(|(i,_)|*i)
                         .fold(0u32, u32::max) as LobbyClientID).checked_add(1) else {
+                            send.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomFull });
                             return Err(RejectJoinReason::RoomFull);
                         };
 
@@ -150,14 +153,17 @@ impl Lobby {
         
                         // send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::GameAlreadyStarted});
                         // Err(RejectJoinReason::GameAlreadyStarted)
+                        send.send(ToClientPacket::LobbyName { name: self.name.clone() });
                         Ok(lobby_client_id)
                     }
                     Err(reason) => {
+                        send.send(ToClientPacket::RejectJoin { reason });
                         Err(reason)
                     }
                 }
             }
             LobbyState::Closed => {
+                send.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomDoesntExist });
                 Err(RejectJoinReason::RoomDoesntExist)
             }
         }
@@ -254,6 +260,7 @@ impl Lobby {
                     Self::send_settings(player, settings, self.name.clone());
                     Self::send_players_lobby(players);
                     
+                    send.send(ToClientPacket::LobbyName { name: self.name.clone() });
                     Ok(())
                 } else {
                     send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
@@ -287,6 +294,7 @@ impl Lobby {
                             .collect()
                     });
 
+                    send.send(ToClientPacket::LobbyName { name: self.name.clone() });
                     Ok(())
                 }else{
                     send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
