@@ -1,9 +1,9 @@
 use serde::Serialize;
 
-use crate::game::{ability_input::{AvailableIntegerSelection, ControllerID, ControllerParametersMap, IntegerSelection}, attack_power::DefensePower, modifiers::{ModifierType, Modifiers}, phase::PhaseType, player::PlayerReference, win_condition::WinCondition, Game};
+use crate::game::{ability_input::{AvailableIntegerSelection, ControllerID, ControllerParametersMap, IntegerSelection}, attack_power::DefensePower, grave::Grave, modifiers::{ModifierType, Modifiers}, phase::PhaseType, player::PlayerReference, win_condition::WinCondition, Game};
 
 
-use super::{Priority, Role, RoleStateImpl};
+use super::{GetClientRoleState, Priority, Role, RoleStateImpl};
 
 
 #[derive(Debug, Clone, Serialize, Default)]
@@ -13,7 +13,8 @@ pub struct Loki {
     next_communication_route_action: LokiCommunicationRouteStatus,
 }
 
-pub type ClientRoleState = Loki;
+#[derive(Debug, Clone, Serialize)]
+pub struct ClientRoleState;
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
@@ -28,7 +29,7 @@ impl Loki {
 }
 
 impl RoleStateImpl for Loki {
-    type ClientRoleState = Loki;
+    type ClientRoleState = ClientRoleState;
 
     fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: super::Priority) {
         if actor_ref.night_blocked(game) { return }
@@ -59,6 +60,12 @@ impl RoleStateImpl for Loki {
         }
     }
 
+    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
+        if phase == PhaseType::Obituary && self.won() {
+            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
+        }
+    }
+
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::builder(game)
             .id(ControllerID::Role { player: actor_ref, role: Role::Loki, id: 0 })
@@ -77,6 +84,12 @@ impl RoleStateImpl for Loki {
 
     fn default_win_condition(self) -> WinCondition {
         WinCondition::RoleStateWon
+    }
+}
+
+impl GetClientRoleState<ClientRoleState> for Loki {
+    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
+        ClientRoleState
     }
 }
 
