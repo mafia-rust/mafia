@@ -26,11 +26,6 @@ export default function HeaderMenu(props: Readonly<{
         (phaseState.type === "night" || phaseState.type === "obituary") ? "background-night" : 
         "background-day";
 
-    const host = useGameState(
-        state => state.host !== null,
-        ["playersHost"]
-    )!;
-
     const spectatorAndHost = useGameState(
         state => state.clientState.type === "spectator" && state.host !== null,
         ["playersHost", "gamePlayers"]
@@ -45,7 +40,7 @@ export default function HeaderMenu(props: Readonly<{
 
 
     return <div className={"header-menu " + backgroundStyle}>
-        {((fastForwardVote !== undefined) || spectatorAndHost) && <FastForwardButton fastForwardVote={fastForwardVote}/>}
+        {((fastForwardVote !== undefined) || spectatorAndHost) && <FastForwardButton spectatorAndHost={spectatorAndHost} fastForwardVote={fastForwardVote}/>}
         <Information />
         {!mobile && <MenuButtons chatMenuNotification={props.chatMenuNotification}/>}
         <Timer />
@@ -229,23 +224,29 @@ export function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>):
     </div>
 }
 
-export function FastForwardButton(props: { fastForwardVote: boolean | undefined }): ReactElement {
+export function FastForwardButton(props: { spectatorAndHost: boolean, fastForwardVote: boolean | undefined }): ReactElement {
     const myIndex = usePlayerState(
         gameState => gameState.myIndex,
         ["yourPlayerIndex"]
     )!;
 
     return <Button 
-        onClick={() => GAME_MANAGER.sendAbilityInput({
-            id: { 
-                type: "fastForwardVote",
-                player: myIndex
-            },
-            selection: {
-                type: "boolean",
-                selection: !props.fastForwardVote
+        onClick={() => {
+            if (props.spectatorAndHost) {
+                GAME_MANAGER.sendHostSkipPhase()
+            } else {
+                GAME_MANAGER.sendAbilityInput({
+                    id: { 
+                        type: "fastForwardVote",
+                        player: myIndex
+                    },
+                    selection: {
+                        type: "boolean",
+                        selection: !props.fastForwardVote
+                    }
+                })}
             }
-        })}
+        }
         className="fast-forward-button"
         highlighted={props.fastForwardVote}
     >
