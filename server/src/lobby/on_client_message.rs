@@ -4,7 +4,7 @@ use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, event::{on_fast_forw
 
 use super::{lobby_client::{LobbyClient, LobbyClientID, LobbyClientType, Ready}, name_validation::{self, sanitize_server_name}, Lobby, LobbyState};
 
-pub const MESSAGE_PER_SECOND_LIMIT: u64 = 1;
+pub const MESSAGE_PER_SECOND_LIMIT: u16 = 1;
 pub const MESSAGE_PER_SECOND_LIMIT_TIME: Duration = Duration::from_secs(10);
 
 impl Lobby {
@@ -48,7 +48,7 @@ impl Lobby {
                         break;
                     }
                 }
-                if last_message_times.len() as u64 >= MESSAGE_PER_SECOND_LIMIT_TIME.as_secs() * MESSAGE_PER_SECOND_LIMIT {
+                if last_message_times.len() as u64 >= MESSAGE_PER_SECOND_LIMIT_TIME.as_secs().saturating_mul(MESSAGE_PER_SECOND_LIMIT.into()) {
                     send.send(ToClientPacket::RateLimitExceeded);
                     return;
                 }
@@ -448,6 +448,44 @@ impl Lobby {
                     }
                     Self::set_player_name(id, name, clients);
                 };
+            }
+            ToServerPacket::SetPlayerHost { player_id } => {
+                if let LobbyState::Game { game, clients } = &mut self.lobby_state {
+                    if let Some(player) = clients.get(&lobby_client_id){
+                        if !player.host {return;}
+                    }
+                    if let Some(player) = clients.get_mut(&player_id) {
+                        player.set_host();
+                    }
+                    Self::send_players_game(game);
+                    Self::resend_host_data_to_all_hosts(game, clients);
+                } else if let LobbyState::Lobby { clients, .. } = &mut self.lobby_state {
+                    if let Some(player) = clients.get(&lobby_client_id) {
+                        if !player.is_host() { return }
+                    }
+                    if let Some(player) = clients.get_mut(&player_id) {
+                        player.set_host();
+                    }
+                    Self::send_players_lobby(clients);
+                }
+            }
+            ToServerPacket::RelinquishHost => {
+                if let LobbyState::Game { game, clients } = &mut self.lobby_state {
+                    if let Some(player) = clients.get_mut(&lobby_client_id){
+                        if !player.host {return;}
+                        player.relinquish_host();
+                    }
+                    Self::ensure_host_game(game, clients, Some(lobby_client_id));
+                    Self::send_players_game(game);
+                    Self::resend_host_data_to_all_hosts(game, clients);
+                } else if let LobbyState::Lobby { clients, .. } = &mut self.lobby_state {
+                    if let Some(player) = clients.get_mut(&lobby_client_id) {
+                        if !player.is_host() { return }
+                        player.relinquish_host();
+                    }
+                    Self::ensure_host_lobby(clients, Some(lobby_client_id));
+                    Self::send_players_lobby(clients);
+                }
             }
             _ => {
                 let LobbyState::Game { game, clients } = &mut self.lobby_state else {

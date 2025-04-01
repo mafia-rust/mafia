@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+use crate::game::ability_input::AvailableBooleanSelection;
 use crate::game::attack_power::AttackPower;
 use crate::game::components::night_visits::NightVisits;
 use crate::game::grave::GraveKiller;
@@ -146,22 +147,20 @@ impl RoleStateImpl for Engineer {
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         match self.trap {
             Trap::Ready => {
-                common_role::controller_parameters_map_player_list_night_typical(
-                    game,
-                    actor_ref,
-                    false,
-                    true,
-                    false,
-                    ControllerID::role(actor_ref, Role::Engineer, 0)
-                )
+                ControllerParametersMap::builder(game)
+                    .id(ControllerID::role(actor_ref, Role::Engineer, 0))
+                    .single_player_selection_typical(actor_ref, false, true)
+                    .night_typical(actor_ref)
+                    .add_grayed_out_condition(false)
+                    .build_map()
             },
             Trap::Set { .. } => {
-                common_role::controller_parameters_map_boolean(
-                    game,
-                    actor_ref,
-                    false,
-                    ControllerID::role(actor_ref, Role::Engineer, 1)
-                )
+                ControllerParametersMap::builder(game)
+                    .id(ControllerID::role(actor_ref, Role::Engineer, 1))
+                    .available_selection(AvailableBooleanSelection)
+                    .night_typical(actor_ref)
+                    .add_grayed_out_condition(false)
+                    .build_map()
             }
             _ => {
                 ControllerParametersMap::default()

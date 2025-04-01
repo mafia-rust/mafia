@@ -2,18 +2,17 @@
 use rand::seq::IndexedRandom;
 use serde::Serialize;
 
+use crate::game::ability_input::AvailablePlayerListSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::components::detained::Detained;
 use crate::game::phase::{PhaseType, PhaseState};
 use crate::game::player::PlayerReference;
 
 use crate::game::verdict::Verdict;
 
 use crate::game::Game;
-use crate::vec_set;
 use super::{
-    AbilitySelection, ControllerID, ControllerParametersMap, GetClientRoleState, PlayerListSelection, Priority, Role, RoleStateImpl
+    ControllerID, ControllerParametersMap, GetClientRoleState, PlayerListSelection, Priority, Role, RoleStateImpl
 };
 
 #[derive(Clone, Debug, Default)]
@@ -69,32 +68,22 @@ impl RoleStateImpl for Jester {
         );
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        let grayed_out = 
-            actor_ref.alive(game) || 
-            Detained::is_detained(game, actor_ref) ||
-            !self.lynched_yesterday;
-
-        // Note: Sam, when you fix this, don't forget to fix Santa Claus in the same manner
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Jester, 0),
-            super::AvailableAbilitySelection::new_player_list(
-                PlayerReference::all_players(game)
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Jester, 0))
+            .available_selection(AvailablePlayerListSelection {
+                available_players: PlayerReference::all_players(game)
                     .filter(|p| *p != actor_ref)
                     .filter(|player| 
                         player.alive(game) &&
                         player.verdict(game) != Verdict::Innocent
                     )
                     .collect(),
-                false,
-                Some(1)
-            ),
-            AbilitySelection::new_player_list(vec![]),
-            grayed_out,
-            Some(PhaseType::Obituary),
-            false,
-            vec_set!(actor_ref),
-        )
+                can_choose_duplicates: false,
+                max_players: Some(1)
+            })
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(!self.lynched_yesterday)
+            .build_map()
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         match game.current_phase() {

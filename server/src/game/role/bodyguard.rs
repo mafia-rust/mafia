@@ -107,14 +107,12 @@ impl RoleStateImpl for Bodyguard {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            self.self_shields_remaining > 0,
-            true,
-            game.day_number() <= 1,
-            ControllerID::role(actor_ref, Role::Bodyguard, 0)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Bodyguard, 0))
+            .single_player_selection_typical(actor_ref, self.self_shields_remaining > 0, true)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(game.day_number() <= 1)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(

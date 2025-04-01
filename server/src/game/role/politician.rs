@@ -1,7 +1,9 @@
 use serde::Serialize;
 
+use crate::game::ability_input::AvailableUnitSelection;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::Grave;
 use crate::game::modifiers::Modifiers;
@@ -12,7 +14,6 @@ use crate::game::player::PlayerReference;
 use crate::game::tag::Tag;
 use crate::game::win_condition::WinCondition;
 use crate::game::Game;
-use crate::vec_set;
 
 use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Role, RoleState, RoleStateImpl};
 
@@ -82,19 +83,18 @@ impl RoleStateImpl for Politician {
         );
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Politician, 0),
-            super::AvailableAbilitySelection::Unit,
-            super::AbilitySelection::new_unit(),
-            actor_ref.ability_deactivated_from_death(game) ||
-            self.revealed || 
-            PhaseType::Night == game.current_phase().phase() ||
-            PhaseType::Briefing == game.current_phase().phase(),
-            None,
-            true,
-            vec_set![actor_ref]
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Politician, 0))
+            .available_selection(AvailableUnitSelection)
+            .add_grayed_out_condition(
+                actor_ref.ability_deactivated_from_death(game) ||
+                self.revealed || 
+                PhaseType::Night == game.current_phase().phase() ||
+                PhaseType::Briefing == game.current_phase().phase()
+            )
+            .dont_save()
+            .allow_players([actor_ref])
+            .build_map()
     }
     fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _new: super::RoleState, _old: super::RoleState) {
         if actor_ref != player {return;}
@@ -143,6 +143,16 @@ impl RoleStateImpl for Politician {
 
     fn default_win_condition(self) -> crate::game::win_condition::WinCondition where RoleState: From<Self> {
         WinCondition::GameConclusionReached{win_if_any: vec![GameConclusion::Politician].into_iter().collect()}
+    }
+    
+    fn on_whisper(self, _game: &mut Game, actor_ref: PlayerReference, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority) {
+        if priority == WhisperPriority::Cancel && (
+            event.sender == actor_ref || 
+            event.receiver == actor_ref
+        ) && self.revealed {
+            fold.cancelled = true;
+            fold.hide_broadcast = true;
+        }
     }
 }
 

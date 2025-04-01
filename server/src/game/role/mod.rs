@@ -13,7 +13,8 @@ use crate::game::attack_power::DefensePower;
 use serde::{Serialize, Deserialize};
 
 use super::{
-    ability_input::*, attack_power::AttackPower, components::{insider_group::InsiderGroupID, night_visits::NightVisits}, grave::GraveReference, visit::VisitTag, win_condition::WinCondition
+    ability_input::*, attack_power::AttackPower, components::{insider_group::InsiderGroupID, night_visits::NightVisits},
+    event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority}, grave::GraveReference, visit::VisitTag, win_condition::WinCondition
 };
 
 pub trait GetClientRoleState<CRS> {
@@ -66,6 +67,7 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference) {}
     fn on_game_start(self, _game: &mut Game, _actor_ref: PlayerReference) {}
     fn before_initial_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
+    fn on_remove_role_label(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _concealed_player: PlayerReference) {}
     fn on_player_roleblocked(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _invisible: bool) {
         if player != actor_ref {return}
 
@@ -83,6 +85,8 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn redirect_attack(self, _: &mut Game, actor_ref: PlayerReference, attack: AttackPower, _: bool)  -> Option<(PlayerReference, AttackPower)> {
         Some((actor_ref, attack))
     }
+
+    fn on_whisper(self, _game: &mut Game, _actor_ref: PlayerReference, _event: &OnWhisper, _fold: &mut WhisperFold, _priority: WhisperPriority) {}
 }
 
 // Creates the Role enum
@@ -334,6 +338,11 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.on_phase_start(game, actor_ref, phase)),*
                     }
                 }
+                pub fn on_remove_role_label(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, concealed_player: PlayerReference){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_remove_role_label(game, actor_ref, player, concealed_player)),*
+                    }
+                }
                 pub fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
                     match self {
                         $(Self::$name(role_struct) => role_struct.on_role_creation(game, actor_ref)),*
@@ -378,6 +387,11 @@ mod macros {
                 pub fn get_client_role_state(self, game: &Game, actor_ref: PlayerReference) -> ClientRoleStateEnum {
                     match self {
                         $(Self::$name(role_struct) => ClientRoleStateEnum::$name(role_struct.get_client_role_state(game, actor_ref))),*
+                    }
+                }
+                pub fn on_whisper(self, game: &mut Game, actor_ref: PlayerReference, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_whisper(game, actor_ref, event, fold, priority)),*
                     }
                 }
             }

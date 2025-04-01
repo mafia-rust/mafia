@@ -10,11 +10,16 @@ pub type SpectatorIndex = u8;
 ///
 /// This does not guarantee that the spectator exists
 pub struct SpectatorPointer {
-    pub index: SpectatorIndex,
+    index: SpectatorIndex,
 }
 impl SpectatorPointer {
     pub fn new(index: SpectatorIndex) -> Self {
         SpectatorPointer { index }
+    }
+
+    #[must_use]
+    pub fn index(&self) -> SpectatorIndex {
+        self.index
     }
 
     pub fn deref_mut<'a>(&self, game: &'a mut Game)->Option<&'a mut Spectator>{
@@ -26,6 +31,11 @@ impl SpectatorPointer {
 
     pub fn host(&self, game: &Game)->bool {
         self.deref(game).map(|s|s.host).unwrap_or(false)
+    }
+    pub fn set_host(&self, game: &mut Game, host: bool) {
+        if let Some(spectator) = self.deref_mut(game) {
+            spectator.host = host;
+        }
     }
     pub fn connection(&self, game: &Game) -> ClientConnection {
         self.deref(game).map(|s|s.connection.clone()).unwrap_or(ClientConnection::Disconnected)
@@ -90,9 +100,8 @@ impl SpectatorPointer {
         if !game.ticking {
             self.send_packet(game, ToClientPacket::GameOver { reason: GameOverReason::Draw })
         }
-        
-        let votes_packet = ToClientPacket::new_player_votes(game);
-        self.send_packet(game, votes_packet);
+
+        self.send_packet(game, ToClientPacket::PlayerVotes{votes_for_player: game.create_voted_player_map()});
         for grave in game.graves.iter(){
             self.send_packet(game, ToClientPacket::AddGrave { grave: grave.clone() });
         }
@@ -102,7 +111,7 @@ impl SpectatorPointer {
                 phase: game.current_phase().clone(),
                 day_number: game.phase_machine.day_number 
             },
-            ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.as_secs() }
+            ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.map(|o|o.as_secs().try_into().expect("Phase time should be below 18 hours")) }
         ]);
 
         self.requeue_chat_messages(game);

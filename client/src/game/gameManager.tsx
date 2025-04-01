@@ -256,6 +256,17 @@ export function createGameManager(): GameManager {
                 playerId: playerId
             });
         },
+        sendSetPlayerHostPacket(playerId: number) {
+            this.server.sendPacket({
+                type: "setPlayerHost",
+                playerId: playerId
+            });
+        },
+        sendRelinquishHostPacket() {
+            this.server.sendPacket({
+                type: "relinquishHost",
+            });
+        },
 
         sendSetSpectatorPacket(spectator) {
             this.server.sendPacket({
@@ -478,17 +489,17 @@ export function createGameManager(): GameManager {
         },
 
         tick(timePassedMs) {
-            if (gameManager.state.stateType === "game") {
-                if (!gameManager.state.ticking) return;
+            if (gameManager.state.stateType !== "game") {return}
+            if (!gameManager.state.ticking) return;
+            if(gameManager.state.timeLeftMs === null) {return}
 
-                const newTimeLeft = gameManager.state.timeLeftMs - timePassedMs;
-                if (Math.floor(newTimeLeft / 1000) < Math.floor(gameManager.state.timeLeftMs / 1000)) {
-                    gameManager.invokeStateListeners("tick");
-                }
-                gameManager.state.timeLeftMs = newTimeLeft;
-                if (gameManager.state.timeLeftMs < 0) {
-                    gameManager.state.timeLeftMs = 0;
-                }
+            const newTimeLeft = gameManager.state.timeLeftMs - timePassedMs;
+            if (Math.floor(newTimeLeft / 1000) < Math.floor(gameManager.state.timeLeftMs / 1000)) {
+                gameManager.invokeStateListeners("tick");
+            }
+            gameManager.state.timeLeftMs = newTimeLeft;
+            if (gameManager.state.timeLeftMs < 0) {
+                gameManager.state.timeLeftMs = 0;
             }
         },
     }

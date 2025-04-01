@@ -103,7 +103,7 @@ export type ToClientPacket = {
     dayNumber: number, 
 } | {
     type: "phaseTimeLeft",
-    secondsLeft: number
+    secondsLeft: number | null
 } |{
     type: "playerAlive", 
     alive: [boolean]
@@ -181,6 +181,11 @@ export type ToServerPacket = {
 } | {
     type: "kick",
     playerId: number
+} | {
+    type: "setPlayerHost",
+    playerId: number
+} | {
+    type: "relinquishHost",
 }
 // Lobby
 | {

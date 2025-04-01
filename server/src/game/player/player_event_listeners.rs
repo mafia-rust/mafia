@@ -1,4 +1,4 @@
-use crate::game::{ability_input::{AbilityInput, ControllerID}, grave::GraveReference, role::RoleState, visit::Visit, Game};
+use crate::game::{ability_input::{AbilityInput, ControllerID}, event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority}, grave::GraveReference, role::RoleState, visit::Visit, Game};
 
 use super::PlayerReference;
 
@@ -35,5 +35,10 @@ impl PlayerReference {
     }
     pub fn on_visit_wardblocked(&self, game: &mut Game, visit: Visit) {
         self.role_state(game).clone().on_visit_wardblocked(game, *self, visit)
+    }
+    pub fn on_whisper(game: &mut Game, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority) {
+        for player in PlayerReference::all_players(game){
+            player.role_state(game).clone().on_whisper(game, player, event, fold, priority);
+        }
     }
 }

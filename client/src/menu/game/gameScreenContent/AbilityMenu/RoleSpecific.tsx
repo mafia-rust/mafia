@@ -8,7 +8,6 @@ import StyledText from "../../../../components/StyledText";
 import translate from "../../../../game/lang";
 import SmallPuppeteerMenu from "./RoleSpecificMenus/SmallPuppeteerMenu";
 import StewardMenu from "./RoleSpecificMenus/StewardMenu";
-import OjoMenu from "./RoleSpecificMenus/OjoMenu";
 import RecruiterMenu from "./RoleSpecificMenus/RecruiterMenu";
 import { RoleState } from "../../../../game/roleState.d";
 import { PhaseState } from "../../../../game/gameState.d";
@@ -151,8 +150,6 @@ function roleSpecificSectionInner(
             >
                 <StyledText>{translate("role.mortician.roleDataText", roleState.cremationsRemaining)}</StyledText>
             </Counter>
-        case "ojo":
-            return <OjoMenu roleState={roleState}/>;
         case "steward":
             return <StewardMenu roleState={roleState}/>;
         case "spiral": 
