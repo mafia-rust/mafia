@@ -77,6 +77,7 @@ pub use mafia_server::game::{
 
         jester::Jester,
         revolutionary::Revolutionary,
+        geist::Geist,
         witch::Witch,
         politician::Politician,
         doomsayer::{Doomsayer, DoomsayerGuess},
@@ -2720,6 +2721,37 @@ fn killed_player_is_not_spiraling() {
 }
 
 #[test]
+fn geist_transporter_and_warper_test() {
+    kit::scenario!(game in Night 2 where
+        geist: Geist,
+        transporter: Transporter,
+        warper: Warper,
+        detective: Detective,
+        townie1: Villager,
+        townie2: Villager,
+        mafioso: Mafioso
+    );
+    detective.send_ability_input_player_list_typical(mafioso);
+    geist.send_ability_input_player_list_typical(townie2);
+    transporter.send_ability_input_two_player_typical(mafioso, townie2);
+    warper.send_ability_input_two_player_typical(townie2, mafioso);
+
+    game.next_phase();
+
+    assert!(townie1.alive());
+    assert!(townie2.alive());
+    assert!(mafioso.alive());
+    assert!(detective.alive());
+    assert!(geist.alive());
+    assert!(transporter.alive());
+    assert!(warper.alive());
+    assert_contains!(
+        detective.get_messages_after_night(1),
+        ChatMessageVariant::SheriffResult { suspicious: false }
+    );
+}
+
+#[test]
 fn santa_cannot_convert_naughty_player() {
     kit::scenario!(game in Night 1 where
         santa: SantaClaus,
@@ -2760,6 +2792,26 @@ fn santa_cannot_convert_naughty_player() {
         naughty.player_ref().win_condition(&game).required_resolution_states_for_win().unwrap(),
         GameConclusion::NiceList
     );
+}
+
+#[test]
+fn geist_win() {
+    kit::scenario!(game in Night 2 where
+        geist: Geist,
+        vig: Vigilante,
+        townie1: Villager,
+        maf: Mafioso
+    );
+    game.skip_to(Night, 3);
+    geist.send_ability_input_player_list_typical(townie1);
+    vig.send_ability_input_player_list_typical(townie1);
+    game.next_phase();
+
+    assert!(geist.get_won_game());
+    assert!(townie1.alive());
+    assert!(!vig.alive());
+    assert!(maf.alive());
+
 }
 
 #[test]

@@ -151,6 +151,7 @@ macros::roles! {
     // Neutral
     Jester : jester,
     Revolutionary : revolutionary,
+    Geist : geist,
     Politician : politician,
     Doomsayer : doomsayer,
     Wildcard : wild_card,
@@ -188,6 +189,7 @@ macros::priorities! {
 
     Transporter,
     Warper,
+    Geist,
 
     Possess,
     Roleblock,
@@ -420,7 +422,7 @@ impl Role{
             | Role::Veteran | Role::Coxswain
             | Role::Transporter | Role::Retributionist
             | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper
-            | Role::MafiaWitch | Role::Necromancer 
+            | Role::MafiaWitch | Role::Necromancer | Role::Geist
         )
     }
     pub fn has_innocent_aura(&self, game: &Game)->bool{

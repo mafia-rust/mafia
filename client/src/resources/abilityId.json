@@ -158,6 +158,9 @@
     "role/politician/0": {
         "midnight": false
     },
+    "role/geist/0": {
+      "midnight": true
+    },
     "role/santaClaus/0": {
         "midnight": true
     },
