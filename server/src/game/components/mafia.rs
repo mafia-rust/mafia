@@ -1,7 +1,7 @@
 use rand::seq::IndexedRandom;
 
 use crate::{game::{ 
-    ability_input::{AvailablePlayerListSelection, ControllerID, ControllerParametersMap, PlayerListSelection}, attack_power::AttackPower, chat::{ChatGroup, ChatMessageVariant}, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::{Priority, RoleState}, role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, Game
+    ability_input::{AvailablePlayerListSelection, ControllerID, ControllerParametersMap, PlayerListSelection}, attack_power::AttackPower, chat::{ChatGroup, ChatMessageVariant}, grave::GraveKiller, modifiers::{ModifierType, Modifiers}, phase::PhaseType, player::PlayerReference, role::{Priority, RoleState}, role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, Game
 }, vec_set::{vec_set, VecSet}};
 
 use super::{detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits, syndicate_gun_item::SyndicateGunItem};
@@ -169,41 +169,55 @@ impl Mafia{
         }
     }
 
-    /// - This must go after rolestate on any death
+    /// - This must go after role state on any death
     /// - Godfathers backup should become godfather if godfather dies as part of the godfathers ability
-    pub fn on_any_death(game: &mut Game, dead_player: PlayerReference){
+    pub fn on_any_death(game: &mut Game, dead_player: PlayerReference) {
         if RoleSet::MafiaKilling.get_roles().contains(&dead_player.role(game)) {
-            Mafia::give_mafia_killing_role(game, dead_player.role_state(game).clone());
+            Mafia::on_mafia_killing_death(game, dead_player.role_state(game).clone());
         }
     }
     pub fn on_role_switch(game: &mut Game, old: RoleState, _new: RoleState) {
         if RoleSet::MafiaKilling.get_roles().contains(&old.role()) {
-            Mafia::give_mafia_killing_role(game, old);
+            Mafia::on_mafia_killing_death(game, old);
         }
     }
 
 
-    pub fn give_mafia_killing_role(
-        game: &mut Game,
-        role: RoleState
-    ){
+    pub fn on_mafia_killing_death(game: &mut Game, role: RoleState){
         let living_players_to_convert = PlayerReference::all_players(game)
             .filter(|p|
                 p.alive(game) &&
                 InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p)
             )
             .collect::<Vec<_>>();
+        if living_players_to_convert.is_empty() {return}
 
         //if they already have a mafia killing then return
         if living_players_to_convert.iter().any(|p|
             RoleSet::MafiaKilling.get_roles().contains(&p.role(game))
         ) {return;}
-        
-        //choose random mafia to be mafia killing
-        let random_mafia = living_players_to_convert.choose(&mut rand::rng());
-        
-        if let Some(random_mafia) = random_mafia {
-            random_mafia.set_role_and_win_condition_and_revealed_group(game, role);
+
+
+        let target = 
+            if let Some(PlayerListSelection(backup)) = game.saved_controllers
+                .get_controller_current_selection_player_list(
+                ControllerID::syndicate_choose_backup()
+                ) {
+                    if backup.first().is_some_and(|b|living_players_to_convert.contains(b)) {
+                        backup.first().copied()
+                    } else {
+                        living_players_to_convert.choose(&mut rand::rng()).copied()
+                    }
+            } else {
+                living_players_to_convert.choose(&mut rand::rng()).copied()
+            };
+
+        if let Some(target) = target {
+            if Modifiers::modifier_is_enabled(game, ModifierType::BackupGetsGun) {
+                SyndicateGunItem::give_gun(game, target);
+            } else {
+                target.set_role_and_win_condition_and_revealed_group(game, role);
+            }
         }
     }
 }

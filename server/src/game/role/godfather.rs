@@ -73,13 +73,14 @@ impl Godfather{
         dead_player_ref: PlayerReference,
         new_role_data: impl Into<RoleState>
     ){
+        if actor_ref != dead_player_ref {return}
         let Some(PlayerListSelection(backup)) = game.saved_controllers
             .get_controller_current_selection_player_list(
             ControllerID::syndicate_choose_backup()
         )else {return};
+        
         let Some(backup) = backup.first() else {return};
-        if actor_ref != dead_player_ref {return}
-
+        
         //convert backup to godfather
         backup.set_role(game, new_role_data);
     }
