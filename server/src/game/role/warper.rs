@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::Grave;
 use crate::game::phase::PhaseType;
 use crate::game::win_condition::WinCondition;
@@ -9,7 +10,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{common_role, ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
+use super::{common_role, ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Warper;
@@ -19,8 +20,8 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Warper {
     type ClientRoleState = Warper;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Warper {return;}
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if priority != OnMidnightPriority::Warper {return;}
     
         let transporter_visits = actor_ref.untagged_night_visits_cloned(game).clone();
         let Some(first_visit) = transporter_visits.get(0) else {return};
@@ -55,7 +56,7 @@ impl RoleStateImpl for Warper {
                 )
 
         {
-            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
+            actor_ref.die_and_add_grave(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {

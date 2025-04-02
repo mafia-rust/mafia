@@ -5,6 +5,7 @@ use crate::game::ability_input::AvailablePlayerListSelection;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::insider_group::InsiderGroupID;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::GraveInformation;
 use crate::game::grave::GraveReference;
 use crate::game::player::PlayerReference;
@@ -17,7 +18,7 @@ use crate::vec_set::VecSet;
 use super::ControllerID;
 use super::ControllerParametersMap;
 use super::Role;
-use super::{Priority, RoleState, RoleStateImpl};
+use super::{RoleState, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize)]
@@ -48,9 +49,10 @@ impl RoleStateImpl for Mortician {
             ..Self::default()
         }
     }
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        
         match priority {
-            Priority::Deception=>{
+            OnMidnightPriority::Deception=>{
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else{return};
 
