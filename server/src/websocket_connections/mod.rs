@@ -1,7 +1,7 @@
 use std::sync::{Mutex, Arc, MutexGuard};
 
 pub mod connection;
-pub mod websocket_listener;
+pub mod websocket_server;
 
 pub trait ForceLock {
     type Inner;

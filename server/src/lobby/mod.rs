@@ -6,14 +6,13 @@ mod name_validation;
 
 use std::time::Duration;
 
+use game_client::GameClientLocation;
 use lobby_client::Ready;
 
 use crate::{
     client_connection::ClientConnection, game::{
         player::PlayerReference, role_list::RoleOutline, settings::Settings, spectator::{spectator_pointer::SpectatorPointer, SpectatorInitializeParameters}, Game
-    }, listener::RoomCode, lobby::game_client::GameClientLocation, packet::{
-        HostDataPacketGameClient, RejectJoinReason, ToClientPacket
-    }, vec_map::VecMap, websocket_connections::connection::ClientSender
+    }, packet::{HostDataPacketGameClient, RejectJoinReason, ToClientPacket}, vec_map::VecMap, websocket_connections::connection::ClientSender, websocket_listener::RoomCode
 };
 
 
@@ -112,6 +111,7 @@ impl Lobby {
                         .iter()
                         .map(|(i,_)|*i)
                         .fold(0u32, u32::max) as LobbyClientID).checked_add(1) else {
+                            send.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomFull });
                             return Err(RejectJoinReason::RoomFull)
                         };
 
@@ -129,6 +129,7 @@ impl Lobby {
                     Self::send_settings(player.1, settings, self.name.clone())
                 }
                 
+                send.send(ToClientPacket::LobbyName { name: self.name.clone() });
                 Ok(lobby_client_id)
             },
             LobbyState::Game{ clients, game} => {
@@ -140,6 +141,7 @@ impl Lobby {
                         .iter()
                         .map(|(i,_)|*i)
                         .fold(0u32, u32::max) as LobbyClientID).checked_add(1) else {
+                            send.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomFull });
                             return Err(RejectJoinReason::RoomFull);
                         };
 
@@ -159,9 +161,11 @@ impl Lobby {
 
                 Self::resend_host_data_to_all_hosts(game, clients);
 
+                send.send(ToClientPacket::LobbyName { name: self.name.clone() });
                 Ok(lobby_client_id)
             }
             LobbyState::Closed => {
+                send.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomDoesntExist });
                 Err(RejectJoinReason::RoomDoesntExist)
             }
         }
@@ -215,9 +219,6 @@ impl Lobby {
         }
     }
     pub fn remove_player_rejoinable(&mut self, id: LobbyClientID) {
-
-        
-
         match &mut self.lobby_state {
             LobbyState::Lobby {clients, settings: _settings} => {
                 let Some(client) = clients.get_mut(&id) else {return};
@@ -268,6 +269,7 @@ impl Lobby {
                     Self::send_settings(player, settings, self.name.clone());
                     Self::send_players_lobby(players);
                     
+                    send.send(ToClientPacket::LobbyName { name: self.name.clone() });
                     Ok(())
                 } else {
                     send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
@@ -302,7 +304,8 @@ impl Lobby {
                     });
 
                     Self::resend_host_data_to_all_hosts(game, players);
-
+                    
+                    send.send(ToClientPacket::LobbyName { name: self.name.clone() });
                     Ok(())
                 }else{
                     send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
