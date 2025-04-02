@@ -1,7 +1,7 @@
 use rand::seq::IndexedRandom;
 
 use crate::{game::{ 
-    ability_input::{AvailablePlayerListSelection, ControllerID, ControllerParametersMap, PlayerListSelection}, attack_power::AttackPower, chat::{ChatGroup, ChatMessageVariant}, event::on_midnight::{OnMidnight, OnMidnightPriority}, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::RoleState, role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, Game
+    ability_input::{AvailablePlayerListSelection, ControllerID, ControllerParametersMap, PlayerListSelection}, attack_power::AttackPower, chat::{ChatGroup, ChatMessageVariant}, event::on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority}, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::RoleState, role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, Game
 }, vec_set::{vec_set, VecSet}};
 
 use super::{detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits, syndicate_gun_item::SyndicateGunItem};
@@ -95,7 +95,7 @@ impl Mafia{
     }
     pub fn on_phase_start(_game: &mut Game, _phase: PhaseType){
     }
-    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, midnight_variables: &mut MidnightVariables, priority: OnMidnightPriority){
         if game.day_number() <= 1 {return}
         match priority {
             OnMidnightPriority::TopPriority => {
@@ -109,7 +109,7 @@ impl Mafia{
                 NightVisits::add_visit(game, new_visit);
             }
             OnMidnightPriority::Deception => {
-                if Self::players_with_gun(game).into_iter().any(|p|!p.night_blocked(game) && p.alive(game)) {
+                if Self::players_with_gun(game).into_iter().any(|p|!p.night_blocked(midnight_variables) && p.alive(game)) {
                     NightVisits::retain(game, |v|v.tag != crate::game::visit::VisitTag::SyndicateBackupAttack);
                 }
             }
@@ -118,7 +118,7 @@ impl Mafia{
                 let all_backup_visits: Vec<Visit> = NightVisits::all_visits(game).into_iter().filter(|v|v.tag == crate::game::visit::VisitTag::SyndicateBackupAttack).copied().collect();
                 for backup_visit in all_backup_visits {
                     backup_visit.target.try_night_kill_single_attacker(
-                        backup_visit.visitor, game, GraveKiller::RoleSet(RoleSet::Mafia),
+                        backup_visit.visitor, game, midnight_variables, GraveKiller::RoleSet(RoleSet::Mafia),
                         AttackPower::Basic, false
                     );
                     game.add_message_to_chat_group(ChatGroup::Mafia, 

@@ -4,7 +4,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
 use crate::game::components::night_visits::NightVisits;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
@@ -35,7 +35,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Cop {
     type ClientRoleState = ClientRoleState;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if game.day_number() <= 1 {return}
 
         match priority {
@@ -45,7 +45,7 @@ impl RoleStateImpl for Cop {
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 
-                target_ref.increase_defense_to(game, DefensePower::Protection);
+                target_ref.increase_defense_to(game, midnight_variables, DefensePower::Protection);
                 actor_ref.set_role_state(game, Cop {target_protected_ref: Some(target_ref)});
             }
             OnMidnightPriority::Kill => {
@@ -82,6 +82,7 @@ impl RoleStateImpl for Cop {
                     player_to_attack.try_night_kill_single_attacker(
                         actor_ref,
                         game,
+                        midnight_variables,
                         GraveKiller::Role(Role::Cop),
                         AttackPower::Basic,
                         false
@@ -90,10 +91,10 @@ impl RoleStateImpl for Cop {
             }
             OnMidnightPriority::Investigative => {
                 if let Some(target_protected_ref) = self.target_protected_ref {
-                    if target_protected_ref.night_attacked(game){
+                    if target_protected_ref.night_attacked(midnight_variables){
                         
-                        actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
-                        target_protected_ref.push_night_message(game, ChatMessageVariant::YouWereProtected);
+                        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::TargetWasAttacked);
+                        target_protected_ref.push_night_message(midnight_variables, ChatMessageVariant::YouWereProtected);
                     }
                 }
             }

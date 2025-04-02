@@ -6,7 +6,7 @@ use crate::game::ability_input::AvailableBooleanSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::detained::Detained;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -50,7 +50,7 @@ impl RoleStateImpl for Jailor {
             ..Self::default()
         }
     }
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(mut self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Kill => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
@@ -61,6 +61,7 @@ impl RoleStateImpl for Jailor {
                         target_ref.try_night_kill_single_attacker(
                             actor_ref,
                             game, 
+                            midnight_variables,
                             GraveKiller::Role(Role::Jailor), 
                             AttackPower::ProtectionPiercing, 
                             false

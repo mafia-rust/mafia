@@ -5,7 +5,7 @@ use serde::Serialize;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::night_visits::NightVisits;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
 use crate::game::player::{PlayerIndex, PlayerReference};
 
@@ -35,7 +35,7 @@ const ENRAGED_DENOMINATOR: usize = 3;
 
 impl RoleStateImpl for Werewolf {
     type ClientRoleState = ClientRoleState;
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(mut self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             //priority completely burgered so sammy told me to make my own priority but i didn't want to so i just made it heal
             OnMidnightPriority::Heal => {
@@ -85,6 +85,7 @@ impl RoleStateImpl for Werewolf {
                         other_player.try_night_kill_single_attacker(
                             actor_ref,
                             game,
+                            midnight_variables,
                             GraveKiller::Role(Role::Werewolf),
                             AttackPower::ArmorPiercing,
                             true
@@ -96,6 +97,7 @@ impl RoleStateImpl for Werewolf {
                         target_ref.try_night_kill_single_attacker(
                             actor_ref,
                             game,
+                            midnight_variables,
                             GraveKiller::Role(Role::Werewolf),
                             AttackPower::ArmorPiercing,
                             true
@@ -111,10 +113,10 @@ impl RoleStateImpl for Werewolf {
                     .into_iter()
                     .for_each(|player_ref|{
 
-                    let mut players: Vec<PlayerIndex> = player_ref.tracker_seen_visits(game).into_iter().map(|p|p.target.index()).collect();
+                    let mut players: Vec<PlayerIndex> = player_ref.tracker_seen_visits(game, midnight_variables).into_iter().map(|p|p.target.index()).collect();
                     players.shuffle(&mut rand::rng());
 
-                    actor_ref.push_night_message(game, 
+                    actor_ref.push_night_message(midnight_variables, 
                         ChatMessageVariant::WerewolfTrackingResult{
                             tracked_player: player_ref.index(), 
                             players

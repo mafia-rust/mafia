@@ -1,6 +1,7 @@
 use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
 
+use crate::game::event::on_midnight::MidnightVariables;
 use crate::game::{attack_power::DefensePower, event::on_midnight::OnMidnightPriority};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::insider_group::InsiderGroupID;
@@ -29,17 +30,17 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Spy {
     type ClientRoleState = Spy;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Investigative => {
-                if actor_ref.night_blocked(game) {return;}
+                if actor_ref.night_blocked(midnight_variables) {return;}
                 if actor_ref.ability_deactivated_from_death(game) {return;}
 
                 let mut mafia_visits = vec![];
                 for other_player in PlayerReference::all_players(game){
                     if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, other_player) {continue}
                     mafia_visits.append(
-                        &mut other_player.tracker_seen_visits(game)
+                        &mut other_player.tracker_seen_visits(game, midnight_variables)
                             .iter()
                             .map(|v|v.target.index())
                             .collect()
@@ -47,13 +48,13 @@ impl RoleStateImpl for Spy {
                 }
                 mafia_visits.shuffle(&mut rand::rng());
                 
-                actor_ref.push_night_message(game, ChatMessageVariant::SpyMafiaVisit { players: mafia_visits });               
+                actor_ref.push_night_message(midnight_variables, ChatMessageVariant::SpyMafiaVisit { players: mafia_visits });               
             },
             OnMidnightPriority::SpyBug => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
 
-                for message in visit.target.night_messages(game).clone(){
+                for message in visit.target.night_messages(midnight_variables).clone(){
                     if let Some(message) = match message{
                         ChatMessageVariant::Silenced => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Silenced }),
                         ChatMessageVariant::RoleBlocked => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Roleblocked }),
@@ -63,7 +64,7 @@ impl RoleStateImpl for Spy {
                         ChatMessageVariant::Wardblocked => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Wardblocked }),
                         _ => None
                     }{
-                        actor_ref.push_night_message(game, message);
+                        actor_ref.push_night_message(midnight_variables, message);
                     }
                 };
             }

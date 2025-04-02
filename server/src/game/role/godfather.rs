@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::ControllerParametersMap;
 use crate::game::attack_power::{AttackPower, DefensePower};
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 
@@ -22,8 +22,8 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Godfather {
     type ClientRoleState = Godfather;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
-        Self::night_ability(game, actor_ref, priority);
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        Self::night_ability(game, midnight_variables, actor_ref, priority);
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         ControllerParametersMap::builder(game)
@@ -52,7 +52,7 @@ impl RoleStateImpl for Godfather {
 }
 
 impl Godfather{
-    pub(super) fn night_ability(game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    pub(super) fn night_ability(game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if game.day_number() == 1 {return}
 
         match priority {
@@ -61,7 +61,7 @@ impl Godfather{
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
                 visit.target.clone().try_night_kill_single_attacker(
-                    actor_ref, game, GraveKiller::RoleSet(RoleSet::Mafia),
+                    actor_ref, game, midnight_variables, GraveKiller::RoleSet(RoleSet::Mafia),
                     AttackPower::Basic, false
                 );
             },

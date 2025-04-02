@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::game::{attack_power::AttackPower, grave::GraveKiller, player::PlayerReference, role::Role, tag::Tag, Game};
+use crate::game::{attack_power::AttackPower, event::on_midnight::MidnightVariables, grave::GraveKiller, player::PlayerReference, role::Role, tag::Tag, Game};
 
 impl Game {
     pub fn arsonist_doused(&self)->&ArsonistDoused{
@@ -37,13 +37,13 @@ impl ArsonistDoused {
 
         ArsonistDoused::tag_doused_players_for_arsonists(game);
     }
-    pub fn ignite(game: &mut Game, igniter: PlayerReference) {
+    pub fn ignite(game: &mut Game, midnight_variables: &mut MidnightVariables, igniter: PlayerReference) {
         let arso_doused = game.arsonist_doused();
 
         for player in arso_doused.doused_players.clone() {
             if player.role(game) == Role::Arsonist {continue;}
             if !player.alive(game) {continue;}
-            player.try_night_kill_single_attacker(igniter, game, GraveKiller::Role(Role::Arsonist), AttackPower::ProtectionPiercing, true);
+            player.try_night_kill_single_attacker(igniter, game, midnight_variables, GraveKiller::Role(Role::Arsonist), AttackPower::ProtectionPiercing, true);
         }
     }
     pub fn doused(&self, player: PlayerReference) -> bool {

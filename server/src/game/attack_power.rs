@@ -5,7 +5,7 @@ pub enum AttackPower {
     ArmorPiercing = 2,
     ProtectionPiercing = 3
 }
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, PartialOrd, Ord)]
 pub enum DefensePower {
     None = 0,
     Armor = 1,

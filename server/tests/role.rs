@@ -603,8 +603,8 @@ fn transporter_basic_vigilante_escort() {
     assert!(town1.alive());
     assert!(!town2.alive());
 
-    assert!(town1.was_blocked());
-    assert!(!town2.was_blocked());
+    assert!(town1.receieved_blocked_message());
+    assert!(!town2.receieved_blocked_message());
     
     game.skip_to(Obituary, 4);
     assert!(!vigi.alive());

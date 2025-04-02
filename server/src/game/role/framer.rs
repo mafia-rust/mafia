@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::game::ability_input::AvailablePlayerListSelection;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::role_list::RoleSet;
 use crate::game::tag::Tag;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
@@ -23,7 +23,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Framer {
     type ClientRoleState = Framer;
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(mut self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Deception => {
                 let framer_visits = actor_ref.untagged_night_visits_cloned(game).clone();
@@ -32,16 +32,16 @@ impl RoleStateImpl for Framer {
 
                 self.framed_targets.insert(first_visit.target);
 
-                first_visit.target.set_night_framed(game, true);
+                first_visit.target.set_night_framed(midnight_variables, true);
                 for framed_target in self.framed_targets.iter(){
-                    framed_target.set_night_framed(game, true);
+                    framed_target.set_night_framed(midnight_variables, true);
                 }
                 self.update_framer_tags(game, actor_ref);
                 actor_ref.set_role_state(game, self);
 
                 let Some(second_visit) = framer_visits.get(1) else {return};
             
-                first_visit.target.set_night_appeared_visits(game, Some(vec![
+                first_visit.target.set_night_appeared_visits(midnight_variables, Some(vec![
                     Visit::new_none(first_visit.target, second_visit.target, false)
                 ]));
 
@@ -62,7 +62,7 @@ impl RoleStateImpl for Framer {
             }
             OnMidnightPriority::Investigative => {
                 self.framed_targets.retain(|p|
-                    !p.all_appeared_visitors(game).iter().any(|visitor| {
+                    !p.all_appeared_visitors(game, midnight_variables).iter().any(|visitor| {
                         RoleSet::TownInvestigative.get_roles().contains(&visitor.role(game))
                     })
                 );

@@ -8,7 +8,7 @@ use super::{
     chat::{ChatGroup, ChatMessageVariant},
     event::{
         before_phase_end::BeforePhaseEnd, on_any_death::OnAnyDeath,
-        on_midnight::OnMidnight, on_phase_start::OnPhaseStart, Event
+        on_midnight::{MidnightVariables, OnMidnight}, on_phase_start::OnPhaseStart, Event
     },
     grave::Grave, player::PlayerReference, settings::PhaseTimeSettings, Game
 };
@@ -33,7 +33,10 @@ pub enum PhaseType {
 #[serde(tag = "type")]
 pub enum PhaseState {
     Briefing,
-    Obituary,
+    Obituary { 
+        #[serde(skip)]
+        last_night: MidnightVariables
+    },
     Discussion,
     #[serde(rename_all = "camelCase")]
     Nomination { trials_left: u8, nomination_time_remaining: Option<Duration> },
@@ -110,7 +113,7 @@ impl PhaseState {
     pub const fn phase(&self) -> PhaseType {
         match self {
             PhaseState::Briefing => PhaseType::Briefing,
-            PhaseState::Obituary => PhaseType::Obituary,
+            PhaseState::Obituary {..} => PhaseType::Obituary,
             PhaseState::Discussion => PhaseType::Discussion,
             PhaseState::Nomination {..} => PhaseType::Nomination,
             PhaseState::Testimony {..} => PhaseType::Testimony,
@@ -138,18 +141,17 @@ impl PhaseState {
         );
         
         match game.current_phase().clone() {
-            PhaseState::Obituary => {
-
+            PhaseState::Obituary { last_night } => {
                 for player in PlayerReference::all_players(game){
-                    let Some(role_state) = player.night_convert_role_to(game).clone() else {continue};
+                    let Some(role_state) = player.night_convert_role_to(&last_night).clone() else {continue};
                     player.set_role(game, role_state);
                 }
 
                 let mut events = Vec::<OnAnyDeath>::new();
 
                 for player_ref in PlayerReference::all_players(game) {
-                    if player_ref.night_died(game) {
-                        let new_grave = Grave::from_player_night(game, player_ref);
+                    if player_ref.night_died(&last_night) {
+                        let new_grave = Grave::from_player_night(game, &last_night, player_ref);
                         if let Some(event) = player_ref.die_return_event(game, new_grave){
                             events.push(event);
                         }
@@ -197,7 +199,7 @@ impl PhaseState {
             PhaseState::Briefing => {
                 Self::Dusk
             },
-            PhaseState::Obituary => {
+            PhaseState::Obituary { .. }=> {
                 Self::Discussion
             },
             PhaseState::Discussion => {
@@ -278,22 +280,7 @@ impl PhaseState {
                 Self::Night
             },
             PhaseState::Night => {
-                for player_ref in PlayerReference::all_players(game){
-                    player_ref.set_night_grave_will(game, player_ref.will(game).clone());
-                }
-
-                for player_ref in PlayerReference::all_players(game){
-                    let visits = player_ref.convert_selection_to_visits(game);
-                    player_ref.set_night_visits(game, visits.clone());
-                }
-
-                OnMidnight::new().invoke(game);
-
-                for player_ref in PlayerReference::all_players(game){
-                    player_ref.push_night_messages_to_player(game);
-                }
-
-                Self::Obituary
+                Self::Obituary { last_night: OnMidnight::new().invoke(game) }
             },
             PhaseState::Recess => Self::Recess
         };

@@ -36,6 +36,7 @@ use components::poison::Poison;
 use components::detained::Detained;
 use components::insider_group::InsiderGroupID;
 use components::insider_group::InsiderGroups;
+use components::silenced::Silenced;
 use components::syndicate_gun_item::SyndicateGunItem;
 use components::synopsis::SynopsisTracker;
 use components::verdicts_today::VerdictsToday;
@@ -112,6 +113,7 @@ pub struct Game {
     pub cult: Cult,
     pub mafia: Mafia,
     pub arsonist_doused: ArsonistDoused,
+    pub silenced: Silenced,
     pub puppeteer_marionette: PuppeteerMarionette,
     pub mafia_recruits: MafiaRecruits,
     pub love_linked: LoveLinked,
@@ -231,6 +233,7 @@ impl Game {
                 cult: Cult::default(),
                 mafia: Mafia,
                 arsonist_doused: ArsonistDoused::default(),
+                silenced: Silenced::default(),
                 puppeteer_marionette: PuppeteerMarionette::default(),
                 mafia_recruits: MafiaRecruits::default(),
                 love_linked: LoveLinked::default(),
@@ -590,12 +593,7 @@ pub mod test {
     use super::{
         ability_input::saved_controllers_map::SavedControllersMap,
         components::{
-            arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID,
-            love_linked::LoveLinked, mafia::Mafia,
-            mafia_recruits::MafiaRecruits, night_visits::NightVisits,
-            pitchfork::Pitchfork, poison::Poison,
-            puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem,
-            synopsis::SynopsisTracker, verdicts_today::VerdictsToday
+            arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, silenced::Silenced, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, verdicts_today::VerdictsToday
         }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine, player::{test::mock_player, PlayerReference},
@@ -652,6 +650,7 @@ pub mod test {
             cult: Cult::default(),
             mafia: Mafia,
             arsonist_doused: ArsonistDoused::default(),
+            silenced: Silenced::default(),
             puppeteer_marionette: PuppeteerMarionette::default(),
             mafia_recruits: MafiaRecruits::default(),
             love_linked: LoveLinked::default(),

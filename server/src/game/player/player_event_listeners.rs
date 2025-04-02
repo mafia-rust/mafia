@@ -1,12 +1,29 @@
-use crate::game::{ability_input::{AbilityInput, ControllerID}, event::{on_midnight::{OnMidnight, OnMidnightPriority}, on_whisper::{OnWhisper, WhisperFold, WhisperPriority}}, grave::GraveReference, role::RoleState, visit::Visit, Game};
+use crate::game::{ability_input::{AbilityInput, ControllerID}, event::{on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority}, on_whisper::{OnWhisper, WhisperFold, WhisperPriority}}, grave::GraveReference, role::RoleState, visit::Visit, Game};
 
 use super::PlayerReference;
 
 impl PlayerReference {
 
-    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, midnight_variables: &mut MidnightVariables, priority: OnMidnightPriority){
+        if priority == OnMidnightPriority::InitializeNight {
+            for player_ref in PlayerReference::all_players(game){
+                player_ref.set_night_grave_will(midnight_variables, player_ref.will(game).clone());
+            }
+
+            for player_ref in PlayerReference::all_players(game){
+                let visits = player_ref.convert_selection_to_visits(game);
+                player_ref.set_night_visits(game, visits.clone());
+            }
+        }
+
         for player_ref in PlayerReference::all_players(game){
-            player_ref.on_midnight_one_player(game, priority);
+            player_ref.on_midnight_one_player(game, midnight_variables, priority);
+        }
+
+        if priority == OnMidnightPriority::FinalizeNight {
+            for player_ref in PlayerReference::all_players(game){
+                player_ref.push_night_messages_to_player(game, midnight_variables);
+            }
         }
     }
 

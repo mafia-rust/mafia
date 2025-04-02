@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::game::{chat::ChatMessageVariant, grave::Grave, player::PlayerReference, tag::Tag, Game};
+use crate::game::{chat::ChatMessageVariant, event::on_midnight::MidnightVariables, grave::Grave, player::PlayerReference, tag::Tag, Game};
 
 #[derive(Default, Clone)]
 pub struct LoveLinked {
@@ -15,14 +15,14 @@ impl Game {
     }
 }
 impl LoveLinked {
-    pub fn add_love_link(game: &mut Game, player1: PlayerReference, player2: PlayerReference) {
+    pub fn add_love_link_night(game: &mut Game, midnight_variables: &mut MidnightVariables, player1: PlayerReference, player2: PlayerReference) {
 
         let mut love_linked = game.love_linked().clone();
 
         if 
             !love_linked.is_love_linked(player1, player2) &&
-            !player1.night_died(game) &&
-            !player2.night_died(game)
+            !player1.night_died(midnight_variables) &&
+            !player2.night_died(midnight_variables)
         {
             love_linked.love_linked_players.insert((player1, player2));
             game.set_love_linked(love_linked);
@@ -30,10 +30,24 @@ impl LoveLinked {
             player1.push_player_tag(game, player2, Tag::LoveLinked);
             player2.push_player_tag(game, player1, Tag::LoveLinked);
 
-            if game.current_phase().is_night() {
-                player1.push_night_message(game, ChatMessageVariant::YouAreLoveLinked { player: player2.index() });
-                player2.push_night_message(game, ChatMessageVariant::YouAreLoveLinked { player: player1.index() });
-            }
+            player1.push_night_message(midnight_variables, ChatMessageVariant::YouAreLoveLinked { player: player2.index() });
+            player2.push_night_message(midnight_variables, ChatMessageVariant::YouAreLoveLinked { player: player1.index() });
+        }
+    }
+
+    pub fn add_love_link_day(game: &mut Game, player1: PlayerReference, player2: PlayerReference) {
+        let mut love_linked = game.love_linked().clone();
+
+        if 
+            !love_linked.is_love_linked(player1, player2) && 
+            player1.alive(game) && 
+            player2.alive(game) 
+        {
+            love_linked.love_linked_players.insert((player1, player2));
+            game.set_love_linked(love_linked);
+
+            player1.push_player_tag(game, player2, Tag::LoveLinked);
+            player2.push_player_tag(game, player1, Tag::LoveLinked);
         }
     }
 

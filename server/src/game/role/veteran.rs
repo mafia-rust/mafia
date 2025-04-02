@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::{AvailableBooleanSelection, ControllerParametersMap};
 use crate::game::attack_power::AttackPower;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -44,7 +44,7 @@ impl RoleStateImpl for Veteran {
             ..Self::default()
         }
     }
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::TopPriority => {
                 let can_alert = self.alerts_remaining > 0 && game.day_number() > 1;
@@ -62,7 +62,7 @@ impl RoleStateImpl for Veteran {
             }
             OnMidnightPriority::Heal=>{
                 if !self.alerting_tonight {return}
-                actor_ref.increase_defense_to(game, DefensePower::Protection);
+                actor_ref.increase_defense_to(game, midnight_variables, DefensePower::Protection);
             }
             OnMidnightPriority::Kill => {
                 if !self.alerting_tonight {return}
@@ -73,7 +73,7 @@ impl RoleStateImpl for Veteran {
                         *other_player_ref != actor_ref
                     ).collect::<Vec<PlayerReference>>()
                 {
-                    other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Veteran), AttackPower::ArmorPiercing, false);
+                    other_player_ref.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Role(Role::Veteran), AttackPower::ArmorPiercing, false);
                 }
             }
             _=>{}

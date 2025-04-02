@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::game::ability_input::ControllerParametersMap;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::components::poison::{Poison, PoisonAlert};
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 
@@ -28,7 +28,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Spiral {
     type ClientRoleState = ClientRoleState;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         let mut new_spiraling = VecSet::new();
 
         if priority != OnMidnightPriority::Poison { return };
@@ -40,17 +40,18 @@ impl RoleStateImpl for Spiral {
                 target_ref.try_night_kill_single_attacker(
                     actor_ref,
                     game,
+                    midnight_variables,
                     GraveKiller::Role(Role::Spiral),
                     AttackPower::ArmorPiercing,
                     true
                 );
-                Spiral::spiral_visitors(game, &mut new_spiraling, actor_ref, target_ref);
+                Spiral::spiral_visitors(game, midnight_variables, &mut new_spiraling, actor_ref, target_ref);
             }
         } else {
             for spiraling_player in self.spiraling.clone() {
                 Spiral::remove_player_spiraling(game, &mut new_spiraling, actor_ref, spiraling_player);
 
-                Spiral::spiral_visitors(game, &mut new_spiraling, actor_ref, spiraling_player);
+                Spiral::spiral_visitors(game, midnight_variables, &mut new_spiraling, actor_ref, spiraling_player);
             }
         }
 
@@ -80,12 +81,12 @@ impl RoleStateImpl for Spiral {
 }
 
 impl Spiral {
-    fn start_player_spiraling(game: &mut Game, new_spiraling: &mut VecSet<PlayerReference>, actor_ref: PlayerReference, target_ref: PlayerReference) {
+    fn start_player_spiraling(game: &mut Game, midnight_variables: &mut MidnightVariables, new_spiraling: &mut VecSet<PlayerReference>, actor_ref: PlayerReference, target_ref: PlayerReference) {
         let attackers = vec![actor_ref].into_iter().collect();
         if target_ref == actor_ref {
             return;
         }
-        Poison::poison_player(game, target_ref, 
+        Poison::poison_player(game, midnight_variables, target_ref, 
             AttackPower::ArmorPiercing, 
             GraveKiller::Role(Role::Spiral), 
             attackers, 
@@ -102,14 +103,14 @@ impl Spiral {
         actor_ref.remove_player_tag(game, target_ref, Tag::Spiraling);
     }
 
-    fn spiral_visitors(game: &mut Game, new_spiraling: &mut VecSet<PlayerReference>, actor_ref: PlayerReference, target: PlayerReference) {
+    fn spiral_visitors(game: &mut Game, midnight_variables: &mut MidnightVariables, new_spiraling: &mut VecSet<PlayerReference>, actor_ref: PlayerReference, target: PlayerReference) {
         for visitor_to_spiraling in target.all_night_visitors_cloned(game)
             .into_iter().filter(|other_player_ref|
                 other_player_ref.alive(game) &&
                 *other_player_ref != target // Let doctor self-heal
             ).collect::<Vec<PlayerReference>>()
         {
-            Spiral::start_player_spiraling(game, new_spiraling, actor_ref, visitor_to_spiraling);
+            Spiral::start_player_spiraling(game, midnight_variables, new_spiraling, actor_ref, visitor_to_spiraling);
         }
     }
 }
