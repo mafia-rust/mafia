@@ -214,21 +214,17 @@ impl PlayerReference{
         }
     }
 
-    /// ### Pre condition:
-    /// self.alive(game) == false
-    pub fn die(&self, game: &mut Game, grave: Grave){
-        if let Some(event) = self.die_return_event(game, grave){
-            event.invoke(game);
-        }
+    pub fn die_and_add_grave(&self, game: &mut Game, grave: Grave){
+        if !self.alive(game) { return }
+        game.add_grave(grave);
+        self.die(game);
     }
-    /// if the player is already dead, this does nothing and returns none
-    pub fn die_return_event(&self, game: &mut Game, grave: Grave)->Option<OnAnyDeath>{
-        if !self.alive(game) { return None }
+    /// if the player is already dead, this does nothing
+    pub fn die(&self, game: &mut Game){
+        if !self.alive(game) { return }
         self.set_alive(game, false);
         self.add_private_chat_message(game, ChatMessageVariant::YouDied);
-        game.add_grave(grave.clone());
-
-        Some(OnAnyDeath::new(*self))
+        OnAnyDeath::new(*self).invoke(game)
     }
     pub fn initial_role_creation(&self, game: &mut Game){
         let new_role_data = self.role(game).new_state(game);

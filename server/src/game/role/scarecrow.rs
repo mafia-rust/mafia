@@ -75,7 +75,7 @@ impl RoleStateImpl for Scarecrow {
                 )
 
         {
-            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
+            actor_ref.die_and_add_grave(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
     fn on_visit_wardblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _visit: Visit) {}
