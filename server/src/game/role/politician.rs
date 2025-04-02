@@ -175,7 +175,7 @@ impl Politician {
                 )
 
         {
-            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
+            actor_ref.die_and_add_grave(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
 
@@ -217,7 +217,7 @@ impl Politician {
     fn kill_all(game: &mut Game){
         for player in PlayerReference::all_players(game){
             if player.alive(game) && !player.win_condition(game).is_loyalist_for(GameConclusion::Politician) {
-                player.die(game, Grave::from_player_leave_town(game, player));
+                player.die_and_add_grave(game, Grave::from_player_leave_town(game, player));
             }
         }
     }

@@ -7,8 +7,8 @@ use crate::{game::modifiers::{ModifierType, Modifiers}, packet::ToClientPacket};
 use super::{
     chat::{ChatGroup, ChatMessageVariant},
     event::{
-        before_phase_end::BeforePhaseEnd, on_any_death::OnAnyDeath,
-        on_midnight::{MidnightVariables, OnMidnight}, on_phase_start::OnPhaseStart, Event
+        before_phase_end::BeforePhaseEnd,
+        on_midnight::{OnMidnight, MidnightVariables}, on_phase_start::OnPhaseStart, Event
     },
     grave::Grave, player::PlayerReference, settings::PhaseTimeSettings, Game
 };
@@ -147,18 +147,16 @@ impl PhaseState {
                     player.set_role(game, role_state);
                 }
 
-                let mut events = Vec::<OnAnyDeath>::new();
-
                 for player_ref in PlayerReference::all_players(game) {
                     if player_ref.night_died(&last_night) {
-                        let new_grave = Grave::from_player_night(game, &last_night, player_ref);
-                        if let Some(event) = player_ref.die_return_event(game, new_grave){
-                            events.push(event);
-                        }
+                        game.add_grave(Grave::from_player_night(game, &last_night, player_ref));
                     }
                 }
-
-                events.into_iter().for_each(|f| f.invoke(game));
+                for player_ref in PlayerReference::all_players(game) {
+                    if player_ref.night_died(&last_night) {
+                        player_ref.die(game);
+                    }
+                }
 
                 game.phase_machine.day_number = game.phase_machine.day_number.saturating_add(1);
             },
@@ -272,7 +270,7 @@ impl PhaseState {
                 }
             },
             PhaseState::FinalWords { player_on_trial } => {
-                player_on_trial.die(game, Grave::from_player_lynch(game, player_on_trial));
+                player_on_trial.die_and_add_grave(game, Grave::from_player_lynch(game, player_on_trial));
 
                 Self::Dusk
             },

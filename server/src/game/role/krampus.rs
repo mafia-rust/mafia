@@ -149,7 +149,7 @@ impl Krampus {
                 .filter(|player| player.alive(game))
                 .collect::<Vec<PlayerReference>>()
             {
-                player.die(game, Grave::from_player_suicide(game, player));
+                player.die_and_add_grave(game, Grave::from_player_suicide(game, player));
             }
         }
     }

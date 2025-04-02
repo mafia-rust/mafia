@@ -73,7 +73,7 @@ impl LoveLinked {
                     crate::game::chat::ChatGroup::All,
                     ChatMessageVariant::PlayerDiedOfABrokenHeart{player: p.index(), lover: player.index()}
                 );
-                p.die(game, Grave::from_broken_heart(game, *p));
+                p.die_and_add_grave(game, Grave::from_broken_heart(game, *p));
             }
         });
     }

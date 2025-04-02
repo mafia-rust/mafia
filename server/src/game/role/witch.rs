@@ -74,7 +74,7 @@ impl RoleStateImpl for Witch {
                 )
 
         {
-            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
+            actor_ref.die_and_add_grave(game, Grave::from_player_leave_town(game, actor_ref));
         }
         if phase == PhaseType::Night {
             actor_ref.set_role_state(game, Witch { currently_used_player: None });
