@@ -25,7 +25,7 @@ use crate::{
     game::{
         ability_input::*,
         chat::{ChatGroup, ChatMessage},
-        components::insider_group::InsiderGroupID,
+        components::{insider_group::InsiderGroupID, tags::Tag},
         grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType},
         player::{PlayerIndex, PlayerReference}, 
         role::{
@@ -33,7 +33,7 @@ use crate::{
             ClientRoleStateEnum, Role
         },
         role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings,
-        tag::Tag, verdict::Verdict, Game, GameOverReason, RejectStartReason
+        verdict::Verdict, Game, GameOverReason, RejectStartReason
     }, listener::RoomCode, lobby::lobby_client::{LobbyClient, LobbyClientID}, log, vec_map::VecMap, vec_set::VecSet
 };
 
@@ -124,7 +124,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourRoleLabels{role_labels: VecMap<PlayerIndex, Role>},
     #[serde(rename_all = "camelCase")]
-    YourPlayerTags{player_tags: VecMap<PlayerIndex, Vec1<Tag>>},
+    YourPlayerTags{player_tags: VecMap<PlayerReference, Vec1<Tag>>},
     YourWill{will: String},
     YourNotes{notes: Vec<String>},
     #[serde(rename_all = "camelCase")]

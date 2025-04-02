@@ -12,7 +12,6 @@ pub mod settings;
 pub mod game_conclusion;
 pub mod components;
 pub mod on_client_message;
-pub mod tag;
 pub mod event;
 pub mod spectator;
 pub mod game_listeners;
@@ -38,6 +37,7 @@ use components::insider_group::InsiderGroupID;
 use components::insider_group::InsiderGroups;
 use components::syndicate_gun_item::SyndicateGunItem;
 use components::synopsis::SynopsisTracker;
+use components::tags::Tags;
 use components::verdicts_today::VerdictsToday;
 use event::on_tick::OnTick;
 use modifiers::ModifierType;
@@ -123,7 +123,8 @@ pub struct Game {
     pub detained: Detained,
     pub confused: Confused,
     pub drunk_aura: DrunkAura,
-    pub synopsis_tracker: SynopsisTracker
+    pub synopsis_tracker: SynopsisTracker,
+    pub tags: Tags
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -241,7 +242,8 @@ impl Game {
                 detained: Detained::default(),
                 confused: Confused::default(),
                 drunk_aura: DrunkAura::default(),
-                synopsis_tracker: SynopsisTracker::new(num_players)
+                synopsis_tracker: SynopsisTracker::new(num_players),
+                tags: Tags::default()
             };
 
             // Just distribute insider groups, this is for game over checking (Keeps game running syndicate gun)
@@ -594,12 +596,7 @@ pub mod test {
     use super::{
         ability_input::saved_controllers_map::SavedControllersMap,
         components::{
-            arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID,
-            love_linked::LoveLinked, mafia::Mafia,
-            mafia_recruits::MafiaRecruits, night_visits::NightVisits,
-            pitchfork::Pitchfork, poison::Poison,
-            puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem,
-            synopsis::SynopsisTracker, verdicts_today::VerdictsToday
+            arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday
         }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine, player::{test::mock_player, PlayerReference},
@@ -666,7 +663,8 @@ pub mod test {
             detained: Default::default(),
             confused: Default::default(),
             drunk_aura: Default::default(),
-            synopsis_tracker: SynopsisTracker::new(number_of_players)
+            synopsis_tracker: SynopsisTracker::new(number_of_players),
+            tags: Tags::default()
         };
 
         //set wincons and revealed groups

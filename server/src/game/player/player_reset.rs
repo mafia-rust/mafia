@@ -2,7 +2,7 @@
 
 use std::time::Duration;
 
-use crate::{client_connection::ClientConnection, game::{grave::GraveKiller, phase::PhaseType, tag::Tag, verdict::Verdict, Game}};
+use crate::{client_connection::ClientConnection, game::{components::tags::Tag, grave::GraveKiller, phase::PhaseType, verdict::Verdict, Game}};
 use super::PlayerReference;
 
 

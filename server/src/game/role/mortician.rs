@@ -5,12 +5,14 @@ use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::detained::Detained;
 use crate::game::components::insider_group::InsiderGroupID;
+use crate::game::components::tags::TagSetID;
+use crate::game::components::tags::Tags;
 use crate::game::grave::GraveInformation;
 use crate::game::grave::GraveReference;
 use crate::game::phase::PhaseType;
+use crate::game::player;
 use crate::game::player::PlayerReference;
 
-use crate::game::tag::Tag;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
@@ -26,13 +28,11 @@ use super::{Priority, RoleState, RoleStateImpl};
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Mortician {
-    obscured_players: VecSet<PlayerReference>,
     cremations_remaining: u8,
 }
 impl Default for Mortician {
     fn default() -> Self {
         Self {
-            obscured_players: VecSet::new(),
             cremations_remaining: 3,
         }
     }
@@ -51,21 +51,14 @@ impl RoleStateImpl for Mortician {
             ..Self::default()
         }
     }
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Deception=>{
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else{return};
 
-                let target_ref = visit.target;
-                
-                if !self.obscured_players.contains(&target_ref){
-                    self.obscured_players.insert(target_ref);
-                    actor_ref.set_role_state(game, RoleState::Mortician(self));
-
-                    for player in InsiderGroupID::all_players_in_same_revealed_group_with_actor(game, actor_ref){
-                        player.push_player_tag(game, target_ref, Tag::MorticianTagged);
-                    }
+                if !Tags::has_tag(game, TagSetID::MorticianTag(actor_ref), visit.target){
+                    Tags::add_tag(game, TagSetID::MorticianTag(actor_ref), visit.target);
                 }
             },
             _ => {}
@@ -84,7 +77,7 @@ impl RoleStateImpl for Mortician {
                     .filter(|p| *p != actor_ref)
                     .filter(|player| 
                         player.alive(game) &&
-                        !self.obscured_players.contains(player)
+                        !Tags::has_tag(game, TagSetID::MorticianTag(actor_ref), player)
                     )
                     .collect(),
                 false,
@@ -105,11 +98,6 @@ impl RoleStateImpl for Mortician {
             false
         )
     }
-    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _old: RoleState, new: RoleState){
-        if player == actor_ref && new.role() != Role::Mortician {
-            actor_ref.remove_player_tag_on_all(game, Tag::MorticianTagged);
-        }
-    }
     fn on_grave_added(mut self, game: &mut Game, actor_ref: PlayerReference, grave_ref: GraveReference){
         if
             !actor_ref.ability_deactivated_from_death(game) &&
@@ -128,9 +116,17 @@ impl RoleStateImpl for Mortician {
             actor_ref.set_role_state(game, self);
         }
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+    fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
+    }
+    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
+        Tags::add_viewer(game, TagSetID::MorticianTag(actor_ref), actor_ref);
+    }
+    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _old: RoleState, _new: RoleState){
+        if actor_ref==player {
+            Tags::remove_viewer(game, TagSetID::MorticianTag(actor_ref), actor_ref);
+        }
     }
 }

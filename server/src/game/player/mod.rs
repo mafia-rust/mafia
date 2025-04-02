@@ -7,10 +7,8 @@ mod player_event_listeners;
 
 pub use player_reference::PlayerIndex;
 pub use player_reference::PlayerReference;
-use vec1::Vec1;
 
 use crate::client_connection::ClientConnection;
-use crate::vec_map::VecMap;
 use crate::vec_set::VecSet;
 use crate::{
     game::{
@@ -25,7 +23,6 @@ use crate::{
 
 use super::attack_power::DefensePower;
 use super::chat::ChatMessage;
-use super::tag::Tag;
 use super::win_condition::WinCondition;
 
 pub struct PlayerInitializeParameters {
@@ -45,8 +42,6 @@ pub struct Player {
     death_note: Option<String>,
 
     role_labels: VecSet<PlayerReference>,
-    player_tags: VecMap<PlayerReference, Vec1<Tag>>,
-
 
     chat_messages: Vec<ChatMessage>,
     queued_chat_messages: Vec<ChatMessage>, // Not yet sent to the client
@@ -96,7 +91,6 @@ impl Player {
             death_note: None,
 
             role_labels: VecSet::new(),
-            player_tags: VecMap::new(),
 
             win_condition,
 
@@ -135,7 +129,7 @@ impl Player {
 pub mod test {
     use std::time::Duration;
 
-    use crate::{client_connection::ClientConnection, game::{role::Role, verdict::Verdict}, vec_map::VecMap, vec_set::VecSet};
+    use crate::{client_connection::ClientConnection, game::{role::Role, verdict::Verdict}, vec_set::VecSet};
 
     use super::{Player, PlayerVotingVariables, PlayerNightVariables};
 
@@ -153,7 +147,6 @@ pub mod test {
             death_note: None,
 
             role_labels: VecSet::new(),
-            player_tags: VecMap::new(),
 
             win_condition: role.default_state().default_win_condition(),
 
