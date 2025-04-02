@@ -59,7 +59,7 @@ impl RoleStateImpl for Vigilante {
                             let killed = target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Vigilante), AttackPower::Basic, false, true);
                             self.state = VigilanteState::Loaded { bullets: bullets.saturating_sub(1) };
 
-                            if let Some(victim) = killed {
+                            if let Some(victim) = killed.successful_target() {
                             	if victim.win_condition(game).is_loyalist_for(GameConclusion::Town) {
                                 	self.state = VigilanteState::WillSuicide;
                              	}

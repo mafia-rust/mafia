@@ -72,7 +72,7 @@ impl RoleStateImpl for Yer {
 						star_passes_remaining: self.star_passes_remaining.saturating_sub(1), 
 						old_role: target_ref.role(game),
 					})
-                ) {
+                ).successful_target() {
 	               	self.star_passes_remaining = self.star_passes_remaining.saturating_sub(1);
 	
 	                //role switching stuff

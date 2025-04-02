@@ -31,7 +31,7 @@ impl RoleStateImpl for Zealot {
         
         if target_ref.try_night_kill_single_attacker(
             actor_ref, game, GraveKiller::RoleSet(RoleSet::Cult), AttackPower::Basic, false, true
-        ).is_some() {
+        ).successful() {
             Cult::set_ability_used_last_night(game, Some(CultAbility::Kill));
         }
     }

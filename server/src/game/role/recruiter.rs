@@ -172,14 +172,14 @@ impl Recruiter {
                 AttackPower::Basic,
                 false,
                 true
-            ).is_some()
+            )
         // }else if AttackPower::Basic.can_pierce(target_ref.defense(game)) {
         //     MafiaRecruits::recruit(game, target_ref)
         // }else{
         //     false
         // }
         } else {
-        	target_ref.try_recruit(actor_ref, game, AttackPower::Basic, true, InsiderGroupID::Mafia).is_some()
-        }
+        	target_ref.try_recruit(actor_ref, game, AttackPower::Basic, true, InsiderGroupID::Mafia)
+        }.successful()
     }
 }

@@ -50,7 +50,7 @@ impl RoleStateImpl for Puppeteer {
                     ControllerID::role(actor_ref, Role::Puppeteer, 1)
                 ).unwrap_or(IntegerSelection(0)).0 == 1
             {
-                if target.try_recruit(actor_ref, game, AttackPower::ArmorPiercing, true, InsiderGroupID::Puppeteer).is_some() {
+                if target.try_recruit(actor_ref, game, AttackPower::ArmorPiercing, true, InsiderGroupID::Puppeteer).successful() {
                 	self.marionettes_remaining = self.marionettes_remaining.saturating_sub(1);
                  	actor_ref.set_role_state(game, self);
                 }

@@ -63,7 +63,7 @@ impl RoleStateImpl for Martyr {
             self.state = MartyrState::StillPlaying { bullets: bullets.saturating_sub(1) };
 
             if target_ref == actor_ref {
-	            if let Some(redirected_target) = target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Suicide, AttackPower::Basic, true, true) {
+	            if let Some(redirected_target) = target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Suicide, AttackPower::Basic, true, true).successful_target() {
 		            if redirected_target == actor_ref {
 		                self.state = MartyrState::Won;
 		            }
