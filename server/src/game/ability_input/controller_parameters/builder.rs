@@ -1,4 +1,4 @@
-use crate::{game::{ability_input::{AvailablePlayerListSelection, AvailableSelectionKind, ControllerID, ControllerParameters}, components::{detained::Detained, insider_group::InsiderGroupID}, phase::PhaseType, player::PlayerReference, Game}, vec_set::VecSet};
+use crate::{game::{ability_input::{AvailablePlayerListSelection, AvailableSelectionKind, ControllerID, ControllerParameters}, components::{detained::Detained, insider_group::InsiderGroupID}, phase::PhaseType, player::PlayerReference, Game}, vec_set::{vec_set, VecSet}};
 
 use super::ControllerParametersMap;
 
@@ -21,7 +21,7 @@ pub struct ControllerParametersBuilder<'a, A: BuilderAvailableAbilitySelectionSt
     game: &'a Game,
     available: A,
     grayed_out: bool,
-    reset_on_phase_start: Option<PhaseType>,
+    reset_on_phase_start: VecSet<PhaseType>,
     dont_save: bool,
     default_selection: A::Selection,
     allowed_players: VecSet<PlayerReference>,
@@ -34,7 +34,7 @@ impl<'a> ControllerParametersBuilder<'a, NoAbilitySelection, ()> {
             game,
             available: NoAbilitySelection,
             grayed_out: false,
-            reset_on_phase_start: None,
+            reset_on_phase_start: VecSet::new(),
             dont_save: false,
             default_selection: NoAbilitySelection,
             allowed_players: VecSet::new(),
@@ -100,7 +100,25 @@ impl<A: BuilderAvailableAbilitySelectionState, I: BuilderIDState> ControllerPara
 
     pub fn reset_on_phase_start(self, phase: PhaseType) -> Self {
         Self {
-            reset_on_phase_start: Some(phase),
+            reset_on_phase_start: self.reset_on_phase_start.union(&vec_set![phase]),
+            ..self
+        }
+    }
+
+    pub fn reset_on_all_phases(self) -> Self {
+        Self {
+            reset_on_phase_start: vec_set![
+                PhaseType::Briefing,
+                PhaseType::Nomination,
+                PhaseType::Testimony,
+                PhaseType::Judgement,
+                PhaseType::FinalWords,
+                PhaseType::Recess,
+                PhaseType::Obituary,
+                PhaseType::Discussion,
+                PhaseType::Dusk,
+                PhaseType::Night
+            ],
             ..self
         }
     }

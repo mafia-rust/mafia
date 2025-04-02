@@ -18,6 +18,7 @@ pub enum ControllerID{
         role: Role,
         id: RoleControllerID
     },
+    FastForwardVote{player: PlayerReference},
     ForfeitVote{player: PlayerReference},
     PitchforkVote{player: PlayerReference},
     Nominate{player: PlayerReference},
@@ -41,6 +42,9 @@ impl ControllerID{
     }
     pub fn nominate(player: PlayerReference)->Self{
         Self::Nominate{player}
+    }
+    pub fn fast_forward_vote(player: PlayerReference)->Self{
+        Self::FastForwardVote{player}
     }
     pub fn forfeit_vote(player: PlayerReference)->Self{
         Self::ForfeitVote{player}

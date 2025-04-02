@@ -53,7 +53,6 @@ pub struct Player {
 
     win_condition: WinCondition,
 
-    fast_forward_vote: bool,
     forfeit_vote: bool,
 
     voting_variables: PlayerVotingVariables,
@@ -103,7 +102,6 @@ impl Player {
             chat_messages: Vec::new(),
             queued_chat_messages: Vec::new(),
             
-            fast_forward_vote: false,
             forfeit_vote: false,
 
             voting_variables: PlayerVotingVariables{
@@ -160,7 +158,6 @@ pub mod test {
             chat_messages: Vec::new(),
             queued_chat_messages: Vec::new(),
 
-            fast_forward_vote: false,
             forfeit_vote: false,
 
             voting_variables: PlayerVotingVariables{

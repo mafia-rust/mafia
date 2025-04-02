@@ -138,8 +138,6 @@ pub enum ToClientPacket{
     YourRoleState{role_state: ClientRoleStateEnum},
     #[serde(rename_all = "camelCase")]
     YourJudgement{verdict: Verdict},
-    #[serde(rename_all = "camelCase")]
-    YourVoteFastForwardPhase{fast_forward: bool},
 
     #[serde(rename_all = "camelCase")]
     AddChatMessages{chat_messages: Vec<ChatMessage>},
@@ -250,7 +248,4 @@ pub enum ToServerPacket{
         you_were_possessed_message: bool,
         your_target_was_jailed_message: bool,
     },
-
-    #[serde(rename_all = "camelCase")]
-    VoteFastForwardPhase{fast_forward: bool},
 }

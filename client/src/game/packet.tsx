@@ -144,9 +144,6 @@ export type ToClientPacket = {
     type: "yourJudgement",
     verdict: Verdict
 } | {
-    type: "yourVoteFastForwardPhase",
-    fastForward: boolean
-} | {
     type: "addChatMessages",
     chatMessages: ChatMessage[]
 } | {
@@ -277,9 +274,6 @@ export type ToServerPacket = {
     youWereTransportedMessage: boolean,
     youWerePossessedMessage: boolean,
     yourTargetWasJailedMessage: boolean
-} | {
-    type: "voteFastForwardPhase",
-    fastForward: boolean
 } | {
     type: "hostForceBackToLobby"
 } | {

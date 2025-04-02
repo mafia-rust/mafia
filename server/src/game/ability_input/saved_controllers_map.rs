@@ -3,10 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     game::{
         chat::ChatMessageVariant, components::{
-            forward_messages::ForwardMessages, insider_group::InsiderGroupID,
-            mafia::Mafia, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem,
-            forfeit_vote::ForfeitVote,
-            nomination_controller::NominationController,
+            fast_forward_vote::FastForwardVote, forfeit_vote::ForfeitVote, forward_messages::ForwardMessages, insider_group::InsiderGroupID, mafia::Mafia, nomination_controller::NominationController, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem
         }, 
         event::{
             on_controller_selection_changed::OnControllerSelectionChanged,
@@ -84,6 +81,7 @@ impl SavedControllersMap{
             NominationController::controller_parameters_map(game),
             SyndicateGunItem::controller_parameters_map(game),
             Mafia::controller_parameters_map(game),
+            FastForwardVote::controller_parameters_map(game),
             ForfeitVote::controller_parameters_map(game),
             Pitchfork::controller_parameters_map(game),
             ForwardMessages::controller_parameters_map(game)
@@ -393,10 +391,8 @@ impl SavedController{
         &self.selection
     }
     pub fn reset_on_phase_start(&mut self, phase: PhaseType){
-        if let Some(reset_phase) = self.available_ability_data.reset_on_phase_start(){
-            if phase == reset_phase{
-                self.selection = self.available_ability_data.default_selection().clone();
-            }
+        if self.available_ability_data.reset_on_phase_start().contains(&phase) {
+            self.selection = self.available_ability_data.default_selection().clone();
         }
     }
 }

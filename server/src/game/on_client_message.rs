@@ -15,7 +15,7 @@ use super::{
 
 
 impl Game {
-    #[expect(clippy::match_single_binding, unused, reason="Surely spectators will do something in the future")]
+    #[expect(clippy::match_single_binding, unused, reason = "Surely spectators will do something eventually")]
     pub fn on_spectator_message(&mut self, sender_index: SpectatorIndex, incoming_packet: ToServerPacket){
         let sender_pointer = SpectatorPointer::new(sender_index);
 
@@ -137,9 +137,6 @@ impl Game {
 
                     sender_player_ref.set_role_state(self, RoleState::Hypnotist(hypnotist));
                 }
-            },
-            ToServerPacket::VoteFastForwardPhase { fast_forward } => {
-                sender_player_ref.set_fast_forward_vote(self, fast_forward);
             },
             _ => {
                 log!(fatal "Game"; "Unimplemented ToServerPacket: {incoming_packet:?}");

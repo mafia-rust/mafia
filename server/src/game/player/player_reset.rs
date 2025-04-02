@@ -78,7 +78,6 @@ impl PlayerReference{
             PhaseType::Recess => {}
         }
 
-        self.set_fast_forward_vote(game, false);
         self.role_state(game).clone().on_phase_start(game, *self, phase)
     }
 }

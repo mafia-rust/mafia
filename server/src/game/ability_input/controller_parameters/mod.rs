@@ -10,7 +10,7 @@ use crate::{game::{ability_input::{ability_selection::AbilitySelection, Availabl
 pub struct ControllerParameters{
     available: AvailableAbilitySelection,
     grayed_out: bool,
-    reset_on_phase_start: Option<PhaseType>,
+    reset_on_phase_start: VecSet<PhaseType>,
     dont_save: bool,
     default_selection: AbilitySelection,
     allowed_players: VecSet<PlayerReference>
@@ -20,7 +20,7 @@ impl ControllerParameters{
         game: &Game,
         available: AvailableAbilitySelection,
         grayed_out: bool,
-        reset_on_phase_start: Option<PhaseType>,
+        reset_on_phase_start: VecSet<PhaseType>,
         dont_save: bool,
         default_selection: AbilitySelection,
         allowed_players: VecSet<PlayerReference>
@@ -56,8 +56,8 @@ impl ControllerParameters{
     pub fn set_grayed_out(&mut self, grayed_out: bool){
         self.grayed_out = grayed_out;
     }
-    pub fn reset_on_phase_start(&self)->Option<PhaseType>{
-        self.reset_on_phase_start
+    pub fn reset_on_phase_start(&self)->VecSet<PhaseType>{
+        self.reset_on_phase_start.clone()
     }
     pub fn allowed_players(&self)->&VecSet<PlayerReference>{
         &self.allowed_players
