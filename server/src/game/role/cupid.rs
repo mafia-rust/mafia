@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, components::love_linked::LoveLinked};
 use crate::game::player::PlayerReference;
 
@@ -8,7 +9,7 @@ use crate::game::visit::Visit;
 
 use crate::game::Game;
 use crate::vec_set;
-use super::{common_role, ControllerID, ControllerParametersMap, InsiderGroupID, Priority, Role, RoleStateImpl};
+use super::{common_role, ControllerID, ControllerParametersMap, InsiderGroupID, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -20,9 +21,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Cupid {
     type ClientRoleState = Cupid;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::Cupid => {
+            OnMidnightPriority::Cupid => {
                 let visits = actor_ref.untagged_night_visits_cloned(game);
 
                 let Some(first_visit) = visits.get(0) else {return};

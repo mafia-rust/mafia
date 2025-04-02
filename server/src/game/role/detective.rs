@@ -2,13 +2,14 @@ use serde::Serialize;
 
 use crate::game::ability_input::ControllerID;
 use crate::game::components::confused::Confused;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
-use super::{ControllerParametersMap, Priority, Role, RoleStateImpl};
+use super::{ControllerParametersMap, Role, RoleStateImpl};
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -19,8 +20,8 @@ pub struct Detective;
 
 impl RoleStateImpl for Detective {
     type ClientRoleState = Detective;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Investigative {return;}
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if priority != OnMidnightPriority::Investigative {return;}
         
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){

@@ -2,6 +2,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::*;
 use crate::game::chat::ChatMessageVariant;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::GraveInformation;
 use crate::game::phase::PhaseType;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
@@ -10,7 +11,7 @@ use crate::game::visit::Visit;
 
 use crate::game::Game;
 use crate::vec_set::{vec_set, VecSet};
-use super::{InsiderGroupID, Priority, Role, RoleStateImpl};
+use super::{InsiderGroupID, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -24,9 +25,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Disguiser {
     type ClientRoleState = Disguiser;
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
-        if priority != Priority::Deception {return}
+        if priority != OnMidnightPriority::Deception {return}
                 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         let Some(first_visit) = actor_visits.first() else {return};

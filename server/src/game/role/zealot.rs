@@ -2,6 +2,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::components::cult::{Cult, CultAbility};
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 
@@ -9,7 +10,7 @@ use crate::game::player::PlayerReference;
 use crate::game::role_list::RoleSet;
 use crate::game::visit::Visit;
 use crate::game::Game;
-use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -21,8 +22,8 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Zealot {
     type ClientRoleState = Zealot;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Kill || Cult::next_ability(game) != CultAbility::Kill {return}
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if priority != OnMidnightPriority::Kill || Cult::next_ability(game) != CultAbility::Kill {return}
 
         
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);

@@ -2,11 +2,10 @@ use crate::{log, packet::ToServerPacket, strings::TidyableString};
 
 use super::{
     chat::{ChatGroup, ChatMessageVariant, MessageSender},
-    event::on_fast_forward::OnFastForward, modifiers::{ModifierType, Modifiers},
+    event::{on_whisper::OnWhisper, Event},
     phase::PhaseType,
     player::{PlayerIndex, PlayerReference},
     role::{
-        mayor::Mayor, politician::Politician,
         Role, RoleState
     },
     spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
@@ -16,18 +15,12 @@ use super::{
 
 
 impl Game {
+    #[expect(clippy::match_single_binding, unused, reason="Surely spectators will do something in the future")]
     pub fn on_spectator_message(&mut self, sender_index: SpectatorIndex, incoming_packet: ToServerPacket){
         let sender_pointer = SpectatorPointer::new(sender_index);
 
-        #[expect(clippy::single_match, reason = "More cases will likely be added later")]
         match incoming_packet {
-            ToServerPacket::VoteFastForwardPhase { fast_forward } => {
-                if sender_pointer.host(self) && fast_forward && !self.phase_machine.time_remaining.is_some_and(|d|d.is_zero()){
-                    OnFastForward::invoke(self);
-                }
-            },
-            _ => {
-            }
+            _ => {}
         }
     }
     pub fn on_client_message(&mut self, sender_player_index: PlayerIndex, incoming_packet: ToServerPacket){
@@ -90,66 +83,15 @@ impl Game {
                 }
             },
             ToServerPacket::SendWhisper { player_index: whispered_to_player_index, text } => {
-                if Modifiers::modifier_is_enabled(self, ModifierType::NoWhispers) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
-                    break 'packet_match
-                }
-
-                let whisperee_ref = match PlayerReference::new(self, whispered_to_player_index){
-                    Ok(whisperee_ref) => whisperee_ref,
+                let whisperee_ref = match PlayerReference::new(self, whispered_to_player_index) {
+                    Ok(receiver_ref) => receiver_ref,
                     Err(_) => {
                         sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
-                        break 'packet_match
-                    },
-                };
-
-                if !self.current_phase().is_day() || 
-                    whisperee_ref.alive(self) != sender_player_ref.alive(self) ||
-                    whisperee_ref == sender_player_ref || 
-                    !sender_player_ref.get_current_send_chat_groups(self).contains(&ChatGroup::All) ||
-                    text.replace(['\n', '\r'], "").trim().is_empty()
-                {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
-                    break 'packet_match;
-                }
-
-                if let RoleState::Mayor(Mayor{revealed: true}) = whisperee_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
-                    break 'packet_match;
-                }
-                if let RoleState::Mayor(Mayor{revealed: true}) = sender_player_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
-                    break 'packet_match;
-                }
-                if let RoleState::Politician(Politician{revealed: true, ..}) = whisperee_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
-                    break 'packet_match;
-                }
-                if let RoleState::Politician(Politician{revealed: true, ..}) = sender_player_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
-                    break 'packet_match;
-                }
-
-                if !Modifiers::modifier_is_enabled(self, ModifierType::HiddenWhispers) {
-                    self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::BroadcastWhisper { whisperer: sender_player_index, whisperee: whispered_to_player_index });
-                }
-
-                let message = ChatMessageVariant::Whisper { 
-                    from_player_index: sender_player_index, 
-                    to_player_index: whispered_to_player_index, 
-                    text 
-                };
-        
-                sender_player_ref.add_private_chat_message(self, message.clone());
-
-                for player in PlayerReference::all_players(self){
-                    if 
-                        matches!(player.role(self), Role::Informant |  Role::Ojo) ||
-                        whisperee_ref == player
-                    {
-                        player.add_private_chat_message(self, message.clone());
+                        break 'packet_match;
                     }
-                }
+                };
+
+                OnWhisper::new(sender_player_ref, whisperee_ref, text).invoke(self);
             },
             ToServerPacket::SaveWill { will } => {
                 sender_player_ref.set_will(self, will);

@@ -2,6 +2,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::*;
 use crate::game::attack_power::DefensePower;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::GraveInformation;
 use crate::game::player::PlayerReference;
 
@@ -9,7 +10,7 @@ use crate::game::visit::Visit;
 
 use crate::game::Game;
 use super::godfather::Godfather;
-use super::{Priority, Role, RoleStateImpl};
+use super::{Role, RoleStateImpl};
 
 
 #[derive(Debug, Default, Clone, Serialize)]
@@ -24,7 +25,8 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Impostor {
     type ClientRoleState = Impostor;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+
         Godfather::night_ability(game, actor_ref, priority);
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {

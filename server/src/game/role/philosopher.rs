@@ -2,6 +2,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
 use crate::game::components::confused::Confused;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
@@ -10,7 +11,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_set;
 
-use super::{common_role, ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
+use super::{common_role, ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Philosopher;
@@ -21,8 +22,8 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Philosopher {
     type ClientRoleState = Philosopher;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Investigative {return;}
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if priority != OnMidnightPriority::Investigative {return;}
 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         let Some(first_visit) = actor_visits.get(0) else {return;};

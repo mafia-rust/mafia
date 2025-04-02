@@ -14,7 +14,7 @@
 
 pub mod game;
 pub mod websocket_connections;
-pub mod listener;
+pub mod websocket_listener;
 pub mod lobby;
 pub mod packet;
 pub mod client_connection;

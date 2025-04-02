@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 
@@ -8,7 +9,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_set;
 
-use super::{common_role, ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
+use super::{common_role, ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Transporter;
@@ -19,8 +20,8 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Transporter {
     type ClientRoleState = Transporter;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Transporter {return;}
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if priority != OnMidnightPriority::Transporter {return;}
     
         let transporter_visits = actor_ref.untagged_night_visits_cloned(game).clone();
         let Some(first_visit) = transporter_visits.get(0) else {return};

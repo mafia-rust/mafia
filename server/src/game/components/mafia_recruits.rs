@@ -1,11 +1,7 @@
 use std::collections::HashSet;
 
 use crate::{game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, game_conclusion::GameConclusion,
-    player::PlayerReference,
-    role::{
-        Priority, Role
-    }, role_list::RoleSet, tag::Tag, win_condition::WinCondition, Game, InsiderGroupID
+    attack_power::AttackPower, chat::ChatMessageVariant, event::on_midnight::{OnMidnight, OnMidnightPriority}, game_conclusion::GameConclusion, player::PlayerReference, role::Role, role_list::RoleSet, tag::Tag, win_condition::WinCondition, Game, InsiderGroupID
 }, vec_set::VecSet};
 
 impl Game{
@@ -103,8 +99,8 @@ impl MafiaRecruits{
     pub fn on_game_start(game: &mut Game){
         MafiaRecruits::give_tags_and_labels(game);
     }
-    pub fn on_night_priority(game: &mut Game, priority: Priority){
-        if priority == Priority::Kill{
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
+        if priority == OnMidnightPriority::Kill{
             MafiaRecruits::kill_recruits(game);
         }
     }

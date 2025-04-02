@@ -3,6 +3,7 @@ use serde::Serialize;
 use crate::game::ability_input::AvailablePlayerListSelection;
 use crate::game::attack_power::AttackPower;
 use crate::game::attack_power::DefensePower;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -14,7 +15,7 @@ use crate::game::Game;
 use crate::vec_set::VecSet;
 use super::{
     ControllerID, ControllerParametersMap,
-    PlayerListSelection, Priority, Role, RoleStateImpl
+    PlayerListSelection, Role, RoleStateImpl
 };
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -39,8 +40,8 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Marksman {
     type ClientRoleState = Marksman;
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Kill {return};
+    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if priority != OnMidnightPriority::Kill {return};
 
         let visiting_players: Vec<_> = actor_ref
             .untagged_night_visits_cloned(game)
