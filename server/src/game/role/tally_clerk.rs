@@ -10,7 +10,7 @@ use crate::game::player::PlayerReference;
 use crate::game::Game;
 
 use super::detective::Detective;
-use super::{Priority, RoleStateImpl};
+use super::RoleStateImpl;
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
