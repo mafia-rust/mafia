@@ -160,6 +160,7 @@ macros::roles! {
     Martyr : martyr,
     SantaClaus : santa_claus,
     Krampus : krampus,
+    Mimic : mimic,
 
     Witch : witch,
     Scarecrow : scarecrow,
