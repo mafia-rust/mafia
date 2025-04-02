@@ -8,7 +8,6 @@ impl Game {
         &mut self.silenced
     }
 }
-// If this comment is still here upon review, then I have not tested this. Please remind me
 #[derive(Default, Clone)]
 pub struct Silenced {
     silenced_players: VecSet<PlayerReference>,
