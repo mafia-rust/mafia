@@ -1,8 +1,17 @@
-use crate::game::{ability_input::{AbilityInput, ControllerID}, event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority}, grave::GraveReference, role::RoleState, visit::Visit, Game};
+use crate::game::{ability_input::{AbilityInput, ControllerID}, event::{on_midnight::{OnMidnight, OnMidnightPriority}, on_whisper::{OnWhisper, WhisperFold, WhisperPriority}}, grave::GraveReference, role::RoleState, visit::Visit, Game};
 
 use super::PlayerReference;
 
 impl PlayerReference {
+
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
+        for player_ref in PlayerReference::all_players(game){
+            player_ref.on_midnight_one_player(game, priority);
+        }
+    }
+
+
+
     pub fn on_controller_selection_changed(&self, game: &mut Game, id: ControllerID){
         self.role_state(game).clone().on_controller_selection_changed(game, *self, id)
     }

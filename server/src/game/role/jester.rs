@@ -5,6 +5,7 @@ use serde::Serialize;
 use crate::game::ability_input::AvailablePlayerListSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::phase::{PhaseType, PhaseState};
 use crate::game::player::PlayerReference;
 
@@ -12,7 +13,7 @@ use crate::game::verdict::Verdict;
 
 use crate::game::Game;
 use super::{
-    ControllerID, ControllerParametersMap, GetClientRoleState, PlayerListSelection, Priority, Role, RoleStateImpl
+    ControllerID, ControllerParametersMap, GetClientRoleState, PlayerListSelection, Role, RoleStateImpl
 };
 
 #[derive(Clone, Debug, Default)]
@@ -30,8 +31,8 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Jester {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::TopPriority {return;}
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if priority != OnMidnightPriority::TopPriority {return;}
         if actor_ref.alive(game) {return;}
         if !self.lynched_yesterday {return}
         

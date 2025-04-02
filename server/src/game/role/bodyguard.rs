@@ -2,6 +2,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -12,7 +13,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use super::{
     ControllerID, ControllerParametersMap,
-    GetClientRoleState, Priority, Role,
+    GetClientRoleState, Role,
     RoleStateImpl
 };
 
@@ -46,9 +47,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Bodyguard {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::Bodyguard => {
+            OnMidnightPriority::Bodyguard => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
@@ -76,7 +77,7 @@ impl RoleStateImpl for Bodyguard {
                 });
                 
             },
-            Priority::Heal => {
+            OnMidnightPriority::Heal => {
                 let actors_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actors_visits.first() else {return};
                 let target_ref = visit.target;
@@ -92,12 +93,12 @@ impl RoleStateImpl for Bodyguard {
                     target_ref.increase_defense_to(game, DefensePower::Protection);
                 }
             },
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 for redirected_player_ref in self.redirected_player_refs {
                     redirected_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Bodyguard), AttackPower::ArmorPiercing, false, false);
                 }
             }
-            Priority::Investigative => {
+            OnMidnightPriority::Investigative => {
                 if let Some(target_protected_ref) = self.target_protected_ref {
                     actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
                     target_protected_ref.push_night_message(game, ChatMessageVariant::YouWereProtected);

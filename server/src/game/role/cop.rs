@@ -4,6 +4,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
 use crate::game::components::night_visits::NightVisits;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
@@ -15,7 +16,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use super::{
     ControllerID, ControllerParametersMap,
-    GetClientRoleState, Priority, Role, RoleStateImpl
+    GetClientRoleState, Role, RoleStateImpl
 };
 
 
@@ -34,11 +35,11 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Cop {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if game.day_number() <= 1 {return}
 
         match priority {
-            Priority::Heal => {
+            OnMidnightPriority::Heal => {
                 
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
@@ -47,7 +48,7 @@ impl RoleStateImpl for Cop {
                 target_ref.increase_defense_to(game, DefensePower::Protection);
                 actor_ref.set_role_state(game, Cop {target_protected_ref: Some(target_ref)});
             }
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(ambush_visit) = actor_visits.first() else {return};
@@ -88,7 +89,7 @@ impl RoleStateImpl for Cop {
                     );
                 }
             }
-            Priority::Investigative => {
+            OnMidnightPriority::Investigative => {
                 if let Some(target_protected_ref) = self.target_protected_ref {
                     if target_protected_ref.night_attacked(game){
                         

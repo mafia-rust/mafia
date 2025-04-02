@@ -2,6 +2,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::player::PlayerReference;
@@ -10,7 +11,7 @@ use crate::game::visit::Visit;
 
 use crate::game::Game;
 use crate::vec_set::VecSet;
-use super::{Priority, Role, RoleState, RoleStateImpl};
+use super::{Role, RoleState, RoleStateImpl};
 use crate::game::ability_input::*;
 
 #[derive(Debug, Clone, Serialize)]
@@ -40,7 +41,7 @@ impl RoleStateImpl for Yer {
             ..Self::default()
         }
     }
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if game.day_number() == 1 {return}
 
         let chose_to_convert = game.saved_controllers.get_controller_current_selection_boolean(
@@ -52,7 +53,7 @@ impl RoleStateImpl for Yer {
             let target_ref = visit.target;
 
             if !chose_to_convert {
-                if priority != Priority::Kill {return}
+                if priority != OnMidnightPriority::Kill {return}
 
                 target_ref.try_night_kill_single_attacker(
                     actor_ref,
@@ -63,7 +64,7 @@ impl RoleStateImpl for Yer {
                     true
                 );
             } else {
-                if priority != Priority::Convert {return}
+                if priority != OnMidnightPriority::Convert {return}
                 if self.star_passes_remaining == 0 {return}
 
                 if let Some(target) = target_ref.try_convert(

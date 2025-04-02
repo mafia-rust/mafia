@@ -4,13 +4,14 @@ use crate::game::ability_input::ControllerParametersMap;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::components::insider_group::InsiderGroupID;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 
 use crate::game::role_list::RoleSet;
 use crate::game::visit::Visit;
 use crate::game::Game;
-use super::{common_role, ControllerID, Priority, Role, RoleStateImpl};
+use super::{common_role, ControllerID, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -22,10 +23,10 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Apostle {
     type ClientRoleState = Apostle;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         match (priority, Cult::next_ability(game)) {
-            (Priority::Kill, CultAbility::Kill) if game.cult().ordered_cultists.len() == 1 => {
+            (OnMidnightPriority::Kill, CultAbility::Kill) if game.cult().ordered_cultists.len() == 1 => {
 
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
@@ -37,7 +38,7 @@ impl RoleStateImpl for Apostle {
                     Cult::set_ability_used_last_night(game, Some(CultAbility::Kill));
                 }
             }
-            (Priority::Convert, CultAbility::Convert) => {
+            (OnMidnightPriority::Convert, CultAbility::Convert) => {
                 
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};

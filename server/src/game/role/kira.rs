@@ -2,6 +2,7 @@ use kira_selection::{AvailableKiraSelection, KiraSelection};
 use serde::{Serialize, Deserialize};
 
 use crate::game::attack_power::AttackPower;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -9,7 +10,7 @@ use crate::game::player::PlayerReference;
 use crate::game::Game;
 use crate::vec_map::VecMap;
 use crate::game::ability_input::*;
-use super::{Priority, Role, RoleStateImpl};
+use super::{Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Kira;
@@ -160,7 +161,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Kira {
     type ClientRoleState = Kira;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if actor_ref.night_blocked(game) {return;}
         if actor_ref.ability_deactivated_from_death(game) {return;}
 
@@ -173,7 +174,7 @@ impl RoleStateImpl for Kira {
         let result = KiraResult::new(selection.clone(), game);
 
         match priority {
-            Priority::Kill if result.all_correct() => {
+            OnMidnightPriority::Kill if result.all_correct() => {
                 if game.day_number() == 1 {return};
                 
                 for (player, (guess, result)) in result.guesses.iter(){
@@ -182,7 +183,7 @@ impl RoleStateImpl for Kira {
                     }
                 }
             },
-            Priority::Investigative => {
+            OnMidnightPriority::Investigative => {
                 actor_ref.push_night_message(game, ChatMessageVariant::KiraResult { result });
             },
             _ => {},

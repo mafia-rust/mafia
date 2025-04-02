@@ -1,6 +1,7 @@
 
 use serde::Serialize;
 
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -8,7 +9,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Role, RoleState, RoleStateImpl};
 
 #[derive(Clone, Debug)]
 pub struct Doctor {
@@ -37,9 +38,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Doctor {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::Heal => {
+            OnMidnightPriority::Heal => {
                 
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
@@ -60,7 +61,7 @@ impl RoleStateImpl for Doctor {
                 }
 
             }
-            Priority::Investigative => {
+            OnMidnightPriority::Investigative => {
                 if let Some(target_healed_ref) = self.target_healed_ref {
                     if target_healed_ref.night_attacked(game){
                         

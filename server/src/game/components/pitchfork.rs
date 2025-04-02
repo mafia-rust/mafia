@@ -1,6 +1,6 @@
 use crate::{
     game::{
-        ability_input::*, attack_power::AttackPower, game_conclusion::GameConclusion, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::{Priority, Role}, role_list::RoleSet, Game
+        ability_input::*, attack_power::AttackPower, event::on_midnight::{OnMidnight, OnMidnightPriority}, game_conclusion::GameConclusion, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::Role, role_list::RoleSet, Game
     },
     vec_map::VecMap, vec_set::VecSet
 };
@@ -79,8 +79,8 @@ impl Pitchfork{
             }
         }
     }
-    pub fn on_night_priority(game: &mut Game, priority: Priority){
-        if priority != Priority::Kill {return;}
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
+        if priority != OnMidnightPriority::Kill {return;}
         if game.day_number() <= 1 {return;}
         if Pitchfork::usable_pitchfork_owners(game).is_empty() {return;}
         

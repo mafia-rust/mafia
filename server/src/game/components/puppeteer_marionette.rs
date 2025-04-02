@@ -1,11 +1,10 @@
 use std::collections::HashSet;
 
 use crate::{game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, 
+    attack_power::AttackPower, chat::ChatMessageVariant,
+    event::on_midnight::{OnMidnight, OnMidnightPriority},
     player::PlayerReference, 
-    role::{
-        Priority, Role
-    }, tag::Tag, Game
+    role::Role, tag::Tag, Game
 }, vec_set::VecSet};
 
 use super::insider_group::InsiderGroupID;
@@ -102,8 +101,8 @@ impl PuppeteerMarionette{
     pub fn on_game_start(game: &mut Game){
         PuppeteerMarionette::give_tags_and_labels(game);
     }
-    pub fn on_night_priority(game: &mut Game, priority: Priority){
-        if priority == Priority::Kill{
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
+        if priority == OnMidnightPriority::Kill{
             PuppeteerMarionette::kill_marionettes(game);
         }
     }

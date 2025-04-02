@@ -5,6 +5,7 @@ use serde::Serialize;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::night_visits::NightVisits;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::GraveKiller;
 use crate::game::player::{PlayerIndex, PlayerReference};
 
@@ -14,7 +15,7 @@ use crate::game::phase::PhaseType;
 
 use crate::game::Game;
 use crate::vec_set::VecSet;
-use super::{ControllerID, ControllerParametersMap, PlayerListSelection, GetClientRoleState, Priority, Role, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, PlayerListSelection, GetClientRoleState, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default)]
@@ -34,10 +35,10 @@ const ENRAGED_DENOMINATOR: usize = 3;
 
 impl RoleStateImpl for Werewolf {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             //priority completely burgered so sammy told me to make my own priority but i didn't want to so i just made it heal
-            Priority::Heal => {
+            OnMidnightPriority::Heal => {
                 let visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(first_visit) = visits.first() else {return};
 
@@ -56,7 +57,7 @@ impl RoleStateImpl for Werewolf {
                         visit.attack = true;
                     });
             }
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 let visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(first_visit) = visits.first() else {return};
                 let target_ref = first_visit.target;
@@ -105,7 +106,7 @@ impl RoleStateImpl for Werewolf {
                 }
                 
             },
-            Priority::Investigative => {
+            OnMidnightPriority::Investigative => {
                 //track sniffed players visits
 
                 self.tracked_players

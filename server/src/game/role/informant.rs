@@ -1,6 +1,7 @@
 use rand::prelude::SliceRandom;
 use serde::Serialize;
 
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
@@ -8,7 +9,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Informant;
@@ -19,8 +20,8 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Informant {
     type ClientRoleState = Informant;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Investigative {return}
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if priority != OnMidnightPriority::Investigative {return}
         
 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
