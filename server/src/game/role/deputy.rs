@@ -52,11 +52,11 @@ impl RoleStateImpl for Deputy {
             if let GraveInformation::Normal{death_cause, ..} = &mut grave.information {
                 *death_cause = GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Deputy)]);
             }
-            target_ref.die(game, grave);
+            target_ref.die_and_add_grave(game, grave);
             
 
             if target_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) {
-                actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
+                actor_ref.die_and_add_grave(game, Grave::from_player_leave_town(game, actor_ref));
             }
         } else {
             actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
