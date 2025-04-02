@@ -62,7 +62,7 @@ impl Godfather{
                 let Some(visit) = actor_visits.first() else {return};
                 visit.target.clone().try_night_kill_single_attacker(
                     actor_ref, game, GraveKiller::RoleSet(RoleSet::Mafia),
-                    AttackPower::Basic, false
+                    AttackPower::Basic, false, true
                 );
             },
             _ => {}

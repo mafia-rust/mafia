@@ -4,7 +4,6 @@ use serde::Serialize;
 
 use crate::game::ability_input::AvailableIntegerSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
-use crate::game::components::mafia_recruits::MafiaRecruits;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::GraveKiller;
@@ -172,12 +171,16 @@ impl Recruiter {
                 game,
                 GraveKiller::RoleSet(RoleSet::Mafia),
                 AttackPower::Basic,
-                false
+                false,
+                true
             )
-        }else if AttackPower::Basic.can_pierce(target_ref.defense(game)) {
-            MafiaRecruits::recruit(game, target_ref)
-        }else{
-            false
-        }
+        // }else if AttackPower::Basic.can_pierce(target_ref.defense(game)) {
+        //     MafiaRecruits::recruit(game, target_ref)
+        // }else{
+        //     false
+        // }
+        } else {
+        	target_ref.try_recruit(actor_ref, game, AttackPower::Basic, true, InsiderGroupID::Mafia)
+        }.successful()
     }
 }

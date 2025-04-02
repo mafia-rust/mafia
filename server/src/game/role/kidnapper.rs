@@ -58,6 +58,7 @@ impl RoleStateImpl for Kidnapper {
                             game, 
                             GraveKiller::Role(Role::Jailor), 
                             AttackPower::ProtectionPiercing, 
+                            false,
                             false
                         );
         

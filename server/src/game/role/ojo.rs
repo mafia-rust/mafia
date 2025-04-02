@@ -31,12 +31,12 @@ impl RoleStateImpl for Ojo {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 if let Some(visit) = actor_visits.first(){
                     let target_ref = visit.target;
-            
+                    
                     target_ref.try_night_kill_single_attacker(
-                        actor_ref,
-                        game,
-                        GraveKiller::Role(Role::Ojo),
-                        AttackPower::Basic,
+                        actor_ref, game, 
+                        GraveKiller::Role(Role::Ojo), 
+                        AttackPower::ArmorPiercing, 
+                        true,
                         true
                     );
                 }
