@@ -1,3 +1,5 @@
+use std::ops::Add;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug)]
@@ -15,13 +17,16 @@ impl<K, V> VecMap<K, V> where K: Eq {
         VecMap { vec: Vec::new() }
     }
     pub fn new_from_vec(vec: Vec<(K, V)>) -> Self {
-        let mut out = VecMap::new();
+        let mut out = VecMap::with_capacity(vec.len());
         for (k, v) in vec {
             out.insert(k, v);
         }
         out
     }
-
+    pub fn with_capacity(capacity: usize) -> Self{
+        VecMap { vec: Vec::with_capacity(capacity) }
+    }
+    
     /// returns the old value if the key already exists
     pub fn insert(&mut self, key: K, value: V) -> Option<(K, V)>{
 
@@ -92,6 +97,10 @@ impl<K, V> VecMap<K, V> where K: Eq {
         self.vec.len()
     }
 
+    pub fn reserve(&mut self, additional: usize) {
+        self.vec.reserve(additional);
+    }
+
     pub fn is_empty(&self) -> bool {
         self.vec.is_empty()
     }
@@ -159,8 +168,65 @@ impl<'de, K, V> Deserialize<'de> for VecMap<K, V> where K: Eq, K: Deserialize<'d
     }
 }
 
+impl<K, V> VecMap<K, V> where K: Eq, V: Add<V, Output = V> + Copy {
+    /// adds addend to the value of key, if the key does not have a addend it is added with the specified weight
+    /// returns the old value if it exists
+    pub fn add(&mut self, key: K, addend: V) -> Option<(K, V)> {
+        if let Some((old_key, old_val)) = self.vec.iter_mut().find(|(k, _)| *k == key) {
+            Some((
+                std::mem::replace(old_key, key),
+                #[expect(clippy::arithmetic_side_effects, reason = "not for integer types")]
+                std::mem::replace(old_val, *old_val + addend)
+            ))
+        }else{
+            self.vec.push((key, addend));
+            None
+        }
+    }
 
+    /// adds weight to the weight of key, if the key does not have a weight nothing happens
+    /// returns the old value if it exists.
+    pub fn add_no_insert(&mut self, key: K, addend: V) -> Option<(K, V)> {
+        if let Some((old_key, old_val)) = self.vec.iter_mut().find(|(k, _)| *k == key) {
+            Some((
+                std::mem::replace(old_key, key),
+                #[expect(clippy::arithmetic_side_effects, reason = "not for integer types")]
+                std::mem::replace(old_val, *old_val + addend)
+            ))
+        }else{
+            None
+        }
+    }
+}
 
+impl<K> VecMap<K, u8> where K: Eq {
+    /// saturating adds addend to the value of key, if the key does not have a value it is added with the specified addend
+    /// returns the old value if it exists
+    pub fn saturating_add(&mut self, key: K, addend: u8) -> Option<(K, u8)> {
+        if let Some((old_key, old_val)) = self.vec.iter_mut().find(|(k, _)| *k == key) {
+            Some((
+                std::mem::replace(old_key, key),
+                std::mem::replace(old_val, old_val.saturating_add(addend))
+            ))
+        }else{
+            self.vec.push((key, addend));
+            None
+        }
+    }
+
+    /// saturating adds addend to the value of key, if the key does not have a value nothing happens
+    /// returns the old value if it exists.
+    pub fn saturating_add_no_insert(&mut self, key: K, addend: u8) -> Option<(K, u8)> {
+        if let Some((old_key, old_val)) = self.vec.iter_mut().find(|(k, _)| *k == key) {
+            Some((
+                std::mem::replace(old_key, key), 
+                std::mem::replace(old_val, old_val.saturating_add(addend))
+            ))
+        }else{
+            None
+        }
+    }
+}
 
 
 pub use macros::vec_map;

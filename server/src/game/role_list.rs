@@ -7,7 +7,7 @@ use vec1::{
 
 use crate::vec_set::VecSet;
 
-use super::{components::insider_group::InsiderGroupID, game_conclusion::GameConclusion, role::Role};
+use super::{components::insider_group::InsiderGroupID, game_conclusion::GameConclusion, role::Role, Game};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RoleList(pub Vec<RoleOutline>);
@@ -92,6 +92,25 @@ impl RoleOutline{
                         insider_groups: r.insider_groups.clone(),
                         win_condition: r.win_condition.clone()
                     })
+            ).collect()
+    }
+
+    /// Deprecate once pr #790 is accepted
+    pub fn get_enabled_role_assignments(&self, game: &Game) -> Vec<RoleAssignment> {
+        self.options.iter()
+            .flat_map(|r| 
+                r.roles.get_roles().into_iter()
+                    .filter_map(|role| 
+                        if game.settings.enabled_roles.contains(&role) {
+                            Some(RoleAssignment{
+                                role, 
+                                insider_groups: r.insider_groups.clone(), 
+                                win_condition: r.win_condition.clone()
+                            })
+                        } else {
+                            None
+                        }
+                    )
             ).collect()
     }
     pub fn get_random_role_assignments(&self, enabled_roles: &VecSet<Role>, taken_roles: &[Role]) -> Option<RoleAssignment> {
