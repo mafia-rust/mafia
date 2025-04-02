@@ -1,7 +1,7 @@
 
 use serde::Serialize;
 
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -38,7 +38,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Doctor {
     type ClientRoleState = ClientRoleState;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Heal => {
                 
@@ -46,7 +46,7 @@ impl RoleStateImpl for Doctor {
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 
-                target_ref.increase_defense_to(game, DefensePower::Protection);
+                target_ref.increase_defense_to(game, midnight_variables, DefensePower::Protection);
 
                 if actor_ref == target_ref{
                     actor_ref.set_role_state(game, RoleState::Doctor(Doctor{
@@ -63,10 +63,10 @@ impl RoleStateImpl for Doctor {
             }
             OnMidnightPriority::Investigative => {
                 if let Some(target_healed_ref) = self.target_healed_ref {
-                    if target_healed_ref.night_attacked(game){
+                    if target_healed_ref.night_attacked(midnight_variables){
                         
-                        actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
-                        target_healed_ref.push_night_message(game, ChatMessageVariant::YouWereProtected);
+                        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::TargetWasAttacked);
+                        target_healed_ref.push_night_message(midnight_variables, ChatMessageVariant::YouWereProtected);
                     }
                 }
             }

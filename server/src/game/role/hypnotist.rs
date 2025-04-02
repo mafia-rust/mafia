@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 
@@ -41,7 +41,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Hypnotist {
     type ClientRoleState = Hypnotist;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         let Some(visit) = actor_visits.first() else {
@@ -58,31 +58,31 @@ impl RoleStateImpl for Hypnotist {
             },
             OnMidnightPriority::Roleblock => {
                 if self.roleblock {
-                    target_ref.roleblock(game, false);
+                    target_ref.roleblock(game, midnight_variables, false);
                 }
             },
             OnMidnightPriority::Deception => {
                 if self.you_were_roleblocked_message {
-                    target_ref.push_night_message(game, ChatMessageVariant::RoleBlocked);
+                    target_ref.push_night_message(midnight_variables, ChatMessageVariant::RoleBlocked);
                 }
                 if self.you_survived_attack_message {
-                    target_ref.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
+                    target_ref.push_night_message(midnight_variables, ChatMessageVariant::YouSurvivedAttack);
                 }
                 if self.you_were_protected_message {
-                    target_ref.push_night_message(game, ChatMessageVariant::YouWereProtected);
+                    target_ref.push_night_message(midnight_variables, ChatMessageVariant::YouWereProtected);
                 }
                 if self.you_were_transported_message {
-                    target_ref.push_night_message(game, ChatMessageVariant::Transported);
+                    target_ref.push_night_message(midnight_variables, ChatMessageVariant::Transported);
                 }
                 if self.you_were_possessed_message {
                     if target_ref.role(game).possession_immune() {
-                        target_ref.push_night_message(game, ChatMessageVariant::YouWerePossessed { immune: true });
+                        target_ref.push_night_message(midnight_variables, ChatMessageVariant::YouWerePossessed { immune: true });
                     } else {
-                        target_ref.push_night_message(game, ChatMessageVariant::YouWerePossessed { immune: false });
+                        target_ref.push_night_message(midnight_variables, ChatMessageVariant::YouWerePossessed { immune: false });
                     }
                 }
                 if self.your_target_was_jailed_message {
-                    target_ref.push_night_message(game, ChatMessageVariant::Wardblocked);
+                    target_ref.push_night_message(midnight_variables, ChatMessageVariant::Wardblocked);
                 }
             },
             _ => {}

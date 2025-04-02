@@ -29,7 +29,7 @@ impl ForwardMessages{
                     ControllerParametersMap::builder(game)
                         .id(ControllerID::ForwardMessage { player })
                         .available_selection(AvailableChatMessageSelection)
-                        .add_grayed_out_condition(!matches!(game.current_phase(), PhaseState::Night | PhaseState::Obituary))
+                        .add_grayed_out_condition(!matches!(game.current_phase(), PhaseState::Night | PhaseState::Obituary {..}))
                         .dont_save()
                         .allow_players([player])
                         .build_map()

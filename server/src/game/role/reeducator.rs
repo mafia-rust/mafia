@@ -6,7 +6,7 @@ use crate::game::ability_input::{AvailablePlayerListSelection, AvailableRoleOpti
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::insider_group::InsiderGroupID;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::role_list::{RoleOutline, RoleOutlineOption, RoleOutlineOptionRoles, RoleSet};
 use crate::game::win_condition::WinCondition;
@@ -39,7 +39,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Reeducator {
     type ClientRoleState = Reeducator;
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(mut self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Deception => {
                 if !self.convert_charges_remaining {return}
@@ -77,12 +77,12 @@ impl RoleStateImpl for Reeducator {
 
                 if InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref) {
 
-                    target_ref.set_night_convert_role_to(game, Some(new_state));
+                    target_ref.set_night_convert_role_to(midnight_variables, Some(new_state));
 
                 }else if self.convert_charges_remaining && game.day_number() > 1{
 
-                    if target_ref.night_defense(game).can_block(AttackPower::Basic) {
-                        actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                    if target_ref.night_defense(game, midnight_variables).can_block(AttackPower::Basic) {
+                        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::YourConvertFailed);
                         return
                     }
 
@@ -91,7 +91,7 @@ impl RoleStateImpl for Reeducator {
                         game,
                         WinCondition::new_loyalist(crate::game::game_conclusion::GameConclusion::Mafia)
                     );
-                    target_ref.set_night_convert_role_to(game, Some(new_state));
+                    target_ref.set_night_convert_role_to(midnight_variables, Some(new_state));
 
                     self.convert_charges_remaining = false;
                     actor_ref.set_role_state(game, self);

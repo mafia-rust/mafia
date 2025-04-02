@@ -1,7 +1,7 @@
 use serde::Serialize;
 use crate::game::ability_input::{AvailableBooleanSelection, AvailablePlayerListSelection};
 use crate::game::components::insider_group::InsiderGroupID;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::{game::attack_power::AttackPower, vec_set::VecSet};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::GraveKiller;
@@ -29,7 +29,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Warden {
     type ClientRoleState = Warden;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         match priority {
             OnMidnightPriority::Ward => {
@@ -39,7 +39,7 @@ impl RoleStateImpl for Warden {
                     )
                 {
                     if chose_to_ward {
-                        actor_ref.ward(game);
+                        actor_ref.ward(game, midnight_variables);
                     }
                 }
             }
@@ -47,7 +47,7 @@ impl RoleStateImpl for Warden {
                 if game.day_number() == 1 {return}
                 for &player in self.players_in_prison.iter() {
                     if player != actor_ref {
-                        player.roleblock(game, true);
+                        player.roleblock(game, midnight_variables, true);
                     }
                 }
             }
@@ -58,7 +58,7 @@ impl RoleStateImpl for Warden {
         
                     player.try_night_kill_single_attacker(
                         actor_ref,
-                        game,
+                        game, midnight_variables,
                         GraveKiller::Role(Role::Warden),
                         AttackPower::ArmorPiercing,
                         true

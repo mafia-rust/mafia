@@ -2,7 +2,7 @@ use kira_selection::{AvailableKiraSelection, KiraSelection};
 use serde::{Serialize, Deserialize};
 
 use crate::game::attack_power::AttackPower;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -161,8 +161,8 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Kira {
     type ClientRoleState = Kira;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
-        if actor_ref.night_blocked(game) {return;}
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if actor_ref.night_blocked(midnight_variables) {return;}
         if actor_ref.ability_deactivated_from_death(game) {return;}
 
         let Some(KiraSelection(selection)) = 
@@ -179,12 +179,12 @@ impl RoleStateImpl for Kira {
                 
                 for (player, (guess, result)) in result.guesses.iter(){
                     if player.alive(game) && *result == KiraGuessResult::Correct && *guess != KiraGuess::None {
-                        player.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(super::Role::Kira), AttackPower::ArmorPiercing, true);
+                        player.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Role(super::Role::Kira), AttackPower::ArmorPiercing, true);
                     }
                 }
             },
             OnMidnightPriority::Investigative => {
-                actor_ref.push_night_message(game, ChatMessageVariant::KiraResult { result });
+                actor_ref.push_night_message(midnight_variables, ChatMessageVariant::KiraResult { result });
             },
             _ => {},
         }    

@@ -37,15 +37,17 @@ pub trait Event: Sized {
     type Priority: EventPriority;
 
     fn listeners() -> Vec<EventListenerFunction<Self>>;
-    fn initial_fold_value(&self) -> Self::FoldValue;
-    fn invoke(self, game: &mut Game) {
-        let mut fold = self.initial_fold_value();
+    fn initial_fold_value(&self, game: &Game) -> Self::FoldValue;
+    fn invoke(self, game: &mut Game) -> Self::FoldValue {
+        let mut fold = self.initial_fold_value(game);
 
         for priority in Self::Priority::values() {
             for listener in Self::listeners() {
                 listener(game, &self, &mut fold, priority);
             }
         }
+
+        fold
     }
 }
 

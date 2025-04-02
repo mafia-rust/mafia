@@ -24,14 +24,14 @@ impl ModifierTrait for RandomLoveLinks{
                 .choose(&mut rand::rng());
 
             if let Some(other_player) = random_unlinked_player {
-                LoveLinked::add_love_link(game, player, other_player);
+                LoveLinked::add_love_link_day(game, player, other_player);
             }else{
                 let random_player = PlayerReference::all_players(game)
                     .filter(|p| *p != player)
                     .choose(&mut rand::rng());
 
                 if let Some(other_player) = random_player {
-                    LoveLinked::add_love_link(game, player, other_player);
+                    LoveLinked::add_love_link_day(game, player, other_player);
                 }
             }
         }

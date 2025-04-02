@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, components::arsonist_doused::ArsonistDoused};
 use crate::game::player::PlayerReference;
 
@@ -19,7 +19,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Arsonist {
     type ClientRoleState = Arsonist;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Deception => {
                 //douse target
@@ -42,7 +42,7 @@ impl RoleStateImpl for Arsonist {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);             
                 if let Some(visit) = actor_visits.first(){
                     if actor_ref == visit.target{
-                        ArsonistDoused::ignite(game, actor_ref);
+                        ArsonistDoused::ignite(game, midnight_variables, actor_ref);
                     }
                 }
             }
