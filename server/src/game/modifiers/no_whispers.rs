@@ -1,3 +1,5 @@
+use crate::game::{event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority}, Game};
+
 use super::{ModifierTrait, ModifierType};
 
 #[derive(Clone, Default, PartialEq, Eq, Hash)]
@@ -9,4 +11,11 @@ impl From<&NoWhispers> for ModifierType{
     }
 }
 
-impl ModifierTrait for NoWhispers {}
+impl ModifierTrait for NoWhispers {
+    fn on_whisper(self, _game: &mut Game, _event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority) {
+        if WhisperPriority::Cancel == priority {
+            fold.cancelled = true;
+            fold.hide_broadcast = true;
+        }
+    }
+}

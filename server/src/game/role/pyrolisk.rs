@@ -2,6 +2,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::{GraveInformation, GraveKiller, GraveReference};
 use crate::game::player::PlayerReference;
 
@@ -9,7 +10,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_set::VecSet;
 
-use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Priority, Role, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Role, RoleStateImpl};
 
 #[derive(Debug, Clone, Default)]
 pub struct Pyrolisk{
@@ -25,11 +26,11 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Pyrolisk {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if game.day_number() <= 1 {return;}
 
         match priority {
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 let mut tagged_for_obscure = self.tagged_for_obscure.clone();
 
                 let mut killed_at_least_once = false;

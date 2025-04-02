@@ -6,6 +6,7 @@ use crate::game::ability_input::AvailableBooleanSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::detained::Detained;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -15,7 +16,10 @@ use crate::game::role::BooleanSelection;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{AbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection, Priority, Role, RoleStateImpl};
+use super::{
+    AbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection,
+    Role, RoleStateImpl
+};
 
 
 #[derive(Serialize, Clone, Debug)]
@@ -46,9 +50,9 @@ impl RoleStateImpl for Jailor {
             ..Self::default()
         }
     }
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 if let Some(visit) = actor_visits.first() {
     

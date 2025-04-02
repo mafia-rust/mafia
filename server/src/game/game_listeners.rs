@@ -1,7 +1,7 @@
 use crate::packet::ToClientPacket;
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant}, components::synopsis::SynopsisTracker, game_conclusion::GameConclusion, grave::GraveReference, phase::{PhaseState, PhaseStateMachine, PhaseType}, player::PlayerReference, role::Role, Game, GameOverReason
+    chat::{ChatGroup, ChatMessageVariant}, components::synopsis::SynopsisTracker, event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority}, game_conclusion::GameConclusion, grave::GraveReference, phase::{PhaseState, PhaseStateMachine, PhaseType}, player::PlayerReference, role::Role, Game, GameOverReason
 };
 
 //Event listerner functions for game defined here
@@ -56,6 +56,45 @@ impl Game{
 
         for player_ref in PlayerReference::all_players(self){
             player_ref.remove_role_label(self, actor);
+        }
+    }
+    pub fn on_whisper(&mut self, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority) {
+        match priority {
+            WhisperPriority::Cancel => {
+                if 
+                    !self.current_phase().is_day() || 
+                    !event.receiver.alive(self) ||
+                    !event.sender.alive(self) ||
+                    event.receiver == event.sender || 
+                    !event.sender.get_current_send_chat_groups(self).contains(&ChatGroup::All) ||
+                    event.message.replace(['\n', '\r'], "").trim().is_empty()
+                {
+                    fold.cancelled = true;
+                    fold.hide_broadcast = true;
+                }
+            },
+            WhisperPriority::Broadcast => {
+                if !fold.hide_broadcast {
+                    self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::BroadcastWhisper {
+                        whisperer: event.sender.into(),
+                        whisperee: event.receiver.into()
+                    });
+                }
+            },
+            WhisperPriority::Send => {
+                if fold.cancelled {
+                    event.sender.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
+                } else {
+                    let message = ChatMessageVariant::Whisper { 
+                        from_player_index: event.sender.into(), 
+                        to_player_index: event.receiver.into(), 
+                        text: event.message.clone()
+                    };
+
+                    event.sender.add_private_chat_message(self, message.clone());
+                    event.receiver.add_private_chat_message(self, message);
+                }
+            },
         }
     }
 }

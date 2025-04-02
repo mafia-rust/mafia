@@ -1,7 +1,7 @@
 use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
 
-use crate::game::attack_power::DefensePower;
+use crate::game::{attack_power::DefensePower, event::on_midnight::OnMidnightPriority};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::player::PlayerReference;
@@ -9,7 +9,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Spy;
@@ -29,9 +29,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Spy {
     type ClientRoleState = Spy;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::Investigative => {
+            OnMidnightPriority::Investigative => {
                 if actor_ref.night_blocked(game) {return;}
                 if actor_ref.ability_deactivated_from_death(game) {return;}
 
@@ -49,7 +49,7 @@ impl RoleStateImpl for Spy {
                 
                 actor_ref.push_night_message(game, ChatMessageVariant::SpyMafiaVisit { players: mafia_visits });               
             },
-            Priority::SpyBug => {
+            OnMidnightPriority::SpyBug => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
 

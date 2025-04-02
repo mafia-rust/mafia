@@ -3,13 +3,14 @@ use serde::Serialize;
 
 use crate::game::ability_input::selection_type::two_role_option_selection::TwoRoleOptionSelection;
 use crate::game::ability_input::{AvailableTwoRoleOptionSelection, ControllerID};
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 
 use crate::game::Game;
-use super::{ControllerParametersMap, GetClientRoleState, Priority, Role, RoleStateImpl};
+use super::{ControllerParametersMap, GetClientRoleState, Role, RoleStateImpl};
 
 #[derive(Clone, Debug)]
 pub struct Steward {
@@ -41,13 +42,13 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Steward {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         if actor_ref.night_blocked(game) {return}
         if actor_ref.ability_deactivated_from_death(game) {return}
 
         match priority {
-            Priority::Heal => {
+            OnMidnightPriority::Heal => {
                 let mut healed_players = vec![];
                 let selection = game.saved_controllers.get_controller_current_selection_two_role_option(ControllerID::role(actor_ref, Role::Steward, 0));
                 let Some(selection) = selection else {return};
@@ -85,7 +86,7 @@ impl RoleStateImpl for Steward {
                     previous_input: TwoRoleOptionSelection(first, second), //updates here
                 });
             }
-            Priority::Investigative => {
+            OnMidnightPriority::Investigative => {
                 for target_healed_ref in self.target_healed_refs{
                     if target_healed_ref.night_attacked(game){
                         actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
