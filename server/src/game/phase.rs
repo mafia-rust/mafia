@@ -5,12 +5,10 @@ use serde::{Serialize, Deserialize};
 use crate::{game::modifiers::{ModifierType, Modifiers}, packet::ToClientPacket};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant},
-    event::{
+    chat::{ChatGroup, ChatMessageVariant}, event::{
         before_phase_end::BeforePhaseEnd,
         on_midnight::OnMidnight, on_phase_start::OnPhaseStart, Event
-    },
-    grave::Grave, player::PlayerReference, settings::PhaseTimeSettings, Game
+    }, grave::Grave, player::PlayerReference, settings::PhaseTimeSettings, verdict::Verdict, Game
 };
 
 
@@ -40,12 +38,65 @@ pub enum PhaseState {
     #[serde(rename_all = "camelCase")]
     Testimony { trials_left: u8, player_on_trial: PlayerReference, nomination_time_remaining: Option<Duration> },
     #[serde(rename_all = "camelCase")]
-    Judgement { trials_left: u8, player_on_trial: PlayerReference, nomination_time_remaining: Option<Duration> },
+    Judgement { 
+        trials_left: u8, 
+        player_on_trial: PlayerReference, 
+        nomination_time_remaining: Option<Duration>, 
+        #[serde(skip)]
+        verdicts: Verdicts
+    },
     #[serde(rename_all = "camelCase")]
     FinalWords { player_on_trial: PlayerReference },
     Dusk,
     Night,
     Recess
+}
+
+#[derive(Default, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Verdicts {
+    verdicts: Vec<Verdict>
+}
+
+impl Verdicts {
+    pub fn new(game: &Game) -> Self {
+        let default_verdict = if Modifiers::modifier_is_enabled(game, ModifierType::NoAbstaining) {
+            Verdict::Innocent
+        } else {
+            Verdict::Abstain
+        };
+
+        Self {
+            verdicts: PlayerReference::all_players(game)
+                .map(|_| default_verdict)
+                .collect()
+        }
+    }
+    pub fn get_guilty_voters(&self) -> impl Iterator<Item=PlayerReference> + '_ {
+        self.verdicts.iter()
+            .enumerate()
+            .filter(|(_, verdict)| matches!(verdict, Verdict::Guilty))
+            .map(|(index, _)| unsafe {
+                PlayerReference::new_unchecked(index.try_into().expect("Verdicts is guaranteed to have the right size"))
+            })
+    }
+    pub fn get_non_innocent_voters(&self) -> impl Iterator<Item=PlayerReference> + '_ {
+        self.verdicts.iter()
+            .enumerate()
+            .filter(|(_, verdict)| !matches!(verdict, Verdict::Innocent))
+            .map(|(index, _)| unsafe {
+                PlayerReference::new_unchecked(index.try_into().expect("Verdicts is guaranteed to have the right size"))
+            })
+    }
+    pub fn get_verdict(&self, player_ref: PlayerReference) -> Verdict {
+        unsafe {
+            *self.verdicts.get_unchecked(player_ref.index() as usize)
+        }
+    }
+    pub fn set_verdict(&mut self, player_ref: PlayerReference, verdict: Verdict) {
+        unsafe {
+            *self.verdicts.get_unchecked_mut(player_ref.index() as usize) = verdict;
+        }
+    }
 }
 
 pub struct PhaseStateMachine {
@@ -191,7 +242,7 @@ impl PhaseState {
     
     /// Returns what phase should come next
     pub fn end(game: &mut Game) -> PhaseState {
-        let next = match *game.current_phase() {
+        let next = match game.current_phase() {
             PhaseState::Briefing => {
                 Self::Dusk
             },
@@ -205,7 +256,7 @@ impl PhaseState {
                 }
             },
             PhaseState::Nomination {trials_left, ..} => {
-
+                let trials_left = *trials_left;
 
                 if Modifiers::modifier_is_enabled(game, ModifierType::ScheduledNominations){
                     
@@ -229,9 +280,18 @@ impl PhaseState {
                 }
             },
             PhaseState::Testimony { trials_left, player_on_trial, nomination_time_remaining } => {
-                Self::Judgement { trials_left, player_on_trial, nomination_time_remaining }
+                Self::Judgement { 
+                    trials_left: *trials_left, 
+                    player_on_trial: *player_on_trial, 
+                    nomination_time_remaining: *nomination_time_remaining,
+                    verdicts: Verdicts::new(game)
+                }
             },
-            PhaseState::Judgement { trials_left, player_on_trial, nomination_time_remaining } => {
+            PhaseState::Judgement { trials_left, player_on_trial, nomination_time_remaining, verdicts } => {
+                let trials_left = *trials_left;
+                let player_on_trial = *player_on_trial;
+                let nomination_time_remaining = *nomination_time_remaining;
+                let verdicts = verdicts.clone();
 
                 game.add_messages_to_chat_group(ChatGroup::All, 
                 PlayerReference::all_players(game)
@@ -241,13 +301,13 @@ impl PhaseState {
                     .map(|player_ref|
                         ChatMessageVariant::JudgementVerdict{
                             voter_player_index: player_ref.index(),
-                            verdict: player_ref.verdict(game)
+                            verdict: verdicts.get_verdict(player_ref)
                         }
                     )
                     .collect()
                 );
                 
-                let (guilty, innocent) = game.count_verdict_votes(player_on_trial);
+                let (guilty, innocent) = game.count_verdict_votes(verdicts, player_on_trial);
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::TrialVerdict{ 
                     player_on_trial: player_on_trial.index(), 
                     innocent, guilty 
@@ -268,6 +328,7 @@ impl PhaseState {
                 }
             },
             PhaseState::FinalWords { player_on_trial } => {
+                let player_on_trial = *player_on_trial;
                 player_on_trial.die_and_add_grave(game, Grave::from_player_lynch(game, player_on_trial));
 
                 Self::Dusk

@@ -1,5 +1,3 @@
-use crate::game::{player::PlayerReference, verdict::Verdict};
-
 use super::{ModifierTrait, ModifierType};
 
 #[derive(Clone, Default, PartialEq, Eq, Hash)]
@@ -14,9 +12,4 @@ impl From<&NoAbstaining> for ModifierType{
     }
 }
 impl ModifierTrait for NoAbstaining{
-    fn on_game_start(self, game: &mut crate::game::Game) {
-        for player in PlayerReference::all_players(game) {
-            player.set_verdict(game, Verdict::Innocent)
-        }
-    }
 }

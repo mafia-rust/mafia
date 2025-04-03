@@ -44,6 +44,9 @@ impl ControllerParameters{
     pub fn validate_selection(&self, game: &Game, selection: &AbilitySelection)->bool{
         self.available.validate_selection(game, selection)
     }
+    pub fn available_selection(&self) -> &AvailableAbilitySelection {
+        &self.available
+    }
     pub fn default_selection(&self)->&AbilitySelection{
         &self.default_selection
     }

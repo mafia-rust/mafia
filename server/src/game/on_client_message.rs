@@ -1,14 +1,9 @@
-use crate::{log, packet::ToServerPacket, strings::TidyableString};
+use crate::{log, packet::{ToClientPacket, ToServerPacket}, strings::TidyableString};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender},
-    event::{on_whisper::OnWhisper, Event},
-    phase::PhaseType,
-    player::{PlayerIndex, PlayerReference},
-    role::{
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, event::{on_whisper::OnWhisper, Event}, modifiers::{ModifierType, Modifiers}, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
         Role, RoleState
-    },
-    spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    }, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, verdict::Verdict, Game
 };
 
 
@@ -34,10 +29,14 @@ impl Game {
         };
 
         'packet_match: {match incoming_packet {
-            ToServerPacket::Judgement { verdict } => {
-                if self.current_phase().phase() != PhaseType::Judgement {break 'packet_match;}
-                
-                sender_player_ref.set_verdict(self, verdict);
+            ToServerPacket::Judgement { mut verdict } => {
+                if Modifiers::modifier_is_enabled(self, ModifierType::NoAbstaining) && verdict == Verdict::Abstain {
+                    verdict = Verdict::Innocent;
+                }
+                sender_player_ref.send_packet(self, ToClientPacket::YourJudgement { verdict });
+                if let PhaseState::Judgement { verdicts, .. } = self.current_phase_mut() {
+                    verdicts.set_verdict(sender_player_ref, verdict)
+                }
             },
             ToServerPacket::SendChatMessage { text, block } => {
                 if text.replace(['\n', '\r'], "").trim().is_empty() {

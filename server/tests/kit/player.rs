@@ -96,7 +96,11 @@ impl TestPlayer {
         );
     }
     pub fn set_verdict(&self, verdict: Verdict) {
-        self.0.set_verdict(game!(self), verdict);
+        if let PhaseState::Judgement { verdicts, .. } = game!(self).current_phase_mut() {
+            verdicts.set_verdict(self.player_ref(), verdict);
+        } else {
+            panic!("Can't set verdict except during Judgement")
+        }
     }
 
     pub fn send_message(&self, message: &str) {

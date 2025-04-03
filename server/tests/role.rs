@@ -4,6 +4,7 @@ use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
+use mafia_server::game::ability_input::{AvailableAbilitySelection, AvailablePlayerListSelection};
 pub use mafia_server::game::{
     ability_input::{ControllerID, IntegerSelection, PlayerListSelection, RoleOptionSelection},
     game_conclusion::GameConclusion,
@@ -423,6 +424,24 @@ fn jester_basic() {
     assert!(!jester.alive());
     lookout1.send_ability_input_player_list_typical(townie);
     lookout2.send_ability_input_player_list_typical(mafia);
+
+    let controller = game.saved_controllers
+        .get_controller(ControllerID::Role { player: jester.player_ref(), role: Role::Jester, id: 0 })
+        .unwrap();
+
+    assert!(!controller.parameters().grayed_out());
+
+    let AvailableAbilitySelection::PlayerList(AvailablePlayerListSelection { available_players, .. }) = controller
+        .parameters()
+        .available_selection() else {
+        panic!()
+    };
+    
+    assert_contains!(available_players, townie.player_ref());
+    assert_contains!(available_players, mafia.player_ref());
+    assert_contains!(available_players, mafia2.player_ref());
+    assert_not_contains!(available_players, lookout1.player_ref());
+    assert_not_contains!(available_players, lookout2.player_ref());
 
 
     game.skip_to(Obituary, 3);

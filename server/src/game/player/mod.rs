@@ -17,8 +17,7 @@ use crate::{
         role::{Role, RoleState}, 
         chat::ChatMessageVariant, 
         visit::Visit, 
-        grave::GraveKiller, 
-        verdict::Verdict,
+        grave::GraveKiller,
     },
     websocket_connections::connection::ClientSender,
 };
@@ -56,11 +55,7 @@ pub struct Player {
     fast_forward_vote: bool,
     forfeit_vote: bool,
 
-    voting_variables: PlayerVotingVariables,
     night_variables: PlayerNightVariables,
-}
-struct PlayerVotingVariables{
-    verdict:        Verdict,
 }
 struct PlayerNightVariables{
     died: bool,
@@ -106,9 +101,6 @@ impl Player {
             fast_forward_vote: false,
             forfeit_vote: false,
 
-            voting_variables: PlayerVotingVariables{
-                verdict : Verdict::Abstain,
-            },
             night_variables: PlayerNightVariables{
                 died: false,
                 attacked: false,
@@ -135,9 +127,9 @@ impl Player {
 pub mod test {
     use std::time::Duration;
 
-    use crate::{client_connection::ClientConnection, game::{role::Role, verdict::Verdict}, vec_map::VecMap, vec_set::VecSet};
+    use crate::{client_connection::ClientConnection, game::role::Role, vec_map::VecMap, vec_set::VecSet};
 
-    use super::{Player, PlayerVotingVariables, PlayerNightVariables};
+    use super::{Player, PlayerNightVariables};
 
     pub fn mock_player(name: String, role: Role) -> Player {
         Player {
@@ -163,9 +155,6 @@ pub mod test {
             fast_forward_vote: false,
             forfeit_vote: false,
 
-            voting_variables: PlayerVotingVariables{
-                verdict : Verdict::Abstain,
-            },
             night_variables: PlayerNightVariables{
                 died: false,
                 attacked: false,
