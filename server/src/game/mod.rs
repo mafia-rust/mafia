@@ -43,6 +43,7 @@ use event::on_tick::OnTick;
 use modifiers::ModifierType;
 use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
+use phase::Verdicts;
 use rand::seq::SliceRandom;
 use role_list::RoleAssignment;
 use role_list::RoleOutlineOptionInsiderGroups;
@@ -354,7 +355,7 @@ impl Game {
     }
 
     /// Returns a tuple containing the number of guilty votes and the number of innocent votes
-    pub fn count_verdict_votes(&self, player_on_trial: PlayerReference)->(u8,u8){
+    pub fn count_verdict_votes(&self, verdicts: Verdicts, player_on_trial: PlayerReference)->(u8,u8){
         let mut guilty = 0u8;
         let mut innocent = 0u8;
         for player_ref in PlayerReference::all_players(self){
@@ -373,7 +374,7 @@ impl Game {
                 }
             }
             
-            match player_ref.verdict(self) {
+            match verdicts.get_verdict(player_ref) {
                 Verdict::Innocent => innocent = innocent.saturating_add(voting_power),
                 Verdict::Abstain => {},
                 Verdict::Guilty => guilty = guilty.saturating_add(voting_power),
@@ -491,6 +492,11 @@ impl Game {
 
     pub fn current_phase(&self) -> &PhaseState {
         &self.phase_machine.current_state
+    }
+
+    // PLEASE don't change the phase with this
+    pub fn current_phase_mut(&mut self) -> &mut PhaseState {
+        &mut self.phase_machine.current_state
     }
 
     pub fn day_number(&self) -> u8 {

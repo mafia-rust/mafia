@@ -3,8 +3,7 @@ use std::time::Duration;
 use crate::{
     client_connection::ClientConnection, 
     game::{
-        chat::ChatMessageVariant, components::insider_group::InsiderGroupID,
-        Game, GameOverReason
+        chat::ChatMessageVariant, components::insider_group::InsiderGroupID, phase::PhaseState, Game, GameOverReason
     },
     lobby::GAME_DISCONNECT_TIMER_SECS,
     packet::ToClientPacket, websocket_connections::connection::ClientSender
@@ -102,9 +101,6 @@ impl PlayerReference{
             ToClientPacket::YourPlayerTags { 
                 player_tags: PlayerReference::ref_vec_map_to_index(self.player_tags(game).clone())
             },
-            ToClientPacket::YourJudgement{
-                verdict: self.verdict(game)
-            },
             ToClientPacket::YourAllowedControllers { 
                 save: game.saved_controllers.controllers_allowed_to_player(*self).all_controllers().clone(),
             },
@@ -124,6 +120,14 @@ impl PlayerReference{
             ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.map(|o|o.as_secs().try_into().expect("Phase time should be below 18 hours")) },
             ToClientPacket::GameInitializationComplete
         ]);
+
+        if let PhaseState::Judgement { verdicts, .. } = game.current_phase() {
+            self.send_packet(game, 
+                ToClientPacket::YourJudgement{
+                    verdict: verdicts.get_verdict(*self)
+                }
+            );
+        }
     }
 
 

@@ -2,7 +2,7 @@
 
 use std::time::Duration;
 
-use crate::{client_connection::ClientConnection, game::{grave::GraveKiller, phase::PhaseType, tag::Tag, verdict::Verdict, Game}};
+use crate::{client_connection::ClientConnection, game::{grave::GraveKiller, phase::PhaseType, tag::Tag, Game}};
 use super::PlayerReference;
 
 
@@ -42,8 +42,6 @@ impl PlayerReference{
                         }
                     }
                 }
-                
-                self.set_verdict(game, Verdict::Abstain);
             },
             PhaseType::Testimony => {},
             PhaseType::Judgement => {},
