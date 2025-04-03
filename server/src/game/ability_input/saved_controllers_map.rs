@@ -399,4 +399,7 @@ impl SavedController{
             }
         }
     }
+    pub fn parameters(&self) -> &ControllerParameters {
+        &self.available_ability_data
+    }
 }

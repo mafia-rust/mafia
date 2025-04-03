@@ -18,7 +18,7 @@ use super::{
 #[derive(Clone, Debug, Default)]
 pub struct Jester {
     lynched_yesterday: bool,
-    players_guiltied: VecSet<PlayerReference>,
+    players_voted_for_me: VecSet<PlayerReference>,
     won: bool,
 }
 
@@ -53,7 +53,7 @@ impl RoleStateImpl for Jester {
                 .filter(|player_ref|{
                     player_ref.alive(game) &&
                     *player_ref != actor_ref &&
-                    self.players_guiltied.contains(player_ref)
+                    self.players_voted_for_me.contains(player_ref)
                 })
                 .collect();
 
@@ -76,26 +76,32 @@ impl RoleStateImpl for Jester {
                     .filter(|p| *p != actor_ref)
                     .filter(|player| 
                         player.alive(game) &&
-                        self.players_guiltied.contains(player)
+                        self.players_voted_for_me.contains(player)
                     )
                     .collect(),
                 can_choose_duplicates: false,
                 max_players: Some(1)
             })
-            .night_typical(actor_ref)
+            .reset_on_phase_start(PhaseType::Obituary)
+            .allow_players([actor_ref])
             .add_grayed_out_condition(!self.lynched_yesterday)
             .build_map()
     }
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
+    fn before_phase_end(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType) {
         match game.current_phase() {
             PhaseState::Judgement { verdicts, .. } => {
                 actor_ref.set_role_state(game, Jester {
-                    players_guiltied: verdicts.get_non_innocent_voters().collect(),
+                    players_voted_for_me: verdicts.get_non_innocent_voters().collect(),
                     ..self
                 });
-            }
-            &PhaseState::FinalWords { player_on_trial } => {
-                if player_on_trial == actor_ref {
+            },
+            _ => {}
+        }
+    }
+    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
+        match game.current_phase() {
+            PhaseState::FinalWords { player_on_trial } => {
+                if *player_on_trial == actor_ref {
                     actor_ref.set_role_state(game, Jester { 
                         lynched_yesterday: true,
                         won: true,
@@ -106,7 +112,6 @@ impl RoleStateImpl for Jester {
             PhaseState::Obituary => {
                 actor_ref.set_role_state(game, Jester { 
                     lynched_yesterday: false,
-                    won: self.won,
                     ..self
                 });
             }

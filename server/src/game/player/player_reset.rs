@@ -24,6 +24,10 @@ impl PlayerReference{
         }
     }
 
+    pub fn before_phase_end(&self, game: &mut Game, phase: PhaseType) {
+        self.role_state(game).clone().before_phase_end(game, *self, phase);
+    }
+
     pub fn on_phase_start(&self, game: &mut Game, phase: PhaseType){
         match phase {
             PhaseType::Briefing => {},
