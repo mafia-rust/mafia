@@ -123,7 +123,8 @@ pub struct Game {
     pub detained: Detained,
     pub confused: Confused,
     pub drunk_aura: DrunkAura,
-    pub synopsis_tracker: SynopsisTracker
+    pub synopsis_tracker: SynopsisTracker,
+    pub rand_key: Option<usize>
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -149,7 +150,7 @@ pub enum GameOverReason {
 
 impl Game {
     /// `players` must have length 255 or lower.
-    pub fn new(settings: Settings, players: Vec<PlayerInitializeParameters>, spectators: Vec<SpectatorInitializeParameters>) -> Result<Self, RejectStartReason>{
+    pub fn new(settings: Settings, players: Vec<PlayerInitializeParameters>, spectators: Vec<SpectatorInitializeParameters>, rand_key: Option<usize>) -> Result<Self, RejectStartReason>{
         //check settings are not completly off the rails
         if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
@@ -224,6 +225,7 @@ impl Game {
                 phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
                 modifiers: Modifiers::default_from_settings(settings.enabled_modifiers.clone()),
                 settings,
+                rand_key,
 
                 saved_controllers: SavedControllersMap::default(),
                 night_visits: NightVisits::default(),
@@ -645,6 +647,7 @@ pub mod test {
             graves: Vec::new(),
             phase_machine: PhaseStateMachine::new(settings.phase_times.clone()),
             settings,
+            rand_key: None,
 
             saved_controllers: SavedControllersMap::default(),
             night_visits: NightVisits::default(),

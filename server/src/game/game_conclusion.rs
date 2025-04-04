@@ -94,5 +94,5 @@ impl GameConclusion {
 
 
 //Endgamecondition -> One single game ending condition, if only these roles are left, the game ends
-//Town, Mafia, Cult, Fiends, Politcian
+//Town, Mafia, Cult, Fiends, Politician
 //Victory condition -> If this is the endgamecondition of the game, you win

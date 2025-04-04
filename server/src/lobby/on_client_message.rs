@@ -233,7 +233,7 @@ impl Lobby {
                     }
                 }
 
-                let game = match Game::new(settings.clone(), game_player_params, game_spectator_params){
+                let game = match Game::new(settings.clone(), game_player_params, game_spectator_params, Some(self.room_code)){
                     Ok(game) => game,
                     Err(err) => {
                         send.send(ToClientPacket::RejectStart { reason: err });
