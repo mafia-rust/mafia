@@ -136,7 +136,6 @@ export const INSIDER_GROUPS = ["mafia", "cult", "puppeteer"] as const;
 export type PhaseTimes = Record<Exclude<PhaseType, "recess">, number>;
 
 export type Tag = 
-    "disguise" |
     "syndicateGun" |
     "godfatherBackup" |
     "werewolfTracked" |

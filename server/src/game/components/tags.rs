@@ -1,4 +1,4 @@
-use crate::{game::{chat::ChatMessageVariant, player::PlayerReference, Game}, packet::ToClientPacket, vec_map::VecMap, vec_set::{vec_set, VecSet}};
+use crate::{game::{chat::ChatMessageVariant, player::PlayerReference, Game}, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 use serde::{Deserialize, Serialize};
 use vec1::vec1;
 
@@ -17,7 +17,9 @@ impl Tags{
         let added = if let Some(val) = game.tags.tags.get_mut(&id){
             val.insert_tag(tagged_player).is_none()
         }else{
-            game.tags.tags.insert(id,  vec_set![tagged_player]);
+            let mut new_set = TagsSet::new();
+            new_set.insert_tag(tagged_player);
+            game.tags.tags.insert(id.clone(),  new_set);
             true
         };
 
@@ -51,7 +53,9 @@ impl Tags{
         let added = if let Some(val) = game.tags.tags.get_mut(&id){
             val.insert_viewer(player).is_none()
         }else{
-            game.tags.tags.insert(id,  vec_set![player]);
+            let mut new_set = TagsSet::new();
+            new_set.insert_viewer(player);
+            game.tags.tags.insert(id,  new_set);
             true
         };
 
@@ -84,9 +88,9 @@ impl Tags{
     pub fn set_tagged(game: &mut Game, id: TagSetID, tagged_players: VecSet<PlayerReference>){
         for player in PlayerReference::all_players(game) {
             if tagged_players.contains(&player) {
-                Self::add_tag(game, id, player);
+                Self::add_tag(game, id.clone(), player);
             }else {
-                Self::remove_tag(game, id, player);
+                Self::remove_tag(game, id.clone(), player);
             }
         }
     }
@@ -132,6 +136,9 @@ struct TagsSet{
     tagged: VecSet<PlayerReference>
 }
 impl TagsSet{
+    fn new()->Self{
+        Self { viewers: VecSet::new(), tagged: VecSet::new() }
+    }
     fn insert_tag(&mut self, player: PlayerReference)->Option<PlayerReference>{
         self.tagged.insert(player)
     }
@@ -152,7 +159,7 @@ impl TagsSet{
         &self.tagged
     }
 }
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Clone)]
 pub enum TagSetID{
     ArsonistDoused,
     MorticianTag(PlayerReference),
@@ -182,7 +189,6 @@ pub enum Tag{
     LoveLinked,
     ForfeitVote,
     Spiraling,
-    Disguise,
     SyndicateGun,
     Frame
 }
