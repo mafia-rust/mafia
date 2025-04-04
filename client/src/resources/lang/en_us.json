@@ -602,7 +602,24 @@
     "role.krampus.name:var.0": "Krampuses",
     "controllerId.role.krampus.0.name": "Attack",
     "controllerId.role.krampus.1.name": "Investigate",
-    
+
+    "role.loki.name": "Loki",
+    "role.loki.name:var.0": "Lokis",
+    "controllerId.role.loki.0.name": "Trick",
+    "controllerId.role.loki.0.integer.0": "None",
+    "controllerId.role.loki.0.integer.1": "Skip Day One",
+    "controllerId.role.loki.0.integer.2": "Hide Grave Killer Roles",
+    "controllerId.role.loki.0.integer.3": "Hide Grave Death Causes",
+    "controllerId.role.loki.0.integer.4": "Obscure Graves",
+    "controllerId.role.loki.0.integer.5": "Enable Abstaining",
+    "controllerId.role.loki.0.integer.6": "Disable Scheduled Nominations",
+    "controllerId.role.loki.0.integer.7": "Remove Judgement",
+    "controllerId.role.loki.0.integer.8": "Make Voting Two-Thirds Majority",
+    "controllerId.role.loki.0.integer.9": "Remove Night Chat",
+    "controllerId.role.loki.0.integer.10": "Hide Whisper Broadcasts",
+    "controllerId.role.loki.0.integer.11": "Disable Whispers",
+    "controllerId.role.loki.0.integer.12": "Disable Chat",
+
     "obscured": "Obscured",
     "obscured:var.0": "Obscure",
     "obscured:var.1": "Obscures",
@@ -1028,6 +1045,8 @@
     "chatMessage.martyrWon": "The messiah has been killed! May we all enter the kingdom of heaven.",
     "chatMessage.youAreLoveLinked": "You are now love linked to \\0.",
     "chatMessage.playerDiedOfBrokenHeart": "\\0 died of a broken heart, joining their lover \\1 in their next life.",
+    "chatMessage.modifierChanged.enabled": "The modifier \\0 has been enabled.",
+    "chatMessage.modifierChanged.disabled": "The modifier \\0 has been disabled.",
 
     "kiraResult.correct": "Correct",
     "kiraResult.wrongSpot": "Somebody has this role, but not this player",
@@ -1644,6 +1663,13 @@
     "wiki.article.role.krampus.abilities": "- None",
     "wiki.article.role.krampus.attributes":"* You are a naughty list loyalist\n* You have a basic attack",
     "wiki.article.role.krampus.extra":"* You can leave a death note. This is a good way to communicate with your fellow naughty-listers.\n* If Krampus and Santa Claus are the only remaining roles, they both die and the game ends in a draw.\n* Visiting a player with independent win condition does nothing.",
+
+    "wiki.article.role.loki.reminder": "Each night, select one of three abilities available to you. You win when you successfully follow a branch of your tech tree to an end.",
+    "wiki.article.role.loki.guide": "Each night, select one of three abilities available to you. The abilities available to you are the first unexplored items of each major branch of your tech tree. In other words:\n* One of the abilities available to you comes from the grave branch:\n  Skip Day 1 -> Hide Grave Killer Roles -> Hide Grave Death Causes -> Obscure Graves\n* One of the abilities available to you comes from the trial branch:\n  Enable Abstaining -> Disable Scheduled Nominations -> Remove Judgement -> Make Voting Two-Thirds Majority\n* One of the abilities available to you comes from the communication branch:\n  Remove Night Chat -> Hide Whisper Broadcasts -> Disable Whispers -> Disable Chat",
+    "wiki.article.role.loki.abilities": "The abilities available to you are the first unexplored items of each major branch of your tech tree.\n* One of the abilities available to you comes from the grave branch:\n  Skip Day 1 -> Hide Grave Killer Roles -> Hide Grave Death Causes -> Obscure Graves\n* One of the abilities available to you comes from the trial branch:\n  Enable Abstaining -> Disable Scheduled Nominations -> Remove Judgement -> Make Voting Two-Thirds Majority\n* One of the abilities available to you comes from the communication branch:\n  Remove Night Chat -> Hide Whisper Broadcasts -> Disable Whispers -> Disable Chat\n\nHere is an explanation of each ability:\n* Skip Day 1 - enables the Skip Day 1 Modifier\n* Hide Grave Killer Roles - enables the Role Set Grave Killers Modifier\n* Hide Grave Death Causes - enables the No Death Cause Modifier\n* Obscure Graves - enables the Obscured Graves Modifier\n* Enable Abstaining - disables the No Abstaining Modifier\n* Disable Scheduled Nominations - disables the Scheduled Nominations Modifier\n* Remove Judgement - enables the Auto-Guilty Modifier\n* Make Voting Two-Thirds-Majority - enables the Two-Thirds Majority Modifier\n* Remove Night Chat - enables the No Night Chat Modifier\n* Hide Whisper Broadcasts - enables the Hidden Whispers Modifier\n* Disable Whispers - enables the No Whispers Modifier\n* Disable Chat - enables the No Chat Modifier",
+    "wiki.article.role.loki.attributes": "When you win, you leave town.",
+    "wiki.article.role.loki.extra": "",
+
 
     "wiki.article.role.serialKiller.reminder": "Each night, select a player to attack.",
     "wiki.article.role.serialKiller.guide": "- At night select a player to attack them\n- You can't use your ability night 1.",

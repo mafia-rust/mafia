@@ -94,7 +94,7 @@ impl RoleStateImpl for Puppeteer {
                 .build_map(),
             ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Puppeteer, 1))
-                .available_selection(AvailableIntegerSelection {
+                .available_selection(AvailableIntegerSelection::Bounded {
                     min: 0,
                     max: if self.marionettes_remaining > 0 {1} else {0}
                 })

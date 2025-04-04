@@ -3,7 +3,7 @@ import React, { ReactElement } from "react";
 import GAME_MANAGER, { find, replaceMentions } from "..";
 import StyledText, { KeywordDataMap, PLAYER_SENDER_KEYWORD_DATA } from "./StyledText";
 import "./chatMessage.css"
-import { ChatGroup, Conclusion, PhaseState, PlayerIndex, Tag, translateConclusion, translateWinCondition, Verdict, WinCondition } from "../game/gameState.d";
+import { ChatGroup, Conclusion, ModifierType, PhaseState, PlayerIndex, Tag, translateConclusion, translateWinCondition, Verdict, WinCondition } from "../game/gameState.d";
 import { Role, RoleState } from "../game/roleState.d";
 import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
@@ -783,6 +783,8 @@ export function translateChatMessage(
         }
         case "playerForwardedMessage":
             return translate(`chatMessage.playerForwardedMessage`, playerNames[message.forwarder]);
+        case "modifierChanged":
+            return translate(`chatMessage.modifierChanged.${message.enabled ? 'enabled' : 'disabled'}`, translate(message.modifier));
         case "deputyShotYou":
         case "mediumExists":
         case "targetWasAttacked":
@@ -1149,6 +1151,10 @@ export type ChatMessageVariant = {
     player: PlayerIndex
 } | {
     type: "werewolfTracked"
+} | {
+    type: "modifierChanged"
+    modifier: ModifierType,
+    enabled: boolean
 }
 
 export type MessageSender = {

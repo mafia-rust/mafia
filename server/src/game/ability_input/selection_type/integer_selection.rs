@@ -12,15 +12,32 @@ use crate::game::{
 pub struct IntegerSelection(pub i8);
 
 
-#[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq)]
-pub struct AvailableIntegerSelection{
-    pub min: i8,    //inclusive
-    pub max: i8
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase", tag = "type")]
+pub enum AvailableIntegerSelection {
+    Bounded {
+        min: i8,    //inclusive
+        max: i8
+    },
+    Discrete {
+        values: Vec<i8>
+    }
 }
+
+impl Default for AvailableIntegerSelection {
+    fn default() -> Self {
+        Self::Bounded { min: 0, max: 0 }
+    }
+}
+
 impl AvailableSelectionKind for AvailableIntegerSelection{
     type Selection = IntegerSelection;
     fn validate_selection(&self, _game: &Game, selection: &IntegerSelection)->bool{
-        selection.0 >= self.min && selection.0 <= self.max
+        match self {
+            Self::Bounded { min, max } => selection.0 >= *min && selection.0 <= *max,
+            Self::Discrete { values } => values.contains(&selection.0),
+        }
+        
     }
     
     fn default_selection(&self, _: &Game) -> Self::Selection {

@@ -288,8 +288,12 @@ export type StringSelection = string;
 
 export type IntegerSelection = number;
 export type AvailableIntegerSelection = {
+    type: "bounded"
     min: number,
     max: number
+} | {
+    type: "discrete",
+    values: number[]
 };
 
 export type KiraSelection = ListMapData<PlayerIndex, KiraGuess>;

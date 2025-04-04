@@ -33,7 +33,8 @@ event_priority!(OnMidnightPriority{
     Cupid,
     SpyBug,
 
-    StealMessages
+    StealMessages,
+    BottomPriority
 });
 
 impl OnMidnight{

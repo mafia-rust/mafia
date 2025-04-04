@@ -158,6 +158,8 @@ Doomsayer
 } | {
     type: "witch"
 } | {
+    type: "loki"
+} | {
     type: "scarecrow"
 } | {
     type: "warper"
