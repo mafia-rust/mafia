@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::ability_input::AvailablePlayerListSelection;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::role_list::RoleSet;
 use crate::game::tag::Tag;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
@@ -9,7 +10,7 @@ use crate::game::visit::{Visit, VisitTag};
 
 use crate::game::Game;
 use crate::vec_set::VecSet;
-use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -22,9 +23,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Framer {
     type ClientRoleState = Framer;
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::Deception => {
+            OnMidnightPriority::Deception => {
                 let framer_visits = actor_ref.untagged_night_visits_cloned(game).clone();
 
                 let Some(first_visit) = framer_visits.first() else {return};
@@ -59,7 +60,7 @@ impl RoleStateImpl for Framer {
                 }
                 actor_ref.set_night_visits(game, new_visits);
             }
-            Priority::Investigative => {
+            OnMidnightPriority::Investigative => {
                 self.framed_targets.retain(|p|
                     !p.all_appeared_visitors(game).iter().any(|visitor| {
                         RoleSet::TownInvestigative.get_roles().contains(&visitor.role(game))

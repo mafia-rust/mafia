@@ -2,12 +2,13 @@ use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::ability_input::ControllerParametersMap;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::Game;
-use super::{common_role, ControllerID, GetClientRoleState, Priority, Role, RoleStateImpl};
+use super::{common_role, ControllerID, GetClientRoleState, Role, RoleStateImpl};
 
 #[derive(Clone, Debug)]
 pub struct Armorsmith {
@@ -40,9 +41,10 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Armorsmith {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+
         match priority {
-            Priority::Heal => {
+            OnMidnightPriority::Heal => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
                 let target = visit.target;
@@ -75,7 +77,7 @@ impl RoleStateImpl for Armorsmith {
 
                 actor_ref.set_role_state(game, self);
             }
-            Priority::Investigative => {
+            OnMidnightPriority::Investigative => {
 
                 for protected_player in self.night_protected_players.iter(){
                     if protected_player.night_attacked(game){
