@@ -36,17 +36,20 @@ export default function EnabledRoleSelector(props: Readonly<{
     }
 
     return <div className="role-specific-colors selector-section">
-        <h2>{translate("menu.lobby.enabledRoles")}</h2>
-        {(props.disabled !== true) && <div>
-            <Button
-                onClick={props.onIncludeAll}
-                disabled={props.disabled}
-                ><Icon>deselect</Icon> {translate("menu.enabledRoles.includeAll")}</Button>
-            <Button
-                onClick={disableAll}
-                disabled={props.disabled}
-            ><Icon>select_all</Icon> {translate("menu.enabledRoles.excludeAll")}</Button>
-
+        <header>
+            <h2>{translate("menu.lobby.enabledRoles")}</h2>
+            {(props.disabled !== true) && <div>
+                <Button
+                    onClick={props.onIncludeAll}
+                    disabled={props.disabled}
+                    ><Icon>deselect</Icon> {translate("menu.enabledRoles.includeAll")}</Button>
+                <Button
+                    onClick={disableAll}
+                    disabled={props.disabled}
+                ><Icon>select_all</Icon> {translate("menu.enabledRoles.excludeAll")}</Button>
+            </div>}
+        </header>
+        <div className="role-selector-section">
             <div className="disabled-role-selector-area">
                 <Button
                     onClick={()=>{enableOutlineOption(roleOrRoleSet)}}
@@ -62,15 +65,14 @@ export default function EnabledRoleSelector(props: Readonly<{
                     onChange={setRoleOrRoleSet}
                 />
             </div>
-        </div>}
-
-        <EnabledRolesDisplay 
-            enabledRoles={enabledRoles}
-            modifiable={!props.disabled}
-            onDisableRoles={props.onDisableRoles}
-            onEnableRoles={props.onEnableRoles}
-            disabled={props.disabled}
-        />
+            <EnabledRolesDisplay 
+                enabledRoles={enabledRoles}
+                modifiable={!props.disabled}
+                onDisableRoles={props.onDisableRoles}
+                onEnableRoles={props.onEnableRoles}
+                disabled={props.disabled}
+            />
+        </div>
     </div>
 }
 

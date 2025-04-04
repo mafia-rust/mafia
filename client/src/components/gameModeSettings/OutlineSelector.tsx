@@ -25,7 +25,7 @@ export default function RoleOutlineSelector(props: RoleOutlineSelectorProps): Re
     }
 
     return <div className="role-picker">
-        {props.roleOutline.map((option, index) => {
+        {props.roleOutline.map((option, index, outlinesInRow) => {
             let roleOrRoleSet: RoleOrRoleSet;
 
             if ("role" in option) {
@@ -101,7 +101,8 @@ export default function RoleOutlineSelector(props: RoleOutlineSelectorProps): Re
                             props.onChange(options);
                         }}
                     />
-                    <Button
+                    {outlinesInRow.length > 1 && <Button
+                        className="role-outline-option-remove-button"
                         disabled={props.disabled}
                         onClick={() => {
                             let options = [...props.roleOutline];
@@ -112,7 +113,8 @@ export default function RoleOutlineSelector(props: RoleOutlineSelectorProps): Re
                             }
                             props.onChange(options);
                         }}
-                    ><Icon size="tiny">remove</Icon></Button>
+                    ><Icon size="tiny">clear</Icon></Button>
+                    }
                 </div>
             )
         })}
@@ -212,6 +214,7 @@ function ConclusionsSelectorLabel(props: Readonly<{
     
     return <>
         <RawButton
+            className="conclusions-selector-label"
             ref={ref}
             disabled={props.disabled}
             onClick={() => setPopupOpen(open => !open)}
@@ -324,6 +327,7 @@ function InsiderGroupSelectorLabel(props: Readonly<{
     
     return <>
         <RawButton
+            className="insider-group-selector-label"
             ref={ref}
             disabled={props.disabled}
             onClick={() => setPopupOpen(open => !open)}
@@ -414,11 +418,13 @@ export function OutlineListSelector(props: Readonly<{
         props.setRoleList(roleList.map(simplifyRoleOutline));
     }
 
-    return <section className="graveyard-menu-colors selector-section">
-        <h2>{translate("menu.lobby.roleList")}: {roleList.length}</h2>
-        {(props.disabled !== true) && <Button onClick={simplify}>
-            <Icon>filter_list</Icon> {translate("simplify")}
-        </Button>}
+    return <section className="player-list-menu-colors selector-section">
+        <header>
+            <h2>{translate("menu.lobby.roleList")}: {roleList.length}</h2>
+            {(props.disabled !== true) && <Button onClick={simplify}>
+                <Icon>filter_list</Icon> {translate("simplify")}
+            </Button>}
+        </header>
         <div className="role-list-setter-list">
             <DragAndDrop 
                 items={structuredClone(roleList)}

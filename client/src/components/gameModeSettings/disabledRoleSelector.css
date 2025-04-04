@@ -1,16 +1,16 @@
+.role-selector-section {
+    padding: .25rem;
+}
 .disabled-role-selector-area {
     display: flex;
     flex-direction: row;
-    background-color: var(--secondary-color);
-    border: .13rem solid var(--primary-border-color);
-    border-top-color: var(--primary-border-shadow-color);
-    border-left-color: var(--primary-border-shadow-color);
-    border-radius: .5rem;
-    margin: .13rem 0;
 }
 .disabled-role-selector-area > select {
     flex-grow: 1;
     width: 5rem;
+}
+.enabled-modifiers-display {
+    padding: .13rem;
 }
 .placard {
     display: inline-block;

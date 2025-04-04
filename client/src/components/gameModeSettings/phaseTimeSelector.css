@@ -5,6 +5,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     margin-bottom: 0.25rem;
+    padding: .13rem;
 }
 
 .phase-times-selector > .phase-times > div {

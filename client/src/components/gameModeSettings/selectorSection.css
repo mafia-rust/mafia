@@ -1,12 +1,18 @@
 .selector-section {
+    display: flex;
+    flex-direction: column;
     background-color: var(--background-color);
-    border: solid .13rem var(--background-border-color);
-    border-bottom-color: var(--background-border-shadow-color);
-    border-right-color: var(--background-border-shadow-color);
-    border-radius: 1rem;
-    padding: 1rem;
+    border: solid .13rem var(--background-border-shadow-color);
+    border-bottom-color: var(--background-border-color);
+    border-right-color: var(--background-border-color);
 }
 
-.selector-section > h2 {
-    margin-bottom: 0.25rem;
+.selector-section > header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: solid .13rem var(--background-border-color);
+    padding: .25rem;
+    padding-bottom: .13rem;
 }

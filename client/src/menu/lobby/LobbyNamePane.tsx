@@ -18,29 +18,6 @@ export default function LobbyNamePane(): ReactElement {
         ["lobbyClients", "playersHost", "playersReady", "yourId"]
     )!;
 
-    return <section className="player-list-menu-colors selector-section lobby-name-pane">
-        {!isSpectator && <NameSelector/>}
-        <div className="name-pane-buttons">
-            <Button onClick={() => GAME_MANAGER.sendSetSpectatorPacket(!isSpectator)}>
-                {isSpectator
-                    ? <><Icon>sports_esports</Icon> {translate("switchToPlayer")}</>
-                    : <><Icon>visibility</Icon> {translate("switchToSpectator")}</>}
-            </Button>
-            {ready === "host" && <button
-                onClick={() => GAME_MANAGER.sendRelinquishHostPacket()}
-            ><Icon>remove_moderator</Icon> {translate("menu.lobby.button.relinquishHost")}</button>}
-            {ready !== "host" && <Button
-                onClick={() => {GAME_MANAGER.sendReadyUpPacket(ready === "notReady")}}
-            >
-                {ready === "ready"
-                    ? <><Icon>clear</Icon> {translate("menu.lobby.button.unready")}</>
-                    : <><Icon>check</Icon> {translate("menu.lobby.button.readyUp")}</>}
-            </Button>}
-        </div>
-    </section>
-}
-
-function NameSelector(): ReactElement {
     const myName = useLobbyState(
         state => {
             const client = state.players.get(state.myId!);
@@ -50,12 +27,36 @@ function NameSelector(): ReactElement {
         },
         ["lobbyClients", "yourId"]
     );
+
+    return <section className="will-menu-colors selector-section lobby-name-pane">
+        <header>
+            <h2>{myName ?? translate("menu.lobby.me")}</h2>
+            <span>
+                <Button onClick={() => GAME_MANAGER.sendSetSpectatorPacket(!isSpectator)}>
+                    {isSpectator
+                        ? <><Icon>sports_esports</Icon> {translate("switchToPlayer")}</>
+                        : <><Icon>visibility</Icon> {translate("switchToSpectator")}</>}
+                </Button>
+                {ready === "host" && <button
+                    onClick={() => GAME_MANAGER.sendRelinquishHostPacket()}
+                ><Icon>remove_moderator</Icon> {translate("menu.lobby.button.relinquishHost")}</button>}
+                {ready !== "host" && <Button
+                    onClick={() => {GAME_MANAGER.sendReadyUpPacket(ready === "notReady")}}
+                >
+                    {ready === "ready"
+                        ? <><Icon>clear</Icon> {translate("menu.lobby.button.unready")}</>
+                        : <><Icon>check</Icon> {translate("menu.lobby.button.readyUp")}</>}
+                </Button>}
+            </span>
+        </header>
+        {!isSpectator && <NameSelector/>}
+    </section>
+}
+
+function NameSelector(): ReactElement {
     const [enteredName, setEnteredName] = React.useState("");
 
     return <div className="name-pane-selector">
-        <div className="lobby-name">
-            <section><h2>{myName ?? ""}</h2></section>
-        </div>
         <div className="name-box">
             <input type="text" value={enteredName}
                 onChange={(e)=>{setEnteredName(e.target.value)}}

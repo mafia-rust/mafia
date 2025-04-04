@@ -6,7 +6,7 @@
     gap: .25rem;
     flex-direction: row;
     flex-wrap: wrap;
-    margin-top: 0.25rem;
+    padding: .25rem;
 }
 .save-menu {
     display: flex;

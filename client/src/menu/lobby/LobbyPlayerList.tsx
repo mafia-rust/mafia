@@ -68,7 +68,9 @@ export default function LobbyPlayerList(): ReactElement {
     )!;
 
     return <section className="player-list-menu-colors selector-section">
-        <h2>{translate("menu.lobby.players")}</h2>
+        <header>
+            <h2>{translate("menu.lobby.players")}</h2>
+        </header>
         <div className="lobby-player-list">
             <ol>
                 {players
@@ -77,8 +79,10 @@ export default function LobbyPlayerList(): ReactElement {
                 }
             </ol>
         </div>
-        {host && <>
-            <h2>{translate("menu.hostSettings.spectators")}</h2>
+        {host && players.filter(player => player.clientType === "spectator").length > 0 && <>
+            <header>
+                <h2>{translate("menu.hostSettings.spectators")}</h2>
+            </header>
             <div className="lobby-player-list">
                 <ol>
                     {players

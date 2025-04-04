@@ -15,8 +15,10 @@ export function EnabledModifiersSelector(props: Readonly<{
     enabledModifiers = props.enabledModifiers ?? enabledModifiers;
     
 
-    return <div className="chat-menu-colors selector-section">
-        <h2>{translate("modifiers")}</h2>
+    return <div className="graveyard-menu-colors selector-section">
+        <header>
+            <h2>{translate("modifiers")}</h2>
+        </header>
         <EnabledModifiersDisplay
             disabled={props.disabled===undefined ? false : props.disabled}
             modifiable={!props.disabled}
@@ -64,7 +66,7 @@ export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): Re
 
     const [hideDisabled, setHideDisabled] = useState(true);
 
-    return <div>
+    return <div className="enabled-modifiers-display">
         {!props.modifiable && <label className="centered-label">
             {translate("hideDisabled")}
             <CheckBox

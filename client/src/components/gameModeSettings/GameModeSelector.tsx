@@ -24,27 +24,36 @@ export function GameModeSelector(props: {
     const [gameModeParseResult, setGameModeParseResult] = useState(loadGameModesParsed());
 
     return <section className="chat-menu-colors selector-section">
-        <h2>{translate("menu.lobby.gameModes")}</h2>
+        
         {isFailure(gameModeParseResult)
-            ? <div>
+            ? <>
+                <header>
+                    <GameModesTitle />
+                </header>
                 <div>
-                    {translate("outdatedGameModesSaveData")}
-                    <br />
-                    <code>{gameModeParseResult.toString()}</code>
+                    <div>
+                        {translate("outdatedGameModesSaveData")}
+                        <br />
+                        <code>{gameModeParseResult.toString()}</code>
+                    </div>
+                    <Button onClick={() => {
+                        deleteGameModes();
+                        setGameModeParseResult(loadGameModesParsed());
+                    }}>
+                        <Icon>delete</Icon>{translate("deleteOutdatedGameModeSaveData")}
+                    </Button>
                 </div>
-                <Button onClick={() => {
-                    deleteGameModes();
-                    setGameModeParseResult(loadGameModesParsed());
-                }}>
-                    <Icon>delete</Icon>{translate("deleteOutdatedGameModeSaveData")}
-                </Button>
-            </div>
+            </>
             : <GameModeSelectorPanel {...props} 
                 gameModeStorage={gameModeParseResult.value}
                 reloadGameModeStorage={() => setGameModeParseResult(loadGameModesParsed())}
             />
         }
     </section>
+}
+
+function GameModesTitle() {
+    return <h2>{translate("menu.lobby.gameModes")}</h2>
 }
 
 function GameModeSelectorPanel(props: {
@@ -161,7 +170,8 @@ function GameModeSelectorPanel(props: {
     
 
     return <>
-        <div className="save-menu">
+        <header className="save-menu">
+            <GameModesTitle />
             {props.canModifySavedGameModes && <>
                 <input 
                     type="text" 
@@ -221,7 +231,7 @@ function GameModeSelectorPanel(props: {
                 >{verbose ? <><Icon>paste</Icon> {translate("importFromClipboard")}</> : undefined}</PasteButton>
                 <button onClick={props.reloadGameModeStorage}>{translate("refresh")}</button>
             </div>
-        </div>
+        </header>
         <div className="saved-game-modes">
             {props.canModifySavedGameModes
                 ? <DragAndDrop
