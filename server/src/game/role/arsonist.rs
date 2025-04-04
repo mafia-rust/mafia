@@ -74,7 +74,7 @@ impl RoleStateImpl for Arsonist {
         Tags::add_viewer(game, TagSetID::ArsonistDoused, actor_ref);
     }
     fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _new: super::RoleState, _old: super::RoleState) {
-        if(actor_ref == player){
+        if actor_ref == player {
             Tags::remove_viewer(game, TagSetID::ArsonistDoused, actor_ref); 
         }
     }

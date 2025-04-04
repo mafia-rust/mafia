@@ -81,6 +81,16 @@ impl Tags{
         }
     }
 
+    pub fn set_tagged(game: &mut Game, id: TagSetID, tagged_players: VecSet<PlayerReference>){
+        for player in PlayerReference::all_players(game) {
+            if tagged_players.contains(&player) {
+                Self::add_tag(game, id, player);
+            }else {
+                Self::remove_tag(game, id, player);
+            }
+        }
+    }
+
     pub fn has_tag(game: &Game, id: TagSetID, player: PlayerReference)->bool{
         game.tags.tags.get(&id).is_some_and(|set|set.tagged().contains(&player))
     }
@@ -145,13 +155,15 @@ impl TagsSet{
 #[derive(PartialEq, Eq)]
 pub enum TagSetID{
     ArsonistDoused,
-    MorticianTag(PlayerReference)
+    MorticianTag(PlayerReference),
+    Framer(PlayerReference),
 }
 impl TagSetID{
     fn get_tag(&self)->Tag{
         match self {
             TagSetID::ArsonistDoused => Tag::Doused,
-            TagSetID::MorticianTag(player) => Tag::MorticianTagged,
+            TagSetID::MorticianTag(_) => Tag::MorticianTagged,
+            TagSetID::Framer(_) => Tag::Frame,
         }
     }
 }

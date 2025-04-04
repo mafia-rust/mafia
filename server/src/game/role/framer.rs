@@ -2,8 +2,8 @@ use serde::Serialize;
 
 use crate::game::components::detained::Detained;
 use crate::game::components::insider_group::InsiderGroupID;
+use crate::game::components::tags::{TagSetID, Tags};
 use crate::game::role_list::RoleSet;
-use crate::game::tag::Tag;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
 
 use crate::game::visit::{Visit, VisitTag};
@@ -14,30 +14,25 @@ use super::{AbilitySelection, ControllerID, ControllerParametersMap, PlayerListS
 
 
 #[derive(Clone, Debug, Default, Serialize)]
-pub struct Framer{
-    framed_targets: VecSet<PlayerReference>
-}
+pub struct Framer;
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Framer {
     type ClientRoleState = Framer;
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
         match priority {
             Priority::Deception => {
                 let framer_visits = actor_ref.untagged_night_visits_cloned(game).clone();
 
                 let Some(first_visit) = framer_visits.first() else {return};
 
-                self.framed_targets.insert(first_visit.target);
+                Tags::add_tag(game, TagSetID::Framer(actor_ref), first_visit.target);
 
-                first_visit.target.set_night_framed(game, true);
-                for framed_target in self.framed_targets.iter(){
+                for framed_target in Tags::tagged(game, TagSetID::Framer(actor_ref)){
                     framed_target.set_night_framed(game, true);
                 }
-                self.update_framer_tags(game, actor_ref);
-                actor_ref.set_role_state(game, self);
 
                 let Some(second_visit) = framer_visits.get(1) else {return};
             
@@ -61,14 +56,18 @@ impl RoleStateImpl for Framer {
                 actor_ref.set_night_visits(game, new_visits);
             }
             Priority::Investigative => {
-                self.framed_targets.retain(|p|
-                    !p.all_appeared_visitors(game).iter().any(|visitor| {
-                        RoleSet::TownInvestigative.get_roles().contains(&visitor.role(game))
-                    })
+                Tags::set_tagged(
+                    game,
+                    TagSetID::Framer(actor_ref),
+                    Tags::tagged(game, TagSetID::Framer(actor_ref))
+                        .into_iter()
+                        .filter(|p|
+                            !p.all_appeared_visitors(game).iter().any(|visitor| {
+                                RoleSet::TownInvestigative.get_roles().contains(&visitor.role(game))
+                            })
+                        )
+                        .collect()
                 );
-
-                self.update_framer_tags(game, actor_ref);
-                actor_ref.set_role_state(game, self);
             }
             _ => {}
         }
@@ -154,23 +153,5 @@ impl RoleStateImpl for Framer {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
-    }
-}
-impl Framer {
-    pub fn update_framer_tags(&self, game: &mut Game, actor_ref: PlayerReference){
-        for player in PlayerReference::all_players(game){
-            match (
-                actor_ref.player_has_tag(game, player, Tag::Frame) != 0, 
-                self.framed_targets.contains(&player)
-            ){
-                (false, true) => {
-                    actor_ref.push_player_tag(game, player, Tag::Frame);
-                }
-                (true, false) => {
-                    actor_ref.remove_player_tag(game, player, Tag::Frame);
-                }
-                _ => {}
-            }
-        }
     }
 }
