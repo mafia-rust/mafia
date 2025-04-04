@@ -5,6 +5,16 @@ use crate::{game::{ability_input::{ability_selection::AbilitySelection, AbilityI
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct PlayerListSelection(pub Vec<PlayerReference>);
 
+impl PlayerListSelection {
+    /// Meant for setting default selections
+    /// if the option is none, it returns an empty selection
+    pub fn one(player: Option<PlayerReference>) -> Self {
+        match player {
+            None => Self::default(),
+            Some(player) => Self(vec![player]),
+        }
+    }
+}
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
