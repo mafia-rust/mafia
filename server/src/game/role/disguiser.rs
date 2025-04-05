@@ -52,16 +52,13 @@ impl RoleStateImpl for Disguiser {
         ControllerParametersMap::combine([
             ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Disguiser, 0))
-                .available_selection(AvailablePlayerListSelection {
-                    available_players: PlayerReference::all_players(game)
-                        .filter(|p|
-                            p.alive(game) &&
-                            InsiderGroupID::in_same_revealed_group(game, actor_ref, *p)
-                        )
-                        .collect(),
-                    can_choose_duplicates: false,
-                    max_players: Some(1)
-                })
+                .available_selection(AvailablePlayerListSelection::insider_selection(
+                    actor_ref, 
+                    true,
+                    false,
+                    Some(1),
+                     game
+                ))
                 .night_typical(actor_ref)
                 .build_map(),
             ControllerParametersMap::builder(game)
