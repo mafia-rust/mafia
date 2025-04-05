@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::game::{chat::ChatMessageVariant, phase::PhaseType, player::PlayerReference, role::Priority, Game};
+use crate::game::{chat::ChatMessageVariant, event::on_midnight::{OnMidnight, OnMidnightPriority}, phase::PhaseType, player::PlayerReference, Game};
 
 use super::insider_group::InsiderGroupID;
 
@@ -23,16 +23,16 @@ impl Detained{
             Detained::clear_detain(game);
         }
     }
-    pub fn on_night_priority(game: &mut Game, priority: Priority){
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
         match priority {
-            Priority::Ward => {
+            OnMidnightPriority::Ward => {
                 for player in PlayerReference::all_players(game){
                     if Self::is_detained(game, player){
                         player.ward(game);
                     }
                 }
             }
-            Priority::Roleblock => {
+            OnMidnightPriority::Roleblock => {
                 for player in PlayerReference::all_players(game){
                     if Self::is_detained(game, player){
                         player.roleblock(game, true);

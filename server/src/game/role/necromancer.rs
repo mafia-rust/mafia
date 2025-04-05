@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, phase::PhaseType};
 use crate::game::player::PlayerReference;
 
@@ -9,7 +10,7 @@ use crate::game::Game;
 
 use super::{
     common_role, ControllerID,
-    ControllerParametersMap, GetClientRoleState, Priority, Role, RoleStateImpl
+    ControllerParametersMap, GetClientRoleState, Role, RoleStateImpl
 };
 
 
@@ -27,7 +28,7 @@ pub struct ClientRoleState;
 
 impl RoleStateImpl for Necromancer {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
             let mut used_bodies = self.used_bodies;
             used_bodies.push(currently_used_player);

@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::Grave;
 use crate::game::phase::PhaseType;
@@ -14,7 +15,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{GetClientRoleState, Priority, Role, RoleStateImpl};
+use super::{GetClientRoleState, Role, RoleStateImpl};
 use crate::game::ability_input::*;
 
 #[derive(Debug, Clone, Serialize, Default)]
@@ -36,11 +37,11 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Krampus {
     type ClientRoleState = ();
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
 
         match (priority, self.ability) {
-            (Priority::Kill, KrampusAbility::Kill) => {
+            (OnMidnightPriority::Kill, KrampusAbility::Kill) => {
                 if let Some(visit) = actor_visits.first() {
                     let target_ref = visit.target;
 
@@ -52,7 +53,7 @@ impl RoleStateImpl for Krampus {
                     });
                 }
             }
-            (Priority::Investigative, _) => {
+            (OnMidnightPriority::Investigative, _) => {
                 if let Some(visit) = actor_visits.first() {
                     let target_ref = visit.target;
 
@@ -148,7 +149,7 @@ impl Krampus {
                 .filter(|player| player.alive(game))
                 .collect::<Vec<PlayerReference>>()
             {
-                player.die(game, Grave::from_player_suicide(game, player));
+                player.die_and_add_grave(game, Grave::from_player_suicide(game, player));
             }
         }
     }
