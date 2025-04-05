@@ -1,4 +1,4 @@
-use crate::{game::{ability_input::{AvailablePlayerListSelection, AvailableSelectionKind, ControllerID, ControllerParameters}, components::{detained::Detained, insider_group::InsiderGroupID}, phase::PhaseType, player::PlayerReference, Game}, vec_set::VecSet};
+use crate::{game::{ability_input::{AvailablePlayerListSelection, AvailableSelectionKind, ControllerID, ControllerParameters}, components::detained::Detained, phase::PhaseType, player::PlayerReference, Game}, vec_set::VecSet};
 
 use super::ControllerParametersMap;
 
@@ -67,25 +67,12 @@ impl<'a, I: BuilderIDState> ControllerParametersBuilder<'a, NoAbilitySelection, 
         can_select_insiders: bool,
     ) -> ControllerParametersBuilder<'a, AvailablePlayerListSelection, I> {
         let game = self.game;
-
-        self.available_selection(AvailablePlayerListSelection {
-            available_players: PlayerReference::all_players(game)
-                .filter(|player|
-                    if !player.alive(game){
-                        false
-                    }else if *player == actor_ref{
-                        can_select_self
-                    }else if InsiderGroupID::in_same_revealed_group(game, actor_ref, *player){
-                        can_select_insiders
-                    }else{
-                        true
-                    }
-
-                )
-                .collect(),
-            can_choose_duplicates: false,
-            max_players: Some(1)
-        })
+        self.available_selection(AvailablePlayerListSelection::single_player_selection_typical(
+            actor_ref, 
+            can_select_self, 
+            can_select_insiders, 
+            game
+        ))
     }
 }
 
