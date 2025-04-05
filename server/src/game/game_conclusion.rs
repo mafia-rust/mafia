@@ -87,7 +87,7 @@ impl GameConclusion {
         {
             true
         }else{
-            matches!(role, Role::Apostle | Role::Zealot)
+            matches!(role, Role::Apostle | Role::Zealot | Role::Krampus)
         }
     }
 }
