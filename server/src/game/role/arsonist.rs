@@ -5,7 +5,6 @@ use crate::game::components::tags::{TagSetID, Tags};
 use crate::game::grave::GraveKiller;
 use crate::game::attack_power::DefensePower;
 use crate::game::event::on_midnight::OnMidnightPriority;
-use crate::game::{attack_power::DefensePower, components::arsonist_doused::ArsonistDoused};
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;

@@ -55,7 +55,7 @@ impl Tags{
         }else{
             let mut new_set = TagsSet::new();
             new_set.insert_viewer(player);
-            game.tags.tags.insert(id,  new_set);
+            game.tags.tags.insert(id.clone(),  new_set);
             true
         };
 
@@ -164,6 +164,7 @@ pub enum TagSetID{
     ArsonistDoused,
     MorticianTag(PlayerReference),
     Framer(PlayerReference),
+    Enfranchised,
 }
 impl TagSetID{
     fn get_tag(&self)->Tag{
@@ -171,6 +172,7 @@ impl TagSetID{
             TagSetID::ArsonistDoused => Tag::Doused,
             TagSetID::MorticianTag(_) => Tag::MorticianTagged,
             TagSetID::Framer(_) => Tag::Frame,
+            TagSetID::Enfranchised => Tag::Enfranchised
         }
     }
 }

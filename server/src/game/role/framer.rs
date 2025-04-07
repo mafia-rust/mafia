@@ -1,7 +1,5 @@
 use serde::Serialize;
 
-use crate::game::components::detained::Detained;
-use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::components::tags::{TagSetID, Tags};
 use crate::game::ability_input::AvailablePlayerListSelection;
 use crate::game::event::on_midnight::OnMidnightPriority;
@@ -11,7 +9,6 @@ use crate::game::{attack_power::DefensePower, player::PlayerReference};
 use crate::game::visit::{Visit, VisitTag};
 
 use crate::game::Game;
-use crate::vec_set::VecSet;
 use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 

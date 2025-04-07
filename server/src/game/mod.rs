@@ -26,6 +26,7 @@ use ability_input::saved_controllers_map::SavedControllersMap;
 use ability_input::PlayerListSelection;
 use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
+use components::enfranchise::Enfranchise;
 use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
 use components::night_visits::NightVisits;
@@ -81,7 +82,6 @@ use self::spectator::{
     Spectator,
     SpectatorInitializeParameters
 };
-use self::role::RoleState;
 use self::verdict::Verdict;
 
 
@@ -361,15 +361,8 @@ impl Game {
                 continue;
             }
             let mut voting_power = 1u8;
-            if let RoleState::Mayor(mayor) = player_ref.role_state(self).clone(){
-                if mayor.revealed {
-                    voting_power = voting_power.saturating_add(2);
-                }
-            }
-            if let RoleState::Politician(politician) = player_ref.role_state(self).clone(){
-                if politician.revealed {
-                    voting_power = voting_power.saturating_add(2);
-                }
+            if Enfranchise::enfranchised(self, player_ref) {
+                voting_power = voting_power.saturating_add(2);
             }
             
             match player_ref.verdict(self) {
@@ -396,16 +389,9 @@ impl Game {
             let Some(&voted_player) = voted_players.first() else { continue };
             
 
-            let mut voting_power = 1;
-            if let RoleState::Mayor(mayor) = player.role_state(self).clone() {
-                if mayor.revealed {
-                    voting_power = 3;
-                }
-            }
-            else if let RoleState::Politician(politician) = player.role_state(self).clone() {
-                if politician.revealed {
-                    voting_power = 3;
-                }
+            let mut voting_power: u8 = 1;
+            if Enfranchise::enfranchised(self, player) {
+                voting_power = voting_power.saturating_add(2);
             }
 
             if let Some(num_votes) = voted_player_votes.get_mut(&voted_player) {
