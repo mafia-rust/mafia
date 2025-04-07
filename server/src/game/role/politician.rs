@@ -3,6 +3,7 @@ use serde::Serialize;
 use crate::game::ability_input::AvailableUnitSelection;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::Grave;
 use crate::game::modifiers::Modifiers;
@@ -143,6 +144,16 @@ impl RoleStateImpl for Politician {
     fn default_win_condition(self) -> crate::game::win_condition::WinCondition where RoleState: From<Self> {
         WinCondition::GameConclusionReached{win_if_any: vec![GameConclusion::Politician].into_iter().collect()}
     }
+    
+    fn on_whisper(self, _game: &mut Game, actor_ref: PlayerReference, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority) {
+        if priority == WhisperPriority::Cancel && (
+            event.sender == actor_ref || 
+            event.receiver == actor_ref
+        ) && self.revealed {
+            fold.cancelled = true;
+            fold.hide_broadcast = true;
+        }
+    }
 }
 
 impl GetClientRoleState<ClientRoleState> for Politician {
@@ -164,7 +175,7 @@ impl Politician {
                 )
 
         {
-            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
+            actor_ref.die_and_add_grave(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
 
@@ -206,7 +217,7 @@ impl Politician {
     fn kill_all(game: &mut Game){
         for player in PlayerReference::all_players(game){
             if player.alive(game) && !player.win_condition(game).is_loyalist_for(GameConclusion::Politician) {
-                player.die(game, Grave::from_player_leave_town(game, player));
+                player.die_and_add_grave(game, Grave::from_player_leave_town(game, player));
             }
         }
     }

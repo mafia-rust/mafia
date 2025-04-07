@@ -6,6 +6,7 @@ use crate::game::attack_power::AttackPower;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::night_visits::NightVisits;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -15,7 +16,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use super::{
     ControllerID, ControllerParametersMap,
-    Priority, Role, RoleStateImpl
+    Role, RoleStateImpl
 };
 
 
@@ -29,11 +30,11 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Ambusher {
     type ClientRoleState = Ambusher;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if game.day_number() <= 1 {return}
 
         match priority {
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(ambush_visit) = actor_visits.first() else {return};
                 let target_ref = ambush_visit.target;

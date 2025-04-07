@@ -2,13 +2,14 @@ use serde::Serialize;
 
 use crate::game::attack_power::DefensePower;
 use crate::game::components::confused::Confused;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{chat::ChatMessageVariant, components::verdicts_today::VerdictsToday};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::player::PlayerReference;
 
 use crate::game::Game;
 
-use super::{Priority, RoleStateImpl};
+use super::RoleStateImpl;
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -20,10 +21,10 @@ pub struct TallyClerk;
 
 impl RoleStateImpl for TallyClerk {
     type ClientRoleState = TallyClerk;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if actor_ref.night_blocked(game) {return}
         if actor_ref.ability_deactivated_from_death(game) {return}
-        if priority != Priority::Investigative {return;}
+        if priority != OnMidnightPriority::Investigative {return;}
 
         let mut evil_count: u8 = 0;
         for player in PlayerReference::all_players(game)

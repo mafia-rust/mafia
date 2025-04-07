@@ -49,7 +49,7 @@ impl RoleStateImpl for Deputy {
         if target_ref.try_day_kill_single_attacker(actor_ref, game, grave.information, AttackPower::Basic) {
             game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::DeputyKilled{shot_index: target_ref.index()});
             if target_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) {
-                actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
+                actor_ref.die_and_add_grave(game, Grave::from_player_leave_town(game, actor_ref));
             }
         } else {
             target_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);

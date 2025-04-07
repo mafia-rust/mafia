@@ -4,6 +4,7 @@ use serde::Serialize;
 use crate::game::ability_input::{AvailableRoleOptionSelection, AvailableStringSelection, RoleOptionSelection};
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
@@ -11,7 +12,7 @@ use crate::game::visit::Visit;
 
 use crate::game::Game;
 use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Role, StringSelection};
-use super::{Priority, RoleState, RoleStateImpl};
+use super::{RoleState, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize)]
@@ -48,11 +49,11 @@ impl RoleStateImpl for Forger {
             ..Self::default()
         }
     }
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if self.forges_remaining == 0 {return}
 
         match priority {
-            Priority::Deception=>{
+            OnMidnightPriority::Deception=>{
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else{return};
 
@@ -77,7 +78,7 @@ impl RoleStateImpl for Forger {
                     forged_ref: Some(target_ref),
                 });
             },
-            Priority::Investigative=>{
+            OnMidnightPriority::Investigative=>{
                 if let Some(forged_ref) = self.forged_ref {
                     if forged_ref.night_died(game) {
                         actor_ref.push_night_message(game, ChatMessageVariant::PlayerRoleAndAlibi{
