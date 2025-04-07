@@ -66,7 +66,7 @@
     font-style: italic;
     color: gray;
 }
-.keyword-pride, .keyword-trans, .keyword-christmas {
+.keyword-pride, .keyword-trans, .keyword-christmas, .keyword-ace {
     background-clip: text;
     color: rgba(255,255,255,.2);
     -webkit-background-clip: text;
@@ -112,6 +112,9 @@
 }
 .keyword-trans {
     background-image: linear-gradient(to left, cyan, pink, white, pink, cyan);
+}
+.keyword-ace {
+    background-image: linear-gradient(to left, #800080, white, #303030 );
 }
 .keyword-disabled * {
     color: gray;
