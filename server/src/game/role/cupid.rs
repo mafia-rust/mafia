@@ -1,6 +1,7 @@
 use serde::Serialize;
 
-use crate::game::components::detained::Detained;
+use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, components::love_linked::LoveLinked};
 use crate::game::player::PlayerReference;
 
@@ -8,7 +9,7 @@ use crate::game::visit::Visit;
 
 use crate::game::Game;
 use crate::vec_set;
-use super::{common_role, AvailableAbilitySelection, ControllerID, ControllerParametersMap, InsiderGroupID, Priority, Role, RoleStateImpl};
+use super::{common_role, ControllerID, ControllerParametersMap, InsiderGroupID, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -20,9 +21,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Cupid {
     type ClientRoleState = Cupid;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::Cupid => {
+            OnMidnightPriority::Cupid => {
                 let visits = actor_ref.untagged_night_visits_cloned(game);
 
                 let Some(first_visit) = visits.get(0) else {return};
@@ -46,22 +47,16 @@ impl RoleStateImpl for Cupid {
             )
             .collect();
 
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Cupid, 0),
-            AvailableAbilitySelection::new_two_player_option(
-                available_players.clone(), 
-                available_players,
-                false,
-                true
-            ),
-            super::AbilitySelection::new_two_player_option(None),
-            actor_ref.ability_deactivated_from_death(game) ||
-            Detained::is_detained(game, actor_ref),
-            Some(crate::game::phase::PhaseType::Obituary),
-            false,
-            vec_set![actor_ref]
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Cupid, 0))
+            .available_selection(AvailableTwoPlayerOptionSelection {
+                available_first_players: available_players.clone(), 
+                available_second_players: available_players,
+                can_choose_duplicates: false,
+                can_choose_none: true
+            })
+            .night_typical(actor_ref)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         common_role::convert_controller_selection_to_visits(

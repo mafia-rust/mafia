@@ -12,6 +12,7 @@ import Icon from '../components/Icon';
 import SettingsMenu from './Settings';
 import { useLobbyOrGameState } from '../components/useHooks';
 import { Button } from '../components/Button';
+import HostMenu from './HostMenu';
 
 export default function GlobalMenu(): ReactElement {
     const lobbyName = useLobbyOrGameState(
@@ -21,7 +22,7 @@ export default function GlobalMenu(): ReactElement {
     const host = useLobbyOrGameState(
         state => {
             if (state.stateType === "game") {
-                return state.host
+                return state.host !== null
             } else {
                 return state.players.get(state.myId!)?.ready === "host"
             }
@@ -71,9 +72,14 @@ export default function GlobalMenu(): ReactElement {
                 <section className="standout">
                     <h2>{lobbyName}</h2>
                     <RoomLinkButton/>
-                    {(stateType === "game" && host) && <Button onClick={()=>GAME_MANAGER.sendBackToLobbyPacket()}>
-                        {translate("backToLobby")}
-                    </Button>}
+                    {(stateType === "game" && host) && <>
+                        <Button onClick={()=>GAME_MANAGER.sendBackToLobbyPacket()}>
+                            {translate("backToLobby")}
+                        </Button>
+                        <Button onClick={()=>anchorController.setCoverCard(<HostMenu />)}>
+                            {translate("menu.hostSettings.title")}
+                        </Button>
+                    </>}
                 </section>
             }
             <section>

@@ -1,15 +1,16 @@
 use serde::Serialize;
+use crate::game::ability_input::{AvailableBooleanSelection, AvailablePlayerListSelection};
 use crate::game::components::insider_group::InsiderGroupID;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::{game::attack_power::AttackPower, vec_set::VecSet};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
-use crate::vec_set;
 use crate::game::attack_power::DefensePower;
 use crate::game::player::PlayerReference;
 use crate::game::Game;
 use super::{
-    common_role, AbilitySelection, AvailableAbilitySelection, BooleanSelection, ControllerID, ControllerParametersMap, PlayerListSelection, Priority, Role, RoleStateImpl
+    common_role, BooleanSelection, ControllerID, ControllerParametersMap, PlayerListSelection, Role, RoleStateImpl
 };
 
 
@@ -28,10 +29,10 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Warden {
     type ClientRoleState = Warden;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         match priority {
-            Priority::Ward => {
+            OnMidnightPriority::Ward => {
                 if let Some(BooleanSelection(chose_to_ward)) = game.saved_controllers
                     .get_controller_current_selection_boolean(
                         ControllerID::role(actor_ref, Role::Warden, 1)
@@ -42,7 +43,7 @@ impl RoleStateImpl for Warden {
                     }
                 }
             }
-            Priority::Roleblock => {
+            OnMidnightPriority::Roleblock => {
                 if game.day_number() == 1 {return}
                 for &player in self.players_in_prison.iter() {
                     if player != actor_ref {
@@ -50,7 +51,7 @@ impl RoleStateImpl for Warden {
                     }
                 }
             }
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 if game.day_number() == 1 {return}
                 for player in self.players_to_kill(game, actor_ref) {
                     if player == actor_ref {continue}
@@ -76,53 +77,42 @@ impl RoleStateImpl for Warden {
             .collect()
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        let available_players = PlayerReference::all_players(game)
-            .filter(|&p| p.alive(game))
-            .collect::<VecSet<_>>();
-        
-        let mut out = 
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Warden, 0),
-            super::AvailableAbilitySelection::new_player_list(
-                available_players,
-                false,
-                Some(MAX_PLAYERS_IN_PRISON),
-            ),
-            AbilitySelection::new_player_list(vec![]),
-            actor_ref.ability_deactivated_from_death(game) || game.day_number() <= 1,
-            Some(crate::game::phase::PhaseType::Night),
-            false,
-            vec_set!(actor_ref)
-        );
-
-        out.combine_overwrite(
-            ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::role(actor_ref, Role::Warden, 1),
-                super::AvailableAbilitySelection::new_boolean(),
-                AbilitySelection::new_boolean(false),
-                actor_ref.ability_deactivated_from_death(game),
-                Some(crate::game::phase::PhaseType::Obituary),
-                false,
-                vec_set!(actor_ref)
+        ControllerParametersMap::combine([
+            ControllerParametersMap::combine([
+                // Put players in prison
+                ControllerParametersMap::builder(game)
+                    .id(ControllerID::role(actor_ref, Role::Warden, 0))
+                    .available_selection(AvailablePlayerListSelection {
+                        available_players: PlayerReference::all_players(game)
+                            .filter(|&p| p.alive(game))
+                            .collect::<VecSet<_>>(),
+                        can_choose_duplicates: false,
+                        max_players: Some(MAX_PLAYERS_IN_PRISON)
+                    })
+                    .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game) || game.day_number() <= 1)
+                    .reset_on_phase_start(PhaseType::Night)
+                    .allow_players([actor_ref])
+                    .build_map(),
+                // Ward
+                ControllerParametersMap::builder(game)
+                    .id(ControllerID::role(actor_ref, Role::Warden, 1))
+                    .available_selection(AvailableBooleanSelection)
+                    .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
+                    .reset_on_phase_start(PhaseType::Obituary)
+                    .allow_players([actor_ref])
+                    .build_map(),
+            ]),
+            ControllerParametersMap::combine(
+                self.players_in_prison.iter().map(|&player|
+                    // Live or die
+                    ControllerParametersMap::builder(game)
+                        .id(ControllerID::WardenLiveOrDie{warden: actor_ref, player})
+                        .available_selection(AvailableBooleanSelection)
+                        .allow_players([player])
+                        .build_map()
+                )
             )
-        );
-
-        for &player in self.players_in_prison.iter() {
-            out.combine_overwrite(ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::WardenLiveOrDie{warden: actor_ref, player},
-                AvailableAbilitySelection::new_boolean(),
-                AbilitySelection::new_boolean(true),
-                false,
-                None,
-                false,
-                vec_set!(player)
-            ));
-        }
-
-        out
+        ])
     }
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {

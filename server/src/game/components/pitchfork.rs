@@ -1,8 +1,8 @@
 use crate::{
     game::{
-        ability_input::*, attack_power::AttackPower, game_conclusion::GameConclusion, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::{Priority, Role}, role_list::RoleSet, Game
+        ability_input::*, attack_power::AttackPower, event::on_midnight::{OnMidnight, OnMidnightPriority}, game_conclusion::GameConclusion, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::Role, role_list::RoleSet, Game
     },
-    vec_map::VecMap, vec_set::{vec_set, VecSet}
+    vec_map::VecMap, vec_set::VecSet
 };
 
 #[derive(Clone)]
@@ -41,38 +41,31 @@ impl Pitchfork{
         }
     }
     pub fn controller_parameters_map(game: &Game)->ControllerParametersMap{
-        if
-            !game.settings.enabled_roles.contains(&Role::Rabblerouser)
-        {
+        if !game.settings.enabled_roles.contains(&Role::Rabblerouser) {
             return ControllerParametersMap::default();
         }
 
-        let mut out = ControllerParametersMap::default();
-        
-        for player in PlayerReference::all_players(game){
-            out.combine_overwrite(
-                ControllerParametersMap::new_controller_fast(
-                    game,
-                    ControllerID::pitchfork_vote(player),
-                    AvailableAbilitySelection::new_player_list(
-                        PlayerReference::all_players(game)
+        ControllerParametersMap::combine(
+            PlayerReference::all_players(game).map(|player|
+                ControllerParametersMap::builder(game)
+                    .id(ControllerID::pitchfork_vote(player))
+                    .available_selection(AvailablePlayerListSelection{
+                        available_players: PlayerReference::all_players(game)
                             .filter(|p|p.alive(game))
                             .collect(),
-                            false,
-                            Some(1)
-                    ),
-                    AbilitySelection::new_player_list(vec![]),
-                    game.day_number() == 1 ||
+                        can_choose_duplicates: false,
+                        max_players: Some(1)
+                    })
+                    .add_grayed_out_condition(
+                        game.day_number() == 1 ||
                         !player.alive(game) ||
-                        !player.win_condition(game).is_loyalist_for(GameConclusion::Town),
-                        Some(PhaseType::Obituary),
-                        false,
-                        vec_set![player]
-                )
-            );
-        }
-        
-        out
+                        !player.win_condition(game).is_loyalist_for(GameConclusion::Town)
+                    )
+                    .reset_on_phase_start(PhaseType::Obituary)
+                    .allow_players([player])
+                    .build_map()
+            )
+        )
     }
     
 
@@ -86,8 +79,8 @@ impl Pitchfork{
             }
         }
     }
-    pub fn on_night_priority(game: &mut Game, priority: Priority){
-        if priority != Priority::Kill {return;}
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
+        if priority != OnMidnightPriority::Kill {return;}
         if game.day_number() <= 1 {return;}
         if Pitchfork::usable_pitchfork_owners(game).is_empty() {return;}
         

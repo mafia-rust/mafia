@@ -2,6 +2,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::{GraveInformation, GraveKiller, GraveReference};
 use crate::game::player::PlayerReference;
 
@@ -9,7 +10,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_set::VecSet;
 
-use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Priority, Role, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Role, RoleStateImpl};
 
 #[derive(Debug, Clone, Default)]
 pub struct Pyrolisk{
@@ -25,11 +26,11 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Pyrolisk {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if game.day_number() <= 1 {return;}
 
         match priority {
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 let mut tagged_for_obscure = self.tagged_for_obscure.clone();
 
                 let mut killed_at_least_once = false;
@@ -65,14 +66,12 @@ impl RoleStateImpl for Pyrolisk {
     }
     
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            true,
-            game.day_number() <= 1 ,
-            ControllerID::role(actor_ref, Role::Pyrolisk, 0)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Pyrolisk, 0))
+            .single_player_selection_typical(actor_ref, false, true)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(game.day_number() <= 1)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(

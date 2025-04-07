@@ -2,13 +2,12 @@ use rand::seq::IteratorRandom;
 use serde::Serialize;
 use vec1::vec1;
 
-use crate::game::ability_input::ControllerID;
+use crate::game::ability_input::{AvailablePlayerListSelection, AvailableRoleOptionSelection, ControllerID};
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::components::detained::Detained;
 use crate::game::components::insider_group::InsiderGroupID;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::game_conclusion::GameConclusion;
-use crate::game::phase::PhaseType;
 use crate::game::role_list::{RoleOutline, RoleOutlineOption, RoleOutlineOptionRoles, RoleSet};
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
@@ -16,10 +15,8 @@ use crate::game::{attack_power::DefensePower, player::PlayerReference};
 use crate::game::visit::{Visit, VisitTag};
 
 use crate::game::Game;
-use crate::vec_set;
 use super::{
-    common_role,
-    AbilitySelection, AvailableAbilitySelection, ControllerParametersMap, Priority, Role, RoleOptionSelection, 
+    common_role, ControllerParametersMap, Role, RoleOptionSelection, 
     RoleStateImpl
 };
 
@@ -42,9 +39,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Reeducator {
     type ClientRoleState = Reeducator;
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::Deception => {
+            OnMidnightPriority::Deception => {
                 if !self.convert_charges_remaining {return}
 
                 actor_ref.set_night_visits(game, actor_ref
@@ -61,7 +58,7 @@ impl RoleStateImpl for Reeducator {
                     }
                 ).collect());
             },
-            Priority::Convert => {
+            OnMidnightPriority::Convert => {
                 let visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(target_ref) = visits.first().map(|v| v.target) else {return};
 
@@ -104,53 +101,37 @@ impl RoleStateImpl for Reeducator {
         }                
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        
-        
-        let grayed_out = 
-            actor_ref.ability_deactivated_from_death(game) || 
-            Detained::is_detained(game, actor_ref);
-
-        let default = Reeducator::default_role(game);
-
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Reeducator, 0),
-            AvailableAbilitySelection::new_player_list(
-                PlayerReference::all_players(game)
-                    .filter(|player| 
-                        player.alive(game) &&
-                        (
-                            InsiderGroupID::in_same_revealed_group(game, actor_ref, *player) || 
-                            (game.day_number() > 1 && self.convert_charges_remaining)
+        ControllerParametersMap::combine([
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Reeducator, 0))
+                .available_selection(AvailablePlayerListSelection {
+                    available_players: PlayerReference::all_players(game)
+                        .filter(|player| 
+                            player.alive(game) &&
+                            (
+                                InsiderGroupID::in_same_revealed_group(game, actor_ref, *player) || 
+                                (game.day_number() > 1 && self.convert_charges_remaining)
+                            )
                         )
-                    )
-                    .collect(),
-                    false,
-                    Some(1)
-                ),
-            AbilitySelection::new_player_list(Vec::new()),
-            grayed_out,
-            Some(PhaseType::Obituary),
-            false,
-            vec_set!(actor_ref)
-        ).combine_overwrite_owned(
-            ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::role(actor_ref, Role::Reeducator, 1),
-                AvailableAbilitySelection::new_role_option(
+                        .collect(),
+                    can_choose_duplicates: false,
+                    max_players: Some(1)
+                })
+                .night_typical(actor_ref)
+                .build_map(),
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Reeducator, 1))
+                .available_selection(AvailableRoleOptionSelection(
                     RoleSet::MafiaSupport.get_roles().into_iter()
                         .filter(|p|game.settings.enabled_roles.contains(p))
                         .filter(|p|*p!=Role::Reeducator)
                         .map(Some)
                         .collect()
-                ),
-                AbilitySelection::new_role_option(default),
-                false,
-                None,
-                false,
-                vec_set!(actor_ref)
-            )
-        )
+                ))
+                .default_selection(RoleOptionSelection(Reeducator::default_role(game)))
+                .allow_players([actor_ref])
+                .build_map()
+        ])
     }
     // Unlike other conversion roles, its visit isn't tagged as an attack.
     // I assume this is because if the target is syndicate then it is converted without an attack

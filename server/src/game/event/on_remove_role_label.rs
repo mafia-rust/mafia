@@ -12,6 +12,7 @@ impl OnRemoveRoleLabel{
         Self{ player, concealed_player }
     }
     pub fn invoke(self, game: &mut Game){
+        PlayerReference::all_players(game).for_each(|p|p.on_remove_role_label(game, self.player, self.concealed_player));
         InsiderGroups::on_remove_role_label(game, self.player, self.concealed_player);
     }
 }

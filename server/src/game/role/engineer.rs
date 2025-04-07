@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
 
+use crate::game::ability_input::AvailableBooleanSelection;
 use crate::game::attack_power::AttackPower;
 use crate::game::components::night_visits::NightVisits;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::GraveKiller;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
@@ -10,7 +12,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{common_role, BooleanSelection, ControllerID, ControllerParametersMap, GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
+use super::{common_role, BooleanSelection, ControllerID, ControllerParametersMap, GetClientRoleState, Role, RoleState, RoleStateImpl};
 
 #[derive(Default, Clone, Debug)]
 pub struct Engineer {
@@ -71,9 +73,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Engineer {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::Heal => {
+            OnMidnightPriority::Heal => {
                 //upgrade state
 
                 if !actor_ref.night_blocked(game) {
@@ -100,7 +102,7 @@ impl RoleStateImpl for Engineer {
                     target.increase_defense_to(game, DefensePower::Protection);
                 }
             }
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 if let Trap::Set { target, .. } = self.trap {
                     for visit in NightVisits::all_visits(game).into_iter().copied().collect::<Vec<_>>() {
                         if 
@@ -113,7 +115,7 @@ impl RoleStateImpl for Engineer {
                     }
                 }
             }
-            Priority::Investigative => {
+            OnMidnightPriority::Investigative => {
                 if let Trap::Set { target, .. } = self.trap {
 
                     let mut should_dismantle = false;
@@ -146,22 +148,20 @@ impl RoleStateImpl for Engineer {
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         match self.trap {
             Trap::Ready => {
-                common_role::controller_parameters_map_player_list_night_typical(
-                    game,
-                    actor_ref,
-                    false,
-                    true,
-                    false,
-                    ControllerID::role(actor_ref, Role::Engineer, 0)
-                )
+                ControllerParametersMap::builder(game)
+                    .id(ControllerID::role(actor_ref, Role::Engineer, 0))
+                    .single_player_selection_typical(actor_ref, false, true)
+                    .night_typical(actor_ref)
+                    .add_grayed_out_condition(false)
+                    .build_map()
             },
             Trap::Set { .. } => {
-                common_role::controller_parameters_map_boolean(
-                    game,
-                    actor_ref,
-                    false,
-                    ControllerID::role(actor_ref, Role::Engineer, 1)
-                )
+                ControllerParametersMap::builder(game)
+                    .id(ControllerID::role(actor_ref, Role::Engineer, 1))
+                    .available_selection(AvailableBooleanSelection)
+                    .night_typical(actor_ref)
+                    .add_grayed_out_condition(false)
+                    .build_map()
             }
             _ => {
                 ControllerParametersMap::default()

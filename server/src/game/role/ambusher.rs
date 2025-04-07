@@ -6,6 +6,7 @@ use crate::game::attack_power::AttackPower;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::night_visits::NightVisits;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -15,7 +16,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use super::{
     ControllerID, ControllerParametersMap,
-    Priority, Role, RoleStateImpl
+    Role, RoleStateImpl
 };
 
 
@@ -29,11 +30,11 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Ambusher {
     type ClientRoleState = Ambusher;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if game.day_number() <= 1 {return}
 
         match priority {
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(ambush_visit) = actor_visits.first() else {return};
                 let target_ref = ambush_visit.target;
@@ -81,14 +82,12 @@ impl RoleStateImpl for Ambusher {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            false,
-            game.day_number() <= 1,
-            ControllerID::role(actor_ref, Role::Ambusher, 0)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Ambusher, 0))
+            .single_player_selection_typical(actor_ref, false, false)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(game.day_number() <= 1)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(

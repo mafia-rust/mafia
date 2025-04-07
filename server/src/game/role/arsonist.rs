@@ -4,12 +4,14 @@ use crate::game::attack_power::AttackPower;
 use crate::game::components::tags::{TagSetID, Tags};
 use crate::game::grave::GraveKiller;
 use crate::game::attack_power::DefensePower;
+use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::{attack_power::DefensePower, components::arsonist_doused::ArsonistDoused};
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -21,9 +23,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Arsonist {
     type ClientRoleState = Arsonist;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::Deception => {
+            OnMidnightPriority::Deception => {
                 //douse target
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 if let Some(visit) = actor_visits.first(){
@@ -40,7 +42,7 @@ impl RoleStateImpl for Arsonist {
                     Self::douse(game, other_player_ref);
                 }
             },
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);             
                 if let Some(visit) = actor_visits.first(){
                     if actor_ref == visit.target{
@@ -52,14 +54,12 @@ impl RoleStateImpl for Arsonist {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            true,
-            true,
-            false,
-            ControllerID::role(actor_ref, Role::Arsonist, 0)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Arsonist, 0))
+            .single_player_selection_typical(actor_ref, true, true)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(false)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(

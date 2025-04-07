@@ -1,8 +1,9 @@
 use serde::Serialize;
 
+use crate::game::ability_input::AvailableBooleanSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::components::detained::Detained;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -10,9 +11,8 @@ use crate::game::player::PlayerReference;
 use crate::game::role::BooleanSelection;
 use crate::game::visit::Visit;
 use crate::game::Game;
-use crate::vec_set;
 
-use super::{AbilitySelection, ControllerID, ControllerParametersMap, Priority, Role, RoleState, RoleStateImpl};
+use super::{AbilitySelection, ControllerID, ControllerParametersMap, Role, RoleState, RoleStateImpl};
 
 #[derive(PartialEq, Eq, Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -53,8 +53,8 @@ impl RoleStateImpl for Martyr {
             state: MartyrState::StillPlaying { bullets: game.num_players().div_ceil(5) }
         }
     }
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Kill {return}
+    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if priority != OnMidnightPriority::Kill {return}
         let MartyrState::StillPlaying { bullets } = self.state else {return};
         if bullets == 0 {return}
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
@@ -75,25 +75,20 @@ impl RoleStateImpl for Martyr {
         actor_ref.set_role_state(game, self);
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Martyr, 0),
-            super::AvailableAbilitySelection::Boolean,
-            AbilitySelection::new_boolean(false),
-            match self.state {
-                MartyrState::StillPlaying { bullets } => bullets == 0,
-                _ => true
-            } ||
-            actor_ref.ability_deactivated_from_death(game) || 
-            Detained::is_detained(game, actor_ref) ||
-            game.day_number() <= 1,
-            Some(PhaseType::Obituary),
-            false,
-            vec_set!(actor_ref)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Martyr, 0))
+            .available_selection(AvailableBooleanSelection)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(
+                game.day_number() <= 1 || match self.state {
+                    MartyrState::StillPlaying { bullets } => bullets == 0,
+                    _ => true
+                }
+            )
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
-        let Some(AbilitySelection::Boolean {selection: BooleanSelection(true)}) = game.saved_controllers.get_controller_current_selection(ControllerID::role(actor_ref, Role::Martyr, 0)) else {return Vec::new()};
+        let Some(AbilitySelection::Boolean(BooleanSelection(true))) = game.saved_controllers.get_controller_current_selection(ControllerID::role(actor_ref, Role::Martyr, 0)) else {return Vec::new()};
         vec![Visit::new_none(actor_ref, actor_ref, true)]
     }
     fn on_phase_start(self,  game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
@@ -102,7 +97,7 @@ impl RoleStateImpl for Martyr {
         }
 
         if phase == PhaseType::Obituary && actor_ref.alive(game) && matches!(self.state, MartyrState::StillPlaying { bullets: 0 }) {
-            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
+            actor_ref.die_and_add_grave(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
     fn on_role_creation(self,  game: &mut Game, actor_ref: PlayerReference) {
@@ -126,7 +121,7 @@ impl RoleStateImpl for Martyr {
                 if player == actor_ref {continue}
                 if !player.alive(game) {continue}
                 if player.defense(game).can_block(AttackPower::ProtectionPiercing) {continue}
-                player.die(game, Grave::from_player_suicide(game, player));
+                player.die_and_add_grave(game, Grave::from_player_suicide(game, player));
             }
     
             actor_ref.set_role_state(game, RoleState::Martyr(Martyr {
