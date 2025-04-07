@@ -9,10 +9,7 @@ impl PlayerListSelection {
     /// Meant for setting default selections
     /// if the option is none, it returns an empty selection
     pub fn one(player: Option<PlayerReference>) -> Self {
-        match player {
-            None => Self::default(),
-            Some(player) => Self(vec![player]),
-        }
+        player.map_or_else(Self::default, |p| Self(vec![p]))
     }
 }
 
