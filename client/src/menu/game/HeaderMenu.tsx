@@ -26,16 +26,21 @@ export default function HeaderMenu(props: Readonly<{
         (phaseState.type === "night" || phaseState.type === "obituary") ? "background-night" : 
         "background-day";
 
-    const host = useGameState(
-        state => state.host !== null,
-        ["playersHost"]
+    const spectatorAndHost = useGameState(
+        state => state.clientState.type === "spectator" && state.host !== null,
+        ["playersHost", "gamePlayers"]
     )!;
 
-    const spectator = useSpectator()!;
+    const fastForwardVote = usePlayerState(
+        state => state.savedControllers.some(([id, controller]) => {
+            return id.type === "fastForwardVote" && controller.selection.type === "boolean" && controller.selection.selection
+        }),
+        ["yourAllowedControllers"]
+    );
 
 
     return <div className={"header-menu " + backgroundStyle}>
-        {!(spectator && !host) && <FastForwardButton spectatorAndHost={spectator && host}/>}
+        {((fastForwardVote !== undefined) || spectatorAndHost) && <FastForwardButton spectatorAndHost={spectatorAndHost} fastForwardVote={fastForwardVote}/>}
         <Information />
         {!mobile && <MenuButtons chatMenuNotification={props.chatMenuNotification}/>}
         <Timer />
@@ -219,22 +224,31 @@ export function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>):
     </div>
 }
 
-export function FastForwardButton(props: { spectatorAndHost: boolean }): ReactElement {
-    const fastForward = useGameState(
-        gameState => gameState.fastForward,
-        ["yourVoteFastForwardPhase"]
-    )!
+export function FastForwardButton(props: { spectatorAndHost: boolean, fastForwardVote: boolean | undefined }): ReactElement {
+    const myIndex = usePlayerState(
+        gameState => gameState.myIndex,
+        ["yourPlayerIndex"]
+    )!;
 
     return <Button 
         onClick={() => {
             if (props.spectatorAndHost) {
                 GAME_MANAGER.sendHostSkipPhase()
             } else {
-                GAME_MANAGER.sendVoteFastForwardPhase(!fastForward)
+                GAME_MANAGER.sendAbilityInput({
+                    id: { 
+                        type: "fastForwardVote",
+                        player: myIndex
+                    },
+                    selection: {
+                        type: "boolean",
+                        selection: !props.fastForwardVote
+                    }
+                })}
             }
-        }}
+        }
         className="fast-forward-button"
-        highlighted={fastForward}
+        highlighted={props.fastForwardVote}
     >
         <Icon>double_arrow</Icon>
     </Button>

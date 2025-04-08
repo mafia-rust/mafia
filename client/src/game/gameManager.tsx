@@ -454,13 +454,6 @@ export function createGameManager(): GameManager {
             });
         },
 
-        sendVoteFastForwardPhase(fastForward: boolean) {
-            this.server.sendPacket({
-                type: "voteFastForwardPhase",
-                fastForward: fastForward
-            });
-        },
-
         sendHostDataRequest() {
             this.server.sendPacket({
                 type: "hostDataRequest"
