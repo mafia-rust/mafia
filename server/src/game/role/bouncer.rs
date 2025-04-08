@@ -25,7 +25,7 @@ impl RoleStateImpl for Bouncer {
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
             let target_ref = visit.target;
-            target_ref.ward(game);
+            target_ref.ward(game, &[*visit]);
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {

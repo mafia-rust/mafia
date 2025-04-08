@@ -20,9 +20,12 @@ impl PlayerReference{
     pub fn roleblock(&self, game: &mut Game, send_messages: bool) {
         OnPlayerRoleblocked::new(*self, !send_messages).invoke(game);
     }
-    pub fn ward(&self, game: &mut Game) -> Vec<PlayerReference> {
+    pub fn ward(&self, game: &mut Game, dont_wardblock: &[Visit]) -> Vec<PlayerReference> {
         let mut out = Vec::new();
         for visit in NightVisits::all_visits_cloned(game) {
+            if dont_wardblock.contains(&visit) {
+                continue;
+            }
             if visit.target != *self {continue;}
             OnVisitWardblocked::new(visit).invoke(game);
             out.push(visit.visitor);

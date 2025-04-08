@@ -32,17 +32,6 @@ impl RoleStateImpl for Warden {
     fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         match priority {
-            OnMidnightPriority::Ward => {
-                if let Some(BooleanSelection(chose_to_ward)) = game.saved_controllers
-                    .get_controller_current_selection_boolean(
-                        ControllerID::role(actor_ref, Role::Warden, 1)
-                    )
-                {
-                    if chose_to_ward {
-                        actor_ref.ward(game);
-                    }
-                }
-            }
             OnMidnightPriority::Roleblock => {
                 if game.day_number() == 1 {return}
                 for &player in self.players_in_prison.iter() {
@@ -78,30 +67,20 @@ impl RoleStateImpl for Warden {
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::combine([
-            ControllerParametersMap::combine([
-                // Put players in prison
-                ControllerParametersMap::builder(game)
-                    .id(ControllerID::role(actor_ref, Role::Warden, 0))
-                    .available_selection(AvailablePlayerListSelection {
-                        available_players: PlayerReference::all_players(game)
-                            .filter(|&p| p.alive(game))
-                            .collect::<VecSet<_>>(),
-                        can_choose_duplicates: false,
-                        max_players: Some(MAX_PLAYERS_IN_PRISON)
-                    })
-                    .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game) || game.day_number() <= 1)
-                    .reset_on_phase_start(PhaseType::Night)
-                    .allow_players([actor_ref])
-                    .build_map(),
-                // Ward
-                ControllerParametersMap::builder(game)
-                    .id(ControllerID::role(actor_ref, Role::Warden, 1))
-                    .available_selection(AvailableBooleanSelection)
-                    .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
-                    .reset_on_phase_start(PhaseType::Obituary)
-                    .allow_players([actor_ref])
-                    .build_map(),
-            ]),
+            // Put players in prison
+            ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Warden, 0))
+            .available_selection(AvailablePlayerListSelection {
+                available_players: PlayerReference::all_players(game)
+                    .filter(|&p| p.alive(game))
+                    .collect::<VecSet<_>>(),
+                can_choose_duplicates: false,
+                max_players: Some(MAX_PLAYERS_IN_PRISON)
+            })
+            .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game) || game.day_number() <= 1)
+            .reset_on_phase_start(PhaseType::Night)
+            .allow_players([actor_ref])
+            .build_map(),
             ControllerParametersMap::combine(
                 self.players_in_prison.iter().map(|&player|
                     // Live or die
