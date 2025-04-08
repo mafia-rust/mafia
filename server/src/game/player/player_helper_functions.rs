@@ -178,7 +178,7 @@ impl PlayerReference{
                     possessed_visit.target.convert_selection_to_visits(game)
                 );
 
-                //remove the second role visit
+                //remove the second role visit from the possessor
                 let mut found_first = false;
                 let mut new_witch_visits = vec![];
                 for visit in self.all_night_visits_cloned(game){

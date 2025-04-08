@@ -302,7 +302,7 @@ export function partitionWikiPages(
         }
 
         if ([
-            "standard/playerList", "standard/gameMode", "standard/outlineList", "standard/alibi", "standard/chat",
+            "standard/playerList", "standard/gameMode", "standard/outlineList", "standard/alibi", "standard/chat", "standard/controller"
         ].includes(wikiPage)) {
             category = "menus"
         }

@@ -1054,7 +1054,7 @@
     "wiki.category.modifiers.text": "These are options that can be enabled which change the behavior of the game.",
     "wiki.category.abilities":"Abilities",
     "wiki.category.abilities:var.0":"Ability",
-    "wiki.category.abilities.text":"Abilities are how players perform actions in the game. To see what actions you can do, see the ability menu. The Ability menu is where the controls for most abilities are. Most abilities happen during the night, but some abilities happen during the day.",
+    "wiki.category.abilities.text":"Abilities are how players perform actions in the game. To see what actions you can take, see the ability menu. The Ability menu is where the controllers for most abilities are. Most abilities happen at midnight.",
     "wiki.category.strategies":"Strategies",
     "wiki.category.strategies:var.0":"Strategy",
     "wiki.category.strategies.text":"There are a lot of helpful strategies that players use in order to help them win. New strategies are created every day.",
@@ -1168,7 +1168,7 @@
     "wiki.article.standard.possess.title:var.4": "Possessions",
     "wiki.article.standard.possess.title:var.5": "Possessor",
     "wiki.article.standard.possess.title:var.6": "Possessee",
-    "wiki.article.standard.possess.text": "A player who is possessed was forced into visiting someone.\n- Roles like Witch, and Retributionist, have the ability to possess players\n- Some roles are immune to being possessed, like witch, and retributionist\n- If a role visits multiple people, only the first visit is changed when possessed\n- You can't be possessed into someone if your role doesn't allow you to select them. If a medium is possessed, they still don't visit anyone\n\n__For Example__:\n\n@1 the vigilante selects @7 in hopes of shooting them.\nWhen night ends @1 gets a message saying they were possessed.\nThe next obituary, they see that @2 was shot instead.\nThis is because @4 is the witch, who possessed @1 into shooting @2.\n\n__For Example__:\n\nThe philosopher selects @8 and @12, but they are possessed into @15\nThe philosopher actually visited @15 and @12, only the first visit was changed",
+    "wiki.article.standard.possess.text": "A player can be possessed into another player, forcing them to use their ability a certain way.\n- Possessed players are told they are possessed but not told who they are possessed into, nor are they told what their ability is forced into doing.\n- Abilities can't be forced into something that they typically can't do (ie, a detective cannot be forced to investigate themself, because a detective is not able to investigate themselves typically)\n- Some abilities are immune to possession, but they are still told they are possessed.\n\nThis is how each controller type is effected when you are possessed:\n- Checkbox: If you are possessed into yourself, the box is force checked, otherwise nothing happens.\n- Player List: The list of players (or the single player slot) is set to contain only the player you are possessed into.\n- Exactly Two Players: The first player choice is set to the player you are possessed into, but the second player choice stays as what it was originally set to.\n\n All unlisted controllers are uneffected by possession. Controllers can't be set to an invalid choice.",
     "wiki.article.standard.defense.title": "Defense",
     "wiki.article.standard.defense.title:var.0": "Basic",
     "wiki.article.standard.defense.title:var.1": "Armor-piercing",
@@ -1330,7 +1330,9 @@
     "wiki.article.standard.gameMode.title":"Gamemode",
     "wiki.article.standard.gameMode.title:var.0":"Game Mode",
     "wiki.article.standard.gameMode.text":"The game mode menu lets you keep track of the game settings during the game.\n- Outline list\n- Enabled Roles\n- Enabled Modifiers",
-    
+    "wiki.article.standard.controller.title":"Controller",
+    "wiki.article.standard.controller.title:var.0":"Controllers",
+    "wiki.article.standard.controller.text":"Controllers are elements of the ability menu that are used to controll abilities.\n Controllers have many types:\n- Player List: An ordered list of player dropdowns with a maximum length (Roles like detective use this controller type with a maximum length of 1)\n- Two Players: Must choose 0 or 2 players\n- Role list: An ordered list of roles with a maximum (Imposter disguise controller uses this with maximmum of 1).\n- Two Roles: Must choose 0 or 2 roles.\n- Checkbox: Yes or no (Veteran rampage uses this).\n- Button: A single button press (Mayor enfranchise uses this)\n- Text Box: (Forger and Reporter use this).\n- Outline List: A depiction of the outline list, with buttons to choose multiple of them (Auditor uses this).\n Options: A list of options with names in a dropdown.\n- Kira: used only for Kira.",
 
     "wiki.article.modifier.obscuredGraves.title":"Obscured Graves",
     "wiki.article.modifier.obscuredGraves.text":"Obscured Graves is a game modifier that makes it so all graves are obscured.",
