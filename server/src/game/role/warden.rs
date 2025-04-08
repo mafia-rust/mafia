@@ -1,6 +1,7 @@
 use serde::Serialize;
 use crate::game::ability_input::{AvailableBooleanSelection, AvailablePlayerListSelection};
 use crate::game::components::insider_group::InsiderGroupID;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::{game::attack_power::AttackPower, vec_set::VecSet};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::GraveKiller;
@@ -9,7 +10,7 @@ use crate::game::attack_power::DefensePower;
 use crate::game::player::PlayerReference;
 use crate::game::Game;
 use super::{
-    common_role, BooleanSelection, ControllerID, ControllerParametersMap, PlayerListSelection, Priority, Role, RoleStateImpl
+    common_role, BooleanSelection, ControllerID, ControllerParametersMap, PlayerListSelection, Role, RoleStateImpl
 };
 
 
@@ -28,10 +29,10 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Warden {
     type ClientRoleState = Warden;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         match priority {
-            Priority::Ward => {
+            OnMidnightPriority::Ward => {
                 if let Some(BooleanSelection(chose_to_ward)) = game.saved_controllers
                     .get_controller_current_selection_boolean(
                         ControllerID::role(actor_ref, Role::Warden, 1)
@@ -42,7 +43,7 @@ impl RoleStateImpl for Warden {
                     }
                 }
             }
-            Priority::Roleblock => {
+            OnMidnightPriority::Roleblock => {
                 if game.day_number() == 1 {return}
                 for &player in self.players_in_prison.iter() {
                     if player != actor_ref {
@@ -50,7 +51,7 @@ impl RoleStateImpl for Warden {
                     }
                 }
             }
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 if game.day_number() == 1 {return}
                 for player in self.players_to_kill(game, actor_ref) {
                     if player == actor_ref {continue}

@@ -1,7 +1,9 @@
+
 use serde::Serialize;
 
 use crate::game::ability_input::*;
 use crate::game::chat::ChatMessageVariant;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::GraveInformation;
 use crate::game::phase::PhaseType;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
@@ -10,23 +12,28 @@ use crate::game::visit::Visit;
 
 use crate::game::Game;
 use crate::vec_set::{vec_set, VecSet};
-use super::{InsiderGroupID, Priority, Role, RoleStateImpl};
+use super::{InsiderGroupID, Role, RoleStateImpl};
 
 
-#[derive(Clone, Debug, Default, Serialize)]
+#[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Disguiser{
-    pub current_target: Option<PlayerReference>
+    pub current_target: Option<PlayerReference>,
+    pub last_role_selection: Role,
 }
-
+impl Default for Disguiser {
+    fn default() -> Self {
+        Self { current_target: None, last_role_selection: Role::Disguiser }
+    }
+}
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Disguiser {
     type ClientRoleState = Disguiser;
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
-        if priority != Priority::Deception {return}
+        if priority != OnMidnightPriority::Deception {return}
                 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         let Some(first_visit) = actor_visits.first() else {return};
@@ -35,6 +42,7 @@ impl RoleStateImpl for Disguiser {
 
         actor_ref.remove_player_tag_on_all(game, crate::game::tag::Tag::Disguise);
         self.current_target = Some(first_visit.target);
+        self.last_role_selection = Self::disguised_role(&self, game, actor_ref);
         actor_ref.push_player_tag(game, first_visit.target, crate::game::tag::Tag::Disguise);
 
         actor_ref.set_role_state(game, self);
@@ -62,6 +70,7 @@ impl RoleStateImpl for Disguiser {
                     max_players: Some(1)
                 })
                 .night_typical(actor_ref)
+                .default_selection(PlayerListSelection::one(self.current_target))
                 .build_map(),
             ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Disguiser, 1))
@@ -70,7 +79,7 @@ impl RoleStateImpl for Disguiser {
                         .map(Some)
                         .collect()
                 ))
-                .default_selection(RoleOptionSelection(Some(Role::Disguiser)))
+                .default_selection(RoleOptionSelection(Some(self.last_role_selection)))
                 .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
                 .allow_players(self.players_with_disguiser_menu(actor_ref))
                 .build_map()

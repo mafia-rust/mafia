@@ -3,6 +3,7 @@ use serde::Serialize;
 use crate::game::ability_input::{AvailableIntegerSelection, AvailableRoleOptionSelection, AvailableStringSelection, RoleOptionSelection};
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -13,7 +14,8 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use super::godfather::Godfather;
 use super::{
-    ControllerID, ControllerParametersMap, GetClientRoleState, IntegerSelection, Priority, Role, RoleStateImpl, StringSelection
+    ControllerID, ControllerParametersMap, GetClientRoleState, IntegerSelection, Role,
+    RoleStateImpl, StringSelection
 };
 
 
@@ -50,11 +52,11 @@ impl RoleStateImpl for Counterfeiter {
             ..Self::default()
         }
     }
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if game.day_number() <= 1 {return}
 
         match priority {
-            Priority::Deception => {
+            OnMidnightPriority::Deception => {
                 if self.forges_remaining == 0 || chose_no_forge(game, actor_ref) {return}
                 
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
@@ -80,7 +82,7 @@ impl RoleStateImpl for Counterfeiter {
                     forged_ref: Some(target_ref)
                 });
             },
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 if let Some(visit) = actor_visits.first(){
                     let target_ref = visit.target;
@@ -90,7 +92,7 @@ impl RoleStateImpl for Counterfeiter {
                     );
                 }
             },
-            Priority::Investigative => {
+            OnMidnightPriority::Investigative => {
                 if let Some(forged_ref) = self.forged_ref {
                     if forged_ref.night_died(game) {
                         actor_ref.push_night_message(game, ChatMessageVariant::PlayerRoleAndAlibi{

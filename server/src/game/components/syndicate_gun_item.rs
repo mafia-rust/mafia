@@ -1,7 +1,7 @@
 use crate::game::{
-    ability_input::*,
-    attack_power::AttackPower, grave::GraveKiller, phase::PhaseType, player::PlayerReference,
-    role::Priority,
+    ability_input::*, attack_power::AttackPower,
+    event::on_midnight::{OnMidnight, OnMidnightPriority}, grave::GraveKiller,
+    phase::PhaseType, player::PlayerReference, 
     role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, Game
 };
 
@@ -103,10 +103,10 @@ impl SyndicateGunItem {
         }
     } 
 
-    pub fn on_night_priority(game: &mut Game, priority: Priority) {
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority) {
         if game.day_number() <= 1 {return}
         match priority {
-            Priority::TopPriority => {
+            OnMidnightPriority::TopPriority => {
                 let Some(player_with_gun) = game.syndicate_gun_item.player_with_gun else {return}; 
 
                 let Some(PlayerListSelection(gun_target)) = game.saved_controllers
@@ -118,7 +118,7 @@ impl SyndicateGunItem {
                     Visit::new(player_with_gun, *gun_target, true, VisitTag::SyndicateGunItem)
                 );
             }
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 let targets: Vec<(PlayerReference, PlayerReference)> = NightVisits::all_visits(game)
                     .iter()
                     .filter(|visit| visit.tag == VisitTag::SyndicateGunItem)

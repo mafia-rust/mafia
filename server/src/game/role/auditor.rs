@@ -14,7 +14,8 @@ use crate::game::Game;
 use crate::vec_map::VecMap;
 
 use rand::prelude::SliceRandom;
-use super::{common_role, Priority, Role, RoleStateImpl};
+use super::{common_role, Role, RoleStateImpl};
+use crate::game::event::on_midnight::OnMidnightPriority;
 
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -38,9 +39,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Auditor {
     type ClientRoleState = Auditor;
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
-        if priority != Priority::Investigative {return;}
+        if priority != OnMidnightPriority::Investigative {return;}
         if actor_ref.night_blocked(game) {return;}
         
         let Some(selection) = game.saved_controllers.get_controller_current_selection_two_role_outline_option(

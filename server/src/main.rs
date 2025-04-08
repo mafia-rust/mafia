@@ -1,5 +1,5 @@
 
-use mafia_server::{log, websocket_connections::websocket_listener::create_ws_server};
+use mafia_server::{log, websocket_connections::websocket_server::create_ws_server};
 use serde::Deserialize;
 use std::{fs, thread, time::Duration};
 

@@ -6,6 +6,7 @@ use crate::game::ability_input::{AvailablePlayerListSelection, AvailableRoleOpti
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::insider_group::InsiderGroupID;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::role_list::{RoleOutline, RoleOutlineOption, RoleOutlineOptionRoles, RoleSet};
 use crate::game::win_condition::WinCondition;
@@ -15,7 +16,7 @@ use crate::game::visit::{Visit, VisitTag};
 
 use crate::game::Game;
 use super::{
-    common_role, ControllerParametersMap, Priority, Role, RoleOptionSelection, 
+    common_role, ControllerParametersMap, Role, RoleOptionSelection, 
     RoleStateImpl
 };
 
@@ -38,9 +39,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Reeducator {
     type ClientRoleState = Reeducator;
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::Deception => {
+            OnMidnightPriority::Deception => {
                 if !self.convert_charges_remaining {return}
 
                 actor_ref.set_night_visits(game, actor_ref
@@ -57,7 +58,7 @@ impl RoleStateImpl for Reeducator {
                     }
                 ).collect());
             },
-            Priority::Convert => {
+            OnMidnightPriority::Convert => {
                 let visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(target_ref) = visits.first().map(|v| v.target) else {return};
 

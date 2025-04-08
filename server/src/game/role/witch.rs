@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, grave::Grave};
 use crate::game::phase::PhaseType;
@@ -12,7 +13,7 @@ use super::{
     common_role,
     ControllerID,
     ControllerParametersMap, GetClientRoleState,
-    Priority, Role, RoleStateImpl
+    Role, RoleStateImpl
 };
 
 
@@ -30,7 +31,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Witch {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
             actor_ref.set_role_state(game, Witch{
                 currently_used_player: Some(currently_used_player)
@@ -73,7 +74,7 @@ impl RoleStateImpl for Witch {
                 )
 
         {
-            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
+            actor_ref.die_and_add_grave(game, Grave::from_player_leave_town(game, actor_ref));
         }
         if phase == PhaseType::Night {
             actor_ref.set_role_state(game, Witch { currently_used_player: None });

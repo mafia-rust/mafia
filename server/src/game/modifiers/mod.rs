@@ -36,19 +36,26 @@ use two_thirds_majority::TwoThirdsMajority;
 
 use crate::{vec_map::VecMap, vec_set::VecSet};
 
-use super::{ability_input::AbilityInput, grave::GraveReference, player::PlayerReference, role::Priority, Game};
+use super::{ability_input::AbilityInput,
+    event::{
+        on_midnight::{OnMidnight, OnMidnightPriority},
+        on_whisper::{OnWhisper, WhisperFold, WhisperPriority}
+    },
+    grave::GraveReference, player::PlayerReference, Game
+};
 
 
 #[enum_delegate::register]
 pub trait ModifierTrait where Self: Clone + Sized{
     fn on_ability_input_received(self, _game: &mut Game, _actor_ref: PlayerReference, _input: AbilityInput) {}
-    fn on_night_priority(self, _game: &mut Game, _priority: Priority) {}
+    fn on_midnight(self, _game: &mut Game, _priority: OnMidnightPriority) {}
     fn before_phase_end(self, _game: &mut Game, _phase: super::phase::PhaseType) {}
     fn on_phase_start(self, _game: &mut Game, _phase: super::phase::PhaseState) {}
     fn on_grave_added(self, _game: &mut Game, _event: GraveReference) {}
     fn on_game_start(self, _game: &mut Game) {}
     fn on_any_death(self, _game: &mut Game, _player: PlayerReference) {}
     fn before_initial_role_creation(self, _game: &mut Game) {}
+    fn on_whisper(self, _game: &mut Game, _event: &OnWhisper, _fold: &mut WhisperFold, _priority: WhisperPriority) {}
 }
 
 #[enum_delegate::implement(ModifierTrait)]
@@ -174,9 +181,9 @@ impl Modifiers{
             modifiers,
         }
     }
-    pub fn on_night_priority(game: &mut Game, priority: crate::game::role::Priority){
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
         for modifier in game.modifiers.modifiers.clone(){
-            modifier.1.on_night_priority(game, priority);
+            modifier.1.on_midnight(game, priority);
         }
     }
     pub fn on_ability_input_received(game: &mut Game, actor_ref: crate::game::player::PlayerReference, input: crate::game::ability_input::AbilityInput){
@@ -212,6 +219,11 @@ impl Modifiers{
     pub fn before_initial_role_creation(game: &mut Game){
         for modifier in game.modifiers.modifiers.clone(){
             modifier.1.before_initial_role_creation(game);
+        }
+    }
+    pub fn on_whisper(game: &mut Game, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority) {
+        for modifier in game.modifiers.modifiers.clone(){
+            modifier.1.on_whisper(game, event, fold, priority);
         }
     }
 }

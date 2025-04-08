@@ -6,6 +6,7 @@ use crate::game::ability_input::AvailableBooleanSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::detained::Detained;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::{Grave, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -16,7 +17,7 @@ use crate::game::Game;
 
 use super::{
     AbilitySelection, ControllerID,
-    ControllerParametersMap, PlayerListSelection, Priority, Role,
+    ControllerParametersMap, PlayerListSelection, Role,
     RoleStateImpl
 };
 
@@ -42,11 +43,11 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Kidnapper {
     type ClientRoleState = Kidnapper;
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
 
         match priority {
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 if let Some(visit) = actor_visits.first() {
     
@@ -151,7 +152,7 @@ impl RoleStateImpl for Kidnapper {
                 )
 
         {
-            actor_ref.die(game, Grave::from_player_leave_town(game, actor_ref));
+            actor_ref.die_and_add_grave(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
     fn on_visit_wardblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _visit: Visit) {}

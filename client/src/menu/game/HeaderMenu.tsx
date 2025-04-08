@@ -31,11 +31,11 @@ export default function HeaderMenu(props: Readonly<{
         ["playersHost"]
     )!;
 
-    const spectator = useSpectator();
+    const spectator = useSpectator()!;
 
 
     return <div className={"header-menu " + backgroundStyle}>
-        {!(spectator && !host) && <FastForwardButton />}
+        {!(spectator && !host) && <FastForwardButton spectatorAndHost={spectator && host}/>}
         <Information />
         {!mobile && <MenuButtons chatMenuNotification={props.chatMenuNotification}/>}
         <Timer />
@@ -219,14 +219,20 @@ export function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>):
     </div>
 }
 
-export function FastForwardButton(): ReactElement {
+export function FastForwardButton(props: { spectatorAndHost: boolean }): ReactElement {
     const fastForward = useGameState(
         gameState => gameState.fastForward,
         ["yourVoteFastForwardPhase"]
     )!
 
     return <Button 
-        onClick={()=>GAME_MANAGER.sendVoteFastForwardPhase(!fastForward)}
+        onClick={() => {
+            if (props.spectatorAndHost) {
+                GAME_MANAGER.sendHostSkipPhase()
+            } else {
+                GAME_MANAGER.sendVoteFastForwardPhase(!fastForward)
+            }
+        }}
         className="fast-forward-button"
         highlighted={fastForward}
     >

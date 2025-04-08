@@ -3,6 +3,7 @@ use serde::Serialize;
 use crate::game::ability_input::{AvailableIntegerSelection, AvailablePlayerListSelection};
 use crate::game::attack_power::AttackPower;
 use crate::game::components::detained::Detained;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{
     attack_power::DefensePower,
     components::puppeteer_marionette::PuppeteerMarionette
@@ -12,7 +13,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{ControllerID, ControllerParametersMap, IntegerSelection, Priority, Role, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, IntegerSelection, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -36,8 +37,9 @@ impl RoleStateImpl for Puppeteer {
             marionettes_remaining: game.num_players().div_ceil(5),
         }
     }
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Kill {return;}
+    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+
+        if priority != OnMidnightPriority::Kill {return;}
         if game.day_number() <= 1 {return;}
 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
