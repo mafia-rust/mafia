@@ -21,9 +21,12 @@ impl PlayerReference{
     pub fn roleblock(&self, game: &mut Game, send_messages: bool) {
         OnPlayerRoleblocked::new(*self, !send_messages).invoke(game);
     }
-    pub fn ward(&self, game: &mut Game) -> Vec<PlayerReference> {
+    pub fn ward(&self, game: &mut Game, dont_wardblock: &[Visit]) -> Vec<PlayerReference> {
         let mut out = Vec::new();
         for visit in NightVisits::all_visits_cloned(game) {
+            if dont_wardblock.contains(&visit) {
+                continue;
+            }
             if visit.target != *self {continue;}
             OnVisitWardblocked::new(visit).invoke(game);
             out.push(visit.visitor);
@@ -211,7 +214,7 @@ impl PlayerReference{
                     possessed_visit.target.convert_selection_to_visits(game)
                 );
 
-                //remove the second role visit
+                //remove the second role visit from the possessor
                 let mut found_first = false;
                 let mut new_witch_visits = vec![];
                 for visit in self.all_night_visits_cloned(game){
