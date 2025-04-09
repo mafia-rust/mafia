@@ -528,7 +528,6 @@
     "role.warden.name": "Warden",
     "role.warden.name:var.0": "Wardens",
     "controllerId.role.warden.0.name": "Imprison",
-    "controllerId.role.warden.1.name": "Self Ward",
 
     "role.yer.name": "Yer",
     "role.yer.name:var.0": "Yers",
@@ -1055,7 +1054,7 @@
     "wiki.category.modifiers.text": "These are options that can be enabled which change the behavior of the game.",
     "wiki.category.abilities":"Abilities",
     "wiki.category.abilities:var.0":"Ability",
-    "wiki.category.abilities.text":"Abilities are how players perform actions in the game. To see what actions you can do, see the ability menu. The Ability menu is where the controls for most abilities are. Most abilities happen during the night, but some abilities happen during the day.",
+    "wiki.category.abilities.text":"Abilities are how players perform actions in the game. To see what actions you can take, see the ability menu. The Ability menu is where the controllers for most abilities are. Most abilities happen at midnight.",
     "wiki.category.strategies":"Strategies",
     "wiki.category.strategies:var.0":"Strategy",
     "wiki.category.strategies.text":"There are a lot of helpful strategies that players use in order to help them win. New strategies are created every day.",
@@ -1151,11 +1150,11 @@
     "wiki.article.standard.block.title:var.1": "Blocking",
     "wiki.article.standard.block.title:var.2": "Blocks",
     "wiki.article.standard.block.text": "A player who is blocked was either roleblocked, wardblocked, or both. A player isn't blocked if they're immune",
-    "wiki.article.standard.jail.title": "Jail",
-    "wiki.article.standard.jail.title:var.0": "Jails",
-    "wiki.article.standard.jail.title:var.1": "Jailed",
-    "wiki.article.standard.jail.title:var.2": "Jailing",
-    "wiki.article.standard.jail.text": "A Jailor can put a player in jail. When a player is in jail, they can talk with the Jailor at night, the Jailor can choose to execute them, they can't select anyone. The jailed player is warded, so most abilities acting on them fail, meaning their safe from most attacks or investigations.",
+    "wiki.article.standard.detain.title": "Detain",
+    "wiki.article.standard.detain.title:var.0": "Detains",
+    "wiki.article.standard.detain.title:var.1": "Detained",
+    "wiki.article.standard.detain.title:var.2": "Detaining",
+    "wiki.article.standard.detain.text": "A player who is detained at night:\n- Is warded from all visits.\n- Is roleblocked.\n- Has their ability deactivated.\n- Them and their fellow insiders are told they are detained at the start of night.\n\nSome examples of roles that can detain players are: Jailor, and Kidnapper.\nWarden does not detain players.",
     "wiki.article.standard.rampage.title": "Rampage",
     "wiki.article.standard.rampage.title:var.0": "Rampaged",
     "wiki.article.standard.rampage.title:var.1": "Rampages",
@@ -1169,7 +1168,7 @@
     "wiki.article.standard.possess.title:var.4": "Possessions",
     "wiki.article.standard.possess.title:var.5": "Possessor",
     "wiki.article.standard.possess.title:var.6": "Possessee",
-    "wiki.article.standard.possess.text": "A player who is possessed was forced into visiting someone.\n- Roles like Witch, and Retributionist, have the ability to possess players\n- Some roles are immune to being possessed, like witch, and retributionist\n- If a role visits multiple people, only the first visit is changed when possessed\n- You can't be possessed into someone if your role doesn't allow you to select them. If a medium is possessed, they still don't visit anyone\n\n__For Example__:\n\n@1 the vigilante selects @7 in hopes of shooting them.\nWhen night ends @1 gets a message saying they were possessed.\nThe next obituary, they see that @2 was shot instead.\nThis is because @4 is the witch, who possessed @1 into shooting @2.\n\n__For Example__:\n\nThe philosopher selects @8 and @12, but they are possessed into @15\nThe philosopher actually visited @15 and @12, only the first visit was changed",
+    "wiki.article.standard.possess.text": "A player can be possessed into another player, forcing them to use their ability a certain way.\n- Possessed players are told they are possessed but not told who they are possessed into, nor are they told what their ability is forced into doing.\n- Abilities can't be forced into something that they typically can't do (ie, a detective cannot be forced to investigate themself, because a detective is not able to investigate themselves typically)\n- Some abilities are immune to possession, but they are still told they are possessed.\n\nThis is how each controller type is effected when you are possessed:\n- Checkbox: If you are possessed into yourself, the box is force checked, otherwise nothing happens.\n- Player List: The list of players (or the single player slot) is set to contain only the player you are possessed into.\n- Exactly Two Players: The first player choice is set to the player you are possessed into, but the second player choice stays as what it was originally set to.\n\n All unlisted controllers are uneffected by possession. Controllers can't be set to an invalid choice.",
     "wiki.article.standard.defense.title": "Defense",
     "wiki.article.standard.defense.title:var.0": "Basic",
     "wiki.article.standard.defense.title:var.1": "Armor-piercing",
@@ -1308,12 +1307,12 @@
     "wiki.article.standard.loveLinked.title:var.3": "Broken Hearts",
     "wiki.article.standard.loveLinked.title:var.4": "Love Linking",
     "wiki.article.standard.loveLinked.text": "2 players who are love linked are told who each other are. If one dies, the other dies of a broken heart. Cupid can love link players. So can the love link game modifier.",
+    
     "wiki.article.standard.howToPlay.title":"How To Play",
     "wiki.article.standard.howToPlay.title:var.0":"Phase",
     "wiki.article.standard.howToPlay.title:var.1":"Phases",
     "wiki.article.standard.howToPlay.title:var.2":"Help",
     "wiki.article.standard.howToPlay.text":"The goal of the game depends on your role. Most roles win if all players from opposing teams are eliminated\nThe teams are Town, Syndicate, Cult, Fiends\n- Town should try to find out who the syndicate is in order to vote them out\n- Syndicate, cult, and fiends, should try to stay hidden while killing townies\n\nThe game runs in phases of day and night\n- During night, each player uses their roles abilities\n- During the day, players discuss information they learned and vote on a player to kill\n\nThere are subphases within day and night\n\n# Night\nMost role abilities work at night. Here are some examples\n- Each night, the godfather can select a player to kill them\n- Each night, the detective can select a player. The detective is told if the player they select is innocent or suspicious. This would help the detective find out who the syndicate is. If they are suspicious they are a town enemy\n- Each night, the framer can select a player to make them register falsely to the detective. So a townie could register as suspicious to a detective falsely if a framer used their ability\n\n# Obituary\nDuring the obituary phase, everyone is told who died, along with the role and alibi of those who died.\nAll players should keep their alibi note page to keep track of all the information they learned during the game. The obituary phase is a perfect time to write down in your alibi what you learned last night. For example:\n\n- If you're a detective who learned that @5 is suspicious on night 1. You could write your alibi to look like this\n\nDetective\nNight 1: @5 - suspicious\n\nIt is also important for non townie players to keep a fake alibi to pretend that they are a townie\n\n# Discussion\nThe discussion phase is where players discuss the information they learned and try to find out who the syndicate, fiends, and cult are\nPlayers will ask each other to claim, this means they want to know the information that the other player learned\nMost players send their alibi in chat during this phase, to share the information efficiently in response to being asked to claim. It will likely be considered suspicious to not have an alibi prepared when asked for one. So its very important to have one prepared, no matter who you are\n\n# Nomination\nDuring nomination, players can vote other players on to trial in order to execute them\nThe best way for townies to kill syndicate members is to use their vote, even if you aren’t certain someone is evil, voting them onto trial and threatening them will often give information to help find syndicate\n- If more than half of the living players vote for one player, that player is put on trial\n- If there aren’t enough votes in time, the game skips directly to dusk\n\n# Testimony\n- The player voted on trail is the only player allowed to speak and chat during this phase, they should certainly claim, send their alibi and say what their role is\n\n# Judgement\n- Everyone votes innocent or guilty (or abstains)\n- If more players vote guilty than innocent, the player on trial will be executed\n- If the player on trial isn’t executed, there is another trail (with a max of three)\n\n# Final words\n- The player who was on trial should be allowed to say some final words or notes they have for the town\n\n# Dusk\n- A pre-night phase for everyone to get a last word in before the next night\n\n# Final thoughts\nThe game runs in this loop until there is one team remaining\nThe midnight manual has a list of all roles and their abilities. It is recommended to read up on your role during the beginning briefing phase\nIf your evil, you should try to learn how at least one townie role works so you can pretend to be that role\nNeutral roles all have different win conditions and are not on a team. For example: Jester wins if they are voted out during a trail",
-    
     "wiki.article.standard.priority.title":"Priority",
     "wiki.article.standard.priority.title:var.0":"Priorities",
     "wiki.article.standard.priority.text":"At the end of night many abilities happen at nearly the same time. They happen in a specific order called priority. Knowing the order of some things can help understanding of some game mechanics.\nThis is the general priority order, with some additional notes:\n- TopPriority\n- Ward\n    - Bouncer, Scarecrow, Kidnapper, Jailor, and Warden all ward here\n- Transporter\n- Warper\n- Possess\n    - Witch gets second visit deleted here\n- Roleblock\n    - Hypnotist and Escort go here\n- Deception\n    - Forger, Framer, Blackmailer go here\n    - Framer gets the second visit deleted here\n    - Syndicate backup visit is erased if the killing is blocked\n- Bodyguard\n    - Bodyguard moves the attacking visit to be towards themself\n- Heal\n    - Protective roles like Doctor and Armorsmith go here\n- Kill\n- Convert\n    - Win condition changes go here\n- Poison\n- Investigative\n    - Roles like Detective, Snoop, Lookout, and Spy go here\n- Cupid\n- SpyBug\n- StealMessages\n    - Witch steals messages\n",
@@ -1331,7 +1330,9 @@
     "wiki.article.standard.gameMode.title":"Gamemode",
     "wiki.article.standard.gameMode.title:var.0":"Game Mode",
     "wiki.article.standard.gameMode.text":"The game mode menu lets you keep track of the game settings during the game.\n- Outline list\n- Enabled Roles\n- Enabled Modifiers",
-    
+    "wiki.article.standard.controller.title":"Controller",
+    "wiki.article.standard.controller.title:var.0":"Controllers",
+    "wiki.article.standard.controller.text":"Controllers are elements of the ability menu that are used to controll abilities.\n Controllers have many types:\n- Player List: An ordered list of player dropdowns with a maximum length (Roles like detective use this controller type with a maximum length of 1)\n- Two Players: Must choose 0 or 2 players\n- Role list: An ordered list of roles with a maximum (Imposter disguise controller uses this with maximmum of 1).\n- Two Roles: Must choose 0 or 2 roles.\n- Checkbox: Yes or no (Veteran rampage uses this).\n- Button: A single button press (Mayor enfranchise uses this)\n- Text Box: (Forger and Reporter use this).\n- Outline List: A depiction of the outline list, with buttons to choose multiple of them (Auditor uses this).\n Options: A list of options with names in a dropdown.\n- Kira: used only for Kira.",
 
     "wiki.article.modifier.obscuredGraves.title":"Obscured Graves",
     "wiki.article.modifier.obscuredGraves.text":"Obscured Graves is a game modifier that makes it so all graves are obscured.",
@@ -1339,7 +1340,6 @@
     "wiki.article.modifier.randomLoveLinks.text":"Random Love Links is a game modifier that makes it so all players are love linked to a random player. The game is set up such that all players are love linked to at least 1 other player, and at most 1 player is love linked to more than 1 other player.",
     "wiki.article.modifier.skipDay1.title": "Skip Day 1",
     "wiki.article.modifier.skipDay1.text": "Skip Day 1 is a game modifier. While activated: All phases from Dusk 1 to Final Words 2 are fast forwarded, effectively starting the game at Dusk 2 instead.",
-
     "wiki.article.modifier.deadCanChat.title":"Dead Can Chat",
     "wiki.article.modifier.deadCanChat.text":"Dead Can Chat is a game modifier that changes the game such that dead players can still use chats as if they were alive. Dead players can not whisper or be whispered to.",
     "wiki.article.modifier.scheduledNominations.title":"Scheduled Nominations",
@@ -1419,10 +1419,10 @@
     "wiki.article.role.details": "Details",
 
     "wiki.article.role.jailor.reminder": "Each day, choose a player to detain. At night, talk to your prisoner, and decide weather or not kill them.",
-    "wiki.article.role.jailor.guide": "- Each day, choose a player to detain. At night, you interrogate them in text chat\n- You can kill your prisoner up to X times (X = Total players ÷ 5 (round up))\n- You can talk to your prisoner during the night, and they are not told who you are\n- If you kill a townie, you lose the ability to kill your prisoner\n- The players you jail are warded and roleblocked.",
-    "wiki.article.role.jailor.abilities":"* Choose one player to jail during the day\n* Visit your prisoner to attack them",
-    "wiki.article.role.jailor.attributes":"* You may talk with your prisoner at night in jail chat\n* If you kill a town loyalist, you forfeit the ability to execute prisoners\n* Players in jail are warded and roleblocked, they also can't select anybody",
-    "wiki.article.role.jailor.extra":"* The Jailor can not kill someone on night one\n* If you kill a townie, or run out of kills, you can not select to kill anymore\n* You roleblock the player you put in jail\n* Players in jail don't see your name on your messages. The messages you send appear to be from the jailor\n* If you jail a cult or syndicate member, their teammates know that that player is in jail",
+    "wiki.article.role.jailor.guide": "- Each day, choose a player to detain. At night, you interrogate them in text chat\n- You can kill your prisoner up to X times (X = Total players ÷ 5 (round up))\n- You can talk to your prisoner during the night, and they are not told who you are\n- If you kill a townie, you lose the ability to kill your prisoner",
+    "wiki.article.role.jailor.abilities":"* Choose one player to detain during the day\n* Choose to attack your prisoner up to X times (X = Total players ÷ 5 (round up)).",
+    "wiki.article.role.jailor.attributes":"* If you kill a town loyalist, you forfeit the ability to execute prisoners",
+    "wiki.article.role.jailor.extra":"* You can't kill someone on night one\n* Players in jail don't see your name on your messages. The messages you send appear to be from the jailor",
 
     "wiki.article.role.villager.reminder": "No ability.",
     "wiki.article.role.villager.guide": "You have no nighttime ability, but you can still speak and vote. Try to help find out who is evil and vote them. Your only ability is your own critical thinking.",
@@ -1522,7 +1522,7 @@
 
     "wiki.article.role.bouncer.reminder": "At night, select a player to ward. All visitors to the warded player are wardblocked.",
     "wiki.article.role.bouncer.guide": "- At night, select a player to ward them, stopping almost all abilities from working on them.\n\n_For Example_\n- A godfather attempts to kill @11 but you ward @11, so the godfathers is wardblocked and doesn't kill @11\n\nYou should try to select people you think are townies who you want to keep alive.",
-    "wiki.article.role.bouncer.abilities":"* Visit a player to ward them\n    - Everyone visitor to your target has their visits erased, and receives a chat message informing them that they are wardblocked",
+    "wiki.article.role.bouncer.abilities":"* Visit a player to ward them\n    - Everyone other visitor to your target has their visits erased, and receives a chat message informing them that they are wardblocked",
     "wiki.article.role.bouncer.attributes":"* Your target isn't told they are warded",
     "wiki.article.role.bouncer.extra":"* You can't select yourself\n* You are immune to roleblocks, wardblocks, and possession",
 
@@ -1799,15 +1799,15 @@
     
     "wiki.article.role.scarecrow.reminder": "Each night, select a player to ward them, everyone you wardblock is revealed to you.",
     "wiki.article.role.scarecrow.guide": "- You win if town loses, when town loses you leave town\n- At night, select a player to ward them, stopping almost all abilities from working on them.\n    - The players you ward and wardblock are revealed to you\n\n_For Example_\n- A detective attempts to investigate @11 but you warded @11, so the detective gets wardblocked and doesn't learn anything, but you learn that you stopped the @11\n\nYou aren't told players who are wardblock immune because you can't wardblock them",
-    "wiki.article.role.scarecrow.abilities":"* Visit a player to ward them\n    - Everyone visitor to your target has their visits erased, and receives a chat message informing them they are wardblocked\n- The players you ward and wardblock are revealed to you\n- If there are no living townies, you win, and leave town at the start of the next phase",
+    "wiki.article.role.scarecrow.abilities":"* Visit a player to ward them\n    - Everyone other visitor to your target has their visits erased, and receives a chat message informing them they are wardblocked\n- The players you ward and wardblock are revealed to you\n- If there are no living townies, you win, and leave town at the start of the next phase",
     "wiki.article.role.scarecrow.attributes":"* Your target isn't told they are warded",
-    "wiki.article.role.scarecrow.extra":"* You can't select yourself\n* You are immune to roleblocks, wardblocks, and possession\n- A Bouncer is wardblock immune so you can't ward them, and rarely will have a bouncer revealed to you",
+    "wiki.article.role.scarecrow.extra":"* You can't select yourself\n* You are immune to roleblocks, wardblocks, and possession\n- A Bouncer is wardblock immune so you can't ward them, so you rarely will have a bouncer revealed to you",
     
     "wiki.article.role.kidnapper.reminder": "Each day, choose a player to detain. At night, talk to your prisoner, and decide weather or not kill them, with a max of 1 attack use. You appear the same as a jailor to your prisoner.",
-    "wiki.article.role.kidnapper.guide": "- Each day, choose a player to kidnap. At night, you interrogate them in text chat\n- You can kill your prisoner one time\n- You can talk to your prisoner during the night, and they are not told who you are\n- The players you kidnap are warded and roleblocked.",
-    "wiki.article.role.kidnapper.abilities":"* Choose one player to kidnap during the day\n* Visit your prisoner to attack them\n- If you kill your prisoner, their grave shows that they were killed by a jailor",
-    "wiki.article.role.kidnapper.attributes":"* You may talk with your prisoner at night in kidnapped chat\n* Players you kidnap are warded and roleblocked, they also can't select anybody",
-    "wiki.article.role.kidnapper.extra":"* The Kidnapper can not kill someone on night one\n* You roleblock the player you detain\n* Players you kidnap don't see your name on your messages. The messages you send appear to be from the jailor\n* If you kidnap a cult or syndicate member, their teammates are told that player is in jail",
+    "wiki.article.role.kidnapper.guide": "- Each day, choose a player to kidnap. At night, you interrogate them in text chat\n- You can kill your prisoner one time\n- You can talk to your prisoner during the night, and they are not told who you are.",
+    "wiki.article.role.kidnapper.abilities":"* Choose one player to kidnap during the day\n* Choose to attack your prisoner up to 1 time\n- If you kill your prisoner, their grave shows that they were killed by a jailor",
+    "wiki.article.role.kidnapper.attributes":"",
+    "wiki.article.role.kidnapper.extra":"* The Kidnapper can not kill someone on night one\n* Players you kidnap don't see your name on your messages. The messages you send appear to be from the jailor.",
 
     "wiki.article.role.warper.reminder": "Each night, select two players, all visits to the first player are redirected to the second.",
     "wiki.article.role.warper.guide": "- At night, select 2 players\n    - If somebody else tries to visit the first player, they instead visit the second player\n    - The first player is told they are transported, but the second is not\n    - You can't choose yourself as your first target, you can't warp yourself\n- You are told the role of your first target\n\n _For example_\n- If a godfather tries to attack @1, but you warped @1 to @4, then @4 will die instead, and @1 is told they are transported\n\nYou are a minion, so you should try to harm the town as much as possible while looking to benefit non-town players.\n\n",
@@ -1864,8 +1864,8 @@
     "wiki.article.role.spiral.extra":"- You can't cause yourself to spiral\n- If a dead player is spiraling, they stay spiraling, and you attack them again, even while they are dead. Although they cannot die after already dead.",
 
     "wiki.article.role.warden.reminder": "Each night*, put up to 3 players in your prison who each must choose to either live or die, but if they all choose to live, they all die instead.",
-    "wiki.article.role.warden.guide":"- Each night except the first, choose up to 3 players to put in prison\n    - The prisoners must choose to live or die\n        - If a player chooses die, you attack them (armor-piercing)\n        - If all of the players in your prison choose live, you attack all of them (armor-piercing)\n    - The players in your prison can talk in a private chat group at night\n        - You can always read from the private prisoner chat group\n    - The players in your prison are roleblocked, but not warded\n    - You can put yourself in your prison, but you can't ever die or be roleblocked by your own ability\n - Each night, you may choose to ward yourself",
-    "wiki.article.role.warden.abilities":"- Each night except the first, choose up to 3 players to put in prison\n    - The prisoners must choose to live or die\n        - If a player chooses die, you attack them (armor-piercing)\n        - If all of the players in your prison choose live, you attack all of them (armor-piercing)\n    - The players in your prison can talk in a private chat group at night\n        - You can always read from the private prisoner chat group\n    - The players in your prison are roleblocked, but not warded\n    - You can put yourself in your prison, but you can't ever die or be roleblocked by your own ability\n - Each night, you may choose to ward yourself",
+    "wiki.article.role.warden.guide":"- Each night except the first, choose up to 3 players to put in prison\n    - The prisoners must choose to live or die\n        - If a player chooses die, you attack them (armor-piercing)\n        - If all of the players in your prison choose live, you attack all of them (armor-piercing)\n    - The players in your prison can talk in a private chat group at night\n        - You can always read from the private prisoner chat group\n    - The players in your prison are roleblocked, but not warded\n    - You can put yourself in your prison, but you can't ever die or be roleblocked by your own ability",
+    "wiki.article.role.warden.abilities":"- Each night except the first, choose up to 3 players to put in prison\n    - The prisoners must choose to live or die\n        - If a player chooses die, you attack them (armor-piercing)\n        - If all of the players in your prison choose live, you attack all of them (armor-piercing)\n    - The players in your prison can talk in a private chat group at night\n        - You can always read from the private prisoner chat group\n    - The players in your prison are roleblocked, but not warded\n    - You can put yourself in your prison, but you can't ever die or be roleblocked by your own ability",
     "wiki.article.role.warden.attributes":" - You can't die to your own ability, but the logic of your ability doesn't change. _For example_:\n You imprison yourself and another player. You both choose live. You survive and the other player dies. All players in prison chose to live so both players should die, but you can't die to your own ability.",
     "wiki.article.role.warden.extra":" - You don't visit anybody due to your own ability",
 

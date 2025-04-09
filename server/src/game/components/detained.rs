@@ -7,15 +7,7 @@ use super::insider_group::InsiderGroupID;
 #[derive(Default)]
 pub struct Detained{
     //resets every obituary
-    pub players: HashSet<PlayerReference>,
-}
-impl Game {
-    pub fn detained(&self)->&Detained{
-        &self.detained
-    }
-    pub fn detained_mut(&mut self)->&mut Detained{
-        &mut self.detained
-    }
+    players: HashSet<PlayerReference>,
 }
 impl Detained{
     pub fn on_phase_start(game: &mut Game, phase: PhaseType){
@@ -28,7 +20,7 @@ impl Detained{
             OnMidnightPriority::Ward => {
                 for player in PlayerReference::all_players(game){
                     if Self::is_detained(game, player){
-                        player.ward(game);
+                        player.ward(game, &[]);
                     }
                 }
             }

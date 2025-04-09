@@ -32,26 +32,33 @@ export default function PlayerListMenu(): ReactElement {
         <div className="player-list">
             {players
                 .filter(player => player.alive)
-                .map(player => <div key={player.index} className="player-card-holder"><PlayerCard playerIndex={player.index}/></div>)}
+                .map(player => <div key={player.index} className="player-card-holder"><PlayerCard playerIndex={player.index}/></div>)
+            }
 
-            {graves.length === 0 || <>
-                <div className="dead-players-separator">
-                    <StyledText>{translate("grave.icon")} {translate("graveyard")}</StyledText>
-                </div>
-                {graves.map((grave, index) => <div key={grave.player} className="player-card-holder"><PlayerCard graveIndex={index} playerIndex={grave.player}/></div>)}
-            </>}
+            {graves.length === 0 || 
+                <>
+                    <div className="dead-players-separator">
+                        <StyledText>{translate("grave.icon")} {translate("graveyard")}</StyledText>
+                    </div>
+                    {graves.map((grave, index) => <div key={grave.player} className="player-card-holder"><PlayerCard graveIndex={index} playerIndex={grave.player}/></div>)}
+                </>
+            }
+
             {players
                 .filter(
                     player => !player.alive && 
                     graves.find(grave => grave.player === player.index) === undefined
-                ).length === 0 || <>
-                <div className="dead-players-separator">
-                    <StyledText>{translate("grave.icon")} {translate("graveyard")}</StyledText>
-                </div>
-                {players
-                    .filter(player => !player.alive)
-                    .map(player => <div key={player.index} className="player-card-holder"><PlayerCard playerIndex={player.index}/></div>)}
-            </>}
+                ).length === 0 || 
+                <>
+                    <div className="dead-players-separator">
+                        <StyledText>{translate("grave.icon")} {translate("graveyard")}</StyledText>
+                    </div>
+                    {players
+                        .filter(player => !player.alive)
+                        .map(player => <div key={player.index} className="player-card-holder"><PlayerCard playerIndex={player.index}/></div>)
+                    }
+                </>
+            }
         </div>
     </div>
 }
