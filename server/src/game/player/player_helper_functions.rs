@@ -11,7 +11,7 @@ use crate::{game::{
         insider_group::InsiderGroupID, night_visits::NightVisits
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_midnight::OnMidnightPriority, on_player_roleblocked::OnPlayerRoleblocked, on_role_switch::OnRoleSwitch, on_visit_wardblocked::OnVisitWardblocked
-    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{armorsmith::Armorsmith, chronokaiser::Chronokaiser, Role, RoleState}, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
+    }, game_conclusion::GameConclusion, grave::{Grave, GraveInformation, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{armorsmith::Armorsmith, chronokaiser::Chronokaiser, Role, RoleState}, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
 }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 use crate::vec_set;
 
@@ -107,7 +107,7 @@ impl PlayerReference{
             attacker.push_night_message(game,ChatMessageVariant::YouAttackedSomeone);
         }
         
-        self.die(game, Grave::from_grave_info(game, *self, grave_info));
+        self.die_and_add_grave(game, Grave::from_grave_info(game, *self, grave_info));
 
         true
     }
