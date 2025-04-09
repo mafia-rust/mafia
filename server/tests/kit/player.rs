@@ -1,5 +1,4 @@
-use mafia_server::{game::{ability_input::*, chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, Game}, packet::ToServerPacket, vec_map::VecMap};
-use vec1::Vec1;
+use mafia_server::{game::{ability_input::*, chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, verdict::Verdict, Game}, packet::ToServerPacket};
 
 #[derive(Clone, Copy, Debug)]
 pub struct TestPlayer(PlayerReference, *mut Game);
@@ -147,10 +146,6 @@ impl TestPlayer {
 
     pub fn set_role_state(&self, new_role_data: RoleState){
         self.0.set_role_state(game!(self), new_role_data);
-    }
-
-    pub fn get_player_tags(&self) -> &VecMap<PlayerReference, Vec1<Tag>> {
-        self.0.player_tags(game!(self))
     }
 
     pub fn get_won_game(&self) -> bool {

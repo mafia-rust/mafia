@@ -109,38 +109,6 @@ pub use mafia_server::game::{
 // Pub use so that submodules don't have to reimport everything.
 pub use mafia_server::packet::ToServerPacket;
 
-#[test]
-fn no_unwanted_tags() {
-    kit::scenario!(game in Dusk 1 where
-        jester: Jester,
-        townie: Detective,
-        mafioso: Godfather,
-        mortician: Mortician,
-        politician: Politician,
-        spy: Spy,
-        lookout: Lookout,
-        detective: Detective,
-        arsonist: Arsonist,
-        vigilante: Vigilante,
-        puppeteer: Puppeteer,
-        warper: Warper,
-        witch: Witch
-    );
-
-    assert!(jester.get_player_tags().is_empty());
-    assert!(townie.get_player_tags().is_empty());
-    assert!(mafioso.get_player_tags().is_empty());
-    assert!(mortician.get_player_tags().is_empty());
-    assert!(politician.get_player_tags().is_empty());
-    assert!(spy.get_player_tags().is_empty());
-    assert!(lookout.get_player_tags().is_empty());
-    assert!(detective.get_player_tags().is_empty());
-    assert!(arsonist.get_player_tags().is_empty());
-    assert!(vigilante.get_player_tags().is_empty());
-    assert!(puppeteer.get_player_tags().is_empty());
-    assert!(warper.get_player_tags().is_empty());
-    assert!(witch.get_player_tags().is_empty());
-}
 
 #[test]
 fn detective_basic() {
@@ -1437,41 +1405,6 @@ fn godfather_backup_kills_jail() {
 }
 
 #[test]
-fn godfathers_backup_tag_works() {
-    kit::scenario!(game in Night 2 where
-        godfather: Godfather,
-        blackmailer: Blackmailer,
-        hypnotist: Hypnotist,
-        _vigi: Vigilante
-    );
-
-    godfather.send_ability_input(AbilityInput::new(
-        ControllerID::syndicate_choose_backup(),
-        PlayerListSelection(vec![blackmailer.player_ref()])
-    ));
-    assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).expect("blackmailer doesnt have tag").contains(&Tag::GodfatherBackup));
-    
-    godfather.send_ability_input(AbilityInput::new(
-        ControllerID::syndicate_choose_backup(),
-        PlayerListSelection(vec![])
-    ));
-    assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).is_none());
-
-    godfather.send_ability_input(AbilityInput::new(
-        ControllerID::syndicate_choose_backup(),
-        PlayerListSelection(vec![blackmailer.player_ref()])
-    ));
-    assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).expect("blackmailer doesnt have tag").contains(&Tag::GodfatherBackup));
-    
-    godfather.send_ability_input(AbilityInput::new(
-        ControllerID::syndicate_choose_backup(),
-        PlayerListSelection(vec![hypnotist.player_ref()])
-    ));
-    assert!(blackmailer.get_player_tags().get(&hypnotist.player_ref()).expect("hypnotist doesnt have tag").contains(&Tag::GodfatherBackup));
-    assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).is_none());
-}
-
-#[test]
 fn gossip_basic_friends() {
     kit::scenario!(game in Night 1 where
         gossip: Gossip,
@@ -2018,14 +1951,6 @@ fn recruits_dont_get_converted_to_mk(){
     assert!(vigi.send_ability_input_player_list_typical(mortician));
 
     game.next_phase();
-
-    //tag checks
-    assert!(mortician.get_player_tags().get(&a.player_ref()).unwrap().contains(&Tag::PuppeteerMarionette));
-    assert!(mortician.get_player_tags().get(&recruiter.player_ref()).is_none());
-    assert!(recruiter.get_player_tags().get(&a.player_ref()).unwrap().contains(&Tag::PuppeteerMarionette));
-    assert!(recruiter.get_player_tags().get(&mortician.player_ref()).is_none());
-    assert!(a.get_player_tags().get(&recruiter.player_ref()).is_none());
-    assert!(a.get_player_tags().get(&mortician.player_ref()).is_none());
 
     assert!(!mortician.alive());
     assert!(a.alive());
@@ -2702,7 +2627,6 @@ fn spiral_does_not_kill_protected_player() {
 
     game.skip_to(Obituary, 3);
     assert!(doctor.alive());
-    assert!(spiral.get_player_tags().get(&doctor.player_ref()).is_none())
 }
 
 #[test]
@@ -2715,7 +2639,6 @@ fn killed_player_is_not_spiraling() {
 
     game.skip_to(Obituary, 3);
     assert!(!townie.alive());
-    assert!(spiral.get_player_tags().get(&townie.player_ref()).is_none())
 }
 
 #[test]
