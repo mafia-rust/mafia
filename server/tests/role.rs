@@ -79,7 +79,6 @@ pub use mafia_server::game::{
         consort::Consort,
         forger::Forger,
         reeducator::Reeducator,
-        cupid::Cupid,
         disguiser::Disguiser,
 
         jester::Jester,
