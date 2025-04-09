@@ -277,16 +277,16 @@ impl RoleSet{
                 vec![
                     Role::Jailor, Role::Villager, Role::Drunk
                 ].into_iter().chain(
-                    RoleSet::TownCommon.get_roles().into_iter()
+                    RoleSet::TownCommon.get_roles()
                 ).collect(),
             RoleSet::TownCommon => {
                 RoleSet::TownInvestigative.get_roles().into_iter()
                 .chain(
-                    RoleSet::TownProtective.get_roles().into_iter()
+                    RoleSet::TownProtective.get_roles()
                 ).chain(
-                    RoleSet::TownKilling.get_roles().into_iter()
+                    RoleSet::TownKilling.get_roles()
                 ).chain(
-                    RoleSet::TownSupport.get_roles().into_iter()
+                    RoleSet::TownSupport.get_roles()
                 ).collect()
             },
             RoleSet::TownInvestigative => 
@@ -316,9 +316,9 @@ impl RoleSet{
                 vec![
                     Role::Goon, Role::MafiaSupportWildcard, Role::MafiaKillingWildcard
                 ].into_iter().chain(
-                    RoleSet::MafiaKilling.get_roles().into_iter()
+                    RoleSet::MafiaKilling.get_roles()
                 ).chain(
-                    RoleSet::MafiaSupport.get_roles().into_iter()
+                    RoleSet::MafiaSupport.get_roles()
                 ).collect(),
             RoleSet::MafiaKilling => 
                 vec![
@@ -330,7 +330,7 @@ impl RoleSet{
                 vec![
                     Role::Blackmailer, Role::Informant, Role::Hypnotist, Role::Consort,
                     Role::Forger, Role::Framer, Role::Mortician, Role::Disguiser,
-                    Role::MafiaWitch, Role::Necromancer, Role::Cupid, Role::Reeducator,
+                    Role::MafiaWitch, Role::Necromancer, Role::Reeducator,
                     Role::Ambusher,
                 ],
             RoleSet::Minions => 

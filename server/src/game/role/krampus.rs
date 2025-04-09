@@ -1,9 +1,10 @@
 use std::collections::HashSet;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::Grave;
 use crate::game::phase::PhaseType;
@@ -14,7 +15,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{GetClientRoleState, Priority, Role, RoleStateImpl};
+use super::{GetClientRoleState, Role, RoleStateImpl};
 use crate::game::ability_input::*;
 
 #[derive(Debug, Clone, Serialize, Default)]
@@ -24,7 +25,7 @@ pub struct Krampus {
     last_used_ability: Option<KrampusAbility>
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Default, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum KrampusAbility {
     #[default] DoNothing,
@@ -36,11 +37,11 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Krampus {
     type ClientRoleState = ();
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
 
         match (priority, self.ability) {
-            (Priority::Kill, KrampusAbility::Kill) => {
+            (OnMidnightPriority::Kill, KrampusAbility::Kill) => {
                 if let Some(visit) = actor_visits.first() {
                     let target_ref = visit.target;
 
@@ -52,7 +53,7 @@ impl RoleStateImpl for Krampus {
                     });
                 }
             }
-            (Priority::Investigative, _) => {
+            (OnMidnightPriority::Investigative, _) => {
                 if let Some(visit) = actor_visits.first() {
                     let target_ref = visit.target;
 
@@ -105,14 +106,12 @@ impl RoleStateImpl for Krampus {
             KrampusAbility::DoNothing => 1
         };
 
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            false,
-            false,
-            ControllerID::role(actor_ref, Role::Krampus, ability_index)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Krampus, ability_index))
+            .single_player_selection_typical(actor_ref, false, false)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(false)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         let ability_index = match self.ability {
@@ -150,7 +149,7 @@ impl Krampus {
                 .filter(|player| player.alive(game))
                 .collect::<Vec<PlayerReference>>()
             {
-                player.die(game, Grave::from_player_suicide(game, player));
+                player.die_and_add_grave(game, Grave::from_player_suicide(game, player));
             }
         }
     }

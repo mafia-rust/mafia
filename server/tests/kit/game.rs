@@ -34,7 +34,7 @@ impl TestGame {
         }
     
         // The only phases that occur day 1 are Briefing, Dusk and Night.
-        if day_number == 1 && match phase {PhaseType::Briefing | PhaseType::Dusk | PhaseType::Night => false, _ => true} {
+        if day_number == 1 && !matches!(phase, PhaseType::Briefing | PhaseType::Dusk | PhaseType::Night) {
             panic!("There is no {phase:?} 1. Tried to go to {phase:?} 1 from {:?} {}. The only phases that occur day 1 are Briefing, Dusk, & Night.", self.current_phase().phase(), self.day_number()); 
         }
 

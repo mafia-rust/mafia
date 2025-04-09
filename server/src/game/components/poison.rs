@@ -1,7 +1,7 @@
 use crate::{game::{
     attack_power::AttackPower, chat::ChatMessageVariant,
-    grave::GraveKiller, player::PlayerReference,
-    role::Priority, Game
+    event::on_midnight::{OnMidnight, OnMidnightPriority},
+    grave::GraveKiller, player::PlayerReference, Game,
 }, vec_set::VecSet};
 
 impl Game {
@@ -44,7 +44,7 @@ impl PlayerPoison{
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Eq)]
 pub enum PoisonAlert {
     NoAlert,
     Alert
@@ -74,8 +74,8 @@ impl Poison{
 
         game.set_poison(poison);
     }
-    pub fn on_night_priority(game: &mut Game, priority: Priority){
-        if priority != Priority::Kill{ return; }
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
+        if priority != OnMidnightPriority::Kill{ return; }
 
         let mut poison = game.poison().clone();
 

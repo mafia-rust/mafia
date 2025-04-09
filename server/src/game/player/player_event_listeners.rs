@@ -1,8 +1,17 @@
-use crate::game::{ability_input::{AbilityInput, ControllerID}, grave::GraveReference, role::RoleState, Game};
+use crate::game::{ability_input::{AbilityInput, ControllerID}, event::{on_midnight::{OnMidnight, OnMidnightPriority}, on_whisper::{OnWhisper, WhisperFold, WhisperPriority}}, grave::GraveReference, role::RoleState, visit::Visit, Game};
 
 use super::PlayerReference;
 
 impl PlayerReference {
+
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
+        for player_ref in PlayerReference::all_players(game){
+            player_ref.on_midnight_one_player(game, priority);
+        }
+    }
+
+
+
     pub fn on_controller_selection_changed(&self, game: &mut Game, id: ControllerID){
         self.role_state(game).clone().on_controller_selection_changed(game, *self, id)
     }
@@ -29,5 +38,16 @@ impl PlayerReference {
     }
     pub fn before_initial_role_creation(&self, game: &mut Game){
         self.role_state(game).clone().before_initial_role_creation(game, *self)
+    }
+    pub fn on_player_roleblocked(&self, game: &mut Game, player: PlayerReference, invisible: bool) {
+        self.role_state(game).clone().on_player_roleblocked(game, *self, player, invisible)
+    }
+    pub fn on_visit_wardblocked(&self, game: &mut Game, visit: Visit) {
+        self.role_state(game).clone().on_visit_wardblocked(game, *self, visit)
+    }
+    pub fn on_whisper(game: &mut Game, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority) {
+        for player in PlayerReference::all_players(game){
+            player.role_state(game).clone().on_whisper(game, player, event, fold, priority);
+        }
     }
 }

@@ -1,17 +1,13 @@
 use std::collections::HashSet;
 
 use crate::{game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, game_conclusion::GameConclusion, 
-    player::PlayerReference, 
-    role::{
-        Priority, Role
-    }, tag::Tag, win_condition::WinCondition, Game
+    attack_power::AttackPower, chat::ChatMessageVariant, event::on_midnight::{OnMidnight, OnMidnightPriority}, game_conclusion::GameConclusion, player::PlayerReference, role::Role, tag::Tag, win_condition::WinCondition, Game
 }, vec_set::VecSet};
 
 use super::insider_group::InsiderGroupID;
 
 impl Game{
-    pub fn puppeteer_marionette<'a>(&'a self)->&'a PuppeteerMarionette{
+    pub fn puppeteer_marionette(&self)->&PuppeteerMarionette{
         &self.puppeteer_marionette
     }
     pub fn set_puppeteer_marionette(&mut self, puppeteer_marionette: PuppeteerMarionette){
@@ -48,7 +44,7 @@ impl PuppeteerMarionette{
                 .to_be_converted
                 .iter()
                 .filter(|p|p.alive(game))
-                .map(|p|p.clone())
+                .copied()
                 .collect::<Vec<_>>();
 
         PuppeteerMarionette::attack_players(game, marionettes, AttackPower::ProtectionPiercing);
@@ -57,7 +53,6 @@ impl PuppeteerMarionette{
         
         let puppeteers: VecSet<_> = PlayerReference::all_players(game)
             .filter(|p|p.role(game)==Role::Puppeteer)
-            .map(|p|p.clone())
             .collect();
 
         for player in players{
@@ -90,7 +85,6 @@ impl PuppeteerMarionette{
     pub fn puppeteers(game: &Game)->HashSet<PlayerReference>{
         PlayerReference::all_players(game)
             .filter(|p|p.role(game)==Role::Puppeteer)
-            .map(|p|p.clone())
             .collect()
     }
     pub fn marionettes_and_puppeteer(game: &Game)->HashSet<PlayerReference>{
@@ -106,8 +100,8 @@ impl PuppeteerMarionette{
     pub fn on_game_start(game: &mut Game){
         PuppeteerMarionette::give_tags_and_labels(game);
     }
-    pub fn on_night_priority(game: &mut Game, priority: Priority){
-        if priority == Priority::Kill{
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
+        if priority == OnMidnightPriority::Kill{
             PuppeteerMarionette::kill_marionettes(game);
         }
     }

@@ -4,6 +4,7 @@ import { PhaseType, PlayerIndex } from "./gameState.d";
 import translate, { translateChecked } from "./lang";
 import { Role } from "./roleState.d";
 import abilitiesJson from "../resources/abilityId.json";
+import { ChatMessage } from "../components/ChatMessage";
 
 
 export type AbilityJsonData = Partial<Record<ControllerIDLink, SingleAbilityJsonData>>;
@@ -47,10 +48,16 @@ export type ControllerID = {
     role: Role,
     id: RoleControllerID,
 } | {
+    type: "nominate",
+    player: PlayerIndex,
+} | {
     type: "forfeitVote",
     player: PlayerIndex,
 } | {
     type: "pitchforkVote",
+    player: PlayerIndex,
+} | {
+    type: "forwardMessage",
     player: PlayerIndex,
 } | {
     type: "syndicateGunItemShoot",
@@ -153,6 +160,7 @@ export function sortControllerIdCompare(
 
 export type AbilitySelection = {
     type: "unit",
+    selection: UnitSelection
 } | {
     type: "boolean"
     selection: BooleanSelection
@@ -180,12 +188,15 @@ export type AbilitySelection = {
 } | {
     type: "kira",
     selection: KiraSelection
-}
+} | {
+    type: "chatMessage",
+    selection: ChatMessageSelection
+};
 
 export function defaultAbilitySelection(available: AvailableAbilitySelection): AbilitySelection {
     switch (available.type) {
         case "unit":
-            return {type: "unit"};
+            return {type: "unit", selection: null};
         case "boolean":
             return {type: "boolean", selection: false};
         case "twoPlayerOption":
@@ -204,6 +215,8 @@ export function defaultAbilitySelection(available: AvailableAbilitySelection): A
             return {type: "integer", selection: 0};
         case "kira":
             return {type: "kira", selection: []};
+        case "chatMessage":
+            return {type: "chatMessage", selection: null};
     }
 }
 
@@ -235,9 +248,12 @@ export type AvailableAbilitySelection = {
 } | {
     type: "kira",
     selection: AvailableKiraSelection
+} | {
+    type: "chatMessage",
 }
 
 
+export type UnitSelection = null;
 export type BooleanSelection = boolean;
 
 export type TwoPlayerOptionSelection = [number, number] | null;
@@ -276,7 +292,9 @@ export type AvailableIntegerSelection = {
     max: number
 };
 
-export type KiraSelection = ListMapData<PlayerIndex, KiraGuess>
+export type KiraSelection = ListMapData<PlayerIndex, KiraGuess>;
 export type AvailableKiraSelection = {
     countMustGuess: number
 };
+
+export type ChatMessageSelection = ChatMessage | null;

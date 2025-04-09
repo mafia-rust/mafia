@@ -1,4 +1,4 @@
-use crate::{websocket_connections::{connection::Connection, ForceLock}, listener::Listener, log};
+use crate::{log, websocket_connections::{connection::Connection, ForceLock}, websocket_listener::WebsocketListener};
 use tokio_tungstenite::tungstenite::Message;
 use std::{net::SocketAddr, sync::{Arc, Mutex}, pin::pin};
 
@@ -8,6 +8,7 @@ use tokio::sync::{mpsc, broadcast};
 use tokio::net::{TcpListener, TcpStream};
 
 pub async fn create_ws_server(server_address: &str) {
+    #[expect(clippy::panic, reason = "Server cannot start without TCP listener")]
     let tcp_listener = TcpListener::bind(&server_address).await.unwrap_or_else(|err| {
         panic!("Failed to bind websocket server to address {server_address}: {err}")
     });
@@ -26,8 +27,8 @@ pub async fn create_ws_server(server_address: &str) {
         }))
     }
 
-    let event_listener = Arc::new(Mutex::new(Listener::new()));
-    Listener::start(event_listener.clone());
+    let event_listener: Arc<Mutex<_>> = Arc::new(Mutex::new(WebsocketListener::new()));
+    WebsocketListener::start_tick(event_listener.clone());
 
     log!(important "Server"; "Started listening on {server_address}");
 
@@ -46,10 +47,8 @@ pub async fn create_ws_server(server_address: &str) {
 
         tokio::spawn(async move {
             if let Ok(connection) = handle_connection(stream, client_address, event_listener.clone(), crash_signal).await {
-                match event_listener.force_lock().on_disconnect(connection) {
-                    Ok(()) => log!(important "Connection"; "Disconnected {}", client_address),
-                    Err(reason) => log!(error "Connection"; "Failed to disconnect {}: {}", client_address, reason)
-                };
+                event_listener.force_lock().on_disconnect(connection);
+                log!(important "Connection"; "Disconnected {}", client_address)
             } 
         });
     }
@@ -66,7 +65,7 @@ struct ConnectionError;
 async fn handle_connection(
     raw_stream: TcpStream, 
     client_address: SocketAddr, 
-    listener: Arc<Mutex<Listener>>,
+    listener: Arc<Mutex<WebsocketListener>>,
     mut crash_signal: (broadcast::Sender<()>, broadcast::Receiver<()>)
 ) -> Result<Connection, ConnectionError> {
     let ws_stream = match tokio_tungstenite::accept_async(raw_stream).await {

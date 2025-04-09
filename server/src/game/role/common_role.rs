@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::{game::{
+use crate::game::{
     ability_input::*,
     chat::ChatGroup,
     components::{
@@ -12,76 +12,9 @@ use crate::{game::{
     phase::{PhaseState, PhaseType}, player::PlayerReference,
     role_list::RoleSet, visit::Visit, win_condition::WinCondition,
     Game
-}, vec_set};
+};
 
 use super::{medium::Medium, reporter::Reporter, warden::Warden, InsiderGroupID, Role, RoleState};
-
-pub fn controller_parameters_map_player_list_night_typical(
-    game: &Game,
-    actor_ref: PlayerReference,
-    can_select_self: bool,
-    can_select_insiders: bool,
-    grayed_out: bool,
-    ability_id: ControllerID,
-) -> ControllerParametersMap {
-    
-    let grayed_out = 
-        actor_ref.ability_deactivated_from_death(game) ||
-        Detained::is_detained(game, actor_ref) ||
-        grayed_out;
-
-    ControllerParametersMap::new_controller_fast(
-        game,
-        ability_id,
-        AvailableAbilitySelection::new_player_list(
-            PlayerReference::all_players(game)
-                .into_iter()
-                .filter(|player|
-                    if !player.alive(game){
-                        false
-                    }else if *player == actor_ref{
-                        can_select_self
-                    }else if InsiderGroupID::in_same_revealed_group(game, actor_ref, *player){
-                        can_select_insiders
-                    }else{
-                        true
-                    }
-
-                )
-                .collect(),
-                false,
-                Some(1)
-            ),
-        AbilitySelection::new_player_list(Vec::new()),
-        grayed_out,
-        Some(PhaseType::Obituary),
-        false,
-        vec_set!(actor_ref)
-    )
-}
-
-pub fn controller_parameters_map_boolean(
-    game: &Game,
-    actor_ref: PlayerReference,
-    grayed_out: bool,
-    ability_id: ControllerID,
-) -> ControllerParametersMap {
-    let grayed_out = 
-        actor_ref.ability_deactivated_from_death(game) || 
-        Detained::is_detained(game, actor_ref) ||
-        grayed_out;
-
-    ControllerParametersMap::new_controller_fast(
-        game,
-        ability_id,
-        AvailableAbilitySelection::Boolean,
-        AbilitySelection::new_boolean(false),
-        grayed_out,
-        Some(PhaseType::Obituary),
-        false,
-        vec_set!(actor_ref)
-    )
-}
 
 
 /// This function uses defaults. When using this function, consider if you need to override the defaults.
@@ -90,21 +23,21 @@ pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: Pla
     let Some(selection) = game.saved_controllers.get_controller_current_selection(ability_id) else {return Vec::new()};
     
     match selection {
-        AbilitySelection::Unit => vec![Visit::new_none(actor_ref, actor_ref, attack)],
-        AbilitySelection::TwoPlayerOption { selection } => {
+        AbilitySelection::Unit(_) => vec![Visit::new_none(actor_ref, actor_ref, attack)],
+        AbilitySelection::TwoPlayerOption(selection) => {
             if let Some((target_1, target_2)) = selection.0 {
                 vec![Visit::new_none(actor_ref, target_1, attack), Visit::new_none(actor_ref, target_2, attack)]
             }else{
                 vec![]
             }
         },
-        AbilitySelection::PlayerList { selection } => {
+        AbilitySelection::PlayerList(selection) => {
             selection.0
                 .iter()
                 .map(|target_ref| Visit::new_none(actor_ref, *target_ref, attack))
                 .collect()
         }
-        AbilitySelection::RoleOption { selection } => {
+        AbilitySelection::RoleOption(selection) => {
             let mut out = Vec::new();
             for player in PlayerReference::all_players(game){
                 if Some(player.role(game)) == selection.0 {
@@ -113,18 +46,19 @@ pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: Pla
             }
             out
         }
-        AbilitySelection::TwoRoleOption { selection } => {
+        AbilitySelection::TwoRoleOption(selection) => {
             let mut out = Vec::new();
             for player in PlayerReference::all_players(game){
                 if Some(player.role(game)) == selection.0 {
                     out.push(Visit::new_none(actor_ref, player, attack));
-                }else if Some(player.role(game)) == selection.1 {
+                }
+                if Some(player.role(game)) == selection.1 {
                     out.push(Visit::new_none(actor_ref, player, attack));
                 }
             }
             out
         }
-        AbilitySelection::TwoRoleOutlineOption { selection } => {
+        AbilitySelection::TwoRoleOutlineOption(selection) => {
             let mut out = vec![];
             if let Some(chosen_outline) = selection.0{
                 let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);

@@ -789,19 +789,6 @@
             {"type": "ambusherCaught", "ambusher": 17}
         ]
     },
-    "cupid": {
-        "mainRoleSet": "mafia",
-        "roleSets": ["mafia", "mafiaSupport"],
-        "armor": false,
-        "aura": null,
-        "maxCount": 1,
-        "canWriteDeathNote": false,
-        "canBeConvertedTo": ["godfather"],
-        "chatMessages":[
-            {"type": "youAreLoveLinked", "player": 20},
-            {"type": "playerDiedOfABrokenHeart", "player": 20, "lover": 25}
-        ]
-    },
     "mafiaSupportWildcard": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia"],
@@ -1072,6 +1059,7 @@
                 "trackedPlayer": 42,
                 "players":[]
             },
+            {"type": "werewolfTracked"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
@@ -1085,11 +1073,51 @@
         "canWriteDeathNote": true,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "playersRoleRevealed","role": "veteran","player": 7},
-            {"type": "playersRoleConcealed","player": 7},
-            {"type": "auditorResult", "roleOutline":[{"roleSet": "any"}],"result": {"type":"one","role":["jester"]}},
+            {"type": "playersRoleConcealed","player": 5},
+            {"type": "playersRoleRevealed","role": "detective","player": 5},
+            {
+                "type":"werewolfTrackingResult",
+                "trackedPlayer": 0,
+                "players":[3]
+            },
+            {
+                "type":"werewolfTrackingResult",
+                "trackedPlayer": 1,
+                "players":[]
+            },
+            {
+                "type":"werewolfTrackingResult",
+                "trackedPlayer": 2,
+                "players":[]
+            },
+            {
+                "type":"werewolfTrackingResult",
+                "trackedPlayer": 3,
+                "players":[]
+            },
+            {
+                "type":"werewolfTrackingResult",
+                "trackedPlayer": 4,
+                "players":[2,6]
+            },
+            {
+                "type":"werewolfTrackingResult",
+                "trackedPlayer": 5,
+                "players":[2]
+            },
+            {
+                "type":"werewolfTrackingResult",
+                "trackedPlayer": 6,
+                "players":[]
+            },
+            {
+                "type":"werewolfTrackingResult",
+                "trackedPlayer": 7,
+                "players":[7]
+            },
             {"type": "someoneSurvivedYourAttack"},
-            {"type": "youSurvivedAttack"}
+            {"type": "youSurvivedAttack"},
+            {"type": "youAttackedSomeone"}
         ]
     },
     "puppeteer": {

@@ -69,6 +69,10 @@ impl GameConclusion {
                 )
         )
     }
+
+    pub fn get_premature_conclusion(game: &Game) -> GameConclusion {
+        GameConclusion::game_is_over(game).unwrap_or(GameConclusion::Draw)
+    }
     
 
     ///Town, Mafia, Cult, NK
@@ -83,10 +87,7 @@ impl GameConclusion {
         {
             true
         }else{
-            match role {
-                Role::Apostle | Role::Zealot => true,
-                _ => false
-            }
+            matches!(role, Role::Apostle | Role::Zealot | Role::Krampus)
         }
     }
 }

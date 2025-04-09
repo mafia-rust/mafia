@@ -1,16 +1,16 @@
 use serde::Serialize;
 
-use crate::game::components::detained::Detained;
+use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, phase::PhaseType};
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
-use crate::vec_set;
 
 use super::{
-    common_role, AbilitySelection, AvailableAbilitySelection, ControllerID,
-    ControllerParametersMap, GetClientRoleState, Priority, Role, RoleStateImpl
+    common_role, ControllerID,
+    ControllerParametersMap, GetClientRoleState, Role, RoleStateImpl
 };
 
 
@@ -28,7 +28,7 @@ pub struct ClientRoleState;
 
 impl RoleStateImpl for Necromancer {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
             let mut used_bodies = self.used_bodies;
             used_bodies.push(currently_used_player);
@@ -40,29 +40,24 @@ impl RoleStateImpl for Necromancer {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Necromancer, 0),
-            AvailableAbilitySelection::new_two_player_option(
-                PlayerReference::all_players(game)
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Necromancer, 0))
+            .available_selection(AvailableTwoPlayerOptionSelection {
+                available_first_players: PlayerReference::all_players(game)
                     .filter(|p|!p.alive(game))
                     .filter(|target|
                         (self.used_bodies.iter().filter(|p| **p == *target).count() < 2)
                     )
                     .filter(|p|*p != actor_ref)
                     .collect(),
-                PlayerReference::all_players(game)
+                available_second_players: PlayerReference::all_players(game)
                     .filter(|p|p.alive(game))
                     .collect(),
-                true,
-                true
-            ),
-            AbilitySelection::new_two_player_option(None),
-            actor_ref.ability_deactivated_from_death(game) || Detained::is_detained(game, actor_ref),
-            Some(PhaseType::Obituary),
-            false, 
-            vec_set!(actor_ref)
-        )
+                can_choose_duplicates: true,
+                can_choose_none: true
+            })
+            .night_typical(actor_ref)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         common_role::convert_controller_selection_to_visits(
@@ -82,6 +77,7 @@ impl RoleStateImpl for Necromancer {
            crate::game::components::insider_group::InsiderGroupID::Mafia
        ].into_iter().collect()
    }
+   fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
 impl GetClientRoleState<ClientRoleState> for Necromancer {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

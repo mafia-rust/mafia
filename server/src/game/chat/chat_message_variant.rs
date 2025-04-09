@@ -18,7 +18,7 @@ pub enum MessageSender {
 }
 
 // Determines message color
-#[derive(PartialOrd, Ord, Clone, Debug, Serialize, PartialEq, Eq)]
+#[derive(PartialOrd, Ord, Clone, Debug, Serialize, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum ChatMessageVariant {
@@ -127,9 +127,7 @@ pub enum ChatMessageVariant {
     DeputyShotYou,
     #[serde(rename_all = "camelCase")]
     WardenPlayersImprisoned{players: Vec<PlayerReference>},
-    
-    #[serde(rename_all = "camelCase")]
-    PlayerDiedOfABrokenHeart{player: PlayerIndex, lover: PlayerIndex},
+    WerewolfTracked,
 
     PuppeteerPlayerIsNowMarionette{player: PlayerIndex},
     RecruiterPlayerIsNowRecruit{player: PlayerIndex},
@@ -157,8 +155,7 @@ pub enum ChatMessageVariant {
     /*
     Night Information
     */
-    RoleBlocked { immune : bool },
-
+    RoleBlocked,
     Wardblocked,
 
     SheriffResult {suspicious: bool},
@@ -207,15 +204,13 @@ pub enum ChatMessageVariant {
     TargetIsPossessionImmune,
     YouWerePossessed { immune: bool },
     TargetsMessage{message: Box<ChatMessageVariant>},
+    PlayerForwardedMessage{forwarder: PlayerReference, message: Box<ChatMessageVariant>},
     TargetHasRole { role: Role },
     #[serde(rename_all = "camelCase")]
     TargetHasWinCondition { win_condition: WinCondition },
 
     #[serde(rename_all = "camelCase")]
     WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},
-
-    #[serde(rename_all = "camelCase")]
-    YouAreLoveLinked{player: PlayerIndex},
 
     JesterWon,
     RevolutionaryWon,

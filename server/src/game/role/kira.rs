@@ -2,6 +2,7 @@ use kira_selection::{AvailableKiraSelection, KiraSelection};
 use serde::{Serialize, Deserialize};
 
 use crate::game::attack_power::AttackPower;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -9,8 +10,7 @@ use crate::game::player::PlayerReference;
 use crate::game::Game;
 use crate::vec_map::VecMap;
 use crate::game::ability_input::*;
-use crate::vec_set;
-use super::{Priority, Role, RoleStateImpl};
+use super::{Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Kira;
@@ -74,7 +74,7 @@ impl KiraGuess{
             Role::MafiaWitch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
             Role::Disguiser | Role::Reeducator |
-            Role::Cupid | Role::Ambusher | Role::MafiaSupportWildcard => Some(Self::NonTown),
+            Role::Ambusher | Role::MafiaSupportWildcard => Some(Self::NonTown),
 
             //Neutral
             Role::Jester | Role::Revolutionary | Role::Politician |
@@ -102,7 +102,7 @@ impl KiraGuess{
         }
     }
     fn is_in_game(&self, game: &Game)->bool{
-        PlayerReference::all_players(game).into_iter().any(|player_ref| {
+        PlayerReference::all_players(game).any(|player_ref| {
             let role = player_ref.role(game);
             self.guess_matches_role(role) && player_ref.alive(game)
         })
@@ -161,7 +161,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Kira {
     type ClientRoleState = Kira;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if actor_ref.night_blocked(game) {return;}
         if actor_ref.ability_deactivated_from_death(game) {return;}
 
@@ -174,7 +174,7 @@ impl RoleStateImpl for Kira {
         let result = KiraResult::new(selection.clone(), game);
 
         match priority {
-            Priority::Kill if result.all_correct() => {
+            OnMidnightPriority::Kill if result.all_correct() => {
                 if game.day_number() == 1 {return};
                 
                 for (player, (guess, result)) in result.guesses.iter(){
@@ -183,31 +183,26 @@ impl RoleStateImpl for Kira {
                     }
                 }
             },
-            Priority::Investigative => {
+            OnMidnightPriority::Investigative => {
                 actor_ref.push_night_message(game, ChatMessageVariant::KiraResult { result });
             },
-            _ => return,
+            _ => {},
         }    
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         match PlayerReference::all_players(game).filter(|p|p.alive(game)).count().saturating_sub(1).try_into() {
             Ok(count) => {
-
-                let default_players = PlayerReference::all_players(game)
-                    .filter(|p|p.alive(game) && *p != actor_ref)
-                    .map(|p|(p, KiraGuess::None))
-                    .collect();
-
-                ControllerParametersMap::new_controller_fast(
-                    game,
-                    ControllerID::role(actor_ref, Role::Kira, 0),
-                    AvailableAbilitySelection::new_kira(AvailableKiraSelection::new(count)),
-                    AbilitySelection::new_kira(KiraSelection::new(default_players)),
-                    false,
-                    None,
-                    false,
-                    vec_set![actor_ref]
-                )
+                ControllerParametersMap::builder(game)
+                    .id(ControllerID::role(actor_ref, Role::Kira, 0))
+                    .available_selection(AvailableKiraSelection::new(count))
+                    .default_selection(KiraSelection::new(
+                        PlayerReference::all_players(game)
+                            .filter(|p|p.alive(game) && *p != actor_ref)
+                            .map(|p|(p, KiraGuess::None))
+                            .collect()
+                    ))
+                    .allow_players([actor_ref])
+                    .build_map()
             }
             Err(_) => {
                 ControllerParametersMap::default()

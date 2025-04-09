@@ -1,6 +1,8 @@
 use serde::Serialize;
 
+use crate::game::ability_input::ControllerParametersMap;
 use crate::game::attack_power::AttackPower;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::role_list::RoleSet;
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::player::PlayerReference;
@@ -8,7 +10,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{common_role, ControllerID, Priority, Role, RoleStateImpl};
+use super::{common_role, ControllerID, Role, RoleStateImpl};
 
 
 #[derive(Debug, Clone, Serialize, Default)]
@@ -20,8 +22,8 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Mafioso {
     type ClientRoleState = Mafioso;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Kill {return}
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if priority != OnMidnightPriority::Kill {return}
         if game.day_number() == 1 {return}
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
@@ -31,14 +33,12 @@ impl RoleStateImpl for Mafioso {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            false,
-            game.day_number() <= 1,
-            ControllerID::role(actor_ref, Role::Mafioso, 0)
-        )  
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Mafioso, 0))
+            .single_player_selection_typical(actor_ref, false, false)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(game.day_number() <= 1)
+            .build_map()  
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         common_role::convert_controller_selection_to_visits(

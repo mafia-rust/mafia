@@ -1,3 +1,5 @@
+#![allow(clippy::get_first, reason = "Often need to get first two visits manually.")]
+
 pub mod grave;
 pub mod phase;
 pub mod player;
@@ -9,7 +11,6 @@ pub mod role_list;
 pub mod settings;
 pub mod game_conclusion;
 pub mod components;
-pub mod available_buttons;
 pub mod on_client_message;
 pub mod tag;
 pub mod event;
@@ -23,9 +24,9 @@ pub mod ability_input;
 
 use std::time::Duration;
 use ability_input::saved_controllers_map::SavedControllersMap;
+use ability_input::PlayerListSelection;
 use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
-use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
 use components::night_visits::NightVisits;
 use components::pitchfork::Pitchfork;
@@ -52,6 +53,7 @@ use win_condition::WinCondition;
 use crate::client_connection::ClientConnection;
 use crate::game::event::on_game_start::OnGameStart;
 use crate::game::player::PlayerIndex;
+use crate::packet::RejectJoinReason;
 use crate::packet::ToClientPacket;
 use crate::vec_map::VecMap;
 use crate::vec_set::VecSet;
@@ -111,7 +113,6 @@ pub struct Game {
     pub arsonist_doused: ArsonistDoused,
     pub puppeteer_marionette: PuppeteerMarionette,
     pub mafia_recruits: MafiaRecruits,
-    pub love_linked: LoveLinked,
     pub verdicts_today: VerdictsToday,
     pub pitchfork: Pitchfork,
     pub poison: Poison,
@@ -126,6 +127,7 @@ pub struct Game {
 #[derive(Serialize, Debug, Clone, Copy)]
 #[serde(rename_all = "camelCase")]
 pub enum RejectStartReason {
+    TooManyClients,
     GameEndsInstantly,
     RoleListTooSmall,
     RoleListCannotCreateRoles,
@@ -144,6 +146,7 @@ pub enum GameOverReason {
 
 
 impl Game {
+    /// `players` must have length 255 or lower.
     pub fn new(settings: Settings, players: Vec<PlayerInitializeParameters>, spectators: Vec<SpectatorInitializeParameters>) -> Result<Self, RejectStartReason>{
         //check settings are not completly off the rails
         if settings.phase_times.game_ends_instantly() {
@@ -151,7 +154,7 @@ impl Game {
         }
         
 
-        let mut role_generation_tries = 0;
+        let mut role_generation_tries = 0u8;
         const MAX_ROLE_GENERATION_TRIES: u8 = 250;
         let (mut game, assignments) = loop {
 
@@ -165,7 +168,7 @@ impl Game {
             let random_outline_assignments = match role_list.create_random_role_assignments(&settings.enabled_roles){
                 Some(roles) => {roles},
                 None => {
-                    role_generation_tries += 1;
+                    role_generation_tries = role_generation_tries.saturating_add(1);
                     continue;
                 }
             };
@@ -180,7 +183,7 @@ impl Game {
                 let ClientConnection::Connected(ref sender) = player.connection else {
                     return Err(RejectStartReason::PlayerDisconnected)
                 };
-                let Some((_, _, assignment)) = assignments.iter().find(|(p,_,_)|p.index() == player_index as u8) else {
+                let Some((_, _, assignment)) = assignments.iter().find(|(p,_,_)|p.index() as usize == player_index) else {
                     return Err(RejectStartReason::RoleListTooSmall)
                 };
 
@@ -204,6 +207,7 @@ impl Game {
                 new_players.push(new_player);
             }
 
+            #[expect(clippy::cast_possible_truncation, reason = "Explained in doc comment")]
             let num_players = new_players.len() as u8;
 
             let mut game = Self{
@@ -227,7 +231,6 @@ impl Game {
                 arsonist_doused: ArsonistDoused::default(),
                 puppeteer_marionette: PuppeteerMarionette::default(),
                 mafia_recruits: MafiaRecruits::default(),
-                love_linked: LoveLinked::default(),
                 verdicts_today: VerdictsToday::default(),
                 poison: Poison::default(),
 
@@ -248,7 +251,7 @@ impl Game {
                 
                 let insider_groups = match &assignment.insider_groups {
                     RoleOutlineOptionInsiderGroups::RoleDefault => assignment.role.default_state().default_revealed_groups(),
-                    RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().cloned().collect(),
+                    RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().copied().collect(),
                 };
                 
                 for group in insider_groups{
@@ -262,7 +265,7 @@ impl Game {
             if !game.game_is_over() {
                 break (game, assignments);
             }
-            role_generation_tries += 1;
+            role_generation_tries = role_generation_tries.saturating_add(1);
         };
 
         if game.game_is_over() {
@@ -287,7 +290,7 @@ impl Game {
 
             let insider_groups = match &assignment.insider_groups {
                 RoleOutlineOptionInsiderGroups::RoleDefault => role_data.clone().default_revealed_groups(),
-                RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().cloned().collect(),
+                RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().copied().collect(),
             };
             
             InsiderGroupID::start_game_set_player_revealed_groups(
@@ -323,6 +326,8 @@ impl Game {
         Ok(game)
     }
     
+    /// `initialization_data` must have length 255 or lower
+    #[expect(clippy::cast_possible_truncation, reason = "See doc comment")]
     fn assign_players_to_assignments(initialization_data: Vec<RoleAssignment>)->Vec<(PlayerReference, RoleOutlineReference, RoleAssignment)>{
         let mut player_indices: Vec<PlayerIndex> = (0..initialization_data.len() as PlayerIndex).collect();
         player_indices.shuffle(&mut rand::rng());
@@ -330,7 +335,7 @@ impl Game {
         initialization_data
             .into_iter()
             .enumerate()
-            .zip(player_indices.into_iter())
+            .zip(player_indices)
             .map(|((o_index, assignment), p_index)|
                 // We are iterating through playerlist and outline list, so this unsafe should be fine
                 unsafe {
@@ -340,34 +345,35 @@ impl Game {
             .collect()
     }
 
+    #[expect(clippy::cast_possible_truncation, reason = "Game can only have 255 players maximum")]
     pub fn num_players(&self) -> u8 {
         self.players.len() as u8
     }
 
     /// Returns a tuple containing the number of guilty votes and the number of innocent votes
     pub fn count_verdict_votes(&self, player_on_trial: PlayerReference)->(u8,u8){
-        let mut guilty = 0;
-        let mut innocent = 0;
+        let mut guilty = 0u8;
+        let mut innocent = 0u8;
         for player_ref in PlayerReference::all_players(self){
             if !player_ref.alive(self) || player_ref == player_on_trial {
                 continue;
             }
-            let mut voting_power = 1;
+            let mut voting_power = 1u8;
             if let RoleState::Mayor(mayor) = player_ref.role_state(self).clone(){
                 if mayor.revealed {
-                    voting_power += 2;
+                    voting_power = voting_power.saturating_add(2);
                 }
             }
             if let RoleState::Politician(politician) = player_ref.role_state(self).clone(){
                 if politician.revealed {
-                    voting_power += 2;
+                    voting_power = voting_power.saturating_add(2);
                 }
             }
             
             match player_ref.verdict(self) {
-                Verdict::Innocent => innocent += voting_power,
+                Verdict::Innocent => innocent = innocent.saturating_add(voting_power),
                 Verdict::Abstain => {},
-                Verdict::Guilty => guilty += voting_power,
+                Verdict::Guilty => guilty = guilty.saturating_add(voting_power),
             }
         }
         (guilty, innocent)
@@ -380,7 +386,13 @@ impl Game {
         for player in PlayerReference::all_players(self){
             if !player.alive(self) { continue }
 
-            let Some(voted_player) = player.chosen_vote(self) else { continue };
+            let Some(PlayerListSelection(voted_players)) = self
+                .saved_controllers
+                .get_controller_current_selection_player_list(ability_input::ControllerID::Nominate { player }) else {
+                    continue;
+                };
+            let Some(&voted_player) = voted_players.first() else { continue };
+            
 
             let mut voting_power = 1;
             if let RoleState::Mayor(mayor) = player.role_state(self).clone() {
@@ -395,17 +407,11 @@ impl Game {
             }
 
             if let Some(num_votes) = voted_player_votes.get_mut(&voted_player) {
-                *num_votes += voting_power;
+                *num_votes = num_votes.saturating_add(voting_power);
             } else {
                 voted_player_votes.insert(voted_player, voting_power);
             }
         }
-
-        self.send_packet_to_all(
-            ToClientPacket::PlayerVotes { votes_for_player: 
-                PlayerReference::ref_vec_map_to_index(voted_player_votes.clone())
-            }
-        );
 
         voted_player_votes
     }
@@ -418,6 +424,7 @@ impl Game {
         let &PhaseState::Nomination { trials_left, .. } = self.current_phase() else {return None};
 
         let voted_player_votes = self.create_voted_player_map();
+        self.send_packet_to_all(ToClientPacket::PlayerVotes { votes_for_player: voted_player_votes.clone()});
 
         let mut voted_player = None;
 
@@ -429,15 +436,13 @@ impl Game {
                     .collect();
 
                 if max_votes_players.len() == 1 {
-                    voted_player = max_votes_players.iter().next().cloned();
+                    voted_player = max_votes_players.iter().next().copied();
                 }
             }
         }
         
         if start_trial_instantly {
             if let Some(player_on_trial) = voted_player {
-                self.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
-                
                 PhaseStateMachine::next_phase(self, Some(PhaseState::Testimony {
                     trials_left: trials_left.saturating_sub(1), 
                     player_on_trial, 
@@ -454,24 +459,31 @@ impl Game {
         votes >= self.nomination_votes_required()
     }
     pub fn nomination_votes_required(&self)->u8{
+        #[expect(clippy::cast_possible_truncation, reason = "Game can only have max 255 players")]
         let eligible_voters = PlayerReference::all_players(self)
             .filter(|p| p.alive(self) && !p.forfeit_vote(self))
             .count() as u8;
 
         if Modifiers::modifier_is_enabled(self, ModifierType::TwoThirdsMajority) {
-            (eligible_voters + 1) * 2 / 3
+            // equivalent to x - (x - (x + 1)/3)/2 to prevent overflow issues
+            eligible_voters
+            .saturating_sub(
+                eligible_voters
+                .saturating_sub(
+                    eligible_voters
+                    .saturating_add(1)
+                    .saturating_div(3)
+                )
+                .saturating_div(2)
+            )
         } else {
-            1 + eligible_voters / 2
+            eligible_voters.saturating_div(2).saturating_add(1)
         }
     }
 
 
     pub fn game_is_over(&self) -> bool {
-        if let Some(_) = GameConclusion::game_is_over(self){
-            true
-        }else{
-            false
-        }
+        GameConclusion::game_is_over(self).is_some()
     }
 
     pub fn current_phase(&self) -> &PhaseState {
@@ -499,27 +511,24 @@ impl Game {
             return;
         }
 
-        while self.phase_machine.time_remaining <= Duration::ZERO {
+        while self.phase_machine.time_remaining.is_some_and(|d| d.is_zero()) {
             PhaseStateMachine::next_phase(self, None);
         }
         PlayerReference::all_players(self).for_each(|p|p.tick(self, time_passed));
         SpectatorPointer::all_spectators(self).for_each(|s|s.tick(self, time_passed));
 
-        self.phase_machine.time_remaining = self.phase_machine.time_remaining.saturating_sub(time_passed);
+        self.phase_machine.time_remaining = self.phase_machine.time_remaining.map(|d|d.saturating_sub(time_passed));
 
         OnTick::new().invoke(self);
     }
 
-    pub fn add_grave(&mut self, grave: Grave){
-        self.graves.push(grave.clone());
-        if let Some(grave_ref) = GraveReference::new(
-            self, 
-            self.graves.len()
-                .saturating_sub(1)
-                .try_into()
-                .expect("There can not be more than u8::MAX graves"))
-        {
-            OnGraveAdded::new(grave_ref).invoke(self);
+    pub fn add_grave(&mut self, grave: Grave) {
+        if let Ok(grave_index) = self.graves.len().try_into() {
+            self.graves.push(grave.clone());
+
+            if let Some(grave_ref) = GraveReference::new(self, grave_index) {
+                OnGraveAdded::new(grave_ref).invoke(self);
+            }
         }
     }
 
@@ -536,7 +545,7 @@ impl Game {
         }
     }
     pub fn add_messages_to_chat_group(&mut self, group: ChatGroup, messages: Vec<ChatMessageVariant>){
-        for message in messages.into_iter(){
+        for message in messages {
             self.add_message_to_chat_group(group.clone(), message);
         }
     }
@@ -546,17 +555,17 @@ impl Game {
         }
         self.spectator_chat_messages.push(message);
     }
-
-    pub fn add_spectator(&mut self, params: SpectatorInitializeParameters) -> SpectatorIndex {
+    pub fn join_spectator(&mut self, params: SpectatorInitializeParameters) -> Result<SpectatorPointer, RejectJoinReason> {
+        let spectator_index = SpectatorIndex::try_from(self.spectators.len()).map_err(|_|RejectJoinReason::RoomFull)?;
         self.spectators.push(Spectator::new(params));
-        let spectator_pointer = SpectatorPointer::new(self.spectators.len() as SpectatorIndex - 1);
+        let spectator_pointer = SpectatorPointer::new(spectator_index);
 
-        spectator_pointer.send_join_game_data(self);
-
-        spectator_pointer.index
+        Ok(spectator_pointer)
     }
     pub fn remove_spectator(&mut self, i: SpectatorIndex){
-        self.spectators.remove(i as usize);
+        if (i as usize) < self.spectators.len() {
+            self.spectators.remove(i as usize);
+        }
     }
 
     pub fn send_packet_to_all(&self, packet: ToClientPacket){
@@ -567,15 +576,19 @@ impl Game {
             spectator.send_packet(packet.clone());
         }
     }
+    
+    pub(crate) fn is_any_client_connected(&self) -> bool {
+        PlayerReference::all_players(self).any(|p| p.is_connected(self))
+        || SpectatorPointer::all_spectators(self).any(|s| s.is_connected(self))
+    }
 }
-
 pub mod test {
 
     use super::{
         ability_input::saved_controllers_map::SavedControllersMap,
         components::{
             arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID,
-            love_linked::LoveLinked, mafia::Mafia,
+            mafia::Mafia,
             mafia_recruits::MafiaRecruits, night_visits::NightVisits,
             pitchfork::Pitchfork, poison::Poison,
             puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem,
@@ -586,7 +599,7 @@ pub mod test {
         role::Role, settings::Settings, Game, RejectStartReason
     };
     
-    pub fn mock_game(settings: Settings, number_of_players: usize) -> Result<Game, RejectStartReason> {
+    pub fn mock_game(settings: Settings, number_of_players: u8) -> Result<Game, RejectStartReason> {
 
         //check settings are not completly off the rails
         if settings.phase_times.game_ends_instantly() {
@@ -610,7 +623,7 @@ pub mod test {
         for player_index in 0..number_of_players {
             let new_player = mock_player(
                 format!("{}",player_index),
-                match shuffled_roles.get(player_index){
+                match shuffled_roles.get(player_index as usize){
                     Some(role) => *role,
                     None => return Err(RejectStartReason::RoleListTooSmall),
                 }
@@ -619,7 +632,7 @@ pub mod test {
         }
 
         let mut game = Game{
-            pitchfork: Pitchfork::new(number_of_players as u8),
+            pitchfork: Pitchfork::new(number_of_players),
             
             assignments,
             ticking: true,
@@ -638,7 +651,6 @@ pub mod test {
             arsonist_doused: ArsonistDoused::default(),
             puppeteer_marionette: PuppeteerMarionette::default(),
             mafia_recruits: MafiaRecruits::default(),
-            love_linked: LoveLinked::default(),
             verdicts_today: VerdictsToday::default(),
             poison: Poison::default(),
             modifiers: Default::default(),
@@ -646,7 +658,7 @@ pub mod test {
             detained: Default::default(),
             confused: Default::default(),
             drunk_aura: Default::default(),
-            synopsis_tracker: SynopsisTracker::new(number_of_players as u8)
+            synopsis_tracker: SynopsisTracker::new(number_of_players)
         };
 
         //set wincons and revealed groups

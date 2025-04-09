@@ -1,9 +1,12 @@
+
 use rand::seq::IteratorRandom;
 use serde::Serialize;
 
+use crate::game::ability_input::AvailableIntegerSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::components::mafia_recruits::MafiaRecruits;
 use crate::game::components::insider_group::InsiderGroupID;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 use crate::game::game_conclusion::GameConclusion;
@@ -11,11 +14,10 @@ use crate::game::role_list::{RoleOutline, RoleOutlineOption, RoleOutlineOptionRo
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use crate::vec_set;
 use super::godfather::Godfather;
 use super::{
-    common_role, AbilitySelection, AvailableAbilitySelection, ControllerID,
-    ControllerParametersMap, IntegerSelection, Priority, Role, RoleStateImpl
+    ControllerID,
+    ControllerParametersMap, IntegerSelection, Role, RoleStateImpl
 };
 
 use vec1::vec1;
@@ -44,10 +46,9 @@ impl RoleStateImpl for Recruiter {
     fn new_state(game: &Game) -> Self {
         Self{
             recruits_remaining: game.num_players().div_ceil(5),
-            ..Self::default()
         }
     }
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         let choose_attack = if let Some(IntegerSelection(x)) = game.saved_controllers.get_controller_current_selection_integer(
             ControllerID::role(actor_ref, Role::Recruiter, 1)
@@ -55,51 +56,51 @@ impl RoleStateImpl for Recruiter {
 
         if choose_attack{
             if game.day_number() <= 1 {return}
-        }else{
-            if self.recruits_remaining == 0 {return}
-        }
+        } else if self.recruits_remaining == 0 {return}
 
         match priority {
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 if let Some(visit) = actor_visits.first(){
                     if Recruiter::night_ability(self.clone(), game, actor_ref, visit.target) {
                         if choose_attack {
-                            actor_ref.set_role_state(game, Recruiter{recruits_remaining: self.recruits_remaining.saturating_add(1), ..self})
+                            actor_ref.set_role_state(game, Recruiter{recruits_remaining: self.recruits_remaining.saturating_add(1)})
                         }else{
-                            actor_ref.set_role_state(game, Recruiter{recruits_remaining: self.recruits_remaining.saturating_sub(1), ..self});
+                            actor_ref.set_role_state(game, Recruiter{recruits_remaining: self.recruits_remaining.saturating_sub(1)});
                         }
                     }
                 }
             },
-            _ => {return}
+            _ => {}
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-
         let choose_attack = if let Some(IntegerSelection(x)) = game.saved_controllers.get_controller_current_selection_integer(
             ControllerID::role(actor_ref, Role::Recruiter, 1)
         ){x==0}else{true};
 
-        common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            false,
-            (!choose_attack && self.recruits_remaining <= 0) || (choose_attack && game.day_number() == 1),
-            ControllerID::role(actor_ref, Role::Recruiter, 0)
-        ).combine_overwrite_owned(
-            ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::role(actor_ref, Role::Recruiter, 1),
-                AvailableAbilitySelection::new_integer(0, if self.recruits_remaining > 0 {1} else {0}),
-                AbilitySelection::new_integer(0),
-                actor_ref.ability_deactivated_from_death(game),
-                None,
-                false,
-                vec_set![actor_ref],
-            )
-        )
+        ControllerParametersMap::combine([
+            // Player
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Recruiter, 0))
+                .single_player_selection_typical(actor_ref, false, false)
+                .night_typical(actor_ref)
+                .add_grayed_out_condition(
+                    (!choose_attack && self.recruits_remaining == 0) 
+                    || (choose_attack && game.day_number() == 1)
+                )
+                .build_map(),
+            // Attack or Recruit
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Recruiter, 1))
+                .available_selection(AvailableIntegerSelection {
+                    min: 0,
+                    max: if self.recruits_remaining > 0 {1} else {0}
+                })
+                .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
+                .allow_players([actor_ref])
+                .build_map()
+        ])
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
@@ -173,12 +174,10 @@ impl Recruiter {
                 AttackPower::Basic,
                 false
             )
+        }else if AttackPower::Basic.can_pierce(target_ref.defense(game)) {
+            MafiaRecruits::recruit(game, target_ref)
         }else{
-            if AttackPower::Basic.can_pierce(target_ref.defense(game)) {
-                MafiaRecruits::recruit(game, target_ref)
-            }else{
-                false
-            }
+            false
         }
     }
 }

@@ -40,8 +40,21 @@ export type LobbyState = {
 }
 export type LobbyClient = {
     ready: "host" | "ready" | "notReady",
-    connection: "connected" | "disconnected" | "couldReconnect",
+    connection: ClientConnection,
     clientType: LobbyClientType
+}
+export type ClientConnection = "connected" | "disconnected" | "couldReconnect";
+export type GameClient = {
+    clientType: GameClientType,
+    connection: ClientConnection,
+    host: boolean,
+}
+export type GameClientType = {
+    type: "spectator",
+    index: number
+} | {
+    type: "player",
+    index: number,
 }
 export type LobbyClientType = {
     type: "spectator"
@@ -65,7 +78,7 @@ type GameState = {
     players: Player[],
     
     phaseState: PhaseState,
-    timeLeftMs: number,
+    timeLeftMs: number | null,
     dayNumber: number,
 
     fastForward: boolean,
@@ -78,7 +91,9 @@ type GameState = {
     ticking: boolean,
 
     clientState: PlayerGameState | {type: "spectator"},
-    host: boolean,
+    host: null | {
+        clients: ListMap<LobbyClientID, GameClient>
+    },
 
     missedChatMessages: boolean
 }
@@ -96,8 +111,6 @@ export type PlayerGameState = {
     crossedOutOutlines: number[],
     chatFilter: ChatFilter,
     deathNote: string,
-    targets: PlayerIndex[],
-    voted: PlayerIndex | null,
     judgement: Verdict,
 
     savedControllers: ListMapData<ControllerID, SavedController>,
@@ -146,28 +159,26 @@ export type Tag =
     "revolutionaryTarget" |
     "morticianTagged" |
     "puppeteerMarionette" |
-    "loveLinked" |
     "frame" |
     "forfeitVote" |
     "spiraling";
 
 export const MODIFIERS = [
-    "obscuredGraves", "randomLoveLinks",
+    "obscuredGraves",
+    "skipDay1",
     "deadCanChat", "noAbstaining",
     "noDeathCause",
     "roleSetGraveKillers", "autoGuilty", 
     "twoThirdsMajority", "noTrialPhases", 
-    "noWhispers", "noNightChat",
-    "noChat", "scheduledNominations"
+    "noWhispers", "hiddenWhispers",
+    "noNightChat", "noChat", 
+    "scheduledNominations"
 ] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 
 export type Player = {
     name: string,
-    index: number
-    buttons: {
-        vote: boolean,
-    },
+    index: number,
     numVoted: number,
     alive: boolean,
     roleLabel: Role | null,

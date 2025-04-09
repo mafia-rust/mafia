@@ -1,7 +1,7 @@
 use rand::seq::SliceRandom;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-use crate::game::attack_power::DefensePower;
+use crate::game::{attack_power::DefensePower, event::on_midnight::OnMidnightPriority};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::player::PlayerReference;
@@ -9,12 +9,12 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Spy;
 
-#[derive(Clone, Debug, Serialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
 pub enum SpyBug{
     Silenced, 
@@ -29,9 +29,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Spy {
     type ClientRoleState = Spy;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::Investigative => {
+            OnMidnightPriority::Investigative => {
                 if actor_ref.night_blocked(game) {return;}
                 if actor_ref.ability_deactivated_from_death(game) {return;}
 
@@ -49,14 +49,14 @@ impl RoleStateImpl for Spy {
                 
                 actor_ref.push_night_message(game, ChatMessageVariant::SpyMafiaVisit { players: mafia_visits });               
             },
-            Priority::SpyBug => {
+            OnMidnightPriority::SpyBug => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
 
                 for message in visit.target.night_messages(game).clone(){
                     if let Some(message) = match message{
                         ChatMessageVariant::Silenced => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Silenced }),
-                        ChatMessageVariant::RoleBlocked { immune: _ } => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Roleblocked }),
+                        ChatMessageVariant::RoleBlocked => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Roleblocked }),
                         ChatMessageVariant::YouWereProtected => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Protected }),
                         ChatMessageVariant::Transported => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Transported }),
                         ChatMessageVariant::YouWerePossessed { immune: _ } => Some(ChatMessageVariant::SpyBug { bug: SpyBug::Possessed }),
@@ -71,14 +71,12 @@ impl RoleStateImpl for Spy {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            true,
-            false,
-            ControllerID::role(actor_ref, Role::Spy, 0)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Spy, 0))
+            .single_player_selection_typical(actor_ref, false, true)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(false)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(

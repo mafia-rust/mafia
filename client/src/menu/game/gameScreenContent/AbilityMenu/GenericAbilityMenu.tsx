@@ -75,6 +75,16 @@ function translateGroupName(id: ControllerID): string {
     }
 }
 
+/// True if this controller should be in this menu
+function showThisController(id: ControllerID): boolean {
+    switch(id.type){
+        case "forwardMessage":
+            return false
+        default:
+            return true
+    }
+}
+
 export default function GenericAbilityMenu(): ReactElement {
     const savedAbilities = usePlayerState(
         playerState => playerState.savedControllers,
@@ -84,6 +94,9 @@ export default function GenericAbilityMenu(): ReactElement {
     let controllerGroupsMap: ControllerGroupsMap = new ListMap();
     //build this map ^
     for(let [controllerID, controller] of savedAbilities) {
+
+        if (!showThisController(controllerID)) {continue;}
+
         let groupName = getGroupNameFromControllerID(controllerID);
         
         let controllers = controllerGroupsMap.get(groupName);
@@ -245,7 +258,7 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
                 onClick={()=>{
                     GAME_MANAGER.sendAbilityInput({
                         id, 
-                        selection: {type: "unit"}
+                        selection: {type: "unit", selection: null}
                     });
                 }}
             >

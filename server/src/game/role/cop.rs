@@ -3,6 +3,8 @@ use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::components::night_visits::NightVisits;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
@@ -14,7 +16,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use super::{
     ControllerID, ControllerParametersMap,
-    GetClientRoleState, Priority, Role, RoleStateImpl
+    GetClientRoleState, Role, RoleStateImpl
 };
 
 
@@ -33,11 +35,11 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Cop {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if game.day_number() == 1 {return}
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if game.day_number() <= 1 {return}
 
         match priority {
-            Priority::Heal => {
+            OnMidnightPriority::Heal => {
                 
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
@@ -46,44 +48,47 @@ impl RoleStateImpl for Cop {
                 target_ref.increase_defense_to(game, DefensePower::Protection);
                 actor_ref.set_role_state(game, Cop {target_protected_ref: Some(target_ref)});
             }
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-                let Some(visit) = actor_visits.first() else {return};
-                let target_ref = visit.target;
+                let Some(ambush_visit) = actor_visits.first() else {return};
+                let target_ref = ambush_visit.target;
 
-                let player_to_attack =
-                if let Some(non_town_visitor) = PlayerReference::all_players(game)
-                    .filter(|other_player_ref|
-                        other_player_ref.alive(game) &&
-                        *other_player_ref != actor_ref &&
-                        !other_player_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
-                        // Its probably this way rather than having it filter applied directly to target_ref.all_night_visitors_cloned(game) 
-                        // in order to prevent repeat players
-                        target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
-                    ).collect::<Vec<PlayerReference>>()
+                let player_to_attacks_visit = 
+                if let Some(priority_visitor) = NightVisits::all_visits(game).into_iter()
+                    .filter(|visit|
+                        ambush_visit != *visit &&
+                        visit.target == target_ref &&
+                        visit.visitor.alive(game) &&
+                        !visit.visitor.win_condition(game).is_loyalist_for(GameConclusion::Town)
+                    ).collect::<Vec<&Visit>>()
                     .choose(&mut rand::rng())
-                    .copied(){
-                    Some(non_town_visitor)
+                    .copied()
+                {
+                    Some(priority_visitor.visitor)
                 } else {
-                    PlayerReference::all_players(game)
-                        .filter(|other_player_ref|
-                            other_player_ref.alive(game) &&
-                            *other_player_ref != actor_ref &&
-                            // Its probably this way rather than having it filter applied directly to target_ref.all_night_visitors_cloned(game) 
-                            // in order to prevent repeat players
-                            target_ref.all_night_visitors_cloned(game).contains(other_player_ref)
-                        )
-                        .collect::<Vec<PlayerReference>>()
+                    NightVisits::all_visits(game).into_iter()
+                        .filter(|visit|
+                            ambush_visit != *visit &&
+                            visit.target == target_ref &&
+                            visit.visitor.alive(game)
+                        ).collect::<Vec<&Visit>>()
                         .choose(&mut rand::rng())
                         .copied()
+                        .map(|v|v.visitor)
                 };
 
-                if let Some(player_to_attack) = player_to_attack{
-                    player_to_attack.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Cop), AttackPower::Basic, false);
+                if let Some(player_to_attack) = player_to_attacks_visit{
+                    player_to_attack.try_night_kill_single_attacker(
+                        actor_ref,
+                        game,
+                        GraveKiller::Role(Role::Cop),
+                        AttackPower::Basic,
+                        false
+                    );
                 }
             }
-            Priority::Investigative => {
+            OnMidnightPriority::Investigative => {
                 if let Some(target_protected_ref) = self.target_protected_ref {
                     if target_protected_ref.night_attacked(game){
                         
@@ -96,14 +101,12 @@ impl RoleStateImpl for Cop {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            true,
-            !(game.day_number() > 1),
-            ControllerID::role(actor_ref, Role::Cop, 0)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Cop, 0))
+            .single_player_selection_typical(actor_ref, false, true)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(game.day_number() <= 1)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(

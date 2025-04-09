@@ -1,9 +1,10 @@
 use mafia_server::game::{
+    chat::ChatMessageVariant, 
     player::PlayerReference, 
-    Game, 
-    role::RoleState,
-    settings::Settings,
-    test::mock_game
+    role::RoleState, 
+    settings::Settings, 
+    test::mock_game, 
+    Game
 };
 
 pub mod player;
@@ -60,6 +61,22 @@ macro_rules! assert_not_contains {
 #[allow(unused)]
 pub(crate) use {scenario, assert_contains, assert_not_contains};
 
+//Formats messages in a way where it's clear which phase each message was sent in
+pub fn _format_messages_debug(messages: Vec<ChatMessageVariant>) -> String{
+    let mut string = "[\n".to_string();
+
+    for message in messages {
+        string += match message {
+            ChatMessageVariant::PhaseChange{..} => "\t",
+            _ => "\t\t",
+        };
+        string += format!("{:?}", message).as_str();
+        string += "\n";
+    }
+    string += "]";
+    string
+}
+
 /// Stuff that shouldn't be called directly - only in macro invocations.
 #[doc(hidden)]
 pub mod _init {
@@ -84,7 +101,7 @@ pub mod _init {
             role_list: RoleList(role_list),
             enabled_roles: Role::values().into_iter().collect(),
             ..Default::default()
-        }, roles.len()){
+        }, roles.len() as u8){
             Ok(game) => game,
             Err(err) => panic!("Failed to create game: {:?}", err),
         };

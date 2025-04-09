@@ -2,6 +2,7 @@ use serde::{Serialize, Deserialize};
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -9,7 +10,7 @@ use crate::game::player::PlayerReference;
 use crate::game::Game;
 
 use super::jester::Jester;
-use super::{GetClientRoleState, Priority, Role, RoleState, RoleStateImpl};
+use super::{GetClientRoleState, Role, RoleState, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Doomsayer {
@@ -73,7 +74,7 @@ impl DoomsayerGuess{
             Role::MafiaWitch | Role::Necromancer | Role::Consort |
             Role::Mortician | Role::Framer | Role::Forger | 
             Role::Disguiser | Role::Reeducator |
-            Role::Cupid | Role::Ambusher | Role::MafiaSupportWildcard => Some(DoomsayerGuess::NonTown),
+            Role::Ambusher | Role::MafiaSupportWildcard => Some(DoomsayerGuess::NonTown),
 
             //Neutral
             Role::Jester | Role::Revolutionary | Role::Politician |
@@ -109,8 +110,8 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Doomsayer {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::TopPriority {return;}
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if priority != OnMidnightPriority::TopPriority {return;}
 
         if actor_ref.night_blocked(game) {return;}
         if !actor_ref.alive(game) {return;}

@@ -2,6 +2,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -12,7 +13,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use super::{
     ControllerID, ControllerParametersMap,
-    GetClientRoleState, Priority, Role,
+    GetClientRoleState, Role,
     RoleStateImpl
 };
 
@@ -46,9 +47,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Bodyguard {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::Bodyguard => {
+            OnMidnightPriority::Bodyguard => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
@@ -76,13 +77,13 @@ impl RoleStateImpl for Bodyguard {
                 });
                 
             },
-            Priority::Heal => {
+            OnMidnightPriority::Heal => {
                 let actors_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actors_visits.first() else {return};
                 let target_ref = visit.target;
     
                 if actor_ref == target_ref {
-                    let self_shields_remaining = self.self_shields_remaining - 1;
+                    let self_shields_remaining = self.self_shields_remaining.saturating_sub(1);
                     actor_ref.set_role_state(game, Bodyguard{
                         self_shields_remaining, 
                         ..self
@@ -92,12 +93,12 @@ impl RoleStateImpl for Bodyguard {
                     target_ref.increase_defense_to(game, DefensePower::Protection);
                 }
             },
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 for redirected_player_ref in self.redirected_player_refs {
                     redirected_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Bodyguard), AttackPower::ArmorPiercing, false);
                 }
             }
-            Priority::Investigative => {
+            OnMidnightPriority::Investigative => {
                 if let Some(target_protected_ref) = self.target_protected_ref {
                     actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
                     target_protected_ref.push_night_message(game, ChatMessageVariant::YouWereProtected);
@@ -107,14 +108,12 @@ impl RoleStateImpl for Bodyguard {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            self.self_shields_remaining > 0,
-            true,
-            !(game.day_number() > 1),
-            ControllerID::role(actor_ref, Role::Bodyguard, 0)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Bodyguard, 0))
+            .single_player_selection_typical(actor_ref, self.self_shields_remaining > 0, true)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(game.day_number() <= 1)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(

@@ -2,7 +2,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::game::{player::PlayerReference, role::Role, Game};
 
-use super::{AbilitySelection, BooleanSelection, IntegerSelection, KiraSelection, PlayerListSelection, RoleOptionSelection, SavedController, StringSelection, TwoPlayerOptionSelection, TwoRoleOptionSelection, TwoRoleOutlineOptionSelection};
+use super::{
+    AbilitySelection, BooleanSelection, IntegerSelection, KiraSelection, PlayerListSelection,
+    RoleOptionSelection, SavedController, StringSelection, TwoPlayerOptionSelection, TwoRoleOptionSelection, TwoRoleOutlineOptionSelection
+};
 
 pub type RoleControllerID = u8;
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Eq, Ord)]
@@ -15,12 +18,13 @@ pub enum ControllerID{
         role: Role,
         id: RoleControllerID
     },
-    ForfeitVote{
-        player: PlayerReference
-    },
-    PitchforkVote{
-        player: PlayerReference
-    },
+    ForfeitVote{player: PlayerReference},
+    PitchforkVote{player: PlayerReference},
+    Nominate{player: PlayerReference},
+
+    ForwardMessage{player: PlayerReference},
+
+
     SyndicateGunItemShoot,
     SyndicateGunItemGive,
     SyndicateChooseBackup,
@@ -34,6 +38,9 @@ pub enum ControllerID{
 impl ControllerID{
     pub fn role(player: PlayerReference, role: Role, id: RoleControllerID)->Self{
         Self::Role{player, role, id}
+    }
+    pub fn nominate(player: PlayerReference)->Self{
+        Self::Nominate{player}
     }
     pub fn forfeit_vote(player: PlayerReference)->Self{
         Self::ForfeitVote{player}
@@ -57,6 +64,9 @@ impl ControllerID{
 
 
 impl ControllerID{
+    pub fn should_send_chat_message(&self)->bool{
+        !matches!(self, ControllerID::Nominate { .. } | ControllerID::ForwardMessage { .. })
+    }
     fn get_controller<'a>(&self, game: &'a Game)->Option<&'a SavedController>{
         game.saved_controllers.get_controller(self.clone())
     }
@@ -67,7 +77,7 @@ impl ControllerID{
     pub fn get_boolean_selection<'a>(&self, game: &'a Game)->Option<&'a BooleanSelection>{
         self.get_selection(game)
             .and_then(|selection| 
-                if let AbilitySelection::Boolean { selection } = selection {
+                if let AbilitySelection::Boolean(selection) = selection {
                     Some(selection)
                 }else{
                     None
@@ -78,7 +88,7 @@ impl ControllerID{
     pub fn get_player_list_selection<'a>(&self, game: &'a Game)->Option<&'a PlayerListSelection>{
         self.get_selection(game)
             .and_then(|selection| 
-                if let AbilitySelection::PlayerList { selection } = selection {
+                if let AbilitySelection::PlayerList(selection) = selection {
                     Some(selection)
                 }else{
                     None
@@ -89,7 +99,7 @@ impl ControllerID{
     pub fn get_two_player_option_selection<'a>(&self, game: &'a Game)->Option<&'a TwoPlayerOptionSelection>{
         self.get_selection(game)
             .and_then(|selection| 
-                if let AbilitySelection::TwoPlayerOption { selection } = selection {
+                if let AbilitySelection::TwoPlayerOption(selection) = selection {
                     Some(selection)
                 }else{
                     None
@@ -100,7 +110,7 @@ impl ControllerID{
     pub fn get_role_option_selection<'a>(&self, game: &'a Game)->Option<&'a RoleOptionSelection>{
         self.get_selection(game)
             .and_then(|selection| 
-                if let AbilitySelection::RoleOption { selection } = selection {
+                if let AbilitySelection::RoleOption(selection) = selection {
                     Some(selection)
                 }else{
                     None
@@ -111,7 +121,7 @@ impl ControllerID{
     pub fn get_two_role_option_selection<'a>(&self, game: &'a Game)->Option<&'a TwoRoleOptionSelection>{
         self.get_selection(game)
             .and_then(|selection| 
-                if let AbilitySelection::TwoRoleOption { selection } = selection {
+                if let AbilitySelection::TwoRoleOption(selection) = selection {
                     Some(selection)
                 }else{
                     None
@@ -122,7 +132,7 @@ impl ControllerID{
     pub fn get_two_role_outline_option_selection<'a>(&self, game: &'a Game)->Option<&'a TwoRoleOutlineOptionSelection>{
         self.get_selection(game)
             .and_then(|selection| 
-                if let AbilitySelection::TwoRoleOutlineOption { selection } = selection {
+                if let AbilitySelection::TwoRoleOutlineOption(selection) = selection {
                     Some(selection)
                 }else{
                     None
@@ -133,7 +143,7 @@ impl ControllerID{
     pub fn get_string_selection<'a>(&self, game: &'a Game)->Option<&'a StringSelection>{
         self.get_selection(game)
             .and_then(|selection| 
-                if let AbilitySelection::String { selection } = selection {
+                if let AbilitySelection::String(selection) = selection {
                     Some(selection)
                 }else{
                     None
@@ -144,7 +154,7 @@ impl ControllerID{
     pub fn get_integer_selection<'a>(&self, game: &'a Game)->Option<&'a IntegerSelection>{
         self.get_selection(game)
             .and_then(|selection| 
-                if let AbilitySelection::Integer { selection } = selection {
+                if let AbilitySelection::Integer(selection) = selection {
                     Some(selection)
                 }else{
                     None
@@ -155,7 +165,7 @@ impl ControllerID{
     pub fn get_kira_selection<'a>(&self, game: &'a Game)->Option<&'a KiraSelection>{
         self.get_selection(game)
             .and_then(|selection| 
-                if let AbilitySelection::Kira { selection } = selection {
+                if let AbilitySelection::Kira(selection) = selection {
                     Some(selection)
                 }else{
                     None

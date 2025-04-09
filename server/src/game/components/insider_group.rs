@@ -85,6 +85,8 @@ impl InsiderGroupID{
     }
 
     // Mutations
+    /// # Safety
+    /// This function will not alert the other players of the addition of this new player
     pub unsafe fn add_player_to_revealed_group_unchecked(&self, game: &mut Game, player: PlayerReference){
         let players: &mut VecSet<PlayerReference> = self.revealed_group_mut(game).into();
         players.insert(player);
@@ -155,6 +157,9 @@ impl InsiderGroupID{
 
 
     // Queries
+    pub fn in_any_group(game: &Game, player: PlayerReference)->bool{
+        InsiderGroupID::all().into_iter().any(|g|g.is_player_in_revealed_group(game, player))
+    }
     pub fn is_player_in_revealed_group(&self, game: &Game, player: PlayerReference)->bool{
         let players: &VecSet<PlayerReference> = self.revealed_group(game).into();
         players.contains(&player)
