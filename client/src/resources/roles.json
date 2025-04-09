@@ -789,19 +789,6 @@
             {"type": "ambusherCaught", "ambusher": 17}
         ]
     },
-    "cupid": {
-        "mainRoleSet": "mafia",
-        "roleSets": ["mafia", "mafiaSupport"],
-        "armor": false,
-        "aura": null,
-        "maxCount": 1,
-        "canWriteDeathNote": false,
-        "canBeConvertedTo": ["godfather"],
-        "chatMessages":[
-            {"type": "youAreLoveLinked", "player": 20},
-            {"type": "playerDiedOfABrokenHeart", "player": 20, "lover": 25}
-        ]
-    },
     "mafiaSupportWildcard": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia"],
