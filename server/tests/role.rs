@@ -1494,13 +1494,14 @@ fn backup_gets_converted_on_killing_death() {
             _maf4: Mortician,
             _maf5: Blackmailer,
             _maf6: Consort,
-            _maf7: Cupid,
+            _maf7: Framer,
             _maf8: Forger,
             _maf9: Reeducator,
-            _maf10: Disguiser,
-            _maf11: Framer
+            _maf10: Disguiser
         );
         assert_eq!(Mafia::players_with_gun(&game), vec_set![sk.player_ref()]);
+        assert!(game.syndicate_gun_item.player_with_gun().is_none());
+
         sk.send_ability_input_player_list_other(backup, ControllerID::SyndicateChooseBackup);
         assert!(vigi.send_ability_input_player_list_typical(sk));
         game.next_phase();
@@ -1524,10 +1525,9 @@ fn backup_gets_gun_on_gunner_death() {
             _maf4: Mortician,
             _maf5: Blackmailer,
             _maf6: Consort,
-            _maf7: Cupid,
+            _maf7: Disguiser,
             _maf8: Forger,
-            _maf9: Reeducator,
-            _maf10: Disguiser
+            _maf9: Reeducator
         );
         SyndicateGunItem::give_gun(&mut game, gunner.player_ref());
         assert_eq!(Mafia::players_with_gun(&game), vec_set![gunner.player_ref()]);
