@@ -749,10 +749,6 @@ export function translateChatMessage(
             );
         case "wildcardConvertFailed":
             return translate("chatMessage.wildcardConvertFailed", translate("role."+message.role+".name"));
-        case "youAreLoveLinked":
-            return translate("chatMessage.youAreLoveLinked", playerNames[message.player]);
-        case "playerDiedOfABrokenHeart":
-            return translate("chatMessage.playerDiedOfBrokenHeart", playerNames[message.player], playerNames[message.lover]);
         case "chronokaiserSpeedUp":
             return translate("chatMessage.chronokaiserSpeedUp", message.percent);
         case "addedToNiceList":
@@ -1045,13 +1041,6 @@ export type ChatMessageVariant = {
     type: "armorsmithArmorBroke"
 } | {
     type: "targetWasAttacked"
-} | {
-    type: "youAreLoveLinked",
-    player: PlayerIndex
-} | {
-    type: "playerDiedOfABrokenHeart",
-    player: PlayerIndex
-    lover: PlayerIndex
 } | {
     type: "youWereProtected"
 } | {

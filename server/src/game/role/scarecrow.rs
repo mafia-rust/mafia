@@ -33,7 +33,7 @@ impl RoleStateImpl for Scarecrow {
 
         let target_ref = visit.target;
 
-        let mut blocked_players = target_ref.ward(game);
+        let mut blocked_players = target_ref.ward(game, &[*visit]);
         blocked_players.shuffle(&mut rand::rng());
 
         let message = ChatMessageVariant::ScarecrowResult { players:
