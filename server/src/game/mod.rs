@@ -27,7 +27,6 @@ use ability_input::saved_controllers_map::SavedControllersMap;
 use ability_input::PlayerListSelection;
 use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
-use components::love_linked::LoveLinked;
 use components::mafia::Mafia;
 use components::night_visits::NightVisits;
 use components::pitchfork::Pitchfork;
@@ -114,7 +113,6 @@ pub struct Game {
     pub arsonist_doused: ArsonistDoused,
     pub puppeteer_marionette: PuppeteerMarionette,
     pub mafia_recruits: MafiaRecruits,
-    pub love_linked: LoveLinked,
     pub verdicts_today: VerdictsToday,
     pub pitchfork: Pitchfork,
     pub poison: Poison,
@@ -233,7 +231,6 @@ impl Game {
                 arsonist_doused: ArsonistDoused::default(),
                 puppeteer_marionette: PuppeteerMarionette::default(),
                 mafia_recruits: MafiaRecruits::default(),
-                love_linked: LoveLinked::default(),
                 verdicts_today: VerdictsToday::default(),
                 poison: Poison::default(),
 
@@ -591,7 +588,7 @@ pub mod test {
         ability_input::saved_controllers_map::SavedControllersMap,
         components::{
             arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID,
-            love_linked::LoveLinked, mafia::Mafia,
+            mafia::Mafia,
             mafia_recruits::MafiaRecruits, night_visits::NightVisits,
             pitchfork::Pitchfork, poison::Poison,
             puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem,
@@ -654,7 +651,6 @@ pub mod test {
             arsonist_doused: ArsonistDoused::default(),
             puppeteer_marionette: PuppeteerMarionette::default(),
             mafia_recruits: MafiaRecruits::default(),
-            love_linked: LoveLinked::default(),
             verdicts_today: VerdictsToday::default(),
             poison: Poison::default(),
             modifiers: Default::default(),

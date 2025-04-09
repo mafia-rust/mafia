@@ -1,5 +1,4 @@
 pub mod obscured_graves;
-pub mod random_love_links;
 pub mod dead_can_chat;
 pub mod no_abstaining;
 pub mod no_death_cause;
@@ -62,7 +61,6 @@ pub trait ModifierTrait where Self: Clone + Sized{
 #[derive(Clone, PartialEq, Eq)]
 pub enum ModifierState{
     ObscuredGraves(ObscuredGraves),
-    RandomLoveLinks(RandomLoveLinks),
     SkipDay1(SkipDay1),
     DeadCanChat(DeadCanChat),
     NoAbstaining(NoAbstaining),
@@ -82,7 +80,6 @@ pub enum ModifierState{
 #[serde(rename_all = "camelCase")]
 pub enum ModifierType{
     ObscuredGraves,
-    RandomLoveLinks,
     SkipDay1,
     DeadCanChat,
     NoAbstaining,
@@ -102,7 +99,6 @@ impl ModifierType{
     pub fn default_state(&self)->ModifierState{
         match self{
             Self::ObscuredGraves => ModifierState::ObscuredGraves(ObscuredGraves),
-            Self::RandomLoveLinks => ModifierState::RandomLoveLinks(RandomLoveLinks),
             Self::SkipDay1 => ModifierState::SkipDay1(SkipDay1),
             Self::DeadCanChat => ModifierState::DeadCanChat(DeadCanChat),
             Self::NoAbstaining => ModifierState::NoAbstaining(NoAbstaining),
@@ -124,7 +120,6 @@ impl From<&ModifierState> for ModifierType{
     fn from(state: &ModifierState)->Self{
         match state {
             ModifierState::ObscuredGraves(_) => Self::ObscuredGraves,
-            ModifierState::RandomLoveLinks(_) => Self::RandomLoveLinks,
             ModifierState::SkipDay1(_) => Self::SkipDay1,
             ModifierState::DeadCanChat(_) => Self::DeadCanChat,
             ModifierState::NoAbstaining(_) => Self::NoAbstaining,
