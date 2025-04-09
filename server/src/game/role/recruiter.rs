@@ -14,7 +14,6 @@ use crate::game::role_list::{RoleOutline, RoleOutlineOption, RoleOutlineOptionRo
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::godfather::Godfather;
 use super::{
     ControllerID,
     ControllerParametersMap, IntegerSelection, Role, RoleStateImpl
@@ -110,9 +109,9 @@ impl RoleStateImpl for Recruiter {
             false
         )
     }
-    fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
-        Godfather::pass_role_state_down(game, actor_ref, dead_player_ref, self);
-    }
+    // fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
+    //     Godfather::pass_role_state_down(game, actor_ref, dead_player_ref, self);
+    // }
     fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
 
         if game.settings.role_list.0.contains(&RoleOutline::new_exact(Role::Recruiter)) {

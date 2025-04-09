@@ -86,6 +86,15 @@ impl TestPlayer {
         );
         true
     }
+    pub fn send_ability_input_player_list_other(&self, selection: impl Into<Vec<TestPlayer>>, id: ControllerID)->bool{
+        self.send_ability_input(
+            AbilityInput::new(
+                id,
+                PlayerListSelection(selection.into().iter().map(|p| p.player_ref()).collect())
+            )
+        );
+        true
+    }
 
     pub fn vote_for_player(&self, target: impl Into<Option<TestPlayer>>) {
         self.send_ability_input(

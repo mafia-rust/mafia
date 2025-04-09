@@ -10,7 +10,7 @@ use crate::game::role_list::RoleSet;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{ControllerID, PlayerListSelection, Role, RoleState, RoleStateImpl};
+use super::{ControllerID, Role, RoleStateImpl};
 
 
 #[derive(Debug, Clone, Serialize, Default)]
@@ -41,9 +41,6 @@ impl RoleStateImpl for Godfather {
             true
         )
     }
-    fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
-        Self::pass_role_state_down(game, actor_ref, dead_player_ref, self);
-    }
      fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
@@ -67,22 +64,5 @@ impl Godfather{
             },
             _ => {}
         }
-    }
-    pub (super) fn pass_role_state_down(
-        game: &mut Game,
-        actor_ref: PlayerReference,
-        dead_player_ref: PlayerReference,
-        new_role_data: impl Into<RoleState>
-    ){
-        if actor_ref != dead_player_ref {return}
-        let Some(PlayerListSelection(backup)) = game.saved_controllers
-            .get_controller_current_selection_player_list(
-            ControllerID::syndicate_choose_backup()
-        )else {return};
-        
-        let Some(backup) = backup.first() else {return};
-        
-        //convert backup to godfather
-        backup.set_role(game, new_role_data);
     }
 }

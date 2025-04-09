@@ -1,3 +1,5 @@
+use rand::seq::IndexedRandom;
+
 use crate::game::{
     ability_input::*, attack_power::AttackPower,
     event::on_midnight::{OnMidnight, OnMidnightPriority}, grave::GraveKiller,
@@ -82,25 +84,46 @@ impl SyndicateGunItem {
 
     //event listeners
     pub fn on_any_death(game: &mut Game, player: PlayerReference) {
-        if game.syndicate_gun_item.player_with_gun.is_some_and(|p|p==player) {
-            Self::give_gun_to_insider(game);
-        }
+        if game.syndicate_gun_item.player_with_gun.is_none_or(|p|p!=player) {return}
+        let players_to_convert = InsiderGroupID::Mafia.players(game)
+            .iter()
+            .filter(|p|
+                p.alive(game)
+            )
+            .collect::<Vec<_>>();
+        if players_to_convert.is_empty() {return}
+        let Some(target) = (
+            if let Some(PlayerListSelection(backup)) = game.saved_controllers
+                .get_controller_current_selection_player_list(
+                ControllerID::syndicate_choose_backup()
+                ) {
+                    if backup.first().is_some_and(|b|players_to_convert.contains(&b)) {
+                        backup.first().copied()
+                    } else {
+                        players_to_convert.choose(&mut rand::rng()).copied().copied()
+                    }
+            } else {
+                players_to_convert.choose(&mut rand::rng()).copied().copied()
+            }
+        ) else {return};
+        Self::give_gun(game, target);
     }
 
     pub fn give_gun_to_insider(game: &mut Game){
-        if game.syndicate_gun_item.player_with_gun.is_some_and(|p|p.alive(game)) {return}
+        if game.syndicate_gun_item.player_with_gun.is_some_and(|p|
+            p.alive(game) && 
+            InsiderGroupID::Mafia.is_player_in_revealed_group(game, p)
+        ) {return}
         game.syndicate_gun_item.player_with_gun = None;
 
         for insider in InsiderGroupID::Mafia.players(game).clone() {
             insider.remove_player_tag_on_all(game, Tag::SyndicateGun);
         }
-        for insider in InsiderGroupID::Mafia.players(game).iter()
-            .filter(|p|p.alive(game))
-            .copied()
-            .collect::<Vec<_>>()
-        {
-            SyndicateGunItem::give_gun(game, insider);
-        }
+        let Some(insider) = InsiderGroupID::Mafia.players(game)
+            .iter()
+            .find(|p|p.alive(game))
+            .copied() else {return};
+        SyndicateGunItem::give_gun(game, insider);
     } 
 
     pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority) {
@@ -138,22 +161,16 @@ impl SyndicateGunItem {
             _ => {}
         }
     }
+    
     pub fn on_validated_ability_input_received(game: &mut Game, actor_ref: PlayerReference, ability_input: AbilityInput) {
-        if let Some(player_with_gun) = game.syndicate_gun_item.player_with_gun {
-            if actor_ref != player_with_gun {
-                return;
-            }
-        }else{
-            return;
-        }
+        if game.syndicate_gun_item.player_with_gun.is_none_or(|p|p != actor_ref) {return}
 
         let Some(PlayerListSelection(target)) = ability_input
             .get_player_list_selection_if_id(ControllerID::SyndicateGunItemGive)
         else {return};
         let Some(target) = target.first() else {return};
 
-        if
-            actor_ref != *target &&
+        if actor_ref != *target &&
             target.alive(game) &&
             InsiderGroupID::Mafia.is_player_in_revealed_group(game, *target) 
         {

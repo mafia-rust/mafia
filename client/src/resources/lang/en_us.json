@@ -1366,7 +1366,7 @@
     "wiki.article.modifier.noChat.title": "No Chat",
     "wiki.article.modifier.noChat.text": "No Chat is a game modifier that changes the game such that no players can send messages.",
     "wiki.article.modifier.backupGetsGun.title": "Backup Gets Gun",
-    "wiki.article.modifier.backupGetsGun.title.var.0": "Player Drops",
+    "wiki.article.modifier.backupGetsGun.title.var.0": "Keep Inventory off",
     "wiki.article.modifier.backupGetsGun.text": "Backup Gets Gun is a game modifier that changes the game such that when a Syndicate Killing dies, their backup gets a gun instead of having their role converted.",
     "wiki.article.standard.syndicateGunItem.title":"Syndicate Gun",
     "wiki.article.standard.syndicateGunItem.text":"Syndicate Gun is an ability a syndicate member gets when theres no syndicate killing role present\n- A syndicate member is given a gun they can use to kill a player with a basic attack at night\n- The gun can't be used on the first night\n- The gun can be passed around between syndicate members, so a different syndicate member can shoot it every night\n- The gun still uses visits, so getting roleblocked still erases that visit, and transports still move it\n- The killer appears to be syndicate on the grave of the player who died to the gun",

@@ -184,39 +184,35 @@ impl Mafia{
 
 
     pub fn on_mafia_killing_death(game: &mut Game, role: RoleState){
-        let living_players_to_convert = PlayerReference::all_players(game)
+        let players_to_convert = InsiderGroupID::Mafia.players(game)
+            .iter()
             .filter(|p|
-                p.alive(game) &&
-                InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p)
+                p.alive(game)
             )
             .collect::<Vec<_>>();
-        if living_players_to_convert.is_empty() {return}
-
+        if players_to_convert.is_empty() {return}
         //if they already have a mafia killing then return
-        if living_players_to_convert.iter().any(|p|
+        if players_to_convert.iter().any(|p|
             RoleSet::MafiaKilling.get_roles().contains(&p.role(game))
         ) {return;}
-
-
         let target = 
             if let Some(PlayerListSelection(backup)) = game.saved_controllers
                 .get_controller_current_selection_player_list(
                 ControllerID::syndicate_choose_backup()
                 ) {
-                    if backup.first().is_some_and(|b|living_players_to_convert.contains(b)) {
+                    if backup.first().is_some_and(|b|players_to_convert.contains(&b)) {
                         backup.first().copied()
                     } else {
-                        living_players_to_convert.choose(&mut rand::rng()).copied()
+                        players_to_convert.choose(&mut rand::rng()).copied().copied()
                     }
             } else {
-                living_players_to_convert.choose(&mut rand::rng()).copied()
+                players_to_convert.choose(&mut rand::rng()).copied().copied()
             };
-
         if let Some(target) = target {
             if Modifiers::modifier_is_enabled(game, ModifierType::BackupGetsGun) {
                 SyndicateGunItem::give_gun(game, target);
             } else {
-                target.set_role_and_win_condition_and_revealed_group(game, role);
+                target.set_role(game, role);
             }
         }
     }

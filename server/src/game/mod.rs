@@ -108,7 +108,7 @@ pub struct Game {
     //components with data
     pub saved_controllers: SavedControllersMap,
     night_visits: NightVisits,
-    syndicate_gun_item: SyndicateGunItem,
+    pub syndicate_gun_item: SyndicateGunItem,
     pub cult: Cult,
     pub mafia: Mafia,
     pub arsonist_doused: ArsonistDoused,

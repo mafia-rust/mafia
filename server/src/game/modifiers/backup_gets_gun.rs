@@ -1,5 +1,7 @@
 use super::{ModifierTrait, ModifierType};
-/* See Godfather for the actual implementation*/
+/* 
+    See Godfather & mafia component for the actual implementation
+*/
 #[derive(Clone, Default, PartialEq, Eq, Hash)]
 pub struct BackupGetsGun;
 
