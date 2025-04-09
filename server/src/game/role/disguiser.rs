@@ -41,11 +41,7 @@ impl RoleStateImpl for Disguiser {
         if !InsiderGroupID::in_same_revealed_group(game, actor_ref, first_visit.target) {return}
 
         self.current_target = Some(first_visit.target);
-<<<<<<< HEAD
-=======
         self.last_role_selection = Self::disguised_role(&self, game, actor_ref);
-        actor_ref.push_player_tag(game, first_visit.target, crate::game::tag::Tag::Disguise);
->>>>>>> main
 
         actor_ref.set_role_state(game, self);
     }

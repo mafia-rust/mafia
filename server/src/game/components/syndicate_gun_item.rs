@@ -83,13 +83,9 @@ impl SyndicateGunItem {
         if game.syndicate_gun_item.player_with_gun.is_some_and(|p|p==player) {
             Self::take_gun(game);
 
-            for insider in InsiderGroupID::Mafia.players(game).iter()
-                .filter(|p|p.alive(game))
-                .copied()
-                .collect::<Vec<_>>()
-            {
-                SyndicateGunItem::give_gun(game, insider);
-                break;
+            let player = InsiderGroupID::Mafia.players(game).iter().find(|p|p.alive(game));
+            if let Some(player) = player {
+                SyndicateGunItem::give_gun(game, *player);
             }
         }
     }

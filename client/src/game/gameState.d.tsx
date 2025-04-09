@@ -158,13 +158,12 @@ export type Tag =
     "revolutionaryTarget" |
     "morticianTagged" |
     "puppeteerMarionette" |
-    "loveLinked" |
     "frame" |
     "forfeitVote" |
     "spiraling";
 
 export const MODIFIERS = [
-    "obscuredGraves", "randomLoveLinks",
+    "obscuredGraves",
     "skipDay1",
     "deadCanChat", "noAbstaining",
     "noDeathCause",

@@ -440,10 +440,6 @@
     "role.ambusher.name:var.0": "Ambushers",
     "controllerId.role.ambusher.0.name": "Camp",
 
-    "role.cupid.name": "Cupid",
-    "role.cupid.name:var.0": "Cupids",
-    "controllerId.role.cupid.0.name": "Love Link",
-
     "role.mafiaSupportWildcard.name": "Syndicate Support Wildcard",
     "role.mafiaSupportWildcard.name:var.0": "Syndicate Support Wildcards",
     "controllerId.role.mafiaSupportWildcard.0.name": "Choose Role",
@@ -678,8 +674,6 @@
     "tag.puppeteerMarionette.name": "Marionette",
     "tag.doused":"🔥",
     "tag.doused.name":"Arsonist doused",
-    "tag.loveLinked":"💘",
-    "tag.loveLinked.name":"Love Linked",
     "tag.frame":"🖼️",
     "tag.frame.name":"Frame",
     "tag.forfeitVote":"🫴",
@@ -766,7 +760,6 @@
     "forge": "Forge",
     "noForge": "No Forge",
     "retrain": "Retrain",
-    "loveLink": "Love Link",
     "poison": "Poison",
     "string": "String",
     "defense": "Defense",
@@ -786,7 +779,6 @@
     "nobody": "nobody",
     "modifiers": "Modifiers",
     "obscuredGraves": "Obscured Graves",
-    "randomLoveLinks": "Random Love Links",
     "skipDay1": "Skip Day 1",
     "deadCanChat": "Dead Can Chat",
     "scheduledNominations": "Scheduled Nominations",
@@ -1025,8 +1017,6 @@
     "chatMessage.doomsayerWon": "Your guesses were correct. You win!",
     "chatMessage.martyrFailed": "The martyr lives, and we endure for another day.",
     "chatMessage.martyrWon": "The messiah has been killed! May we all enter the kingdom of heaven.",
-    "chatMessage.youAreLoveLinked": "You are now love linked to \\0.",
-    "chatMessage.playerDiedOfBrokenHeart": "\\0 died of a broken heart, joining their lover \\1 in their next life.",
 
     "kiraResult.correct": "Correct",
     "kiraResult.wrongSpot": "Somebody has this role, but not this player",
@@ -1300,14 +1290,7 @@
     "wiki.article.standard.forfeitVote.title:var.2": "Forfeits Vote",
     "wiki.article.standard.forfeitVote.title:var.3": "Forfeit Vote",
     "wiki.article.standard.forfeitVote.text": "Forfeiting your vote means you are not able to vote during the nomination phase but you can still vote during the judgement phase. During discussion, players can choose to forfeit their vote using the button at the top of the playerlist. Once Nomination starts, they can't change their mind.\n- Everyone learns who forfeited their vote when nomination starts in the form of a tag\n- For each player who forfeits their vote, the amount of votes needed for a trial decreases accordingly\n- Players who are silenced are forced to forfeit their vote\n\n It is strongly recommended to never ever forfeit your vote unless you are silenced or pretending to be silenced",
-    "wiki.article.standard.loveLinked.title": "Love Link",
-    "wiki.article.standard.loveLinked.title:var.0": "Broken Heart",
-    "wiki.article.standard.loveLinked.title:var.1": "Love Linked",
-    "wiki.article.standard.loveLinked.title:var.2": "Love Links",
-    "wiki.article.standard.loveLinked.title:var.3": "Broken Hearts",
-    "wiki.article.standard.loveLinked.title:var.4": "Love Linking",
-    "wiki.article.standard.loveLinked.text": "2 players who are love linked are told who each other are. If one dies, the other dies of a broken heart. Cupid can love link players. So can the love link game modifier.",
-    
+
     "wiki.article.standard.howToPlay.title":"How To Play",
     "wiki.article.standard.howToPlay.title:var.0":"Phase",
     "wiki.article.standard.howToPlay.title:var.1":"Phases",
@@ -1315,7 +1298,7 @@
     "wiki.article.standard.howToPlay.text":"The goal of the game depends on your role. Most roles win if all players from opposing teams are eliminated\nThe teams are Town, Syndicate, Cult, Fiends\n- Town should try to find out who the syndicate is in order to vote them out\n- Syndicate, cult, and fiends, should try to stay hidden while killing townies\n\nThe game runs in phases of day and night\n- During night, each player uses their roles abilities\n- During the day, players discuss information they learned and vote on a player to kill\n\nThere are subphases within day and night\n\n# Night\nMost role abilities work at night. Here are some examples\n- Each night, the godfather can select a player to kill them\n- Each night, the detective can select a player. The detective is told if the player they select is innocent or suspicious. This would help the detective find out who the syndicate is. If they are suspicious they are a town enemy\n- Each night, the framer can select a player to make them register falsely to the detective. So a townie could register as suspicious to a detective falsely if a framer used their ability\n\n# Obituary\nDuring the obituary phase, everyone is told who died, along with the role and alibi of those who died.\nAll players should keep their alibi note page to keep track of all the information they learned during the game. The obituary phase is a perfect time to write down in your alibi what you learned last night. For example:\n\n- If you're a detective who learned that @5 is suspicious on night 1. You could write your alibi to look like this\n\nDetective\nNight 1: @5 - suspicious\n\nIt is also important for non townie players to keep a fake alibi to pretend that they are a townie\n\n# Discussion\nThe discussion phase is where players discuss the information they learned and try to find out who the syndicate, fiends, and cult are\nPlayers will ask each other to claim, this means they want to know the information that the other player learned\nMost players send their alibi in chat during this phase, to share the information efficiently in response to being asked to claim. It will likely be considered suspicious to not have an alibi prepared when asked for one. So its very important to have one prepared, no matter who you are\n\n# Nomination\nDuring nomination, players can vote other players on to trial in order to execute them\nThe best way for townies to kill syndicate members is to use their vote, even if you aren’t certain someone is evil, voting them onto trial and threatening them will often give information to help find syndicate\n- If more than half of the living players vote for one player, that player is put on trial\n- If there aren’t enough votes in time, the game skips directly to dusk\n\n# Testimony\n- The player voted on trail is the only player allowed to speak and chat during this phase, they should certainly claim, send their alibi and say what their role is\n\n# Judgement\n- Everyone votes innocent or guilty (or abstains)\n- If more players vote guilty than innocent, the player on trial will be executed\n- If the player on trial isn’t executed, there is another trail (with a max of three)\n\n# Final words\n- The player who was on trial should be allowed to say some final words or notes they have for the town\n\n# Dusk\n- A pre-night phase for everyone to get a last word in before the next night\n\n# Final thoughts\nThe game runs in this loop until there is one team remaining\nThe midnight manual has a list of all roles and their abilities. It is recommended to read up on your role during the beginning briefing phase\nIf your evil, you should try to learn how at least one townie role works so you can pretend to be that role\nNeutral roles all have different win conditions and are not on a team. For example: Jester wins if they are voted out during a trail",
     "wiki.article.standard.priority.title":"Priority",
     "wiki.article.standard.priority.title:var.0":"Priorities",
-    "wiki.article.standard.priority.text":"At the end of night many abilities happen at nearly the same time. They happen in a specific order called priority. Knowing the order of some things can help understanding of some game mechanics.\nThis is the general priority order, with some additional notes:\n- TopPriority\n- Ward\n    - Bouncer, Scarecrow, Kidnapper, Jailor, and Warden all ward here\n- Transporter\n- Warper\n- Possess\n    - Witch gets second visit deleted here\n- Roleblock\n    - Hypnotist and Escort go here\n- Deception\n    - Forger, Framer, Blackmailer go here\n    - Framer gets the second visit deleted here\n    - Syndicate backup visit is erased if the killing is blocked\n- Bodyguard\n    - Bodyguard moves the attacking visit to be towards themself\n- Heal\n    - Protective roles like Doctor and Armorsmith go here\n- Kill\n- Convert\n    - Win condition changes go here\n- Poison\n- Investigative\n    - Roles like Detective, Snoop, Lookout, and Spy go here\n- Cupid\n- SpyBug\n- StealMessages\n    - Witch steals messages\n",
+    "wiki.article.standard.priority.text":"At the end of night many abilities happen at nearly the same time. They happen in a specific order called priority. Knowing the order of some things can help understanding of some game mechanics.\nThis is the general priority order, with some additional notes:\n- TopPriority\n- Ward\n    - Bouncer, Scarecrow, Kidnapper, Jailor, and Warden all ward here\n- Transporter\n- Warper\n- Possess\n    - Witch gets second visit deleted here\n- Roleblock\n    - Hypnotist and Escort go here\n- Deception\n    - Forger, Framer, Blackmailer go here\n    - Framer gets the second visit deleted here\n    - Syndicate backup visit is erased if the killing is blocked\n- Bodyguard\n    - Bodyguard moves the attacking visit to be towards themself\n- Heal\n    - Protective roles like Doctor and Armorsmith go here\n- Kill\n- Convert\n    - Win condition changes go here\n- Poison\n- Investigative\n    - Roles like Detective, Snoop, Lookout, and Spy go here\n- SpyBug\n- StealMessages\n    - Witch steals messages\n",
 
     "wiki.article.standard.chat.title:var.0":"Chat Messages",
     "wiki.article.standard.chat.title":"Chat",
@@ -1336,8 +1319,6 @@
 
     "wiki.article.modifier.obscuredGraves.title":"Obscured Graves",
     "wiki.article.modifier.obscuredGraves.text":"Obscured Graves is a game modifier that makes it so all graves are obscured.",
-    "wiki.article.modifier.randomLoveLinks.title":"Random Love Links",
-    "wiki.article.modifier.randomLoveLinks.text":"Random Love Links is a game modifier that makes it so all players are love linked to a random player. The game is set up such that all players are love linked to at least 1 other player, and at most 1 player is love linked to more than 1 other player.",
     "wiki.article.modifier.skipDay1.title": "Skip Day 1",
     "wiki.article.modifier.skipDay1.text": "Skip Day 1 is a game modifier. While activated: All phases from Dusk 1 to Final Words 2 are fast forwarded, effectively starting the game at Dusk 2 instead.",
     "wiki.article.modifier.deadCanChat.title":"Dead Can Chat",
@@ -1733,12 +1714,6 @@
     "wiki.article.role.ambusher.abilities":"- At night, choose a player to camp\n    - You attack a random visitor to the player you chose to camp\n        - The attack prioritizes town loyalists\n   - All other visitors to your target are told you are the ambusher\n    - You can't use your ability night 1\n    - You only visit the player you camp",
     "wiki.article.role.ambusher.attributes":"- The ambushers attack has an attack power of basic\n- You can attack yourself if you somehow visit yourself with another ability (for exmaple: syndicate gun)\n - If another player visits your target twice, they could potentially get the message saying they caught an ambusher twice, or get attacked and get the message once.",
     "wiki.article.role.ambusher.extra":"- You can't select yourself or other syndicate members\n - You don't visit the player you attack",
-
-    "wiki.article.role.cupid.reminder": "At night, choose two players to love link to each other",
-    "wiki.article.role.cupid.guide": "- At night, select 2 players to love link\n* The players are told they are love linked, if one of them dies, the other dies of a broken heart",
-    "wiki.article.role.cupid.abilities":"- Visit 2 players to love link them\n    - If one of them dies, the other dies of a broken heart immediately\n    - If one of the players you visit dies on the night you try to love link them, they don't link.",
-    "wiki.article.role.cupid.attributes":"- The player that dies of a broken heart dies separate from night deaths\n-    The love linked players are told that they are love linked",
-    "wiki.article.role.cupid.extra":"- You can't select yourself or other syndicate members",
 
     "wiki.article.role.mafiaSupportWildcard.guide": "* Choose a syndicate support role to become that role\n    * You become that role when night starts\n* You likely can't become a role if someone already has that role (You can't become a role that has exceeded its role limit)",
     "wiki.article.role.mafiaSupportWildcard.abilities":"* Become a role you choose at the start of night",

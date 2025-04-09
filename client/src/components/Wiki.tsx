@@ -286,7 +286,7 @@ export function partitionWikiPages(
         if ([
             "standard/backup", "standard/block", "standard/convert", "standard/douse", "standard/forged",
             "standard/frame", "standard/haunt", "standard/hypnotize", "standard/interview", "standard/detain",
-            "standard/loveLinked", "standard/marionette", "standard/obscured", "standard/possess", 
+            "standard/marionette", "standard/obscured", "standard/possess", 
             "standard/protect", "standard/rampage", "standard/report", "standard/roleblock", "standard/silenced",
             "standard/spiral", "standard/syndicateGunItem", "standard/transport", "standard/ward",
             "standard/forfeitVote", "standard/aura", "standard/fastForward", "standard/appearedVisit", 

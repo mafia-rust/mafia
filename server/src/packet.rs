@@ -23,29 +23,15 @@ use vec1::Vec1;
 
 
 use crate::{
-    client_connection::ClientConnection, game::{
-<<<<<<< HEAD
-        ability_input::*,
-        chat::{ChatGroup, ChatMessage},
-        components::{insider_group::InsiderGroupID, tags::Tag},
-        grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType},
-        player::{PlayerIndex, PlayerReference}, 
-        role::{
+    client_connection::ClientConnection,
+    game::{
+        ability_input::*, chat::{ChatGroup, ChatMessage}, components::{insider_group::InsiderGroupID, tags::Tag}, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
             doomsayer::DoomsayerGuess,
             ClientRoleStateEnum, Role
-        },
-        role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings,
-        verdict::Verdict, GameOverReason, RejectStartReason
+        }, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, verdict::Verdict, GameOverReason, RejectStartReason
     },
-    lobby::{game_client::GameClientLocation,lobby_client::{LobbyClient, LobbyClientID}},
-    log, vec_map::VecMap, vec_set::VecSet, listener::RoomCode,
-=======
-        ability_input::*, chat::{ChatGroup, ChatMessage}, components::insider_group::InsiderGroupID, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
-            doomsayer::DoomsayerGuess,
-            ClientRoleStateEnum, Role
-        }, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, GameOverReason, RejectStartReason
-    }, lobby::{game_client::GameClientLocation, lobby_client::{LobbyClient, LobbyClientID}}, log, vec_map::VecMap, vec_set::VecSet, websocket_listener::RoomCode
->>>>>>> main
+    lobby::{game_client::GameClientLocation, lobby_client::{LobbyClient, LobbyClientID}},
+    log, vec_map::VecMap, vec_set::VecSet, websocket_listener::RoomCode
 };
 
 #[derive(Serialize, Debug, Clone)]

@@ -27,7 +27,7 @@ use ability_input::PlayerListSelection;
 use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
 use components::enfranchise::Enfranchise;
-use components::love_linked::LoveLinked;
+use components::forfeit_vote::ForfeitVote;
 use components::mafia::Mafia;
 use components::night_visits::NightVisits;
 use components::pitchfork::Pitchfork;
@@ -112,7 +112,6 @@ pub struct Game {
     pub mafia: Mafia,
     pub puppeteer_marionette: PuppeteerMarionette,
     pub mafia_recruits: MafiaRecruits,
-    pub love_linked: LoveLinked,
     pub verdicts_today: VerdictsToday,
     pub pitchfork: Pitchfork,
     pub poison: Poison,
@@ -231,7 +230,6 @@ impl Game {
                 mafia: Mafia,
                 puppeteer_marionette: PuppeteerMarionette::default(),
                 mafia_recruits: MafiaRecruits::default(),
-                love_linked: LoveLinked::default(),
                 verdicts_today: VerdictsToday::default(),
                 poison: Poison::default(),
 
@@ -449,7 +447,7 @@ impl Game {
     pub fn nomination_votes_required(&self)->u8{
         #[expect(clippy::cast_possible_truncation, reason = "Game can only have max 255 players")]
         let eligible_voters = PlayerReference::all_players(self)
-            .filter(|p| p.alive(self) && !p.forfeit_vote(self))
+            .filter(|p| p.alive(self) && !ForfeitVote::forfeit_vote(self, *p))
             .count() as u8;
 
         if Modifiers::modifier_is_enabled(self, ModifierType::TwoThirdsMajority) {
@@ -575,7 +573,7 @@ pub mod test {
     use super::{
         ability_input::saved_controllers_map::SavedControllersMap,
         components::{
-            cult::Cult, insider_group::InsiderGroupID, love_linked::LoveLinked, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday
+            cult::Cult, insider_group::InsiderGroupID, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday
         }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine, player::{test::mock_player, PlayerReference},
@@ -633,7 +631,6 @@ pub mod test {
             mafia: Mafia,
             puppeteer_marionette: PuppeteerMarionette::default(),
             mafia_recruits: MafiaRecruits::default(),
-            love_linked: LoveLinked::default(),
             verdicts_today: VerdictsToday::default(),
             poison: Poison::default(),
             modifiers: Default::default(),

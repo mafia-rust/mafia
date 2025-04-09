@@ -128,9 +128,6 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     WardenPlayersImprisoned{players: Vec<PlayerReference>},
     WerewolfTracked,
-    
-    #[serde(rename_all = "camelCase")]
-    PlayerDiedOfABrokenHeart{player: PlayerIndex, lover: PlayerIndex},
 
     PuppeteerPlayerIsNowMarionette{player: PlayerIndex},
     RecruiterPlayerIsNowRecruit{player: PlayerIndex},
@@ -214,9 +211,6 @@ pub enum ChatMessageVariant {
 
     #[serde(rename_all = "camelCase")]
     WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},
-
-    #[serde(rename_all = "camelCase")]
-    YouAreLoveLinked{player: PlayerIndex},
 
     JesterWon,
     RevolutionaryWon,

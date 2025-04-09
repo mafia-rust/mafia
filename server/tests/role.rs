@@ -22,7 +22,6 @@ pub use mafia_server::game::{
     role_outline_reference::RoleOutlineReference,
      
     player::PlayerReference,
-    tag::Tag,
     verdict::Verdict,
     role::{
         Role,

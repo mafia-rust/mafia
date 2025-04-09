@@ -42,8 +42,7 @@ impl RoleStateImpl for Mortician {
     type ClientRoleState = Mortician;
     fn new_state(game: &Game) -> Self {
         Self{
-            cremations_remaining: game.num_players().div_ceil(5),
-            ..Self::default()
+            cremations_remaining: game.num_players().div_ceil(5)
         }
     }
     fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {

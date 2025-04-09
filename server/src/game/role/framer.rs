@@ -20,7 +20,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Framer {
     type ClientRoleState = Framer;
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Deception => {
                 let framer_visits = actor_ref.untagged_night_visits_cloned(game).clone();
@@ -54,7 +54,7 @@ impl RoleStateImpl for Framer {
                 }
                 actor_ref.set_night_visits(game, new_visits);
             }
-            Priority::Investigative => {
+            OnMidnightPriority::Investigative => {
                 Tags::set_tagged(
                     game,
                     TagSetID::Framer(actor_ref),
@@ -110,9 +110,18 @@ impl RoleStateImpl for Framer {
             )
         ).collect()
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+    fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
+    }
+
+    
+    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
+        Tags::add_viewer(game, TagSetID::Framer(actor_ref), actor_ref);
+    }
+    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _new: super::RoleState, _old: super::RoleState) {
+        if actor_ref != player {return}
+        Tags::remove_viewer(game, TagSetID::Framer(actor_ref), actor_ref);
     }
 }

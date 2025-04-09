@@ -158,18 +158,9 @@ impl PlayerReference{
         self.deref(game).fast_forward_vote
     }
 
-    pub fn set_forfeit_vote(&self, game: &mut Game, forfeit: bool) {
-        self.deref_mut(game).forfeit_vote = forfeit;
-    }
-    pub fn forfeit_vote(&self, game: &Game) -> bool{
-        self.deref(game).forfeit_vote
-    }
-
     /* 
     Voting
     */
-
-    
     pub fn verdict(&self, game: &Game) -> Verdict{
         self.deref(game).voting_variables.verdict
     }
@@ -184,7 +175,6 @@ impl PlayerReference{
     /* 
     Night
     */
-    
     pub fn night_died(&self, game: &Game) -> bool {
         self.deref(game).night_variables.died
     }
