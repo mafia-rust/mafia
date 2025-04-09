@@ -1,13 +1,9 @@
 
-use crate::{
-    game::{
-        ability_input::*,
-        attack_power::AttackPower, grave::GraveKiller, phase::PhaseType, player::PlayerReference,
-        role_list::RoleSet, visit::{Visit, VisitTag}, Game
-    }, 
-};
+use crate::{game::{
+    ability_input::*, attack_power::AttackPower, event::on_midnight::{OnMidnight, OnMidnightPriority}, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role_list::RoleSet, visit::{Visit, VisitTag}, Game
+}, vec_set};
 
-use super::{detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits};
+use super::{detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits, tags::Tags};
 
 #[derive(Default)]
 pub struct SyndicateGunItem {
@@ -29,17 +25,13 @@ impl SyndicateGunItem {
     pub fn give_gun(game: &mut Game, player: PlayerReference) {
         Self::take_gun(game);
         game.syndicate_gun_item.player_with_gun = Some(player);
-
-        for insider in InsiderGroupID::Mafia.players(game).clone() {
-            insider.push_player_tag(game, player, Tag::SyndicateGun);
-        }
+        
+        Tags::add_tag(game, super::tags::TagSetID::SyndicateGun, player);
     }
     pub fn take_gun(game: &mut Game) {
         game.syndicate_gun_item.player_with_gun = None;
 
-        for insider in InsiderGroupID::Mafia.players(game).clone() {
-            insider.remove_player_tag_on_all(game, Tag::SyndicateGun);
-        }
+        Tags::set_tagged(game, super::tags::TagSetID::SyndicateGun, vec_set![]);
     }
 
     pub fn player_with_gun(&self) -> Option<PlayerReference> {
@@ -84,19 +76,20 @@ impl SyndicateGunItem {
 
 
     //event listeners
+    pub fn on_game_start(game: &mut Game){
+        Tags::set_viewers(game, super::tags::TagSetID::SyndicateGun, PlayerReference::all_players(game).collect());
+    }
     pub fn on_any_death(game: &mut Game, player: PlayerReference) {
         if game.syndicate_gun_item.player_with_gun.is_some_and(|p|p==player) {
-            game.syndicate_gun_item.player_with_gun = None;
+            Self::take_gun(game);
 
-            for insider in InsiderGroupID::Mafia.players(game).clone() {
-                insider.remove_player_tag_on_all(game, Tag::SyndicateGun);
-            }
             for insider in InsiderGroupID::Mafia.players(game).iter()
                 .filter(|p|p.alive(game))
                 .copied()
                 .collect::<Vec<_>>()
             {
                 SyndicateGunItem::give_gun(game, insider);
+                break;
             }
         }
     }

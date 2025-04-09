@@ -21,4 +21,7 @@ impl Enfranchise{
     pub fn enfranchised(game: &Game, player: PlayerReference)->bool{
         Tags::has_tag(game, super::tags::TagSetID::Enfranchised, player)
     }
+    pub fn on_game_start(game: &mut Game){
+        Tags::set_viewers(game, super::tags::TagSetID::Enfranchised, PlayerReference::all_players(game).collect());
+    }
 }

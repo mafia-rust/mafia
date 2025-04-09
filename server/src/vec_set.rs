@@ -124,6 +124,7 @@ mod macros {
     #[macro_export]
     macro_rules! vec_set {
         ($($key:expr),*) => {{
+            #[expect(unused_mut, reason="Macro doesn't know how many elements input")]
             let mut map = $crate::vec_set::VecSet::new();
             $(map.insert($key);)*
             map

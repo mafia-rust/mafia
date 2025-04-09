@@ -94,6 +94,15 @@ impl Tags{
             }
         }
     }
+    pub fn set_viewers(game: &mut Game, id: TagSetID, viewers: VecSet<PlayerReference>){
+        for player in PlayerReference::all_players(game) {
+            if viewers.contains(&player) {
+                Self::add_viewer(game, id.clone(), player);
+            }else {
+                Self::remove_viewer(game, id.clone(), player);
+            }
+        }
+    }
 
     pub fn has_tag(game: &Game, id: TagSetID, player: PlayerReference)->bool{
         game.tags.tags.get(&id).is_some_and(|set|set.tagged().contains(&player))
@@ -105,15 +114,16 @@ impl Tags{
 
 
 
-    fn send_to_clients(game: &Game, players: &VecSet<PlayerReference>){
+    pub fn send_to_clients(game: &Game, players: &VecSet<PlayerReference>){
         for player in players.iter(){
             Self::send_to_client(game, *player);
         }
     }
-    fn send_to_client(game: &Game, player: PlayerReference){
-
+    pub fn send_to_client(game: &Game, player: PlayerReference){
+        player.send_packet(game, ToClientPacket::YourPlayerTags { player_tags: Self::player_tags_map(game, player) });
+    }
+    fn player_tags_map(game: &Game, player: PlayerReference)->VecMap<PlayerReference, vec1::Vec1<Tag>>{
         let mut player_tags: VecMap<PlayerReference, vec1::Vec1<Tag>> = VecMap::new();
-
         for (id, tags_set) in game.tags.tags.iter(){
             if !tags_set.viewers().contains(&player) {continue}
 
@@ -127,8 +137,7 @@ impl Tags{
 
             }
         }
-
-        player.send_packet(game, ToClientPacket::YourPlayerTags { player_tags });
+        player_tags
     }
 }
 struct TagsSet{
@@ -165,6 +174,10 @@ pub enum TagSetID{
     MorticianTag(PlayerReference),
     Framer(PlayerReference),
     Enfranchised,
+    PuppeteerMarionette,
+    SyndicateRecruit,
+    SyndicateBackup,
+    SyndicateGun,
 }
 impl TagSetID{
     fn get_tag(&self)->Tag{
@@ -172,7 +185,11 @@ impl TagSetID{
             TagSetID::ArsonistDoused => Tag::Doused,
             TagSetID::MorticianTag(_) => Tag::MorticianTagged,
             TagSetID::Framer(_) => Tag::Frame,
-            TagSetID::Enfranchised => Tag::Enfranchised
+            TagSetID::Enfranchised => Tag::Enfranchised,
+            TagSetID::PuppeteerMarionette => Tag::PuppeteerMarionette,
+            TagSetID::SyndicateRecruit => Tag::PuppeteerMarionette,
+            TagSetID::SyndicateBackup => Tag::GodfatherBackup,
+            TagSetID::SyndicateGun => Tag::SyndicateGun,
         }
     }
 }
@@ -181,16 +198,18 @@ impl TagSetID{
 #[derive(Deserialize, PartialOrd, Ord, Debug, Clone, PartialEq, Eq, Serialize, Copy)]
 #[serde(rename_all = "camelCase")]
 pub enum Tag{
-    Enfranchised,
-    GodfatherBackup,
     Doused,
+    MorticianTagged,
+    Frame,
+    Enfranchised,
+    PuppeteerMarionette,
+    GodfatherBackup,
+    SyndicateGun,
+
+    
     WerewolfTracked,
     RevolutionaryTarget,
-    MorticianTagged,
-    PuppeteerMarionette,
     LoveLinked,
     ForfeitVote,
     Spiraling,
-    SyndicateGun,
-    Frame
 }

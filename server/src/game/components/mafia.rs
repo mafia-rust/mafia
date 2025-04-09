@@ -1,10 +1,12 @@
 use rand::seq::IndexedRandom;
 
 use crate::{game::{ 
-    ability_input::{AvailablePlayerListSelection, ControllerID, ControllerParametersMap, PlayerListSelection}, attack_power::AttackPower, chat::{ChatGroup, ChatMessageVariant}, event::on_midnight::{OnMidnight, OnMidnightPriority}, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::RoleState, role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, Game
+    ability_input::{AvailablePlayerListSelection, ControllerID, ControllerParametersMap, PlayerListSelection},
+    attack_power::AttackPower, chat::{ChatGroup, ChatMessageVariant}, event::on_midnight::{OnMidnight, OnMidnightPriority},
+    grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::RoleState, role_list::RoleSet, visit::{Visit, VisitTag}, Game
 }, vec_set::{vec_set, VecSet}};
 
-use super::{detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits, syndicate_gun_item::SyndicateGunItem};
+use super::{detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits, syndicate_gun_item::SyndicateGunItem, tags::Tags};
 
 #[derive(Clone)]
 pub struct Mafia;
@@ -156,16 +158,8 @@ impl Mafia{
             game.saved_controllers.get_controller_current_selection_player_list(controller_id)
             .and_then(|b|b.0.first().copied());
 
-        
-        for player_ref in PlayerReference::all_players(game){
-            if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player_ref) {continue}
-            player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
-        }
         if let Some(backup) = backup{
-            for player_ref in PlayerReference::all_players(game){
-                if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player_ref) {continue}
-                player_ref.push_player_tag(game, backup, Tag::GodfatherBackup);
-            }
+            Tags::set_tagged(game, super::tags::TagSetID::SyndicateBackup, vec_set![backup]);
         }
     }
 
@@ -180,6 +174,9 @@ impl Mafia{
         if RoleSet::MafiaKilling.get_roles().contains(&old.role()) {
             Mafia::give_mafia_killing_role(game, old);
         }
+    }
+    pub fn on_become_insider(game: &mut Game){
+        Tags::set_viewers(game, super::tags::TagSetID::SyndicateBackup, InsiderGroupID::Mafia.players(game).clone());
     }
 
 

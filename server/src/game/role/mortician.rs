@@ -46,7 +46,7 @@ impl RoleStateImpl for Mortician {
             ..Self::default()
         }
     }
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Deception=>{
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
@@ -67,7 +67,7 @@ impl RoleStateImpl for Mortician {
                     .filter(|p| *p != actor_ref)
                     .filter(|player| 
                         player.alive(game) &&
-                        !Tags::has_tag(game, TagSetID::MorticianTag(actor_ref), player)
+                        !Tags::has_tag(game, TagSetID::MorticianTag(actor_ref), *player)
                     )
                     .collect(),
                 can_choose_duplicates: false,
@@ -87,7 +87,7 @@ impl RoleStateImpl for Mortician {
     fn on_grave_added(mut self, game: &mut Game, actor_ref: PlayerReference, grave_ref: GraveReference){
         if
             !actor_ref.ability_deactivated_from_death(game) &&
-            self.obscured_players.contains(&grave_ref.deref(game).player) &&
+            Tags::has_tag(game, TagSetID::MorticianTag(actor_ref), grave_ref.deref(game).player) &&
             self.cremations_remaining > 0
         {
             actor_ref.add_private_chat_message(game, ChatMessageVariant::PlayerRoleAndAlibi{
