@@ -2,16 +2,12 @@ use vec1::Vec1;
 
 use crate::{
     game::{
-        attack_power::DefensePower,
-        chat::{
+        attack_power::DefensePower, chat::{
             ChatMessage, ChatMessageVariant
-        },
-        event::{
+        }, event::{
             on_convert::OnConvert, on_fast_forward::OnFastForward,
             on_remove_role_label::OnRemoveRoleLabel
-        },
-        grave::GraveKiller, modifiers::{ModifierType, Modifiers}, role::{Role, RoleState},
-        tag::Tag, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
+        }, grave::GraveKiller, modifiers::Modifiers, role::{Role, RoleState}, tag::Tag, visit::Visit, win_condition::WinCondition, Game
     }, 
     packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet, 
 };
@@ -221,22 +217,6 @@ impl PlayerReference{
     }
     pub fn forfeit_vote(&self, game: &Game) -> bool{
         self.deref(game).forfeit_vote
-    }
-
-    /* 
-    Voting
-    */
-
-    
-    pub fn verdict(&self, game: &Game) -> Verdict{
-        self.deref(game).voting_variables.verdict
-    }
-    pub fn set_verdict(&self, game: &mut Game, mut verdict: Verdict){
-        if Modifiers::modifier_is_enabled(game, ModifierType::NoAbstaining) && verdict == Verdict::Abstain {
-            verdict = Verdict::Innocent;
-        }
-        self.send_packet(game, ToClientPacket::YourJudgement { verdict });
-        self.deref_mut(game).voting_variables.verdict = verdict;
     }
 
     /* 

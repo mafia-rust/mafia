@@ -2,7 +2,7 @@
 
 use std::time::Duration;
 
-use crate::{client_connection::ClientConnection, game::{grave::GraveKiller, phase::PhaseType, tag::Tag, verdict::Verdict, Game}};
+use crate::{client_connection::ClientConnection, game::{grave::GraveKiller, phase::PhaseType, tag::Tag, Game}};
 use super::PlayerReference;
 
 
@@ -24,6 +24,10 @@ impl PlayerReference{
         }
     }
 
+    pub fn before_phase_end(&self, game: &mut Game, phase: PhaseType) {
+        self.role_state(game).clone().before_phase_end(game, *self, phase);
+    }
+
     pub fn on_phase_start(&self, game: &mut Game, phase: PhaseType){
         match phase {
             PhaseType::Briefing => {},
@@ -42,8 +46,6 @@ impl PlayerReference{
                         }
                     }
                 }
-                
-                self.set_verdict(game, Verdict::Abstain);
             },
             PhaseType::Testimony => {},
             PhaseType::Judgement => {},

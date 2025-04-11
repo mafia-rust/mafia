@@ -61,6 +61,7 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     }
 
     fn on_phase_start(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType) {}
+    fn before_phase_end(self, _game: &mut Game, _actor_ref: PlayerReference, _phase: PhaseType) {}
     fn on_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
     fn before_role_switch(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _new: RoleState, _old: RoleState) {}
     fn on_any_death(self, _game: &mut Game, _actor_ref: PlayerReference, _dead_player_ref: PlayerReference) {}
@@ -301,6 +302,11 @@ mod macros {
                 pub fn default_win_condition(self) -> WinCondition{
                     match self {
                         $(Self::$name(role_struct) => role_struct.default_win_condition()),*
+                    }
+                }
+                pub fn before_phase_end(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.before_phase_end(game, actor_ref, phase)),*
                     }
                 }
                 pub fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
