@@ -2,7 +2,7 @@ use rand::seq::IndexedRandom;
 
 use crate::{game::{ 
     ability_input::{AvailablePlayerListSelection, ControllerID, ControllerParametersMap, PlayerListSelection},
-    attack_power::AttackPower, chat::{ChatGroup, ChatMessageVariant}, event::on_midnight::{OnMidnight, OnMidnightPriority},
+    attack_power::AttackPower, chat::{ChatGroup, ChatMessageVariant}, event::{on_become_insider::OnBecomeInsider, on_midnight::{OnMidnight, OnMidnightPriority}},
     grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::RoleState, role_list::RoleSet, visit::{Visit, VisitTag}, Game
 }, vec_set::{vec_set, VecSet}};
 
@@ -159,7 +159,7 @@ impl Mafia{
             .and_then(|b|b.0.first().copied());
 
         if let Some(backup) = backup{
-            Tags::set_tagged(game, super::tags::TagSetID::SyndicateBackup, vec_set![backup]);
+            Tags::set_tagged(game, super::tags::TagSetID::SyndicateBackup, &vec_set![backup]);
         }
     }
 
@@ -175,8 +175,8 @@ impl Mafia{
             Mafia::give_mafia_killing_role(game, old);
         }
     }
-    pub fn on_become_insider(game: &mut Game){
-        Tags::set_viewers(game, super::tags::TagSetID::SyndicateBackup, InsiderGroupID::Mafia.players(game).clone());
+    pub fn on_become_insider(game: &mut Game, _event: &OnBecomeInsider, _fold: &mut (), _priority: ()){
+        Tags::set_viewers(game, super::tags::TagSetID::SyndicateGun, &InsiderGroupID::Mafia.players(game).clone());
     }
 
 

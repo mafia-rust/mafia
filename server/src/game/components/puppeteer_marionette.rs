@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use crate::{game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, event::on_midnight::{OnMidnight, OnMidnightPriority},
+    attack_power::AttackPower, chat::ChatMessageVariant, event::{on_become_insider::OnBecomeInsider, on_midnight::{OnMidnight, OnMidnightPriority}},
     game_conclusion::GameConclusion, player::PlayerReference, role::Role, win_condition::WinCondition, Game
 }, vec_set::VecSet};
 
@@ -87,7 +87,10 @@ impl PuppeteerMarionette{
     //event listeners
 
     pub fn on_game_start(game: &mut Game){
-        Tags::set_viewers(game, super::tags::TagSetID::PuppeteerMarionette, PlayerReference::all_players(game).collect());
+        Tags::set_viewers(game, super::tags::TagSetID::PuppeteerMarionette, &InsiderGroupID::Puppeteer.players(game).clone());
+    }
+    pub fn on_become_insider(game: &mut Game, _event: &OnBecomeInsider, _fold: &mut (), _priority: ()){
+        Tags::set_viewers(game, super::tags::TagSetID::PuppeteerMarionette, &InsiderGroupID::Puppeteer.players(game).clone());
     }
     pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
         if priority == OnMidnightPriority::Kill{

@@ -58,7 +58,7 @@ impl RoleStateImpl for Framer {
                 Tags::set_tagged(
                     game,
                     TagSetID::Framer(actor_ref),
-                    Tags::tagged(game, TagSetID::Framer(actor_ref))
+                    &Tags::tagged(game, TagSetID::Framer(actor_ref))
                         .into_iter()
                         .filter(|p|
                             !p.all_night_visitors_cloned(game).iter().any(|visitor| {

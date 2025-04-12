@@ -44,14 +44,14 @@ impl ForfeitVote{
                 }
             },
             PhaseType::Dusk => {
-                Tags::set_tagged(game, TagSetID::ForfeitVote, VecSet::new());
+                Tags::set_tagged(game, TagSetID::ForfeitVote, &VecSet::new());
             },
             _ => {}
         }
     }
 
     pub fn on_game_start(game: &mut Game){
-        Tags::set_viewers(game, TagSetID::ForfeitVote, PlayerReference::all_players(game).collect());
+        Tags::set_viewers(game, TagSetID::ForfeitVote, &PlayerReference::all_players(game).collect());
     }
 
     pub fn forfeit_vote(game: &Game, player: PlayerReference)->bool{

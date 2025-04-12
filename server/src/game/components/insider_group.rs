@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{game::{chat::{ChatGroup, ChatMessageVariant}, player::PlayerReference, Game}, packet::ToClientPacket, vec_set::VecSet};
+use crate::{game::{chat::{ChatGroup, ChatMessageVariant}, event::{on_become_insider::OnBecomeInsider, Event}, player::PlayerReference, Game}, packet::ToClientPacket, vec_set::VecSet};
 
 #[derive(Default)]
 pub struct InsiderGroups{
@@ -90,12 +90,14 @@ impl InsiderGroupID{
     pub unsafe fn add_player_to_revealed_group_unchecked(&self, game: &mut Game, player: PlayerReference){
         let players: &mut VecSet<PlayerReference> = self.revealed_group_mut(game).into();
         players.insert(player);
+        OnBecomeInsider::new(player, *self, false).invoke(game);
     }
     pub fn add_player_to_revealed_group(&self, game: &mut Game, player: PlayerReference){
         let players: &mut VecSet<PlayerReference> = self.revealed_group_mut(game).into();
         if players.insert(player).is_none() {
             self.reveal_group_players(game);
         }
+        OnBecomeInsider::new(player, *self, false).invoke(game);
         Self::send_player_insider_groups(game, player);
     }
     pub fn remove_player_from_revealed_group(&self, game: &mut Game, player: PlayerReference){
@@ -119,6 +121,7 @@ impl InsiderGroupID{
             if set.contains(&group){
                 let players: &mut VecSet<PlayerReference> = group.revealed_group_mut(game).into();
                 players.insert(player);
+                OnBecomeInsider::new(player, group, true).invoke(game);
             }
         }
         Self::send_player_insider_groups(game, player);

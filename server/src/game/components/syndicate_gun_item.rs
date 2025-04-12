@@ -1,6 +1,6 @@
 
 use crate::{game::{
-    ability_input::*, attack_power::AttackPower, event::on_midnight::{OnMidnight, OnMidnightPriority}, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role_list::RoleSet, visit::{Visit, VisitTag}, Game
+    ability_input::*, attack_power::AttackPower, event::{on_become_insider::OnBecomeInsider, on_midnight::{OnMidnight, OnMidnightPriority}}, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role_list::RoleSet, visit::{Visit, VisitTag}, Game
 }, vec_set};
 
 use super::{detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits, tags::Tags};
@@ -31,7 +31,7 @@ impl SyndicateGunItem {
     pub fn take_gun(game: &mut Game) {
         game.syndicate_gun_item.player_with_gun = None;
 
-        Tags::set_tagged(game, super::tags::TagSetID::SyndicateGun, vec_set![]);
+        Tags::set_tagged(game, super::tags::TagSetID::SyndicateGun, &vec_set![]);
     }
 
     pub fn player_with_gun(&self) -> Option<PlayerReference> {
@@ -77,7 +77,10 @@ impl SyndicateGunItem {
 
     //event listeners
     pub fn on_game_start(game: &mut Game){
-        Tags::set_viewers(game, super::tags::TagSetID::SyndicateGun, PlayerReference::all_players(game).collect());
+        Tags::set_viewers(game, super::tags::TagSetID::SyndicateGun, &InsiderGroupID::Mafia.players(game).clone());
+    }
+    pub fn on_become_insider(game: &mut Game, _event: &OnBecomeInsider, _fold: &mut (), _priority: ()){
+        Tags::set_viewers(game, super::tags::TagSetID::SyndicateGun, &InsiderGroupID::Mafia.players(game).clone());
     }
     pub fn on_any_death(game: &mut Game, player: PlayerReference) {
         if game.syndicate_gun_item.player_with_gun.is_some_and(|p|p==player) {

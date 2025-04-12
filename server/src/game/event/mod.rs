@@ -20,6 +20,7 @@ pub mod on_tick;
 pub mod on_player_roleblocked;
 pub mod on_visit_wardblocked;
 pub mod on_whisper;
+pub mod on_become_insider;
 
 
 pub trait EventPriority: Sized + Copy {

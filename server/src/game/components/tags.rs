@@ -80,7 +80,7 @@ impl Tags{
         }
     }
 
-    pub fn set_tagged(game: &mut Game, id: TagSetID, tagged_players: VecSet<PlayerReference>){
+    pub fn set_tagged(game: &mut Game, id: TagSetID, tagged_players: &VecSet<PlayerReference>){
         for player in PlayerReference::all_players(game) {
             if tagged_players.contains(&player) {
                 Self::add_tag(game, id.clone(), player);
@@ -89,7 +89,7 @@ impl Tags{
             }
         }
     }
-    pub fn set_viewers(game: &mut Game, id: TagSetID, viewers: VecSet<PlayerReference>){
+    pub fn set_viewers(game: &mut Game, id: TagSetID, viewers: &VecSet<PlayerReference>){
         for player in PlayerReference::all_players(game) {
             if viewers.contains(&player) {
                 Self::add_viewer(game, id.clone(), player);
