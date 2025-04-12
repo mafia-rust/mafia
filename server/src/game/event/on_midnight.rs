@@ -30,7 +30,6 @@ event_priority!(OnMidnightPriority{
     Poison,
     Investigative,
 
-    Cupid,
     SpyBug,
 
     StealMessages

@@ -11,7 +11,6 @@ pub enum Tag{
     RevolutionaryTarget,
     MorticianTagged,
     PuppeteerMarionette,
-    LoveLinked,
     ForfeitVote,
     Spiraling,
     Disguise,

@@ -13,7 +13,6 @@ use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::role::BooleanSelection;
-use crate::game::visit::Visit;
 use crate::game::Game;
 
 use super::{
@@ -53,25 +52,28 @@ impl RoleStateImpl for Jailor {
     fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Kill => {
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-                if let Some(visit) = actor_visits.first() {
+
+                let Some(AbilitySelection::Boolean(BooleanSelection(true))) = game.saved_controllers.get_controller_current_selection(
+                    ControllerID::role(actor_ref, Role::Jailor, 1)) else {return};
+                let Some(target) = self.jailed_target_ref else {return};
+
     
-                    let target_ref = visit.target;
-                    if Detained::is_detained(game, target_ref){
-                        target_ref.try_night_kill_single_attacker(
-                            actor_ref,
-                            game, 
-                            GraveKiller::Role(Role::Jailor), 
-                            AttackPower::ProtectionPiercing, 
-                            false,
-                            false
-                        );
-        
-                        self.executions_remaining = 
-                            if target_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) {0} else {self.executions_remaining.saturating_sub(1)};
-                        actor_ref.set_role_state(game, self);
-                    }
+                if Detained::is_detained(game, target){
+                    target.try_night_kill_single_attacker(
+                        actor_ref,
+                        game, 
+                        GraveKiller::Role(Role::Jailor), 
+                        AttackPower::ProtectionPiercing, 
+                        false,
+                        false
+                    );
+
+                    self.executions_remaining = 
+                        if target.win_condition(game).is_loyalist_for(GameConclusion::Town) {0} else {self.executions_remaining.saturating_sub(1)};
+                    actor_ref.set_role_state(game, self);
+
                 }
+                
             },
             _ => {}
         }
@@ -96,12 +98,6 @@ impl RoleStateImpl for Jailor {
                 )
                 .build_map()
         ])
-    }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
-        let Some(AbilitySelection::Boolean(BooleanSelection(true))) = game.saved_controllers.get_controller_current_selection(
-            ControllerID::role(actor_ref, Role::Jailor, 1)) else {return Vec::new()};
-        let Some(target) = self.jailed_target_ref else {return Vec::new()};
-        vec![Visit::new_none(actor_ref, target, true)]
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, 
@@ -149,5 +145,4 @@ impl RoleStateImpl for Jailor {
             _ => {}
         }
     }
-    fn on_visit_wardblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _visit: Visit) {}
 }
