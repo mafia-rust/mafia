@@ -95,7 +95,7 @@ impl RoleStateImpl for Bodyguard {
             },
             OnMidnightPriority::Kill => {
                 for redirected_player_ref in self.redirected_player_refs {
-                    redirected_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Bodyguard), AttackPower::ArmorPiercing, false);
+                    redirected_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Bodyguard), AttackPower::ArmorPiercing, false, false);
                 }
             }
             OnMidnightPriority::Investigative => {

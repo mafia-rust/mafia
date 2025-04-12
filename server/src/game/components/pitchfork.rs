@@ -90,6 +90,7 @@ impl Pitchfork{
                 game, 
                 GraveKiller::RoleSet(RoleSet::Town), 
                 AttackPower::ProtectionPiercing, 
+                false,
                 false
             );
             Pitchfork::set_pitchfork_uses_remaining(game,

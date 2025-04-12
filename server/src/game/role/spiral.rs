@@ -37,14 +37,17 @@ impl RoleStateImpl for Spiral {
             if let Some(visit) = actor_ref.untagged_night_visits_cloned(game).first(){
                 let target_ref = visit.target;
                 
-                target_ref.try_night_kill_single_attacker(
+                if let Some(target) = target_ref.try_night_kill_single_attacker(
                     actor_ref,
                     game,
                     GraveKiller::Role(Role::Spiral),
                     AttackPower::ArmorPiercing,
+                    true,
                     true
-                );
-                Spiral::spiral_visitors(game, &mut new_spiraling, actor_ref, target_ref);
+                ).target() {
+                    // todo this behavior may be unwanted
+                    Spiral::spiral_visitors(game, &mut new_spiraling, actor_ref, target);
+                }
             }
         } else {
             for spiraling_player in self.spiraling.clone() {

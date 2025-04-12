@@ -119,7 +119,7 @@ impl Mafia{
                 for backup_visit in all_backup_visits {
                     backup_visit.target.try_night_kill_single_attacker(
                         backup_visit.visitor, game, GraveKiller::RoleSet(RoleSet::Mafia),
-                        AttackPower::Basic, false
+                        AttackPower::Basic, false, true
                     );
                     game.add_message_to_chat_group(ChatGroup::Mafia, 
                         ChatMessageVariant::GodfatherBackupKilled { backup: backup_visit.visitor.index() }

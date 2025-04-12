@@ -56,9 +56,10 @@ impl RoleStateImpl for Kidnapper {
                         game, 
                         GraveKiller::Role(Role::Jailor), 
                         AttackPower::ProtectionPiercing, 
+                        false,
                         false
                     );
-    
+
                     self.executions_remaining = self.executions_remaining.saturating_sub(1);
                     actor_ref.set_role_state(game, self);
                 }

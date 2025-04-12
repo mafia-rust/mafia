@@ -43,11 +43,8 @@ impl RoleStateImpl for Deputy {
         
         
         target_ref.add_private_chat_message(game, ChatMessageVariant::DeputyShotYou);
-        if target_ref.defense(game).can_block(AttackPower::Basic) {
-            target_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
-            actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
-
-        }else{
+        if target_ref.try_attack(game, AttackPower::Basic, false).successful() {
+            // the attack is indirect, so cannot be redirected and contents of Option can be ignored
             game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::DeputyKilled{shot_index: target_ref.index()});
             
             
@@ -61,6 +58,8 @@ impl RoleStateImpl for Deputy {
             if target_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) {
                 actor_ref.die_and_add_grave(game, Grave::from_player_leave_town(game, actor_ref));
             }
+        } else {
+            actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
         }
 
         actor_ref.set_role_state(game, Deputy{bullets_remaining:self.bullets_remaining.saturating_sub(1)});

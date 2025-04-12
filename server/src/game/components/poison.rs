@@ -92,7 +92,8 @@ impl Poison{
             game,
             poison.grave_killer,
             poison.attack_power,
-            poison.leave_death_note
+            poison.leave_death_note,
+            false
         );
     }
 }
