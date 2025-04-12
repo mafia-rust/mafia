@@ -26,11 +26,7 @@ pub struct Auditor{
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
-#[serde(tag = "type")]
-pub enum AuditorResult{
-    Two{roles: [Role; 2]},
-    One{role: Role}
-}
+pub struct  AuditorResult(Vec<Role>);
 
 
 
