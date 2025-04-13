@@ -10,6 +10,7 @@ pub mod no_whispers;
 pub mod no_night_chat;
 pub mod no_chat;
 pub mod scheduled_nominations;
+pub mod backup_gets_gun;
 pub mod skip_day_1;
 pub mod hidden_whispers;
 
@@ -22,6 +23,7 @@ use no_night_chat::NoNightChat;
 use no_trial::NoTrialPhases;
 use no_whispers::NoWhispers;
 use obscured_graves::ObscuredGraves;
+use backup_gets_gun::BackupGetsGun;
 use no_death_cause::NoDeathCause;
 use role_set_grave_killers::RoleSetGraveKillers;
 use scheduled_nominations::ScheduledNominations;
@@ -71,6 +73,7 @@ pub enum ModifierState{
     NoChat(NoChat),
     HiddenWhispers(HiddenWhispers),
     ScheduledNominations(ScheduledNominations),
+    BackupGetsGun(BackupGetsGun),
 }
 #[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Debug, Hash)]
 #[serde(rename_all = "camelCase")]
@@ -89,6 +92,7 @@ pub enum ModifierType{
     NoChat,
     HiddenWhispers,
     ScheduledNominations,
+    BackupGetsGun,
 }
 impl ModifierType{
     pub fn default_state(&self)->ModifierState{
@@ -107,6 +111,7 @@ impl ModifierType{
             Self::NoChat => ModifierState::NoChat(NoChat),
             Self::HiddenWhispers => ModifierState::HiddenWhispers(HiddenWhispers),
             Self::ScheduledNominations => ModifierState::ScheduledNominations(ScheduledNominations),
+            Self::BackupGetsGun => ModifierState::BackupGetsGun(BackupGetsGun)
         }
     }
 }
@@ -127,6 +132,7 @@ impl From<&ModifierState> for ModifierType{
             ModifierState::NoChat(_) => Self::NoChat,
             ModifierState::HiddenWhispers(_) => Self::HiddenWhispers,
             ModifierState::ScheduledNominations(_) => Self::ScheduledNominations,
+            ModifierState::BackupGetsGun(_) => Self::BackupGetsGun,
         }
     }
 }
