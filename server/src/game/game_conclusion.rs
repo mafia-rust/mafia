@@ -65,6 +65,7 @@ impl GameConclusion {
                     match p.win_condition(game){
                         WinCondition::GameConclusionReached{win_if_any} => win_if_any.contains(resolution),
                         WinCondition::RoleStateWon => true,
+                        WinCondition::Mimic(_) => true,
                     }
                 )
         )

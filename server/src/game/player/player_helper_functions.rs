@@ -8,7 +8,7 @@ use crate::{game::{
     components::{
         arsonist_doused::ArsonistDoused,
         drunk_aura::DrunkAura,
-        insider_group::InsiderGroupID, night_visits::NightVisits
+        insider_group::InsiderGroupID, mimic_win_con::MimicWinCon, night_visits::NightVisits
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_midnight::OnMidnightPriority, on_player_roleblocked::OnPlayerRoleblocked, on_role_switch::OnRoleSwitch, on_visit_wardblocked::OnVisitWardblocked
     }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{chronokaiser::Chronokaiser, Role, RoleState}, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
@@ -376,6 +376,9 @@ impl PlayerReference{
                     _ => false
                 }
             },
+            WinCondition::Mimic(_) => {
+                return MimicWinCon::has_won(game, *self);
+            }
         }
     }
     /// If they can consistently kill then they keep the game running

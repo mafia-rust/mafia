@@ -28,6 +28,7 @@ use ability_input::PlayerListSelection;
 use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
 use components::mafia::Mafia;
+use components::mimic_win_con::MimicWinCon;
 use components::night_visits::NightVisits;
 use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
@@ -121,7 +122,8 @@ pub struct Game {
     pub detained: Detained,
     pub confused: Confused,
     pub drunk_aura: DrunkAura,
-    pub synopsis_tracker: SynopsisTracker
+    pub synopsis_tracker: SynopsisTracker,
+    pub mimic_win_con: MimicWinCon,
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -233,6 +235,7 @@ impl Game {
                 mafia_recruits: MafiaRecruits::default(),
                 verdicts_today: VerdictsToday::default(),
                 poison: Poison::default(),
+                mimic_win_con: MimicWinCon::default(),
 
                 revealed_groups: InsiderGroups::default(),
                 detained: Detained::default(),
@@ -658,7 +661,8 @@ pub mod test {
             detained: Default::default(),
             confused: Default::default(),
             drunk_aura: Default::default(),
-            synopsis_tracker: SynopsisTracker::new(number_of_players)
+            synopsis_tracker: SynopsisTracker::new(number_of_players),
+            mimic_win_con: Default::default(),
         };
 
         //set wincons and revealed groups
