@@ -176,7 +176,7 @@ impl Mafia{
         }
     }
     pub fn on_become_insider(game: &mut Game, _event: &OnBecomeInsider, _fold: &mut (), _priority: ()){
-        Tags::set_viewers(game, super::tags::TagSetID::SyndicateGun, &InsiderGroupID::Mafia.players(game).clone());
+        Tags::set_viewers(game, super::tags::TagSetID::SyndicateBackup, &InsiderGroupID::Mafia.players(game).clone());
     }
 
 
