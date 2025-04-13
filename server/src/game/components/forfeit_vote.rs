@@ -54,7 +54,7 @@ impl ForfeitVote{
         Tags::set_viewers(game, TagSetID::ForfeitVote, &PlayerReference::all_players(game).collect());
     }
 
-    pub fn forfeit_vote(game: &Game, player: PlayerReference)->bool{
+    pub fn forfeited_vote(game: &Game, player: PlayerReference)->bool{
         Tags::has_tag(game, TagSetID::ForfeitVote, player)
     }
 }

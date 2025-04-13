@@ -9,32 +9,30 @@ use crate::game::{
 use super::Event;
 
 #[derive(Clone)]
-pub struct OnBecomeInsider {
+pub struct OnRemoveInsider {
     pub player: PlayerReference,
     pub group: InsiderGroupID,
-    pub on_init: bool
 }
 
-impl OnBecomeInsider {
-    pub fn new(player: PlayerReference, group: InsiderGroupID, on_init: bool) -> Self {
+impl OnRemoveInsider {
+    pub fn new(player: PlayerReference, group: InsiderGroupID) -> Self {
         Self {
             player,
             group,
-            on_init
         }
     }
 }
 
-impl Event for OnBecomeInsider {
+impl Event for OnRemoveInsider {
     type FoldValue = ();
     type Priority = ();
 
     fn listeners() -> Vec<super::EventListenerFunction<Self>> {
         vec![
-            SyndicateGunItem::on_become_insider,
-            PuppeteerMarionette::on_become_insider,
-            Mafia::on_become_insider,
-            MafiaRecruits::on_become_insider,
+            SyndicateGunItem::on_remove_insider,
+            PuppeteerMarionette::on_remove_insider,
+            Mafia::on_remove_insider,
+            MafiaRecruits::on_remove_insider,
         ]
     }
     

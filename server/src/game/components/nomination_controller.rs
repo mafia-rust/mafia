@@ -25,7 +25,7 @@ impl NominationController{
             })
             .add_grayed_out_condition(
                 !actor.alive(game) ||
-                ForfeitVote::forfeit_vote(game, actor) ||
+                ForfeitVote::forfeited_vote(game, actor) ||
                 game.current_phase().phase() != crate::game::phase::PhaseType::Nomination
             )
             .reset_on_phase_start(crate::game::phase::PhaseType::Nomination)

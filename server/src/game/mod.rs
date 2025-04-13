@@ -447,7 +447,7 @@ impl Game {
     pub fn nomination_votes_required(&self)->u8{
         #[expect(clippy::cast_possible_truncation, reason = "Game can only have max 255 players")]
         let eligible_voters = PlayerReference::all_players(self)
-            .filter(|p| p.alive(self) && !ForfeitVote::forfeit_vote(self, *p))
+            .filter(|p| p.alive(self) && !ForfeitVote::forfeited_vote(self, *p))
             .count() as u8;
 
         if Modifiers::modifier_is_enabled(self, ModifierType::TwoThirdsMajority) {

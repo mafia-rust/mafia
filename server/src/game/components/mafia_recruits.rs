@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use crate::{game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, event::{on_become_insider::OnBecomeInsider, on_midnight::{OnMidnight, OnMidnightPriority}},
+    attack_power::AttackPower, chat::ChatMessageVariant, event::{on_add_insider::OnAddInsider, on_midnight::{OnMidnight, OnMidnightPriority}, on_remove_insider::OnRemoveInsider},
     game_conclusion::GameConclusion, player::PlayerReference, role::Role, role_list::RoleSet, win_condition::WinCondition, Game, InsiderGroupID
 }, vec_set::VecSet};
 
@@ -86,11 +86,10 @@ impl MafiaRecruits{
 
 
     //event listeners
-
-    pub fn on_game_start(game: &mut Game){
+    pub fn on_add_insider(game: &mut Game, _event: &OnAddInsider, _fold: &mut (), _priority: ()){
         Tags::set_viewers(game, super::tags::TagSetID::SyndicateRecruit, &InsiderGroupID::Mafia.players(game).clone());
     }
-    pub fn on_become_insider(game: &mut Game, _event: &OnBecomeInsider, _fold: &mut (), _priority: ()){
+    pub fn on_remove_insider(game: &mut Game, _event: &OnRemoveInsider, _fold: &mut (), _priority: ()){
         Tags::set_viewers(game, super::tags::TagSetID::SyndicateRecruit, &InsiderGroupID::Mafia.players(game).clone());
     }
     pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
