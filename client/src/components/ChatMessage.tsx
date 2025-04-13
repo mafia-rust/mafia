@@ -653,8 +653,8 @@ export function translateChatMessage(
         /* NIGHT */
         case "godfatherBackupKilled":
             return translate("chatMessage.godfatherBackupKilled", playerNames[message.backup]);
-        case "sheriffResult":
-            return translate("chatMessage.sheriffResult." + (message.suspicious ? "suspicious" : "innocent"));
+        case "detectiveResult":
+            return translate("chatMessage.detectiveResult." + (message.suspicious ? "suspicious" : "innocent"));
         case "snoopResult":
             return translate("chatMessage.snoopResult." + (message.townie ? "townie" : "inconclusive"));
         case "gossipResult":
@@ -669,8 +669,8 @@ export function translateChatMessage(
             return translate("chatMessage.spyBug."+message.bug);
         case "trackerResult":
             return translate("chatMessage.trackerResult", playerListToString(message.players, playerNames));
-        case "seerResult":
-            return translate("chatMessage.seerResult." + (message.enemies ? "enemies" : "friends"));
+        case "philosopherResult":
+            return translate("chatMessage.philosopherResult." + (message.enemies ? "enemies" : "friends"));
         case "psychicEvil":
             return translate(
                 "chatMessage.psychicEvil",
@@ -985,7 +985,7 @@ export type ChatMessageVariant = {
 {
     type: "wardblocked"
 } | {
-    type: "sheriffResult", 
+    type: "detectiveResult", 
     suspicious: boolean
 } | {
     type: "snoopResult", 
@@ -1009,7 +1009,7 @@ export type ChatMessageVariant = {
     type: "trackerResult",
     players: PlayerIndex[]
 } | {
-    type: "seerResult",
+    type: "philosopherResult",
     enemies: boolean
 } | {
     type: "psychicGood",

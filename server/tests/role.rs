@@ -1,7 +1,7 @@
 mod kit;
 use std::{ops::Deref, vec};
 
-
+use kit::player::TestPlayer;
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
 pub use mafia_server::game::{
@@ -17,7 +17,7 @@ pub use mafia_server::game::{
         },
         AbilityInput,
     }, 
-    components::{cult::CultAbility, insider_group::InsiderGroupID},  
+    components::{cult::CultAbility, insider_group::InsiderGroupID, confused::Confused, drunk_aura::DrunkAura},  
     role_list::RoleSet, 
     role_outline_reference::RoleOutlineReference,
      
@@ -74,6 +74,7 @@ pub use mafia_server::game::{
         mortician::Mortician,
         mafia_support_wildcard::MafiaSupportWildcard, 
         ambusher::Ambusher,
+        reeducator::Reeducator,
 
         jester::Jester,
         revolutionary::Revolutionary,
@@ -154,7 +155,7 @@ fn detective_basic() {
     game.next_phase();
     assert_contains!(
         sher.get_messages_after_night(1),
-        ChatMessageVariant::SheriffResult { suspicious: true }
+        ChatMessageVariant::DetectiveResult { suspicious: true }
     );
 
     game.skip_to(Night, 2);
@@ -162,7 +163,7 @@ fn detective_basic() {
     game.next_phase();
     assert_contains!(
         sher.get_messages_after_night(2),
-        ChatMessageVariant::SheriffResult { suspicious: false }
+        ChatMessageVariant::DetectiveResult { suspicious: false }
     );
 }
 
@@ -180,7 +181,7 @@ fn detective_neutrals(){
     game.next_phase();
     assert_contains!(
         sher.get_messages_after_night(1),
-        ChatMessageVariant::SheriffResult { suspicious: true }
+        ChatMessageVariant::DetectiveResult { suspicious: true }
     );
     
     game.skip_to(Night, 2);
@@ -188,7 +189,7 @@ fn detective_neutrals(){
     game.next_phase();
     assert_contains!(
         sher.get_messages_after_night(2),
-        ChatMessageVariant::SheriffResult { suspicious: false }
+        ChatMessageVariant::DetectiveResult { suspicious: false }
     );
     
     game.skip_to(Night, 3);
@@ -196,7 +197,7 @@ fn detective_neutrals(){
     game.next_phase();
     assert_contains!(
         sher.get_messages_after_night(3),
-        ChatMessageVariant::SheriffResult { suspicious: true }
+        ChatMessageVariant::DetectiveResult { suspicious: true }
     );
 
 }
@@ -298,7 +299,7 @@ fn detective_godfather() {
     );
     sher.send_ability_input_player_list_typical(mafia);
     game.next_phase();
-    assert_contains!(sher.get_messages(), ChatMessageVariant::SheriffResult { suspicious: false });
+    assert_contains!(sher.get_messages(), ChatMessageVariant::DetectiveResult { suspicious: false });
 }
 
 #[test]
@@ -316,7 +317,7 @@ fn philosopher_basic() {
     game.next_phase();
     assert_contains!(
         philosopher.get_messages_after_night(1),
-        ChatMessageVariant::SeerResult { enemies: true }
+        ChatMessageVariant::PhilosopherResult { enemies: true }
     );
 
     game.skip_to(Night, 2);
@@ -325,7 +326,7 @@ fn philosopher_basic() {
     game.next_phase();
     assert_contains!(
         philosopher.get_messages_after_night(2),
-        ChatMessageVariant::SeerResult { enemies: false }
+        ChatMessageVariant::PhilosopherResult { enemies: false }
     );
 
     game.skip_to(Night, 3);
@@ -334,7 +335,7 @@ fn philosopher_basic() {
     game.next_phase();
     assert_contains!(
         philosopher.get_messages_after_night(3),
-        ChatMessageVariant::SeerResult { enemies: false }
+        ChatMessageVariant::PhilosopherResult { enemies: false }
     );
 }
 
@@ -354,7 +355,7 @@ fn philosopher_neutrals() {
     game.next_phase();
     assert_contains!(
         philosopher.get_messages_after_night(3),
-        ChatMessageVariant::SeerResult { enemies: false }
+        ChatMessageVariant::PhilosopherResult { enemies: false }
     );
 
     game.skip_to(Night, 4);
@@ -363,7 +364,7 @@ fn philosopher_neutrals() {
     game.next_phase();
     assert_contains!(
         philosopher.get_messages_after_night(4),
-        ChatMessageVariant::SeerResult { enemies: false }
+        ChatMessageVariant::PhilosopherResult { enemies: false }
     );
 
     game.skip_to(Night, 6);
@@ -372,7 +373,7 @@ fn philosopher_neutrals() {
     game.next_phase();
     assert_contains!(
         philosopher.get_messages_after_night(6),
-        ChatMessageVariant::SeerResult { enemies: true }
+        ChatMessageVariant::PhilosopherResult { enemies: true }
     );
 
     game.skip_to(Night, 7);
@@ -381,7 +382,7 @@ fn philosopher_neutrals() {
     game.next_phase();
     assert_contains!(
         philosopher.get_messages_after_night(7),
-        ChatMessageVariant::SeerResult { enemies: false }
+        ChatMessageVariant::PhilosopherResult { enemies: false }
     );
 
     game.skip_to(Night, 8);
@@ -390,7 +391,7 @@ fn philosopher_neutrals() {
     game.next_phase();
     assert_contains!(
         philosopher.get_messages_after_night(8),
-        ChatMessageVariant::SeerResult { enemies: false }
+        ChatMessageVariant::PhilosopherResult { enemies: false }
     );
 }
 
@@ -630,15 +631,15 @@ fn transporter_basic_seer_sheriff_framer() {
     game.skip_to(Obituary, 2);
     assert_contains!(
         philosopher.get_messages_after_night(1),
-        ChatMessageVariant::SeerResult { enemies: true }
+        ChatMessageVariant::PhilosopherResult { enemies: true }
     );
     assert_contains!(
         town1.get_messages_after_night(1),
-        ChatMessageVariant::SheriffResult { suspicious: false }
+        ChatMessageVariant::DetectiveResult { suspicious: false }
     );
     assert_contains!(
         town2.get_messages_after_night(1),
-        ChatMessageVariant::SheriffResult { suspicious: true }
+        ChatMessageVariant::DetectiveResult { suspicious: true }
     );
 }
 
@@ -705,7 +706,7 @@ fn retributionist_basic(){
     assert_contains!(
         ret.get_messages_after_night(4),
         ChatMessageVariant::TargetsMessage{message: Box::new(
-            ChatMessageVariant::SheriffResult{ suspicious: true }
+            ChatMessageVariant::DetectiveResult{ suspicious: true }
         )}
     );
 
@@ -715,7 +716,7 @@ fn retributionist_basic(){
     assert_contains!(
         ret.get_messages_after_night(5),
         ChatMessageVariant::TargetsMessage{message: Box::new(
-            ChatMessageVariant::SheriffResult{ suspicious: true }
+            ChatMessageVariant::DetectiveResult{ suspicious: true }
         )}
     );
 
@@ -725,7 +726,7 @@ fn retributionist_basic(){
     assert_not_contains!(
         ret.get_messages_after_night(6),
         ChatMessageVariant::TargetsMessage{message: Box::new(
-            ChatMessageVariant::SheriffResult{ suspicious: true }
+            ChatMessageVariant::DetectiveResult{ suspicious: true }
         )}
     );
 }
@@ -770,7 +771,7 @@ fn witch_basic(){
     assert!(witch.send_ability_input_two_player_typical(sher, mafioso));
     game.next_phase();
     assert_contains!(witch.get_messages(), ChatMessageVariant::TargetsMessage{message: Box::new(
-        ChatMessageVariant::SheriffResult{ suspicious: true }
+        ChatMessageVariant::DetectiveResult{ suspicious: true }
     )});
     
     game.skip_to(Night, 2);
@@ -780,7 +781,7 @@ fn witch_basic(){
     assert_contains!(
         witch.get_messages_after_night(2),
         ChatMessageVariant::TargetsMessage{message: Box::new(
-            ChatMessageVariant::SeerResult { enemies: false }
+            ChatMessageVariant::PhilosopherResult { enemies: false }
         )}
     );
 }
@@ -1264,8 +1265,63 @@ fn drunk_suspicious_aura() {
 
     assert_contains!(
         detective.get_messages(),
-        ChatMessageVariant::SheriffResult { suspicious: true }
+        ChatMessageVariant::DetectiveResult { suspicious: true }
     );
+}
+
+#[test]
+fn drunk_confused_and_drunk_aura() {
+    for _ in 0..20 {
+        kit::scenario!(game in Night 2 where
+            drunk: Drunk,
+            reed: Reeducator,
+            townie: Deputy
+        );
+
+        let red_herring: PlayerReference =
+            match Confused::get_confusion_data(&game, drunk.player_ref()) {
+                Some(value) => {
+                    assert!(value.red_herrings.len() == 1);
+                    assert!(value.red_herrings.first().is_some_and(|rh|
+                        (*rh == reed.player_ref()) ^ (*rh == townie.player_ref())
+                    ));
+                    assert!(value.confused);
+                    value.red_herrings[0]
+                },
+                None => unreachable!()
+            };
+
+        assert!(Confused::is_confused(&game, drunk.player_ref()));
+        assert!(!Confused::is_confused(&game, reed.player_ref()));
+        assert!(!Confused::is_confused(&game, townie.player_ref()));
+
+        assert!(DrunkAura::has_drunk_aura(&game, drunk.player_ref()));
+        assert!(!DrunkAura::has_drunk_aura(&game, reed.player_ref()));
+        assert!(!DrunkAura::has_drunk_aura(&game, townie.player_ref()));
+
+        reed.send_ability_input_player_list_typical(drunk);
+        game.next_phase();
+
+        match game.confused.0.get(&drunk.player_ref()) {
+            Some(value) => {
+                assert!(value.red_herrings.len() == 1);
+                assert!(value.red_herrings.first().is_some_and(|rh|
+                    (*rh == reed.player_ref()) ^ (*rh == townie.player_ref())
+                ));
+                assert!(!value.confused);
+                assert!(red_herring == value.red_herrings[0]);
+            },
+            None => unreachable!()
+        }
+
+        assert!(!Confused::is_confused(&game, drunk.player_ref()));
+        assert!(!Confused::is_confused(&game, reed.player_ref()));
+        assert!(!Confused::is_confused(&game, townie.player_ref()));
+
+        assert!(!DrunkAura::has_drunk_aura(&game, drunk.player_ref()));
+        assert!(!DrunkAura::has_drunk_aura(&game, reed.player_ref()));
+        assert!(!DrunkAura::has_drunk_aura(&game, townie.player_ref()));
+    }
 }
 
 #[test]
@@ -1328,6 +1384,203 @@ fn drunk_role_change() {
     assert!(
         messages.contains(&ChatMessageVariant::LookoutResult { players: vec![mafioso.index()] })
     );
+}
+
+#[test]
+fn red_herrings() {
+    for _ in 0..20 {
+        kit::scenario!(game in Dusk 1 where
+            detective: Detective,
+            gossip: Gossip,
+            philosopher: Philosopher,
+            //Has to be a doctor so they can visit themself
+            tester: Doctor,
+            mafia: Informant
+        );
+    
+        Confused::add_player(&mut game, detective.player_ref());
+        Confused::add_player(&mut game, gossip.player_ref());
+        Confused::add_player(&mut game, philosopher.player_ref());
+        
+        assert!(Confused::is_confused(&game, detective.player_ref()));
+        assert!(Confused::is_confused(&game, gossip.player_ref()));
+        assert!(Confused::is_confused(&game, philosopher.player_ref()));
+    
+        let mut found_detective_red_herring = false;
+        let mut found_gossip_red_herring = false;
+        let mut found_philosopher_red_herring = false;
+        let mut philosopher_red_herring_is_tester = false;
+    
+        for index in 0u8..5 {
+            let target;
+            //The unsafe part is the fact that the player index is next ensured to be a player.
+            //this is fine as only indices 0 to 4 would be allowed which is what is going on here.
+            unsafe {
+                target = TestPlayer::new(PlayerReference::new_unchecked(index), &game);
+            }
+            
+            detective.send_ability_input_player_list_typical(target);
+            gossip.send_ability_input_player_list_typical(tester);
+            philosopher.send_ability_input_two_player_typical(target, tester);
+            tester.send_ability_input_player_list_typical(target);
+            mafia.send_ability_input_player_list_typical(target);
+    
+            game.skip_to(Obituary, index+2);
+    
+            assert!(detective.alive());
+            assert!(gossip.alive());
+            assert!(philosopher.alive());
+            assert!(tester.alive());
+            assert!(mafia.alive());
+    
+            let message_before_ability_message = ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: index+1 };
+            
+            /* Test Detective */
+            let detective_messages = detective.get_messages_after_last_message(message_before_ability_message.clone());
+            
+            if detective_messages.contains(&ChatMessageVariant::DetectiveResult { suspicious: true }) {
+                if found_detective_red_herring {
+                    panic!("detective_messages: {:?}", detective_messages);
+                } else {
+                    found_detective_red_herring = true;
+                    assert!(Confused::is_red_herring(&game, detective.player_ref(), target.player_ref()));
+                }
+            } else {
+                assert_eq!(
+                    detective_messages.contains(&ChatMessageVariant::DetectiveResult { suspicious: false }),
+                    target != detective
+                );
+                assert!(!Confused::is_red_herring(&game, detective.player_ref(), target.player_ref()));
+            }
+    
+            /* Test Gossip */
+            let gossip_messages = gossip.get_messages_after_last_message(message_before_ability_message.clone());
+                
+            if gossip_messages.contains(&ChatMessageVariant::GossipResult { enemies: true }){
+                if found_gossip_red_herring {
+                    panic!("gossip_messages: {:?}", gossip_messages);
+                } else {
+                    found_gossip_red_herring = true;
+                    assert!(Confused::is_red_herring(&game, gossip.player_ref(), target.player_ref()))
+                }
+            } else {
+                assert!(gossip_messages.contains(&ChatMessageVariant::GossipResult { enemies: false }));
+                assert!(!Confused::is_red_herring(&game, gossip.player_ref(), target.player_ref()));
+            }
+            
+    
+            /* Test Philosopher */
+            let philosopher_messages = philosopher.get_messages_after_last_message(message_before_ability_message.clone());
+            
+            if philosopher_messages.contains(&ChatMessageVariant::PhilosopherResult { enemies: true }){
+                if found_philosopher_red_herring {
+                    if !philosopher_red_herring_is_tester {
+                        if game.day_number() > 3 {
+                            panic!("philosopher_messages: {:?}", philosopher_messages);
+                        } else {
+                            philosopher_red_herring_is_tester = true;
+                        }
+                    }
+                } else {
+                    found_philosopher_red_herring = true;
+                }
+            } else { 
+                assert_eq!(
+                    philosopher_messages.contains(&ChatMessageVariant::PhilosopherResult { enemies: false }),
+                    target != philosopher && target != tester
+                )
+            }
+        }
+    
+        assert!(found_detective_red_herring);
+        assert!(found_gossip_red_herring);
+        assert!(found_philosopher_red_herring);
+    }
+}
+
+#[test]
+fn red_herrings_framer() {
+    for _ in 0..20 {
+        kit::scenario!(game in Dusk 1 where
+            detective: Detective,
+            gossip: Gossip,
+            philosopher: Philosopher,
+            tester: Doctor,
+            mafia: Framer
+        );
+    
+        Confused::add_player(&mut game, detective.player_ref());
+        Confused::add_player(&mut game, gossip.player_ref());
+        Confused::add_player(&mut game, philosopher.player_ref());
+        
+        assert!(Confused::is_confused(&game, detective.player_ref()));
+        assert!(Confused::is_confused(&game, gossip.player_ref()));
+        assert!(Confused::is_confused(&game, philosopher.player_ref()));
+        
+        let mut found_philosopher_red_herring = false;
+
+        let philosopher_red_herring_is_tester = Confused::is_red_herring(&game, philosopher.player_ref(), tester.player_ref());
+
+        for index in 0..4u8 {
+            let target;
+            //The unsafe part is the fact that the player index is next ensured to be a player.
+            //this is fine as only indices 0 to 4 would be allowed which is what is going on here.
+            unsafe {
+                target = TestPlayer::new(PlayerReference::new_unchecked(index), &game);
+            }
+            
+            detective.send_ability_input_player_list_typical(target);
+            gossip.send_ability_input_player_list_typical(tester);
+            philosopher.send_ability_input_two_player_typical(target, tester);
+            tester.send_ability_input_player_list_typical(target);
+            mafia.send_ability_input_player_list_typical(target);
+            
+            game.skip_to(Obituary, index+2);
+    
+            assert!(detective.alive());
+            assert!(gossip.alive());
+            assert!(philosopher.alive());
+            assert!(tester.alive());
+            assert!(mafia.alive());
+            
+            let message_before_ability_message = ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: index+1 };
+            
+            /* Test Detective */
+            let detective_messages = detective.get_messages_after_last_message(message_before_ability_message.clone());
+            assert_eq!(
+                detective_messages.contains(&ChatMessageVariant::DetectiveResult { suspicious: true }),
+                target != detective
+            );
+
+            /* Test Gossip */
+            let gossip_messages = gossip.get_messages_after_last_message(message_before_ability_message.clone()); 
+            assert!(gossip_messages.contains(&ChatMessageVariant::GossipResult { enemies: true }));
+            
+            /* Test Philosopher */
+            let philosopher_messages = philosopher.get_messages_after_last_message(message_before_ability_message.clone());
+            if philosopher_red_herring_is_tester{
+                assert_eq!(
+                    philosopher_messages.contains(&ChatMessageVariant::PhilosopherResult { enemies: false }),
+                    target != philosopher && target != tester
+                );
+                assert!(!philosopher_messages.contains(&ChatMessageVariant::PhilosopherResult { enemies: true }));
+            } else if philosopher_messages.contains(&ChatMessageVariant::PhilosopherResult { enemies: false }) {
+                if found_philosopher_red_herring {
+                    panic!("philosopher_messages: {}", kit::_format_messages_debug(philosopher_messages));
+                } else {
+                    assert!(target != tester);
+                    assert!(target != tester);
+                    found_philosopher_red_herring = true;
+                }
+            } else {
+                assert_eq!(
+                    philosopher_messages.contains(&ChatMessageVariant::PhilosopherResult { enemies: true }),
+                    target != philosopher && target != tester
+                )
+            }
+            
+        }
+    }
 }
 
 #[test]
@@ -1629,7 +1882,7 @@ fn seer_cant_see_godfather() {
         philosopher.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 1 }
         ),
-        ChatMessageVariant::SeerResult { enemies: false }
+        ChatMessageVariant::PhilosopherResult { enemies: false }
     );
     game.skip_to(Night, 2);
 
@@ -1639,7 +1892,7 @@ fn seer_cant_see_godfather() {
         philosopher.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 2 }
         ),
-        ChatMessageVariant::SeerResult { enemies: false }
+        ChatMessageVariant::PhilosopherResult { enemies: false }
     );
 }
 
@@ -1860,7 +2113,7 @@ fn puppeteer_marionettes_philosopher(){
     game.next_phase();
     assert_contains!(
         philo.get_messages_after_night(1),
-        ChatMessageVariant::SeerResult{ enemies: true }
+        ChatMessageVariant::PhilosopherResult{ enemies: true }
     );
 
     game.skip_to(Night, 3);
@@ -1870,7 +2123,7 @@ fn puppeteer_marionettes_philosopher(){
     game.next_phase();
     assert_contains!(
         philo.get_messages_after_night(2),
-        ChatMessageVariant::SeerResult{ enemies: false }
+        ChatMessageVariant::PhilosopherResult{ enemies: false }
     );
 }
 
@@ -2070,7 +2323,7 @@ fn arsonist_ignites_and_aura(){
 
     assert_contains!(sher.get_messages_after_last_message(
         ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 1}
-    ), ChatMessageVariant::SheriffResult{ suspicious: true });
+    ), ChatMessageVariant::DetectiveResult{ suspicious: true });
 
     game.skip_to(Night, 2);
     
@@ -2081,7 +2334,7 @@ fn arsonist_ignites_and_aura(){
 
     assert_contains!(sher.get_messages_after_last_message(
         ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 2}
-    ), ChatMessageVariant::SheriffResult{ suspicious: true });
+    ), ChatMessageVariant::DetectiveResult{ suspicious: true });
 
     game.skip_to(Nomination, 3);
 
@@ -2101,7 +2354,7 @@ fn arsonist_ignites_and_aura(){
     
     assert_contains!(sher.get_messages_after_last_message(
         ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 3}
-    ), ChatMessageVariant::SheriffResult{ suspicious: false });
+    ), ChatMessageVariant::DetectiveResult{ suspicious: false });
 
     
 }
@@ -2432,8 +2685,6 @@ fn yer() {
     ));
     
     game.skip_to(PhaseType::Dusk, 5);
-
-    println!("messages: {}", kit::_format_messages_debug(convertee.get_messages()));
 
     assert!(!yer.alive());
     assert!(!detective.alive());

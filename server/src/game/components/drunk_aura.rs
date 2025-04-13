@@ -1,12 +1,10 @@
-use std::collections::HashSet;
-
-use crate::game::{player::PlayerReference, Game};
+use crate::{game::{player::PlayerReference, Game}, vec_set::VecSet};
 
 use super::confused::Confused;
 
 #[derive(Default, Clone)]
 pub struct DrunkAura {
-    pub players: HashSet<PlayerReference>,
+    pub players: VecSet<PlayerReference>,
 }
 
 impl Game {
@@ -19,20 +17,20 @@ impl Game {
 }
 
 impl DrunkAura {
-    pub fn add_player(game: &mut Game, player: PlayerReference) {
+    pub fn add_player(game: &mut Game, player: PlayerReference){
         game.drunk_aura_mut().players.insert(player);
     }
-    pub fn remove_player(game: &mut Game, player: PlayerReference) {
-        game.drunk_aura_mut().players.remove(&player);
+    /// Returns true if the player was drunk
+    pub fn remove_player(game: &mut Game, player: PlayerReference) -> bool{
+        game.drunk_aura_mut().players.remove(&player).is_some()
     }
-
+  
     pub fn has_drunk_aura(game: &Game, player: PlayerReference) -> bool {
         game.drunk_aura().players.contains(&player)
     }
 
     pub fn on_role_switch(game: &mut Game, player: PlayerReference) {
-        if Self::has_drunk_aura(game, player) {
-            Self::remove_player(game, player);
+        if Self::remove_player(game, player) {
             Confused::remove_player(game, player);
         }
     }

@@ -9,8 +9,8 @@ use crate::game::player::PlayerReference;
 
 use crate::game::Game;
 
+use super::detective::Detective;
 use super::RoleStateImpl;
-
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
@@ -27,25 +27,20 @@ impl RoleStateImpl for TallyClerk {
         if priority != OnMidnightPriority::Investigative {return;}
 
         let mut evil_count: u8 = 0;
+        let is_confused = Confused::is_confused(game, actor_ref);
+        
         for player in PlayerReference::all_players(game)
             .filter(|player|player.alive(game))
             .filter(|player|VerdictsToday::player_guiltied_today(game, player))
         {
-            if TallyClerk::player_is_suspicious(game, player){
-                evil_count = evil_count.saturating_add(1);
+            if is_confused {
+                if Self::player_is_suspicious_confused(game, player, actor_ref) {
+                    evil_count = evil_count.saturating_add(1);
+                }
+            } else if Self::player_is_suspicious(game, player) {
+                evil_count =  evil_count.saturating_add(1);
             }
         }
-
-        if Confused::is_confused(game, actor_ref){
-            let total_guilties = VerdictsToday::guilties(game).len();
-            //add or subtract 1 randomly from the count
-            if rand::random::<bool>(){
-                evil_count = (evil_count.saturating_add(1u8)).min(total_guilties.try_into().unwrap_or(u8::MAX));
-            }else{
-                evil_count = evil_count.saturating_sub(1u8);
-            }
-        }
-
         
         let message = ChatMessageVariant::TallyClerkResult{ evil_count };
         actor_ref.push_night_message(game, message);
@@ -54,7 +49,6 @@ impl RoleStateImpl for TallyClerk {
 
 impl TallyClerk {
     pub fn player_is_suspicious(game: &Game, player_ref: PlayerReference) -> bool {
-
         if player_ref.has_suspicious_aura(game){
             true
         }else if player_ref.has_innocent_aura(game){
@@ -62,5 +56,8 @@ impl TallyClerk {
         }else{
             !player_ref.win_condition(game).is_loyalist_for(GameConclusion::Town)
         }
+    }
+    pub fn player_is_suspicious_confused(game: &Game, player_ref: PlayerReference, actor_ref: PlayerReference) -> bool {
+        Detective::player_is_suspicious_confused(game, player_ref, actor_ref)
     }
 }
