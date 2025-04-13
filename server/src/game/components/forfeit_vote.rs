@@ -36,7 +36,7 @@ impl ForfeitVote{
                 for player in PlayerReference::all_players(game){
                     let choose_forfeit = matches!(game.saved_controllers.get_controller_current_selection_boolean(ControllerID::forfeit_vote(player)),Some(BooleanSelection(true)));
                     if 
-                        (player.night_silenced(game) || choose_forfiet) &&
+                        (player.night_silenced(game) || choose_forfeit) &&
                         player.alive(game)
                     {
                         Tags::add_tag(game, TagSetID::ForfeitVote, player);
