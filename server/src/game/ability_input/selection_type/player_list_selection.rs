@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{game::{ability_input::{ability_selection::AbilitySelection, AbilityInput, ControllerID, AvailableSelectionKind}, player::PlayerReference, Game}, vec_set::VecSet};
+use crate::{game::{ability_input::{ability_selection::AbilitySelection, AbilityInput, AvailableSelectionKind, ControllerID}, components::insider_group::InsiderGroupID, player::PlayerReference, Game}, vec_set::VecSet};
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct PlayerListSelection(pub Vec<PlayerReference>);
@@ -15,7 +15,7 @@ impl PlayerListSelection {
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
-pub struct AvailablePlayerListSelection{
+pub struct AvailablePlayerListSelection {
     pub available_players: VecSet<PlayerReference>,
     pub can_choose_duplicates: bool,
     pub max_players: Option<u8>
@@ -30,6 +30,50 @@ impl AvailableSelectionKind for AvailablePlayerListSelection{
     
     fn default_selection(&self, _: &Game) -> Self::Selection {
         PlayerListSelection(Vec::new())
+    }
+}
+impl AvailablePlayerListSelection {
+    pub fn single_player_selection_typical(actor_ref: PlayerReference, can_select_self: bool, can_select_insiders: bool, game: &Game) -> Self {
+        AvailablePlayerListSelection {
+            available_players: PlayerReference::all_players(game)
+                .filter(|player|
+                    if !player.alive(game){
+                        false
+                    }else if *player == actor_ref{
+                        can_select_self
+                    }else{ 
+                        can_select_insiders || !InsiderGroupID::in_same_revealed_group(game, actor_ref, *player)
+                    }
+                )
+                .collect(),
+            can_choose_duplicates: false,
+            max_players: Some(1)
+        }
+    }
+    /// Returns a AvailablePlayerListSelection, with the available players being the living players 
+    /// in the same insider group as the actor_ref. If the actor ref is not in an insider group, they can pick any living player.
+    pub fn insider_selection(actor_ref: PlayerReference, can_select_self: bool, can_choose_duplicates: bool, max_players: Option<u8>, game: &Game) -> Self {
+        if InsiderGroupID::in_any_group(game, actor_ref) {
+            Self {
+                available_players: PlayerReference::all_players(game)
+                    .filter(|p|
+                        p.alive(game) &&
+                        (can_select_self || *p != actor_ref) &&
+                        InsiderGroupID::in_same_revealed_group(game, actor_ref, *p)
+                    )
+                    .collect(),
+                can_choose_duplicates,
+                max_players,
+            }
+        } else {
+            Self {
+                available_players: PlayerReference::all_players(game)
+                    .filter(|p|p.alive(game))
+                    .collect(),
+                can_choose_duplicates,
+                max_players,
+            }
+        }
     }
 }
 

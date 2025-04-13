@@ -104,19 +104,7 @@ impl RoleStateImpl for Reeducator {
         ControllerParametersMap::combine([
             ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Reeducator, 0))
-                .available_selection(AvailablePlayerListSelection {
-                    available_players: PlayerReference::all_players(game)
-                        .filter(|player| 
-                            player.alive(game) &&
-                            (
-                                InsiderGroupID::in_same_revealed_group(game, actor_ref, *player) || 
-                                (game.day_number() > 1 && self.convert_charges_remaining)
-                            )
-                        )
-                        .collect(),
-                    can_choose_duplicates: false,
-                    max_players: Some(1)
-                })
+                .available_selection(self.selection_options(game, actor_ref))
                 .night_typical(actor_ref)
                 .build_map(),
             ControllerParametersMap::builder(game)
@@ -199,5 +187,12 @@ impl Reeducator {
             .filter(|p|game.settings.enabled_roles.contains(p))
             .filter(|p|*p!=Role::Reeducator)
             .choose(&mut rand::rng())
+    }
+    fn selection_options(self, game: &Game, actor_ref: PlayerReference) -> AvailablePlayerListSelection {
+        if self.convert_charges_remaining && game.day_number() > 1 {
+            AvailablePlayerListSelection::single_player_selection_typical(actor_ref, false, true, game)
+        } else {
+            AvailablePlayerListSelection::insider_selection(actor_ref, false, false, Some(1), game)
+        }
     }
 }
