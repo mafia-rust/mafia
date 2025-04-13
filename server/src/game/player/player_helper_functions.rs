@@ -11,8 +11,9 @@ use crate::{game::{
         insider_group::InsiderGroupID, night_visits::NightVisits
     }, event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_midnight::OnMidnightPriority, on_player_roleblocked::OnPlayerRoleblocked, on_role_switch::OnRoleSwitch, on_visit_wardblocked::OnVisitWardblocked
-    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{chronokaiser::Chronokaiser, Role, RoleState}, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
+    }, game_conclusion::GameConclusion, grave::{Grave, GraveInformation, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{armorsmith::Armorsmith, chronokaiser::Chronokaiser, Role, RoleState}, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
 }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
+use crate::vec_set;
 
 use super::PlayerReference;
 
@@ -37,7 +38,7 @@ impl PlayerReference{
     /// Returns true if attack overpowered defense
     pub fn try_night_kill_single_attacker(&self, attacker_ref: PlayerReference, game: &mut Game, grave_killer: GraveKiller, attack: AttackPower, should_leave_death_note: bool) -> bool {
         self.try_night_kill(
-            &vec![attacker_ref].into_iter().collect(),
+            &vec_set![attacker_ref],
             game,
             grave_killer,
             attack,
@@ -84,6 +85,41 @@ impl PlayerReference{
             grave_killer,
             attack,
             false
+        )
+    }
+
+    pub fn try_day_kill_single_attacker(&self, attacker_ref: PlayerReference, game: &mut Game, grave_info: GraveInformation, attack_power: AttackPower) -> bool {
+        self.try_day_kill(
+            &vec_set![attacker_ref],
+            game,
+            grave_info,
+            attack_power,
+        )
+    }
+    pub fn try_day_kill(&self, attacker_refs: &VecSet<PlayerReference>, game: &mut Game, grave_info: GraveInformation, attack_power: AttackPower) -> bool {
+        if self.get_day_defense_break_armorsmith_armor(game, attack_power).can_block(attack_power){
+            self.push_night_message(game, ChatMessageVariant::YouSurvivedAttack);
+            for attacker in attacker_refs.iter() {
+                attacker.push_night_message(game,ChatMessageVariant::SomeoneSurvivedYourAttack);
+            }
+            return false;
+        }
+        
+        self.push_night_message(game, ChatMessageVariant::YouWereAttacked);
+        for attacker in attacker_refs.iter() {
+            attacker.push_night_message(game,ChatMessageVariant::YouAttackedSomeone);
+        }
+        
+        self.die_and_add_grave(game, Grave::from_grave_info(game, *self, grave_info));
+
+        true
+    }
+    pub fn try_day_kill_no_attacker(&self, game: &mut Game, grave_info: GraveInformation, attack_power: AttackPower) -> bool {
+        self.try_day_kill(
+            &VecSet::new(),
+            game,
+            grave_info,
+            attack_power,
         )
     }
 
@@ -334,7 +370,23 @@ impl PlayerReference{
     pub fn defense(&self, game: &Game) -> DefensePower {
         if game.current_phase().is_night() {
             self.night_defense(game)
-        }else{
+        } else {
+            self.get_day_defense(game)
+        }
+    }
+    pub fn get_day_defense(&self, game: &Game) -> DefensePower {
+        if Armorsmith::has_armorsmith_armor(*self, game) {
+            //incase a role with invincible defense gets added
+            DefensePower::Protection.max(self.role(game).defense())
+        } else {
+            self.role(game).defense()
+        }
+    }
+    pub fn get_day_defense_break_armorsmith_armor(&self, game: &mut Game, attack_power: AttackPower) -> DefensePower {
+        if Armorsmith::break_armor_day(game, *self, attack_power) {
+            //incase a role with invincible defense gets added
+            DefensePower::Protection.max(self.role(game).defense())
+        } else {
             self.role(game).defense()
         }
     }

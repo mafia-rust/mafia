@@ -1,6 +1,7 @@
 use rand::seq::IndexedRandom;
 use serde::Serialize;
 
+use crate::game::attack_power::AttackPower;
 use crate::game::ability_input::ControllerParametersMap;
 use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
@@ -8,7 +9,7 @@ use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::Game;
-use super::{common_role, ControllerID, GetClientRoleState, Role, RoleStateImpl};
+use super::{common_role, ControllerID, GetClientRoleState, Role, RoleState, RoleStateImpl};
 
 #[derive(Clone, Debug)]
 pub struct Armorsmith {
@@ -137,5 +138,40 @@ impl GetClientRoleState<ClientRoleState> for Armorsmith {
         ClientRoleState {
             open_shops_remaining: self.open_shops_remaining
         }
+    }
+}
+
+impl Armorsmith {
+    pub fn has_armorsmith_armor(player: PlayerReference, game: &Game) -> bool {
+        for other in PlayerReference::all_players(game){
+            if let RoleState::Armorsmith(state) = other.role_state(game) {
+                if state.players_armor.contains(&player) {
+                    return true;
+                }
+            }
+        }
+        false
+    }
+    /// Should not be run during the do_night_action events
+    /// Attack power is only used for checking if the armorsmith should be told their target was protected
+    pub fn break_armor_day(game: &mut Game, player: PlayerReference, attack_power: AttackPower) -> bool {
+        let mut had_armor: bool = false;
+        for smith in PlayerReference::all_players(game){
+            let RoleState::Armorsmith(state) = smith.role_state(game) else {continue};
+            if state.players_armor.contains(&player) {
+                had_armor = true;
+                smith.set_role_state(game, RoleState::Armorsmith(Armorsmith { 
+                    open_shops_remaining: state.open_shops_remaining, 
+                    night_open_shop: state.night_open_shop, 
+                    night_protected_players: state.night_protected_players.clone(), 
+                    players_armor: state.players_armor.iter().filter(|p|**p!=player).copied().collect(),
+                }));
+                player.add_private_chat_message(game, ChatMessageVariant::ArmorsmithArmorBroke);
+                if !attack_power.can_pierce(DefensePower::Protection) {
+                    smith.add_private_chat_message(game, ChatMessageVariant::TargetWasAttacked);
+                }
+            }
+        }
+        had_armor
     }
 }
