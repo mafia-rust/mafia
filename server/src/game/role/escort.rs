@@ -11,8 +11,6 @@ use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Escort;
 
-
-
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
