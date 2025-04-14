@@ -683,18 +683,10 @@ export function translateChatMessage(
                 playerNames[message.player]
             );
         case "auditorResult":
-            if(message.result.type === "one"){
-                return translate("chatMessage.auditorResult.one", 
-                    translateRoleOutline(message.roleOutline),
-                    translate("role."+message.result.role+".name")
-                );
-            }else{
-                return translate("chatMessage.auditorResult.two", 
-                    translateRoleOutline(message.roleOutline),
-                    translate("role."+message.result.roles[0]+".name"),
-                    translate("role."+message.result.roles[1]+".name")
-                );
-            }
+            return translate("chatMessage.auditorResult", 
+                translateRoleOutline(message.roleOutline),
+                message.result.map((role)=>translate("role."+role+".name")).join(", ")
+            );
         case "engineerVisitorsRole":
             return translate("chatMessage.engineerVisitorsRole", translate("role."+message.role+".name"));
         case "trapState":
