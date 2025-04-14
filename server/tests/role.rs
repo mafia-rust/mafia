@@ -227,10 +227,7 @@ fn auditor_standard_double_audit(){
     for message in messages.iter() {
         if let ChatMessageVariant::AuditorResult { role_outline: _, result } = message {
             results += 1;
-            if match result {
-                AuditorResult::Two { roles } => roles.contains(&Role::Auditor),
-                AuditorResult::One { role } => *role == Role::Auditor,
-            } {
+            if result.0.contains(&Role::Auditor) {
                 found_auditor = true;
             }
         }
