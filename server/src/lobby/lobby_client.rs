@@ -11,7 +11,7 @@ use crate::{client_connection::ClientConnection, packet::ToClientPacket, websock
 use super::game_client::GameClient;
 use super::GameClientLocation;
 
-pub type LobbyClientID = u32;
+pub type RoomClientID = u32;
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LobbyClient{

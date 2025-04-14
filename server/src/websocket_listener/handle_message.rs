@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{log, packet::{LobbyPreviewData, RejectJoinReason, ToClientPacket, ToServerPacket}};
+use crate::{game::on_client_message::GameAction, lobby::{on_client_message::RoomAction, on_lobby_message::LobbyAction, RemoveClientData, RoomState}, log, packet::{LobbyPreviewData, RejectJoinReason, ToClientPacket, ToServerPacket}};
 
 use super::{client::{ClientLocation, ClientReference}, RoomCode, WebsocketListener};
 
@@ -16,13 +16,7 @@ impl WebsocketListener{
                     self,
                     ToClientPacket::LobbyList{lobbies: self.lobbies()
                         .iter()
-                        .map(|(room_code, lobby)|
-                            (*room_code, LobbyPreviewData { 
-                                name: lobby.name.clone(),
-                                in_game: lobby.is_in_game(),
-                                players: lobby.get_player_list() 
-                            }
-                        ))
+                        .map(|(room_code, room)| (*room_code, room.get_preview_data()))
                         .collect::<HashMap<RoomCode, LobbyPreviewData>>()
                     }
                 );
@@ -49,7 +43,7 @@ impl WebsocketListener{
             ToServerPacket::Kick { player_id: kicked_player_id } => {
 
 
-                let Ok((lobby,room_code,host_id)) = client.get_lobby_mut(self) else {return};
+                let Ok((lobby,room_code,host_id)) = client.get_room_mut(self) else {return};
 
                 if !lobby.is_host(host_id) {return}
 
@@ -57,7 +51,7 @@ impl WebsocketListener{
                 let kicked_player = 
                     ClientReference::all_clients(self)
                     .find(|c|
-                        *c.location(self) == ClientLocation::InLobby { room_code, lobby_client_id: kicked_player_id }
+                        *c.location(self) == ClientLocation::InRoom { room_code, room_client_id: kicked_player_id }
                     );
 
                 if let Some(kicked_player) = kicked_player {
@@ -69,17 +63,36 @@ impl WebsocketListener{
                     //Nobody is connected to that lobby with that id,
                     //Maybe they already left
 
-                    let Ok((lobby,_,_)) = client.get_lobby_mut(self) else {return};
+                    let Ok((lobby,_,_)) = client.get_room_mut(self) else {return};
 
-                    lobby.remove_player(kicked_player_id);
+                    let RemoveClientData { close_room } = lobby.remove_client(kicked_player_id);
+
+                    if close_room {
+                        self.delete_lobby(room_code);
+                    }
                 }
                 
             },
             _ => {
                 let sender = &client.sender(self);
-                let Ok((lobby, _, id)) = client.get_lobby_mut(self) else {return};
+                let Ok((room, room_code, id)) = client.get_room_mut(self) else {return};
 
-                lobby.on_client_message(sender, id, packet);
+                match room.on_client_message(sender, id, packet) {
+                    RoomAction::LobbyAction(LobbyAction::StartGame(game)) => {
+                        log!(info "Lobby"; "Game started with room code {}", room_code);
+
+                        *room = RoomState::Game(game);
+                    },
+                    RoomAction::GameAction(GameAction::BackToLobby(lobby)) => {
+                        *room = RoomState::Lobby(lobby);
+                    },
+                    RoomAction::GameAction(GameAction::Close) |
+                    RoomAction::LobbyAction(LobbyAction::Close) => {
+                        self.delete_lobby(room_code);
+                    },
+                    _ => {}
+                }
+                
             }
         }
     }

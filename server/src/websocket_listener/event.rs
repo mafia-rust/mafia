@@ -41,10 +41,9 @@ impl WebsocketListener{
         let mut closed_clients = Vec::new();
 
         for (room_code, lobby) in self.lobbies_mut().iter_mut() {
-            if lobby.is_closed() {
+            let tick_data = lobby.tick(delta_time);
+            if tick_data.close_room {
                 closed_lobbies.push(*room_code);
-            } else {
-                lobby.tick(delta_time);
             }
         }
 

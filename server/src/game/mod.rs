@@ -22,7 +22,9 @@ pub mod win_condition;
 pub mod role_outline_reference;
 pub mod ability_input;
 
+use std::collections::VecDeque;
 use std::time::Duration;
+use std::time::Instant;
 use ability_input::saved_controllers_map::SavedControllersMap;
 use ability_input::PlayerListSelection;
 use components::confused::Confused;
@@ -53,10 +55,20 @@ use win_condition::WinCondition;
 use crate::client_connection::ClientConnection;
 use crate::game::event::on_game_start::OnGameStart;
 use crate::game::player::PlayerIndex;
+use crate::lobby::game_client::GameClient;
+use crate::lobby::game_client::GameClientLocation;
+use crate::lobby::lobby_client::RoomClientID;
+use crate::lobby::name_validation;
+use crate::lobby::JoinClientData;
+use crate::lobby::RemoveClientData;
+use crate::lobby::TickData;
+use crate::packet::HostDataPacketGameClient;
+use crate::packet::LobbyPreviewData;
 use crate::packet::RejectJoinReason;
 use crate::packet::ToClientPacket;
 use crate::vec_map::VecMap;
 use crate::vec_set::VecSet;
+use crate::websocket_connections::connection::ClientSender;
 use chat::{ChatMessageVariant, ChatGroup, ChatMessage};
 use player::PlayerReference;
 use player::Player;
@@ -86,6 +98,8 @@ use self::verdict::Verdict;
 
 
 pub struct Game {
+    room_name: String,
+    clients: VecMap<RoomClientID, GameClient>,
     pub settings : Settings,
 
     pub spectators: Vec<Spectator>,
@@ -147,7 +161,7 @@ pub enum GameOverReason {
 
 impl Game {
     /// `players` must have length 255 or lower.
-    pub fn new(settings: Settings, players: Vec<PlayerInitializeParameters>, spectators: Vec<SpectatorInitializeParameters>) -> Result<Self, RejectStartReason>{
+    pub fn new(room_name: String, settings: Settings, clients: VecMap<RoomClientID, GameClient>, players: Vec<PlayerInitializeParameters>, spectators: Vec<SpectatorInitializeParameters>) -> Result<Self, RejectStartReason>{
         //check settings are not completly off the rails
         if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
@@ -211,6 +225,8 @@ impl Game {
             let num_players = new_players.len() as u8;
 
             let mut game = Self{
+                room_name: room_name.clone(),
+                clients: clients.clone(),
                 pitchfork: Pitchfork::new(num_players),
 
                 assignments: assignments.clone(),
@@ -494,9 +510,10 @@ impl Game {
         self.phase_machine.day_number
     }
 
-    pub fn tick(&mut self, time_passed: Duration){
-
-        if !self.ticking { return }
+    pub fn tick(&mut self, time_passed: Duration) -> TickData {
+        if !self.ticking { 
+            return TickData { close_room: false }
+        }
 
         if let Some(conclusion) = GameConclusion::game_is_over(self) {
             OnGameEnding::new(conclusion).invoke(self);
@@ -508,7 +525,7 @@ impl Game {
             });
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
             self.ticking = false;
-            return;
+            return TickData { close_room: !self.is_any_client_connected() };
         }
 
         while self.phase_machine.time_remaining.is_some_and(|d| d.is_zero()) {
@@ -520,6 +537,10 @@ impl Game {
         self.phase_machine.time_remaining = self.phase_machine.time_remaining.map(|d|d.saturating_sub(time_passed));
 
         OnTick::new().invoke(self);
+
+        TickData {
+            close_room: !self.is_any_client_connected()
+        }
     }
 
     pub fn add_grave(&mut self, grave: Grave) {
@@ -577,12 +598,289 @@ impl Game {
         }
     }
     
+    pub fn send_to_client_by_id(&self, lobby_client_id: RoomClientID, packet: ToClientPacket) {
+        if let Some(player) = self.clients.get(&lobby_client_id) {
+            match player.client_location {
+                GameClientLocation::Player(player_index) => {
+                    if let Ok(player_ref) = PlayerReference::new(self, player_index) {
+                        player_ref.send_packet(self, packet);
+                    }
+                },
+                GameClientLocation::Spectator(index) => {
+                    SpectatorPointer::new(index).send_packet(self, packet);
+                }
+            }
+        }
+    }
+    
     pub(crate) fn is_any_client_connected(&self) -> bool {
         PlayerReference::all_players(self).any(|p| p.is_connected(self))
         || SpectatorPointer::all_spectators(self).any(|s| s.is_connected(self))
     }
+    
+    pub(crate) fn join_client(&mut self, send: &ClientSender) -> Result<JoinClientData, RejectJoinReason> {
+        let is_host = !self.clients.iter().any(|p|p.1.host);
+                
+        let Some(lobby_client_id) = 
+            (self.clients
+                .iter()
+                .map(|(i,_)|*i)
+                .fold(0u32, u32::max) as RoomClientID).checked_add(1) else {
+                    send.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomFull });
+                    return Err(RejectJoinReason::RoomFull);
+                };
+
+        self.ensure_host_exists(None);
+
+        let new_spectator = self.join_spectator(SpectatorInitializeParameters {
+            connection: ClientConnection::Connected(send.clone()),
+            host: is_host,
+        })?;
+        
+        let new_client = GameClient::new_spectator(new_spectator.index(), is_host);
+
+        self.clients.insert(lobby_client_id, new_client);
+
+        self.resend_host_data_to_all_hosts();
+        Ok(JoinClientData { id: lobby_client_id, in_game: true, spectator: true })
+    }
+
+    pub fn initialize_client(&mut self, lobby_client_id: RoomClientID, send: &ClientSender) {
+        if let Some(client) = self.clients.get(&lobby_client_id) {
+            match client.client_location {
+                GameClientLocation::Player(player_index) => {
+                    if let Ok(player_ref) = PlayerReference::new(self, player_index) {
+                        player_ref.connect(self, send.clone());
+                        player_ref.send_join_game_data(self);
+                    }
+                },
+                GameClientLocation::Spectator(index) => {
+                    SpectatorPointer::new(index).send_join_game_data(self);
+                }
+            }
+        }
+        
+        send.send(ToClientPacket::PlayersHost{hosts:
+            self.clients
+                .iter()
+                .filter(|p|p.1.host)
+                .map(|p|*p.0)
+                .collect()
+        });
+
+        send.send(ToClientPacket::LobbyName { name: self.room_name.clone() });
+    }
+    
+    pub(crate) fn remove_client(&mut self, lobby_client_id: u32) -> RemoveClientData {
+        let Some(game_player) = self.clients.get_mut(&lobby_client_id) else {
+            return RemoveClientData {
+                close_room: false,
+            }
+        };
+
+        match game_player.client_location {
+            GameClientLocation::Player(player_index) => {
+                if let Ok(player_ref) = PlayerReference::new(self, player_index) {
+                    player_ref.quit(self);
+                }
+            },
+            GameClientLocation::Spectator(idx) => {
+                self.clients.remove(&lobby_client_id);
+                for client in self.clients.iter_mut() {
+                    if let GameClientLocation::Spectator(index) = &mut client.1.client_location {
+                        if *index > idx {
+                            *index = index.saturating_sub(1);
+                        }
+                    }
+                }
+                self.remove_spectator(idx);
+            }
+        }
+
+        self.ensure_host_exists(None);
+
+        self.resend_host_data_to_all_hosts();
+
+        RemoveClientData { close_room: !self.is_any_client_connected() }
+    }
+
+    fn ensure_host_exists(&mut self, skip: Option<RoomClientID>) {
+        fn is_player_not_disconnected(game: &Game, p: &GameClient) -> bool {
+            match p.client_location {
+                GameClientLocation::Spectator(index) => {
+                    !matches!(SpectatorPointer::new(index).connection(game), ClientConnection::Disconnected)
+                },
+                GameClientLocation::Player(index) => {
+                    PlayerReference::new(game, index).is_ok_and(|player_ref| 
+                        !matches!(player_ref.connection(game), ClientConnection::Disconnected)
+                    )
+                }
+            }
+        }
+        fn is_player_not_disconnected_host(game: &Game, p: &GameClient) -> bool {
+            p.host && is_player_not_disconnected(game, p)
+        }
+
+        if !self.clients.iter().any(|p| is_player_not_disconnected_host(self, p.1)) {
+            let next_available_player_id = self.clients.iter()
+                .filter(|(&id, _)| skip.is_none_or(|s| s != id))
+                .filter(|(_, c)| is_player_not_disconnected(self, c))
+                .map(|(&id, _)| id)
+                .next();
+
+            let next_available_player = next_available_player_id.map(|id| unsafe { self.clients.get_unchecked_mut(&id) });
+
+            if let Some(new_host) = next_available_player {
+                new_host.set_host();
+            } else if let Some(new_host) = self.clients.values_mut().next(){
+                new_host.set_host();
+            }
+        }
+    }
+
+
+    fn resend_host_data_to_all_hosts(&self) {
+        for client in self.clients.values().filter(|client| client.host) {
+            let client_connection = match client.client_location {
+                GameClientLocation::Player(index) => PlayerReference::new(self, index).map(|p| p.connection(self).clone()).ok(),
+                GameClientLocation::Spectator(index) => Some(SpectatorPointer::new(index).connection(self))
+            };
+
+            if let Some(client_connection) = client_connection {
+                self.resend_host_data(&client_connection)
+            }
+        }
+    }
+    
+    fn resend_host_data(&self, connection: &ClientConnection) {
+        connection.send_packet(ToClientPacket::HostData { clients: self.clients.iter()
+            .map(|(id, client)| {
+                (*id, HostDataPacketGameClient {
+                    client_type: client.client_location.clone(),
+                    connection: match client.client_location {
+                        GameClientLocation::Player(index) => {
+                            unsafe { PlayerReference::new_unchecked(index) }.connection(self).clone()
+                        }
+                        GameClientLocation::Spectator(index) => {
+                            SpectatorPointer::new(index).connection(self)
+                        }
+                    },
+                    host: client.host
+                })
+            }).collect()
+        });
+    }
+
+    fn send_players(&mut self){
+        let players: Vec<String> = PlayerReference::all_players(self).map(|p|
+            p.name(self).clone()
+        ).collect();
+
+        let packet = ToClientPacket::GamePlayers{ 
+            players
+        };
+
+        self.send_packet_to_all(packet.clone());
+    }
+
+    pub fn set_player_name(&mut self, player_ref: PlayerReference, name: String) {
+        let mut other_players: Vec<String> = PlayerReference::all_players(self)
+            .map(|p| p.name(self))
+            .cloned()
+            .collect();
+
+        other_players.remove(player_ref.index() as usize);
+        
+        let new_name: String = name_validation::sanitize_name(name, &other_players);
+
+        player_ref.set_name(self, new_name);
+    }
+    
+    pub(crate) fn remove_client_rejoinable(&mut self, id: u32) -> RemoveClientData {
+        let Some(game_player) = self.clients.get_mut(&id) else {return RemoveClientData { close_room: false }};
+
+        if let GameClientLocation::Player(player_index) = game_player.client_location {
+            if let Ok(player_ref) = PlayerReference::new(self, player_index) {
+                if !player_ref.is_disconnected(self) {
+                    player_ref.lose_connection(self);
+
+                    self.ensure_host_exists(None);
+                    self.resend_host_data_to_all_hosts();
+                }
+            }
+        }
+
+        RemoveClientData { close_room: false }
+    }
+    
+    pub(crate) fn rejoin_client(&mut self, send: &ClientSender, lobby_client_id: u32) -> Result<JoinClientData, RejectJoinReason> {
+        let Some(client) = self.clients.get_mut(&lobby_client_id) else {
+            send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
+            return Err(RejectJoinReason::PlayerDoesntExist)
+        };
+        
+        if let GameClientLocation::Player(player_index) = client.client_location {
+            let Ok(player_ref) = PlayerReference::new(self, player_index) else {
+                send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
+                return Err(RejectJoinReason::PlayerDoesntExist)
+            };
+            if !player_ref.could_reconnect(self) {
+                send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerTaken});
+                return Err(RejectJoinReason::PlayerTaken)
+            };
+
+            self.resend_host_data_to_all_hosts();
+
+            Ok(JoinClientData { id: lobby_client_id, in_game: true, spectator: false })
+        }else{
+            send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
+            Err(RejectJoinReason::PlayerDoesntExist)
+        }
+    }
+    
+    pub(crate) fn get_preview_data(&self) -> LobbyPreviewData {
+        LobbyPreviewData {
+            name: self.room_name.clone(),
+            in_game: true,
+            players: self.clients.iter()
+                .filter_map(|(id, player)|
+                    if let GameClientLocation::Player(player_index) = player.client_location {
+                        if let Ok(player_ref) = PlayerReference::new(self, player_index) {
+                            Some((*id, player_ref.name(self).clone()))
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
+                )
+                .collect()
+        }
+    }
+    
+    pub(crate) fn is_host(&self, lobby_client_id: u32) -> bool {
+        if let Some(client) = self.clients.get(&lobby_client_id){
+            client.host
+        }else{
+            false
+        }
+    }
+    
+    pub(crate) fn send_to_all(&self, packet: ToClientPacket) {
+        self.send_packet_to_all(packet.clone())
+    }
+    
+    pub(crate) fn get_client_last_message_times(&mut self, lobby_client_id: u32) -> Option<&mut VecDeque<Instant>> {
+        if let Some(client) = self.clients.get_mut(&lobby_client_id) {
+            Some(&mut client.last_message_times)
+        } else {
+            None
+        }
+    }
 }
 pub mod test {
+
+    use crate::vec_map::VecMap;
 
     use super::{
         ability_input::saved_controllers_map::SavedControllersMap,
@@ -632,6 +930,8 @@ pub mod test {
         }
 
         let mut game = Game{
+            clients: VecMap::new(),
+            room_name: "Test".to_string(),
             pitchfork: Pitchfork::new(number_of_players),
             
             assignments,

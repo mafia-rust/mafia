@@ -1,6 +1,6 @@
 use crate::{log, websocket_connections::{connection::Connection, ForceLock}, websocket_listener::WebsocketListener};
 use tokio_tungstenite::tungstenite::Message;
-use std::{net::SocketAddr, sync::{Arc, Mutex}, pin::pin};
+use std::{future::Future, net::SocketAddr, pin::pin, sync::{Arc, Mutex}};
 
 use futures_util::{future::{self, Either}, StreamExt, SinkExt};
 
@@ -59,6 +59,32 @@ pub async fn create_ws_server(server_address: &str) {
 
 struct ConnectionError;
 
+enum NextEvent<A, B, C>
+where 
+    A: Future + Unpin,
+    B: Future + Unpin,
+    C: Future + Unpin
+{
+    TcpRecieved(A::Output),
+    MpscReceieved(B::Output),
+    CrashSignal(C::Output),
+}
+
+impl<A, B, C> NextEvent<A, B, C> 
+where 
+    A : Future + Unpin,
+    B : Future + Unpin,
+    C : Future + Unpin
+{
+    async fn from_futures(tcp_message: A, mpsc_message: B, crash_signal: C) -> Self {
+        match future::select(tcp_message, future::select(mpsc_message, crash_signal)).await {
+            Either::Left((tcp_message, _)) => Self::TcpRecieved(tcp_message),
+            Either::Right((Either::Left((mpsc_message, _)), _)) => Self::MpscReceieved(mpsc_message),
+            Either::Right((Either::Right((crash_signal, _)), _)) => Self::CrashSignal(crash_signal),
+        }
+    }
+}
+
 // Code within this function __SHOULD NOT PANIC__ except for listener methods.
 // There is a panic hook that restarts the server. The server doesn't need to restart if a connection fails, so don't panic -- just disconnect.
 /// This runs until the connection is closed. It does not remove the connection from the listener.
@@ -92,48 +118,57 @@ async fn handle_connection(
         listener.on_connect(&connection);
         connection
     };
-    
-    // Route MPSC packets to client via TCP
-    let send_over_tcp = tokio::spawn(async move {
-        loop {
-            let message = match future::select(pin!(mpsc_receiver.recv()), pin!(crash_signal.1.recv())).await {
-                Either::Left((Some(message), _)) => message,
-                Either::Left((None, _)) => break, // Channel has been closed
-                Either::Right(_) => break // Server has been closed
-            };
-            
-            let Ok(json_message) = message.to_json_string() else {break};
 
-            match tcp_sender.send(Message::text(json_message)).await {
-                Ok(_) => {},
-                Err(tokio_tungstenite::tungstenite::Error::ConnectionClosed) => break,
-                Err(err) => {
-                    log!(error "Connection"; "Failed to send packet. {}", err);
-                    break
-                },
-            }
+    let connection_tcp = connection.clone();
+    
+    let handle_tcp = tokio::spawn(async move {
+        let listener = listener.clone();
+
+        loop {
+            match NextEvent::from_futures(
+                pin!(tcp_receiver.next()),
+                pin!(mpsc_receiver.recv()),
+                pin!(crash_signal.1.recv())
+            ).await {
+                NextEvent::TcpRecieved(None) => break, // Channel has been closed
+                NextEvent::TcpRecieved(Some(message)) => {
+                    let Ok(mut listener) = listener.lock() else {
+                        let _ = crash_signal.0.send(());
+                        return;
+                    };
+
+                    match message {
+                        Ok(message) => {
+                            listener.on_message(&connection_tcp, &message);
+                        }
+                        Err(tokio_tungstenite::tungstenite::Error::ConnectionClosed) => break,
+                        Err(err) => {
+                            log!(error "Connection"; "Failed to receive packet. {}", err);
+                            break
+                        },
+                    }
+                }
+                NextEvent::MpscReceieved(None) => break, // Channel has been closed
+                NextEvent::MpscReceieved(Some(message)) => {
+                    let Ok(json_message) = message.to_json_string() else {break};
+        
+                    match tcp_sender.send(Message::text(json_message)).await {
+                        Ok(_) => {},
+                        Err(tokio_tungstenite::tungstenite::Error::ConnectionClosed) => break,
+                        Err(err) => {
+                            log!(error "Connection"; "Failed to send packet. {}", err);
+                            break
+                        },
+                    }
+                }
+                NextEvent::CrashSignal(..) => break, // Server has been closed
+            };
         }
         let _ = tcp_sender.close().await;
     });
-
-    let receive_over_tcp = {
-        let listener = listener.clone();
-        let connection = connection.clone();
-
-        tokio::spawn(async move {
-            while let Some(Ok(message)) = tcp_receiver.next().await {
-                let Ok(mut listener) = listener.lock() else {
-                    let _ = crash_signal.0.send(());
-                    return;
-                };
-        
-                listener.on_message(&connection, &message);
-            }
-        })
-    };
     
     // When either future is complete, that means it has disconnected
-    future::select(send_over_tcp, receive_over_tcp).await;
+    let _ = handle_tcp.await;
 
     Ok(connection)
 }
