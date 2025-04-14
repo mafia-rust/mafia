@@ -149,10 +149,10 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "auditorResult", "roleOutline":[{"roleSet": "any"}],"result": {"type":"two","roles":["godfather","jester"]}},
-            {"type": "auditorResult", "roleOutline":[{"role":"vigilante"},{"role":"marksman"}],"result": {"type":"one","role":["vigilante"]}},
-            {"type": "auditorResult", "roleOutline":[{"role":"fiendsWildcard"}],"result": {"type":"one","role":["fiendsWildcard"]}},
-            {"type": "auditorResult", "roleOutline":[{"roleSet":"townSupport"}],"result": {"type":"two","roles":["escort","medium"]}}
+            {"type": "auditorResult", "roleOutline":[{"roleSet": "any"}],"result": ["godfather","jester","apostle","escort"]},
+            {"type": "auditorResult", "roleOutline":[{"role":"vigilante"},{"role":"marksman"}],"result": ["vigilante"]},
+            {"type": "auditorResult", "roleOutline":[{"role":"arsonist"}],"result": ["arsonist"]},
+            {"type": "auditorResult", "roleOutline":[{"roleSet":"townSupport"}],"result": ["escort","medium","coxswain"]}
         ]
     },
     "snoop": {
