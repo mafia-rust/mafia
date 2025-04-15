@@ -8,7 +8,7 @@ use super::{
 
 
 
-pub enum GameAction {
+pub enum GameClientMessageResult {
     BackToLobby(Lobby),
     Close,
     None
@@ -22,7 +22,7 @@ impl Game {
         }
     }
     
-    pub fn on_client_message(&mut self, _: &ClientSender, room_client_id: RoomClientID, incoming_packet: ToServerPacket) -> GameAction {
+    pub fn on_client_message(&mut self, _: &ClientSender, room_client_id: RoomClientID, incoming_packet: ToServerPacket) -> GameClientMessageResult {
         if let Some(client) = self.clients.get(&room_client_id) {
             match client.client_location {
                 GameClientLocation::Player(player) => {
@@ -30,23 +30,23 @@ impl Game {
                 }
                 GameClientLocation::Spectator(spectator) => {
                     self.on_spectator_message(spectator, incoming_packet);
-                    GameAction::None
+                    GameClientMessageResult::None
                 }
             }
         } else {
             log!(error "Game"; "Received message from invalid client id: {}", room_client_id);
-            GameAction::None
+            GameClientMessageResult::None
         }
     }
 
-    pub fn on_player_message(&mut self, room_client_id: RoomClientID, sender_player_ref: PlayerReference, incoming_packet: ToServerPacket) -> GameAction {
+    pub fn on_player_message(&mut self, room_client_id: RoomClientID, sender_player_ref: PlayerReference, incoming_packet: ToServerPacket) -> GameClientMessageResult {
         'packet_match: {match incoming_packet {
             ToServerPacket::SetName{ name } => {
                 self.set_player_name(sender_player_ref, name);
             },
             ToServerPacket::Leave => {
                 if let RemoveRoomClientResult::RoomShouldClose = self.remove_client(room_client_id) {
-                    return GameAction::Close;
+                    return GameClientMessageResult::Close;
                 }
             },
             ToServerPacket::HostForceBackToLobby => {
@@ -68,7 +68,7 @@ impl Game {
 
                 let lobby = Lobby::new_from_game(self.room_name.clone(), self.settings.clone(), new_clients);
 
-                return GameAction::BackToLobby(lobby);
+                return GameClientMessageResult::BackToLobby(lobby);
             }
             ToServerPacket::HostForceEndGame => {
                 if let Some(player) = self.clients.get(&room_client_id){
@@ -241,6 +241,6 @@ impl Game {
             spectator_ref.send_repeating_data(self)
         }
 
-        GameAction::None
+        GameClientMessageResult::None
     }
 }

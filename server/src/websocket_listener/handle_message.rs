@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{game::on_client_message::GameAction, lobby::on_client_message::LobbyAction, log, packet::{RoomPreviewData, RejectJoinReason, ToClientPacket, ToServerPacket}, room::{on_client_message::RoomAction, RemoveRoomClientResult, Room, RoomState}};
+use crate::{game::on_client_message::GameClientMessageResult, lobby::on_client_message::LobbyClientMessageResult, log, packet::{RoomPreviewData, RejectJoinReason, ToClientPacket, ToServerPacket}, room::{on_client_message::RoomClientMessageResult, RemoveRoomClientResult, Room, RoomState}};
 
 use super::{client::{ClientLocation, ClientReference}, RoomCode, WebsocketListener};
 
@@ -75,16 +75,16 @@ impl WebsocketListener{
                 let Ok((room, room_code, id)) = client.get_room_mut(self) else {return};
 
                 match room.on_client_message(sender, id, packet) {
-                    RoomAction::LobbyAction(LobbyAction::StartGame(game)) => {
+                    RoomClientMessageResult::LobbyAction(LobbyClientMessageResult::StartGame(game)) => {
                         log!(info "Room"; "Game started with room code {}", room_code);
 
                         *room = Room::Game(game);
                     },
-                    RoomAction::GameAction(GameAction::BackToLobby(lobby)) => {
+                    RoomClientMessageResult::GameAction(GameClientMessageResult::BackToLobby(lobby)) => {
                         *room = Room::Lobby(lobby);
                     },
-                    RoomAction::GameAction(GameAction::Close) |
-                    RoomAction::LobbyAction(LobbyAction::Close) => {
+                    RoomClientMessageResult::GameAction(GameClientMessageResult::Close) |
+                    RoomClientMessageResult::LobbyAction(LobbyClientMessageResult::Close) => {
                         self.delete_room(room_code);
                     },
                     _ => {}

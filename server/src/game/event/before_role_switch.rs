@@ -20,13 +20,4 @@ impl BeforeRoleSwitch{
             player.before_role_switch(game, self.player, self.old.clone(), self.new.clone());
         }
     }
-    pub fn player(&self) -> PlayerReference{
-        self.player
-    }
-    pub fn old_role(&self) -> &RoleState{
-        &self.old
-    }
-    pub fn new_role(&self) -> &RoleState{
-        &self.new
-    }
 }

@@ -5,14 +5,14 @@ use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, game_client::{GameCl
 use super::{lobby_client::{LobbyClient, LobbyClientType, Ready}, Lobby};
 
 
-pub enum LobbyAction {
+pub enum LobbyClientMessageResult {
     StartGame(Game),
     Close,
     None
 }
 
 impl Lobby {
-    pub fn on_client_message(&mut self, send: &ClientSender, room_client_id: RoomClientID, incoming_packet: ToServerPacket) -> LobbyAction {
+    pub fn on_client_message(&mut self, send: &ClientSender, room_client_id: RoomClientID, incoming_packet: ToServerPacket) -> LobbyClientMessageResult {
         'packet_match: { match incoming_packet {
             ToServerPacket::SendLobbyMessage { text } => {
                 let text = text.trim_newline().trim_whitespace().truncate(100);
@@ -169,7 +169,7 @@ impl Lobby {
                         
                 self.send_to_all(ToClientPacket::RoomName { name: self.name.clone() });
 
-                return LobbyAction::StartGame(game);
+                return LobbyClientMessageResult::StartGame(game);
             },
             ToServerPacket::SetPhaseTime{phase, time} => {
                 if let Some(player) = self.clients.get(&room_client_id){
@@ -245,7 +245,7 @@ impl Lobby {
             }
             ToServerPacket::Leave => {
                 if let RemoveRoomClientResult::RoomShouldClose = self.remove_client(room_client_id) {
-                    return LobbyAction::Close;
+                    return LobbyClientMessageResult::Close;
                 }
             }
             ToServerPacket::HostForceSetPlayerName { id, name } => {
@@ -276,6 +276,6 @@ impl Lobby {
             }
         } }
 
-        LobbyAction::None
+        LobbyClientMessageResult::None
     }
 }

@@ -5,7 +5,7 @@ use std::{collections::VecDeque, time::{Duration, Instant}};
 
 use lobby_client::{LobbyClient, LobbyClientType, Ready};
 
-use crate::{client_connection::ClientConnection, game::{role_list::RoleOutline, settings::Settings}, packet::{RoomPreviewData, RejectJoinReason, ToClientPacket}, room::{name_validation, JoinRoomClientData, RemoveRoomClientResult, RoomClientID, RoomState, RoomTickResult}, vec_map::VecMap, websocket_connections::connection::ClientSender};
+use crate::{client_connection::ClientConnection, game::{role_list::RoleOutline, settings::Settings}, packet::{RoomPreviewData, RejectJoinReason, ToClientPacket}, room::{name_validation, JoinRoomClientResult, RemoveRoomClientResult, RoomClientID, RoomState, RoomTickResult}, vec_map::VecMap, websocket_connections::connection::ClientSender};
 
 pub struct Lobby {
     pub name: String,
@@ -143,7 +143,7 @@ impl RoomState for Lobby {
         }
     }
 
-    fn join_client(&mut self, send: &ClientSender) -> Result<JoinRoomClientData, RejectJoinReason> {
+    fn join_client(&mut self, send: &ClientSender) -> Result<JoinRoomClientResult, RejectJoinReason> {
         let player_names = self.clients.values().filter_map(|p| {
             if let LobbyClientType::Player { name } = p.client_type.clone() {
                 Some(name)
@@ -174,7 +174,7 @@ impl RoomState for Lobby {
             }
         }
 
-        Ok(JoinRoomClientData {
+        Ok(JoinRoomClientResult {
             id: room_client_id,
             in_game: false,
             spectator: false
@@ -220,7 +220,7 @@ impl RoomState for Lobby {
         RemoveRoomClientResult::Success
     }
     
-    fn rejoin_client(&mut self, send: &ClientSender, id: RoomClientID) -> Result<JoinRoomClientData, RejectJoinReason> {
+    fn rejoin_client(&mut self, send: &ClientSender, id: RoomClientID) -> Result<JoinRoomClientResult, RejectJoinReason> {
         let Some(client) = self.clients.get_mut(&id) else {
             return Err(RejectJoinReason::PlayerDoesntExist)
         };
@@ -229,7 +229,7 @@ impl RoomState for Lobby {
             ClientConnection::CouldReconnect { .. } => {
                 client.connection = ClientConnection::Connected(send.clone());
     
-                Ok(JoinRoomClientData {
+                Ok(JoinRoomClientResult {
                     id,
                     in_game: false,
                     spectator: false

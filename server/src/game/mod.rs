@@ -60,7 +60,7 @@ use game_client::GameClient;
 use game_client::GameClientLocation;
 use crate::room::RoomClientID;
 use crate::room::name_validation;
-use crate::room::JoinRoomClientData;
+use crate::room::JoinRoomClientResult;
 use crate::room::RemoveRoomClientResult;
 use crate::room::RoomState;
 use crate::room::RoomTickResult;
@@ -714,7 +714,7 @@ impl RoomState for Game {
         }
     }
     
-    fn join_client(&mut self, send: &ClientSender) -> Result<JoinRoomClientData, RejectJoinReason> {
+    fn join_client(&mut self, send: &ClientSender) -> Result<JoinRoomClientResult, RejectJoinReason> {
         let is_host = !self.clients.iter().any(|p|p.1.host);
                 
         let Some(room_client_id) = 
@@ -737,7 +737,7 @@ impl RoomState for Game {
         self.clients.insert(room_client_id, new_client);
 
         self.resend_host_data_to_all_hosts();
-        Ok(JoinRoomClientData { id: room_client_id, in_game: true, spectator: true })
+        Ok(JoinRoomClientResult { id: room_client_id, in_game: true, spectator: true })
     }
 
     fn initialize_client(&mut self, room_client_id: RoomClientID, send: &ClientSender) {
@@ -801,19 +801,35 @@ impl RoomState for Game {
     fn remove_client_rejoinable(&mut self, id: u32) -> RemoveRoomClientResult {
         let Some(game_player) = self.clients.get_mut(&id) else { return RemoveRoomClientResult::ClientNotInRoom };
 
-        if let GameClientLocation::Player(player) = game_player.client_location {
-            if !player.is_disconnected(self) {
-                player.lose_connection(self);
+        match game_player.client_location {
+            GameClientLocation::Player(player) => {
+                if !player.is_disconnected(self) {
+                    player.lose_connection(self);
+    
+                    self.ensure_host_exists(None);
+                    self.resend_host_data_to_all_hosts();
+                }
+            },
+            GameClientLocation::Spectator(spectator) => {
+                self.clients.remove(&id);
 
-                self.ensure_host_exists(None);
-                self.resend_host_data_to_all_hosts();
+                // Shift every other spectator down one index
+                for client in self.clients.iter_mut() {
+                    if let GameClientLocation::Spectator(ref mut other) = &mut client.1.client_location {
+                        if other.index() > spectator.index() {
+                            *other = SpectatorPointer::new(other.index().saturating_sub(1));
+                        }
+                    }
+                }
+
+                self.remove_spectator(spectator.index());
             }
         }
 
         RemoveRoomClientResult::Success
     }
     
-    fn rejoin_client(&mut self, _: &ClientSender, room_client_id: u32) -> Result<JoinRoomClientData, RejectJoinReason> {
+    fn rejoin_client(&mut self, _: &ClientSender, room_client_id: u32) -> Result<JoinRoomClientResult, RejectJoinReason> {
         let Some(client) = self.clients.get_mut(&room_client_id) else {
             return Err(RejectJoinReason::PlayerDoesntExist)
         };
@@ -825,7 +841,7 @@ impl RoomState for Game {
 
             self.resend_host_data_to_all_hosts();
 
-            Ok(JoinRoomClientData { id: room_client_id, in_game: true, spectator: false })
+            Ok(JoinRoomClientResult { id: room_client_id, in_game: true, spectator: false })
         }else{
             Err(RejectJoinReason::PlayerDoesntExist)
         }

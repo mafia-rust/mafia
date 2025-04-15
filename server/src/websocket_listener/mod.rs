@@ -7,7 +7,7 @@ pub type RoomCode = usize;
 
 use std::{collections::HashMap, net::SocketAddr, sync::{Arc, Mutex}, time::Duration};
 
-use crate::{log, packet::{RejectJoinReason, ToClientPacket}, room::{JoinRoomClientData, RemoveRoomClientResult, Room, RoomClientID, RoomState}, websocket_connections::connection::Connection};
+use crate::{log, packet::{RejectJoinReason, ToClientPacket}, room::{JoinRoomClientResult, RemoveRoomClientResult, Room, RoomClientID, RoomState}, websocket_connections::connection::Connection};
 
 use self::client::{Client, ClientLocation, ClientReference, GetRoomError};
 use rand::random;
@@ -93,7 +93,7 @@ impl WebsocketListener{
             return
         };
         match room.join_client(sender) {
-            Ok(JoinRoomClientData { id: room_client_id, in_game, spectator }) => {
+            Ok(JoinRoomClientResult { id: room_client_id, in_game, spectator }) => {
                 sender.send(ToClientPacket::AcceptJoin { room_code, in_game, player_id: room_client_id, spectator });
 
                 room.initialize_client(room_client_id, sender);
@@ -113,7 +113,7 @@ impl WebsocketListener{
             return
         };
         match room.rejoin_client(sender, room_client_id) {
-            Ok(JoinRoomClientData { id: room_client_id, in_game, spectator }) => {
+            Ok(JoinRoomClientResult { id: room_client_id, in_game, spectator }) => {
                 sender.send(ToClientPacket::AcceptJoin { room_code, in_game, player_id: room_client_id, spectator });
 
                 room.initialize_client(room_client_id, sender);
