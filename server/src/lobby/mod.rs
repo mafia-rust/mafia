@@ -5,7 +5,7 @@ use std::{collections::VecDeque, time::{Duration, Instant}};
 
 use lobby_client::{LobbyClient, LobbyClientType, Ready};
 
-use crate::{client_connection::ClientConnection, game::{role_list::RoleOutline, settings::Settings}, packet::{RoomPreviewData, RejectJoinReason, ToClientPacket}, room::{name_validation, JoinClientData, RemoveClientData, RoomClientID, RoomState, TickData}, vec_map::VecMap, websocket_connections::connection::ClientSender};
+use crate::{client_connection::ClientConnection, game::{role_list::RoleOutline, settings::Settings}, packet::{RoomPreviewData, RejectJoinReason, ToClientPacket}, room::{name_validation, JoinRoomClientData, RemoveRoomClientResult, RoomClientID, RoomState, RoomTickResult}, vec_map::VecMap, websocket_connections::connection::ClientSender};
 
 pub struct Lobby {
     pub name: String,
@@ -143,7 +143,7 @@ impl RoomState for Lobby {
         }
     }
 
-    fn join_client(&mut self, send: &ClientSender) -> Result<JoinClientData, RejectJoinReason> {
+    fn join_client(&mut self, send: &ClientSender) -> Result<JoinRoomClientData, RejectJoinReason> {
         let player_names = self.clients.values().filter_map(|p| {
             if let LobbyClientType::Player { name } = p.client_type.clone() {
                 Some(name)
@@ -160,7 +160,6 @@ impl RoomState for Lobby {
                 .iter()
                 .map(|(i,_)|*i)
                 .fold(0u32, u32::max) as RoomClientID).checked_add(1) else {
-                    send.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomFull });
                     return Err(RejectJoinReason::RoomFull)
                 };
 
@@ -175,27 +174,19 @@ impl RoomState for Lobby {
             }
         }
 
-        Ok(JoinClientData {
+        Ok(JoinRoomClientData {
             id: room_client_id,
             in_game: false,
             spectator: false
         })
     }
     
-    fn remove_client(&mut self, room_client_id: u32) -> RemoveClientData {
-        let player = self.clients.remove(&room_client_id);
-        
-        if self.clients.is_empty() {
-            return RemoveClientData {
-                close_room: true,
-            };
-        }
+    fn remove_client(&mut self, room_client_id: u32) -> RemoveRoomClientResult {
+        let Some(_) = self.clients.remove(&room_client_id) else { return RemoveRoomClientResult::ClientNotInRoom };
 
         self.ensure_host_exists(None);
 
-        if let Some(_player) = player {
-            self.set_rolelist_length();
-        };
+        self.set_rolelist_length();
 
         self.send_players();
         for player in self.clients.iter(){
@@ -204,11 +195,15 @@ impl RoomState for Lobby {
             }
         }
 
-        RemoveClientData { close_room: false }
+        if self.clients.is_empty() {
+            RemoveRoomClientResult::RoomShouldClose
+        } else {
+            RemoveRoomClientResult::Success
+        }
     }
     
-    fn remove_client_rejoinable(&mut self, id: RoomClientID) -> RemoveClientData {
-        let Some(client) = self.clients.get_mut(&id) else {return RemoveClientData { close_room: false }};
+    fn remove_client_rejoinable(&mut self, id: RoomClientID) -> RemoveRoomClientResult {
+        let Some(client) = self.clients.get_mut(&id) else {return RemoveRoomClientResult::ClientNotInRoom};
 
         if client.is_spectator() {
             return self.remove_client(id);
@@ -222,12 +217,11 @@ impl RoomState for Lobby {
 
         self.send_players();
 
-        RemoveClientData { close_room: false }
+        RemoveRoomClientResult::Success
     }
     
-    fn rejoin_client(&mut self, send: &ClientSender, id: RoomClientID) -> Result<JoinClientData, RejectJoinReason> {
+    fn rejoin_client(&mut self, send: &ClientSender, id: RoomClientID) -> Result<JoinRoomClientData, RejectJoinReason> {
         let Some(client) = self.clients.get_mut(&id) else {
-            send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
             return Err(RejectJoinReason::PlayerDoesntExist)
         };
         match &mut client.connection {
@@ -235,7 +229,7 @@ impl RoomState for Lobby {
             ClientConnection::CouldReconnect { .. } => {
                 client.connection = ClientConnection::Connected(send.clone());
     
-                Ok(JoinClientData {
+                Ok(JoinRoomClientData {
                     id,
                     in_game: false,
                     spectator: false
@@ -252,7 +246,7 @@ impl RoomState for Lobby {
         send.send(ToClientPacket::RoomName { name: self.name.clone() });
     }
     
-    fn tick(&mut self, time_passed: Duration) -> TickData {
+    fn tick(&mut self, time_passed: Duration) -> RoomTickResult {
         let mut to_remove = vec![];
 
         for client in self.clients.iter_mut() {
@@ -269,13 +263,12 @@ impl RoomState for Lobby {
         }
 
         for client in to_remove {
-            let RemoveClientData { close_room } = self.remove_client(client);
-            if close_room {
-                return TickData { close_room: true };
+            if let RemoveRoomClientResult::RoomShouldClose = self.remove_client(client) {
+                return RoomTickResult { close_room: true };
             }
         }
 
-        TickData { close_room: false }
+        RoomTickResult { close_room: false }
     }
     
     fn get_preview_data(&self) -> RoomPreviewData {

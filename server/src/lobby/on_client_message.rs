@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game, RejectStartReason}, log, packet::{ToClientPacket, ToServerPacket}, room::{game_client::{GameClient, GameClientLocation}, name_validation::{self, sanitize_server_name}, RemoveClientData, RoomClientID, RoomState}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
+use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game, RejectStartReason}, log, packet::{ToClientPacket, ToServerPacket}, room::{game_client::{GameClient, GameClientLocation}, name_validation::{self, sanitize_server_name}, RemoveRoomClientResult, RoomClientID, RoomState}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
 
 use super::{lobby_client::{LobbyClient, LobbyClientType, Ready}, Lobby};
 
@@ -244,9 +244,7 @@ impl Lobby {
                 self.send_to_all(ToClientPacket::EnabledModifiers { modifiers });
             }
             ToServerPacket::Leave => {
-                let RemoveClientData { close_room } = self.remove_client(room_client_id);
-
-                if close_room {
+                if let RemoveRoomClientResult::RoomShouldClose = self.remove_client(room_client_id) {
                     return LobbyAction::Close;
                 }
             }

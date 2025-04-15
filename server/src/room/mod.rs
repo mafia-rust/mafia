@@ -17,12 +17,12 @@ pub type RoomClientID = u32;
 #[enum_delegate::register]
 pub trait RoomState {
     fn send_to_client_by_id(&self, room_client_id: RoomClientID, packet: ToClientPacket);
-    fn join_client(&mut self, send: &ClientSender) -> Result<JoinClientData, RejectJoinReason>;
+    fn join_client(&mut self, send: &ClientSender) -> Result<JoinRoomClientData, RejectJoinReason>;
     fn initialize_client(&mut self, room_client_id: RoomClientID, send: &ClientSender);
-    fn remove_client(&mut self, id: RoomClientID) -> RemoveClientData;
-    fn remove_client_rejoinable(&mut self, id: RoomClientID) -> RemoveClientData;
-    fn rejoin_client(&mut self, send: &ClientSender, room_client_id: RoomClientID) -> Result<JoinClientData, RejectJoinReason>;
-    fn tick(&mut self, time_passed: Duration) -> TickData;
+    fn remove_client(&mut self, id: RoomClientID) -> RemoveRoomClientResult;
+    fn remove_client_rejoinable(&mut self, id: RoomClientID) -> RemoveRoomClientResult;
+    fn rejoin_client(&mut self, send: &ClientSender, room_client_id: RoomClientID) -> Result<JoinRoomClientData, RejectJoinReason>;
+    fn tick(&mut self, time_passed: Duration) -> RoomTickResult;
     fn get_preview_data(&self) -> RoomPreviewData;
     fn is_host(&self, room_client_id: RoomClientID)->bool;
 }
@@ -34,19 +34,21 @@ pub enum Room {
 }
 
 #[must_use = "Send the accept join packet"]
-pub struct JoinClientData {
+pub struct JoinRoomClientData {
     pub id: RoomClientID,
     pub in_game: bool,
     pub spectator: bool 
 }
 
 #[must_use = "You may need to close the room"]
-pub struct RemoveClientData {
-    pub close_room: bool,
+pub enum RemoveRoomClientResult {
+    Success,
+    ClientNotInRoom,
+    RoomShouldClose,
 }
 
 #[must_use = "You may need to close the room"]
-pub struct TickData {
+pub struct RoomTickResult {
     pub close_room: bool,
 }
 

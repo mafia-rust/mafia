@@ -1,4 +1,4 @@
-use crate::{client_connection::ClientConnection, lobby::{lobby_client::LobbyClient, Lobby}, log, packet::{ToClientPacket, ToServerPacket}, room::{game_client::GameClientLocation, RemoveClientData, RoomClientID, RoomState}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
+use crate::{client_connection::ClientConnection, lobby::{lobby_client::LobbyClient, Lobby}, log, packet::{ToClientPacket, ToServerPacket}, room::{game_client::GameClientLocation, RemoveRoomClientResult, RoomClientID, RoomState}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
 
 use super::{
     chat::{ChatGroup, ChatMessageVariant, MessageSender}, event::{on_fast_forward::OnFastForward, on_game_ending::OnGameEnding, on_whisper::OnWhisper, Event}, game_conclusion::GameConclusion, phase::PhaseType, player::{PlayerIndex, PlayerReference}, role::{
@@ -56,8 +56,7 @@ impl Game {
                 self.set_player_name(sender_player_ref, name);
             },
             ToServerPacket::Leave => {
-                let RemoveClientData { close_room } = self.remove_client(room_client_id);
-                if close_room {
+                if let RemoveRoomClientResult::RoomShouldClose = self.remove_client(room_client_id) {
                     return GameAction::Close;
                 }
             },

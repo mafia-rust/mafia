@@ -59,10 +59,10 @@ use crate::room::game_client::GameClient;
 use crate::room::game_client::GameClientLocation;
 use crate::room::RoomClientID;
 use crate::room::name_validation;
-use crate::room::JoinClientData;
-use crate::room::RemoveClientData;
+use crate::room::JoinRoomClientData;
+use crate::room::RemoveRoomClientResult;
 use crate::room::RoomState;
-use crate::room::TickData;
+use crate::room::RoomTickResult;
 use crate::packet::HostDataPacketGameClient;
 use crate::packet::RoomPreviewData;
 use crate::packet::RejectJoinReason;
@@ -679,9 +679,9 @@ impl Game {
 }
 
 impl RoomState for Game {
-    fn tick(&mut self, time_passed: Duration) -> TickData {
+    fn tick(&mut self, time_passed: Duration) -> RoomTickResult {
         if !self.ticking { 
-            return TickData { close_room: false }
+            return RoomTickResult { close_room: false }
         }
 
         if let Some(conclusion) = GameConclusion::game_is_over(self) {
@@ -694,7 +694,7 @@ impl RoomState for Game {
             });
             self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
             self.ticking = false;
-            return TickData { close_room: !self.is_any_client_connected() };
+            return RoomTickResult { close_room: !self.is_any_client_connected() };
         }
 
         while self.phase_machine.time_remaining.is_some_and(|d| d.is_zero()) {
@@ -707,7 +707,7 @@ impl RoomState for Game {
 
         OnTick::new().invoke(self);
 
-        TickData {
+        RoomTickResult {
             close_room: !self.is_any_client_connected()
         }
     }
@@ -727,7 +727,7 @@ impl RoomState for Game {
         }
     }
     
-    fn join_client(&mut self, send: &ClientSender) -> Result<JoinClientData, RejectJoinReason> {
+    fn join_client(&mut self, send: &ClientSender) -> Result<JoinRoomClientData, RejectJoinReason> {
         let is_host = !self.clients.iter().any(|p|p.1.host);
                 
         let Some(room_client_id) = 
@@ -735,7 +735,6 @@ impl RoomState for Game {
                 .iter()
                 .map(|(i,_)|*i)
                 .fold(0u32, u32::max) as RoomClientID).checked_add(1) else {
-                    send.send(ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomFull });
                     return Err(RejectJoinReason::RoomFull);
                 };
 
@@ -751,7 +750,7 @@ impl RoomState for Game {
         self.clients.insert(room_client_id, new_client);
 
         self.resend_host_data_to_all_hosts();
-        Ok(JoinClientData { id: room_client_id, in_game: true, spectator: true })
+        Ok(JoinRoomClientData { id: room_client_id, in_game: true, spectator: true })
     }
 
     fn initialize_client(&mut self, room_client_id: RoomClientID, send: &ClientSender) {
@@ -780,11 +779,9 @@ impl RoomState for Game {
         send.send(ToClientPacket::RoomName { name: self.room_name.clone() });
     }
     
-    fn remove_client(&mut self, room_client_id: u32) -> RemoveClientData {
+    fn remove_client(&mut self, room_client_id: u32) -> RemoveRoomClientResult {
         let Some(game_player) = self.clients.get_mut(&room_client_id) else {
-            return RemoveClientData {
-                close_room: false,
-            }
+            return RemoveRoomClientResult::ClientNotInRoom;
         };
 
         match game_player.client_location {
@@ -810,11 +807,15 @@ impl RoomState for Game {
 
         self.resend_host_data_to_all_hosts();
 
-        RemoveClientData { close_room: !self.is_any_client_connected() }
+        if !self.is_any_client_connected() {
+            RemoveRoomClientResult::RoomShouldClose
+        } else {
+            RemoveRoomClientResult::Success
+        }
     }
     
-    fn remove_client_rejoinable(&mut self, id: u32) -> RemoveClientData {
-        let Some(game_player) = self.clients.get_mut(&id) else {return RemoveClientData { close_room: false }};
+    fn remove_client_rejoinable(&mut self, id: u32) -> RemoveRoomClientResult {
+        let Some(game_player) = self.clients.get_mut(&id) else { return RemoveRoomClientResult::ClientNotInRoom };
 
         if let GameClientLocation::Player(player_index) = game_player.client_location {
             if let Ok(player_ref) = PlayerReference::new(self, player_index) {
@@ -827,30 +828,26 @@ impl RoomState for Game {
             }
         }
 
-        RemoveClientData { close_room: false }
+        RemoveRoomClientResult::Success
     }
     
-    fn rejoin_client(&mut self, send: &ClientSender, room_client_id: u32) -> Result<JoinClientData, RejectJoinReason> {
+    fn rejoin_client(&mut self, _: &ClientSender, room_client_id: u32) -> Result<JoinRoomClientData, RejectJoinReason> {
         let Some(client) = self.clients.get_mut(&room_client_id) else {
-            send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
             return Err(RejectJoinReason::PlayerDoesntExist)
         };
         
         if let GameClientLocation::Player(player_index) = client.client_location {
             let Ok(player_ref) = PlayerReference::new(self, player_index) else {
-                send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
                 return Err(RejectJoinReason::PlayerDoesntExist)
             };
             if !player_ref.could_reconnect(self) {
-                send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerTaken});
                 return Err(RejectJoinReason::PlayerTaken)
             };
 
             self.resend_host_data_to_all_hosts();
 
-            Ok(JoinClientData { id: room_client_id, in_game: true, spectator: false })
+            Ok(JoinRoomClientData { id: room_client_id, in_game: true, spectator: false })
         }else{
-            send.send(ToClientPacket::RejectJoin{reason: RejectJoinReason::PlayerDoesntExist});
             Err(RejectJoinReason::PlayerDoesntExist)
         }
     }

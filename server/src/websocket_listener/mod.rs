@@ -7,7 +7,7 @@ pub type RoomCode = usize;
 
 use std::{collections::HashMap, net::SocketAddr, sync::{Arc, Mutex}, time::Duration};
 
-use crate::{room::{RoomClientID, JoinClientData, RemoveClientData, Room, RoomState}, packet::{RejectJoinReason, ToClientPacket}, websocket_connections::connection::Connection};
+use crate::{room::{RoomClientID, JoinRoomClientData, RemoveRoomClientResult, Room, RoomState}, packet::{RejectJoinReason, ToClientPacket}, websocket_connections::connection::Connection};
 
 use self::client::{Client, ClientLocation, ClientReference, GetRoomError};
 use rand::random;
@@ -15,7 +15,16 @@ use rand::random;
 
 
 pub struct WebsocketListener {
-    // Clients that are currently connected, if a client isnt connected it isnt here
+    /// Clients that are currently connected, if a client isnt connected it isnt here
+    ///
+    /// What to do in different connection sscenarios:
+    ///
+    ///  Listener has client | Lobby has client | Behavior
+    /// ---------------------|------------------|---------------------------
+    ///  No                  | No               | Hooray!
+    ///  No                  | Yes              | Reconnect (if possible)
+    ///  Yes                 | No               | Disconnect listener client
+    ///  Yes                 | Yes              | Hooray!
     clients: HashMap<SocketAddr, Client>,
     rooms: HashMap<RoomCode, Room>,
 }
@@ -60,7 +69,6 @@ impl WebsocketListener{
     fn delete_client(&mut self, client: &ClientReference) {
         let Some(client) = self.clients.remove(&client.address(self).clone()) else {return};
 
-        //This produces a warning in the logs because sometimes the player is already disconnected
         //This ToClientPacket is still useful in the *rare* case that the player is still connected when they're being forced to disconnect
         //A player can be forced to disconnect if a seperate connection is made with the same ip and port address
         client.send(ToClientPacket::ForcedDisconnect);
@@ -69,10 +77,10 @@ impl WebsocketListener{
         let ClientLocation::InRoom { room_code, room_client_id } = client.location() else {return};
         let Some(room) = self.rooms.get_mut(room_code) else {return};
 
-        let RemoveClientData { close_room } = room.remove_client_rejoinable(*room_client_id);
-
-        if close_room {
-            self.delete_room(*room_code);
+        match room.remove_client_rejoinable(*room_client_id) {
+            RemoveRoomClientResult::Success |
+            RemoveRoomClientResult::ClientNotInRoom => {},
+            RemoveRoomClientResult::RoomShouldClose => self.delete_room(*room_code)
         }
     }
 
@@ -85,7 +93,7 @@ impl WebsocketListener{
             return
         };
         match room.join_client(sender) {
-            Ok(JoinClientData { id: room_client_id, in_game, spectator }) => {
+            Ok(JoinRoomClientData { id: room_client_id, in_game, spectator }) => {
                 sender.send(ToClientPacket::AcceptJoin { room_code, in_game, player_id: room_client_id, spectator });
 
                 room.initialize_client(room_client_id, sender);
@@ -105,7 +113,7 @@ impl WebsocketListener{
             return
         };
         match room.rejoin_client(sender, room_client_id) {
-            Ok(JoinClientData { id: room_client_id, in_game, spectator }) => {
+            Ok(JoinRoomClientData { id: room_client_id, in_game, spectator }) => {
                 sender.send(ToClientPacket::AcceptJoin { room_code, in_game, player_id: room_client_id, spectator });
 
                 room.initialize_client(room_client_id, sender);
@@ -121,14 +129,16 @@ impl WebsocketListener{
         client.send(self, ToClientPacket::ForcedOutsideRoom);
         
         if let Ok((room, room_code, id)) = client.get_room_mut(self) {
-            let RemoveClientData { close_room } = if rejoinable {
+            let result = if rejoinable {
                 room.remove_client_rejoinable(id)
             }else{
                 room.remove_client(id)
             };
 
-            if close_room {
-                self.delete_room(room_code);
+            match result {
+                RemoveRoomClientResult::Success |
+                RemoveRoomClientResult::ClientNotInRoom => {}
+                RemoveRoomClientResult::RoomShouldClose => self.delete_room(room_code),
             }
         }
 

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{game::on_client_message::GameAction, lobby::on_client_message::LobbyAction, log, packet::{RoomPreviewData, RejectJoinReason, ToClientPacket, ToServerPacket}, room::{on_client_message::RoomAction, RemoveClientData, Room, RoomState}};
+use crate::{game::on_client_message::GameAction, lobby::on_client_message::LobbyAction, log, packet::{RoomPreviewData, RejectJoinReason, ToClientPacket, ToServerPacket}, room::{on_client_message::RoomAction, RemoveRoomClientResult, Room, RoomState}};
 
 use super::{client::{ClientLocation, ClientReference}, RoomCode, WebsocketListener};
 
@@ -46,27 +46,26 @@ impl WebsocketListener{
                 if !room.is_host(host_id) {return}
 
                 
-                let kicked_player = 
+                let kicked_player_client_ref = 
                     ClientReference::all_clients(self)
                     .find(|c|
                         *c.location(self) == ClientLocation::InRoom { room_code, room_client_id: kicked_player_id }
                     );
 
-                if let Some(kicked_player) = kicked_player {
+                if let Some(kicked_player_client_ref) = kicked_player_client_ref {
 
-                    kicked_player.send(self, ToClientPacket::RejectJoin { reason: RejectJoinReason::ServerBusy });
-                    self.set_client_outside_room(&kicked_player, false);
+                    kicked_player_client_ref.send(self, ToClientPacket::RejectJoin { reason: RejectJoinReason::ServerBusy });
+                    self.set_client_outside_room(&kicked_player_client_ref, false);
                     
-                }else{
-                    //Nobody is connected to that room with that id,
-                    //Maybe they already left
-
+                } else { // The client wasn't in the Websocket Listener
                     let Ok((room,_,_)) = client.get_room_mut(self) else {return};
 
-                    let RemoveClientData { close_room } = room.remove_client(kicked_player_id);
-
-                    if close_room {
-                        self.delete_room(room_code);
+                    match room.remove_client(kicked_player_id) {
+                        RemoveRoomClientResult::Success => {}
+                        RemoveRoomClientResult::RoomShouldClose => self.delete_room(room_code),
+                        RemoveRoomClientResult::ClientNotInRoom => {
+                            // The client is already not in the listener, so doing nothing is fine
+                        }
                     }
                 }
                 
