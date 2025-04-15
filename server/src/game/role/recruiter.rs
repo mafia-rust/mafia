@@ -50,9 +50,7 @@ impl RoleStateImpl for Recruiter {
     }
     fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
-        let choose_attack = if let Some(IntegerSelection(x)) = game.saved_controllers.get_controller_current_selection_integer(
-            ControllerID::role(actor_ref, Role::Recruiter, 1)
-        ){x==0}else{true};
+        let choose_attack = Self::choose_attack(game, actor_ref);
 
         if choose_attack{
             if game.day_number() <= 1 {return}
@@ -75,9 +73,7 @@ impl RoleStateImpl for Recruiter {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        let choose_attack = if let Some(IntegerSelection(x)) = game.saved_controllers.get_controller_current_selection_integer(
-            ControllerID::role(actor_ref, Role::Recruiter, 1)
-        ){x==0}else{true};
+        let choose_attack = Self::choose_attack(game, actor_ref);
 
         ControllerParametersMap::combine([
             // Player
@@ -162,9 +158,7 @@ impl Recruiter {
     /// returns true if target_ref is killed when trying to kill
     /// returns true if target_ref is recruited when trying to recruit
     pub fn night_ability(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
-        let choose_attack = if let Some(IntegerSelection(x)) = game.saved_controllers.get_controller_current_selection_integer(
-            ControllerID::role(actor_ref, Role::Recruiter, 1)
-        ){x==0}else{true};
+        let choose_attack = Self::choose_attack(game, actor_ref);
 
         if choose_attack {
             target_ref.try_night_kill_single_attacker(
@@ -179,5 +173,10 @@ impl Recruiter {
         }else{
             false
         }
+    }
+
+    fn choose_attack(game: &Game, actor_ref: PlayerReference)->bool{
+        if let Some(IntegerSelection(x)) = ControllerID::role(actor_ref, Role::Recruiter, 1).get_integer_selection(game)
+        {*x==0}else{true}
     }
 }

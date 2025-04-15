@@ -9,10 +9,7 @@ use crate::game::phase::PhaseType;
 use crate::game::attack_power::DefensePower;
 use crate::game::player::PlayerReference;
 use crate::game::Game;
-use super::{
-    common_role, BooleanSelection, ControllerID, ControllerParametersMap, PlayerListSelection, Role, RoleStateImpl
-};
-
+use super::{common_role, ControllerID, ControllerParametersMap, PlayerListSelection, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Warden{
@@ -96,9 +93,10 @@ impl RoleStateImpl for Warden {
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
             PhaseType::Night => {
-                let Some(PlayerListSelection(players_in_prison)) = game.saved_controllers.get_controller_current_selection_player_list(
-                    ControllerID::role(actor_ref, Role::Warden, 0)
-                ) else {return};
+                let Some(PlayerListSelection(players_in_prison)) = ControllerID::role(actor_ref, Role::Warden, 0)
+                    .get_player_list_selection(game)
+                    .cloned()
+                    else {return};
 
                 if actor_ref.ability_deactivated_from_death(game) || players_in_prison.iter().any(|p|!p.alive(game)) {return};
                 
@@ -138,11 +136,10 @@ impl Warden {
 
         for &player in self.players_in_prison.iter(){
             if
-                !if let Some(BooleanSelection(chose_to_live)) = game.saved_controllers.get_controller_current_selection_boolean(
-                    ControllerID::WardenLiveOrDie { warden: actor_ref, player }
-                ) {
-                    chose_to_live
-                } else {true}
+                !(ControllerID::WardenLiveOrDie { warden: actor_ref, player })
+                    .get_boolean_selection(game)
+                    .map(|b|b.0)
+                    .unwrap_or(true)
             {
                 players_who_chose_die.insert(player);
             }

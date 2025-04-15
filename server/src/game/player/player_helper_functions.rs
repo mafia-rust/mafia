@@ -302,7 +302,7 @@ impl PlayerReference{
     }
 
     pub fn chosen_vote(&self, game: &Game) -> Option<PlayerReference> {
-        if let Some(PlayerListSelection(players)) =game.saved_controllers.get_controller_current_selection_player_list(ControllerID::nominate(*self)) {
+        if let Some(PlayerListSelection(players)) = ControllerID::nominate(*self).get_player_list_selection(game) {
             Some(players.first().copied()).flatten()
         }else{
             None

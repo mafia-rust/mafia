@@ -73,10 +73,10 @@ impl RoleStateImpl for Reeducator {
                 let Some(visit) = visits.first() else {return};
 
                 let role = 
-                if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
-                    ControllerID::role(actor_ref, Role::Reeducator, 1)
-                ){
-                    role
+                if let Some(RoleOptionSelection(Some(role))) = ControllerID::role(actor_ref, Role::Reeducator, 1)
+                    .get_role_option_selection(game)
+                {
+                    *role
                 }else if let Some(role) = Reeducator::default_role(game){
                     role
                 }else{

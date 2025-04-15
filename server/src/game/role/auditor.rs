@@ -34,12 +34,9 @@ impl RoleStateImpl for Auditor {
         if priority != OnMidnightPriority::Investigative {return;}
         if actor_ref.night_blocked(game) {return;}
         
-        let Some(selection) = game.saved_controllers.get_controller_current_selection_two_role_outline_option(
-            ControllerID::role(actor_ref, Role::Auditor, 0)
-        )
-        else{return};
+        let Some(TwoRoleOutlineOptionSelection(first, second)) = ControllerID::role(actor_ref, Role::Auditor, 0).get_two_role_outline_option_selection(game).cloned()else{return};
 
-        if let Some(chosen_outline) = selection.0{
+        if let Some(chosen_outline) = first{
             let result = Self::get_result(game, chosen_outline, Confused::is_confused(game, actor_ref));
             actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
                 role_outline: chosen_outline.deref(game).clone(),
@@ -49,7 +46,7 @@ impl RoleStateImpl for Auditor {
             self.previously_given_results.insert(chosen_outline, result);
         }
 
-        if let Some(chosen_outline) = selection.1{
+        if let Some(chosen_outline) = second{
             let result = Self::get_result(game, chosen_outline, Confused::is_confused(game, actor_ref));
             actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
                 role_outline: chosen_outline.deref(game).clone(),

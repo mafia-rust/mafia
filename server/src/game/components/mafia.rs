@@ -49,12 +49,9 @@ impl Mafia{
             .allow_players(players_with_gun.clone())
             .build_map();
 
-        if let Some(PlayerListSelection(player_list)) = game.saved_controllers.get_controller_current_selection_player_list(
-            ControllerID::syndicate_choose_backup()
-        ){
+        if let Some(PlayerListSelection(player_list)) = ControllerID::syndicate_choose_backup().get_player_list_selection(game){
             if let Some(backup) = player_list.first(){
 
-                
                 let attackable_players = PlayerReference::all_players(game)
                     .filter(|p|
                         !InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p) &&
@@ -99,10 +96,10 @@ impl Mafia{
         if game.day_number() <= 1 {return}
         match priority {
             OnMidnightPriority::TopPriority => {
-                let Some(PlayerListSelection(backup)) = game.saved_controllers.get_controller_current_selection_player_list(ControllerID::syndicate_choose_backup()) else {return};
+                let Some(PlayerListSelection(backup)) = ControllerID::syndicate_choose_backup().get_player_list_selection(game) else {return};
                 let Some(backup) = backup.first() else {return};
 
-                let Some(PlayerListSelection(backup_target)) = game.saved_controllers.get_controller_current_selection_player_list(ControllerID::syndicate_backup_attack()) else {return};
+                let Some(PlayerListSelection(backup_target)) = ControllerID::syndicate_backup_attack().get_player_list_selection(game) else {return};
                 let Some(backup_target) = backup_target.first() else {return};
 
                 let new_visit = Visit::new(*backup, *backup_target, true, crate::game::visit::VisitTag::SyndicateBackupAttack);
@@ -152,8 +149,7 @@ impl Mafia{
     pub fn on_controller_selection_changed(game: &mut Game, controller_id: ControllerID){
         if controller_id != ControllerID::syndicate_choose_backup() {return};
 
-        let backup = 
-            game.saved_controllers.get_controller_current_selection_player_list(controller_id)
+        let backup = controller_id.get_player_list_selection(game)
             .and_then(|b|b.0.first().copied());
 
         

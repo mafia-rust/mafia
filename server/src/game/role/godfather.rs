@@ -26,10 +26,7 @@ impl RoleStateImpl for Godfather {
         Self::night_kill_ability(game, actor_ref, priority);
 
         if priority == OnMidnightPriority::Deception{
-            let Some(PlayerListSelection(players)) = game.saved_controllers.get_controller_current_selection_player_list(
-                ControllerID::role(actor_ref, Role::Godfather, 1)
-            ) else {return};
-            
+            let Some(PlayerListSelection(players)) = ControllerID::role(actor_ref, Role::Godfather, 1).get_player_list_selection(game) else {return};
             let Some(appeared_into) = players.first() else {return};
             actor_ref.set_night_appeared_visits(game, Some(vec![
                 Visit::new_none(actor_ref, *appeared_into, false)
@@ -94,11 +91,8 @@ impl Godfather{
         new_role_data: impl Into<RoleState>
     ){
         if actor_ref != dead_player_ref {return}
-        let Some(PlayerListSelection(backup)) = game.saved_controllers
-            .get_controller_current_selection_player_list(
-            ControllerID::syndicate_choose_backup()
-        )else {return};
-        let Some(backup) = backup.first() else {return};
+        let Some(PlayerListSelection(backup)) = ControllerID::syndicate_choose_backup().get_player_list_selection(game) else {return};
+        let Some(backup) = backup.first().copied() else {return};
 
         //convert backup to godfather
         backup.set_role(game, new_role_data);
