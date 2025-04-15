@@ -25,7 +25,7 @@ impl Room {
                     Self::Game(game) => game.get_client_last_message_times(room_client_id),
                     Self::Lobby(lobby) => lobby.get_client_last_message_times(room_client_id)
                 }) else {
-                    log!(error "RoomState"; "{} {:?}", "Message recieved from player not in game", incoming_packet);
+                    log!(error "Room"; "{} {:?}", "Message recieved from player not in game", incoming_packet);
                     return RoomAction::None;
                 };
 
