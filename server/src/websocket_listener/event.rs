@@ -55,7 +55,6 @@ impl WebsocketListener{
         }
 
         for room_code in closed_rooms {
-            log!(important "Room"; "Closed {room_code} due to room closed");
             self.delete_room(room_code);
         }
         for client in closed_clients {

@@ -7,7 +7,7 @@ pub type RoomCode = usize;
 
 use std::{collections::HashMap, net::SocketAddr, sync::{Arc, Mutex}, time::Duration};
 
-use crate::{room::{RoomClientID, JoinRoomClientData, RemoveRoomClientResult, Room, RoomState}, packet::{RejectJoinReason, ToClientPacket}, websocket_connections::connection::Connection};
+use crate::{log, packet::{RejectJoinReason, ToClientPacket}, room::{JoinRoomClientData, RemoveRoomClientResult, Room, RoomClientID, RoomState}, websocket_connections::connection::Connection};
 
 use self::client::{Client, ClientLocation, ClientReference, GetRoomError};
 use rand::random;
@@ -162,14 +162,16 @@ impl WebsocketListener{
         Some(room_code)
     }
     pub(super) fn delete_room(&mut self, room_code: RoomCode){
+        self.rooms.remove(&room_code);
 
         for client in ClientReference::all_clients(self){
             if client.in_room(self, room_code) {
-                self.set_client_outside_room(&client, false);
+                client.send(self, ToClientPacket::ForcedOutsideRoom);
+                client.set_location(self, ClientLocation::OutsideRoom);
             }
         }
 
-        self.rooms.remove(&room_code);
+        log!(important "Room"; "Closed {room_code}.");
     }
 
     

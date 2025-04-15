@@ -24,11 +24,11 @@ use vec1::Vec1;
 
 use crate::{
     client_connection::ClientConnection, game::{
-        ability_input::*, chat::{ChatGroup, ChatMessage}, components::insider_group::InsiderGroupID, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
+        ability_input::*, chat::{ChatGroup, ChatMessage}, components::insider_group::InsiderGroupID, game_client::GameClientLocation, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
             doomsayer::DoomsayerGuess,
             ClientRoleStateEnum, Role
         }, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, GameOverReason, RejectStartReason
-    }, lobby::lobby_client::LobbyClient, log, room::{game_client::GameClientLocation, RoomClientID}, vec_map::VecMap, vec_set::VecSet, websocket_listener::RoomCode
+    }, lobby::lobby_client::LobbyClient, log, room::RoomClientID, vec_map::VecMap, vec_set::VecSet, websocket_listener::RoomCode
 };
 
 #[derive(Serialize, Debug, Clone)]

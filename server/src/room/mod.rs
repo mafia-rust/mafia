@@ -1,5 +1,4 @@
 
-pub mod game_client;
 pub mod on_client_message;
 pub mod name_validation;
 

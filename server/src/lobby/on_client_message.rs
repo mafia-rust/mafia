@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters}, spectator::{spectator_pointer::SpectatorIndex, SpectatorInitializeParameters}, Game, RejectStartReason}, log, packet::{ToClientPacket, ToServerPacket}, room::{game_client::{GameClient, GameClientLocation}, name_validation::{self, sanitize_server_name}, RemoveRoomClientResult, RoomClientID, RoomState}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
+use crate::{game::{chat::{ChatMessage, ChatMessageVariant}, game_client::{GameClient, GameClientLocation}, phase::PhaseType, player::{PlayerIndex, PlayerInitializeParameters, PlayerReference}, spectator::{spectator_pointer::{SpectatorIndex, SpectatorPointer}, SpectatorInitializeParameters}, Game, RejectStartReason}, log, packet::{ToClientPacket, ToServerPacket}, room::{name_validation::{self, sanitize_server_name}, RemoveRoomClientResult, RoomClientID, RoomState}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
 
 use super::{lobby_client::{LobbyClient, LobbyClientType, Ready}, Lobby};
 
@@ -116,13 +116,13 @@ impl Lobby {
                     game_clients.insert(room_client_id, 
                         if let LobbyClientType::Spectator = lobby_client.client_type {
                             GameClient {
-                                client_location: GameClientLocation::Spectator(next_spectator_index),
+                                client_location: GameClientLocation::Spectator(SpectatorPointer::new(next_spectator_index)),
                                 host: lobby_client.is_host(),
                                 last_message_times: VecDeque::new(),
                             }
                         } else {
                             GameClient {
-                                client_location: GameClientLocation::Player(next_player_index),
+                                client_location: GameClientLocation::Player(unsafe { PlayerReference::new_unchecked(next_player_index) }),
                                 host: lobby_client.is_host(),
                                 last_message_times: VecDeque::new(),
                             }

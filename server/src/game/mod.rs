@@ -1,5 +1,6 @@
 #![allow(clippy::get_first, reason = "Often need to get first two visits manually.")]
 
+pub mod game_client;
 pub mod grave;
 pub mod phase;
 pub mod player;
@@ -55,8 +56,8 @@ use win_condition::WinCondition;
 use crate::client_connection::ClientConnection;
 use crate::game::event::on_game_start::OnGameStart;
 use crate::game::player::PlayerIndex;
-use crate::room::game_client::GameClient;
-use crate::room::game_client::GameClientLocation;
+use game_client::GameClient;
+use game_client::GameClientLocation;
 use crate::room::RoomClientID;
 use crate::room::name_validation;
 use crate::room::JoinRoomClientData;
@@ -576,13 +577,11 @@ impl Game {
     fn ensure_host_exists(&mut self, skip: Option<RoomClientID>) {
         fn is_player_not_disconnected(game: &Game, p: &GameClient) -> bool {
             match p.client_location {
-                GameClientLocation::Spectator(index) => {
-                    !matches!(SpectatorPointer::new(index).connection(game), ClientConnection::Disconnected)
+                GameClientLocation::Spectator(spectator) => {
+                    !matches!(spectator.connection(game), ClientConnection::Disconnected)
                 },
-                GameClientLocation::Player(index) => {
-                    PlayerReference::new(game, index).is_ok_and(|player_ref| 
-                        !matches!(player_ref.connection(game), ClientConnection::Disconnected)
-                    )
+                GameClientLocation::Player(player) => {
+                    !matches!(player.connection(game), ClientConnection::Disconnected)
                 }
             }
         }
@@ -611,13 +610,11 @@ impl Game {
     fn resend_host_data_to_all_hosts(&self) {
         for client in self.clients.values().filter(|client| client.host) {
             let client_connection = match client.client_location {
-                GameClientLocation::Player(index) => PlayerReference::new(self, index).map(|p| p.connection(self).clone()).ok(),
-                GameClientLocation::Spectator(index) => Some(SpectatorPointer::new(index).connection(self))
+                GameClientLocation::Player(player) => player.connection(self).clone(),
+                GameClientLocation::Spectator(spectator) => spectator.connection(self)
             };
 
-            if let Some(client_connection) = client_connection {
-                self.resend_host_data(&client_connection)
-            }
+            self.resend_host_data(&client_connection)
         }
     }
     
@@ -627,12 +624,8 @@ impl Game {
                 (*id, HostDataPacketGameClient {
                     client_type: client.client_location.clone(),
                     connection: match client.client_location {
-                        GameClientLocation::Player(index) => {
-                            unsafe { PlayerReference::new_unchecked(index) }.connection(self).clone()
-                        }
-                        GameClientLocation::Spectator(index) => {
-                            SpectatorPointer::new(index).connection(self)
-                        }
+                        GameClientLocation::Player(player) => player.connection(self).clone(),
+                        GameClientLocation::Spectator(spectator) => spectator.connection(self)
                     },
                     host: client.host
                 })
@@ -715,14 +708,8 @@ impl RoomState for Game {
     fn send_to_client_by_id(&self, room_client_id: RoomClientID, packet: ToClientPacket) {
         if let Some(player) = self.clients.get(&room_client_id) {
             match player.client_location {
-                GameClientLocation::Player(player_index) => {
-                    if let Ok(player_ref) = PlayerReference::new(self, player_index) {
-                        player_ref.send_packet(self, packet);
-                    }
-                },
-                GameClientLocation::Spectator(index) => {
-                    SpectatorPointer::new(index).send_packet(self, packet);
-                }
+                GameClientLocation::Player(player) => player.send_packet(self, packet),
+                GameClientLocation::Spectator(spectator) => spectator.send_packet(self, packet)
             }
         }
     }
@@ -745,7 +732,7 @@ impl RoomState for Game {
             host: is_host,
         })?;
         
-        let new_client = GameClient::new_spectator(new_spectator.index(), is_host);
+        let new_client = GameClient::new_spectator(new_spectator, is_host);
 
         self.clients.insert(room_client_id, new_client);
 
@@ -756,14 +743,12 @@ impl RoomState for Game {
     fn initialize_client(&mut self, room_client_id: RoomClientID, send: &ClientSender) {
         if let Some(client) = self.clients.get(&room_client_id) {
             match client.client_location {
-                GameClientLocation::Player(player_index) => {
-                    if let Ok(player_ref) = PlayerReference::new(self, player_index) {
-                        player_ref.connect(self, send.clone());
-                        player_ref.send_join_game_data(self);
-                    }
+                GameClientLocation::Player(player) => {
+                    player.connect(self, send.clone());
+                    player.send_join_game_data(self);
                 },
-                GameClientLocation::Spectator(index) => {
-                    SpectatorPointer::new(index).send_join_game_data(self);
+                GameClientLocation::Spectator(spectator) => {
+                    spectator.send_join_game_data(self);
                 }
             }
         }
@@ -785,21 +770,20 @@ impl RoomState for Game {
         };
 
         match game_player.client_location {
-            GameClientLocation::Player(player_index) => {
-                if let Ok(player_ref) = PlayerReference::new(self, player_index) {
-                    player_ref.quit(self);
-                }
-            },
-            GameClientLocation::Spectator(idx) => {
+            GameClientLocation::Player(player) => player.quit(self),
+            GameClientLocation::Spectator(spectator) => {
                 self.clients.remove(&room_client_id);
+
+                // Shift every other spectator down one index
                 for client in self.clients.iter_mut() {
-                    if let GameClientLocation::Spectator(index) = &mut client.1.client_location {
-                        if *index > idx {
-                            *index = index.saturating_sub(1);
+                    if let GameClientLocation::Spectator(ref mut other) = &mut client.1.client_location {
+                        if other.index() > spectator.index() {
+                            *other = SpectatorPointer::new(other.index().saturating_sub(1));
                         }
                     }
                 }
-                self.remove_spectator(idx);
+
+                self.remove_spectator(spectator.index());
             }
         }
 
@@ -817,14 +801,12 @@ impl RoomState for Game {
     fn remove_client_rejoinable(&mut self, id: u32) -> RemoveRoomClientResult {
         let Some(game_player) = self.clients.get_mut(&id) else { return RemoveRoomClientResult::ClientNotInRoom };
 
-        if let GameClientLocation::Player(player_index) = game_player.client_location {
-            if let Ok(player_ref) = PlayerReference::new(self, player_index) {
-                if !player_ref.is_disconnected(self) {
-                    player_ref.lose_connection(self);
+        if let GameClientLocation::Player(player) = game_player.client_location {
+            if !player.is_disconnected(self) {
+                player.lose_connection(self);
 
-                    self.ensure_host_exists(None);
-                    self.resend_host_data_to_all_hosts();
-                }
+                self.ensure_host_exists(None);
+                self.resend_host_data_to_all_hosts();
             }
         }
 
@@ -836,11 +818,8 @@ impl RoomState for Game {
             return Err(RejectJoinReason::PlayerDoesntExist)
         };
         
-        if let GameClientLocation::Player(player_index) = client.client_location {
-            let Ok(player_ref) = PlayerReference::new(self, player_index) else {
-                return Err(RejectJoinReason::PlayerDoesntExist)
-            };
-            if !player_ref.could_reconnect(self) {
+        if let GameClientLocation::Player(player) = client.client_location {
+            if !player.could_reconnect(self) {
                 return Err(RejectJoinReason::PlayerTaken)
             };
 
@@ -858,12 +837,8 @@ impl RoomState for Game {
             in_game: true,
             players: self.clients.iter()
                 .filter_map(|(id, player)|
-                    if let GameClientLocation::Player(player_index) = player.client_location {
-                        if let Ok(player_ref) = PlayerReference::new(self, player_index) {
-                            Some((*id, player_ref.name(self).clone()))
-                        } else {
-                            None
-                        }
+                    if let GameClientLocation::Player(player) = player.client_location {
+                        Some((*id, player.name(self).clone()))
                     } else {
                         None
                     }

@@ -1,4 +1,4 @@
-use mafia_server::{client_connection::ClientConnection, game::{ability_input::*, chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, Game}, packet::ToServerPacket, vec_map::VecMap};
+use mafia_server::{game::{ability_input::*, chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, Game}, packet::ToServerPacket, vec_map::VecMap};
 use vec1::Vec1;
 
 #[derive(Clone, Copy, Debug)]
@@ -33,9 +33,8 @@ impl TestPlayer {
 
     pub fn send_ability_input(&self, ability_input: AbilityInput) {
         game!(self).on_player_message(
-            &ClientConnection::Disconnected,
             0, // This is only used for host stuff.
-            self.0.index(), 
+            self.0, 
             ToServerPacket::AbilityInput { ability_input }
         );
     }
@@ -104,9 +103,8 @@ impl TestPlayer {
 
     pub fn send_message(&self, message: &str) {
         game!(self).on_player_message(
-            &ClientConnection::Disconnected,
             0, // This is only used for host stuff.
-            self.0.index(), 
+            self.0, 
             ToServerPacket::SendChatMessage { text: message.to_string(), block: false }
         );
     }

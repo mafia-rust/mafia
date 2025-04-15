@@ -1,9 +1,9 @@
-use crate::{client_connection::ClientConnection, lobby::{lobby_client::LobbyClient, Lobby}, log, packet::{ToClientPacket, ToServerPacket}, room::{game_client::GameClientLocation, RemoveRoomClientResult, RoomClientID, RoomState}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
+use crate::{lobby::{lobby_client::LobbyClient, Lobby}, log, packet::{ToClientPacket, ToServerPacket}, room::{RemoveRoomClientResult, RoomClientID, RoomState}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender}, event::{on_fast_forward::OnFastForward, on_game_ending::OnGameEnding, on_whisper::OnWhisper, Event}, game_conclusion::GameConclusion, phase::PhaseType, player::{PlayerIndex, PlayerReference}, role::{
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, event::{on_fast_forward::OnFastForward, on_game_ending::OnGameEnding, on_whisper::OnWhisper, Event}, game_client::GameClientLocation, game_conclusion::GameConclusion, phase::PhaseType, player::PlayerReference, role::{
         Role, RoleState
-    }, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    }, spectator::spectator_pointer::SpectatorPointer, Game
 };
 
 
@@ -16,22 +16,20 @@ pub enum GameAction {
 
 impl Game {
     #[expect(clippy::match_single_binding, unused, reason="Surely spectators will do something in the future")]
-    pub fn on_spectator_message(&mut self, sender_index: SpectatorIndex, incoming_packet: ToServerPacket){
-        let sender_pointer = SpectatorPointer::new(sender_index);
-
+    pub fn on_spectator_message(&mut self, sender_ref: SpectatorPointer, incoming_packet: ToServerPacket){
         match incoming_packet {
             _ => {}
         }
     }
     
-    pub fn on_client_message(&mut self, send: &ClientSender, room_client_id: RoomClientID, incoming_packet: ToServerPacket) -> GameAction {
+    pub fn on_client_message(&mut self, _: &ClientSender, room_client_id: RoomClientID, incoming_packet: ToServerPacket) -> GameAction {
         if let Some(client) = self.clients.get(&room_client_id) {
             match client.client_location {
-                GameClientLocation::Player(player_index) => {
-                    self.on_player_message(&ClientConnection::Connected(send.clone()), room_client_id, player_index, incoming_packet)
+                GameClientLocation::Player(player) => {
+                    self.on_player_message(room_client_id, player, incoming_packet)
                 }
-                GameClientLocation::Spectator(spectator_index) => {
-                    self.on_spectator_message(spectator_index, incoming_packet);
+                GameClientLocation::Spectator(spectator) => {
+                    self.on_spectator_message(spectator, incoming_packet);
                     GameAction::None
                 }
             }
@@ -41,16 +39,7 @@ impl Game {
         }
     }
 
-    // The only reason this takes a client connection and not a client sender is for the tests ... which sucks
-    pub fn on_player_message(&mut self, client_connection: &ClientConnection, room_client_id: RoomClientID, sender_player_index: PlayerIndex, incoming_packet: ToServerPacket) -> GameAction {
-        let sender_player_ref = match PlayerReference::new(self, sender_player_index){
-            Ok(sender_player_ref) => sender_player_ref,
-            Err(_) => {
-                log!(error "Game"; "Received message from invalid player index: {}", sender_player_index);
-                return GameAction::None;
-            }
-        };
-
+    pub fn on_player_message(&mut self, room_client_id: RoomClientID, sender_player_ref: PlayerReference, incoming_packet: ToServerPacket) -> GameAction {
         'packet_match: {match incoming_packet {
             ToServerPacket::SetName{ name } => {
                 self.set_player_name(sender_player_ref, name);
@@ -102,17 +91,15 @@ impl Game {
                     if !player.host {break 'packet_match}
                 }
 
-                self.resend_host_data(client_connection);
+                self.resend_host_data(sender_player_ref.connection(self));
             }
             ToServerPacket::HostForceSetPlayerName { id, name } => {
                 if let Some(player) = self.clients.get(&room_client_id){
                     if !player.host {break 'packet_match}
                 }
                 if let Some(player) = self.clients.get(&id) {
-                    if let GameClientLocation::Player(index) = player.client_location {
-                        if let Ok(player_ref) = PlayerReference::new(self, index) {
-                            self.set_player_name(player_ref, name);
-                        }
+                    if let GameClientLocation::Player(player) = player.client_location {
+                        self.set_player_name(player, name);
                     }
                 }
             }
@@ -159,7 +146,7 @@ impl Game {
                         },
                         ChatGroup::Dead => {
                             if sender_player_ref.alive(self) {
-                                Some(MessageSender::LivingToDead{ player: sender_player_index })
+                                Some(MessageSender::LivingToDead{ player: sender_player_ref.index() })
                             }else{None}
                         },
                         ChatGroup::Interview => {
@@ -170,7 +157,7 @@ impl Game {
                         _ => {None}
                     };
 
-                    let message_sender = message_sender.unwrap_or(MessageSender::Player { player: sender_player_index });
+                    let message_sender = message_sender.unwrap_or(MessageSender::Player { player: sender_player_ref.index() });
 
 
                     self.add_message_to_chat_group(
