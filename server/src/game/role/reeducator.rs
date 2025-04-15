@@ -1,14 +1,12 @@
 use rand::seq::IteratorRandom;
 use serde::Serialize;
-use vec1::vec1;
 
 use crate::game::ability_input::{AvailablePlayerListSelection, AvailableRoleOptionSelection, ControllerID};
 use crate::game::attack_power::AttackPower;
-use crate::game::chat::ChatMessageVariant;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::event::on_midnight::OnMidnightPriority;
-use crate::game::game_conclusion::GameConclusion;
-use crate::game::role_list::{RoleOutline, RoleOutlineOption, RoleOutlineOptionRoles, RoleSet};
+use crate::game::grave::GraveKiller;
+use crate::game::role_list::RoleSet;
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
 
@@ -41,26 +39,38 @@ impl RoleStateImpl for Reeducator {
     type ClientRoleState = Reeducator;
     fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            OnMidnightPriority::Deception => {
-                if !self.convert_charges_remaining {return}
+            OnMidnightPriority::Roleblock => {
+                if !self.convert_charges_remaining || game.day_number() <= 1 {return}
 
-                actor_ref.set_night_visits(game, actor_ref
-                    .all_night_visits_cloned(game)
-                    .into_iter()
-                    .map(|mut v|{
-                        if 
-                            !InsiderGroupID::in_same_revealed_group(game, actor_ref, v.target) &&
-                            v.tag == VisitTag::Role
-                        {
-                            v.attack = true;
-                        }
-                        v
+                let mut converting = false;
+
+                actor_ref.set_night_visits(
+                    game, 
+                    actor_ref
+                        .all_night_visits_cloned(game)
+                        .into_iter()
+                        .map(|mut v|{
+                            if 
+                                !InsiderGroupID::in_same_revealed_group(game, actor_ref, v.target) &&
+                                v.tag == VisitTag::Role
+                            {
+                                v.attack = true;
+                                converting = true;
+                            }
+                            v
+                        })
+                        .collect()
+                );
+
+                if converting {
+                    for fellow_insider in InsiderGroupID::Mafia.players(game).clone().iter(){
+                        fellow_insider.roleblock(game, true);
                     }
-                ).collect());
+                }
             },
             OnMidnightPriority::Convert => {
                 let visits = actor_ref.untagged_night_visits_cloned(game);
-                let Some(target_ref) = visits.first().map(|v| v.target) else {return};
+                let Some(visit) = visits.first() else {return};
 
                 let role = 
                 if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
@@ -75,27 +85,29 @@ impl RoleStateImpl for Reeducator {
 
                 let new_state = role.new_state(game);
 
-                if InsiderGroupID::in_same_revealed_group(game, actor_ref, target_ref) {
-
-                    target_ref.set_night_convert_role_to(game, Some(new_state));
-
-                }else if self.convert_charges_remaining && game.day_number() > 1{
-
-                    if target_ref.night_defense(game).can_block(AttackPower::Basic) {
-                        actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
-                        return
+                if visit.attack {
+                    if self.convert_charges_remaining && game.day_number() > 1 {
+                        actor_ref.try_night_kill_single_attacker(
+                            actor_ref,
+                            game,
+                            GraveKiller::RoleSet(RoleSet::Mafia),
+                            AttackPower::ProtectionPiercing,
+                            false,
+                        );
+    
+                        InsiderGroupID::Mafia.add_player_to_revealed_group(game, visit.target);
+                        visit.target.set_win_condition(
+                            game,
+                            WinCondition::new_loyalist(crate::game::game_conclusion::GameConclusion::Mafia)
+                        );
+                        visit.target.set_night_convert_role_to(game, Some(new_state));
+    
+                        self.convert_charges_remaining = false;
+                        actor_ref.set_role_state(game, self);
                     }
-
-                    InsiderGroupID::Mafia.add_player_to_revealed_group(game, target_ref);
-                    target_ref.set_win_condition(
-                        game,
-                        WinCondition::new_loyalist(crate::game::game_conclusion::GameConclusion::Mafia)
-                    );
-                    target_ref.set_night_convert_role_to(game, Some(new_state));
-
-                    self.convert_charges_remaining = false;
-                    actor_ref.set_role_state(game, self);
-                }
+                }else{
+                    visit.target.set_night_convert_role_to(game, Some(new_state));
+                };
             },
             _ => {}
         }                
@@ -134,7 +146,8 @@ impl RoleStateImpl for Reeducator {
         ])
     }
     // Unlike other conversion roles, its visit isn't tagged as an attack.
-    // I assume this is because if the target is syndicate then it is converted without an attack
+    // This is because if the target is syndicate then it is converted without an attack
+    // After transportation, it becomes an attack
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         common_role::convert_controller_selection_to_visits(
             game, 
@@ -143,54 +156,12 @@ impl RoleStateImpl for Reeducator {
             false
         )
     }
-    fn before_initial_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
-
-        if game.settings.role_list.0.contains(&RoleOutline::new_exact(Role::Reeducator)) {
-            return;
-        }
-
-        //get random mafia player and turn them info a random town role
-
-        let random_mafia_player = PlayerReference::all_players(game)
-            .filter(|p|RoleSet::Mafia.get_roles().contains(&p.role(game)))
-            .filter(|p|!RoleSet::MafiaKilling.get_roles().contains(&p.role(game)))
-            .filter(|p|*p!=actor_ref)
-            .filter(|p|p.role(game)!=Role::Reeducator)
-            .choose(&mut rand::rng());
-
-        if let Some(random_mafia_player) = random_mafia_player {
-
-            let random_town_role = RoleOutline { 
-                options: vec1![RoleOutlineOption {
-                    win_condition: Default::default(),
-                    insider_groups: Default::default(),
-                    roles: RoleOutlineOptionRoles::RoleSet { role_set: RoleSet::TownCommon }
-                }]
-            }
-                .get_random_role_assignments(
-                    &game.settings.enabled_roles,
-                    PlayerReference::all_players(game).map(|p|p.role(game)).collect::<Vec<_>>().as_slice()
-                ).map(|assignment| assignment.role);
-
-            if let Some(random_town_role) = random_town_role {
-                //special case here. I don't want to use set_role because it alerts the player their role changed
-                //NOTE: It will still send a packet to the player that their role state updated,
-                //so it might be deducible that there is a reeducator
-                InsiderGroupID::Mafia.remove_player_from_revealed_group(game, random_mafia_player);
-                random_mafia_player.set_win_condition(game, crate::game::win_condition::WinCondition::GameConclusionReached{
-                    win_if_any: vec![GameConclusion::Town].into_iter().collect()
-                });
-                random_mafia_player.set_role_state(game, random_town_role.new_state(game));
-                
-            }
-        }
-        
-    }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+    fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
+    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
 
 impl Reeducator {

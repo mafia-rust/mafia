@@ -30,22 +30,21 @@ pub struct ClientRoleState;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-const ENRAGED_NUMBERATOR: usize = 2;
+const ENRAGED_NUMERATOR: usize = 2;
 const ENRAGED_DENOMINATOR: usize = 3;
 
 impl RoleStateImpl for Werewolf {
     type ClientRoleState = ClientRoleState;
     fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            //priority completely burgered so sammy told me to make my own priority but i didn't want to so i just made it heal
-            OnMidnightPriority::Heal => {
+            OnMidnightPriority::Deception => {
                 let visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(first_visit) = visits.first() else {return};
 
                 let target_ref = first_visit.target;
                 let enraged = self.tracked_players.len().saturating_mul(ENRAGED_DENOMINATOR) >= PlayerReference::all_players(game)
                     .filter(|p|p.alive(game)||*p==actor_ref)
-                    .count().saturating_mul(ENRAGED_NUMBERATOR);
+                    .count().saturating_mul(ENRAGED_NUMERATOR);
 
                 if !enraged && target_ref.all_night_visits_cloned(game).is_empty() {return}
                     
