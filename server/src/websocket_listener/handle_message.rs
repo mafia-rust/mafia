@@ -58,7 +58,7 @@ impl WebsocketListener{
                     self.set_client_outside_room(&kicked_player, false);
                     
                 }else{
-                    //Nobody is connected to that lobby with that id,
+                    //Nobody is connected to that room with that id,
                     //Maybe they already left
 
                     let Ok((room,_,_)) = client.get_room_mut(self) else {return};
