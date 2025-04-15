@@ -83,14 +83,13 @@ impl RoleStateImpl for Medium {
                 actor_ref.set_role_state(game, self);
             },
             PhaseType::Night => {
-                let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(
-                    ControllerID::role(actor_ref, Role::Medium, 0)
-                ) else {return};
+                let Some(PlayerListSelection(target)) = ControllerID::role(actor_ref, Role::Medium, 0)
+                    .get_player_list_selection(game) else {return};
 
-                let Some(target) = target.first() else {return};
+                let Some(target) = target.first().copied() else {return};
                 
                 self.seances_remaining = self.seances_remaining.saturating_sub(1);
-                self.seanced_target = Some(*target);
+                self.seanced_target = Some(target);
                 
                 actor_ref.set_role_state(game, self);
 

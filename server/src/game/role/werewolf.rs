@@ -154,9 +154,9 @@ impl RoleStateImpl for Werewolf {
             PhaseType::Night => {
 
                 //Mark chosen player as tracked on phase start: night
-                if let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(
-                    ControllerID::role(actor_ref, Role::Werewolf, 1)
-                ) {
+                if let Some(PlayerListSelection(target)) = ControllerID::role(actor_ref, Role::Werewolf, 1)
+                    .get_player_list_selection(game)
+                {
                     if let Some(target) = target.first() {
                         self.track_player(game, actor_ref, *target);
                     };

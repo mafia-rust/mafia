@@ -49,13 +49,9 @@ impl RoleStateImpl for Marksman {
             .flat_map(|p|p.target.all_night_visitors_cloned(game))
             .collect();
 
-        let Some(PlayerListSelection(marks)) = 
-            game.saved_controllers.get_controller_current_selection_player_list(
-                ControllerID::role(actor_ref, Role::Marksman, 0)
-            ) else 
-        {
-            return;
-        };
+        let Some(PlayerListSelection(marks)) = ControllerID::role(actor_ref, Role::Marksman, 0)
+            .get_player_list_selection(game)
+            .cloned() else {return};
 
         for mark in marks {
             if !visiting_players.contains(&mark) {continue};
@@ -103,8 +99,8 @@ impl RoleStateImpl for Marksman {
                 .night_typical(actor_ref)
                 .add_grayed_out_condition(
                     self.state != MarksmanState::Loaded 
-                    || game.saved_controllers
-                        .get_controller_current_selection_player_list(ControllerID::role(actor_ref, Role::Marksman, 0))
+                    || ControllerID::role(actor_ref, Role::Marksman, 0)
+                        .get_player_list_selection(game)
                         .is_none_or(|players| players.0.is_empty())
                 )
                 .build_map()

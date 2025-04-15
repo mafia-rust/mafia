@@ -58,9 +58,8 @@ impl RoleStateImpl for Impostor {
         ])
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: crate::game::grave::GraveReference) {
-        let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
-            ControllerID::role(actor_ref, Role::Impostor, 1)
-        )else{return};
+        let Some(RoleOptionSelection(Some(role))) = ControllerID::role(actor_ref, Role::Impostor, 1)
+            .get_role_option_selection(game).cloned() else {return};
         
         
         if grave.deref(game).player == actor_ref {

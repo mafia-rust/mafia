@@ -165,10 +165,7 @@ impl RoleStateImpl for Kira {
         if actor_ref.night_blocked(game) {return;}
         if actor_ref.ability_deactivated_from_death(game) {return;}
 
-        let Some(KiraSelection(selection)) = 
-            game.saved_controllers.get_controller_current_selection_kira(
-                ControllerID::role(actor_ref, Role::Kira, 0)
-            )
+        let Some(KiraSelection(selection)) = ControllerID::role(actor_ref, Role::Kira, 0).get_kira_selection(game)
             else {return};
 
         let result = KiraResult::new(selection.clone(), game);

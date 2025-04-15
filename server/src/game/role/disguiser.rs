@@ -152,9 +152,7 @@ impl Disguiser{
         players
     }
     fn disguised_role(&self, game: &Game, actor_ref: PlayerReference)->Role{
-        if let Some(role) = game.saved_controllers.get_controller_current_selection_role_option(
-            ControllerID::role(actor_ref, Role::Disguiser, 1)
-        ).and_then(|selection| selection.0)
+        if let Some(role) = ControllerID::role(actor_ref, Role::Disguiser, 1).get_role_option_selection(game).and_then(|selection| selection.0)
         {
             role
         }else{
