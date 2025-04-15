@@ -169,6 +169,11 @@ impl RoomState for Lobby {
         self.ensure_host_exists(None);
 
         self.set_rolelist_length();
+        for player in self.clients.iter(){
+            if let ClientConnection::Connected(send) = &player.1.connection {
+                self.send_settings(send);
+            }
+        }
 
         Ok(JoinClientData {
             id: room_client_id,
