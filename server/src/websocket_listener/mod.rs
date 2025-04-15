@@ -190,7 +190,7 @@ impl WebsocketListener{
                     return;
                 }
 
-                tokio::time::sleep(DESIRED_FRAME_TIME.saturating_sub(tokio::time::Instant::now().saturating_duration_since(frame_start_time))).await;
+                tokio::time::sleep(DESIRED_FRAME_TIME.saturating_sub(frame_start_time.elapsed())).await;
             }
         });
     }
