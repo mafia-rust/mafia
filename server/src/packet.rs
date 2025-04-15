@@ -28,12 +28,12 @@ use crate::{
             doomsayer::DoomsayerGuess,
             ClientRoleStateEnum, Role
         }, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, GameOverReason, RejectStartReason
-    }, lobby::{game_client::GameClientLocation, lobby_client::{LobbyClient, RoomClientID}}, log, vec_map::VecMap, vec_set::VecSet, websocket_listener::RoomCode
+    }, lobby::lobby_client::LobbyClient, log, room::{game_client::GameClientLocation, RoomClientID}, vec_map::VecMap, vec_set::VecSet, websocket_listener::RoomCode
 };
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct LobbyPreviewData {
+pub struct RoomPreviewData {
     pub name: String,
     pub in_game: bool,
     pub players: Vec<(RoomClientID, String)>
@@ -57,17 +57,22 @@ pub enum ToClientPacket{
     RateLimitExceeded,
     
     ForcedDisconnect,
-    ForcedOutsideLobby,
+    #[serde(rename = "forcedOutsideLobby")]
+    ForcedOutsideRoom,
 
     // Pre lobby
-    #[serde(rename_all = "camelCase")]
-    LobbyList{lobbies: HashMap<RoomCode, LobbyPreviewData>},
+    #[serde(rename = "lobbyList", rename_all = "camelCase")]
+    RoomList{
+        #[serde(rename = "lobbies")]
+        rooms: HashMap<RoomCode, RoomPreviewData>
+    },
     #[serde(rename_all = "camelCase")]
     AcceptJoin{room_code: RoomCode, in_game: bool, player_id: RoomClientID, spectator: bool},
     RejectJoin{reason: RejectJoinReason},
     
     // Lobby
-    LobbyName{name: String},
+    #[serde(rename = "lobbyName")]
+    RoomName{name: String},
     #[serde(rename_all = "camelCase")]
     YourId{player_id: RoomClientID},
     #[serde(rename_all = "camelCase")]
@@ -175,7 +180,8 @@ pub enum RejectJoinReason {
 pub enum ToServerPacket{
     Ping,
     // Pre Lobby
-    LobbyListRequest,
+    #[serde(rename = "lobbyListRequest")]
+    RoomListRequest,
     #[serde(rename_all = "camelCase")]
     ReJoin{room_code: RoomCode, player_id: RoomClientID},
     #[serde(rename_all = "camelCase")]
@@ -193,7 +199,8 @@ pub enum ToServerPacket{
     SetSpectator{spectator: bool},
     SetName{name: String},
     ReadyUp{ready: bool},
-    SetLobbyName{name: String},
+    #[serde(rename = "setLobbyName")]
+    SetRoomName{name: String},
     StartGame,
 
     // Settings

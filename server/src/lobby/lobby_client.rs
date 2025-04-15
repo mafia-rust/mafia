@@ -6,12 +6,9 @@ use serde::Serialize;
 use crate::game::player::PlayerReference;
 use crate::game::spectator::spectator_pointer::SpectatorPointer;
 use crate::game::Game;
+use crate::room::game_client::{GameClient, GameClientLocation};
 use crate::{client_connection::ClientConnection, packet::ToClientPacket, websocket_connections::connection::ClientSender};
 
-use super::game_client::GameClient;
-use super::GameClientLocation;
-
-pub type RoomClientID = u32;
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LobbyClient{

@@ -1,4 +1,4 @@
-use crate::{client_connection::ClientConnection, lobby::{game_client::GameClientLocation, lobby_client::{LobbyClient, RoomClientID}, lobby_state::Lobby, RemoveClientData}, log, packet::{ToClientPacket, ToServerPacket}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
+use crate::{client_connection::ClientConnection, lobby::{lobby_client::LobbyClient, Lobby}, log, packet::{ToClientPacket, ToServerPacket}, room::{game_client::GameClientLocation, RemoveClientData, RoomClientID, RoomState}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
 
 use super::{
     chat::{ChatGroup, ChatMessageVariant, MessageSender}, event::{on_fast_forward::OnFastForward, on_game_ending::OnGameEnding, on_whisper::OnWhisper, Event}, game_conclusion::GameConclusion, phase::PhaseType, player::{PlayerIndex, PlayerReference}, role::{
@@ -24,11 +24,11 @@ impl Game {
         }
     }
     
-    pub fn on_client_message(&mut self, send: &ClientSender, lobby_client_id: RoomClientID, incoming_packet: ToServerPacket) -> GameAction {
-        if let Some(client) = self.clients.get(&lobby_client_id) {
+    pub fn on_client_message(&mut self, send: &ClientSender, room_client_id: RoomClientID, incoming_packet: ToServerPacket) -> GameAction {
+        if let Some(client) = self.clients.get(&room_client_id) {
             match client.client_location {
                 GameClientLocation::Player(player_index) => {
-                    self.on_player_message(&ClientConnection::Connected(send.clone()), lobby_client_id, player_index, incoming_packet)
+                    self.on_player_message(&ClientConnection::Connected(send.clone()), room_client_id, player_index, incoming_packet)
                 }
                 GameClientLocation::Spectator(spectator_index) => {
                     self.on_spectator_message(spectator_index, incoming_packet);
@@ -36,13 +36,13 @@ impl Game {
                 }
             }
         } else {
-            log!(error "Game"; "Received message from invalid client id: {}", lobby_client_id);
+            log!(error "Game"; "Received message from invalid client id: {}", room_client_id);
             GameAction::None
         }
     }
 
     // The only reason this takes a client connection and not a client sender is for the tests ... which sucks
-    pub fn on_player_message(&mut self, client_connection: &ClientConnection, lobby_client_id: RoomClientID, sender_player_index: PlayerIndex, incoming_packet: ToServerPacket) -> GameAction {
+    pub fn on_player_message(&mut self, client_connection: &ClientConnection, room_client_id: RoomClientID, sender_player_index: PlayerIndex, incoming_packet: ToServerPacket) -> GameAction {
         let sender_player_ref = match PlayerReference::new(self, sender_player_index){
             Ok(sender_player_ref) => sender_player_ref,
             Err(_) => {
@@ -56,13 +56,13 @@ impl Game {
                 self.set_player_name(sender_player_ref, name);
             },
             ToServerPacket::Leave => {
-                let RemoveClientData { close_room } = self.remove_client(lobby_client_id);
+                let RemoveClientData { close_room } = self.remove_client(room_client_id);
                 if close_room {
                     return GameAction::Close;
                 }
             },
             ToServerPacket::HostForceBackToLobby => {
-                if let Some(player) = self.clients.get(&lobby_client_id){
+                if let Some(player) = self.clients.get(&room_client_id){
                     if !player.host {break 'packet_match}
                 }
 
@@ -72,8 +72,8 @@ impl Game {
                 self.send_to_all(ToClientPacket::RoleList { role_list });
 
                 let mut new_clients = VecMap::new();
-                for (lobby_client_id, game_client) in self.clients.clone() {
-                    new_clients.insert(lobby_client_id, LobbyClient::new_from_game_client(self, game_client));
+                for (room_client_id, game_client) in self.clients.clone() {
+                    new_clients.insert(room_client_id, LobbyClient::new_from_game_client(self, game_client));
                 }
 
                 self.send_to_all(ToClientPacket::BackToLobby);
@@ -83,7 +83,7 @@ impl Game {
                 return GameAction::BackToLobby(lobby);
             }
             ToServerPacket::HostForceEndGame => {
-                if let Some(player) = self.clients.get(&lobby_client_id){
+                if let Some(player) = self.clients.get(&room_client_id){
                     if !player.host {break 'packet_match}
                 }
 
@@ -92,21 +92,21 @@ impl Game {
                 OnGameEnding::new(conclusion).invoke(self);
             }
             ToServerPacket::HostForceSkipPhase => {
-                if let Some(player) = self.clients.get(&lobby_client_id){
+                if let Some(player) = self.clients.get(&room_client_id){
                     if !player.host {break 'packet_match}
                 }
                 
                 OnFastForward::invoke(self);
             }
             ToServerPacket::HostDataRequest => {
-                if let Some(player) = self.clients.get(&lobby_client_id){
+                if let Some(player) = self.clients.get(&room_client_id){
                     if !player.host {break 'packet_match}
                 }
 
                 self.resend_host_data(client_connection);
             }
             ToServerPacket::HostForceSetPlayerName { id, name } => {
-                if let Some(player) = self.clients.get(&lobby_client_id){
+                if let Some(player) = self.clients.get(&room_client_id){
                     if !player.host {break 'packet_match}
                 }
                 if let Some(player) = self.clients.get(&id) {
@@ -118,7 +118,7 @@ impl Game {
                 }
             }
             ToServerPacket::SetPlayerHost { player_id } => {
-                if let Some(player) = self.clients.get(&lobby_client_id){
+                if let Some(player) = self.clients.get(&room_client_id){
                     if !player.host {break 'packet_match}
                 }
                 if let Some(player) = self.clients.get_mut(&player_id) {
@@ -128,11 +128,11 @@ impl Game {
                 self.resend_host_data_to_all_hosts();
             }
             ToServerPacket::RelinquishHost => {
-                if let Some(player) = self.clients.get_mut(&lobby_client_id){
+                if let Some(player) = self.clients.get_mut(&room_client_id){
                     if !player.host {break 'packet_match}
                     player.relinquish_host();
                 }
-                self.ensure_host_exists(Some(lobby_client_id));
+                self.ensure_host_exists(Some(room_client_id));
                 self.send_players();
                 self.resend_host_data_to_all_hosts();
             }

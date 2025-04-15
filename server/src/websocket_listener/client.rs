@@ -1,6 +1,6 @@
 use std::{net::SocketAddr, ops::Mul, time::Duration};
 
-use crate::{lobby::{lobby_client::RoomClientID, RoomState}, packet::ToClientPacket, websocket_connections::connection::{ClientSender, Connection}};
+use crate::{room::{RoomClientID, Room}, packet::ToClientPacket, websocket_connections::connection::{ClientSender, Connection}};
 
 use super::{RoomCode, WebsocketListener};
 
@@ -53,10 +53,10 @@ impl ClientReference{
         self.deref_mut(listener).location = loc
     }
 
-    pub(super) fn get_room<'a>(&self, listener: &'a WebsocketListener)->Result<(&'a RoomState, RoomCode, RoomClientID),GetRoomError>{
+    pub(super) fn get_room<'a>(&self, listener: &'a WebsocketListener)->Result<(&'a Room, RoomCode, RoomClientID),GetRoomError>{
         self.location(listener).clone().get_room(listener)
     }
-    pub(super) fn get_room_mut<'a>(&self, listener: &'a mut WebsocketListener)->Result<(&'a mut RoomState, RoomCode, RoomClientID),GetRoomError>{
+    pub(super) fn get_room_mut<'a>(&self, listener: &'a mut WebsocketListener)->Result<(&'a mut Room, RoomCode, RoomClientID),GetRoomError>{
         self.location(listener).clone().get_room_mut(listener)
     }
     pub(super) fn in_room(&self, listener: &WebsocketListener, room_code: RoomCode)->bool{
@@ -123,15 +123,15 @@ impl ClientLocation{
         let Self::InRoom { room_code: b, .. } = &self else {return false};
         room_code == *b 
     }
-    pub(super) fn get_room<'a>(&self, listener: &'a WebsocketListener)->Result<(&'a RoomState, RoomCode, RoomClientID),GetRoomError>{
+    pub(super) fn get_room<'a>(&self, listener: &'a WebsocketListener)->Result<(&'a Room, RoomCode, RoomClientID),GetRoomError>{
         let ClientLocation::InRoom{room_code, room_client_id} = &self else {return Err(GetRoomError::NotInRoom)};
-        let Some(lobby) = listener.get_lobby(room_code) else {return Err(GetRoomError::RoomDoesntExist)};
-        Ok((lobby, *room_code, *room_client_id))
+        let Some(room) = listener.get_room(room_code) else {return Err(GetRoomError::RoomDoesntExist)};
+        Ok((room, *room_code, *room_client_id))
     }
-    pub(super) fn get_room_mut<'a>(&self, listener: &'a mut WebsocketListener)->Result<(&'a mut RoomState, RoomCode, RoomClientID),GetRoomError>{
+    pub(super) fn get_room_mut<'a>(&self, listener: &'a mut WebsocketListener)->Result<(&'a mut Room, RoomCode, RoomClientID),GetRoomError>{
         let ClientLocation::InRoom{room_code, room_client_id} = &self else {return Err(GetRoomError::NotInRoom)};
-        let Some(lobby) = listener.get_lobby_mut(room_code) else {return Err(GetRoomError::RoomDoesntExist)};
-        Ok((lobby, *room_code, *room_client_id))
+        let Some(room) = listener.get_room_mut(room_code) else {return Err(GetRoomError::RoomDoesntExist)};
+        Ok((room, *room_code, *room_client_id))
     }
 }
 

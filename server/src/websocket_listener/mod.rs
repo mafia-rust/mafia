@@ -7,7 +7,7 @@ pub type RoomCode = usize;
 
 use std::{collections::HashMap, net::SocketAddr, sync::{Arc, Mutex}, time::Duration};
 
-use crate::{lobby::{lobby_client::RoomClientID, JoinClientData, RemoveClientData, RoomState}, packet::{RejectJoinReason, ToClientPacket}, websocket_connections::connection::Connection};
+use crate::{room::{RoomClientID, JoinClientData, RemoveClientData, Room, RoomState}, packet::{RejectJoinReason, ToClientPacket}, websocket_connections::connection::Connection};
 
 use self::client::{Client, ClientLocation, ClientReference, GetRoomError};
 use rand::random;
@@ -17,23 +17,23 @@ use rand::random;
 pub struct WebsocketListener {
     // Clients that are currently connected, if a client isnt connected it isnt here
     clients: HashMap<SocketAddr, Client>,
-    lobbies: HashMap<RoomCode, RoomState>,
+    rooms: HashMap<RoomCode, Room>,
 }
 impl WebsocketListener{
     pub fn new() -> Self {
         Self {
-            lobbies: HashMap::new(),
+            rooms: HashMap::new(),
             clients: HashMap::new(),
         }
     }
     fn clients(&self) -> &HashMap<SocketAddr, Client> {
         &self.clients
     }
-    fn lobbies(&self) -> &HashMap<RoomCode, RoomState> {
-        &self.lobbies
+    fn rooms(&self) -> &HashMap<RoomCode, Room> {
+        &self.rooms
     }
-    fn lobbies_mut(&mut self) -> &mut HashMap<RoomCode, RoomState> {
-        &mut self.lobbies
+    fn rooms_mut(&mut self) -> &mut HashMap<RoomCode, Room> {
+        &mut self.rooms
     }
     fn get_client<'a>(&'a self, address: &SocketAddr) -> Option<&'a Client> {
         self.clients.get(address)
@@ -41,11 +41,11 @@ impl WebsocketListener{
     fn get_client_mut<'a>(&'a mut self, address: &SocketAddr) -> Option<&'a mut Client> {
         self.clients.get_mut(address)
     }
-    pub(super) fn get_lobby<'a>(&'a self, room_code: &RoomCode) -> Option<&'a RoomState> {
-        self.lobbies.get(room_code)
+    pub(super) fn get_room<'a>(&'a self, room_code: &RoomCode) -> Option<&'a Room> {
+        self.rooms.get(room_code)
     }
-    pub(super) fn get_lobby_mut<'a>(&'a mut self, room_code: &RoomCode) -> Option<&'a mut RoomState> {
-        self.lobbies.get_mut(room_code)
+    pub(super) fn get_room_mut<'a>(&'a mut self, room_code: &RoomCode) -> Option<&'a mut Room> {
+        self.rooms.get_mut(room_code)
     }
 
 
@@ -66,49 +66,29 @@ impl WebsocketListener{
         client.send(ToClientPacket::ForcedDisconnect);
 
 
-        let ClientLocation::InRoom { room_code, room_client_id: lobby_client_id } = client.location() else {return};
-        let Some(lobby) = self.lobbies.get_mut(room_code) else {return};
+        let ClientLocation::InRoom { room_code, room_client_id } = client.location() else {return};
+        let Some(room) = self.rooms.get_mut(room_code) else {return};
 
-        let RemoveClientData { close_room } = lobby.remove_client_rejoinable(*lobby_client_id);
+        let RemoveClientData { close_room } = room.remove_client_rejoinable(*room_client_id);
 
         if close_room {
-            self.delete_lobby(*room_code);
+            self.delete_room(*room_code);
         }
     }
 
 
-    fn set_client_in_lobby(&mut self, client: &ClientReference, room_code: RoomCode){
+    fn set_client_in_room(&mut self, client: &ClientReference, room_code: RoomCode){
 
         let sender = &client.sender(self).clone();
-        let Some(lobby) = self.get_lobby_mut(&room_code) else {
+        let Some(room) = self.get_room_mut(&room_code) else {
             client.send(self, ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomDoesntExist });
             return
         };
-        match lobby.join_client(sender) {
-            Ok(JoinClientData { id: lobby_client_id, in_game, spectator }) => {
-                sender.send(ToClientPacket::AcceptJoin { room_code, in_game, player_id: lobby_client_id, spectator });
-
-                lobby.initialize_client(lobby_client_id, sender);
-
-                client.set_location(self, ClientLocation::InRoom { room_code, room_client_id: lobby_client_id });
-            }
-            Err(reason) => {
-                client.send(self, ToClientPacket::RejectJoin { reason });
-            }
-        }
-    }
-    fn set_client_in_lobby_reconnect(&mut self, client: ClientReference, room_code: RoomCode, room_client_id: RoomClientID){
-
-        let sender = &client.sender(self).clone();
-        let Some(lobby) = self.get_lobby_mut(&room_code) else {
-            client.send(self, ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomDoesntExist });
-            return
-        };
-        match lobby.rejoin_client(sender, room_client_id) {
+        match room.join_client(sender) {
             Ok(JoinClientData { id: room_client_id, in_game, spectator }) => {
                 sender.send(ToClientPacket::AcceptJoin { room_code, in_game, player_id: room_client_id, spectator });
 
-                lobby.initialize_client(room_client_id, sender);
+                room.initialize_client(room_client_id, sender);
 
                 client.set_location(self, ClientLocation::InRoom { room_code, room_client_id });
             }
@@ -117,18 +97,38 @@ impl WebsocketListener{
             }
         }
     }
-    fn set_client_outside_lobby(&mut self, client: &ClientReference, rejoinable: bool) {
-        client.send(self, ToClientPacket::ForcedOutsideLobby);
+    fn set_client_in_room_reconnect(&mut self, client: ClientReference, room_code: RoomCode, room_client_id: RoomClientID){
+
+        let sender = &client.sender(self).clone();
+        let Some(room) = self.get_room_mut(&room_code) else {
+            client.send(self, ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomDoesntExist });
+            return
+        };
+        match room.rejoin_client(sender, room_client_id) {
+            Ok(JoinClientData { id: room_client_id, in_game, spectator }) => {
+                sender.send(ToClientPacket::AcceptJoin { room_code, in_game, player_id: room_client_id, spectator });
+
+                room.initialize_client(room_client_id, sender);
+
+                client.set_location(self, ClientLocation::InRoom { room_code, room_client_id });
+            }
+            Err(reason) => {
+                client.send(self, ToClientPacket::RejectJoin { reason });
+            }
+        }
+    }
+    fn set_client_outside_room(&mut self, client: &ClientReference, rejoinable: bool) {
+        client.send(self, ToClientPacket::ForcedOutsideRoom);
         
-        if let Ok((lobby, room_code, id)) = client.get_room_mut(self) {
+        if let Ok((room, room_code, id)) = client.get_room_mut(self) {
             let RemoveClientData { close_room } = if rejoinable {
-                lobby.remove_client_rejoinable(id)
+                room.remove_client_rejoinable(id)
             }else{
-                lobby.remove_client(id)
+                room.remove_client(id)
             };
 
             if close_room {
-                self.delete_lobby(room_code);
+                self.delete_room(room_code);
             }
         }
 
@@ -142,24 +142,24 @@ impl WebsocketListener{
         (start..=usize::MAX)
             .chain(0..start)
             .find(
-                |code| !self.lobbies.contains_key(code)
+                |code| !self.rooms.contains_key(code)
             )
     }
-    pub(super) fn create_lobby(&mut self) -> Option<RoomCode>{
+    pub(super) fn create_room(&mut self) -> Option<RoomCode>{
         let room_code = self.generate_roomcode()?;
 
-        self.lobbies.insert(room_code, RoomState::new());
+        self.rooms.insert(room_code, Room::new());
         Some(room_code)
     }
-    pub(super) fn delete_lobby(&mut self, room_code: RoomCode){
+    pub(super) fn delete_room(&mut self, room_code: RoomCode){
 
         for client in ClientReference::all_clients(self){
             if client.in_room(self, room_code) {
-                self.set_client_outside_lobby(&client, false);
+                self.set_client_outside_room(&client, false);
             }
         }
 
-        self.lobbies.remove(&room_code);
+        self.rooms.remove(&room_code);
     }
 
     
@@ -186,7 +186,7 @@ impl WebsocketListener{
 
     fn validate_client(&self, addr: &SocketAddr)->Result<ClientReference,ValidateClientError>{
         let Some(client) = ClientReference::new(addr, self) else {return Err(ValidateClientError::ClientDoesntExist)};
-        if let Err(GetRoomError::RoomDoesntExist) = client.get_room(self) {return Err(ValidateClientError::InLobbyThatDoesntExist)};
+        if let Err(GetRoomError::RoomDoesntExist) = client.get_room(self) {return Err(ValidateClientError::InRoomThatDoesntExist)};
         Ok(client)
     }
     
@@ -195,5 +195,5 @@ impl WebsocketListener{
 
 pub(super) enum ValidateClientError{
     ClientDoesntExist,
-    InLobbyThatDoesntExist
+    InRoomThatDoesntExist
 }
