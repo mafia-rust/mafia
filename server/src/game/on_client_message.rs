@@ -230,8 +230,7 @@ impl Game {
                 sender_player_ref.set_fast_forward_vote(self, fast_forward);
             },
             _ => {
-                log!(fatal "Game"; "Unimplemented ToServerPacket: {incoming_packet:?}");
-                unreachable!();
+                log!(error "Game"; "Recieved invalid packet for Game state: {incoming_packet:?}");
             }
         }}
         
