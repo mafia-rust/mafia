@@ -7,13 +7,7 @@ import { controllerIdToLink, TwoRoleOutlineOptionSelection } from "../../../../.
 import { usePlayerState } from "../../../../../components/useHooks"
 import ListMap from "../../../../../ListMap"
 
-export type AuditorResult = {
-    type: "two",
-    roles: [Role, Role]
-} | {
-    type: "one",
-    role: Role
-}
+export type AuditorResult = Role[];
 
 export default function AuditorMenu(props: Readonly<{
     roleState: RoleState & {type: "auditor"}
