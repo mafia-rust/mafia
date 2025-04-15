@@ -140,7 +140,10 @@ async fn handle_connection(
             }
             NextEvent::MpscReceieved(None) => break, // Channel has been closed
             NextEvent::MpscReceieved(Some(message)) => {
-                let Ok(json_message) = message.to_json_string() else {break};
+                let Ok(json_message) = serde_json::to_string(&message) else {
+                    log!(error "Connection"; "Failed to parse packet. {:?}", &message);
+                    break
+                };
     
                 match tcp_sender.send(Message::text(json_message)).await {
                     Ok(_) => {},

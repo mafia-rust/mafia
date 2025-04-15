@@ -29,7 +29,7 @@ impl Mafia{
     }
 
     pub fn controller_parameters_map(game: &Game)->ControllerParametersMap{
-        let players_with_gun = Self::players_with_gun(game);
+        let players_with_gun = Self::syndicate_killing_players(game);
 
         let available_backup_players = PlayerReference::all_players(game)
             .filter(|p|
@@ -82,7 +82,7 @@ impl Mafia{
         out
     }
     
-    pub fn players_with_gun(game: &Game)->VecSet<PlayerReference>{
+    pub fn syndicate_killing_players(game: &Game)->VecSet<PlayerReference>{
         PlayerReference::all_players(game)
             .filter(|p|
                 InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p) &&
@@ -109,7 +109,7 @@ impl Mafia{
                 NightVisits::add_visit(game, new_visit);
             }
             OnMidnightPriority::Deception => {
-                if Self::players_with_gun(game).into_iter().any(|p|!p.night_blocked(game) && p.alive(game)) {
+                if Self::syndicate_killing_players(game).into_iter().any(|p|!p.night_blocked(game) && p.alive(game)) {
                     NightVisits::retain(game, |v|v.tag != crate::game::visit::VisitTag::SyndicateBackupAttack);
                 }
             }

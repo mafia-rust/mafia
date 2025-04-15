@@ -28,7 +28,7 @@ use crate::{
             doomsayer::DoomsayerGuess,
             ClientRoleStateEnum, Role
         }, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, GameOverReason, RejectStartReason
-    }, lobby::lobby_client::LobbyClient, log, room::RoomClientID, vec_map::VecMap, vec_set::VecSet, websocket_listener::RoomCode
+    }, lobby::lobby_client::LobbyClient, room::RoomClientID, vec_map::VecMap, vec_set::VecSet, websocket_listener::RoomCode
 };
 
 #[derive(Serialize, Debug, Clone)]
@@ -154,13 +154,6 @@ pub enum ToClientPacket{
     NightMessages{chat_messages: Vec<ChatMessage>},
 
     GameOver{reason: GameOverReason},
-}
-impl ToClientPacket {
-    pub fn to_json_string(&self) -> Result<String, serde_json::Error> {
-        serde_json::to_string(self).inspect_err(|_|{
-            log!(error "Serde error"; "Parsing JSON string: {:?}", self);
-        })
-    }
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
