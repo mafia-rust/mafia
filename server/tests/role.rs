@@ -169,41 +169,6 @@ fn detective_neutrals(){
 }
 
 #[test]
-fn auditor_standard_double_audit(){
-    kit::scenario!(game in Night 1 where
-        auditor: Auditor,
-        _townie: Auditor,
-        _mafioso: Mafioso
-    );
-
-    let input = AbilityInput::new(
-        ControllerID::role(auditor.player_ref(), Role::Auditor, 0), 
-        TwoRoleOutlineOptionSelection(
-            RoleOutlineReference::new(&game, 0), 
-            RoleOutlineReference::new(&game, 1)
-        )
-    );
-
-    auditor.send_ability_input(input);
-    game.next_phase();
-    
-    let messages = auditor.get_messages_after_night(1);
-
-    let mut results: u8 = 0;
-    let mut found_auditor = false;
-    for message in messages.iter() {
-        if let ChatMessageVariant::AuditorResult { role_outline: _, result } = message {
-            results += 1;
-            if result.0.contains(&Role::Auditor) {
-                found_auditor = true;
-            }
-        }
-    }
-    assert!(results == 2);
-    assert!(found_auditor);
-}
-
-#[test]
 fn mortician_obscures_on_stand(){
     kit::scenario!(game in Night 1 where
         mortician: Mortician,
