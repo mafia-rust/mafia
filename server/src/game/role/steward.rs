@@ -89,11 +89,19 @@ impl RoleStateImpl for Steward {
                     previous_input: TwoRoleOptionSelection(first, second), //updates here
                 });
             }
-            OnMidnightPriority::Investigative => {
+            OnMidnightPriority::DeleteMessages => {
                 for target_healed_ref in self.target_healed_refs{
                     if target_healed_ref.night_attacked(midnight_variables){
-                        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::TargetWasAttacked);
-                        target_healed_ref.push_night_message(midnight_variables, ChatMessageVariant::YouWereProtected);
+
+                        target_healed_ref.set_night_messages(midnight_variables, 
+                            target_healed_ref.night_messages(midnight_variables)
+                                .iter()
+                                .filter(|m|
+                                    !matches!(m,ChatMessageVariant::YouWereProtected|ChatMessageVariant::YouSurvivedAttack)
+                                )
+                                .cloned()
+                                .collect()
+                        );
                     }
                 }
             }

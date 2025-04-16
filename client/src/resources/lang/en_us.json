@@ -1530,8 +1530,8 @@
     "wiki.article.role.armorsmith.extra":"* Your target is told they are protected if they get attacked\n* You can't choose yourself\n- If you somehow visit yourself, you give yourself the temporary armor",
 
     "wiki.article.role.steward.reminder": "At night, select up to 2 roles to protect everyone with those roles.",
-    "wiki.article.role.steward.guide":"- At night, choose up to 2 roles to protect\n    - Everyone with these roles are protected from attacks\n    - You are told if anyone with this role is attacked\n    - You can't protect the same role twice in a row\n    - You can't protect Steward more than once per game", 
-    "wiki.article.role.steward.abilities":"* Choose up to 2 roles to protect\n    * Everyone with either of the roles is protected\n    * You are told if anyone you protect is attacked, and they are told they are protected",
+    "wiki.article.role.steward.guide":"- At night, choose up to 2 roles to protect\n    - Everyone with these roles are protected from attacks\n    - You aren't told if anyone with this role is attacked\n    - You can't protect the same role twice in a row\n    - You can't protect Steward more than once per game\n    - Everyone you protect has the following night messages deleted: you were protected, and you survived an attack.", 
+    "wiki.article.role.steward.abilities":"* Choose up to 2 roles to protect\n    * Everyone with either of the roles is protected\n    * You aren't told if anyone you protect is attacked\n    - Everyone you protect has the following night messages deleted: you were protected, and you survived an attack.",
     "wiki.article.role.steward.attributes":"* You can't protect the same role two nights in a row\n* You can't protect Steward more than once\n* Your ability does nothing if you are blocked, or dead",
     "wiki.article.role.steward.extra":"You do not visit the roles you protect",
 

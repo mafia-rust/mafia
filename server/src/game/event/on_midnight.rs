@@ -32,9 +32,11 @@ event_priority!(OnMidnightPriority{
     Poison, //set poison
     Investigative,  //use aura
 
-    SpyBug,
+    DeleteMessages, //set messages
 
-    StealMessages,
+    SpyBug, //use non stolen messages
+
+    StealMessages,  //use messages + set messages (specficially set stolen messages)
 
     FinalizeNight
 });

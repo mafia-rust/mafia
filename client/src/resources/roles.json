@@ -299,9 +299,7 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "targetWasAttacked"},
             {"type": "youWereProtected"},
-            {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
     },
