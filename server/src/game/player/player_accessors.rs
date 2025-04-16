@@ -1,18 +1,14 @@
-use vec1::Vec1;
-
 use crate::{
     game::{
-        chat::{
-            ChatMessage, ChatMessageVariant
-        },
+        chat::{ChatMessage, ChatMessageVariant},
         event::{
             on_convert::OnConvert, on_fast_forward::OnFastForward,
             on_remove_role_label::OnRemoveRoleLabel
         },
         modifiers::{ModifierType, Modifiers}, role::{Role, RoleState},
-        tag::Tag, verdict::Verdict, win_condition::WinCondition, Game
+        verdict::Verdict, win_condition::WinCondition, Game
     }, 
-    packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet, 
+    packet::ToClientPacket, vec_set::VecSet, 
 };
 use super::PlayerReference;
 
@@ -119,58 +115,6 @@ impl PlayerReference{
         OnRemoveRoleLabel::new(*self, concealed_player).invoke(game);
     }
 
-    pub fn player_tags<'a>(&self, game: &'a Game) -> &'a VecMap<PlayerReference, Vec1<Tag>>{
-        &self.deref(game).player_tags
-    }
-    pub fn player_has_tag(&self, game: &Game, key: PlayerReference, value: Tag) -> usize {
-        if let Some(player_tags) = self.deref(game).player_tags.get(&key){
-            player_tags.iter().filter(|t|**t==value).count()
-        }else{
-            0
-        }
-    }
-    pub fn push_player_tag(&self, game: &mut Game, key: PlayerReference, value: Tag){
-        if let Some(player_tags) = self.deref_mut(game).player_tags.get_mut(&key){
-            player_tags.push(value);
-        }else{
-            self.deref_mut(game).player_tags.insert(key, vec1::vec1![value]);
-        }
-        self.add_private_chat_message(game, ChatMessageVariant::TagAdded { player: key.index(), tag: value });
-        self.send_packet(game, ToClientPacket::YourPlayerTags { player_tags: PlayerReference::ref_vec_map_to_index(self.deref(game).player_tags.clone()) });
-    }
-    pub fn remove_player_tag(&self, game: &mut Game, key: PlayerReference, value: Tag){
-        let Some(player_tags) = self.deref_mut(game).player_tags.get_mut(&key) else {return};
-
-        let old_tags = player_tags.clone();
-        match Vec1::try_from_vec(
-            player_tags.clone()
-                .into_iter()
-                .filter(|t|*t!=value)
-                .collect()
-        ){
-            Ok(new_player_tags) => {
-                *player_tags = new_player_tags
-            },
-            Err(_) => {
-                self.deref_mut(game).player_tags.remove(&key);
-            },
-        }
-
-        if Some(old_tags) != self.deref_mut(game).player_tags.get(&key).cloned() {
-            self.add_private_chat_message(game, ChatMessageVariant::TagRemoved { player: key.index(), tag: value });
-            
-            self.send_packet(game, ToClientPacket::YourPlayerTags{
-                player_tags: PlayerReference::ref_vec_map_to_index(self.deref(game).player_tags.clone())
-            });
-        }
-
-    }
-    pub fn remove_player_tag_on_all(&self, game: &mut Game, value: Tag){
-        for player_ref in PlayerReference::all_players(game){
-            self.remove_player_tag(game, player_ref, value)
-        }
-    }
-
     pub fn win_condition<'a>(&self, game: &'a Game) -> &'a WinCondition {
         &self.deref(game).win_condition
     }
@@ -215,18 +159,9 @@ impl PlayerReference{
         self.deref(game).fast_forward_vote
     }
 
-    pub fn set_forfeit_vote(&self, game: &mut Game, forfeit: bool) {
-        self.deref_mut(game).forfeit_vote = forfeit;
-    }
-    pub fn forfeit_vote(&self, game: &Game) -> bool{
-        self.deref(game).forfeit_vote
-    }
-
     /* 
     Voting
     */
-
-    
     pub fn verdict(&self, game: &Game) -> Verdict{
         self.deref(game).voting_variables.verdict
     }

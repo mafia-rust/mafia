@@ -110,8 +110,8 @@ impl Pitchfork{
 
 
         for voter in PlayerReference::all_players(game){
-            let Some(PlayerListSelection(target)) = game.saved_controllers
-                .get_controller_current_selection_player_list(ControllerID::pitchfork_vote(voter))
+            let Some(PlayerListSelection(target)) = ControllerID::pitchfork_vote(voter)
+                .get_player_list_selection(game)
                 else {continue};
             let Some(target) = target.first() else {continue};
             if 

@@ -22,17 +22,16 @@ event_priority!(OnMidnightPriority{
     Possess,
     Roleblock,
 
-    Deception,
+    Deception,  //set aura //set attack
+    Heal,   //set protection
 
-    Bodyguard,
+    Bodyguard,  //set protection //use attack 
+    
+    Kill,   //use attack //use protection
+    Convert,    //role swap & win condition change //use protection
+    Poison, //set poison
+    Investigative,  //use aura
 
-    Heal,
-    Kill,
-    Convert,    //role swap & win condition change
-    Poison,
-    Investigative,
-
-    Cupid,
     SpyBug,
 
     StealMessages,

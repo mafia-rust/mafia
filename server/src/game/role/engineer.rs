@@ -89,9 +89,7 @@ impl RoleStateImpl for Engineer {
                             }
                         },
                         Trap::Set { .. } => {
-                            if let Some(BooleanSelection(true)) = game.saved_controllers.get_controller_current_selection_boolean(
-                                ControllerID::role(actor_ref, Role::Engineer, 1)
-                            ){
+                            if let Some(BooleanSelection(true)) = ControllerID::role(actor_ref, Role::Engineer, 1).get_boolean_selection(game){
                                 actor_ref.set_role_state(game, Engineer {trap: Trap::Ready});
                             }
                         }

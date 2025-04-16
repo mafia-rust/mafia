@@ -50,8 +50,11 @@ impl RoleStateImpl for Steward {
         match priority {
             OnMidnightPriority::Heal => {
                 let mut healed_players = vec![];
-                let selection = game.saved_controllers.get_controller_current_selection_two_role_option(ControllerID::role(actor_ref, Role::Steward, 0));
-                let Some(selection) = selection else {return};
+                let Some(selection) = 
+                    ControllerID::role(actor_ref, Role::Steward, 0)
+                        .get_two_role_option_selection(game)
+                        .cloned()
+                        else {return};
                 let TwoRoleOptionSelection(first, second) = selection;
                 
                 if let Some(role) = first {

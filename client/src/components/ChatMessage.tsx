@@ -683,18 +683,10 @@ export function translateChatMessage(
                 playerNames[message.player]
             );
         case "auditorResult":
-            if(message.result.type === "one"){
-                return translate("chatMessage.auditorResult.one", 
-                    translateRoleOutline(message.roleOutline),
-                    translate("role."+message.result.role+".name")
-                );
-            }else{
-                return translate("chatMessage.auditorResult.two", 
-                    translateRoleOutline(message.roleOutline),
-                    translate("role."+message.result.roles[0]+".name"),
-                    translate("role."+message.result.roles[1]+".name")
-                );
-            }
+            return translate("chatMessage.auditorResult", 
+                translateRoleOutline(message.roleOutline),
+                message.result.map((role)=>translate("role."+role+".name")).join(", ")
+            );
         case "engineerVisitorsRole":
             return translate("chatMessage.engineerVisitorsRole", translate("role."+message.role+".name"));
         case "trapState":
@@ -749,10 +741,6 @@ export function translateChatMessage(
             );
         case "wildcardConvertFailed":
             return translate("chatMessage.wildcardConvertFailed", translate("role."+message.role+".name"));
-        case "youAreLoveLinked":
-            return translate("chatMessage.youAreLoveLinked", playerNames[message.player]);
-        case "playerDiedOfABrokenHeart":
-            return translate("chatMessage.playerDiedOfBrokenHeart", playerNames[message.player], playerNames[message.lover]);
         case "chronokaiserSpeedUp":
             return translate("chatMessage.chronokaiserSpeedUp", message.percent);
         case "addedToNiceList":
@@ -1045,13 +1033,6 @@ export type ChatMessageVariant = {
     type: "armorsmithArmorBroke"
 } | {
     type: "targetWasAttacked"
-} | {
-    type: "youAreLoveLinked",
-    player: PlayerIndex
-} | {
-    type: "playerDiedOfABrokenHeart",
-    player: PlayerIndex
-    lover: PlayerIndex
 } | {
     type: "youWereProtected"
 } | {

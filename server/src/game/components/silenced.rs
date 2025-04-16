@@ -1,10 +1,10 @@
 use crate::{game::{chat::ChatMessageVariant, event::on_midnight::MidnightVariables, phase::PhaseType, player::PlayerReference, Game}, packet::ToClientPacket, vec_set::VecSet};
 
 impl Game {
-    pub fn silenced(&self)->&Silenced{
+    fn silenced(&self)->&Silenced{
         &self.silenced
     }
-    pub fn silenced_mut(&mut self) -> &mut Silenced {
+    fn silenced_mut(&mut self) -> &mut Silenced {
         &mut self.silenced
     }
 }
@@ -24,8 +24,8 @@ impl Silenced {
     pub fn unsilence(game: &mut Game, player: PlayerReference) {
         game.silenced_mut().silenced_players.remove(&player);
     }
-    pub fn silenced(&self, player: PlayerReference) -> bool {
-        self.silenced_players.contains(&player)
+    pub fn silenced(game: &Game, player: PlayerReference) -> bool {
+        game.silenced().silenced_players.contains(&player)
     }
     pub fn on_phase_start(game: &mut Game, phase: PhaseType) {
         if phase == PhaseType::Night {

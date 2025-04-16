@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use serde::Serialize;
 
-use crate::game::ability_input::AvailableBooleanSelection;
+use crate::game::ability_input::{AvailableBooleanSelection, BooleanSelection};
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::detained::Detained;
@@ -10,14 +10,12 @@ use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::{Grave, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::role::BooleanSelection;
-use crate::game::visit::Visit;
 use crate::game::win_condition::WinCondition;
 use crate::game::Game;
 
 use super::{
-    AbilitySelection, ControllerID,
-    ControllerParametersMap, PlayerListSelection, Role,
+    ControllerID,
+    ControllerParametersMap, Role,
     RoleStateImpl
 };
 
@@ -48,23 +46,21 @@ impl RoleStateImpl for Kidnapper {
 
         match priority {
             OnMidnightPriority::Kill => {
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-                if let Some(visit) = actor_visits.first() {
+                let Some(BooleanSelection(true)) = ControllerID::role(actor_ref, Role::Jailor, 1).get_boolean_selection(game) else {return};
+                let Some(target) = self.jailed_target_ref else {return};
+                
+                if Detained::is_detained(game, target){
+                    target.try_night_kill_single_attacker(
+                        actor_ref, 
+                        game, 
+                        midnight_variables,
+                        GraveKiller::Role(Role::Jailor), 
+                        AttackPower::ProtectionPiercing, 
+                        false
+                    );
     
-                    let target_ref = visit.target;
-                    if Detained::is_detained(game, target_ref){
-                        target_ref.try_night_kill_single_attacker(
-                            actor_ref, 
-                            game, 
-                            midnight_variables,
-                            GraveKiller::Role(Role::Jailor), 
-                            AttackPower::ProtectionPiercing, 
-                            false
-                        );
-        
-                        self.executions_remaining = self.executions_remaining.saturating_sub(1);
-                        actor_ref.set_role_state(game, self);
-                    }
+                    self.executions_remaining = self.executions_remaining.saturating_sub(1);
+                    actor_ref.set_role_state(game, self);
                 }
             },
             _ => {}
@@ -91,12 +87,6 @@ impl RoleStateImpl for Kidnapper {
                 .build_map()
         ])
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
-        let Some(AbilitySelection::Boolean(BooleanSelection(true))) = game.saved_controllers.get_controller_current_selection(
-            ControllerID::role(actor_ref, Role::Kidnapper, 1)) else {return Vec::new()};
-        let Some(target) = self.jailed_target_ref else {return Vec::new()};
-        vec![Visit::new_none(actor_ref, target, true)]
-    }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, 
             if PlayerReference::all_players(game).any(|p|Detained::is_detained(game, p)) {
@@ -120,18 +110,19 @@ impl RoleStateImpl for Kidnapper {
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
             PhaseType::Night => {
-                let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(
-                    ControllerID::role(actor_ref, Role::Kidnapper, 0)
-                ) else {return};
-                let Some(target) = target.first() else {return};
+                let Some(target) = ControllerID::role(actor_ref, Role::Kidnapper, 0)
+                    .get_player_list_selection(game)
+                    .and_then(|p|p.0.first())
+                    .copied()
+                else {return};
 
                 if actor_ref.ability_deactivated_from_death(game) || !target.alive(game) {return};
                 
-                self.jailed_target_ref = Some(*target);
+                self.jailed_target_ref = Some(target);
                 
                 actor_ref.set_role_state(game, self);
 
-                Detained::add_detain(game, *target);
+                Detained::add_detain(game, target);
                 actor_ref.add_private_chat_message(game, 
                     ChatMessageVariant::JailedTarget{ player_index: target.index() }
                 );
@@ -156,5 +147,4 @@ impl RoleStateImpl for Kidnapper {
             actor_ref.die_and_add_grave(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
-    fn on_visit_wardblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _visit: Visit) {}
 }

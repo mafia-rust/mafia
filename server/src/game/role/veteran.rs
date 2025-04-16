@@ -48,11 +48,7 @@ impl RoleStateImpl for Veteran {
         match priority {
             OnMidnightPriority::TopPriority => {
                 let can_alert = self.alerts_remaining > 0 && game.day_number() > 1;
-                let chose_to_alert = 
-                    matches!(game.saved_controllers.get_controller_current_selection_boolean(
-                        ControllerID::role(actor_ref, Role::Veteran, 0)
-                    ), Some(BooleanSelection(true)));
-
+                let chose_to_alert = matches!(ControllerID::role(actor_ref, Role::Veteran, 0).get_boolean_selection(game), Some(BooleanSelection(true)));
                 if can_alert && chose_to_alert{
                     actor_ref.set_role_state(game, Veteran { 
                         alerts_remaining: self.alerts_remaining.saturating_sub(1), 

@@ -1,18 +1,27 @@
 use std::collections::HashSet;
 use rand::seq::SliceRandom;
 
-use crate::{game::{
-    ability_input::{AbilitySelection, BooleanSelection, ControllerID, ControllerParametersMap, PlayerListSelection, SavedControllersMap, TwoPlayerOptionSelection},
-    attack_power::{AttackPower, DefensePower},
-    chat::{ChatGroup, ChatMessage, ChatMessageVariant},
-    components::{
-        arsonist_doused::ArsonistDoused,
-        drunk_aura::DrunkAura,
-        insider_group::InsiderGroupID, night_visits::NightVisits
-    }, event::{
-        before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_midnight::{MidnightVariables, OnMidnightPriority}, on_player_roleblocked::OnPlayerRoleblocked, on_role_switch::OnRoleSwitch, on_visit_wardblocked::OnVisitWardblocked
-    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{chronokaiser::Chronokaiser, Role, RoleState}, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
-}, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
+use crate::{
+    game::{
+        ability_input::{AbilitySelection, BooleanSelection, ControllerID, ControllerParametersMap, PlayerListSelection, SavedControllersMap, TwoPlayerOptionSelection},
+        attack_power::{AttackPower, DefensePower},
+        chat::{ChatGroup, ChatMessage, ChatMessageVariant},
+        components::{
+            drunk_aura::DrunkAura,
+            insider_group::InsiderGroupID, night_visits::NightVisits
+        },
+        event::{
+            before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_midnight::{MidnightVariables, OnMidnightPriority}, on_player_roleblocked::OnPlayerRoleblocked, on_role_switch::OnRoleSwitch, on_visit_wardblocked::OnVisitWardblocked
+        },
+        game_conclusion::GameConclusion,
+        grave::{Grave, GraveKiller},
+        modifiers::{ModifierType, Modifiers}, phase::PhaseType,
+        role::{arsonist::Arsonist,chronokaiser::Chronokaiser, Role, RoleState},
+        visit::{Visit, VisitTag},
+        win_condition::WinCondition, Game
+    },
+    packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet
+};
 
 use super::PlayerReference;
 
@@ -20,9 +29,12 @@ impl PlayerReference{
     pub fn roleblock(&self, game: &mut Game, midnight_variables: &mut MidnightVariables, send_messages: bool) {
         OnPlayerRoleblocked::new(*self, !send_messages).invoke(game, midnight_variables);
     }
-    pub fn ward(&self, game: &mut Game, midnight_variables: &mut MidnightVariables) -> Vec<PlayerReference> {
+    pub fn ward(&self, game: &mut Game, midnight_variables: &mut MidnightVariables, dont_wardblock: &[Visit]) -> Vec<PlayerReference> {
         let mut out = Vec::new();
         for visit in NightVisits::all_visits_cloned(game) {
+            if dont_wardblock.contains(&visit) {
+                continue;
+            }
             if visit.target != *self {continue;}
             OnVisitWardblocked::new(visit).invoke(game, midnight_variables);
             out.push(visit.visitor);
@@ -177,7 +189,7 @@ impl PlayerReference{
                     possessed_visit.target.convert_selection_to_visits(game)
                 );
 
-                //remove the second role visit
+                //remove the second role visit from the possessor
                 let mut found_first = false;
                 let mut new_witch_visits = vec![];
                 for visit in self.all_night_visits_cloned(game){
@@ -301,7 +313,7 @@ impl PlayerReference{
     }
 
     pub fn chosen_vote(&self, game: &Game) -> Option<PlayerReference> {
-        if let Some(PlayerListSelection(players)) =game.saved_controllers.get_controller_current_selection_player_list(ControllerID::nominate(*self)) {
+        if let Some(PlayerListSelection(players)) = ControllerID::nominate(*self).get_player_list_selection(game) {
             Some(players.first().copied()).flatten()
         }else{
             None
@@ -347,7 +359,7 @@ impl PlayerReference{
         self.role(game).has_suspicious_aura(game) || 
         self.night_framed(midnight_variables) ||
         DrunkAura::has_drunk_aura(game, *self) ||
-        ArsonistDoused::has_suspicious_aura_douse(game, *self)
+        Arsonist::has_suspicious_aura_douse(game, *self)
     }
     pub fn get_won_game(&self, game: &Game) -> bool {
         match self.win_condition(game){

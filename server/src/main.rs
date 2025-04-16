@@ -24,6 +24,6 @@ async fn main() -> ! {
         create_ws_server(&config.address).await;
         // This delay is only to make sure disconnect messages are sent before the server restarts
         thread::sleep(Duration::from_secs(1));
-        log!(important "Main"; "Restarting server...");
+        log!(important "Server"; "Restarting...");
     }
 }

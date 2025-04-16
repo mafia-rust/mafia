@@ -12,7 +12,7 @@ use crate::game::role::BooleanSelection;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use super::{AbilitySelection, ControllerID, ControllerParametersMap, Role, RoleState, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Role, RoleState, RoleStateImpl};
 
 #[derive(PartialEq, Eq, Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -88,7 +88,7 @@ impl RoleStateImpl for Martyr {
             .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
-        let Some(AbilitySelection::Boolean(BooleanSelection(true))) = game.saved_controllers.get_controller_current_selection(ControllerID::role(actor_ref, Role::Martyr, 0)) else {return Vec::new()};
+        let Some(BooleanSelection(true)) = ControllerID::role(actor_ref, Role::Martyr, 0).get_boolean_selection(game) else {return Vec::new()};
         vec![Visit::new_none(actor_ref, actor_ref, true)]
     }
     fn on_phase_start(self,  game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {

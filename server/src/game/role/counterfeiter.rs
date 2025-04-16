@@ -15,7 +15,7 @@ use crate::game::Game;
 use super::godfather::Godfather;
 use super::{
     ControllerID, ControllerParametersMap, GetClientRoleState, IntegerSelection, Role,
-    RoleStateImpl, StringSelection
+    RoleStateImpl
 };
 
 
@@ -64,17 +64,16 @@ impl RoleStateImpl for Counterfeiter {
 
                 let target_ref = visit.target;
 
-                let fake_role = game.saved_controllers
-                    .get_controller_current_selection_role_option(ControllerID::role(actor_ref, Role::Counterfeiter, 1))
+                let fake_role = ControllerID::role(actor_ref, Role::Counterfeiter, 1)
+                    .get_role_option_selection(game)
                     .and_then(|p| p.0);
                 target_ref.set_night_grave_role(midnight_variables, fake_role);
 
-                let fake_alibi = if let Some(StringSelection(string)) = game.saved_controllers
-                    .get_controller_current_selection_string(ControllerID::role(actor_ref, Role::Counterfeiter, 2)) {
-                    string
-                } else {
-                    "".to_owned()
-                };
+                let fake_alibi = ControllerID::role(actor_ref, Role::Counterfeiter, 2)
+                    .get_string_selection(game)
+                    .map(|s|s.0.clone())
+                    .unwrap_or("".to_string());
+
                 target_ref.set_night_grave_will(midnight_variables, fake_alibi);
 
                 actor_ref.set_role_state(game, Counterfeiter { 
@@ -180,10 +179,8 @@ impl GetClientRoleState<ClientRoleState> for Counterfeiter {
 }
 
 fn chose_no_forge(game: &Game, actor_ref: PlayerReference)->bool{
-    if let Some(IntegerSelection(x)) = game.saved_controllers.get_controller_current_selection_integer(
-        ControllerID::role(actor_ref, Role::Counterfeiter, 3)
-    ){
-        x == 0
+    if let Some(IntegerSelection(x)) = ControllerID::role(actor_ref, Role::Counterfeiter, 3).get_integer_selection(game){
+        *x == 0
     }else{
         true
     }

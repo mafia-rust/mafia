@@ -1,8 +1,5 @@
-
-
 use std::time::Duration;
-
-use crate::{client_connection::ClientConnection, game::{phase::PhaseType, tag::Tag, verdict::Verdict, Game}};
+use crate::{client_connection::ClientConnection, game::{phase::PhaseType, verdict::Verdict, Game}};
 use super::PlayerReference;
 
 
@@ -30,30 +27,13 @@ impl PlayerReference{
             PhaseType::Obituary => {},
             PhaseType::Discussion => {},
             PhaseType::Nomination => {
-                if game.silenced().silenced(*self) {
-                    self.set_forfeit_vote(game, true);
-                }
-
-                //tell players someone forfeited
-                if self.forfeit_vote(game){
-                    for player in PlayerReference::all_players(game){
-                        if player.player_has_tag(game, *self, Tag::ForfeitVote) == 0 {
-                            player.push_player_tag(game, *self, Tag::ForfeitVote);
-                        }
-                    }
-                }
-                
                 self.set_verdict(game, Verdict::Abstain);
             },
             PhaseType::Testimony => {},
             PhaseType::Judgement => {},
             PhaseType::FinalWords => {},
-            PhaseType::Dusk => {
-                self.remove_player_tag_on_all(game, Tag::ForfeitVote);
-            },
-            PhaseType::Night => {
-                self.set_forfeit_vote(game, false);
-            },
+            PhaseType::Dusk => {},
+            PhaseType::Night => {},
             PhaseType::Recess => {}
         }
 

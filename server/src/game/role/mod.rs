@@ -146,7 +146,6 @@ macros::roles! {
     Disguiser : disguiser,
     Forger : forger,
     Reeducator : reeducator,
-    Cupid : cupid,
     Ambusher : ambusher,
     MafiaSupportWildcard: mafia_support_wildcard,
 

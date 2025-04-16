@@ -47,9 +47,8 @@ impl RoleStateImpl for Puppeteer {
             let target = visit.target;
             
             if 
-                game.saved_controllers.get_controller_current_selection_integer(
-                    ControllerID::role(actor_ref, Role::Puppeteer, 1)
-                ).unwrap_or(IntegerSelection(0)).0 == 1
+                ControllerID::role(actor_ref, Role::Puppeteer, 1).get_integer_selection(game)
+                    .unwrap_or(&IntegerSelection(0)).0 == 1
             {
                 if !AttackPower::ArmorPiercing.can_pierce(target.night_defense(game, midnight_variables)) {
                     actor_ref.push_night_message(midnight_variables, crate::game::chat::ChatMessageVariant::YourConvertFailed);

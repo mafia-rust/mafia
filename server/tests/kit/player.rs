@@ -1,5 +1,4 @@
-use mafia_server::{game::{ability_input::*, chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, tag::Tag, verdict::Verdict, Game}, packet::ToServerPacket, vec_map::VecMap};
-use vec1::Vec1;
+use mafia_server::{game::{ability_input::*, chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, verdict::Verdict, Game}, packet::ToServerPacket};
 
 #[derive(Clone, Copy, Debug)]
 pub struct TestPlayer(PlayerReference, *mut Game);
@@ -32,7 +31,9 @@ impl TestPlayer {
     }
 
     pub fn send_ability_input(&self, ability_input: AbilityInput) {
-        game!(self).on_client_message(self.0.index(), 
+        game!(self).on_player_message(
+            0, // This is only used for host stuff.
+            self.0, 
             ToServerPacket::AbilityInput { ability_input }
         );
     }
@@ -100,7 +101,9 @@ impl TestPlayer {
     }
 
     pub fn send_message(&self, message: &str) {
-        game!(self).on_client_message(self.0.index(), 
+        game!(self).on_player_message(
+            0, // This is only used for host stuff.
+            self.0, 
             ToServerPacket::SendChatMessage { text: message.to_string(), block: false }
         );
     }
@@ -150,10 +153,6 @@ impl TestPlayer {
 
     pub fn set_role_state(&self, new_role_data: RoleState){
         self.0.set_role_state(game!(self), new_role_data);
-    }
-
-    pub fn get_player_tags(&self) -> &VecMap<PlayerReference, Vec1<Tag>> {
-        self.0.player_tags(game!(self))
     }
 
     pub fn get_won_game(&self) -> bool {

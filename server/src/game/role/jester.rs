@@ -13,7 +13,7 @@ use crate::game::verdict::Verdict;
 
 use crate::game::Game;
 use super::{
-    ControllerID, ControllerParametersMap, GetClientRoleState, PlayerListSelection, Role, RoleStateImpl
+    ControllerID, ControllerParametersMap, GetClientRoleState, Role, RoleStateImpl
 };
 
 #[derive(Clone, Debug, Default)]
@@ -37,17 +37,14 @@ impl RoleStateImpl for Jester {
         if !self.lynched_yesterday {return}
         
         
-    
 
-        let target_ref = if let Some(PlayerListSelection(selection)) = game.saved_controllers
-            .get_controller_current_selection_player_list(ControllerID::role(actor_ref, Role::Jester, 0)){
-            selection.first().copied()
-        }else{
-            None
-        };
 
-        let target_ref = if let Some(target_ref) = target_ref {
-            target_ref
+
+        let target_ref = if let Some(target_ref) = ControllerID::role(actor_ref, Role::Jester, 0)
+            .get_player_list_selection(game)
+            .and_then(|s|s.0.first())
+        {
+            *target_ref
         }else{
             let all_killable_players: Vec<PlayerReference> = PlayerReference::all_players(game)
                 .filter(|player_ref|{
