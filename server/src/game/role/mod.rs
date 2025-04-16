@@ -123,6 +123,7 @@ macros::roles! {
     Reporter : reporter,
     Mayor : mayor,
     Transporter : transporter,
+    Porter : porter,
     Coxswain : coxswain,
 
     // Mafia
@@ -376,7 +377,7 @@ impl Role{
             | Role::Bouncer
             | Role::Veteran | Role::Coxswain
             | Role::Transporter | Role::Retributionist
-            | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper
+            | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper | Role::Porter
             | Role::MafiaWitch | Role::Necromancer 
         )
     }

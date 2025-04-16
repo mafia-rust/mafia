@@ -2,9 +2,6 @@ use serde::Serialize;
 
 use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
 use crate::game::event::on_midnight::OnMidnightPriority;
-use crate::game::grave::Grave;
-use crate::game::phase::PhaseType;
-use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
@@ -13,13 +10,13 @@ use crate::game::Game;
 use super::{common_role, ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
-pub struct Warper;
+pub struct Porter;
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
-impl RoleStateImpl for Warper {
-    type ClientRoleState = Warper;
+impl RoleStateImpl for Porter {
+    type ClientRoleState = Porter;
     fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Warper {return;}
     
@@ -29,7 +26,6 @@ impl RoleStateImpl for Warper {
         
         
         first_visit.target.push_night_message(game, ChatMessageVariant::Transported);
-        actor_ref.push_night_message(game, ChatMessageVariant::TargetHasRole { role: first_visit.target.role(game) });
     
         for player_ref in PlayerReference::all_players(game){
             if player_ref == actor_ref {continue;}
@@ -46,23 +42,9 @@ impl RoleStateImpl for Warper {
             player_ref.set_night_visits(game, new_visits);
         }
     }
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
-        if
-            actor_ref.alive(game) &&
-            PlayerReference::all_players(game)
-                .filter(|p|p.alive(game))
-                .filter(|p|p.keeps_game_running(game))
-                .all(|p|
-                    WinCondition::are_friends(p.win_condition(game), actor_ref.win_condition(game))
-                )
-
-        {
-            actor_ref.die_and_add_grave(game, Grave::from_player_leave_town(game, actor_ref));
-        }
-    }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         ControllerParametersMap::builder(game)
-            .id(ControllerID::role(actor_ref, Role::Warper, 0))
+            .id(ControllerID::role(actor_ref, Role::Porter, 0))
             .available_selection(AvailableTwoPlayerOptionSelection {
                 available_first_players: PlayerReference::all_players(game)
                     .filter(|p|p.alive(game))
@@ -81,7 +63,7 @@ impl RoleStateImpl for Warper {
         common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,
-            ControllerID::role(actor_ref, Role::Warper, 0),
+            ControllerID::role(actor_ref, Role::Porter, 0),
             false
         )
     }

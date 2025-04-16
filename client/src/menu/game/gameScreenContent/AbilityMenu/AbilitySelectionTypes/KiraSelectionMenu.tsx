@@ -16,7 +16,7 @@ export const KIRA_GUESSES = [
     "detective", "lookout", "spy", "tracker", "philosopher", "psychic", "auditor", "snoop", "gossip", "tallyClerk",
     "doctor",  "bodyguard",  "cop", "bouncer", "engineer", "armorsmith", "steward",
     "vigilante",  "veteran", "marksman", "deputy", "rabblerouser",
-    "escort",  "medium",  "retributionist", "reporter", "mayor",  "transporter",
+    "escort",  "medium",  "retributionist", "reporter", "mayor",  "transporter", "porter"
 ];
 export type KiraGuessResult = "correct" | "notInGame" | "wrongSpot";
 export type KiraSelection = ListMapData<PlayerIndex, KiraGuess>;

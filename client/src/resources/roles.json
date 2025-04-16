@@ -479,6 +479,18 @@
             {"type": "transported"}
         ]
     },
+    "porter":{
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townSupport"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "transported"}
+        ]
+    },
     "coxswain":{
         "mainRoleSet": "town",
         "roleSets": ["town", "townCommon", "townSupport"],
