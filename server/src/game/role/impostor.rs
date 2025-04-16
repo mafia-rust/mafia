@@ -26,8 +26,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 impl RoleStateImpl for Impostor {
     type ClientRoleState = Impostor;
     fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
-
-        Godfather::night_ability(game, actor_ref, priority);
+        Godfather::night_kill_ability(game, actor_ref, priority);
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
@@ -59,9 +58,8 @@ impl RoleStateImpl for Impostor {
         ])
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: crate::game::grave::GraveReference) {
-        let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
-            ControllerID::role(actor_ref, Role::Impostor, 1)
-        )else{return};
+        let Some(RoleOptionSelection(Some(role))) = ControllerID::role(actor_ref, Role::Impostor, 1)
+            .get_role_option_selection(game).cloned() else {return};
         
         
         if grave.deref(game).player == actor_ref {

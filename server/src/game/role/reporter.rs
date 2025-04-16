@@ -96,20 +96,20 @@ impl RoleStateImpl for Reporter {
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Night => {
-                let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(
-                    ControllerID::role(actor_ref, Role::Reporter, 0)
-                ) else {return};
-                let Some(target) = target.first() else {return};
+                let Some(PlayerListSelection(target)) = ControllerID::role(actor_ref, Role::Reporter, 0)
+                    .get_player_list_selection(game)
+                    else {return};
+                let Some(target) = target.first().copied() else {return};
 
                 if actor_ref.ability_deactivated_from_death(game) || !target.alive(game) {return};
                 
-                self.interviewed_target = Some(*target);
+                self.interviewed_target = Some(target);
                 
                 actor_ref.set_role_state(game, self);
 
                 InsiderGroupID::send_message_in_available_insider_chat_or_private(
                     game,
-                    *target,
+                    target,
                     ChatMessageVariant::PlayerIsBeingInterviewed { player_index: target.index() },
                     true
                 );
@@ -125,13 +125,9 @@ impl RoleStateImpl for Reporter {
 
 impl Reporter{
     fn get_report(game: &Game, actor_ref: PlayerReference)->String{
-        game.saved_controllers.get_controller_current_selection_string(
-            ControllerID::role(actor_ref, Role::Reporter, 2)
-        ).map_or_else(String::new, |s|s.0)
+        ControllerID::role(actor_ref, Role::Reporter, 2).get_string_selection(game).map_or_else(String::new, |s|s.0.clone())
     }
     fn get_public(game: &Game, actor_ref: PlayerReference)->bool{
-        game.saved_controllers.get_controller_current_selection_boolean(
-            ControllerID::role(actor_ref, Role::Reporter, 1)
-        ).is_some_and(|b|b.0)
+        ControllerID::role(actor_ref, Role::Reporter, 1).get_boolean_selection(game).is_some_and(|b|b.0)
     }
 }

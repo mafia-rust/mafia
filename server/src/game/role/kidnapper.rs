@@ -14,8 +14,8 @@ use crate::game::win_condition::WinCondition;
 use crate::game::Game;
 
 use super::{
-    AbilitySelection, ControllerID,
-    ControllerParametersMap, PlayerListSelection, Role,
+    ControllerID,
+    ControllerParametersMap, Role,
     RoleStateImpl
 };
 
@@ -46,8 +46,7 @@ impl RoleStateImpl for Kidnapper {
 
         match priority {
             OnMidnightPriority::Kill => {
-                let Some(AbilitySelection::Boolean(BooleanSelection(true))) = game.saved_controllers.get_controller_current_selection(
-                    ControllerID::role(actor_ref, Role::Jailor, 1)) else {return};
+                let Some(BooleanSelection(true)) = ControllerID::role(actor_ref, Role::Jailor, 1).get_boolean_selection(game) else {return};
                 let Some(target) = self.jailed_target_ref else {return};
                 
                 if Detained::is_detained(game, target){
@@ -111,18 +110,19 @@ impl RoleStateImpl for Kidnapper {
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
             PhaseType::Night => {
-                let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(
-                    ControllerID::role(actor_ref, Role::Kidnapper, 0)
-                ) else {return};
-                let Some(target) = target.first() else {return};
+                let Some(target) = ControllerID::role(actor_ref, Role::Kidnapper, 0)
+                    .get_player_list_selection(game)
+                    .and_then(|p|p.0.first())
+                    .copied()
+                else {return};
 
                 if actor_ref.ability_deactivated_from_death(game) || !target.alive(game) {return};
                 
-                self.jailed_target_ref = Some(*target);
+                self.jailed_target_ref = Some(target);
                 
                 actor_ref.set_role_state(game, self);
 
-                Detained::add_detain(game, *target);
+                Detained::add_detain(game, target);
                 actor_ref.add_private_chat_message(game, 
                     ChatMessageVariant::JailedTarget{ player_index: target.index() }
                 );

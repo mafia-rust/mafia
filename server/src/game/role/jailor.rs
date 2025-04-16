@@ -16,7 +16,7 @@ use crate::game::role::BooleanSelection;
 use crate::game::Game;
 
 use super::{
-    AbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection,
+    ControllerID, ControllerParametersMap, PlayerListSelection,
     Role, RoleStateImpl
 };
 
@@ -53,8 +53,7 @@ impl RoleStateImpl for Jailor {
         match priority {
             OnMidnightPriority::Kill => {
 
-                let Some(AbilitySelection::Boolean(BooleanSelection(true))) = game.saved_controllers.get_controller_current_selection(
-                    ControllerID::role(actor_ref, Role::Jailor, 1)) else {return};
+                let Some(BooleanSelection(true)) = ControllerID::role(actor_ref, Role::Jailor, 1).get_boolean_selection(game) else {return};
                 let Some(target) = self.jailed_target_ref else {return};
 
     
@@ -120,9 +119,9 @@ impl RoleStateImpl for Jailor {
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
             PhaseType::Night => {
-                let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(
-                    ControllerID::role(actor_ref, Role::Jailor, 0)
-                ) else {return};
+                let Some(PlayerListSelection(target)) = ControllerID::role(actor_ref, Role::Jailor, 0)
+                    .get_player_list_selection(game)
+                    .cloned() else {return};
                 let Some(target) = target.first() else {return};
 
                 if actor_ref.ability_deactivated_from_death(game) || !target.alive(game) {return};

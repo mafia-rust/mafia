@@ -23,6 +23,7 @@ pub mod ability_input;
 
 use std::time::Duration;
 use ability_input::saved_controllers_map::SavedControllersMap;
+use ability_input::ControllerID;
 use ability_input::PlayerListSelection;
 use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
@@ -379,11 +380,7 @@ impl Game {
         for player in PlayerReference::all_players(self){
             if !player.alive(self) { continue }
 
-            let Some(PlayerListSelection(voted_players)) = self
-                .saved_controllers
-                .get_controller_current_selection_player_list(ability_input::ControllerID::Nominate { player }) else {
-                    continue;
-                };
+            let Some(PlayerListSelection(voted_players)) = ControllerID::Nominate { player }.get_player_list_selection(self) else {continue};
             let Some(&voted_player) = voted_players.first() else { continue };
             
 

@@ -98,8 +98,7 @@ impl SyndicateGunItem {
             OnMidnightPriority::TopPriority => {
                 let Some(player_with_gun) = game.syndicate_gun_item.player_with_gun else {return}; 
 
-                let Some(PlayerListSelection(gun_target)) = game.saved_controllers
-                    .get_controller_current_selection_player_list(ControllerID::syndicate_gun_item_shoot()) else {return};
+                let Some(PlayerListSelection(gun_target)) = ControllerID::syndicate_gun_item_shoot().get_player_list_selection(game) else {return};
                 let Some(gun_target) = gun_target.first() else {return};
 
                 NightVisits::add_visit(

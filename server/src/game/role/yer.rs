@@ -44,9 +44,10 @@ impl RoleStateImpl for Yer {
     fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if game.day_number() == 1 {return}
 
-        let chose_to_convert = game.saved_controllers.get_controller_current_selection_boolean(
-            ControllerID::role(actor_ref, Role::Yer, 0)
-        ).map(|selection| selection.0).unwrap_or(false);
+        let chose_to_convert = ControllerID::role(actor_ref, Role::Yer, 0)
+            .get_boolean_selection(game)
+            .map(|selection| selection.0)
+            .unwrap_or(false);
 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
@@ -144,12 +145,10 @@ impl RoleStateImpl for Yer {
 
 impl Yer{
     pub fn current_fake_role(&self, game: &Game, actor_ref: PlayerReference) -> Role {
-        if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
-            ControllerID::role(actor_ref, Role::Yer, 2)
-        ){
-            role
-        } else {
-            self.old_role
-        }
+        ControllerID::role(actor_ref, Role::Yer, 2)
+            .get_role_option_selection(game)
+            .cloned()
+            .and_then(|r|r.0)
+            .unwrap_or(self.old_role)
     }
 }

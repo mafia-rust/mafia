@@ -88,8 +88,8 @@ impl RoleStateImpl for Framer {
                 .night_typical(actor_ref)
                 .add_grayed_out_condition(
                     // Framed player is not selected
-                    game.saved_controllers
-                        .get_controller_current_selection_player_list(ControllerID::role(actor_ref, Role::Framer, 0))
+                    ControllerID::role(actor_ref, Role::Framer, 0)
+                        .get_player_list_selection(game)
                         .is_none_or(|selection| selection.0.is_empty())
                 )
                 .build_map()
