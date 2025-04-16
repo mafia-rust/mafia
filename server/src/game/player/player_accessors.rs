@@ -1,11 +1,12 @@
 use crate::{
     game::{
-        attack_power::DefensePower, chat::{
-            ChatMessage, ChatMessageVariant
-        }, event::{
+        chat::{ChatMessage, ChatMessageVariant},
+        event::{
             on_convert::OnConvert, on_fast_forward::OnFastForward,
             on_remove_role_label::OnRemoveRoleLabel
-        }, grave::GraveKiller, modifiers::{ModifierType, Modifiers}, role::{Role, RoleState}, verdict::Verdict, visit::Visit, win_condition::WinCondition, Game
+        },
+        modifiers::{ModifierType, Modifiers}, role::{Role, RoleState},
+        verdict::Verdict, win_condition::WinCondition, Game
     }, 
     packet::ToClientPacket, vec_set::VecSet, 
 };
@@ -170,119 +171,6 @@ impl PlayerReference{
         }
         self.send_packet(game, ToClientPacket::YourJudgement { verdict });
         self.deref_mut(game).voting_variables.verdict = verdict;
-    }
-
-    /* 
-    Night
-    */
-    pub fn night_died(&self, game: &Game) -> bool {
-        self.deref(game).night_variables.died
-    }
-    pub fn set_night_died(&self, game: &mut Game, died: bool){
-        self.deref_mut(game).night_variables.died = died;
-    }
-
-    pub fn night_attacked(&self, game: &Game) -> bool {
-        self.deref(game).night_variables.attacked
-    }
-    pub fn set_night_attacked(&self, game: &mut Game, attacked: bool){
-        self.deref_mut(game).night_variables.attacked = attacked;
-    }
-
-    pub fn night_blocked(&self, game: &Game) -> bool {
-        self.deref(game).night_variables.blocked
-    }
-    pub fn set_night_blocked(&self, game: &mut Game, roleblocked: bool){
-        self.deref_mut(game).night_variables.blocked = roleblocked;
-    }
-
-    pub fn night_defense(&self, game: &Game) -> DefensePower {
-        if let Some(defense) = self.deref(game).night_variables.upgraded_defense {
-            defense
-        }else{
-            self.role(game).defense()
-        }
-    }
-    pub fn set_night_upgraded_defense(&self, game: &mut Game, defense: Option<DefensePower>){
-        self.deref_mut(game).night_variables.upgraded_defense = defense;
-    }
-
-    pub fn night_framed(&self, game: &Game) -> bool {
-        self.deref(game).night_variables.framed
-    }
-    pub fn set_night_framed(&self, game: &mut Game, framed: bool){
-        self.deref_mut(game).night_variables.framed = framed;
-    }
-
-    pub fn night_convert_role_to<'a>(&self, game: &'a Game) -> &'a Option<RoleState> {
-        &self.deref(game).night_variables.convert_role_to
-    }
-    pub fn set_night_convert_role_to(&self, game: &mut Game, convert_role_to: Option<RoleState>){
-        self.deref_mut(game).night_variables.convert_role_to = convert_role_to;
-    }
-
-    pub fn night_appeared_visits<'a>(&self, game: &'a Game) -> &'a Option<Vec<Visit>>{
-        &self.deref(game).night_variables.appeared_visits
-    }
-    pub fn set_night_appeared_visits(&self, game: &mut Game, appeared_visits: Option<Vec<Visit>>){
-        self.deref_mut(game).night_variables.appeared_visits = appeared_visits;
-    }
-    
-    pub fn night_messages<'a>(&self, game: &'a Game) -> &'a Vec<ChatMessageVariant> {
-        &self.deref(game).night_variables.messages
-    }
-    pub fn push_night_message(&self, game: &mut Game, message: ChatMessageVariant){
-        self.deref_mut(game).night_variables.messages.push(message);
-    }
-    pub fn set_night_messages(&self, game: &mut Game, messages: Vec<ChatMessageVariant>){
-        self.deref_mut(game).night_variables.messages = messages;
-    }
-
-    pub fn night_grave_role<'a>(&self, game: &'a Game) -> &'a Option<Role> {
-        &self.deref(game).night_variables.grave_role
-    }
-    pub fn set_night_grave_role(&self, game: &mut Game, grave_role: Option<Role>){
-        self.deref_mut(game).night_variables.grave_role = grave_role;
-    }
-
-    pub fn night_grave_killers<'a>(&self, game: &'a Game) -> &'a Vec<GraveKiller> {
-        &self.deref(game).night_variables.grave_killers
-    }
-    pub fn push_night_grave_killers(&self, game: &mut Game, grave_killer: GraveKiller){
-        self.deref_mut(game).night_variables.grave_killers.push(grave_killer);
-    }
-    pub fn set_night_grave_killers(&self, game: &mut Game, grave_killers: Vec<GraveKiller>){
-        self.deref_mut(game).night_variables.grave_killers = grave_killers;
-    }
-
-    pub fn night_grave_will<'a>(&self, game: &'a Game) -> &'a String {
-        &self.deref(game).night_variables.grave_will
-    }
-    pub fn set_night_grave_will(&self, game: &mut Game, grave_will: String){
-        self.deref_mut(game).night_variables.grave_will = grave_will;
-    }
-
-    pub fn night_grave_death_notes<'a>(&self, game: &'a Game) -> &'a Vec<String> {
-        &self.deref(game).night_variables.grave_death_notes
-    }
-    pub fn push_night_grave_death_notes(&self, game: &mut Game, death_note: String){
-        self.deref_mut(game).night_variables.grave_death_notes.push(death_note);
-    }
-    pub fn set_night_grave_death_notes(&self, game: &mut Game, grave_death_notes: Vec<String>){
-        self.deref_mut(game).night_variables.grave_death_notes = grave_death_notes;
-    }
-
-    pub fn night_silenced(&self, game: &Game) -> bool {
-        self.deref(game).night_variables.silenced
-    }
-    pub fn set_night_silenced(&self, game: &mut Game, silenced: bool){
-        self.deref_mut(game).night_variables.silenced = silenced;
-        if silenced {
-            self.push_night_message(game, ChatMessageVariant::Silenced);
-            self.send_packet(game, ToClientPacket::YourSendChatGroups { send_chat_groups: 
-                self.get_current_send_chat_groups(game).into_iter().collect()
-            });
-        }
     }
 }
 

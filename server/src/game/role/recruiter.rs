@@ -6,7 +6,7 @@ use crate::game::ability_input::AvailableIntegerSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::components::mafia_recruits::MafiaRecruits;
 use crate::game::components::insider_group::InsiderGroupID;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 use crate::game::game_conclusion::GameConclusion;
@@ -48,7 +48,7 @@ impl RoleStateImpl for Recruiter {
             recruits_remaining: game.num_players().div_ceil(5),
         }
     }
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         let choose_attack = Self::choose_attack(game, actor_ref);
 
@@ -60,7 +60,7 @@ impl RoleStateImpl for Recruiter {
             OnMidnightPriority::Kill => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 if let Some(visit) = actor_visits.first(){
-                    if Recruiter::night_ability(self.clone(), game, actor_ref, visit.target) {
+                    if Recruiter::night_ability(self.clone(), game, midnight_variables, actor_ref, visit.target) {
                         if choose_attack {
                             actor_ref.set_role_state(game, Recruiter{recruits_remaining: self.recruits_remaining.saturating_add(1)})
                         }else{
@@ -157,19 +157,20 @@ impl RoleStateImpl for Recruiter {
 impl Recruiter {
     /// returns true if target_ref is killed when trying to kill
     /// returns true if target_ref is recruited when trying to recruit
-    pub fn night_ability(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+    pub fn night_ability(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         let choose_attack = Self::choose_attack(game, actor_ref);
 
         if choose_attack {
             target_ref.try_night_kill_single_attacker(
                 actor_ref,
                 game,
+                midnight_variables,
                 GraveKiller::RoleSet(RoleSet::Mafia),
                 AttackPower::Basic,
                 false
             )
-        }else if AttackPower::Basic.can_pierce(target_ref.defense(game)) {
-            MafiaRecruits::recruit(game, target_ref)
+        }else if AttackPower::Basic.can_pierce(target_ref.night_defense(game, midnight_variables)) {
+            MafiaRecruits::recruit(game, midnight_variables, target_ref)
         }else{
             false
         }

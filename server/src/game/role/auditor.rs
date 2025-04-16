@@ -11,7 +11,7 @@ use crate::vec_map::VecMap;
 use crate::vec_set::VecSet;
 use rand::prelude::SliceRandom;
 use super::{common_role, Role, RoleStateImpl};
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -29,16 +29,16 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Auditor {
     type ClientRoleState = Auditor;
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(mut self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         if priority != OnMidnightPriority::Investigative {return;}
-        if actor_ref.night_blocked(game) {return;}
+        if actor_ref.night_blocked(midnight_variables) {return;}
         
         let Some(TwoRoleOutlineOptionSelection(first, second)) = ControllerID::role(actor_ref, Role::Auditor, 0).get_two_role_outline_option_selection(game).cloned()else{return};
 
         if let Some(chosen_outline) = first{
             let result = Self::get_result(game, chosen_outline, Confused::is_confused(game, actor_ref));
-            actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
+            actor_ref.push_night_message(midnight_variables, ChatMessageVariant::AuditorResult {
                 role_outline: chosen_outline.deref(game).clone(),
                 result: result.clone(),
             });
@@ -48,7 +48,7 @@ impl RoleStateImpl for Auditor {
 
         if let Some(chosen_outline) = second{
             let result = Self::get_result(game, chosen_outline, Confused::is_confused(game, actor_ref));
-            actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
+            actor_ref.push_night_message(midnight_variables, ChatMessageVariant::AuditorResult {
                 role_outline: chosen_outline.deref(game).clone(),
                 result: result.clone()
             });

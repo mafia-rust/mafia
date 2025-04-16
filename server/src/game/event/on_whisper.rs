@@ -35,7 +35,7 @@ impl Event for OnWhisper {
         ]
     }
 
-    fn initial_fold_value(&self) -> Self::FoldValue {
+    fn initial_fold_value(&self, _game: &Game) -> Self::FoldValue {
         WhisperFold {
             cancelled: false,
             hide_broadcast: false,

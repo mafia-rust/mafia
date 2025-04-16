@@ -3,7 +3,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::selection_type::two_role_option_selection::TwoRoleOptionSelection;
 use crate::game::ability_input::{AvailableTwoRoleOptionSelection, ControllerID};
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -42,9 +42,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Steward {
     type ClientRoleState = ClientRoleState;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
-        if actor_ref.night_blocked(game) {return}
+        if actor_ref.night_blocked(midnight_variables) {return}
         if actor_ref.ability_deactivated_from_death(game) {return}
 
         match priority {
@@ -61,7 +61,7 @@ impl RoleStateImpl for Steward {
                     for player in PlayerReference::all_players(game){
                         if role != player.role(game) {continue;}
     
-                        player.increase_defense_to(game, DefensePower::Protection);
+                        player.increase_defense_to(game, midnight_variables, DefensePower::Protection);
                         healed_players.push(player);
                     }
                 }
@@ -69,7 +69,7 @@ impl RoleStateImpl for Steward {
                     for player in PlayerReference::all_players(game){
                         if role != player.role(game) {continue;}
     
-                        player.increase_defense_to(game, DefensePower::Protection);
+                        player.increase_defense_to(game, midnight_variables, DefensePower::Protection);
                         healed_players.push(player);
                     }
                 }
@@ -91,9 +91,9 @@ impl RoleStateImpl for Steward {
             }
             OnMidnightPriority::Investigative => {
                 for target_healed_ref in self.target_healed_refs{
-                    if target_healed_ref.night_attacked(game){
-                        actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
-                        target_healed_ref.push_night_message(game, ChatMessageVariant::YouWereProtected);
+                    if target_healed_ref.night_attacked(midnight_variables){
+                        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::TargetWasAttacked);
+                        target_healed_ref.push_night_message(midnight_variables, ChatMessageVariant::YouWereProtected);
                     }
                 }
             }

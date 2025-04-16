@@ -1,8 +1,7 @@
-
 use crate::{game::{
     ability_input::*,
     attack_power::AttackPower,
-    event::{on_add_insider::OnAddInsider, on_midnight::{OnMidnight, OnMidnightPriority}, on_remove_insider::OnRemoveInsider},
+    event::{on_add_insider::OnAddInsider, on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority}, on_remove_insider::OnRemoveInsider},
     grave::GraveKiller, phase::PhaseType, player::PlayerReference, role_list::RoleSet, visit::{Visit, VisitTag}, Game
 }, vec_set};
 
@@ -95,7 +94,7 @@ impl SyndicateGunItem {
             }
         }
     }
-    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority) {
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, midnight_variables: &mut MidnightVariables, priority: OnMidnightPriority) {
         if game.day_number() <= 1 {return}
         match priority {
             OnMidnightPriority::TopPriority => {
@@ -119,7 +118,7 @@ impl SyndicateGunItem {
                 for (attacker, target) in targets {
                     target.try_night_kill_single_attacker(
                         attacker,
-                        game,
+                        game, midnight_variables,
                         GraveKiller::RoleSet(RoleSet::Mafia),
                         AttackPower::Basic,
                         false

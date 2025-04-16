@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::game::ability_input::{AvailableIntegerSelection, AvailablePlayerListSelection};
 use crate::game::attack_power::AttackPower;
 use crate::game::components::detained::Detained;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{
     attack_power::DefensePower,
     components::puppeteer_marionette::PuppeteerMarionette
@@ -37,7 +37,7 @@ impl RoleStateImpl for Puppeteer {
             marionettes_remaining: game.num_players().div_ceil(5),
         }
     }
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(mut self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         if priority != OnMidnightPriority::Kill {return;}
         if game.day_number() <= 1 {return;}
@@ -50,10 +50,10 @@ impl RoleStateImpl for Puppeteer {
                 ControllerID::role(actor_ref, Role::Puppeteer, 1).get_integer_selection(game)
                     .unwrap_or(&IntegerSelection(0)).0 == 1
             {
-                if !AttackPower::ArmorPiercing.can_pierce(target.defense(game)) {
-                    actor_ref.push_night_message(game, crate::game::chat::ChatMessageVariant::YourConvertFailed);
+                if !AttackPower::ArmorPiercing.can_pierce(target.night_defense(game, midnight_variables)) {
+                    actor_ref.push_night_message(midnight_variables, crate::game::chat::ChatMessageVariant::YourConvertFailed);
                 }else{
-                    if PuppeteerMarionette::string(game, target){
+                    if PuppeteerMarionette::string(game, midnight_variables, target){
                         self.marionettes_remaining = self.marionettes_remaining.saturating_sub(1);
                     }
                     actor_ref.set_role_state(game, self);
@@ -62,6 +62,7 @@ impl RoleStateImpl for Puppeteer {
                 target.try_night_kill_single_attacker(
                     actor_ref,
                     game,
+                    midnight_variables,
                     crate::game::grave::GraveKiller::Role(Role::Puppeteer),
                     AttackPower::ArmorPiercing,
                     true

@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::components::tags::{TagSetID, Tags};
 use crate::game::ability_input::AvailablePlayerListSelection;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::role_list::RoleSet;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
 
@@ -20,7 +20,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Framer {
     type ClientRoleState = Framer;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Deception => {
                 let framer_visits = actor_ref.untagged_night_visits_cloned(game).clone();
@@ -30,12 +30,12 @@ impl RoleStateImpl for Framer {
                 Tags::add_tag(game, TagSetID::Framer(actor_ref), first_visit.target);
 
                 for framed_target in Tags::tagged(game, TagSetID::Framer(actor_ref)){
-                    framed_target.set_night_framed(game, true);
+                    framed_target.set_night_framed(midnight_variables, true);
                 }
 
                 let Some(second_visit) = framer_visits.get(1) else {return};
             
-                first_visit.target.set_night_appeared_visits(game, Some(vec![
+                first_visit.target.set_night_appeared_visits(midnight_variables, Some(vec![
                     Visit::new_none(first_visit.target, second_visit.target, false)
                 ]));
 
@@ -53,7 +53,7 @@ impl RoleStateImpl for Framer {
                     }
                 }
                 actor_ref.set_night_visits(game, new_visits);
-            }
+            },
             OnMidnightPriority::Investigative => {
                 Tags::set_tagged(
                     game,
@@ -67,7 +67,7 @@ impl RoleStateImpl for Framer {
                         )
                         .collect()
                 );
-            }
+            },
             _ => {}
         }
     }

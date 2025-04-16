@@ -4,7 +4,7 @@ use serde::Serialize;
 use crate::game::ability_input::ControllerParametersMap;
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority};
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::player::{PlayerIndex, PlayerReference};
@@ -24,7 +24,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Ojo {
     type ClientRoleState = Ojo;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Kill => {
                 if game.day_number() == 1 {return}
@@ -35,6 +35,7 @@ impl RoleStateImpl for Ojo {
                     target_ref.try_night_kill_single_attacker(
                         actor_ref,
                         game,
+                        midnight_variables,
                         GraveKiller::Role(Role::Ojo),
                         AttackPower::Basic,
                         true
@@ -48,7 +49,7 @@ impl RoleStateImpl for Ojo {
                     let mut players: Vec<PlayerIndex> = player_ref.all_night_visits_cloned(game).into_iter().map(|p|p.target.index()).collect();
                     players.shuffle(&mut rand::rng());
 
-                    actor_ref.push_night_message(game, 
+                    actor_ref.push_night_message(midnight_variables, 
                         ChatMessageVariant::WerewolfTrackingResult{
                             tracked_player: player_ref.index(), 
                             players

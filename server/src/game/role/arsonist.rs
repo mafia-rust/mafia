@@ -1,10 +1,10 @@
 use serde::Serialize;
 
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::attack_power::AttackPower;
 use crate::game::components::tags::{TagSetID, Tags};
 use crate::game::grave::GraveKiller;
 use crate::game::attack_power::DefensePower;
-use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
@@ -22,7 +22,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
 impl RoleStateImpl for Arsonist {
     type ClientRoleState = Arsonist;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Deception => {
                 //douse target
@@ -45,7 +45,7 @@ impl RoleStateImpl for Arsonist {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);             
                 if let Some(visit) = actor_visits.first(){
                     if actor_ref == visit.target{
-                        Self::ignite(game, actor_ref);
+                        Self::ignite(game, actor_ref, midnight_variables);
                     }
                 }
             }
@@ -86,13 +86,14 @@ impl Arsonist{
 
         Tags::add_tag(game, TagSetID::ArsonistDoused, player);
     }
-    pub fn ignite(game: &mut Game, igniter: PlayerReference) {
+    pub fn ignite(game: &mut Game, igniter: PlayerReference, midnight_variables: &mut MidnightVariables) {
         for player in Tags::tagged(game, TagSetID::ArsonistDoused) {
             if player.role(game) == Role::Arsonist {continue;}
             if !player.alive(game) {continue;}
             player.try_night_kill_single_attacker(
                 igniter,
                 game,
+                midnight_variables,
                 GraveKiller::Role(Role::Arsonist),
                 AttackPower::ProtectionPiercing,
                 true

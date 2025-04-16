@@ -14,7 +14,7 @@ use serde::{Serialize, Deserialize};
 
 use super::{
     ability_input::*, components::{insider_group::InsiderGroupID, night_visits::NightVisits},
-    event::{on_midnight::OnMidnightPriority, on_whisper::{OnWhisper, WhisperFold, WhisperPriority}},
+    event::{on_midnight::{MidnightVariables, OnMidnightPriority}, on_whisper::{OnWhisper, WhisperFold, WhisperPriority}},
     grave::GraveReference, visit::VisitTag, win_condition::WinCondition
 };
 
@@ -30,7 +30,7 @@ impl<T> GetClientRoleState<T> for T {
 
 pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<<Self as RoleStateImpl>::ClientRoleState> {
     type ClientRoleState: Clone + std::fmt::Debug + Serialize;
-    fn on_midnight(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: OnMidnightPriority) {}
+    fn on_midnight(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _priority: OnMidnightPriority) {}
 
     fn controller_parameters_map(self, _game: &Game, _actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::default()
@@ -253,9 +253,9 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.on_visit_wardblocked(game, actor_ref, visit)),*
                     }
                 }
-                pub fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority){
+                pub fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority){
                     match self {
-                        $(Self::$name(role_struct) => role_struct.on_midnight(game, actor_ref, priority)),*
+                        $(Self::$name(role_struct) => role_struct.on_midnight(game, midnight_variables, actor_ref, priority)),*
                     }
                 }
                 pub fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {

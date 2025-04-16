@@ -43,7 +43,7 @@ impl RoleStateImpl for Deputy {
         
         
         target_ref.add_private_chat_message(game, ChatMessageVariant::DeputyShotYou);
-        if target_ref.defense(game).can_block(AttackPower::Basic) {
+        if target_ref.role(game).defense().can_block(AttackPower::Basic) {
             target_ref.add_private_chat_message(game, ChatMessageVariant::YouSurvivedAttack);
             actor_ref.add_private_chat_message(game, ChatMessageVariant::SomeoneSurvivedYourAttack);
 
