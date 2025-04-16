@@ -6,7 +6,8 @@ use crate::game::ability_input::{AvailableBooleanSelection, AvailableStringSelec
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::insider_group::InsiderGroupID;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::components::silenced::Silenced;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
@@ -29,13 +30,13 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Reporter {
     type ClientRoleState = Reporter;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if 
             priority == OnMidnightPriority::Investigative &&
             Self::get_public(game, actor_ref) && 
             !actor_ref.ability_deactivated_from_death(game) &&
-            !actor_ref.night_blocked(game) &&
-            !actor_ref.night_silenced(game)
+            !actor_ref.night_blocked(midnight_variables) &&
+            !Silenced::silenced(game, actor_ref)
         {
             game.add_message_to_chat_group(
                 ChatGroup::All, 

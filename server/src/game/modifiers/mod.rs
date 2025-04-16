@@ -34,7 +34,7 @@ use crate::{vec_map::VecMap, vec_set::VecSet};
 
 use super::{ability_input::AbilityInput,
     event::{
-        on_midnight::{OnMidnight, OnMidnightPriority},
+        on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority},
         on_whisper::{OnWhisper, WhisperFold, WhisperPriority}
     },
     grave::GraveReference, player::PlayerReference, Game
@@ -169,7 +169,7 @@ impl Modifiers{
             modifiers,
         }
     }
-    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut MidnightVariables, priority: OnMidnightPriority){
         for modifier in game.modifiers.modifiers.clone(){
             modifier.1.on_midnight(game, priority);
         }

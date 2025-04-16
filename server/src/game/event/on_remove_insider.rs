@@ -4,7 +4,7 @@ use crate::game::{
         mafia_recruits::MafiaRecruits, puppeteer_marionette::PuppeteerMarionette,
         syndicate_gun_item::SyndicateGunItem
     },
-    player::PlayerReference
+    player::PlayerReference, Game
 };
 use super::Event;
 
@@ -36,5 +36,5 @@ impl Event for OnRemoveInsider {
         ]
     }
     
-    fn initial_fold_value(&self) -> Self::FoldValue {}
+    fn initial_fold_value(&self, _game: &Game) -> Self::FoldValue {}
 }

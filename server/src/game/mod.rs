@@ -40,6 +40,7 @@ use components::poison::Poison;
 use components::detained::Detained;
 use components::insider_group::InsiderGroupID;
 use components::insider_group::InsiderGroups;
+use components::silenced::Silenced;
 use components::syndicate_gun_item::SyndicateGunItem;
 use components::synopsis::SynopsisTracker;
 use components::tags::Tags;
@@ -138,7 +139,8 @@ pub struct Game {
     pub confused: Confused,
     pub drunk_aura: DrunkAura,
     pub synopsis_tracker: SynopsisTracker,
-    pub tags: Tags
+    pub tags: Tags,
+    pub silenced: Silenced
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -259,7 +261,8 @@ impl Game {
                 confused: Confused::default(),
                 drunk_aura: DrunkAura::default(),
                 synopsis_tracker: SynopsisTracker::new(num_players),
-                tags: Tags::default()
+                tags: Tags::default(),
+                silenced: Silenced::default()
             };
 
             // Just distribute insider groups, this is for game over checking (Keeps game running syndicate gun)
@@ -863,7 +866,7 @@ pub mod test {
     use super::{
         ability_input::saved_controllers_map::SavedControllersMap,
         components::{
-            cult::Cult, insider_group::InsiderGroupID, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday
+            cult::Cult, insider_group::InsiderGroupID, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, silenced::Silenced, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday
         }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine, player::{test::mock_player, PlayerReference},
@@ -931,7 +934,8 @@ pub mod test {
             confused: Default::default(),
             drunk_aura: Default::default(),
             synopsis_tracker: SynopsisTracker::new(number_of_players),
-            tags: Tags::default()
+            tags: Tags::default(),
+            silenced: Silenced::default()
         };
 
         //set wincons and revealed groups

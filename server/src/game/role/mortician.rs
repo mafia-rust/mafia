@@ -4,11 +4,12 @@ use serde::Serialize;
 use crate::game::ability_input::AvailablePlayerListSelection;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
+use crate::game::event::on_midnight::MidnightVariables;
+use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::components::tags::TagSetID;
 use crate::game::components::tags::Tags;
 use crate::game::grave::GraveInformation;
 use crate::game::grave::GraveReference;
-use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
@@ -45,7 +46,7 @@ impl RoleStateImpl for Mortician {
             cremations_remaining: game.num_players().div_ceil(5)
         }
     }
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, _midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Deception=>{
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);

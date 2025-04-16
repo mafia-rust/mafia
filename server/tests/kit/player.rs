@@ -112,8 +112,11 @@ impl TestPlayer {
         self.0.alive(game!(self))
     }
 
-    pub fn was_blocked(&self) -> bool {
-        self.0.night_blocked(game!(self))
+    pub fn received_blocked_message(&self) -> bool {
+        let messages = self.get_messages_after_night(game!(self).day_number() - 1);
+
+        messages.contains(&ChatMessageVariant::RoleBlocked) ||
+        messages.contains(&ChatMessageVariant::Wardblocked)
     }
 
     pub fn get_messages(&self) -> Vec<ChatMessageVariant> {

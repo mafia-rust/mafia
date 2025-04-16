@@ -6,7 +6,7 @@ use crate::{
     vec_set::{vec_set, VecSet}
 };
 
-use super::tags::{TagSetID, Tags};
+use super::{silenced::Silenced, tags::{TagSetID, Tags}};
 
 pub struct ForfeitVote;
 impl ForfeitVote{
@@ -36,7 +36,7 @@ impl ForfeitVote{
                 for player in PlayerReference::all_players(game){
                     let choose_forfeit = matches!(ControllerID::forfeit_vote(player).get_boolean_selection(game),Some(BooleanSelection(true)));
                     if 
-                        (player.night_silenced(game) || choose_forfeit) &&
+                        (Silenced::silenced(game, player) || choose_forfeit) &&
                         player.alive(game)
                     {
                         Tags::add_tag(game, TagSetID::ForfeitVote, player);

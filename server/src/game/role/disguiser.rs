@@ -3,7 +3,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::*;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveInformation;
 use crate::game::phase::PhaseType;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
@@ -31,7 +31,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Disguiser {
     type ClientRoleState = Disguiser;
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(mut self, game: &mut Game, _midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         if priority != OnMidnightPriority::Deception {return}
                 

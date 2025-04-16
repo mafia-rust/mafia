@@ -1,8 +1,5 @@
-
-
 use std::time::Duration;
-
-use crate::{client_connection::ClientConnection, game::{grave::GraveKiller, phase::PhaseType, verdict::Verdict, Game}};
+use crate::{client_connection::ClientConnection, game::{phase::PhaseType, verdict::Verdict, Game}};
 use super::PlayerReference;
 
 
@@ -36,28 +33,7 @@ impl PlayerReference{
             PhaseType::Judgement => {},
             PhaseType::FinalWords => {},
             PhaseType::Dusk => {},
-            PhaseType::Night => {
-                self.set_night_died(game, false);
-                self.set_night_attacked(game, false);
-                self.set_night_blocked(game, false);
-                self.set_night_upgraded_defense(game, None);
-                self.set_night_appeared_visits(game, None);
-                self.set_night_framed(game, false);
-                self.set_night_convert_role_to(game, None);
-                self.set_night_silenced(game, false);
-                self.set_night_messages(game, vec![]);
-                
-                self.set_night_grave_role(game, None);
-                self.set_night_grave_killers(game, vec![]);
-                self.set_night_grave_will(game, self.will(game).clone());
-                self.set_night_grave_death_notes(game, vec![]);
-
-                if self.is_disconnected(game) && self.alive(game){
-                    self.set_night_died(game, true);
-                    
-                    self.set_night_grave_killers(game, vec![GraveKiller::Quit]);
-                }
-            },
+            PhaseType::Night => {},
             PhaseType::Recess => {}
         }
 

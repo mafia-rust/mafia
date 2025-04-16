@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::player::PlayerReference;
@@ -41,7 +41,7 @@ impl RoleStateImpl for Yer {
             ..Self::default()
         }
     }
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(mut self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if game.day_number() == 1 {return}
 
         let chose_to_convert = ControllerID::role(actor_ref, Role::Yer, 0)
@@ -59,6 +59,7 @@ impl RoleStateImpl for Yer {
                 target_ref.try_night_kill_single_attacker(
                     actor_ref,
                     game,
+                    midnight_variables,
                     GraveKiller::Role(Role::Yer),
                     AttackPower::ArmorPiercing,
                     true
@@ -67,8 +68,8 @@ impl RoleStateImpl for Yer {
                 if priority != OnMidnightPriority::Convert {return}
                 if self.star_passes_remaining == 0 {return}
 
-                if target_ref.night_defense(game).can_block(AttackPower::ArmorPiercing) {
-                    actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                if target_ref.night_defense(game, midnight_variables).can_block(AttackPower::ArmorPiercing) {
+                    actor_ref.push_night_message(midnight_variables, ChatMessageVariant::YourConvertFailed);
                     return
                 }
 
@@ -77,14 +78,14 @@ impl RoleStateImpl for Yer {
                 //role switching stuff
                 let fake_role = self.current_fake_role(game, actor_ref);
 
-                actor_ref.set_night_grave_role(game, Some(fake_role));
+                actor_ref.set_night_grave_role(midnight_variables, Some(fake_role));
                 
                 //convert & kill stuff
                 target_ref.set_win_condition(
                     game,
                     WinCondition::new_loyalist(crate::game::game_conclusion::GameConclusion::Fiends)
                 );
-                target_ref.set_night_convert_role_to(game, Some(RoleState::Yer(Yer { 
+                target_ref.set_night_convert_role_to(midnight_variables, Some(RoleState::Yer(Yer { 
                     star_passes_remaining: self.star_passes_remaining, 
                     old_role: target_ref.role(game),
                 })));
@@ -92,6 +93,7 @@ impl RoleStateImpl for Yer {
                 actor_ref.try_night_kill_single_attacker(
                     actor_ref,
                     game,
+                    midnight_variables,
                     GraveKiller::Role(Role::Yer),
                     AttackPower::ProtectionPiercing,
                     true

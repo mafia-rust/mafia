@@ -5,7 +5,7 @@ use crate::game::{
     chat::ChatGroup,
     components::{
         detained::Detained,
-        puppeteer_marionette::PuppeteerMarionette
+        puppeteer_marionette::PuppeteerMarionette, silenced::Silenced
     },
     game_conclusion::GameConclusion,
     modifiers::{ModifierType, Modifiers},
@@ -87,13 +87,13 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         }
         return vec![ChatGroup::Dead].into_iter().collect();
     }
-    if actor_ref.night_silenced(game){
+    if Silenced::silenced(game, actor_ref) {
         return HashSet::new();
     }
 
     match game.current_phase() {
         PhaseState::Briefing => HashSet::new(),
-        PhaseState::Obituary => {
+        PhaseState::Obituary { .. } => {
             let mut out = HashSet::new();
 
             //evil chat groups

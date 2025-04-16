@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::game::ability_input::AvailableBooleanSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -53,7 +53,7 @@ impl RoleStateImpl for Martyr {
             state: MartyrState::StillPlaying { bullets: game.num_players().div_ceil(5) }
         }
     }
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(mut self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Kill {return}
         let MartyrState::StillPlaying { bullets } = self.state else {return};
         if bullets == 0 {return}
@@ -64,11 +64,11 @@ impl RoleStateImpl for Martyr {
             self.state = MartyrState::StillPlaying { bullets: bullets.saturating_sub(1) };
 
             if target_ref == actor_ref {
-                if target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Suicide, AttackPower::Basic, true) {
+                if target_ref.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Suicide, AttackPower::Basic, true) {
                     self.state = MartyrState::Won;
                 }
             } else {
-                target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Martyr), AttackPower::Basic, true);
+                target_ref.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Role(Role::Martyr), AttackPower::Basic, true);
             }
         };
 
@@ -120,7 +120,7 @@ impl RoleStateImpl for Martyr {
             for player in PlayerReference::all_players(game) {
                 if player == actor_ref {continue}
                 if !player.alive(game) {continue}
-                if player.defense(game).can_block(AttackPower::ProtectionPiercing) {continue}
+                if player.role(game).defense().can_block(AttackPower::ProtectionPiercing) {continue}
                 player.die_and_add_grave(game, Grave::from_player_suicide(game, player));
             }
     
