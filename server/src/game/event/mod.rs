@@ -1,5 +1,4 @@
 use super::Game;
-
 pub(super) mod on_any_death;
 pub(super) mod on_fast_forward;
 pub(super) mod on_game_ending;
@@ -20,7 +19,8 @@ pub(super) mod on_tick;
 pub(super) mod on_player_roleblocked;
 pub(super) mod on_visit_wardblocked;
 pub(super) mod on_whisper;
-
+pub(super) mod on_add_insider;
+pub(super) mod on_remove_insider;
 
 pub trait EventPriority: Sized + Copy {
     fn values() -> Vec<Self>;

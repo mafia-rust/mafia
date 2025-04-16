@@ -3,7 +3,7 @@ use std::time::Duration;
 use crate::{
     client_connection::ClientConnection, 
     game::{
-        chat::ChatMessageVariant, components::insider_group::InsiderGroupID,
+        chat::ChatMessageVariant, components::{insider_group::InsiderGroupID, tags::Tags},
         Game, GameOverReason
     },
     packet::ToClientPacket, websocket_connections::connection::ClientSender
@@ -84,6 +84,7 @@ impl PlayerReference{
         self.send_chat_messages(game);
         InsiderGroupID::send_player_insider_groups(game, *self);
         InsiderGroupID::send_fellow_insiders(game, *self);
+        Tags::send_to_client(game, *self);
 
         self.send_packets(game, vec![
             ToClientPacket::YourSendChatGroups {
@@ -97,9 +98,6 @@ impl PlayerReference{
             },
             ToClientPacket::YourRoleLabels { 
                 role_labels: PlayerReference::ref_vec_map_to_index(self.role_label_map(game)) 
-            },
-            ToClientPacket::YourPlayerTags { 
-                player_tags: PlayerReference::ref_vec_map_to_index(self.player_tags(game).clone())
             },
             ToClientPacket::YourJudgement{
                 verdict: self.verdict(game)

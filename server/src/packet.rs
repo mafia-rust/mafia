@@ -24,10 +24,10 @@ use vec1::Vec1;
 
 use crate::{
     client_connection::ClientConnection, game::{
-        ability_input::*, chat::{ChatGroup, ChatMessage}, components::insider_group::InsiderGroupID, game_client::GameClientLocation, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
+        ability_input::*, chat::{ChatGroup, ChatMessage}, components::{insider_group::InsiderGroupID, tags::Tag}, game_client::GameClientLocation, grave::Grave, modifiers::ModifierType, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
             doomsayer::DoomsayerGuess,
             ClientRoleStateEnum, Role
-        }, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, tag::Tag, verdict::Verdict, GameOverReason, RejectStartReason
+        }, role_list::{RoleList, RoleOutline}, settings::PhaseTimeSettings, verdict::Verdict, GameOverReason, RejectStartReason
     }, lobby::lobby_client::LobbyClient, room::RoomClientID, vec_map::VecMap, vec_set::VecSet, websocket_listener::RoomCode
 };
 
@@ -132,7 +132,7 @@ pub enum ToClientPacket{
     #[serde(rename_all = "camelCase")]
     YourRoleLabels{role_labels: VecMap<PlayerIndex, Role>},
     #[serde(rename_all = "camelCase")]
-    YourPlayerTags{player_tags: VecMap<PlayerIndex, Vec1<Tag>>},
+    YourPlayerTags{player_tags: VecMap<PlayerReference, Vec1<Tag>>},
     YourWill{will: String},
     YourNotes{notes: Vec<String>},
     #[serde(rename_all = "camelCase")]

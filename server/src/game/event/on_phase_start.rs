@@ -1,8 +1,6 @@
 use crate::game::{
     ability_input::saved_controllers_map::SavedControllersMap, components::{
-        cult::Cult, detained::Detained,
-        mafia::Mafia, night_visits::NightVisits,
-        verdicts_today::VerdictsToday
+        cult::Cult, detained::Detained, forfeit_vote::ForfeitVote, mafia::Mafia, night_visits::NightVisits, verdicts_today::VerdictsToday
     }, modifiers::Modifiers, phase::PhaseState, player::PlayerReference, Game
 };
 
@@ -19,6 +17,7 @@ impl OnPhaseStart{
             player_ref.on_phase_start(game, self.phase.phase());
         }
 
+        ForfeitVote::on_phase_start(game, self.phase.phase());
         NightVisits::on_phase_start(game, self.phase.phase());
         Detained::on_phase_start(game, self.phase.phase());
         VerdictsToday::on_phase_start(game, self.phase.phase());

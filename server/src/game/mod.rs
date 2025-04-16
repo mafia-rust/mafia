@@ -13,7 +13,6 @@ pub mod settings;
 pub mod game_conclusion;
 pub mod components;
 pub mod on_client_message;
-pub mod tag;
 pub mod event;
 pub mod spectator;
 pub mod game_listeners;
@@ -31,6 +30,8 @@ use ability_input::ControllerID;
 use ability_input::PlayerListSelection;
 use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
+use components::enfranchise::Enfranchise;
+use components::forfeit_vote::ForfeitVote;
 use components::mafia::Mafia;
 use components::night_visits::NightVisits;
 use components::pitchfork::Pitchfork;
@@ -41,6 +42,7 @@ use components::insider_group::InsiderGroupID;
 use components::insider_group::InsiderGroups;
 use components::syndicate_gun_item::SyndicateGunItem;
 use components::synopsis::SynopsisTracker;
+use components::tags::Tags;
 use components::verdicts_today::VerdictsToday;
 use event::on_tick::OnTick;
 use modifiers::ModifierType;
@@ -79,7 +81,6 @@ use phase::PhaseStateMachine;
 use settings::Settings;
 use grave::Grave;
 use self::components::{
-    arsonist_doused::ArsonistDoused,
     cult::Cult,
     puppeteer_marionette::PuppeteerMarionette
 };
@@ -96,7 +97,6 @@ use self::spectator::{
     Spectator,
     SpectatorInitializeParameters
 };
-use self::role::RoleState;
 use self::verdict::Verdict;
 
 
@@ -127,7 +127,6 @@ pub struct Game {
     syndicate_gun_item: SyndicateGunItem,
     pub cult: Cult,
     pub mafia: Mafia,
-    pub arsonist_doused: ArsonistDoused,
     pub puppeteer_marionette: PuppeteerMarionette,
     pub mafia_recruits: MafiaRecruits,
     pub verdicts_today: VerdictsToday,
@@ -138,7 +137,8 @@ pub struct Game {
     pub detained: Detained,
     pub confused: Confused,
     pub drunk_aura: DrunkAura,
-    pub synopsis_tracker: SynopsisTracker
+    pub synopsis_tracker: SynopsisTracker,
+    pub tags: Tags
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -249,7 +249,6 @@ impl Game {
                 syndicate_gun_item: SyndicateGunItem::default(),
                 cult: Cult::default(),
                 mafia: Mafia,
-                arsonist_doused: ArsonistDoused::default(),
                 puppeteer_marionette: PuppeteerMarionette::default(),
                 mafia_recruits: MafiaRecruits::default(),
                 verdicts_today: VerdictsToday::default(),
@@ -259,7 +258,8 @@ impl Game {
                 detained: Detained::default(),
                 confused: Confused::default(),
                 drunk_aura: DrunkAura::default(),
-                synopsis_tracker: SynopsisTracker::new(num_players)
+                synopsis_tracker: SynopsisTracker::new(num_players),
+                tags: Tags::default()
             };
 
             // Just distribute insider groups, this is for game over checking (Keeps game running syndicate gun)
@@ -380,15 +380,8 @@ impl Game {
                 continue;
             }
             let mut voting_power = 1u8;
-            if let RoleState::Mayor(mayor) = player_ref.role_state(self).clone(){
-                if mayor.revealed {
-                    voting_power = voting_power.saturating_add(2);
-                }
-            }
-            if let RoleState::Politician(politician) = player_ref.role_state(self).clone(){
-                if politician.revealed {
-                    voting_power = voting_power.saturating_add(2);
-                }
+            if Enfranchise::enfranchised(self, player_ref) {
+                voting_power = voting_power.saturating_add(2);
             }
             
             match player_ref.verdict(self) {
@@ -411,16 +404,9 @@ impl Game {
             let Some(&voted_player) = voted_players.first() else { continue };
             
 
-            let mut voting_power = 1;
-            if let RoleState::Mayor(mayor) = player.role_state(self).clone() {
-                if mayor.revealed {
-                    voting_power = 3;
-                }
-            }
-            else if let RoleState::Politician(politician) = player.role_state(self).clone() {
-                if politician.revealed {
-                    voting_power = 3;
-                }
+            let mut voting_power: u8 = 1;
+            if Enfranchise::enfranchised(self, player) {
+                voting_power = voting_power.saturating_add(2);
             }
 
             if let Some(num_votes) = voted_player_votes.get_mut(&voted_player) {
@@ -478,7 +464,7 @@ impl Game {
     pub fn nomination_votes_required(&self)->u8{
         #[expect(clippy::cast_possible_truncation, reason = "Game can only have max 255 players")]
         let eligible_voters = PlayerReference::all_players(self)
-            .filter(|p| p.alive(self) && !p.forfeit_vote(self))
+            .filter(|p| p.alive(self) && !ForfeitVote::forfeited_vote(self, *p))
             .count() as u8;
 
         if Modifiers::modifier_is_enabled(self, ModifierType::TwoThirdsMajority) {
@@ -877,12 +863,7 @@ pub mod test {
     use super::{
         ability_input::saved_controllers_map::SavedControllersMap,
         components::{
-            arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID,
-            mafia::Mafia,
-            mafia_recruits::MafiaRecruits, night_visits::NightVisits,
-            pitchfork::Pitchfork, poison::Poison,
-            puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem,
-            synopsis::SynopsisTracker, verdicts_today::VerdictsToday
+            cult::Cult, insider_group::InsiderGroupID, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday
         }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine, player::{test::mock_player, PlayerReference},
@@ -940,7 +921,6 @@ pub mod test {
             syndicate_gun_item: SyndicateGunItem::default(),
             cult: Cult::default(),
             mafia: Mafia,
-            arsonist_doused: ArsonistDoused::default(),
             puppeteer_marionette: PuppeteerMarionette::default(),
             mafia_recruits: MafiaRecruits::default(),
             verdicts_today: VerdictsToday::default(),
@@ -950,7 +930,8 @@ pub mod test {
             detained: Default::default(),
             confused: Default::default(),
             drunk_aura: Default::default(),
-            synopsis_tracker: SynopsisTracker::new(number_of_players)
+            synopsis_tracker: SynopsisTracker::new(number_of_players),
+            tags: Tags::default()
         };
 
         //set wincons and revealed groups

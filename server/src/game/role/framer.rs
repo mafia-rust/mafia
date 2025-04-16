@@ -1,43 +1,37 @@
 use serde::Serialize;
 
+use crate::game::components::tags::{TagSetID, Tags};
 use crate::game::ability_input::AvailablePlayerListSelection;
 use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::role_list::RoleSet;
-use crate::game::tag::Tag;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
 
 use crate::game::visit::{Visit, VisitTag};
 
 use crate::game::Game;
-use crate::vec_set::VecSet;
 use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default, Serialize)]
-pub struct Framer{
-    framed_targets: VecSet<PlayerReference>
-}
+pub struct Framer;
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Framer {
     type ClientRoleState = Framer;
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Deception => {
                 let framer_visits = actor_ref.untagged_night_visits_cloned(game).clone();
 
                 let Some(first_visit) = framer_visits.first() else {return};
 
-                self.framed_targets.insert(first_visit.target);
+                Tags::add_tag(game, TagSetID::Framer(actor_ref), first_visit.target);
 
-                first_visit.target.set_night_framed(game, true);
-                for framed_target in self.framed_targets.iter(){
+                for framed_target in Tags::tagged(game, TagSetID::Framer(actor_ref)){
                     framed_target.set_night_framed(game, true);
                 }
-                self.update_framer_tags(game, actor_ref);
-                actor_ref.set_role_state(game, self);
 
                 let Some(second_visit) = framer_visits.get(1) else {return};
             
@@ -61,14 +55,18 @@ impl RoleStateImpl for Framer {
                 actor_ref.set_night_visits(game, new_visits);
             }
             OnMidnightPriority::Investigative => {
-                self.framed_targets.retain(|p|
-                    !p.all_appeared_visitors(game).iter().any(|visitor| {
-                        RoleSet::TownInvestigative.get_roles().contains(&visitor.role(game))
-                    })
+                Tags::set_tagged(
+                    game,
+                    TagSetID::Framer(actor_ref),
+                    &Tags::tagged(game, TagSetID::Framer(actor_ref))
+                        .into_iter()
+                        .filter(|p|
+                            !p.all_night_visitors_cloned(game).iter().any(|visitor| {
+                                RoleSet::TownInvestigative.get_roles().contains(&visitor.role(game))
+                            })
+                        )
+                        .collect()
                 );
-
-                self.update_framer_tags(game, actor_ref);
-                actor_ref.set_role_state(game, self);
             }
             _ => {}
         }
@@ -112,27 +110,18 @@ impl RoleStateImpl for Framer {
             )
         ).collect()
     }
-     fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
+    fn default_revealed_groups(self) -> crate::vec_set::VecSet<crate::game::components::insider_group::InsiderGroupID> {
         vec![
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
-}
-impl Framer {
-    pub fn update_framer_tags(&self, game: &mut Game, actor_ref: PlayerReference){
-        for player in PlayerReference::all_players(game){
-            match (
-                actor_ref.player_has_tag(game, player, Tag::Frame) != 0, 
-                self.framed_targets.contains(&player)
-            ){
-                (false, true) => {
-                    actor_ref.push_player_tag(game, player, Tag::Frame);
-                }
-                (true, false) => {
-                    actor_ref.remove_player_tag(game, player, Tag::Frame);
-                }
-                _ => {}
-            }
-        }
+
+    
+    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
+        Tags::add_viewer(game, TagSetID::Framer(actor_ref), actor_ref);
+    }
+    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _new: super::RoleState, _old: super::RoleState) {
+        if actor_ref != player {return}
+        Tags::remove_viewer(game, TagSetID::Framer(actor_ref), actor_ref);
     }
 }

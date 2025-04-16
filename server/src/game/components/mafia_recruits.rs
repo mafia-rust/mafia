@@ -1,8 +1,11 @@
 use std::collections::HashSet;
 
 use crate::{game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, event::on_midnight::{OnMidnight, OnMidnightPriority}, game_conclusion::GameConclusion, player::PlayerReference, role::Role, role_list::RoleSet, tag::Tag, win_condition::WinCondition, Game, InsiderGroupID
+    attack_power::AttackPower, chat::ChatMessageVariant, event::{on_add_insider::OnAddInsider, on_midnight::{OnMidnight, OnMidnightPriority}, on_remove_insider::OnRemoveInsider},
+    game_conclusion::GameConclusion, player::PlayerReference, role::Role, role_list::RoleSet, win_condition::WinCondition, Game, InsiderGroupID
 }, vec_set::VecSet};
+
+use super::tags::Tags;
 
 impl Game{
     pub fn mafia_recruits(&self)->&MafiaRecruits{
@@ -23,6 +26,7 @@ impl MafiaRecruits{
 
         if InsiderGroupID::Mafia.is_player_in_revealed_group(game, player) {return false;}
         if !recruiter_recruits.recruits.insert(player){return false;}
+        Tags::add_tag(game, super::tags::TagSetID::SyndicateRecruit, player);
 
         game.set_recruiter_recruits(recruiter_recruits);
         InsiderGroupID::Mafia.add_player_to_revealed_group(game, player);
@@ -33,7 +37,6 @@ impl MafiaRecruits{
             mafia.push_night_message(game, ChatMessageVariant::RecruiterPlayerIsNowRecruit{player: player.index()});
         }
 
-        MafiaRecruits::give_tags_and_labels(game);
         true
     }
 
@@ -56,18 +59,6 @@ impl MafiaRecruits{
 
         for player in players{
             player.try_night_kill(&recruiters, game, crate::game::grave::GraveKiller::RoleSet(RoleSet::Mafia), attack_power, false);
-        }
-    }
-
-    pub fn give_tags_and_labels(game: &mut Game){
-        for player_a in InsiderGroupID::Mafia.players(game).clone() {
-            for player_b in Self::recruits(game) {
-                if 
-                    player_a.player_has_tag(game, player_b, Tag::PuppeteerMarionette) == 0
-                {
-                    player_a.push_player_tag(game, player_b, Tag::PuppeteerMarionette);
-                }
-            }
         }
     }
 
@@ -95,9 +86,11 @@ impl MafiaRecruits{
 
 
     //event listeners
-
-    pub fn on_game_start(game: &mut Game){
-        MafiaRecruits::give_tags_and_labels(game);
+    pub fn on_add_insider(game: &mut Game, _event: &OnAddInsider, _fold: &mut (), _priority: ()){
+        Tags::set_viewers(game, super::tags::TagSetID::SyndicateRecruit, &InsiderGroupID::Mafia.players(game).clone());
+    }
+    pub fn on_remove_insider(game: &mut Game, _event: &OnRemoveInsider, _fold: &mut (), _priority: ()){
+        Tags::set_viewers(game, super::tags::TagSetID::SyndicateRecruit, &InsiderGroupID::Mafia.players(game).clone());
     }
     pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
         if priority == OnMidnightPriority::Kill{

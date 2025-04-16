@@ -40,10 +40,8 @@ impl RoleStateImpl for Disguiser {
         
         if !InsiderGroupID::in_same_revealed_group(game, actor_ref, first_visit.target) {return}
 
-        actor_ref.remove_player_tag_on_all(game, crate::game::tag::Tag::Disguise);
         self.current_target = Some(first_visit.target);
         self.last_role_selection = Self::disguised_role(&self, game, actor_ref);
-        actor_ref.push_player_tag(game, first_visit.target, crate::game::tag::Tag::Disguise);
 
         actor_ref.set_role_state(game, self);
     }
@@ -90,7 +88,6 @@ impl RoleStateImpl for Disguiser {
             self.current_target.is_some_and(|p|p == dead_player_ref) || 
             actor_ref == dead_player_ref
         {
-            actor_ref.remove_player_tag_on_all(game, crate::game::tag::Tag::Disguise);
             self.current_target = None;
             actor_ref.set_role_state(game, self);
         }
@@ -98,7 +95,6 @@ impl RoleStateImpl for Disguiser {
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Night => {
-                actor_ref.remove_player_tag_on_all(game, crate::game::tag::Tag::Disguise);
                 self.current_target = None;
                 actor_ref.set_role_state(game, self);
             },

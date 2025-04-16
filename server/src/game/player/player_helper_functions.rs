@@ -6,12 +6,18 @@ use crate::{game::{
     attack_power::{AttackPower, DefensePower},
     chat::{ChatGroup, ChatMessage, ChatMessageVariant},
     components::{
-        arsonist_doused::ArsonistDoused,
         drunk_aura::DrunkAura,
         insider_group::InsiderGroupID, night_visits::NightVisits
-    }, event::{
+    },
+    event::{
         before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_midnight::OnMidnightPriority, on_player_roleblocked::OnPlayerRoleblocked, on_role_switch::OnRoleSwitch, on_visit_wardblocked::OnVisitWardblocked
-    }, game_conclusion::GameConclusion, grave::{Grave, GraveKiller}, modifiers::{ModifierType, Modifiers}, phase::PhaseType, role::{chronokaiser::Chronokaiser, Role, RoleState}, visit::{Visit, VisitTag}, win_condition::WinCondition, Game
+    },
+    game_conclusion::GameConclusion,
+    grave::{Grave, GraveKiller},
+    modifiers::{ModifierType, Modifiers}, phase::PhaseType,
+    role::{arsonist::Arsonist,chronokaiser::Chronokaiser, Role, RoleState},
+    visit::{Visit, VisitTag},
+    win_condition::WinCondition, Game
 }, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
 use super::PlayerReference;
@@ -355,7 +361,7 @@ impl PlayerReference{
         self.role(game).has_suspicious_aura(game) || 
         self.night_framed(game) ||
         DrunkAura::has_drunk_aura(game, *self) ||
-        ArsonistDoused::has_suspicious_aura_douse(game, *self)
+        Arsonist::has_suspicious_aura_douse(game, *self)
     }
     pub fn get_won_game(&self, game: &Game) -> bool {
         match self.win_condition(game){

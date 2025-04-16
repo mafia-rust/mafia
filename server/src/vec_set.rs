@@ -123,6 +123,9 @@ pub use macros::vec_set;
 mod macros {
     #[macro_export]
     macro_rules! vec_set {
+        () => {{
+            $crate::vec_set::VecSet::new()
+        }};
         ($($key:expr),*) => {{
             let mut map = $crate::vec_set::VecSet::new();
             $(map.insert($key);)*
