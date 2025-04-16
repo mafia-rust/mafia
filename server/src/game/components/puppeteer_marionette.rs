@@ -1,7 +1,8 @@
 use std::collections::HashSet;
 
 use crate::{game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, event::{on_add_insider::OnAddInsider, on_midnight::{OnMidnight, OnMidnightPriority}, on_remove_insider::OnRemoveInsider},
+    attack_power::AttackPower, chat::ChatMessageVariant,
+    event::{on_add_insider::OnAddInsider, on_midnight::{OnMidnight, OnMidnightPriority}, on_remove_insider::OnRemoveInsider},
     game_conclusion::GameConclusion, player::PlayerReference, role::Role, win_condition::WinCondition, Game
 }, vec_set::VecSet};
 

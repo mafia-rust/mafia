@@ -31,7 +31,9 @@ impl TestPlayer {
     }
 
     pub fn send_ability_input(&self, ability_input: AbilityInput) {
-        game!(self).on_client_message(self.0.index(), 
+        game!(self).on_player_message(
+            0, // This is only used for host stuff.
+            self.0, 
             ToServerPacket::AbilityInput { ability_input }
         );
     }
@@ -99,7 +101,9 @@ impl TestPlayer {
     }
 
     pub fn send_message(&self, message: &str) {
-        game!(self).on_client_message(self.0.index(), 
+        game!(self).on_player_message(
+            0, // This is only used for host stuff.
+            self.0, 
             ToServerPacket::SendChatMessage { text: message.to_string(), block: false }
         );
     }

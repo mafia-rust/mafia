@@ -34,7 +34,7 @@ impl ForfeitVote{
         match phase {
             PhaseType::Nomination => {
                 for player in PlayerReference::all_players(game){
-                    let choose_forfeit = matches!(game.saved_controllers.get_controller_current_selection_boolean(ControllerID::forfeit_vote(player)),Some(BooleanSelection(true)));
+                    let choose_forfeit = matches!(ControllerID::forfeit_vote(player).get_boolean_selection(game),Some(BooleanSelection(true)));
                     if 
                         (player.night_silenced(game) || choose_forfeit) &&
                         player.alive(game)
