@@ -3,15 +3,10 @@ use std::time::Instant;
 
 use serde::Serialize;
 
-use crate::game::player::PlayerReference;
-use crate::game::spectator::spectator_pointer::SpectatorPointer;
 use crate::game::Game;
+use crate::game::game_client::{GameClient, GameClientLocation};
 use crate::{client_connection::ClientConnection, packet::ToClientPacket, websocket_connections::connection::ClientSender};
 
-use super::game_client::GameClient;
-use super::GameClientLocation;
-
-pub type LobbyClientID = u32;
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LobbyClient{
@@ -53,19 +48,17 @@ impl LobbyClient {
     pub fn new_from_game_client(game: &Game, game_client: GameClient)->Self{
 
         match game_client.client_location {
-            GameClientLocation::Player(index) => {
-                let player_ref = unsafe { PlayerReference::new_unchecked(index) };
+            GameClientLocation::Player(player) => {
                 LobbyClient{
-                    connection: player_ref.connection(game).clone(),
+                    connection: player.connection(game).clone(),
                     ready: if game_client.host { Ready::Host } else { Ready::NotReady },
-                    client_type: LobbyClientType::Player{name: player_ref.name(game).to_string()},
+                    client_type: LobbyClientType::Player{name: player.name(game).to_string()},
                     last_message_times: VecDeque::new()
                 }
             },
-            GameClientLocation::Spectator(index) => {
-                let spectator_pointer = SpectatorPointer::new(index);
+            GameClientLocation::Spectator(spectator) => {
                 LobbyClient{
-                    connection:spectator_pointer.connection(game),
+                    connection: spectator.connection(game),
                     ready: if game_client.host { Ready::Host } else { Ready::Ready },
                     client_type: LobbyClientType::Spectator,
                     last_message_times: VecDeque::new()

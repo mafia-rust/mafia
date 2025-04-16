@@ -1,39 +1,127 @@
-use crate::{log, packet::ToServerPacket, strings::TidyableString};
+use crate::{lobby::{lobby_client::LobbyClient, Lobby}, log, packet::{ToClientPacket, ToServerPacket}, room::{RemoveRoomClientResult, RoomClientID, RoomState}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender},
-    event::{on_whisper::OnWhisper, Event},
-    phase::PhaseType,
-    player::{PlayerIndex, PlayerReference},
-    role::{
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, event::{on_fast_forward::OnFastForward, on_game_ending::OnGameEnding, on_whisper::OnWhisper, Event}, game_client::GameClientLocation, game_conclusion::GameConclusion, phase::PhaseType, player::PlayerReference, role::{
         Role, RoleState
-    },
-    spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    }, spectator::spectator_pointer::SpectatorPointer, Game
 };
 
 
 
+pub enum GameClientMessageResult {
+    BackToLobby(Lobby),
+    Close,
+    None
+}
 
 impl Game {
     #[expect(clippy::match_single_binding, unused, reason="Surely spectators will do something in the future")]
-    pub fn on_spectator_message(&mut self, sender_index: SpectatorIndex, incoming_packet: ToServerPacket){
-        let sender_pointer = SpectatorPointer::new(sender_index);
-
+    pub fn on_spectator_message(&mut self, sender_ref: SpectatorPointer, incoming_packet: ToServerPacket){
         match incoming_packet {
             _ => {}
         }
     }
-    pub fn on_client_message(&mut self, sender_player_index: PlayerIndex, incoming_packet: ToServerPacket){
-
-        let sender_player_ref = match PlayerReference::new(self, sender_player_index){
-            Ok(sender_player_ref) => sender_player_ref,
-            Err(_) => {
-                log!(error "Game"; "Received message from invalid player index: {}", sender_player_index);
-                return;
+    
+    pub fn on_client_message(&mut self, _: &ClientSender, room_client_id: RoomClientID, incoming_packet: ToServerPacket) -> GameClientMessageResult {
+        if let Some(client) = self.clients.get(&room_client_id) {
+            match client.client_location {
+                GameClientLocation::Player(player) => {
+                    self.on_player_message(room_client_id, player, incoming_packet)
+                }
+                GameClientLocation::Spectator(spectator) => {
+                    self.on_spectator_message(spectator, incoming_packet);
+                    GameClientMessageResult::None
+                }
             }
-        };
+        } else {
+            log!(error "Game"; "Received message from invalid client id: {}", room_client_id);
+            GameClientMessageResult::None
+        }
+    }
 
+    pub fn on_player_message(&mut self, room_client_id: RoomClientID, sender_player_ref: PlayerReference, incoming_packet: ToServerPacket) -> GameClientMessageResult {
         'packet_match: {match incoming_packet {
+            ToServerPacket::SetName{ name } => {
+                self.set_player_name(sender_player_ref, name);
+            },
+            ToServerPacket::Leave => {
+                if let RemoveRoomClientResult::RoomShouldClose = self.remove_client(room_client_id) {
+                    return GameClientMessageResult::Close;
+                }
+            },
+            ToServerPacket::HostForceBackToLobby => {
+                if let Some(player) = self.clients.get(&room_client_id){
+                    if !player.host {break 'packet_match}
+                }
+
+                self.settings.role_list.simplify();
+                let role_list = self.settings.role_list.clone();
+                
+                self.send_to_all(ToClientPacket::RoleList { role_list });
+
+                let mut new_clients = VecMap::new();
+                for (room_client_id, game_client) in self.clients.clone() {
+                    new_clients.insert(room_client_id, LobbyClient::new_from_game_client(self, game_client));
+                }
+
+                self.send_to_all(ToClientPacket::BackToLobby);
+
+                let lobby = Lobby::new_from_game(self.room_name.clone(), self.settings.clone(), new_clients);
+
+                return GameClientMessageResult::BackToLobby(lobby);
+            }
+            ToServerPacket::HostForceEndGame => {
+                if let Some(player) = self.clients.get(&room_client_id){
+                    if !player.host {break 'packet_match}
+                }
+
+                let conclusion = GameConclusion::get_premature_conclusion(self);
+
+                OnGameEnding::new(conclusion).invoke(self);
+            }
+            ToServerPacket::HostForceSkipPhase => {
+                if let Some(player) = self.clients.get(&room_client_id){
+                    if !player.host {break 'packet_match}
+                }
+                
+                OnFastForward::invoke(self);
+            }
+            ToServerPacket::HostDataRequest => {
+                if let Some(player) = self.clients.get(&room_client_id){
+                    if !player.host {break 'packet_match}
+                }
+
+                self.resend_host_data(sender_player_ref.connection(self));
+            }
+            ToServerPacket::HostForceSetPlayerName { id, name } => {
+                if let Some(player) = self.clients.get(&room_client_id){
+                    if !player.host {break 'packet_match}
+                }
+                if let Some(player) = self.clients.get(&id) {
+                    if let GameClientLocation::Player(player) = player.client_location {
+                        self.set_player_name(player, name);
+                    }
+                }
+            }
+            ToServerPacket::SetPlayerHost { player_id } => {
+                if let Some(player) = self.clients.get(&room_client_id){
+                    if !player.host {break 'packet_match}
+                }
+                if let Some(player) = self.clients.get_mut(&player_id) {
+                    player.set_host();
+                }
+                self.send_players();
+                self.resend_host_data_to_all_hosts();
+            }
+            ToServerPacket::RelinquishHost => {
+                if let Some(player) = self.clients.get_mut(&room_client_id){
+                    if !player.host {break 'packet_match}
+                    player.relinquish_host();
+                }
+                self.ensure_host_exists(Some(room_client_id));
+                self.send_players();
+                self.resend_host_data_to_all_hosts();
+            }
             ToServerPacket::Judgement { verdict } => {
                 if self.current_phase().phase() != PhaseType::Judgement {break 'packet_match;}
                 
@@ -58,7 +146,7 @@ impl Game {
                         },
                         ChatGroup::Dead => {
                             if sender_player_ref.alive(self) {
-                                Some(MessageSender::LivingToDead{ player: sender_player_index })
+                                Some(MessageSender::LivingToDead{ player: sender_player_ref.index() })
                             }else{None}
                         },
                         ChatGroup::Interview => {
@@ -69,7 +157,7 @@ impl Game {
                         _ => {None}
                     };
 
-                    let message_sender = message_sender.unwrap_or(MessageSender::Player { player: sender_player_index });
+                    let message_sender = message_sender.unwrap_or(MessageSender::Player { player: sender_player_ref.index() });
 
 
                     self.add_message_to_chat_group(
@@ -142,8 +230,7 @@ impl Game {
                 sender_player_ref.set_fast_forward_vote(self, fast_forward);
             },
             _ => {
-                log!(fatal "Game"; "Unimplemented ToServerPacket: {incoming_packet:?}");
-                unreachable!();
+                log!(error "Game"; "Recieved invalid packet for Game state: {incoming_packet:?}");
             }
         }}
         
@@ -154,5 +241,6 @@ impl Game {
             spectator_ref.send_repeating_data(self)
         }
 
+        GameClientMessageResult::None
     }
 }

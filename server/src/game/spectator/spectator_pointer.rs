@@ -1,5 +1,7 @@
 use std::time::Duration;
 
+use serde::Serialize;
+
 use crate::{
     client_connection::ClientConnection, game::{chat::{ChatGroup, ChatMessage}, player::PlayerReference, Game, GameOverReason}, packet::ToClientPacket
 };
@@ -9,6 +11,7 @@ use super::Spectator;
 pub type SpectatorIndex = u8;
 ///
 /// This does not guarantee that the spectator exists
+#[derive(Debug, Clone, Copy)]
 pub struct SpectatorPointer {
     index: SpectatorIndex,
 }
@@ -29,14 +32,6 @@ impl SpectatorPointer {
         game.spectators.get(self.index as usize)
     }
 
-    pub fn host(&self, game: &Game)->bool {
-        self.deref(game).map(|s|s.host).unwrap_or(false)
-    }
-    pub fn set_host(&self, game: &mut Game, host: bool) {
-        if let Some(spectator) = self.deref_mut(game) {
-            spectator.host = host;
-        }
-    }
     pub fn connection(&self, game: &Game) -> ClientConnection {
         self.deref(game).map(|s|s.connection.clone()).unwrap_or(ClientConnection::Disconnected)
     }
@@ -196,3 +191,12 @@ impl Iterator for SpectatorPointerIterator {
 }
 
 impl ExactSizeIterator for SpectatorPointerIterator {}
+
+impl Serialize for SpectatorPointer {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer
+    {
+        serializer.serialize_u8(self.index)
+    }
+}
