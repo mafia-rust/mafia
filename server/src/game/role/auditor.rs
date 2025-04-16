@@ -64,6 +64,7 @@ impl RoleStateImpl for Auditor {
             .available_selection(AvailableTwoRoleOutlineOptionSelection(
                 RoleOutlineReference::all_outlines(game)
                     .filter(|o|!self.previously_given_results.contains(o))
+                    .filter(|o|o.deref(game).get_all_roles().len() > 1)
                     .map(Some)
                     .chain(once(None))
                     .collect()
