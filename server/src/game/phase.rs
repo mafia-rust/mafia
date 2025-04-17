@@ -28,7 +28,7 @@ pub enum PhaseType {
     Night,
     Recess
 }
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum PhaseState {
@@ -49,6 +49,16 @@ pub enum PhaseState {
     Dusk,
     Night,
     Recess
+}
+impl PartialOrd for PhaseState{
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl Ord for PhaseState{
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.phase().cmp(&other.phase())
+    }
 }
 
 pub struct PhaseStateMachine {

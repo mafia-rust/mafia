@@ -97,7 +97,7 @@ impl RoleStateImpl for Engineer {
                 }
     
                 if let RoleState::Engineer(Engineer{trap: Trap::Set{target, ..}}) = actor_ref.role_state(game).clone(){
-                    target.increase_defense_to(game, midnight_variables, DefensePower::Protection);
+                    actor_ref.set_protected_player(game, midnight_variables, target);
                 }
             }
             OnMidnightPriority::Kill => {
@@ -119,8 +119,6 @@ impl RoleStateImpl for Engineer {
                     let mut should_dismantle = false;
 
                     if target.night_attacked(midnight_variables){
-                        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::TargetWasAttacked);
-                        target.push_night_message(midnight_variables, ChatMessageVariant::YouWereProtected);
                         should_dismantle = true;
                     }
 

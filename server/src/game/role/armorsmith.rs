@@ -15,7 +15,6 @@ pub struct Armorsmith {
     open_shops_remaining: u8,
     night_open_shop: bool,
 
-    protected_visiting_players: Vec<PlayerReference>,
     players_armor: Vec<PlayerReference>
 }
 
@@ -30,7 +29,6 @@ impl Default for Armorsmith {
         Self { 
             open_shops_remaining: 3,
             night_open_shop: false,
-            protected_visiting_players: Vec::new(),
             players_armor: Vec::new()
         }
     }
@@ -52,43 +50,31 @@ impl RoleStateImpl for Armorsmith {
                         self.night_open_shop = true;
                         self.open_shops_remaining = self.open_shops_remaining.saturating_sub(1);
 
-                        actor_ref.increase_defense_to(game, midnight_variables, DefensePower::Protection);
+                        actor_ref.set_protected_player(game, midnight_variables, actor_ref);
 
 
                         let visitors = actor_ref.all_night_visitors_cloned(game);
 
                         for visitor in visitors.iter(){
-                            visitor.increase_defense_to(game, midnight_variables, DefensePower::Protection);
+                            actor_ref.set_protected_player(game, midnight_variables, *visitor);
                         }
                         if visitors.contains(&visit.target){
                             self.players_armor.push(visit.target);
                         }else if let Some(random_visitor) = visitors.choose(&mut rand::rng()) {
                             self.players_armor.push(*random_visitor);
                         }
-
-                        self.protected_visiting_players = visitors;
                     }
                 };
 
                 for player in self.players_armor.iter(){
-                    player.increase_defense_to(game, midnight_variables, DefensePower::Protection);
+                    actor_ref.set_protected_player(game, midnight_variables, *player);
                 }
 
                 actor_ref.set_role_state(game, self);
             }
             OnMidnightPriority::Investigative => {
-                for protected_player in self.protected_visiting_players.iter(){
-                    if protected_player.night_attacked(midnight_variables){
-                        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::TargetWasAttacked);
-                        protected_player.push_night_message(midnight_variables, ChatMessageVariant::YouWereProtected);
-                    }
-                }
-
                 for player_armor in self.players_armor.clone() {
                     if player_armor.night_attacked(midnight_variables){
-                        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::TargetWasAttacked);
-                        player_armor.push_night_message(midnight_variables, ChatMessageVariant::YouWereProtected);
-
                         player_armor.push_night_message(midnight_variables, ChatMessageVariant::ArmorsmithArmorBroke);
                         self.players_armor.retain(|x| *x != player_armor);
                     }
@@ -119,7 +105,6 @@ impl RoleStateImpl for Armorsmith {
         actor_ref.set_role_state(game, 
             Armorsmith{
                 night_open_shop: false,
-                protected_visiting_players: Vec::new(),
                 ..self
             });
     }

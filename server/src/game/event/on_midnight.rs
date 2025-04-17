@@ -1,8 +1,6 @@
 use crate::{event_priority, game::{
     attack_power::DefensePower, chat::ChatMessageVariant, components::{
-        detained::Detained, mafia::Mafia, mafia_recruits::MafiaRecruits,
-        pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette,
-        syndicate_gun_item::SyndicateGunItem
+        detained::Detained, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, protected_message::NightProtected, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem
     }, grave::GraveKiller, modifiers::Modifiers, player::PlayerReference, role::{Role, RoleState}, visit::Visit, Game
 }};
 use super::Event;
@@ -60,6 +58,7 @@ impl Event for OnMidnight {
             Mafia::on_midnight,
             
             PlayerReference::on_midnight,
+            NightProtected::on_midnight,
         ]
     }
 
@@ -68,7 +67,7 @@ impl Event for OnMidnight {
     }
 }
 
-#[derive(Default, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Default, Clone, Debug, PartialEq, Eq)]
 pub struct MidnightVariables {
     data: Vec<PlayerMidnightVariables>
 }
@@ -113,6 +112,8 @@ pub struct PlayerMidnightVariables {
     pub grave_killers: Vec<GraveKiller>,
     pub grave_will: String,
     pub grave_death_notes: Vec<String>,
+
+    pub protected_players: Vec<PlayerReference>
 }
 
 impl PartialEq for PlayerMidnightVariables {
@@ -132,27 +133,6 @@ impl PartialEq for PlayerMidnightVariables {
 
 impl Eq for PlayerMidnightVariables {}
 
-impl PartialOrd for PlayerMidnightVariables {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl Ord for PlayerMidnightVariables {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.died.cmp(&other.died)
-            .then(self.attacked.cmp(&other.attacked))
-            .then(self.blocked.cmp(&other.blocked))
-            .then(self.upgraded_defense.cmp(&other.upgraded_defense))
-            .then(self.framed.cmp(&other.framed))
-            .then(self.messages.cmp(&other.messages))
-            .then(self.grave_role.cmp(&other.grave_role))
-            .then(self.grave_killers.cmp(&other.grave_killers))
-            .then(self.grave_will.cmp(&other.grave_will))
-            .then(self.grave_death_notes.cmp(&other.grave_death_notes))
-    }
-}
-
 impl PlayerMidnightVariables {
     pub fn new(game: &Game, player_ref: PlayerReference) -> Self {
         Self {
@@ -170,7 +150,8 @@ impl PlayerMidnightVariables {
             grave_role: None,
             grave_killers: Vec::new(),
             grave_will: player_ref.will(game).clone(),
-            grave_death_notes: Vec::new()
+            grave_death_notes: Vec::new(),
+            protected_players: Vec::new(),
         }
     }
 }
@@ -198,11 +179,7 @@ impl PlayerReference {
     }
 
     pub fn night_defense(self, game: &Game, midnight_variables: &MidnightVariables, ) -> DefensePower {
-        if let Some(defense) = midnight_variables.get(self).upgraded_defense {
-            defense
-        }else{
-            self.role(game).defense()
-        }
+        midnight_variables.get(self).upgraded_defense.unwrap_or(self.role(game).defense())
     }
     pub fn set_night_upgraded_defense(self, midnight_variables: &mut MidnightVariables, defense: Option<DefensePower>){
         midnight_variables.get_mut(self).upgraded_defense = defense;
@@ -271,5 +248,13 @@ impl PlayerReference {
     }
     pub fn set_night_grave_death_notes(self, midnight_variables: &mut MidnightVariables, grave_death_notes: Vec<String>){
         midnight_variables.get_mut(self).grave_death_notes = grave_death_notes;
+    }
+
+    pub fn set_protected_player(self, game: &mut Game, midnight_variables: &mut MidnightVariables, protected: PlayerReference){
+        protected.increase_defense_to(game, midnight_variables, DefensePower::Protection);
+        midnight_variables.get_mut(self).protected_players.push(protected);
+    }
+    pub fn protected_players(self, midnight_variables: &MidnightVariables)->&Vec<PlayerReference>{
+        &midnight_variables.get(self).protected_players
     }
 }

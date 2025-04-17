@@ -1499,11 +1499,11 @@
     "wiki.article.role.doctor.attributes":"* If you visit yourself, you use the self protect charge, and you can't select yourself again",
     "wiki.article.role.doctor.extra":"* You are told if your target is attacked\n* Your target is told they are protected only if they get attacked",
 
-    "wiki.article.role.bodyguard.reminder": "At night, select a player to protect. If they are attacked, you get attacked instead, and you attack the attacker back.",
-    "wiki.article.role.bodyguard.guide": "- Select a player to protect each night\n    - If the player you protect is attacked, you are attacked instead, and you attack the attacker back\n - You can't select anyone night 1\n- You can target yourself once per game\n\n- You should try to protect people you think are town loyalists who will be attacked.",
+    "wiki.article.role.bodyguard.reminder": "Each night* select a player. All attacks to them are directed towards you, and you attack them back.",
+    "wiki.article.role.bodyguard.guide": "Each night except the first, select a player\n    - If your target is attacked, you are attacked instead, and you attack the attacker back\n- You can choose to protect yourself instead up to once per game",
     "wiki.article.role.bodyguard.abilities":"* Visit another player\n    * When any players visit your target with an attacking visit, they are redirected into visiting and attacking you\n    * If you redirect an attackers visit into yourself, you attack all attackers\n* Visit yourself\n    * You protect yourself tonight\n    * You don't redirect any attacks\n    * You lose the ability to select yourself",
     "wiki.article.role.bodyguard.attributes":"* You have an indirect armor-piercing attack",
-    "wiki.article.role.bodyguard.extra":"* You are told if your target is attacked\n* Your target is told that they were protected if they were attacked\n* If your target is attacked by multiple visits, you will attack back for each visit",
+    "wiki.article.role.bodyguard.extra":"* If your target is attacked, you attack each attacking visitor.",
 
     "wiki.article.role.cop.reminder": "At night, select a player to protect. You attack a random visitor of the player you protect.",
     "wiki.article.role.cop.guide": "- At night, select a player to protect\n - You attack one random other player who visits your target\n- You can't use your ability night 1\n\n You should try to protect people you think are townies who will be attacked. You could easily accidentally kill town loyalists, so you should try to make sure no other town loyalists visit the player you protect.",
