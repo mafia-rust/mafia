@@ -8,10 +8,13 @@ use crate::{
         chat::{ChatGroup, ChatMessage, ChatMessageVariant},
         components::{
             drunk_aura::DrunkAura,
-            insider_group::InsiderGroupID, night_visits::NightVisits, syndicate_gun_item::SyndicateGunItem
+            insider_group::InsiderGroupID, night_visits::NightVisits
         },
         event::{
-            before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_midnight::{MidnightVariables, OnMidnightPriority}, on_player_roleblocked::OnPlayerRoleblocked, on_role_switch::OnRoleSwitch, on_visit_wardblocked::OnVisitWardblocked
+            before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath,
+            on_midnight::{MidnightVariables, OnMidnightPriority},
+            on_player_roleblocked::OnPlayerRoleblocked, on_role_switch::OnRoleSwitch,
+            on_visit_wardblocked::OnVisitWardblocked
         },
         game_conclusion::GameConclusion,
         grave::{Grave, GraveKiller},
