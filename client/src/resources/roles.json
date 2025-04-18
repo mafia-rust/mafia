@@ -666,8 +666,8 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
-            {"type": "informantResult", "role": "arsonist", "visitedBy":[31,32], "visited":[33]},
-            {"type": "informantResult", "role": "vigilante", "visitedBy":[], "visited":[]}
+            {"type": "informantResult", "player": 10, "role": "arsonist", "visitedBy":[31,32], "visited":[33]},
+            {"type": "informantResult", "player": 8, "role": "vigilante", "visitedBy":[], "visited":[]}
         ]
     },
     "mortician": {

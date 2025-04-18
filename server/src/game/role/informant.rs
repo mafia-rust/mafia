@@ -1,6 +1,5 @@
 use rand::prelude::SliceRandom;
 use serde::Serialize;
-
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
@@ -25,7 +24,7 @@ impl RoleStateImpl for Informant {
         
 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-        if let Some(visit) = actor_visits.first(){
+        for visit in actor_visits{
             let target_ref = visit.target;
 
             let mut visited_by: Vec<PlayerReference> =  visit.target.all_appeared_visitors(game, midnight_variables).into_iter().filter(|p|actor_ref!=*p).collect();
@@ -35,17 +34,19 @@ impl RoleStateImpl for Informant {
             visited.shuffle(&mut rand::rng());
 
             let message = ChatMessageVariant::InformantResult{
+                player: target_ref,
                 role: target_ref.role(game), 
                 visited_by: PlayerReference::ref_vec_to_index(visited_by.as_mut_slice()),
                 visited: PlayerReference::ref_vec_to_index(visited.as_slice())
             };
             actor_ref.push_night_message(midnight_variables, message);
+            actor_ref.reveal_players_role(game, target_ref);
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::Informant, 0))
-            .single_player_selection_typical(actor_ref, false, false)
+            .player_list_selection_typical(actor_ref, false, false, false, Some(2))
             .night_typical(actor_ref)
             .add_grayed_out_condition(false)
             .build_map()

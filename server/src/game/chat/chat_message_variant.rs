@@ -193,7 +193,7 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     PlayerRoleAndAlibi { player: PlayerReference, role: Role, will: String },
     #[serde(rename_all = "camelCase")]
-    InformantResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
+    InformantResult{player: PlayerReference, role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
     FramerResult{ mafia_member: PlayerIndex, visitors: Vec<Role>},
     #[serde(rename_all = "camelCase")]
