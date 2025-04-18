@@ -77,12 +77,12 @@ impl RoleStateImpl for Ojo {
         )
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
-        PlayerReference::all_players(game).for_each(|p|actor_ref.insert_role_label(game, p));
+        PlayerReference::all_players(game).for_each(|p|actor_ref.reveal_players_role(game, p));
     }
-    fn on_remove_role_label(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, concealed_player: PlayerReference){
+    fn on_conceal_role(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, concealed_player: PlayerReference){
         if player != actor_ref {return};
 
-        actor_ref.insert_role_label(game, concealed_player);
+        actor_ref.reveal_players_role(game, concealed_player);
     }
     fn on_whisper(self, game: &mut Game, actor_ref: PlayerReference, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority) {
         if priority == WhisperPriority::Send && !fold.cancelled && event.receiver != actor_ref && event.sender != actor_ref {

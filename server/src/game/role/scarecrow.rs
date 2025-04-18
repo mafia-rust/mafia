@@ -41,9 +41,9 @@ impl RoleStateImpl for Scarecrow {
         };
 
         for player_ref in blocked_players.iter(){
-            actor_ref.insert_role_label(game, *player_ref);
+            actor_ref.reveal_players_role(game, *player_ref);
         }
-        actor_ref.insert_role_label(game, target_ref);
+        actor_ref.reveal_players_role(game, target_ref);
         
         actor_ref.push_night_message(midnight_variables, message);
         

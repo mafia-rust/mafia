@@ -248,7 +248,7 @@ impl PlayerReference{
             self.add_private_chat_message(game, ChatMessageVariant::RoleAssignment{role: self.role(game)});
         }
         self.set_win_condition(game, self.win_condition(game).clone());
-        InsiderGroupID::set_player_revealed_groups(
+        InsiderGroupID::set_player_insider_groups(
             InsiderGroupID::all_insider_groups_with_player(game, *self), 
             game, *self
         );
@@ -274,7 +274,7 @@ impl PlayerReference{
     
         self.set_win_condition(game, self.role_state(game).clone().default_win_condition());
         
-        InsiderGroupID::set_player_revealed_groups(
+        InsiderGroupID::set_player_insider_groups(
             self.role_state(game).clone().default_revealed_groups(), 
             game, *self
         );
@@ -320,9 +320,9 @@ impl PlayerReference{
         }
     }
 
-    pub fn role_label_map(&self, game: &Game) -> VecMap<PlayerReference, Role> {
+    pub fn revealed_players_map(&self, game: &Game) -> VecMap<PlayerReference, Role> {
         let mut map = VecMap::new();
-        for player in self.role_labels(game).iter() {
+        for player in self.revealed_players(game).iter() {
             map.insert(*player, player.role(game));
         }
         map
@@ -409,8 +409,8 @@ impl PlayerReference{
             midnight_variables.get_mut(*self).grave_killers = vec![GraveKiller::Quit]
         }
     }
-    pub fn on_remove_role_label(&self, game: &mut Game, player: PlayerReference, concealed_player: PlayerReference) {
-        self.role_state(game).clone().on_remove_role_label(game, *self, player, concealed_player)
+    pub fn on_conceal_role(&self, game: &mut Game, player: PlayerReference, concealed_player: PlayerReference) {
+        self.role_state(game).clone().on_conceal_role(game, *self, player, concealed_player)
     }
     pub fn on_role_creation(&self, game: &mut Game) {
         self.role_state(game).clone().on_role_creation(game, *self)

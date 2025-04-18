@@ -68,7 +68,7 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference) {}
     fn on_game_start(self, _game: &mut Game, _actor_ref: PlayerReference) {}
     fn before_initial_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
-    fn on_remove_role_label(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _concealed_player: PlayerReference) {}
+    fn on_conceal_role(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _concealed_player: PlayerReference) {}
     fn on_player_roleblocked(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _invisible: bool) {
         if player != actor_ref {return}
 
@@ -309,9 +309,9 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.on_phase_start(game, actor_ref, phase)),*
                     }
                 }
-                pub fn on_remove_role_label(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, concealed_player: PlayerReference){
+                pub fn on_conceal_role(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, concealed_player: PlayerReference){
                     match self {
-                        $(Self::$name(role_struct) => role_struct.on_remove_role_label(game, actor_ref, player, concealed_player)),*
+                        $(Self::$name(role_struct) => role_struct.on_conceal_role(game, actor_ref, player, concealed_player)),*
                     }
                 }
                 pub fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){

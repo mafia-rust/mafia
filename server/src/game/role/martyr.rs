@@ -103,7 +103,7 @@ impl RoleStateImpl for Martyr {
     fn on_role_creation(self,  game: &mut Game, actor_ref: PlayerReference) {
         game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::MartyrRevealed { martyr: actor_ref.index() });
         for player in PlayerReference::all_players(game){
-            player.insert_role_label(game, actor_ref);
+            player.reveal_players_role(game, actor_ref);
         }
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference) {

@@ -3,7 +3,7 @@ use crate::{
         chat::{ChatMessage, ChatMessageVariant},
         event::{
             on_convert::OnConvert, on_fast_forward::OnFastForward,
-            on_remove_role_label::OnRemoveRoleLabel
+            on_conceal_role::OnConcealRole
         },
         modifiers::{ModifierType, Modifiers}, role::{Role, RoleState},
         verdict::Verdict, win_condition::WinCondition, Game
@@ -86,10 +86,10 @@ impl PlayerReference{
         self.send_packet(game, ToClientPacket::YourDeathNote { death_note: self.deref(game).death_note.clone() })
     }
     
-    pub fn role_labels<'a>(&self, game: &'a Game) -> &'a VecSet<PlayerReference>{
+    pub fn revealed_players<'a>(&self, game: &'a Game) -> &'a VecSet<PlayerReference>{
         &self.deref(game).role_labels
     }  
-    pub fn insert_role_label(&self, game: &mut Game, revealed_player: PlayerReference){
+    pub fn reveal_players_role(&self, game: &mut Game, revealed_player: PlayerReference){
         if
             revealed_player != *self &&
             revealed_player.alive(game) &&
@@ -100,19 +100,19 @@ impl PlayerReference{
 
 
         self.send_packet(game, ToClientPacket::YourRoleLabels{
-            role_labels: PlayerReference::ref_vec_map_to_index(self.role_label_map(game)) 
+            role_labels: PlayerReference::ref_vec_map_to_index(self.revealed_players_map(game)) 
         });
     }
-    pub fn remove_role_label(&self, game: &mut Game, concealed_player: PlayerReference){
+    pub fn conceal_players_role(&self, game: &mut Game, concealed_player: PlayerReference){
         if self.deref_mut(game).role_labels.remove(&concealed_player).is_some() {
             self.add_private_chat_message(game, ChatMessageVariant::PlayersRoleConcealed { player: concealed_player.index() })
         }
 
         self.send_packet(game, ToClientPacket::YourRoleLabels{
-            role_labels: PlayerReference::ref_vec_map_to_index(self.role_label_map(game)) 
+            role_labels: PlayerReference::ref_vec_map_to_index(self.revealed_players_map(game)) 
         });
 
-        OnRemoveRoleLabel::new(*self, concealed_player).invoke(game);
+        OnConcealRole::new(*self, concealed_player).invoke(game);
     }
 
     pub fn win_condition<'a>(&self, game: &'a Game) -> &'a WinCondition {

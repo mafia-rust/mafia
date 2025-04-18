@@ -317,7 +317,7 @@ impl Game {
                 RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().copied().collect(),
             };
             
-            InsiderGroupID::start_game_set_player_revealed_groups(
+            InsiderGroupID::start_game_set_player_insider_groups(
                 insider_groups,
                 &mut game,
                 player
@@ -944,7 +944,7 @@ pub mod test {
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         
-            InsiderGroupID::start_game_set_player_revealed_groups(
+            InsiderGroupID::start_game_set_player_insider_groups(
                 role_data.clone().default_revealed_groups(),
                 &mut game,
                 player

@@ -10,7 +10,7 @@ pub(super) mod on_convert;
 pub(super) mod before_role_switch;
 pub(super) mod before_phase_end;
 pub(super) mod on_midnight;
-pub(super) mod on_remove_role_label;
+pub(super) mod on_conceal_role;
 pub(super) mod before_initial_role_creation;
 pub(super) mod on_ability_input_received;
 pub(super) mod on_validated_ability_input_received;

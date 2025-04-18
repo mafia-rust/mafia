@@ -88,7 +88,7 @@ impl RoleStateImpl for Revolutionary {
         {
             Tags::add_tag(game, TagSetID::RevolutionaryTarget(actor_ref), *target);
             actor_ref.set_role_state(game, RoleState::Revolutionary(Revolutionary{target: RevolutionaryTarget::Target(*target)}));
-            actor_ref.insert_role_label(game, *target);
+            actor_ref.reveal_players_role(game, *target);
         }else{
             actor_ref.set_role_and_win_condition_and_revealed_group(game, RoleState::Jester(Jester::default()))
         };

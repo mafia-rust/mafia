@@ -47,7 +47,7 @@ impl Game{
 
         
         for other_player_ref in PlayerReference::all_players(self){
-            other_player_ref.remove_role_label(self, grave.player);
+            other_player_ref.conceal_players_role(self, grave.player);
         }
     }
     pub fn on_role_switch(&mut self, actor: PlayerReference, old: Role, new: Role){
@@ -55,7 +55,7 @@ impl Game{
         if old == new {return;}
 
         for player_ref in PlayerReference::all_players(self){
-            player_ref.remove_role_label(self, actor);
+            player_ref.conceal_players_role(self, actor);
         }
     }
     pub fn on_whisper(&mut self, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority) {
