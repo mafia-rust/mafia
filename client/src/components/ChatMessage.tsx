@@ -701,7 +701,8 @@ export function translateChatMessage(
             );
         case "informantResult":
             return translate("chatMessage.informantResult",
-                translate("chatMessage.targetHasRole", translate("role."+message.role+".name")),
+                playerNames[message.player],
+                translate("role."+message.role+".name"),
                 translate("chatMessage.informantResult.visited", playerListToString(message.visited, playerNames)),
                 translate("chatMessage.informantResult.visitedBy", playerListToString(message.visitedBy, playerNames))
             );
@@ -1054,6 +1055,7 @@ export type ChatMessageVariant = {
     will: string
 } | {
     type: "informantResult", 
+    player: PlayerIndex
     role: Role,
     visitedBy: PlayerIndex[],
     visited: PlayerIndex[]
