@@ -20,3 +20,4 @@ pub mod silenced;
 pub mod tags;
 pub mod enfranchise;
 pub mod protected_message;
+pub mod defense_items;
