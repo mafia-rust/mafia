@@ -8,7 +8,7 @@ use crate::{
         chat::{ChatGroup, ChatMessage, ChatMessageVariant},
         components::{
             drunk_aura::DrunkAura,
-            insider_group::InsiderGroupID, night_visits::NightVisits
+            insider_group::InsiderGroupID, night_visits::NightVisits, syndicate_gun_item::SyndicateGunItem
         },
         event::{
             before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath, on_midnight::{MidnightVariables, OnMidnightPriority}, on_player_roleblocked::OnPlayerRoleblocked, on_role_switch::OnRoleSwitch, on_visit_wardblocked::OnVisitWardblocked
@@ -278,6 +278,12 @@ impl PlayerReference{
             self.role_state(game).clone().default_revealed_groups(), 
             game, *self
         );
+        
+    }
+    
+    
+    pub fn normal_defense(&self, game: &Game)->DefensePower{
+        self.role(game).defense()
         
     }
     pub fn increase_defense_to(&self, game: &mut Game, midnight_variables: &mut MidnightVariables, defense: DefensePower){

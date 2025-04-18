@@ -860,7 +860,7 @@ fn ambusher_does_not_kill_framed_player(){
 }
 
 #[test]
-fn ambusher_kills_self(){
+fn ambusher_attacks_self(){
     kit::scenario!(game in Night 2 where
         ambusher: Ambusher,
         protected_player: Jester,
@@ -874,6 +874,8 @@ fn ambusher_kills_self(){
     ));
 
     game.next_phase();
+
+    // assert_contains!(ambusher.get_messages(), ChatMessageVariant::YouSurvivedAttack);
 
     assert!(!ambusher.alive());
     assert!(!protected_player.alive());

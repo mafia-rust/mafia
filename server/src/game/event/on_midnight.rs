@@ -178,8 +178,8 @@ impl PlayerReference {
         midnight_variables.get_mut(self).blocked = roleblocked;
     }
 
-    pub fn night_defense(self, game: &Game, midnight_variables: &MidnightVariables, ) -> DefensePower {
-        midnight_variables.get(self).upgraded_defense.unwrap_or(self.role(game).defense())
+    pub fn night_defense(self, game: &Game, midnight_variables: &MidnightVariables) -> DefensePower {
+        midnight_variables.get(self).upgraded_defense.unwrap_or(self.normal_defense(game))
     }
     pub fn set_night_upgraded_defense(self, midnight_variables: &mut MidnightVariables, defense: Option<DefensePower>){
         midnight_variables.get_mut(self).upgraded_defense = defense;
