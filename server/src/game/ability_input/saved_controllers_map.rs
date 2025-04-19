@@ -20,7 +20,7 @@ use super::*;
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SavedControllersMap{
-    saved_controllers: VecMap<ControllerID, SavedController>,
+    pub(super) saved_controllers: VecMap<ControllerID, SavedController>,
 }
 
 impl SavedControllersMap{
@@ -243,129 +243,6 @@ impl SavedControllersMap{
                 .collect()
         )
     }
-
-    pub fn get_controller(&self, id: ControllerID)->Option<&SavedController>{
-        self.saved_controllers.get(&id)
-    }
-
-    pub fn get_controller_current_selection(&self, id: ControllerID)->Option<AbilitySelection>{
-        self
-            .get_controller(id)
-            .map(|saved_controller| saved_controller.selection.clone())
-    }
-
-    // selection type queries
-
-    pub fn get_controller_current_selection_boolean(&self,id: ControllerID)->Option<BooleanSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::Boolean(selection) = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-
-    pub fn get_controller_current_selection_player_list(&self, id: ControllerID)->Option<PlayerListSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::PlayerList(selection) = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-
-    pub fn get_controller_current_selection_two_player_option(&self,id: ControllerID)->Option<TwoPlayerOptionSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::TwoPlayerOption(selection) = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-
-    pub fn get_controller_current_selection_role_option(&self,id: ControllerID)->Option<RoleOptionSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::RoleOption(selection) = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-
-    pub fn get_controller_current_selection_two_role_option(&self,id: ControllerID)->Option<TwoRoleOptionSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::TwoRoleOption(selection) = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-
-    pub fn get_controller_current_selection_two_role_outline_option(&self,id: ControllerID)->Option<TwoRoleOutlineOptionSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::TwoRoleOutlineOption(selection) = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-
-    pub fn get_controller_current_selection_string(&self,id: ControllerID)->Option<StringSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::String(selection) = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-
-    pub fn get_controller_current_selection_integer(&self,id: ControllerID)->Option<IntegerSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::Integer(selection) = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-    
-    pub fn get_controller_current_selection_kira(&self,id: ControllerID)->Option<KiraSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::Kira(selection) = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-    
-    
-    
     // game stuff
     
     pub fn send_saved_controllers_to_clients(game: &Game){

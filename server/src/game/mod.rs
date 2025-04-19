@@ -1,5 +1,6 @@
 #![allow(clippy::get_first, reason = "Often need to get first two visits manually.")]
 
+pub mod game_client;
 pub mod grave;
 pub mod phase;
 pub mod player;
@@ -12,7 +13,6 @@ pub mod settings;
 pub mod game_conclusion;
 pub mod components;
 pub mod on_client_message;
-pub mod tag;
 pub mod event;
 pub mod spectator;
 pub mod game_listeners;
@@ -22,11 +22,16 @@ pub mod win_condition;
 pub mod role_outline_reference;
 pub mod ability_input;
 
+use std::collections::VecDeque;
 use std::time::Duration;
+use std::time::Instant;
 use ability_input::saved_controllers_map::SavedControllersMap;
+use ability_input::ControllerID;
 use ability_input::PlayerListSelection;
 use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
+use components::enfranchise::Enfranchise;
+use components::forfeit_vote::ForfeitVote;
 use components::mafia::Mafia;
 use components::night_visits::NightVisits;
 use components::pitchfork::Pitchfork;
@@ -35,8 +40,10 @@ use components::poison::Poison;
 use components::detained::Detained;
 use components::insider_group::InsiderGroupID;
 use components::insider_group::InsiderGroups;
+use components::silenced::Silenced;
 use components::syndicate_gun_item::SyndicateGunItem;
 use components::synopsis::SynopsisTracker;
+use components::tags::Tags;
 use components::verdicts_today::VerdictsToday;
 use event::on_tick::OnTick;
 use modifiers::ModifierType;
@@ -53,10 +60,21 @@ use win_condition::WinCondition;
 use crate::client_connection::ClientConnection;
 use crate::game::event::on_game_start::OnGameStart;
 use crate::game::player::PlayerIndex;
+use game_client::GameClient;
+use game_client::GameClientLocation;
+use crate::room::RoomClientID;
+use crate::room::name_validation;
+use crate::room::JoinRoomClientResult;
+use crate::room::RemoveRoomClientResult;
+use crate::room::RoomState;
+use crate::room::RoomTickResult;
+use crate::packet::HostDataPacketGameClient;
+use crate::packet::RoomPreviewData;
 use crate::packet::RejectJoinReason;
 use crate::packet::ToClientPacket;
 use crate::vec_map::VecMap;
 use crate::vec_set::VecSet;
+use crate::websocket_connections::connection::ClientSender;
 use chat::{ChatMessageVariant, ChatGroup, ChatMessage};
 use player::PlayerReference;
 use player::Player;
@@ -64,7 +82,6 @@ use phase::PhaseStateMachine;
 use settings::Settings;
 use grave::Grave;
 use self::components::{
-    arsonist_doused::ArsonistDoused,
     cult::Cult,
     puppeteer_marionette::PuppeteerMarionette
 };
@@ -81,11 +98,12 @@ use self::spectator::{
     Spectator,
     SpectatorInitializeParameters
 };
-use self::role::RoleState;
 use self::verdict::Verdict;
 
 
 pub struct Game {
+    room_name: String,
+    clients: VecMap<RoomClientID, GameClient>,
     pub settings : Settings,
 
     pub spectators: Vec<Spectator>,
@@ -110,7 +128,6 @@ pub struct Game {
     syndicate_gun_item: SyndicateGunItem,
     pub cult: Cult,
     pub mafia: Mafia,
-    pub arsonist_doused: ArsonistDoused,
     pub puppeteer_marionette: PuppeteerMarionette,
     pub mafia_recruits: MafiaRecruits,
     pub verdicts_today: VerdictsToday,
@@ -121,7 +138,9 @@ pub struct Game {
     pub detained: Detained,
     pub confused: Confused,
     pub drunk_aura: DrunkAura,
-    pub synopsis_tracker: SynopsisTracker
+    pub synopsis_tracker: SynopsisTracker,
+    pub tags: Tags,
+    pub silenced: Silenced
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -146,8 +165,10 @@ pub enum GameOverReason {
 
 
 impl Game {
+    pub const DISCONNECT_TIMER_SECS: u16 = 60 * 2;
+
     /// `players` must have length 255 or lower.
-    pub fn new(settings: Settings, players: Vec<PlayerInitializeParameters>, spectators: Vec<SpectatorInitializeParameters>) -> Result<Self, RejectStartReason>{
+    pub fn new(room_name: String, settings: Settings, clients: VecMap<RoomClientID, GameClient>, players: Vec<PlayerInitializeParameters>, spectators: Vec<SpectatorInitializeParameters>) -> Result<Self, RejectStartReason>{
         //check settings are not completly off the rails
         if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
@@ -211,6 +232,8 @@ impl Game {
             let num_players = new_players.len() as u8;
 
             let mut game = Self{
+                room_name: room_name.clone(),
+                clients: clients.clone(),
                 pitchfork: Pitchfork::new(num_players),
 
                 assignments: assignments.clone(),
@@ -228,7 +251,6 @@ impl Game {
                 syndicate_gun_item: SyndicateGunItem::default(),
                 cult: Cult::default(),
                 mafia: Mafia,
-                arsonist_doused: ArsonistDoused::default(),
                 puppeteer_marionette: PuppeteerMarionette::default(),
                 mafia_recruits: MafiaRecruits::default(),
                 verdicts_today: VerdictsToday::default(),
@@ -238,7 +260,9 @@ impl Game {
                 detained: Detained::default(),
                 confused: Confused::default(),
                 drunk_aura: DrunkAura::default(),
-                synopsis_tracker: SynopsisTracker::new(num_players)
+                synopsis_tracker: SynopsisTracker::new(num_players),
+                tags: Tags::default(),
+                silenced: Silenced::default()
             };
 
             // Just distribute insider groups, this is for game over checking (Keeps game running syndicate gun)
@@ -293,7 +317,7 @@ impl Game {
                 RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().copied().collect(),
             };
             
-            InsiderGroupID::start_game_set_player_revealed_groups(
+            InsiderGroupID::start_game_set_player_insider_groups(
                 insider_groups,
                 &mut game,
                 player
@@ -359,15 +383,8 @@ impl Game {
                 continue;
             }
             let mut voting_power = 1u8;
-            if let RoleState::Mayor(mayor) = player_ref.role_state(self).clone(){
-                if mayor.revealed {
-                    voting_power = voting_power.saturating_add(2);
-                }
-            }
-            if let RoleState::Politician(politician) = player_ref.role_state(self).clone(){
-                if politician.revealed {
-                    voting_power = voting_power.saturating_add(2);
-                }
+            if Enfranchise::enfranchised(self, player_ref) {
+                voting_power = voting_power.saturating_add(2);
             }
             
             match player_ref.verdict(self) {
@@ -386,24 +403,13 @@ impl Game {
         for player in PlayerReference::all_players(self){
             if !player.alive(self) { continue }
 
-            let Some(PlayerListSelection(voted_players)) = self
-                .saved_controllers
-                .get_controller_current_selection_player_list(ability_input::ControllerID::Nominate { player }) else {
-                    continue;
-                };
+            let Some(PlayerListSelection(voted_players)) = ControllerID::Nominate { player }.get_player_list_selection(self) else {continue};
             let Some(&voted_player) = voted_players.first() else { continue };
             
 
-            let mut voting_power = 1;
-            if let RoleState::Mayor(mayor) = player.role_state(self).clone() {
-                if mayor.revealed {
-                    voting_power = 3;
-                }
-            }
-            else if let RoleState::Politician(politician) = player.role_state(self).clone() {
-                if politician.revealed {
-                    voting_power = 3;
-                }
+            let mut voting_power: u8 = 1;
+            if Enfranchise::enfranchised(self, player) {
+                voting_power = voting_power.saturating_add(2);
             }
 
             if let Some(num_votes) = voted_player_votes.get_mut(&voted_player) {
@@ -461,7 +467,7 @@ impl Game {
     pub fn nomination_votes_required(&self)->u8{
         #[expect(clippy::cast_possible_truncation, reason = "Game can only have max 255 players")]
         let eligible_voters = PlayerReference::all_players(self)
-            .filter(|p| p.alive(self) && !p.forfeit_vote(self))
+            .filter(|p| p.alive(self) && !ForfeitVote::forfeited_vote(self, *p))
             .count() as u8;
 
         if Modifiers::modifier_is_enabled(self, ModifierType::TwoThirdsMajority) {
@@ -492,34 +498,6 @@ impl Game {
 
     pub fn day_number(&self) -> u8 {
         self.phase_machine.day_number
-    }
-
-    pub fn tick(&mut self, time_passed: Duration){
-
-        if !self.ticking { return }
-
-        if let Some(conclusion) = GameConclusion::game_is_over(self) {
-            OnGameEnding::new(conclusion).invoke(self);
-        }
-
-        if self.phase_machine.day_number == u8::MAX {
-            self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::GameOver { 
-                synopsis: SynopsisTracker::get(self, GameConclusion::Draw)
-            });
-            self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
-            self.ticking = false;
-            return;
-        }
-
-        while self.phase_machine.time_remaining.is_some_and(|d| d.is_zero()) {
-            PhaseStateMachine::next_phase(self, None);
-        }
-        PlayerReference::all_players(self).for_each(|p|p.tick(self, time_passed));
-        SpectatorPointer::all_spectators(self).for_each(|s|s.tick(self, time_passed));
-
-        self.phase_machine.time_remaining = self.phase_machine.time_remaining.map(|d|d.saturating_sub(time_passed));
-
-        OnTick::new().invoke(self);
     }
 
     pub fn add_grave(&mut self, grave: Grave) {
@@ -581,18 +559,314 @@ impl Game {
         PlayerReference::all_players(self).any(|p| p.is_connected(self))
         || SpectatorPointer::all_spectators(self).any(|s| s.is_connected(self))
     }
+
+    fn ensure_host_exists(&mut self, skip: Option<RoomClientID>) {
+        fn is_player_not_disconnected(game: &Game, p: &GameClient) -> bool {
+            match p.client_location {
+                GameClientLocation::Spectator(spectator) => {
+                    !matches!(spectator.connection(game), ClientConnection::Disconnected)
+                },
+                GameClientLocation::Player(player) => {
+                    !matches!(player.connection(game), ClientConnection::Disconnected)
+                }
+            }
+        }
+        fn is_player_not_disconnected_host(game: &Game, p: &GameClient) -> bool {
+            p.host && is_player_not_disconnected(game, p)
+        }
+
+        if !self.clients.iter().any(|p| is_player_not_disconnected_host(self, p.1)) {
+            let next_available_player_id = self.clients.iter()
+                .filter(|(&id, _)| skip.is_none_or(|s| s != id))
+                .filter(|(_, c)| is_player_not_disconnected(self, c))
+                .map(|(&id, _)| id)
+                .next();
+
+            let next_available_player = next_available_player_id.map(|id| unsafe { self.clients.get_unchecked_mut(&id) });
+
+            if let Some(new_host) = next_available_player {
+                new_host.set_host();
+            } else if let Some(new_host) = self.clients.values_mut().next(){
+                new_host.set_host();
+            }
+        }
+    }
+
+
+    fn resend_host_data_to_all_hosts(&self) {
+        for client in self.clients.values().filter(|client| client.host) {
+            let client_connection = match client.client_location {
+                GameClientLocation::Player(player) => player.connection(self).clone(),
+                GameClientLocation::Spectator(spectator) => spectator.connection(self)
+            };
+
+            self.resend_host_data(&client_connection)
+        }
+    }
+    
+    fn resend_host_data(&self, connection: &ClientConnection) {
+        connection.send_packet(ToClientPacket::HostData { clients: self.clients.iter()
+            .map(|(id, client)| {
+                (*id, HostDataPacketGameClient {
+                    client_type: client.client_location.clone(),
+                    connection: match client.client_location {
+                        GameClientLocation::Player(player) => player.connection(self).clone(),
+                        GameClientLocation::Spectator(spectator) => spectator.connection(self)
+                    },
+                    host: client.host
+                })
+            }).collect()
+        });
+    }
+
+    fn send_players(&mut self){
+        let players: Vec<String> = PlayerReference::all_players(self).map(|p|
+            p.name(self).clone()
+        ).collect();
+
+        let packet = ToClientPacket::GamePlayers{ 
+            players
+        };
+
+        self.send_packet_to_all(packet.clone());
+    }
+
+    pub fn set_player_name(&mut self, player_ref: PlayerReference, name: String) {
+        let mut other_players: Vec<String> = PlayerReference::all_players(self)
+            .map(|p| p.name(self))
+            .cloned()
+            .collect();
+
+        other_players.remove(player_ref.index() as usize);
+        
+        let new_name: String = name_validation::sanitize_name(name, &other_players);
+
+        player_ref.set_name(self, new_name);
+    }
+    
+    fn send_to_all(&self, packet: ToClientPacket) {
+        self.send_packet_to_all(packet.clone())
+    }
+    
+    pub fn get_client_last_message_times(&mut self, room_client_id: u32) -> Option<&mut VecDeque<Instant>> {
+        if let Some(client) = self.clients.get_mut(&room_client_id) {
+            Some(&mut client.last_message_times)
+        } else {
+            None
+        }
+    }
 }
+
+impl RoomState for Game {
+    fn tick(&mut self, time_passed: Duration) -> RoomTickResult {
+        if !self.ticking { 
+            return RoomTickResult { close_room: false }
+        }
+
+        if let Some(conclusion) = GameConclusion::game_is_over(self) {
+            OnGameEnding::new(conclusion).invoke(self);
+        }
+
+        if self.phase_machine.day_number == u8::MAX {
+            self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::GameOver { 
+                synopsis: SynopsisTracker::get(self, GameConclusion::Draw)
+            });
+            self.send_packet_to_all(ToClientPacket::GameOver{ reason: GameOverReason::ReachedMaxDay });
+            self.ticking = false;
+            return RoomTickResult { close_room: !self.is_any_client_connected() };
+        }
+
+        while self.phase_machine.time_remaining.is_some_and(|d| d.is_zero()) {
+            PhaseStateMachine::next_phase(self, None);
+        }
+        PlayerReference::all_players(self).for_each(|p|p.tick(self, time_passed));
+        SpectatorPointer::all_spectators(self).for_each(|s|s.tick(self, time_passed));
+
+        self.phase_machine.time_remaining = self.phase_machine.time_remaining.map(|d|d.saturating_sub(time_passed));
+
+        OnTick::new().invoke(self);
+
+        RoomTickResult {
+            close_room: !self.is_any_client_connected()
+        }
+    }
+    
+    fn send_to_client_by_id(&self, room_client_id: RoomClientID, packet: ToClientPacket) {
+        if let Some(player) = self.clients.get(&room_client_id) {
+            match player.client_location {
+                GameClientLocation::Player(player) => player.send_packet(self, packet),
+                GameClientLocation::Spectator(spectator) => spectator.send_packet(self, packet)
+            }
+        }
+    }
+    
+    fn join_client(&mut self, send: &ClientSender) -> Result<JoinRoomClientResult, RejectJoinReason> {
+        let is_host = !self.clients.iter().any(|p|p.1.host);
+                
+        let Some(room_client_id) = 
+            (self.clients
+                .iter()
+                .map(|(i,_)|*i)
+                .fold(0u32, u32::max) as RoomClientID).checked_add(1) else {
+                    return Err(RejectJoinReason::RoomFull);
+                };
+
+        self.ensure_host_exists(None);
+
+        let new_spectator = self.join_spectator(SpectatorInitializeParameters {
+            connection: ClientConnection::Connected(send.clone()),
+            host: is_host,
+        })?;
+        
+        let new_client = GameClient::new_spectator(new_spectator, is_host);
+
+        self.clients.insert(room_client_id, new_client);
+
+        self.resend_host_data_to_all_hosts();
+        Ok(JoinRoomClientResult { id: room_client_id, in_game: true, spectator: true })
+    }
+
+    fn initialize_client(&mut self, room_client_id: RoomClientID, send: &ClientSender) {
+        if let Some(client) = self.clients.get(&room_client_id) {
+            match client.client_location {
+                GameClientLocation::Player(player) => {
+                    player.connect(self, send.clone());
+                    player.send_join_game_data(self);
+                },
+                GameClientLocation::Spectator(spectator) => {
+                    spectator.send_join_game_data(self);
+                }
+            }
+        }
+        
+        send.send(ToClientPacket::PlayersHost{hosts:
+            self.clients
+                .iter()
+                .filter(|p|p.1.host)
+                .map(|p|*p.0)
+                .collect()
+        });
+
+        send.send(ToClientPacket::RoomName { name: self.room_name.clone() });
+    }
+    
+    fn remove_client(&mut self, room_client_id: u32) -> RemoveRoomClientResult {
+        let Some(game_player) = self.clients.get_mut(&room_client_id) else {
+            return RemoveRoomClientResult::ClientNotInRoom;
+        };
+
+        match game_player.client_location {
+            GameClientLocation::Player(player) => player.quit(self),
+            GameClientLocation::Spectator(spectator) => {
+                self.clients.remove(&room_client_id);
+
+                // Shift every other spectator down one index
+                for client in self.clients.iter_mut() {
+                    if let GameClientLocation::Spectator(ref mut other) = &mut client.1.client_location {
+                        if other.index() > spectator.index() {
+                            *other = SpectatorPointer::new(other.index().saturating_sub(1));
+                        }
+                    }
+                }
+
+                self.remove_spectator(spectator.index());
+            }
+        }
+
+        self.ensure_host_exists(None);
+
+        self.resend_host_data_to_all_hosts();
+
+        if !self.is_any_client_connected() {
+            RemoveRoomClientResult::RoomShouldClose
+        } else {
+            RemoveRoomClientResult::Success
+        }
+    }
+    
+    fn remove_client_rejoinable(&mut self, id: u32) -> RemoveRoomClientResult {
+        let Some(game_player) = self.clients.get_mut(&id) else { return RemoveRoomClientResult::ClientNotInRoom };
+
+        match game_player.client_location {
+            GameClientLocation::Player(player) => {
+                if !player.is_disconnected(self) {
+                    player.lose_connection(self);
+    
+                    self.ensure_host_exists(None);
+                    self.resend_host_data_to_all_hosts();
+                }
+            },
+            GameClientLocation::Spectator(spectator) => {
+                self.clients.remove(&id);
+
+                // Shift every other spectator down one index
+                for client in self.clients.iter_mut() {
+                    if let GameClientLocation::Spectator(ref mut other) = &mut client.1.client_location {
+                        if other.index() > spectator.index() {
+                            *other = SpectatorPointer::new(other.index().saturating_sub(1));
+                        }
+                    }
+                }
+
+                self.remove_spectator(spectator.index());
+            }
+        }
+
+        RemoveRoomClientResult::Success
+    }
+    
+    fn rejoin_client(&mut self, _: &ClientSender, room_client_id: u32) -> Result<JoinRoomClientResult, RejectJoinReason> {
+        let Some(client) = self.clients.get_mut(&room_client_id) else {
+            return Err(RejectJoinReason::PlayerDoesntExist)
+        };
+        
+        if let GameClientLocation::Player(player) = client.client_location {
+            if !player.could_reconnect(self) {
+                return Err(RejectJoinReason::PlayerTaken)
+            };
+
+            self.resend_host_data_to_all_hosts();
+
+            Ok(JoinRoomClientResult { id: room_client_id, in_game: true, spectator: false })
+        }else{
+            Err(RejectJoinReason::PlayerDoesntExist)
+        }
+    }
+    
+    fn get_preview_data(&self) -> RoomPreviewData {
+        RoomPreviewData {
+            name: self.room_name.clone(),
+            in_game: true,
+            players: self.clients.iter()
+                .filter_map(|(id, player)|
+                    if let GameClientLocation::Player(player) = player.client_location {
+                        Some((*id, player.name(self).clone()))
+                    } else {
+                        None
+                    }
+                )
+                .collect()
+        }
+    }
+    
+    fn is_host(&self, room_client_id: u32) -> bool {
+        if let Some(client) = self.clients.get(&room_client_id){
+            client.host
+        }else{
+            false
+        }
+    }
+}
+
+
 pub mod test {
+
+    use crate::vec_map::VecMap;
 
     use super::{
         ability_input::saved_controllers_map::SavedControllersMap,
         components::{
-            arsonist_doused::ArsonistDoused, cult::Cult, insider_group::InsiderGroupID,
-            mafia::Mafia,
-            mafia_recruits::MafiaRecruits, night_visits::NightVisits,
-            pitchfork::Pitchfork, poison::Poison,
-            puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem,
-            synopsis::SynopsisTracker, verdicts_today::VerdictsToday
+            cult::Cult, insider_group::InsiderGroupID, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, silenced::Silenced, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday
         }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine, player::{test::mock_player, PlayerReference},
@@ -632,6 +906,8 @@ pub mod test {
         }
 
         let mut game = Game{
+            clients: VecMap::new(),
+            room_name: "Test".to_string(),
             pitchfork: Pitchfork::new(number_of_players),
             
             assignments,
@@ -648,7 +924,6 @@ pub mod test {
             syndicate_gun_item: SyndicateGunItem::default(),
             cult: Cult::default(),
             mafia: Mafia,
-            arsonist_doused: ArsonistDoused::default(),
             puppeteer_marionette: PuppeteerMarionette::default(),
             mafia_recruits: MafiaRecruits::default(),
             verdicts_today: VerdictsToday::default(),
@@ -658,7 +933,9 @@ pub mod test {
             detained: Default::default(),
             confused: Default::default(),
             drunk_aura: Default::default(),
-            synopsis_tracker: SynopsisTracker::new(number_of_players)
+            synopsis_tracker: SynopsisTracker::new(number_of_players),
+            tags: Tags::default(),
+            silenced: Silenced::default()
         };
 
         //set wincons and revealed groups
@@ -667,7 +944,7 @@ pub mod test {
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         
-            InsiderGroupID::start_game_set_player_revealed_groups(
+            InsiderGroupID::start_game_set_player_insider_groups(
                 role_data.clone().default_revealed_groups(),
                 &mut game,
                 player

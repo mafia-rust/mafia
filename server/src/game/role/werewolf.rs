@@ -1,27 +1,20 @@
 use rand::seq::SliceRandom;
-
 use serde::Serialize;
-
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::night_visits::NightVisits;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
+use crate::game::components::tags::{TagSetID, Tags};
 use crate::game::grave::GraveKiller;
 use crate::game::player::{PlayerIndex, PlayerReference};
-
-use crate::game::tag::Tag;
 use crate::game::visit::{Visit, VisitTag};
 use crate::game::phase::PhaseType;
-
 use crate::game::Game;
-use crate::vec_set::VecSet;
 use super::{ControllerID, ControllerParametersMap, PlayerListSelection, GetClientRoleState, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Default)]
-pub struct Werewolf{
-    pub tracked_players: VecSet<PlayerReference>,
-}
+pub struct Werewolf;
 
 #[derive(Clone, Debug, Serialize)]
 pub struct ClientRoleState;
@@ -30,22 +23,21 @@ pub struct ClientRoleState;
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
 
-const ENRAGED_NUMBERATOR: usize = 2;
+const ENRAGED_NUMERATOR: usize = 2;
 const ENRAGED_DENOMINATOR: usize = 3;
 
 impl RoleStateImpl for Werewolf {
     type ClientRoleState = ClientRoleState;
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            //priority completely burgered so sammy told me to make my own priority but i didn't want to so i just made it heal
-            OnMidnightPriority::Heal => {
+            OnMidnightPriority::Deception => {
                 let visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(first_visit) = visits.first() else {return};
 
                 let target_ref = first_visit.target;
-                let enraged = self.tracked_players.len().saturating_mul(ENRAGED_DENOMINATOR) >= PlayerReference::all_players(game)
+                let enraged = Tags::tagged(game, TagSetID::WerewolfTracked(actor_ref)).len().saturating_mul(ENRAGED_DENOMINATOR) >= PlayerReference::all_players(game)
                     .filter(|p|p.alive(game)||*p==actor_ref)
-                    .count().saturating_mul(ENRAGED_NUMBERATOR);
+                    .count().saturating_mul(ENRAGED_NUMERATOR);
 
                 if !enraged && target_ref.all_night_visits_cloned(game).is_empty() {return}
                     
@@ -63,12 +55,8 @@ impl RoleStateImpl for Werewolf {
                 let target_ref = first_visit.target;
 
                 //If player is untracked, track them
-                if !self.tracked_players.contains(&target_ref) {
-
+                if !Tags::has_tag(game, TagSetID::WerewolfTracked(actor_ref), target_ref) {
                     self.track_player(game, actor_ref, target_ref);
-
-                    actor_ref.set_role_state(game, self);
-                    
                 } else {
                     //Dont attack or rampage first night
                     if game.day_number() <= 1 {return}
@@ -85,6 +73,7 @@ impl RoleStateImpl for Werewolf {
                         other_player.try_night_kill_single_attacker(
                             actor_ref,
                             game,
+                            midnight_variables,
                             GraveKiller::Role(Role::Werewolf),
                             AttackPower::ArmorPiercing,
                             true
@@ -96,6 +85,7 @@ impl RoleStateImpl for Werewolf {
                         target_ref.try_night_kill_single_attacker(
                             actor_ref,
                             game,
+                            midnight_variables,
                             GraveKiller::Role(Role::Werewolf),
                             AttackPower::ArmorPiercing,
                             true
@@ -107,14 +97,14 @@ impl RoleStateImpl for Werewolf {
             OnMidnightPriority::Investigative => {
                 //track sniffed players visits
 
-                self.tracked_players
+                Tags::tagged(game, TagSetID::WerewolfTracked(actor_ref))
                     .into_iter()
                     .for_each(|player_ref|{
 
-                    let mut players: Vec<PlayerIndex> = player_ref.tracker_seen_visits(game).into_iter().map(|p|p.target.index()).collect();
+                    let mut players: Vec<PlayerIndex> = player_ref.tracker_seen_visits(game, midnight_variables).into_iter().map(|p|p.target.index()).collect();
                     players.shuffle(&mut rand::rng());
 
-                    actor_ref.push_night_message(game, 
+                    actor_ref.push_night_message(midnight_variables, 
                         ChatMessageVariant::WerewolfTrackingResult{
                             tracked_player: player_ref.index(), 
                             players
@@ -150,33 +140,39 @@ impl RoleStateImpl for Werewolf {
         )
     }
 
-    fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
+    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
             PhaseType::Night => {
 
                 //Mark chosen player as tracked on phase start: night
-                if let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(
-                    ControllerID::role(actor_ref, Role::Werewolf, 1)
-                ) {
+                if let Some(PlayerListSelection(target)) = ControllerID::role(actor_ref, Role::Werewolf, 1)
+                    .get_player_list_selection(game)
+                {
                     if let Some(target) = target.first() {
                         self.track_player(game, actor_ref, *target);
                     };
                 };
 
-                for player in self.tracked_players.iter() {
+                for player in Tags::tagged(game, TagSetID::WerewolfTracked(actor_ref)).iter() {
                     player.add_private_chat_message(game, ChatMessageVariant::WerewolfTracked);
                 }
-                actor_ref.set_role_state(game, self);
             },
             _ => {}
         }
     }
+
+    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
+        Tags::add_viewer(game, TagSetID::WerewolfTracked(actor_ref), actor_ref);
+    }
+    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _new: super::RoleState, _old: super::RoleState) {
+        if actor_ref != player {return}
+        Tags::remove_viewer(game, TagSetID::WerewolfTracked(actor_ref), actor_ref);
+    }
+
 }
 impl Werewolf{
-    fn track_player(&mut self, game: &mut Game, actor: PlayerReference, target: PlayerReference){
-        if self.tracked_players.contains(&target){return}
-        actor.push_player_tag(game, target, Tag::WerewolfTracked);
-        self.tracked_players.insert(target);
+    fn track_player(&self, game: &mut Game, actor: PlayerReference, target: PlayerReference){
+        Tags::add_tag(game, TagSetID::WerewolfTracked(actor), target);
     }
 }
 impl GetClientRoleState<ClientRoleState> for Werewolf {

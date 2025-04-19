@@ -3,21 +3,17 @@ use serde::Serialize;
 
 use crate::game::ability_input::AvailableUnitSelection;
 use crate::game::attack_power::DefensePower;
-use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority};
-use crate::game::modifiers::Modifiers;
+use crate::game::components::enfranchise::Enfranchise;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 
-use crate::game::tag::Tag;
 use crate::game::Game;
 use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Default)]
-pub struct Mayor {
-    pub revealed: bool
-}
+pub struct Mayor;
 
 #[derive(Clone, Debug, Serialize)]
 pub struct ClientRoleState;
@@ -33,25 +29,12 @@ impl RoleStateImpl for Mayor {
         if ability_input.id() != ControllerID::role(actor_ref, Role::Mayor, 0) {
             return;
         }
-        
 
-        game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::MayorRevealed { player_index: actor_ref.index() });
-
-        actor_ref.set_role_state(game, Mayor{
-            revealed: true
-        });
-        for player in PlayerReference::all_players(game){
-            player.push_player_tag(game, actor_ref, Tag::Enfranchised);
-        }
-        game.count_nomination_and_start_trial(
-            !Modifiers::modifier_is_enabled(game, crate::game::modifiers::ModifierType::ScheduledNominations)
-        );
+        Enfranchise::enfranchise(game, actor_ref);
     }
     fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _new: super::RoleState, _old: super::RoleState) {
         if actor_ref != player {return;}
-        for player in PlayerReference::all_players(game){
-            player.remove_player_tag(game, actor_ref, Tag::Enfranchised);
-        }
+        Enfranchise::unenfranchise(game, actor_ref);
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::builder(game)
@@ -59,7 +42,7 @@ impl RoleStateImpl for Mayor {
             .available_selection(AvailableUnitSelection)
             .add_grayed_out_condition(
                 actor_ref.ability_deactivated_from_death(game) ||
-                self.revealed || 
+                Enfranchise::enfranchised(game, actor_ref) || 
                 PhaseType::Night == game.current_phase().phase() ||
                 PhaseType::Briefing == game.current_phase().phase()
             )
@@ -67,11 +50,11 @@ impl RoleStateImpl for Mayor {
             .allow_players([actor_ref])
             .build_map()
     }
-    fn on_whisper(self, _game: &mut Game, actor_ref: PlayerReference, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority) {
+    fn on_whisper(self, game: &mut Game, actor_ref: PlayerReference, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority) {
         if priority == WhisperPriority::Cancel && (
             event.sender == actor_ref || 
             event.receiver == actor_ref
-        ) && self.revealed {
+        ) && Enfranchise::enfranchised(game, actor_ref) {
             fold.cancelled = true;
             fold.hide_broadcast = true;
         }

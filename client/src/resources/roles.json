@@ -149,10 +149,10 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "auditorResult", "roleOutline":[{"roleSet": "any"}],"result": {"type":"two","roles":["godfather","jester"]}},
-            {"type": "auditorResult", "roleOutline":[{"role":"vigilante"},{"role":"marksman"}],"result": {"type":"one","role":["vigilante"]}},
-            {"type": "auditorResult", "roleOutline":[{"role":"fiendsWildcard"}],"result": {"type":"one","role":["fiendsWildcard"]}},
-            {"type": "auditorResult", "roleOutline":[{"roleSet":"townSupport"}],"result": {"type":"two","roles":["escort","medium"]}}
+            {"type": "auditorResult", "roleOutline":[{"roleSet": "any"}],"result": ["godfather","jester","apostle","escort"]},
+            {"type": "auditorResult", "roleOutline":[{"role":"vigilante"},{"role":"marksman"}],"result": ["vigilante"]},
+            {"type": "auditorResult", "roleOutline":[{"role":"arsonist"}],"result": ["arsonist"]},
+            {"type": "auditorResult", "roleOutline":[{"roleSet":"townSupport"}],"result": ["escort","medium","coxswain"]}
         ]
     },
     "snoop": {
@@ -299,9 +299,7 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "targetWasAttacked"},
             {"type": "youWereProtected"},
-            {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
     },
@@ -468,6 +466,18 @@
         ]
     },
     "transporter":{
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townSupport"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "transported"}
+        ]
+    },
+    "porter":{
         "mainRoleSet": "town",
         "roleSets": ["town", "townCommon", "townSupport"],
         "armor": false,
@@ -656,8 +666,8 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
-            {"type": "informantResult", "role": "arsonist", "visitedBy":[31,32], "visited":[33]},
-            {"type": "informantResult", "role": "vigilante", "visitedBy":[], "visited":[]}
+            {"type": "informantResult", "player": 10, "role": "arsonist", "visitedBy":[31,32], "visited":[33]},
+            {"type": "informantResult", "player": 8, "role": "vigilante", "visitedBy":[], "visited":[]}
         ]
     },
     "mortician": {

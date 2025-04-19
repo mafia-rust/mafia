@@ -9,13 +9,7 @@ import { useGameState } from "../../../../../components/useHooks"
 import { Button } from "../../../../../components/Button"
 import { AvailableTwoRoleOutlineOptionSelection, TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput"
 
-export type AuditorResult = {
-    type: "two",
-    roles: [Role, Role]
-} | {
-    type: "one",
-    role: Role
-}
+export type AuditorResult = Role[];
 type AuditorButtons = ({
     type:"notUsed",
     chosen: boolean
@@ -135,25 +129,14 @@ function ChooseButtons(props: Readonly<{
                     </StyledText>
                 </Button>
             }else{
-                if(button.result.type === "one"){
-                    return <label
-                        className="choose-button"
-                        key={index}
-                    >
-                        <StyledText>
-                            {translate("role."+button.result.role+".name")}
-                        </StyledText>
-                    </label>
-                }else{
-                    return <label
-                        className="choose-button"
-                        key={index}
-                    >
-                        <StyledText>
-                            {translate("role."+button.result.roles[0]+".name")} {translate("role."+button.result.roles[1]+".name")}
-                        </StyledText>
-                    </label>
-                }
+                return <label
+                    className="choose-button"
+                    key={index}
+                >
+                    <StyledText>
+                        {button.result.map((role)=>translate("role."+role+".name")).join(" ")}
+                    </StyledText>
+                </label>
             }
         })
     }</>

@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::*;
 use crate::game::attack_power::DefensePower;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveInformation;
 use crate::game::player::PlayerReference;
 
@@ -25,9 +25,8 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Impostor {
     type ClientRoleState = Impostor;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
-
-        Godfather::night_ability(game, actor_ref, priority);
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        Godfather::night_kill_ability(game, midnight_variables, actor_ref, priority);
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
@@ -59,9 +58,8 @@ impl RoleStateImpl for Impostor {
         ])
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: crate::game::grave::GraveReference) {
-        let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
-            ControllerID::role(actor_ref, Role::Impostor, 1)
-        )else{return};
+        let Some(RoleOptionSelection(Some(role))) = ControllerID::role(actor_ref, Role::Impostor, 1)
+            .get_role_option_selection(game).cloned() else {return};
         
         
         if grave.deref(game).player == actor_ref {

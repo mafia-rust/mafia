@@ -68,12 +68,14 @@ impl ControllerID{
         !matches!(self, ControllerID::Nominate { .. } | ControllerID::ForwardMessage { .. })
     }
     fn get_controller<'a>(&self, game: &'a Game)->Option<&'a SavedController>{
-        game.saved_controllers.get_controller(self.clone())
+        game.saved_controllers.saved_controllers.get(self)
     }
-    fn get_selection<'a>(&self, game: &'a Game)->Option<&'a AbilitySelection>{
+    pub fn get_selection<'a>(&self, game: &'a Game)->Option<&'a AbilitySelection>{
         let saved_controller = self.get_controller(game)?;
         Some(saved_controller.selection())
     }
+
+
     pub fn get_boolean_selection<'a>(&self, game: &'a Game)->Option<&'a BooleanSelection>{
         self.get_selection(game)
             .and_then(|selection| 
@@ -84,7 +86,6 @@ impl ControllerID{
                 }
             )
     }
-
     pub fn get_player_list_selection<'a>(&self, game: &'a Game)->Option<&'a PlayerListSelection>{
         self.get_selection(game)
             .and_then(|selection| 
@@ -95,7 +96,6 @@ impl ControllerID{
                 }
             )
     }
-
     pub fn get_two_player_option_selection<'a>(&self, game: &'a Game)->Option<&'a TwoPlayerOptionSelection>{
         self.get_selection(game)
             .and_then(|selection| 
@@ -106,7 +106,6 @@ impl ControllerID{
                 }
             )
     }
-
     pub fn get_role_option_selection<'a>(&self, game: &'a Game)->Option<&'a RoleOptionSelection>{
         self.get_selection(game)
             .and_then(|selection| 
@@ -117,7 +116,6 @@ impl ControllerID{
                 }
             )
     }
-
     pub fn get_two_role_option_selection<'a>(&self, game: &'a Game)->Option<&'a TwoRoleOptionSelection>{
         self.get_selection(game)
             .and_then(|selection| 
@@ -128,7 +126,6 @@ impl ControllerID{
                 }
             )
     }
-
     pub fn get_two_role_outline_option_selection<'a>(&self, game: &'a Game)->Option<&'a TwoRoleOutlineOptionSelection>{
         self.get_selection(game)
             .and_then(|selection| 
@@ -139,7 +136,6 @@ impl ControllerID{
                 }
             )
     }
-
     pub fn get_string_selection<'a>(&self, game: &'a Game)->Option<&'a StringSelection>{
         self.get_selection(game)
             .and_then(|selection| 
@@ -150,7 +146,6 @@ impl ControllerID{
                 }
             )
     }
-
     pub fn get_integer_selection<'a>(&self, game: &'a Game)->Option<&'a IntegerSelection>{
         self.get_selection(game)
             .and_then(|selection| 
@@ -161,7 +156,6 @@ impl ControllerID{
                 }
             )
     }
-    
     pub fn get_kira_selection<'a>(&self, game: &'a Game)->Option<&'a KiraSelection>{
         self.get_selection(game)
             .and_then(|selection| 
@@ -172,6 +166,4 @@ impl ControllerID{
                 }
             )
     }
-    
-    
 }

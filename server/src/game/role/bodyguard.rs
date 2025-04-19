@@ -2,8 +2,8 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
-use crate::game::event::on_midnight::OnMidnightPriority;
-use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
+use crate::game::attack_power::DefensePower;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -21,7 +21,6 @@ use super::{
 #[serde(rename_all = "camelCase")]
 pub struct Bodyguard {
     self_shields_remaining: u8,
-    target_protected_ref: Option<PlayerReference>,
     redirected_player_refs: Vec<PlayerReference>
 }
 
@@ -35,7 +34,6 @@ impl Default for Bodyguard {
     fn default() -> Self {
         Self { 
             self_shields_remaining: 1, 
-            target_protected_ref: None, 
             redirected_player_refs: Vec::new()
         }
     }
@@ -47,7 +45,9 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Bodyguard {
     type ClientRoleState = ClientRoleState;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if game.day_number() <= 1 {return};
+        
         match priority {
             OnMidnightPriority::Bodyguard => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
@@ -56,14 +56,12 @@ impl RoleStateImpl for Bodyguard {
                 if actor_ref == target_ref {return}
 
                 let mut redirected_player_refs = vec![];
-                let mut target_protected_ref = None;
                 for attacker_ref in PlayerReference::all_players(game){
                     let mut new_visits = vec![];
                     for mut attacking_visit in attacker_ref.all_night_visits_cloned(game).clone(){
                         if attacking_visit.target == target_ref && attacking_visit.attack {
                             attacking_visit.target = actor_ref;
                             redirected_player_refs.push(attacker_ref);
-                            target_protected_ref = Some(target_ref);
                         }
                         new_visits.push(attacking_visit);
                     }
@@ -72,7 +70,6 @@ impl RoleStateImpl for Bodyguard {
 
                 actor_ref.set_role_state(game, Bodyguard {
                     self_shields_remaining: self.self_shields_remaining, 
-                    target_protected_ref, 
                     redirected_player_refs
                 });
                 
@@ -89,19 +86,12 @@ impl RoleStateImpl for Bodyguard {
                         ..self
                     });
                     
-                    
-                    target_ref.increase_defense_to(game, DefensePower::Protection);
+                    actor_ref.set_protected_player(game, midnight_variables, target_ref);
                 }
             },
             OnMidnightPriority::Kill => {
                 for redirected_player_ref in self.redirected_player_refs {
-                    redirected_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Bodyguard), AttackPower::ArmorPiercing, false);
-                }
-            }
-            OnMidnightPriority::Investigative => {
-                if let Some(target_protected_ref) = self.target_protected_ref {
-                    actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
-                    target_protected_ref.push_night_message(game, ChatMessageVariant::YouWereProtected);
+                    redirected_player_ref.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Role(Role::Bodyguard), AttackPower::ArmorPiercing, false);
                 }
             }
             _ => {}
@@ -124,11 +114,9 @@ impl RoleStateImpl for Bodyguard {
         )
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
-        let redirected_player_refs = Vec::new();
-        let target_protected_ref = None;
         actor_ref.set_role_state(game, Bodyguard {
             self_shields_remaining: self.self_shields_remaining,
-            redirected_player_refs, target_protected_ref
+            redirected_player_refs: Vec::new(),
         });
     }
 }

@@ -3,11 +3,6 @@ use serde::{Deserialize, Serialize};
 use vec1::vec1;
 
 
-// self.add_private_chat_message(game, ChatMessageVariant::TagAdded { player: key.index(), tag: value });
-// self.send_packet(game, ToClientPacket::YourPlayerTags { player_tags: PlayerReference::ref_vec_map_to_index(self.deref(game).player_tags.clone()) });
-// self.add_private_chat_message(game, ChatMessageVariant::TagRemoved { player: key.index(), tag: value });
-
-
 #[derive(Default)]
 pub struct Tags{
     tags: VecMap<TagSetID, TagsSet>
@@ -85,7 +80,7 @@ impl Tags{
         }
     }
 
-    pub fn set_tagged(game: &mut Game, id: TagSetID, tagged_players: VecSet<PlayerReference>){
+    pub fn set_tagged(game: &mut Game, id: TagSetID, tagged_players: &VecSet<PlayerReference>){
         for player in PlayerReference::all_players(game) {
             if tagged_players.contains(&player) {
                 Self::add_tag(game, id.clone(), player);
@@ -94,7 +89,7 @@ impl Tags{
             }
         }
     }
-    pub fn set_viewers(game: &mut Game, id: TagSetID, viewers: VecSet<PlayerReference>){
+    pub fn set_viewers(game: &mut Game, id: TagSetID, viewers: &VecSet<PlayerReference>){
         for player in PlayerReference::all_players(game) {
             if viewers.contains(&player) {
                 Self::add_viewer(game, id.clone(), player);
@@ -129,7 +124,7 @@ impl Tags{
 
             for tagged_player in tags_set.tagged().iter(){
 
-                if let Some(tags) = player_tags.get_mut(&tagged_player){
+                if let Some(tags) = player_tags.get_mut(tagged_player){
                     tags.push(id.get_tag());
                 }else{
                     player_tags.insert(*tagged_player, vec1!(id.get_tag()));
@@ -178,6 +173,10 @@ pub enum TagSetID{
     SyndicateRecruit,
     SyndicateBackup,
     SyndicateGun,
+    WerewolfTracked(PlayerReference),
+    RevolutionaryTarget(PlayerReference),
+    UzumakiSpiral(PlayerReference),
+    ForfeitVote
 }
 impl TagSetID{
     fn get_tag(&self)->Tag{
@@ -190,6 +189,10 @@ impl TagSetID{
             TagSetID::SyndicateRecruit => Tag::PuppeteerMarionette,
             TagSetID::SyndicateBackup => Tag::GodfatherBackup,
             TagSetID::SyndicateGun => Tag::SyndicateGun,
+            TagSetID::WerewolfTracked(_) => Tag::WerewolfTracked,
+            TagSetID::RevolutionaryTarget(_) => Tag::RevolutionaryTarget,
+            TagSetID::UzumakiSpiral(_) => Tag::Spiraling,
+            TagSetID::ForfeitVote => Tag::ForfeitVote,
         }
     }
 }
@@ -205,10 +208,8 @@ pub enum Tag{
     PuppeteerMarionette,
     GodfatherBackup,
     SyndicateGun,
-
-    
     WerewolfTracked,
     RevolutionaryTarget,
-    ForfeitVote,
     Spiraling,
+    ForfeitVote,
 }

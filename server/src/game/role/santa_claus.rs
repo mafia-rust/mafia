@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use crate::game::ability_input::AvailablePlayerListSelection;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::phase::PhaseType;
 use crate::game::win_condition::WinCondition;
@@ -31,7 +31,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for SantaClaus {
     type ClientRoleState = SantaClaus;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Convert { return }
 
         match self.get_next_santa_ability() {
@@ -41,21 +41,21 @@ impl RoleStateImpl for SantaClaus {
 
                 for target_ref in targets {
                     let WinCondition::GameConclusionReached { mut win_if_any } = target_ref.win_condition(game).clone() else {
-                        actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::YourConvertFailed);
                         continue
                     };
 
                     if
-                        !AttackPower::ArmorPiercing.can_pierce(target_ref.defense(game)) ||
+                        !AttackPower::ArmorPiercing.can_pierce(target_ref.night_defense(game, midnight_variables)) ||
                         !get_eligible_players(game, actor_ref).contains(&target_ref)
                     {
-                        actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::YourConvertFailed);
                         continue;
                     }
                     
                     win_if_any.insert(GameConclusion::NiceList);
                     target_ref.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any });
-                    target_ref.push_night_message(game, ChatMessageVariant::AddedToNiceList);
+                    target_ref.push_night_message(midnight_variables, ChatMessageVariant::AddedToNiceList);
 
                     actor_ref.set_role_state(game, Self {
                         ability_used_last_night: Some(SantaListKind::Nice),
@@ -68,21 +68,21 @@ impl RoleStateImpl for SantaClaus {
 
                 for target_ref in targets {
                     let WinCondition::GameConclusionReached { mut win_if_any } = target_ref.win_condition(game).clone() else {
-                        actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::YourConvertFailed);
                         continue
                     };
 
                     if
-                        !AttackPower::ArmorPiercing.can_pierce(target_ref.defense(game)) ||
+                        !AttackPower::ArmorPiercing.can_pierce(target_ref.night_defense(game, midnight_variables)) ||
                         !get_eligible_players(game, actor_ref).contains(&target_ref)
                     {
-                        actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::YourConvertFailed);
                         continue;
                     }
                     
                     win_if_any.insert(GameConclusion::NaughtyList);
                     target_ref.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any });
-                    target_ref.push_night_message(game, ChatMessageVariant::AddedToNaughtyList);
+                    target_ref.push_night_message(midnight_variables, ChatMessageVariant::AddedToNaughtyList);
 
                     actor_ref.set_role_state(game, Self {
                         ability_used_last_night: Some(SantaListKind::Naughty),
@@ -91,7 +91,7 @@ impl RoleStateImpl for SantaClaus {
                     for krampus in PlayerReference::all_players(game) {
                         if krampus.role(game) != Role::Krampus { continue }
 
-                        krampus.push_night_message(game, 
+                        krampus.push_night_message(midnight_variables, 
                             ChatMessageVariant::SantaAddedPlayerToNaughtyList { player: target_ref }
                         );
                     }

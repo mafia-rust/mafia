@@ -46,9 +46,7 @@ impl RoleStateImpl for TrueWildcard {
 impl TrueWildcard {
     fn become_role(&self, game: &mut Game, actor_ref: PlayerReference) {
 
-        let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
-            ControllerID::role(actor_ref, Role::TrueWildcard, 0)
-        ) else {return};
+        let Some(RoleOptionSelection(Some(role))) = ControllerID::role(actor_ref, Role::TrueWildcard, 0).get_role_option_selection(game).cloned() else {return};
 
         if 
             role_can_generate(

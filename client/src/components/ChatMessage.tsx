@@ -683,18 +683,10 @@ export function translateChatMessage(
                 playerNames[message.player]
             );
         case "auditorResult":
-            if(message.result.type === "one"){
-                return translate("chatMessage.auditorResult.one", 
-                    translateRoleOutline(message.roleOutline),
-                    translate("role."+message.result.role+".name")
-                );
-            }else{
-                return translate("chatMessage.auditorResult.two", 
-                    translateRoleOutline(message.roleOutline),
-                    translate("role."+message.result.roles[0]+".name"),
-                    translate("role."+message.result.roles[1]+".name")
-                );
-            }
+            return translate("chatMessage.auditorResult", 
+                translateRoleOutline(message.roleOutline),
+                message.result.map((role)=>translate("role."+role+".name")).join(", ")
+            );
         case "engineerVisitorsRole":
             return translate("chatMessage.engineerVisitorsRole", translate("role."+message.role+".name"));
         case "trapState":
@@ -709,7 +701,8 @@ export function translateChatMessage(
             );
         case "informantResult":
             return translate("chatMessage.informantResult",
-                translate("chatMessage.targetHasRole", translate("role."+message.role+".name")),
+                playerNames[message.player],
+                translate("role."+message.role+".name"),
                 translate("chatMessage.informantResult.visited", playerListToString(message.visited, playerNames)),
                 translate("chatMessage.informantResult.visitedBy", playerListToString(message.visitedBy, playerNames))
             );
@@ -1062,6 +1055,7 @@ export type ChatMessageVariant = {
     will: string
 } | {
     type: "informantResult", 
+    player: PlayerIndex
     role: Role,
     visitedBy: PlayerIndex[],
     visited: PlayerIndex[]
