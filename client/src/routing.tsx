@@ -1,6 +1,6 @@
-import React from "react";
+import React, { ReactElement, ReactNode, useContext } from "react";
 import { ARTICLES, WikiArticleLink } from "./components/WikiArticleLink";
-import { AnchorController } from "./menu/Anchor";
+import { AnchorController, AnchorControllerContext } from "./menu/Anchor";
 import StandaloneWiki from "./menu/main/StandaloneWiki";
 import { deleteReconnectData, loadReconnectData } from "./game/localStorage";
 import GAME_MANAGER from ".";
@@ -8,6 +8,8 @@ import StartMenu from "./menu/main/StartMenu";
 import GameModesEditor from "./components/gameModeSettings/GameModesEditor";
 import parseFromJson from "./components/gameModeSettings/gameMode/dataFixer";
 import { isFailure } from "./components/gameModeSettings/gameMode/parse";
+import LoadingScreen from "./menu/LoadingScreen";
+import { useAuth0 } from "@auth0/auth0-react";
 
 function uriAsFileURI(path: string): string {
     if (path.endsWith('/')) {
@@ -119,9 +121,25 @@ async function routeMainButFirstTryUsingReconnectData(anchorController: AnchorCo
     // This is where we *should* handle joining the lobby, but it's handled in messageListener... grumble grumble
 }
 
+function WaitForAuth(props: { onAuth: () => void }): ReactElement {
+    const { isLoading } = useAuth0();
+
+    if (isLoading) {
+        return <LoadingScreen type="login"/>;
+    } else {
+        setTimeout(() => props.onAuth());
+        return <LoadingScreen type="login"/>;
+    }
+}
+
 export default async function route(anchorController: AnchorController, url: Location) {
 
-    if (url.pathname.startsWith("/wiki")) {
+    if (url.pathname.startsWith('/loginSuccess')) {
+        anchorController.setContent(
+            <WaitForAuth onAuth={() => routeMainButFirstTryUsingReconnectData(anchorController)}/>
+        );
+        return;
+    } else if (url.pathname.startsWith("/wiki")) {
         return await routeWiki(anchorController, url.pathname.substring(5));
     } else if (url.pathname.startsWith("/connect")) {
         const roomCode = new URLSearchParams(url.search).get("code");
