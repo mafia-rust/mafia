@@ -19,5 +19,5 @@ pub mod forward_messages;
 pub mod silenced;
 pub mod tags;
 pub mod enfranchise;
-pub mod protected_message;
+pub mod guard;
 pub mod fragile_vest;

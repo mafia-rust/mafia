@@ -35,7 +35,7 @@ impl RoleStateImpl for Doctor {
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 
-                actor_ref.set_protected_player(game, midnight_variables, target_ref);
+                actor_ref.guard_player(game, midnight_variables, target_ref);
 
                 if actor_ref == target_ref{
                     actor_ref.set_role_state(game, Doctor{

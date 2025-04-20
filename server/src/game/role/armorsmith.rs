@@ -49,13 +49,13 @@ impl RoleStateImpl for Armorsmith {
                         self.night_open_shop = true;
                         self.open_shops_remaining = self.open_shops_remaining.saturating_sub(1);
 
-                        actor_ref.set_protected_player(game, midnight_variables, actor_ref);
+                        actor_ref.guard_player(game, midnight_variables, actor_ref);
 
 
                         let visitors = actor_ref.all_night_visitors_cloned(game);
 
                         for visitor in visitors.iter(){
-                            actor_ref.set_protected_player(game, midnight_variables, *visitor);
+                            actor_ref.guard_player(game, midnight_variables, *visitor);
                         }
 
                         //players with armor will have defense here because they are visitors to armorsmith
