@@ -7,7 +7,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{ControllerID, ControllerParametersMap, Role, RoleState, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize)]
 pub struct Doctor {
@@ -38,9 +38,9 @@ impl RoleStateImpl for Doctor {
                 actor_ref.set_protected_player(game, midnight_variables, target_ref);
 
                 if actor_ref == target_ref{
-                    actor_ref.set_role_state(game, RoleState::Doctor(Doctor{
+                    actor_ref.set_role_state(game, Doctor{
                         self_heals_remaining: self.self_heals_remaining.saturating_sub(1), 
-                    }));
+                    });
                 }
 
             }

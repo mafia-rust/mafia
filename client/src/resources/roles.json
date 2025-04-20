@@ -203,8 +203,8 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "targetWasAttacked"},
-            {"type": "youWereProtected"},
+            {"type": "youGuardedSomeone"},
+            {"type": "youWereGuarded"},
             {"type": "youSurvivedAttack"}
         ]
     },
@@ -218,8 +218,8 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "youAttackedSomeone"},
-            {"type": "targetWasAttacked"},
-            {"type": "youWereProtected"},
+            {"type": "youGuardedSomeone"},
+            {"type": "youWereGuarded"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
@@ -253,8 +253,8 @@
             {"type": "trapStateEndOfNight", "state":{"type":"set"}},
             {"type": "engineerVisitorsRole", "role": "framer"},
             {"type": "youAttackedSomeone"},
-            {"type": "targetWasAttacked"},
-            {"type": "youWereProtected"},
+            {"type": "youGuardedSomeone"},
+            {"type": "youWereGuarded"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
@@ -268,8 +268,8 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "targetWasAttacked"},
-            {"type": "youWereProtected"},
+            {"type": "youGuardedSomeone"},
+            {"type": "youWereGuarded"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
@@ -283,9 +283,9 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "armorsmithArmorBroke"},
-            {"type": "targetWasAttacked"},
-            {"type": "youWereProtected"},
+            {"type": "fragileVestBreak", "playerWithVest": 29, "defense":"protected"},
+            {"type": "youGuardedSomeone"},
+            {"type": "youWereGuarded"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
@@ -298,10 +298,7 @@
         "maxCount": null,
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
-        "chatMessages":[
-            {"type": "youWereProtected"},
-            {"type": "youSurvivedAttack"}
-        ]
+        "chatMessages":[]
     },
     "vigilante": {
         "mainRoleSet": "town",
@@ -625,7 +622,7 @@
             {"type": "roleBlocked","immune": true},
             {"type": "roleBlocked","immune": false},
             {"type": "youSurvivedAttack"},
-            {"type": "youWereProtected"},
+            {"type": "youWereGuarded"},
             {"type": "transported"},
             {"type": "youWerePossessed", "immune": false},
             {"type": "youWerePossessed", "immune": true},

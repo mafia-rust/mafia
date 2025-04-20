@@ -1,6 +1,6 @@
 use crate::{event_priority, game::{
     attack_power::DefensePower, chat::ChatMessageVariant, components::{
-        detained::Detained, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, protected_message::NightProtected, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem
+        fragile_vest::FragileVests, detained::Detained, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, protected_message::NightProtected, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem
     }, grave::GraveKiller, modifiers::Modifiers, player::PlayerReference, role::{Role, RoleState}, visit::Visit, Game
 }};
 use super::Event;
@@ -58,6 +58,7 @@ impl Event for OnMidnight {
             Mafia::on_midnight,
             
             PlayerReference::on_midnight,
+            FragileVests::on_midnight,
             NightProtected::on_midnight,
         ]
     }
@@ -251,7 +252,7 @@ impl PlayerReference {
     }
 
     pub fn set_protected_player(self, game: &mut Game, midnight_variables: &mut MidnightVariables, protected: PlayerReference){
-        protected.increase_defense_to(game, midnight_variables, DefensePower::Protection);
+        protected.increase_defense_to(game, midnight_variables, DefensePower::Protected);
         midnight_variables.get_mut(self).protected_players.push(protected);
     }
     pub fn protected_players(self, midnight_variables: &MidnightVariables)->&Vec<PlayerReference>{

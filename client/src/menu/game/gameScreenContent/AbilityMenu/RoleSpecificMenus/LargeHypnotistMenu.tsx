@@ -11,7 +11,7 @@ export type Hypnotist = {
     
     youWereRoleblockedMessage: boolean,
     youSurvivedAttackMessage: boolean,
-    youWereProtectedMessage: boolean,
+    youWereGuardedMessage: boolean,
     youWereTransportedMessage: boolean,
     youWerePossessedMessage: boolean,
     yourTargetWasJailedMessage: boolean
@@ -24,7 +24,7 @@ type LargeHypnotistMenuState = {
     
     youWereRoleblockedMessage: boolean,
     youSurvivedAttackMessage: boolean,
-    youWereProtectedMessage: boolean,
+    youWereGuardedMessage: boolean,
     youWereTransportedMessage: boolean,
     youWerePossessedMessage: boolean,
     yourTargetWasJailedMessage: boolean
@@ -40,7 +40,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                 
                 youWereRoleblockedMessage: GAME_MANAGER.state.clientState.roleState?.youWereRoleblockedMessage?? false,
                 youSurvivedAttackMessage: GAME_MANAGER.state.clientState.roleState?.youSurvivedAttackMessage?? false,
-                youWereProtectedMessage: GAME_MANAGER.state.clientState.roleState?.youWereProtectedMessage?? false,
+                youWereGuardedMessage: GAME_MANAGER.state.clientState.roleState?.youWereGuardedMessage?? false,
                 youWereTransportedMessage: GAME_MANAGER.state.clientState.roleState?.youWereTransportedMessage?? false,
                 youWerePossessedMessage: GAME_MANAGER.state.clientState.roleState?.youWerePossessedMessage?? false,
                 yourTargetWasJailedMessage: GAME_MANAGER.state.clientState.roleState?.yourTargetWasJailedMessage?? false
@@ -52,7 +52,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                 
                     youWereRoleblockedMessage: GAME_MANAGER.state.clientState.roleState?.youWereRoleblockedMessage?? false,
                     youSurvivedAttackMessage: GAME_MANAGER.state.clientState.roleState?.youSurvivedAttackMessage?? false,
-                    youWereProtectedMessage: GAME_MANAGER.state.clientState.roleState?.youWereProtectedMessage?? false,
+                    youWereGuardedMessage: GAME_MANAGER.state.clientState.roleState?.youWereGuardedMessage?? false,
                     youWereTransportedMessage: GAME_MANAGER.state.clientState.roleState?.youWereTransportedMessage?? false,
                     youWerePossessedMessage: GAME_MANAGER.state.clientState.roleState?.youWerePossessedMessage?? false,
                     yourTargetWasJailedMessage: GAME_MANAGER.state.clientState.roleState?.yourTargetWasJailedMessage?? false
@@ -72,7 +72,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
             !this.state.roleblock, 
             this.state.youWereRoleblockedMessage, 
             this.state.youSurvivedAttackMessage, 
-            this.state.youWereProtectedMessage, 
+            this.state.youWereGuardedMessage, 
             this.state.youWereTransportedMessage, 
             this.state.youWerePossessedMessage, 
             this.state.yourTargetWasJailedMessage
@@ -83,7 +83,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
             this.state.roleblock, 
             !this.state.youWereRoleblockedMessage, 
             this.state.youSurvivedAttackMessage, 
-            this.state.youWereProtectedMessage, 
+            this.state.youWereGuardedMessage, 
             this.state.youWereTransportedMessage, 
             this.state.youWerePossessedMessage, 
             this.state.yourTargetWasJailedMessage
@@ -94,18 +94,18 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
             this.state.roleblock, 
             this.state.youWereRoleblockedMessage, 
             !this.state.youSurvivedAttackMessage, 
-            this.state.youWereProtectedMessage, 
+            this.state.youWereGuardedMessage, 
             this.state.youWereTransportedMessage, 
             this.state.youWerePossessedMessage, 
             this.state.yourTargetWasJailedMessage
         );
     }
-    handleYouWereProtectedMessageToggle(){
+    handleYouWereGuardedMessageToggle(){
         GAME_MANAGER.sendSetConsortOptions(
             this.state.roleblock, 
             this.state.youWereRoleblockedMessage, 
             this.state.youSurvivedAttackMessage, 
-            !this.state.youWereProtectedMessage, 
+            !this.state.youWereGuardedMessage, 
             this.state.youWereTransportedMessage, 
             this.state.youWerePossessedMessage, 
             this.state.yourTargetWasJailedMessage
@@ -116,7 +116,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
             this.state.roleblock, 
             this.state.youWereRoleblockedMessage, 
             this.state.youSurvivedAttackMessage, 
-            this.state.youWereProtectedMessage, 
+            this.state.youWereGuardedMessage, 
             !this.state.youWereTransportedMessage, 
             this.state.youWerePossessedMessage, 
             this.state.yourTargetWasJailedMessage
@@ -127,7 +127,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
             this.state.roleblock, 
             this.state.youWereRoleblockedMessage, 
             this.state.youSurvivedAttackMessage, 
-            this.state.youWereProtectedMessage, 
+            this.state.youWereGuardedMessage, 
             this.state.youWereTransportedMessage, 
             !this.state.youWerePossessedMessage, 
             this.state.yourTargetWasJailedMessage
@@ -138,7 +138,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
             this.state.roleblock, 
             this.state.youWereRoleblockedMessage, 
             this.state.youSurvivedAttackMessage, 
-            this.state.youWereProtectedMessage, 
+            this.state.youWereGuardedMessage, 
             this.state.youWereTransportedMessage, 
             this.state.youWerePossessedMessage, 
             !this.state.yourTargetWasJailedMessage
@@ -175,11 +175,11 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
             <div>
                 <ChatElement message={{
                     variant: {
-                        type: "youWereProtected",
+                        type: "youWereGuarded",
                     },
                     chatGroup:null
                 }}/>
-                <CheckBox checked={this.state.youWereProtectedMessage} onChange={(checked)=>this.handleYouWereProtectedMessageToggle()}/>
+                <CheckBox checked={this.state.youWereGuardedMessage} onChange={(checked)=>this.handleYouWereGuardedMessageToggle()}/>
             </div>
             <div>
                 <ChatElement message={{

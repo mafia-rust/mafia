@@ -8,8 +8,8 @@ impl NightProtected{
         for player in PlayerReference::all_players(game){
             for protected in player.protected_players(midnight_variables).clone() {
                 if protected.night_attacked(midnight_variables){
-                    player.push_night_message(midnight_variables, ChatMessageVariant::TargetWasAttacked);
-                    protected.push_night_message(midnight_variables, ChatMessageVariant::YouWereProtected);
+                    player.push_night_message(midnight_variables, ChatMessageVariant::YouGuardedSomeone);
+                    protected.push_night_message(midnight_variables, ChatMessageVariant::YouWereGuarded);
                 }
             }
         }

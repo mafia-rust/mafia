@@ -29,7 +29,7 @@ use ability_input::saved_controllers_map::SavedControllersMap;
 use ability_input::ControllerID;
 use ability_input::PlayerListSelection;
 use components::confused::Confused;
-use components::defense_items::DefenseItems;
+use components::fragile_vest::FragileVests;
 use components::drunk_aura::DrunkAura;
 use components::enfranchise::Enfranchise;
 use components::forfeit_vote::ForfeitVote;
@@ -142,7 +142,7 @@ pub struct Game {
     pub synopsis_tracker: SynopsisTracker,
     pub tags: Tags,
     pub silenced: Silenced,
-    pub defense_items: DefenseItems,
+    pub defense_items: FragileVests,
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -265,7 +265,7 @@ impl Game {
                 synopsis_tracker: SynopsisTracker::new(num_players),
                 tags: Tags::default(),
                 silenced: Silenced::default(),
-                defense_items: DefenseItems::new(num_players)
+                defense_items: FragileVests::new(num_players)
             };
 
             // Just distribute insider groups, this is for game over checking (Keeps game running syndicate gun)
@@ -869,7 +869,7 @@ pub mod test {
     use super::{
         ability_input::saved_controllers_map::SavedControllersMap,
         components::{
-            cult::Cult, defense_items::DefenseItems, insider_group::InsiderGroupID, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, silenced::Silenced, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday
+            cult::Cult, fragile_vest::FragileVests, insider_group::InsiderGroupID, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, silenced::Silenced, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday
         }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine, player::{test::mock_player, PlayerReference},
@@ -939,7 +939,7 @@ pub mod test {
             synopsis_tracker: SynopsisTracker::new(number_of_players),
             tags: Tags::default(),
             silenced: Silenced::default(),
-            defense_items: DefenseItems::new(number_of_players)
+            defense_items: FragileVests::new(number_of_players)
         };
 
         //set wincons and revealed groups
