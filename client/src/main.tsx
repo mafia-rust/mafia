@@ -17,7 +17,6 @@ const THEME_CSS_ATTRIBUTES = [
 ];
 
 export { THEME_CSS_ATTRIBUTES }
-console.log("hello");
 const ROOT = createRoot(document.querySelector("#root")!);
 const GAME_MANAGER: GameManager = createGameManager();
 const TIME_PERIOD = 1000;

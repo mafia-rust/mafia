@@ -1,5 +1,6 @@
+console.log("styledtext loads")
 import { marked } from "marked";
-import { ReactElement, useContext, useEffect } from "react";
+import { ReactElement, useContext, useEffect, useMemo } from "react";
 import ReactDOMServer from "react-dom/server";
 import { find } from "../main";
 import translate, { translateChecked } from "../game/lang";
@@ -87,7 +88,9 @@ export default function StyledText(props: Readonly<StyledTextProps>): ReactEleme
         tokens[0].string = tokens[0].string.replace(/\n/g, '<br>');
     }
 
-    tokens = styleKeywords(tokens, playerKeywordData);
+    tokens = useMemo(()=>{
+        return styleKeywords(tokens, playerKeywordData);
+    }, [KEYWORD_DATA, playerKeywordData, tokens]); 
 
     const jsxString = tokens.map(token => {
         if (token.type === "raw") {
