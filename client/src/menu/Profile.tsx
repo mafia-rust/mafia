@@ -26,12 +26,10 @@ export default function Profile(props: {}): ReactElement {
             ><Icon>logout</Icon>{translate("logout")}</button>
         </header>
         <div className="profile">
-            {user.picture && <img src={user.picture} />}
+            {user.picture && <img src={user.picture} alt={translate("menu.profile.picture")}/>}
             <div className="profile-details">
                 <h2>{user.name}</h2>
-                Developer<br />
-                {translate("menu.profile.gamesPlayed", "4 billion")}<br/>
-                {translate("menu.profile.gamesWon", "ALL OF THEM")}
+                <code>id: {user.sub}</code>
             </div>
         </div>
     </div>

@@ -124,12 +124,12 @@ async function routeMainButFirstTryUsingReconnectData(anchorController: AnchorCo
 function WaitForAuth(props: { onAuth: () => void }): ReactElement {
     const { isLoading } = useAuth0();
 
-    if (isLoading) {
-        return <LoadingScreen type="login"/>;
-    } else {
+    // Component will re-render when loading complete, calling onAuth prop
+    if (!isLoading) {
         setTimeout(() => props.onAuth());
-        return <LoadingScreen type="login"/>;
     }
+
+    return <LoadingScreen type="login"/>;
 }
 
 export default async function route(anchorController: AnchorController, url: Location) {

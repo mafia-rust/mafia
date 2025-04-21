@@ -71,6 +71,7 @@
     "menu.settings.roleSpecificMenus.standalone": "Standalone",
     
     "menu.profile.title": "Profile",
+    "menu.profile.picture": "Profile picture",
     "menu.profile.gamesPlayed": "Games played: \\0",
     "menu.profile.gamesWon": "Games won: \\0",
     "login": "Log in",
