@@ -37,7 +37,7 @@ export default function GlobalMenu(): ReactElement {
     )!;
     const ref = useRef<HTMLDivElement>(null);
     const anchorController = useContext(AnchorControllerContext)!;
-    const { user, isLoading, isAuthenticated, loginWithRedirect, logout } = useAuth0();
+    const { isAuthenticated, loginWithRedirect } = useAuth0();
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {

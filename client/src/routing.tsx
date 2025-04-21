@@ -1,6 +1,6 @@
-import React, { ReactElement, ReactNode, useContext } from "react";
+import React, { ReactElement } from "react";
 import { ARTICLES, WikiArticleLink } from "./components/WikiArticleLink";
-import { AnchorController, AnchorControllerContext } from "./menu/Anchor";
+import { AnchorController } from "./menu/Anchor";
 import StandaloneWiki from "./menu/main/StandaloneWiki";
 import { deleteReconnectData, loadReconnectData } from "./game/localStorage";
 import GAME_MANAGER from ".";
