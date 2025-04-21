@@ -1,6 +1,6 @@
 import { PlayerIndex } from "./gameState.d"
 import { RoleSet } from "./roleListState.d"
-import ROLES from "./../resources/roles.json";
+import ROLES from "../resources/roles.json";
 import { ChatMessageVariant } from "../components/ChatMessage";
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
 import { Hypnotist } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeHypnotistMenu";

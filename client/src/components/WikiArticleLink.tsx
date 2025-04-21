@@ -1,9 +1,11 @@
 import { MODIFIERS, ModifierType } from "../game/gameState.d";
-import translate, { langJson } from "../game/lang";
+import translate from "../game/lang";
 import { Role, roleJsonData } from "../game/roleState.d";
 import { partitionWikiPages, WIKI_CATEGORIES, WikiCategory } from "./Wiki";
 import "./wiki.css";
-import { getAllRoles } from "../game/roleListState.d"
+import { getAllRoles } from "../game/roleListState.d";
+
+import langJson from "../resources/lang/en_us.json";
 
 export type WikiArticleLink = 
     `role/${Role}` | 

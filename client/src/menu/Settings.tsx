@@ -1,4 +1,4 @@
-import React, { ReactElement, useContext, useEffect, useState } from "react";
+import { ReactElement, useContext, useEffect, useState } from "react";
 import "./settings.css";
 import translate, { Language, languageName, LANGUAGES, switchLanguage } from "../game/lang";
 import StyledText, { computeKeywordData } from "../components/StyledText";
@@ -74,9 +74,8 @@ export default function SettingsMenu(): ReactElement {
                         defaultValue={loadSettingsParsed().language}
                         onChange={e => {
                             const language = e.target.options[e.target.selectedIndex].value as Language;
-                            switchLanguage(language);
                             saveSettings({language});
-                            computeKeywordData()
+                            switchLanguage(language, ()=>{computeKeywordData()});
                             anchorController.reload();
                         }}
                     >

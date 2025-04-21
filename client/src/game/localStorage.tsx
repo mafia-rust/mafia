@@ -25,10 +25,10 @@ export function loadReconnectData(): {
     playerId: number,
     lastSaveTime: number,
 } | null {
-    let dataJSON = localStorage.getItem("reconnectData");
+    const dataJSON = localStorage.getItem("reconnectData");
     
     if (dataJSON) {
-        let reconnectData = JSON.parse(dataJSON);
+        const reconnectData = JSON.parse(dataJSON);
     
         // Make sure it isn't expired
         const HOUR_IN_SECONDS = 3_600_000;

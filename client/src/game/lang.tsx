@@ -1,16 +1,24 @@
-
 export let langMap: ReadonlyMap<string, string>;
 export let langText: string;
-export let langJson: any;
+
+import enJson from "../resources/lang/en_us.json";
+langMap = new Map<string, string>(Object.entries(enJson));
+langText = JSON.stringify(enJson, null, 1);
+console.log(langMap);
 
 export const LANGUAGES = ["en_us", "broken_keyboard", "dyslexic"] as const;
 export type Language = typeof LANGUAGES[number]
-switchLanguage("en_us");
+// switchLanguage("en_us");
 
-export function switchLanguage(language: Language) {
-    langJson = require("../resources/lang/" + language + ".json");
-    langMap = new Map<string, string>(Object.entries(langJson));
-    langText = JSON.stringify(langJson, null, 1);
+export function switchLanguage(language: Language, callback?: ()=>void){
+    import("../resources/lang/" + language + ".json")
+        .then((json)=>{
+            langMap = new Map<string, string>(Object.entries(json));
+            langText = JSON.stringify(json, null, 1);
+            if(callback){
+                callback();
+            }
+        });
 }
 
 /// Returns the translated string with the given key, replacing the placeholders with the given values.
@@ -39,6 +47,9 @@ export function translateAny(langKeys: string[], ...valuesList: (string | number
 }
 
 export function translateChecked(langKey: string, ...valuesList: (string | number)[]): string | null {
+    if(langMap===undefined){
+        return null;
+    }
     let out = langMap.get(langKey);
     if(out===undefined){
         return null;
@@ -49,7 +60,20 @@ export function translateChecked(langKey: string, ...valuesList: (string | numbe
     return out;
 }
 
+// export function languageName(language: Language): string {
+//     const json = require("../resources/lang/" + language + ".json");
+//     return json.language;
+// }
 export function languageName(language: Language): string {
-    const json = require("../resources/lang/" + language + ".json");
-    return json.language;
+    let languageData: string = '';
+    import(`../resources/lang/${language}.json`)
+        .then((json) => {
+            languageData = json.language;
+        })
+        .catch((err) => {
+            console.error("Error loading language JSON:", err);
+            languageData = 'default'; // Fallback value
+        });
+
+    return languageData;
 }

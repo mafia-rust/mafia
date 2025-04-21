@@ -1,6 +1,6 @@
-import React, { ReactElement, useEffect, useState } from "react"
+import { ReactElement, useEffect, useState } from "react"
 import "./kiraSelectionMenu.css";
-import GAME_MANAGER from "../../../../..";
+import GAME_MANAGER from "../../../../../main";
 import translate, { translateChecked } from "../../../../../game/lang";
 import StyledText, { KeywordDataMap } from "../../../../../components/StyledText";
 import Select, { SelectOptionsSearch } from "../../../../../components/Select";
@@ -44,34 +44,34 @@ export function KiraResultDisplay(props: Readonly<{
     playerKeywordData?: KeywordDataMap,
     playerNames: string[],
 }>): ReactElement {
-    let guessesMap = new ListMap<PlayerIndex, [KiraGuess, KiraGuessResult]>();
+    const guessesMap = new ListMap<PlayerIndex, [KiraGuess, KiraGuessResult]>();
 
     if(props.map.type === "reuslt"){
-        for(let [player, guess] of props.map.map){
+        for(const [player, guess] of props.map.map){
             guessesMap.insert(player, guess);
         }
     }else{
-        for(let [player, guess] of props.map.map){
+        for(const [player, guess] of props.map.map){
             guessesMap.insert(player, [guess, "notInGame"]);
         }
 
     }
 
-    let out = [];
+    const out = [];
 
-    let sortedPlayerIndexes = guessesMap.keys().sort();
+    const sortedPlayerIndexes = guessesMap.keys().sort();
 
-    for(let playerIndex of sortedPlayerIndexes){
+    for(const playerIndex of sortedPlayerIndexes){
         let resultStyle = "";
         let resultIcon = "";
         let resultString = "";
 
-        let guessMapValue = guessesMap.get(playerIndex);
+        const guessMapValue = guessesMap.get(playerIndex);
         if(guessMapValue === null){
             continue;
         }
-        let guess = guessMapValue[0];
-        let result = guessMapValue[1];
+        const guess = guessMapValue[0];
+        const result = guessMapValue[1];
 
 
         if(guess !== "none" && props.map.type !== "selection"){
@@ -121,7 +121,7 @@ export default function KiraSelectionMenu(props: Readonly<{
         props.onChange(guesses);
     }
 
-    let currentGuessesMap = new ListMap(props.selection);    
+    const currentGuessesMap = new ListMap(props.selection);    
 
     return <div className="large-kira-menu">
         {guessable.map((playerIndex)=>{
@@ -130,7 +130,7 @@ export default function KiraSelectionMenu(props: Readonly<{
                 playerIndex={playerIndex} 
                 guess={currentGuessesMap.get(playerIndex) ?? "none"} 
                 onChange={(guess: KiraGuess) => {
-                    let newGuesses = new ListMap<PlayerIndex, KiraGuess>([...props.selection]);
+                    const newGuesses = new ListMap<PlayerIndex, KiraGuess>([...props.selection]);
                     newGuesses.insert(playerIndex, guess);
                     sendSetKiraGuess(newGuesses.list);
                 }}
@@ -163,7 +163,7 @@ function KiraGuessPicker(props: {
     }, [setPlayers]);
 
     const guessOptions: SelectOptionsSearch<KiraGuess> = new Map();
-    for(let guess of KIRA_GUESSES){
+    for(const guess of KIRA_GUESSES){
         guessOptions.set(guess, [
             <StyledText noLinks={true}>{kiraGuessTranslate(guess)}</StyledText>,
             kiraGuessTranslate(guess)

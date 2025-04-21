@@ -1,7 +1,7 @@
-import React, { ReactElement, useCallback, useContext, useEffect, useState } from "react";
+import { ReactElement, useCallback, useContext, useEffect, useState } from "react";
 import translate from "../../game/lang";
 import { AnchorControllerContext } from "../Anchor";
-import GAME_MANAGER from "../..";
+import GAME_MANAGER from "./../../main.tsx";
 import LoadingScreen from "../LoadingScreen";
 import "./playMenu.css";
 import { StateListener } from "../../game/gameManager.d";
@@ -92,7 +92,8 @@ function PlayMenuFooter(props: Readonly<{
                             if (!isNaN(code)) {
                                 setRoomCode(code)
                             }
-                        } catch (_) {}
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        } catch (e) { /* empty */ }
                     }}}
                 onKeyUp={(e)=>{
                     if(e.key === 'Enter') {
@@ -114,7 +115,8 @@ function PlayMenuFooter(props: Readonly<{
                             if (!isNaN(id) && id < 256) {
                                 setPlayerID(id)
                             }
-                        } catch (_) {}
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        } catch (_) { /* empty */ }
                     }
                 }}
                 onKeyUp={(e)=>{

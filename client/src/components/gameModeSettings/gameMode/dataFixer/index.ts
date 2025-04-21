@@ -47,7 +47,6 @@ export default function parseFromJson<T extends keyof ConverterMap>(type: T, jso
     let currentJson = json;
     for(let i = 0; i < MAX_ITERATIONS; i++) {
         const converterEntry = Object.entries(VERSION_CONVERTERS)
-            // eslint-disable-next-line no-loop-func
             .find(([version, converter]) => isCorrectConverter(currentJson, converter, version));
     
         if (converterEntry === undefined) {

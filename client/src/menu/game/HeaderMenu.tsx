@@ -1,6 +1,6 @@
-import React, { ReactElement, useContext, useMemo } from "react";
+import { ReactElement, useContext, useMemo } from "react";
 import translate from "../../game/lang";
-import GAME_MANAGER from "../../index";
+import GAME_MANAGER from "../../main";
 import { PhaseState, Player, Verdict } from "../../game/gameState.d";
 import { MenuControllerContext, ContentMenu, MENU_THEMES, MENU_TRANSLATION_KEYS } from "./GameScreen";
 import "./headerMenu.css";

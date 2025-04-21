@@ -1,13 +1,13 @@
 import React, { ReactElement, ReactNode, useEffect, useMemo, useRef } from "react";
 import ReactDOM from "react-dom/client";
-import { THEME_CSS_ATTRIBUTES } from "..";
+import { THEME_CSS_ATTRIBUTES } from "./../main.tsx";
 
 export default function Popover<T extends HTMLElement = HTMLElement>(props: Readonly<{
     open: boolean,
     children: ReactNode,
     setOpenOrClosed: (open: boolean) => void,
     onRender?: (popoverElement: HTMLDivElement, anchorElement?: T | undefined) => void
-    anchorForPositionRef?: React.RefObject<T>,
+    anchorForPositionRef?: React.RefObject<T | null>,
     className?: string
 }>): ReactElement {
     const thisRef = useRef<HTMLDivElement>(null);

@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useContext, useMemo, useRef, useState } from "react";
+import { ReactElement, useCallback, useContext, useMemo, useRef, useState } from "react";
 import "./outlineSelector.css";
 import translate from "../../game/lang";
 import { getAllRoles, getRolesFromRoleSet, ROLE_SETS, RoleList, RoleOrRoleSet, RoleOutline, simplifyRoleOutline, translateRoleOutline, translateRoleOrRoleSet} from "../../game/roleListState.d";
@@ -76,9 +76,9 @@ export default function RoleOutlineSelector(props: RoleOutlineSelectorProps): Re
                         disabled={props.disabled}
                         roleOrRoleSet={roleOrRoleSet}
                         onChange={(value) => {
-                            let options = [...props.roleOutline];
+                            const options = [...props.roleOutline];
 
-                            let old = {...options[index]};
+                            const old = {...options[index]};
 
                             switch (value.type) {
                                 case "role":
@@ -104,7 +104,7 @@ export default function RoleOutlineSelector(props: RoleOutlineSelectorProps): Re
                     <Button
                         disabled={props.disabled}
                         onClick={() => {
-                            let options = [...props.roleOutline];
+                            const options = [...props.roleOutline];
                             options.splice(index, 1);
                             if(options.length === 0) {
                                 props.onChange([{ roleSet: "any" }]);

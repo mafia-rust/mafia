@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import GAME_MANAGER from "../..";
+import GAME_MANAGER from "./../../main.tsx";
 import translate from "../../game/lang";
 import Icon from "../../components/Icon";
 import { useLobbyState } from "../../components/useHooks";

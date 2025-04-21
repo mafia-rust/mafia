@@ -216,7 +216,7 @@ function parseRoleOutlineOptionList(json: NonNullable<any>): ParseResult<RoleOut
 
 function parseRoleOutlineOption(json: NonNullable<any>): ParseResult<RoleOutlineOption> {
 
-    let out: {
+    const out: {
         insiderGroups?: InsiderGroup[],
         winIfAny?: Conclusion[],
         role?: Role,

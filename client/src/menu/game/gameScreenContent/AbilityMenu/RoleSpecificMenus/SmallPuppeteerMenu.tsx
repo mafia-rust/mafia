@@ -1,6 +1,5 @@
 import { ReactElement } from "react";
 import Counter from "../../../../../components/Counter";
-import React from "react";
 import StyledText from "../../../../../components/StyledText";
 import translate from "../../../../../game/lang";
 import { PhaseType } from "../../../../../game/gameState.d";

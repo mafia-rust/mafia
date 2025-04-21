@@ -1,6 +1,6 @@
 import translate, { translateChecked } from "../game/lang";
 import React, { ReactElement } from "react";
-import GAME_MANAGER, { find, replaceMentions } from "..";
+import GAME_MANAGER, { find, replaceMentions } from "../main";
 import StyledText, { KeywordDataMap, PLAYER_SENDER_KEYWORD_DATA } from "./StyledText";
 import "./chatMessage.css"
 import { ChatGroup, Conclusion, PhaseState, PlayerIndex, Tag, translateConclusion, translateWinCondition, Verdict, WinCondition } from "../game/gameState.d";
@@ -17,6 +17,7 @@ import { ControllerID, AbilitySelection, translateControllerID, controllerIdToLi
 import DetailsSummary from "./DetailsSummary";
 import ListMap from "../ListMap";
 import { Button } from "./Button";
+import chatMessageStyles from "../resources/styling/chatMessage.json";
 
 const ChatElement = React.memo((
     props: {
@@ -32,7 +33,7 @@ const ChatElement = React.memo((
     );
     const forwardButton = usePlayerState(
         playerState => {
-            let controller = new ListMap(playerState.savedControllers, (a,b)=>a.type===b.type)
+            const controller = new ListMap(playerState.savedControllers, (a,b)=>a.type===b.type)
                 .get({type: "forwardMessage", player: playerState.myIndex});
 
             return controller!==null&&!controller.availableAbilityData.grayedOut;
@@ -54,12 +55,17 @@ const ChatElement = React.memo((
     const message = props.message;
     const realPlayerNames = usePlayerNames();
     const playerNames = props.playerNames ?? realPlayerNames;
-    const chatMessageStyles = require("../resources/styling/chatMessage.json");
+    // const chatMessageStyles = require("../resources/styling/chatMessage.json");
     if(message.variant === undefined){
         console.error("ChatElement message with undefined variant:");
         console.error(message);
     }
-    let style = typeof chatMessageStyles[message.variant.type] === "string" ? chatMessageStyles[message.variant.type] : "";
+    type ChatMessageStyleKey = keyof typeof chatMessageStyles;
+
+    let style = typeof chatMessageStyles[message.variant.type as ChatMessageStyleKey] === "string"
+        ? chatMessageStyles[message.variant.type as ChatMessageStyleKey]
+        : "";
+    // let style = typeof chatMessageStyles[message.variant.type] === "string" ? chatMessageStyles[message.variant.type] : "";
 
     let chatGroupIcon = null;
     if(message.chatGroup !== null){
@@ -521,8 +527,7 @@ export function translateChatMessage(
                 message.guilty
             );
         }
-        case "abilityUsed":
-
+        case "abilityUsed":{
             let out;
 
             switch (message.selection.type) {
@@ -568,14 +573,14 @@ export function translateChatMessage(
                         message.selection.selection[1]===null?translate("none"):translate("role."+message.selection.selection[1]+".name"),
                     );
                     break;
-                case "twoRoleOutlineOption":                    
-                    let first = message.selection.selection[0] === null ? 
+                case "twoRoleOutlineOption":{
+                    const first = message.selection.selection[0] === null ? 
                         translate("none") :
                         roleList === undefined ?
                             message.selection.selection[0].toString() :
                             translateRoleOutline(roleList[message.selection.selection[0]]);
 
-                    let second = message.selection.selection[1] === null ? 
+                            const second = message.selection.selection[1] === null ? 
                         translate("none") :
                         roleList === undefined ?
                             message.selection.selection[1].toString() :
@@ -585,10 +590,11 @@ export function translateChatMessage(
 
                     out = translate("chatMessage.abilityUsed.selection.twoRoleOutlineOption", first, second);
                     break;
+                }
                 case "string":
                     out = translate("chatMessage.abilityUsed.selection.string", sanitizePlayerMessage(replaceMentions(message.selection.selection, playerNames)));
                     break;
-                case "integer":
+                case "integer":{
                     let text = translateChecked("controllerId."+controllerIdToLink(message.abilityId).replace(/\//g, ".") + ".integer." + message.selection.selection);
                     
                     if(text === null){
@@ -597,13 +603,15 @@ export function translateChatMessage(
 
                     out = translate("chatMessage.abilityUsed.selection.integer", text);
                     break;
+                }
                 default:
                     out = "";
             }
             
-            let abilityIdString = translateControllerID(message.abilityId);
+            const abilityIdString = translateControllerID(message.abilityId);
                 
             return translate("chatMessage.abilityUsed", playerNames[message.player], abilityIdString, out);
+        }
         case "mayorRevealed":
             return translate("chatMessage.mayorRevealed",
                 playerNames[message.playerIndex],
@@ -706,7 +714,7 @@ export function translateChatMessage(
                 translate("chatMessage.informantResult.visited", playerListToString(message.visited, playerNames)),
                 translate("chatMessage.informantResult.visitedBy", playerListToString(message.visitedBy, playerNames))
             );
-        case "framerResult":
+        case "framerResult":{
             const mafiaMemberName = playerNames[message.mafiaMember];
             const visitorRoles = message.visitors.map((role) => translate("role."+role+".name"));
 
@@ -717,6 +725,7 @@ export function translateChatMessage(
                 mafiaMemberName,
                 visitorRoles.join(", ")
             );
+        }
         case "scarecrowResult":
             return translate("chatMessage.scarecrowResult",
                 playerListToString(message.players, playerNames)

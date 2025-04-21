@@ -1,6 +1,6 @@
-import React, { ReactElement, useMemo } from "react";
+import { ReactElement, useMemo } from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER from "../../../index";
+import GAME_MANAGER from "../../../main";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import { usePlayerState } from "../../../components/useHooks";
 import { getSingleRoleJsonData } from "../../../game/roleState.d";

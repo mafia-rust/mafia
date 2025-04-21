@@ -1,6 +1,6 @@
-import React, { ReactElement, useRef, useState } from "react";
+import { ReactElement, useRef, useState } from "react";
 import translate from "../../game/lang";
-import GAME_MANAGER from "../../index";
+import GAME_MANAGER from "./../../main.tsx";
 import "./lobbyMenu.css";
 import { ClientConnection } from "../../game/gameState.d";
 import Icon from "../../components/Icon";

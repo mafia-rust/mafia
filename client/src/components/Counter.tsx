@@ -1,4 +1,4 @@
-import React, { ReactNode, ReactElement } from "react";
+import { ReactNode, ReactElement } from "react";
 import "./counter.css"
 
 export default function Counter(props: Readonly<{

@@ -1,6 +1,5 @@
 import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 import { Role, roleJsonData } from "../game/roleState.d";
-import React from "react";
 import translate, { langText, translateChecked } from "../game/lang";
 import StyledText, { DUMMY_NAMES_KEYWORD_DATA, DUMMY_NAMES_SENDER_KEYWORD_DATA, StyledTextProps } from "./StyledText";
 import { ROLE_SETS, getAllRoles, getRolesFromRoleSet } from "../game/roleListState.d";
@@ -8,7 +7,7 @@ import ChatElement, { ChatMessageVariant } from "./ChatMessage";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { ARTICLES, GeneratedArticle, getArticleTitle, WikiArticleLink, wikiPageIsEnabled } from "./WikiArticleLink";
 import "./wiki.css";
-import GAME_MANAGER, { replaceMentions } from "..";
+import GAME_MANAGER, { replaceMentions } from "./../main.tsx";
 import { useLobbyOrGameState } from "./useHooks";
 import DetailsSummary from "./DetailsSummary";
 import { partitionWikiPages, WikiCategory } from "./Wiki";
@@ -245,8 +244,8 @@ function RoleSetArticle(): ReactElement {
 function getSearchStringsGenerated(article: GeneratedArticle): string[]{
     switch(article){
         case "roleSet": {
-            let out = [translate("wiki.article.generated.roleSet.title")];
-            for(let set of ROLE_SETS){
+            const out = [translate("wiki.article.generated.roleSet.title")];
+            for(const set of ROLE_SETS){
                 out.push(translate(set));
             }
             return out;
@@ -263,31 +262,31 @@ export function getSearchStrings(article: WikiArticleLink): string[]{
         case "role": {
             const role = path[1] as Role;
             const roleData = roleJsonData()[role];
-            let out = [];
+            const out = [];
 
             out.push(translate("role."+role+".name"));
 
-            for(let roleSet of roleData.roleSets){
+            for(const roleSet of roleData.roleSets){
                 out.push(translate(roleSet));
             }
 
-            let guide = translateChecked("wiki.article.role."+role+".guide");
+            const guide = translateChecked("wiki.article.role."+role+".guide");
             if(guide)
                 out.push(guide);
             if(roleData.armor){
                 out.push(translate("defense.1"));
                 out.push(translate("defense"));
             }
-            let abilities = translateChecked("wiki.article.role."+role+".abilities");
+            const abilities = translateChecked("wiki.article.role."+role+".abilities");
             if(abilities)
                 out.push(abilities);
-            let attributes = translateChecked("wiki.article.role."+role+".attributes");
+            const attributes = translateChecked("wiki.article.role."+role+".attributes");
             if(attributes)
                 out.push(attributes);
-            let extra = translateChecked("wiki.article.role."+role+".extra");
+            const extra = translateChecked("wiki.article.role."+role+".extra");
             if(extra)
                 out.push(extra);
-            let roleLimit = roleData.maxCount !== null;
+            const roleLimit = roleData.maxCount !== null;
             if(roleLimit)
                 out.push(translate("wiki.article.standard.roleLimit.title"));
 

@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useContext, useState } from "react"
+import { ReactElement, useCallback, useContext, useState } from "react"
 import translate from "../../game/lang"
 import StyledText from "../StyledText"
 import { ROLE_SETS, RoleOrRoleSet, getAllRoles, getRolesFromRoleOrRoleSet } from "../../game/roleListState.d";

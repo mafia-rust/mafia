@@ -1,4 +1,3 @@
-import React from "react";
 import { ReactElement } from "react";
 import translate from "../../game/lang";
 import "./credits.css";

@@ -1,4 +1,3 @@
-import React from "react";
 import { PlayerIndex } from "../../../../../game/gameState.d";
 import PlayerOptionDropdown from "../../../../../components/PlayerOptionDropdown";
 import { AvailablePlayerListSelection, PlayerListSelection, } from "../../../../../game/abilityInput";

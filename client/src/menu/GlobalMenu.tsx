@@ -1,7 +1,7 @@
-import React, { JSXElementConstructor, ReactElement, useContext, useEffect, useRef } from 'react';
+import { JSX, JSXElementConstructor, ReactElement, useContext, useEffect, useRef } from 'react';
 import "./globalMenu.css";
 import translate from '../game/lang';
-import GAME_MANAGER from '..';
+import GAME_MANAGER from './../main.tsx';
 import { AnchorControllerContext } from './Anchor';
 import StartMenu from './main/StartMenu';
 import LoadingScreen from './LoadingScreen';

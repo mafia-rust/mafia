@@ -8,7 +8,7 @@ type CopyButtonResult = boolean;
 type CopyButtonProps = ButtonProps<CopyButtonResult> & { onClick?: undefined, ref?: undefined, text: string };
 
 function reconcileCopyProps(props: CopyButtonProps): ButtonProps<CopyButtonResult> {
-    let newProps: Partial<CopyButtonProps> = {...props};
+    const newProps: Partial<CopyButtonProps> = {...props};
     delete newProps.onClick;
     delete newProps.ref;
     newProps.text = undefined;
@@ -100,6 +100,7 @@ async function writeToClipboard(text: string, pushError: (error: ErrorData) => v
     try {
         await navigator.clipboard.writeText(text);
         return true;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
         pushError({
             title: translate("notification.clipboard.read.failure"), 

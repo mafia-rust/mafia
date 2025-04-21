@@ -16,11 +16,10 @@ import {
     PlayerListSelection,
     IntegerSelection
 } from "../../../../game/abilityInput";
-import React from "react";
 import { usePlayerState } from "../../../../components/useHooks";
 import { Button } from "../../../../components/Button";
 import TwoRoleOutlineOptionSelectionMenu from "./AbilitySelectionTypes/TwoRoleOutlineOptionSelectionMenu";
-import GAME_MANAGER from "../../../..";
+import GAME_MANAGER from "../../../../main";
 import TwoRoleOptionSelectionMenu from "./AbilitySelectionTypes/TwoRoleOptionSelectionMenu";
 import TwoPlayerOptionSelectionMenu from "./AbilitySelectionTypes/TwoPlayerOptionSelectionMenu";
 import StyledText from "../../../../components/StyledText";
@@ -91,13 +90,13 @@ export default function GenericAbilityMenu(): ReactElement {
         ["yourAllowedControllers"]
     )!;
 
-    let controllerGroupsMap: ControllerGroupsMap = new ListMap();
+    const controllerGroupsMap: ControllerGroupsMap = new ListMap();
     //build this map ^
-    for(let [controllerID, controller] of savedAbilities) {
+    for(const [controllerID, controller] of savedAbilities) {
 
         if (!showThisController(controllerID)) {continue;}
 
-        let groupName = getGroupNameFromControllerID(controllerID);
+        const groupName = getGroupNameFromControllerID(controllerID);
         
         let controllers = controllerGroupsMap.get(groupName);
         if(controllers === null){
@@ -111,7 +110,7 @@ export default function GenericAbilityMenu(): ReactElement {
     return <>
         {controllerGroupsMap.entries().map(([group, controllers], i)=>{
 
-            let firstController = controllers.entries()[0]
+const firstController = controllers.entries()[0]
             if(firstController !== undefined && controllers.entries().length === 1){
                 return <SingleAbilityMenu
                     key={i}
@@ -140,7 +139,7 @@ function MultipleControllersMenu(props: Readonly<{
     );
 
 
-    let anyControllerId = props.controllers.keys()[0]
+    const anyControllerId = props.controllers.keys()[0]
     let groupName = "";
     if(anyControllerId !== undefined){
         groupName = translateGroupName(anyControllerId)
@@ -250,7 +249,7 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
 }>): ReactElement {
 
     const {id, available} = props;
-    let selected: AbilitySelection = props.selected;
+    const selected: AbilitySelection = props.selected;
 
     switch(available.type) {
         case "unit":

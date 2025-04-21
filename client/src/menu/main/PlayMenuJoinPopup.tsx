@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 import { LobbyPreviewData } from "../../game/packet";
 import translate from "../../game/lang";
 import "./playMenuJoinPopup.css";
@@ -13,7 +13,7 @@ export default function PlayMenuJoinPopup(props: Readonly<{
         <button onClick={() => props.joinGame(props.roomCode)}>{translate("menu.play.button.spectate")}</button>
         
         <div className="rejoinColumn">
-            {props.lobbyData.players.map((player, j)=>{
+            {props.lobbyData.players.map((player)=>{
                 return <button key={player[1]} onClick={()=>{
                     props.joinGame(props.roomCode, player[0]);
                 }}>{player[1]}</button>

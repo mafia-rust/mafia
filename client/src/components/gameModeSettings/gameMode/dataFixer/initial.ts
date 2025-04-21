@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { VersionConverter } from ".";
 import { PHASES, PhaseTimes } from "../../../../game/gameState.d";
 import { Settings } from "../../../../game/localStorage";
@@ -45,7 +46,7 @@ function convertSettings(json: NonNullable<any>): ParseResult<Settings> {
     });
 }
 
-function parseRoleSpecificMenus(json: NonNullable<any>): ParseResult<Role[]> {
+function parseRoleSpecificMenus(_json: NonNullable<any>): ParseResult<Role[]> {
     return Success([]);
 }
 
@@ -191,7 +192,7 @@ function parseRoleOutline(json: NonNullable<any>): ParseResult<InitialRoleOutlin
     switch (json.type) {
         case "any":
             return Success({ type: "any" })
-        case "roleOutlineOptions":
+        case "roleOutlineOptions":{
             if (!Object.keys(json).includes('options')) {
                 return Failure("roleOutlineMissingOptionsKey", json);
             }
@@ -203,6 +204,7 @@ function parseRoleOutline(json: NonNullable<any>): ParseResult<InitialRoleOutlin
                 type: "roleOutlineOptions",
                 options: options.value
             });
+        }
         default:
             return Failure("roleOutlineInvalidType", json);
     }
@@ -227,7 +229,7 @@ function parseRoleOutlineOption(json: NonNullable<any>): ParseResult<InitialRole
     }
 
     switch (json.type) {
-        case "role":
+        case "role":{
             if (!Object.keys(json).includes('role')) {
                 return Failure("roleOutlineOptionMissingRoleKey", json);
             }
@@ -239,7 +241,8 @@ function parseRoleOutlineOption(json: NonNullable<any>): ParseResult<InitialRole
                 type: "role",
                 role: role.value
             });
-        case "roleSet":
+        }
+        case "roleSet":{
             if (!Object.keys(json).includes('roleSet')) {
                 return Failure("roleOutlineOptionMissingRoleSetKey", json);
             }
@@ -251,7 +254,8 @@ function parseRoleOutlineOption(json: NonNullable<any>): ParseResult<InitialRole
                 type: "roleSet",
                 roleSet: roleSet.value
             });
-        case "faction":
+        }
+        case "faction":{
             if (!Object.keys(json).includes('faction')) {
                 return Failure("roleOutlineOptionMissingFactionKey", json);
             }
@@ -263,6 +267,7 @@ function parseRoleOutlineOption(json: NonNullable<any>): ParseResult<InitialRole
                 type: "faction",
                 faction: faction.value
             });
+        }
         default:
             return Failure("roleOutlineOptionInvalidType", json);
     }

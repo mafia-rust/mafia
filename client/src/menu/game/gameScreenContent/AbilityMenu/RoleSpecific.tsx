@@ -1,5 +1,5 @@
 import { useGameState, usePlayerState } from "../../../../components/useHooks";
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 import AuditorMenu from "./RoleSpecificMenus/AuditorMenu";
 import LargeHypnotistMenu from "./RoleSpecificMenus/LargeHypnotistMenu";
 import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
@@ -55,7 +55,7 @@ function roleSpecificSectionInner(
     roleState: RoleState,
     numPlayers: number
 ): ReactElement | null{
-    let maxChargesCounter = abilityChargesCounter(numPlayers);
+    const maxChargesCounter = abilityChargesCounter(numPlayers);
 
     switch(roleState.type){
         case "auditor":
@@ -244,7 +244,7 @@ function MediumRoleSpecificMenu(props: Readonly<{
     }
 }
 
-function SpiralMenu(props: {}): ReactElement | null {
+function SpiralMenu(): ReactElement | null {
     const spiralingPlayers = useGameState(
         gameState => gameState.players.filter(p => p.playerTags.includes("spiraling")),
         ["yourPlayerTags"]

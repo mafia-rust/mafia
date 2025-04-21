@@ -1,9 +1,9 @@
-import React from "react"
+import React, { JSX } from "react"
 import "./largeDoomsayerMenu.css"
 import translate, { translateChecked } from "../../../../../game/lang";
 import GameState from "../../../../../game/gameState.d";
 import { StateEventType } from "../../../../../game/gameManager.d";
-import GAME_MANAGER from "../../../../..";
+import GAME_MANAGER from "../../../../../main";
 
 
 export type Doomsayer = {
@@ -32,8 +32,6 @@ export function doomsayerGuessTranslate(doomsayerGuess: DoomsayerGuess): string{
     return outString;
 }
 
-type LargeDoomsayerMenuProps = {
-}
 type LargeDoomsayerMenuState = {
     gameState: GameState
     localDoomsayerGuesses: [
@@ -42,7 +40,7 @@ type LargeDoomsayerMenuState = {
         [number, DoomsayerGuess]
     ]
 }
-export default class LargeDoomsayerMenu extends React.Component<LargeDoomsayerMenuProps, LargeDoomsayerMenuState> {
+export default class LargeDoomsayerMenu extends React.Component<object, LargeDoomsayerMenuState> {
     listener: (type?: StateEventType) => void;
     constructor(props: LargeDoomsayerMenuState) {
         super(props);
@@ -106,11 +104,11 @@ export default class LargeDoomsayerMenu extends React.Component<LargeDoomsayerMe
         //cant guess yourself
         //cant guess a dead player (keep in mind a player could possibly appear dead when their not, so maybe keep it so you can guess dead players?)
 
-        let playerOptions: JSX.Element[] = [];
+        const playerOptions: JSX.Element[] = [];
         for(let i = 0; i < this.state.gameState.players.length; i++){
             playerOptions.push(<option key={i} value={i}>{this.state.gameState.players[i].toString()}</option>);
         }
-        let doomsayerGuessOptions: JSX.Element[] = [];
+        const doomsayerGuessOptions: JSX.Element[] = [];
         for(let i = 0; i < DOOMSAYER_GUESSES.length; i++){
             doomsayerGuessOptions.push(<option key={i} value={DOOMSAYER_GUESSES[i]}>{doomsayerGuessTranslate(DOOMSAYER_GUESSES[i])}</option>);
         }
@@ -118,7 +116,7 @@ export default class LargeDoomsayerMenu extends React.Component<LargeDoomsayerMe
             <select
                 value={this.state.localDoomsayerGuesses[index][0]}
                 onChange={(e)=>{
-                    let newGuess = this.state.localDoomsayerGuesses;
+                    const newGuess = this.state.localDoomsayerGuesses;
                     newGuess[index][0] = parseInt(e.target.options[e.target.selectedIndex].value);
                     this.sendAndSetGuesses(newGuess);
                 }}
@@ -126,7 +124,7 @@ export default class LargeDoomsayerMenu extends React.Component<LargeDoomsayerMe
             <select
                 value={this.state.localDoomsayerGuesses[index][1]}
                 onChange={(e)=>{
-                    let newGuess = this.state.localDoomsayerGuesses;
+                    const newGuess = this.state.localDoomsayerGuesses;
                     newGuess[index][1] = e.target.options[e.target.selectedIndex].value as DoomsayerGuess;
                     this.sendAndSetGuesses(newGuess);
                 }}

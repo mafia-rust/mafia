@@ -1,5 +1,4 @@
 import { ReactElement } from "react"
-import React from "react"
 import "./twoRoleOutlineOptionSelectionMenu.css"
 import { Role } from "../../../../../game/roleState.d"
 import { RoleList, translateRoleOutline } from "../../../../../game/roleListState.d"
@@ -49,9 +48,9 @@ export default function TwoRoleOutlineOptionSelectionMenu(props: {
     for(let i = 0; i < roleList.length; i++){
         const found = previouslyGivenResults.find(result=>result[0] === i);
         if(found !== undefined){
-            buttons.push({type:"used" as "used", result: found[1]});
+            buttons.push({type:"used" as const, result: found[1]});
         }else{
-            buttons.push({type:"notUsed"  as "notUsed", chosen: chosenOutlines.includes(i)});
+            buttons.push({type:"notUsed" as const, chosen: chosenOutlines.includes(i)});
         }
     }
     
@@ -106,7 +105,7 @@ function ChooseButtons(props: Readonly<{
                     className={"choose-button" + (button.chosen ? " highlighted" : "")}
                     key={index}
                     onClick={()=>{
-                        let newChosenOutlines = [...props.chosenOutlines];
+                        const newChosenOutlines = [...props.chosenOutlines];
 
                         const foundIndex = newChosenOutlines.indexOf(index);
                         if(foundIndex !== -1){

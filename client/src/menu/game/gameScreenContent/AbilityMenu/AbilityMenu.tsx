@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 import translate from "../../../../game/lang";
 import { ContentMenu, ContentTab } from "../../GameScreen";
 import { useGameState } from "../../../../components/useHooks";

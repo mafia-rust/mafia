@@ -27,20 +27,20 @@ export default class ListMap<K, V> {
         return null
     }
     insert(key: K, value: V) {
-        this.list = this.list.filter(([k, v]) => !this.equalsFn(k, key));
+        this.list = this.list.filter(([k]) => !this.equalsFn(k, key));
         this.list.push([key, value])
     }
     delete(key: K) {
-        this.list = this.list.filter(([k, v]) => !this.equalsFn(k, key))
+        this.list = this.list.filter(([k]) => !this.equalsFn(k, key))
     }
     entries(): ListMapData<K, V> {
         return this.list
     }
     keys(): K[] {
-        return this.list.map(([k, v]) => k)
+        return this.list.map(([k]) => k)
     }
     values(): V[] {
-        return this.list.map(([k, v]) => v)
+        return this.list.map(([, v]) => v)
     }
 
 

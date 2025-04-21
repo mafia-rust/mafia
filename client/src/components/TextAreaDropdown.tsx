@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useMemo, useRef, useState } from "react";
 import StyledText from "./StyledText";
 import { sanitizePlayerMessage } from "./ChatMessage";
-import GAME_MANAGER, { replaceMentions } from "..";
+import GAME_MANAGER, { replaceMentions } from "../main";
 import { Button } from "./Button";
 import Icon from "./Icon";
 import translate from "../game/lang";

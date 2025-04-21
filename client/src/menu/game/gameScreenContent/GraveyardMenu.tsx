@@ -1,6 +1,6 @@
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER from "../../../index";
+import GAME_MANAGER from "../../../main";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import "./graveyardMenu.css";
 import StyledText from "../../../components/StyledText";

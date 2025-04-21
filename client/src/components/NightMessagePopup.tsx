@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import ChatElement, { ChatMessage } from './ChatMessage';
 import translate from '../game/lang';
 import "./nightMessagePopup.css";
