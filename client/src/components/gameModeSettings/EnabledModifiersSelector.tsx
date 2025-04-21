@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useContext, useState } from "react";
+import { ReactElement, useCallback, useContext, useState } from "react";
 import { MODIFIERS, ModifierType } from "../../game/gameState.d";
 import translate from "../../game/lang";
 import StyledText from "../StyledText";
@@ -76,7 +76,7 @@ export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): Re
             {MODIFIERS
                 .filter(role => isEnabled(role) || !hideDisabled || props.modifiable)
                 .sort((a, b) => props.modifiable ? 0 : (isEnabled(a) ? -1 : 1) - (isEnabled(b) ? -1 : 1))
-                .map((modifier, i) => 
+                .map((modifier) => 
                 props.modifiable 
                     ? <Button key={modifier}
                         disabled={props.disabled}

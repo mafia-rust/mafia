@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import GAME_MANAGER from "..";
+import GAME_MANAGER from "../main";
 import { StateEventType } from "../game/gameManager.d";
 import GameState, { LobbyState, PlayerGameState } from "../game/gameState.d";
 import DUMMY_NAMES from "../resources/dummyNames.json";

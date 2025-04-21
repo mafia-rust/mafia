@@ -1,7 +1,7 @@
 import { marked } from "marked";
-import React, { ReactElement, useContext, useEffect } from "react";
+import { ReactElement, useContext, useEffect } from "react";
 import ReactDOMServer from "react-dom/server";
-import { find } from "..";
+import { find } from "../main";
 import translate, { translateChecked } from "../game/lang";
 import { Role, getMainRoleSetFromRole, roleJsonData } from "../game/roleState.d";
 import "./styledText.css";
@@ -12,6 +12,7 @@ import { Player } from "../game/gameState.d";
 import { AnchorControllerContext } from "../menu/Anchor";
 import { setWikiSearchPage } from "./Wiki";
 import { getRoleSetsFromRole } from "../game/roleListState.d";
+import KEYWORD_DATA_JSON from "../resources/keywords.json";
 
 export type TokenData = {
     style?: string, 
@@ -71,7 +72,17 @@ export default function StyledText(props: Readonly<StyledTextProps>): ReactEleme
     }];
 
     if (props.markdown) {
-        tokens[0].string = marked.parse(tokens[0].string, MARKDOWN_OPTIONS);
+        // tokens[0].string = marked.parse(tokens[0].string, MARKDOWN_OPTIONS);
+        const result = marked.parse(tokens[0].string, MARKDOWN_OPTIONS);
+
+        if (result instanceof Promise) {
+            result.then((resolvedResult) => {
+                tokens[0].string = resolvedResult;
+            });
+        } else {
+            tokens[0].string = result; // It's already a string
+        }
+
     } else {
         tokens[0].string = tokens[0].string.replace(/\n/g, '<br>');
     }
@@ -90,7 +101,6 @@ export default function StyledText(props: Readonly<StyledTextProps>): ReactEleme
             );
         } else {
             return ReactDOMServer.renderToStaticMarkup(
-                // eslint-disable-next-line jsx-a11y/anchor-is-valid
                 <a
                     href={`javascript: window.setWikiSearchPage("${token.link}")`}
                     className={token.style + " keyword-link"}
@@ -136,8 +146,8 @@ export function computeKeywordData() {
             link: `${keySplit[0]}/${keySplit[1]}` as WikiArticleLink,
         }]);
     }
-
-    const KEYWORD_DATA_JSON = require("../resources/keywords.json");
+    
+    // const KEYWORD_DATA_JSON = require("../resources/keywords.json");
     //add role keywords
     for(const role of Object.keys(roleJsonData())) {
 
@@ -145,9 +155,9 @@ export function computeKeywordData() {
 
         const roleSets = getRoleSetsFromRole(role as Role);
         if (roleSets.length === 1) {
-            data = KEYWORD_DATA_JSON[roleSets[0]];
+            data = KEYWORD_DATA_JSON[roleSets[0]] as unknown as KeywordData | undefined;
         }else if (data === undefined) {
-            data = KEYWORD_DATA_JSON[getMainRoleSetFromRole(role as Role)];
+            data = KEYWORD_DATA_JSON[getMainRoleSetFromRole(role as Role)] as unknown as KeywordData | undefined;
         }
 
         if (data === undefined || Array.isArray(data)) {
@@ -250,7 +260,7 @@ function styleKeywords(tokens: Token[], extraData?: KeywordDataMap): Token[] {
             if (stringSplit.length === 1) continue;
 
             // Insert the styled string into where we just removed the unstyled string from
-            let replacement: Token[] = []; 
+            const replacement: Token[] = []; 
             for(const string of stringSplit){
                 if(string === "") continue;
                 if (!find(keyword).test(string)) {

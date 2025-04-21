@@ -1,8 +1,8 @@
 
 import { createPlayer } from "./gameState";
-import { ANCHOR_CONTROLLER, chatMessageToAudio } from "./../menu/Anchor";
-import GAME_MANAGER from "./../index";
-import GameScreen from "./../menu/game/GameScreen";
+import { ANCHOR_CONTROLLER, chatMessageToAudio } from "../menu/Anchor";
+import GAME_MANAGER from "../main";
+import GameScreen from "../menu/game/GameScreen";
 import { ToClientPacket } from "./packet";
 import { GameClient, PlayerIndex, Tag } from "./gameState.d";
 import { Role } from "./roleState.d";
@@ -10,7 +10,6 @@ import translate from "./lang";
 import { computePlayerKeywordData, computePlayerKeywordDataForLobby } from "../components/StyledText";
 import { deleteReconnectData, loadSettingsParsed, saveReconnectData } from "./localStorage";
 import { WikiArticleLink } from "../components/WikiArticleLink";
-import React from "react";
 import WikiArticle from "../components/WikiArticle";
 import SpectatorGameScreen from "../menu/spectator/SpectatorGameScreen";
 import LobbyMenu from "../menu/lobby/LobbyMenu";
@@ -56,7 +55,7 @@ export default function messageListener(packet: ToClientPacket){
             if(GAME_MANAGER.state.stateType === "outsideLobby"){
                 GAME_MANAGER.state.lobbies = new Map();
 
-                for(let [lobbyId, lobbyData] of Object.entries(packet.lobbies))
+                for(const [lobbyId, lobbyData] of Object.entries(packet.lobbies))
                     GAME_MANAGER.state.lobbies.set(Number.parseInt(lobbyId), lobbyData);
             }
         break;
@@ -140,7 +139,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "playersHost":
             if(GAME_MANAGER.state.stateType === "lobby"){
-                for(let [playerId, player] of GAME_MANAGER.state.players.entries()){
+                for(const [playerId, player] of GAME_MANAGER.state.players.entries()){
                     if (packet.hosts.includes(playerId)) {
                         player.ready = "host";
                     } else {
@@ -166,7 +165,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "playersReady":
             if(GAME_MANAGER.state.stateType === "lobby"){
-                for(let [playerId, player] of GAME_MANAGER.state.players.entries()){
+                for(const [playerId, player] of GAME_MANAGER.state.players.entries()){
                     if (packet.ready.includes(playerId)) {
                         player.ready = "ready";
                     } else {
@@ -178,7 +177,7 @@ export default function messageListener(packet: ToClientPacket){
         break;
         case "playersLostConnection":
             if(GAME_MANAGER.state.stateType === "lobby"){
-                for(let [playerId, player] of GAME_MANAGER.state.players.entries()){
+                for(const [playerId, player] of GAME_MANAGER.state.players.entries()){
                     if(packet.lostConnection.includes(playerId))
                         player.connection = "couldReconnect";
                 }
@@ -351,12 +350,12 @@ export default function messageListener(packet: ToClientPacket){
         case "playerVotes":
             if(GAME_MANAGER.state.stateType === "game"){
 
-                let listMapVotes = new ListMap<PlayerIndex, number>(packet.votesForPlayer);
+                const listMapVotes = new ListMap<PlayerIndex, number>(packet.votesForPlayer);
 
                 for(let i = 0; i < GAME_MANAGER.state.players.length; i++){
                     GAME_MANAGER.state.players[i].numVoted = 0;
                     
-                    let numVoted = listMapVotes.get(i);
+                    const numVoted = listMapVotes.get(i);
                     if(numVoted !== null){
                         GAME_MANAGER.state.players[i].numVoted = numVoted;
                     }
@@ -469,7 +468,7 @@ export default function messageListener(packet: ToClientPacket){
                 if(GAME_MANAGER.state.stateType === "game" && packet.chatMessages.length !== 0){
                     GAME_MANAGER.state.missedChatMessages = true;
                     
-                    for(let chatMessage of packet.chatMessages){
+                    for(const chatMessage of packet.chatMessages){
                         if(
                             chatMessage.variant.type === "whisper" &&
                             GAME_MANAGER.state.clientState.type === "player" &&
@@ -481,8 +480,8 @@ export default function messageListener(packet: ToClientPacket){
                 }
 
                 if (GAME_MANAGER.state.stateType !== "game" || GAME_MANAGER.state.initialized === true) {
-                    for(let chatMessage of packet.chatMessages){
-                        let audioSrc = chatMessageToAudio(chatMessage);
+                    for(const chatMessage of packet.chatMessages){
+                        const audioSrc = chatMessageToAudio(chatMessage);
                         if(audioSrc)
                             AudioController.queueFile(audioSrc);
                     }

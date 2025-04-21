@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 import Wiki from "../../components/Wiki";
 import translate from "../../game/lang";
 import "./standaloneWiki.css";

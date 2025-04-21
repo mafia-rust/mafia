@@ -1,5 +1,4 @@
 import { ReactElement } from "react"
-import React from "react"
 import translate from "../game/lang"
 import { PlayerIndex } from "../game/gameState.d"
 import { useGameState } from "./useHooks"
@@ -15,7 +14,7 @@ export default function PlayerOptionDropdown(props: {
     canChooseNone?: boolean
 }): ReactElement {
 
-    let players = useGameState(
+    const players = useGameState(
         gameState => gameState.players.map(player => [player.index, player.toString()] as [PlayerIndex, string]),
         ["gamePlayers"]
     )!;

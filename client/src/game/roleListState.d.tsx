@@ -6,9 +6,9 @@ import { Role, roleJsonData } from "./roleState.d";
 export type RoleList = RoleOutline[];
 export function getRolesFromRoleList(roleList: RoleList): Role[] {
 
-    let set = new Set<Role>();
-    for(let roleOutline of roleList){
-        for(let role of getRolesFromOutline(roleOutline)){
+    const set = new Set<Role>();
+    for(const roleOutline of roleList){
+        for(const role of getRolesFromOutline(roleOutline)){
             set.add(role);
         }
     }
@@ -123,8 +123,8 @@ export function simplifyRoleOutline(roleOutline: RoleOutline): RoleOutline {
         return index === self.findIndex((t) => deepEqual(item, t));
     });
 
-    for(let optionA of roleOutline){
-        for(let optionB of roleOutline){
+    for(const optionA of roleOutline){
+        for(const optionB of roleOutline){
             if(outlineOptionIsSubset(optionA, optionB) && !deepEqual(optionA, optionB)){
                 newOptions = newOptions.filter((option) => option !== optionA);
             }
@@ -135,13 +135,13 @@ export function simplifyRoleOutline(roleOutline: RoleOutline): RoleOutline {
     return newOptions;
 }
 function outlineOptionIsSubset(optionA: RoleOutlineOption, optionB: RoleOutlineOption): boolean {
-    let rolesA = getRolesFromOutlineOption(optionA);
-    let rolesB = getRolesFromOutlineOption(optionB);
+    const rolesA = getRolesFromOutlineOption(optionA);
+    const rolesB = getRolesFromOutlineOption(optionB);
     return rolesA.every((role) => rolesB.includes(role));
 }
 function outlineOptionCompare(optionA: RoleOutlineOption, optionB: RoleOutlineOption): number {
-    let rolesA = getRolesFromOutlineOption(optionA);
-    let rolesB = getRolesFromOutlineOption(optionB);
+    const rolesA = getRolesFromOutlineOption(optionA);
+    const rolesB = getRolesFromOutlineOption(optionB);
     return rolesB.length - rolesA.length;
 }
 

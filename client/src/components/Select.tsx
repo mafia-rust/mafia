@@ -22,9 +22,9 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
         if("optionsSearch" in props) {
             return props.optionsSearch;
         } else {
-            let optionsSearch = new Map<K, [React.ReactNode, string]>()
+            const optionsSearch = new Map<K, [React.ReactNode, string]>()
 
-            for(let [key, val] of props.optionsNoSearch.entries()) {
+            for(const [key, val] of props.optionsNoSearch.entries()) {
                 optionsSearch.set(key, [val, key.toString()]);
             }
             return optionsSearch
@@ -33,9 +33,9 @@ export default function Select<K extends { toString(): string}>(props: Readonly<
 
     const optionsNoSearch: SelectOptionsNoSearch<K> = useMemo(() => {
         if ("optionsSearch" in props) {
-            let optionsNoSearch = new Map<K, React.ReactNode>()
+            const optionsNoSearch = new Map<K, React.ReactNode>()
 
-            for(let [key, val] of props.optionsSearch.entries()) {
+            for(const [key, val] of props.optionsSearch.entries()) {
                 optionsNoSearch.set(key, val[0]);
             }
 
@@ -184,7 +184,8 @@ export function dropdownPlacementFunction(dropdownElement: HTMLElement, buttonEl
     keepPopoverOnScreen(dropdownElement, buttonElement);
 }
 
-function keepPopoverOnScreen(dropdownElement: HTMLElement, buttonElement?: HTMLElement) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function keepPopoverOnScreen(dropdownElement: HTMLElement, _buttonElement?: HTMLElement) {
     const dropdownBounds = dropdownElement.getBoundingClientRect();
 
     const modifyTop = dropdownElement.style.bottom === 'unset' || dropdownElement.style.bottom === "";

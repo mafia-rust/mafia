@@ -1,8 +1,8 @@
-import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import translate from "../game/lang";
 import "./wiki.css";
 import { Role, getMainRoleSetFromRole } from "../game/roleState.d";
-import GAME_MANAGER, { regEscape } from "..";
+import GAME_MANAGER, { regEscape } from "../main";
 import WikiArticle, { getSearchStrings, PageCollection } from "./WikiArticle";
 import { ARTICLES, WikiArticleLink, getArticleTitle, wikiPageIsEnabled } from "./WikiArticleLink";
 import StyledText from "./StyledText";
@@ -45,6 +45,7 @@ export default function Wiki(props: Readonly<{
     const [history, setHistory] = useState<WikiArticleLink[]>([]);
 
     useEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         props.onPageChange && props.onPageChange(article);
     }, [article, props])
 
@@ -73,7 +74,7 @@ export default function Wiki(props: Readonly<{
 
     function goBack() {
         if (history.length > 1) {
-            let newHistory = [...history];
+            const newHistory = [...history];
             newHistory.pop();
             setHistory(newHistory);
             setArticle(newHistory[newHistory.length - 1]);

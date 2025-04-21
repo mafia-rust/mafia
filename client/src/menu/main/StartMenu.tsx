@@ -1,5 +1,5 @@
-import React, { ReactElement, useContext } from "react";
-import GAME_MANAGER from "../../index";
+import { ReactElement, useContext } from "react";
+import GAME_MANAGER from "../../main.tsx";
 import "../../index.css"
 import "./startMenu.css"
 import translate from "../../game/lang";

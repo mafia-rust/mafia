@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import "./wikiMenu.css"
 import translate from "../../../game/lang";

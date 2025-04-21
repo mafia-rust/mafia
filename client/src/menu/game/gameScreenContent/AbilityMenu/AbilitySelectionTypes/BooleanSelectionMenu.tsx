@@ -44,12 +44,12 @@ function BooleanSelectionMenuNamed(props: Readonly<{
     onChoose: (bool: BooleanSelection)=>void,
 }>): ReactElement {
     ///make array with numbers from available.min to available.max
-    let optionsSearch = new Map<boolean, [React.ReactNode, string]>();
+    const optionsSearch = new Map<boolean, [React.ReactNode, string]>();
 
-    let trueText = translate("controllerId."+controllerIdToLink(props.id).replace(/\//g, ".") + ".boolean.true");
+    const trueText = translate("controllerId."+controllerIdToLink(props.id).replace(/\//g, ".") + ".boolean.true");
     optionsSearch.set(true, [<StyledText noLinks={true}>{trueText}</StyledText>, trueText]);
     
-    let falseText = translate("controllerId."+controllerIdToLink(props.id).replace(/\//g, ".") + ".boolean.false");
+    const falseText = translate("controllerId."+controllerIdToLink(props.id).replace(/\//g, ".") + ".boolean.false");
     optionsSearch.set(false, [<StyledText noLinks={true}>{falseText}</StyledText>, falseText]);
     
     return <div>

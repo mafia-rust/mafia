@@ -1,11 +1,11 @@
-import React, { JSXElementConstructor, ReactElement, useRef, createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
+import React, { JSXElementConstructor, ReactElement, useRef, createContext, useContext, useState, useEffect, useMemo, useCallback, JSX } from "react";
 import "../index.css";
 import "./anchor.css";
 import { switchLanguage } from "../game/lang";
 import GlobalMenu from "./GlobalMenu";
 import { loadSettingsParsed } from "../game/localStorage";
 import LoadingScreen from "./LoadingScreen";
-import { Theme } from "..";
+import { Theme } from "./../main.tsx";
 import Icon from "../components/Icon";
 import { Button } from "../components/Button";
 import { ChatMessage } from "../components/ChatMessage";
@@ -215,18 +215,18 @@ export default function Anchor(props: Readonly<{
                 onTouchMove={(e) => {
                     setTouchCurrent([e.targetTouches[0].clientX,e.targetTouches[0].clientY])
                 }}
-                onTouchEnd={(e) => {
+                onTouchEnd={() => {
                     if(touchStart !== null && touchCurrent !== null){
 
                         if(touchStart[1] - touchCurrent[1] > MAX_SWIPE_DISTANCE_Y) {
                             return;
                         }
                         if(touchStart[0] - touchCurrent[0] > MIN_SWIPE_DISTANCE_X) {
-                            for(let listener of swipeEventListeners) {
+                            for(const listener of swipeEventListeners) {
                                 listener(false);
                             }
                         } else if (touchStart[0] - touchCurrent[0] < -MIN_SWIPE_DISTANCE_X) {
-                            for(let listener of swipeEventListeners) {
+                            for(const listener of swipeEventListeners) {
                                 listener(true);
                             }
                         }

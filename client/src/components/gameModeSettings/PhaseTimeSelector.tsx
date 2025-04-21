@@ -1,4 +1,4 @@
-import React, { ReactElement, useContext } from "react";
+import { ReactElement, useContext } from "react";
 import { PhaseType, PhaseTimes, PHASES } from "../../game/gameState.d";
 import translate from "../../game/lang";
 import { isValidPhaseTime } from "../../game/gameManager";
@@ -14,7 +14,7 @@ export default function PhaseTimesSelector(props: Readonly<{
     const {phaseTimes} = useContext(GameModeContext);
 
     const onChange = (phase: Exclude<PhaseType, "recess">, time: number) => {
-        let newPhaseTimes = {...phaseTimes};
+        const newPhaseTimes = {...phaseTimes};
         newPhaseTimes[phase] = time;
         props.onChange(newPhaseTimes);
     }

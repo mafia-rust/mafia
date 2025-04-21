@@ -1,10 +1,10 @@
-import React, { createContext, ReactElement, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, ReactElement, useCallback, useContext, useEffect, useState } from "react";
 import HeaderMenu, { MenuButtons } from "./HeaderMenu";
 import GraveyardMenu from "./gameScreenContent/GraveyardMenu";
 import ChatMenu from "./gameScreenContent/ChatMenu";
 import PlayerListMenu from "./gameScreenContent/PlayerListMenu";
 import WillMenu from "./gameScreenContent/WillMenu";
-import GAME_MANAGER, { DEV_ENV, modulus, Theme } from "../..";
+import GAME_MANAGER, { DEV_ENV, modulus, Theme } from "../../main";
 import WikiMenu from "./gameScreenContent/WikiMenu";
 import "../../index.css";
 import "./gameScreen.css";
@@ -145,8 +145,8 @@ export function useMenuController<C extends Partial<Record<ContentMenu, boolean>
             },
             menusOpen(): ContentMenu[] {
                 return Object.entries(contentMenus)
-                    .filter(([_, open]) => open)
-                    .map(([menu, _]) => menu) as ContentMenu[];
+                    .filter(([, open]) => open)
+                    .map(([menu]) => menu) as ContentMenu[];
             },
             menuOpen(menu): boolean {
                 return this.menusOpen().includes(menu);
@@ -317,6 +317,7 @@ export function ContentTab(props: Readonly<{
         {props.helpMenu && !spectator && <Button className="help"
             onClick={()=>{
                 menuController.openMenu(ContentMenu.WikiMenu, ()=>{
+                    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                     props.helpMenu && GAME_MANAGER.setWikiArticle(props.helpMenu);
                 });
             }}

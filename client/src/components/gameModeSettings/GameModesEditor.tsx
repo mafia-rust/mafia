@@ -1,5 +1,4 @@
 import { ReactElement, createContext, useCallback, useState } from "react";
-import React from "react";
 import { OutlineListSelector } from "./OutlineSelector";
 import { getAllRoles, RoleList, RoleOutline } from "../../game/roleListState.d";
 import translate from "../../game/lang";
@@ -63,7 +62,7 @@ export default function GameModesEditor(props: Readonly<{
         setRoleList([...roleList, [{ roleSet: "any" }]]);
     }
     const removeOutline = (index: number) => {
-        let newRoleList = [...roleList];
+        const newRoleList = [...roleList];
         newRoleList.splice(index, 1);
         setRoleList(newRoleList);
     }

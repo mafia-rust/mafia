@@ -1,9 +1,9 @@
-import { ANCHOR_CONTROLLER } from "./../menu/Anchor";
-import StartMenu from "./../menu/main/StartMenu";
-import GAME_MANAGER from "./../index";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { ANCHOR_CONTROLLER } from "../menu/Anchor";
+import StartMenu from "../menu/main/StartMenu";
+import GAME_MANAGER from "../main";
 import messageListener from "./messageListener";
-import CONFIG from "./../resources/config.json"
-import React from "react";
+import CONFIG from "../resources/config.json"
 import { PhaseType, PhaseTimes, Verdict, PlayerIndex } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
 import { LobbyPreviewData, ToClientPacket, ToServerPacket } from "./packet";
@@ -19,7 +19,7 @@ export function createGameManager(): GameManager {
 
     console.log("Game manager created.");
     
-    let gameManager: GameManager = {
+    const gameManager: GameManager = {
         async setDisconnectedState(): Promise<void> {
             AudioController.clearQueue();
             AudioController.pauseQueue();
@@ -134,7 +134,7 @@ export function createGameManager(): GameManager {
             gameManager.listeners.push(listener);
         },
         removeStateListener(listener) {
-            let index = gameManager.listeners.indexOf(listener);
+            const index = gameManager.listeners.indexOf(listener);
             if (index !== -1)
                 gameManager.listeners.splice(index, 1);
         },
@@ -149,7 +149,7 @@ export function createGameManager(): GameManager {
         setPrependWhisperFunction: (f) => {
             gameManager.prependWhisper = f;
         },
-        prependWhisper: (index) => {},
+        prependWhisper: (_index) => {},
         
         wikiArticleCallbacks: [],
         addSetWikiArticleCallback: (callback) => {
@@ -182,7 +182,7 @@ export function createGameManager(): GameManager {
             const promise = new Promise<boolean>((resolver) => {
                 completePromise = resolver;
             });
-            let onJoined: StateListener = (type) => {
+            const onJoined: StateListener = (type) => {
                 if (type === "acceptJoin") {
                     completePromise(true);
                     GAME_MANAGER.removeStateListener(onJoined);
@@ -303,10 +303,10 @@ export function createGameManager(): GameManager {
         },
         sendStartGamePacket() {
             let completePromise: (success: boolean) => void;
-            let promise = new Promise<boolean>((resolver) => {
+            const promise = new Promise<boolean>((resolver) => {
                 completePromise = resolver;
             });
-            let onJoined: StateListener = (type) => {
+            const onJoined: StateListener = (type) => {
                 if (type === "startGame") {
                     completePromise(true);
                     GAME_MANAGER.removeStateListener(onJoined);
@@ -507,11 +507,11 @@ export function createGameManager(): GameManager {
 }
 function createServer(){
 
-    let Server: Server = {
+    const Server: Server = {
         ws: null,
 
         open : () => {
-            let address = CONFIG.address;
+            const address = CONFIG.address;
             try {
                 Server.ws = new WebSocket(address);
             } catch {
@@ -530,11 +530,11 @@ function createServer(){
                 })
             ]);
 
-            Server.ws.onopen = (event: Event)=>{
+            Server.ws.onopen = (_event: Event)=>{
                 completePromise(true);
                 console.log("Connected to server.");
             };
-            Server.ws.onclose = (event: CloseEvent)=>{
+            Server.ws.onclose = (_event: CloseEvent)=>{
                 console.log("Disconnected from server.");
                 completePromise(false);
                 GAME_MANAGER.invokeStateListeners("connectionClosed");
@@ -552,7 +552,7 @@ function createServer(){
                     JSON.parse(event.data) as ToClientPacket
                 );
             };
-            Server.ws.onerror = (event: Event) => {
+            Server.ws.onerror = (_event: Event) => {
                 Server.close();
                 completePromise(false);
                 ANCHOR_CONTROLLER?.pushErrorCard({

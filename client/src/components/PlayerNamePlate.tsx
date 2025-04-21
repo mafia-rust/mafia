@@ -1,4 +1,4 @@
-import React, { useMemo } from "react"
+import { useMemo } from "react"
 import { ReactElement } from "react"
 import translate from "../game/lang"
 import StyledText, { KeywordDataMap, PLAYER_KEYWORD_DATA } from "./StyledText"

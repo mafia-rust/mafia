@@ -1,8 +1,7 @@
 import { ReactElement } from "react"
-import React from "react"
 import { Role, RoleState } from "../../../../../game/roleState.d"
 import TwoRoleOutlineOptionSelectionMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionSelectionMenu"
-import GAME_MANAGER from "../../../../.."
+import GAME_MANAGER from "../../../../../main"
 import { controllerIdToLink, TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput"
 import { usePlayerState } from "../../../../../components/useHooks"
 import ListMap from "../../../../../ListMap"
@@ -41,7 +40,7 @@ export default function AuditorMenu(props: Readonly<{
     
     const savedAbilitiesMap = new ListMap(savedAbilities, (k1, k2) => controllerIdToLink(k1) === controllerIdToLink(k2));
 
-    let singleAbilitySave = savedAbilitiesMap.get({
+    const singleAbilitySave = savedAbilitiesMap.get({
         type: "role",
         role: "auditor",
         player: myPlayerIndex,

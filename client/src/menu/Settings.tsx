@@ -1,4 +1,4 @@
-import React, { ReactElement, useContext, useEffect, useState } from "react";
+import { ReactElement, useContext, useEffect, useState } from "react";
 import "./settings.css";
 import translate, { Language, languageName, LANGUAGES, switchLanguage } from "../game/lang";
 import StyledText, { computeKeywordData } from "../components/StyledText";

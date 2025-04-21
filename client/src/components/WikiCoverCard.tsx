@@ -1,6 +1,6 @@
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import translate from '../game/lang';
-import Wiki from '../components/Wiki';
+import Wiki from './Wiki';
 import "./wiki.css";
 import { WikiArticleLink } from './WikiArticleLink';
 import { useLobbyOrGameState } from './useHooks';

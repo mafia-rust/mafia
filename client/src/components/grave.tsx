@@ -1,10 +1,10 @@
 
-import { replaceMentions } from "..";
+import { replaceMentions } from "../main";
 import { Grave, GraveInformation } from "../game/graveState";
 import translate from "../game/lang";
 import { sanitizePlayerMessage } from "./ChatMessage";
 import StyledText from "./StyledText";
-import React, { ReactElement, useMemo } from "react";
+import { ReactElement, useMemo } from "react";
 import "./grave.css";
 import { useGameState } from "./useHooks";
 
@@ -60,10 +60,10 @@ function UnobscuredGrave(props: Readonly<{
         }
     }, [props.grave.information.deathCause]);
 
-    let graveRoleString = translate(`role.${props.grave.information.role}.name`);
+    const graveRoleString = translate(`role.${props.grave.information.role}.name`);
 
-    let diedPhaseString = props.grave.diedPhase === "day" ? translate("day") : translate("phase.night");
-    let diedPhaseIcon = props.grave.diedPhase === "day" ? translate("day.icon") : translate("night.icon");
+    const diedPhaseString = props.grave.diedPhase === "day" ? translate("day") : translate("phase.night");
+    const diedPhaseIcon = props.grave.diedPhase === "day" ? translate("day.icon") : translate("night.icon");
 
     return <div className="grave" onClick={()=>{
         if(props.onClick!==undefined)
@@ -103,9 +103,9 @@ function UnobscuredGrave(props: Readonly<{
 
 function ObscuredGrave(props: Readonly<{grave: Grave, playerNames: string[]}>): ReactElement {
 
-    let diedPhaseString = props.grave.diedPhase === "day" ? translate("day") : translate("phase.night");
-    let diedPhaseIcon = props.grave.diedPhase === "day" ? translate("day.icon") : translate("night.icon");
-    let graveRoleString = translate("obscured");
+    const diedPhaseString = props.grave.diedPhase === "day" ? translate("day") : translate("phase.night");
+    const diedPhaseIcon = props.grave.diedPhase === "day" ? translate("day.icon") : translate("night.icon");
+    const graveRoleString = translate("obscured");
 
     return <div className="grave">
         <div><StyledText>{`${diedPhaseString+diedPhaseIcon+props.grave.dayNumber}`}</StyledText></div>

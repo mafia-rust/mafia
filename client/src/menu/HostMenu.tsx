@@ -1,6 +1,6 @@
-import React, { ReactElement, useContext, useEffect, useState } from "react";
+import { ReactElement, useContext, useEffect, useState } from "react";
 import translate from "../game/lang";
-import GAME_MANAGER from "..";
+import GAME_MANAGER from "./../main.tsx";
 import { Button } from "../components/Button";
 import { usePacketListener } from "../components/useHooks";
 import { AnchorControllerContext } from "./Anchor";

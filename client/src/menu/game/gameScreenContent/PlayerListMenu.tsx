@@ -1,8 +1,8 @@
 import React, { ReactElement } from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER from "../../../index";
+import GAME_MANAGER from "../../../main";
 import "./playerListMenu.css"
-import "./../gameScreen.css"
+import "../gameScreen.css"
 import { PlayerIndex } from "../../../game/gameState.d";
 import { ContentMenu, ContentTab } from "../GameScreen";
 import StyledText from "../../../components/StyledText";

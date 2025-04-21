@@ -1,6 +1,6 @@
 import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER from "../../../index";
+import GAME_MANAGER from "../../../main";
 import "../gameScreen.css";
 import "./chatMenu.css"
 import { PlayerClientType, PlayerIndex } from "../../../game/gameState.d";
@@ -92,7 +92,7 @@ export function ChatMessageSection(props: Readonly<{
                 return true;
 
             switch(filter.type){
-                case "playerNameInMessage":
+                case "playerNameInMessage":{
                     let msgTxt = "";
                     //special case messages, where translate chat message doesnt work properly, or it should be let through anyway
                     switch (msg.variant.type) {
@@ -117,6 +117,7 @@ export function ChatMessageSection(props: Readonly<{
                     msgTxt += translateChatMessage(msg.variant, players.map(player => player.toString()));
                     
                     return msgTxt.includes(players[filter.player].toString());
+                }
                 case "myWhispersWithPlayer":
                     switch (msg.variant.type) {
                         //translateChatMessage errors for playerDied type.
@@ -263,7 +264,7 @@ export function ChatTextInput(props: Readonly<{
 
 
     const sendChatField = useCallback(() => {
-        let text = chatBoxText.trim();
+        const text = chatBoxText.trim();
         setWhispering(null);
         setChatBoxText("");
         if (text === "") return;

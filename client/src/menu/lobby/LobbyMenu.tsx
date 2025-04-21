@@ -1,5 +1,5 @@
-import React, { ReactElement, useContext, useEffect, useMemo, useState } from "react";
-import GAME_MANAGER, { DEV_ENV } from "../../index";
+import { JSX, ReactElement, useContext, useEffect, useMemo, useState } from "react";
+import GAME_MANAGER, { DEV_ENV } from "../../main.tsx";
 import LobbyPlayerList from "./LobbyPlayerList";
 import "./lobbyMenu.css";
 import translate from "../../game/lang";

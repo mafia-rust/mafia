@@ -1,7 +1,6 @@
 import { ReactElement } from "react";
 import { RoleState } from "../../../../../game/roleState.d";
 import Counter from "../../../../../components/Counter";
-import React from "react";
 import StyledText from "../../../../../components/StyledText";
 import translate from "../../../../../game/lang";
 

@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useRef, ReactElement, useState, forwardRef } from "react";
+import React, { useEffect, useMemo, useRef, ReactElement, useState, forwardRef, JSX } from "react";
 import "./button.css";
 import ReactDOM from "react-dom/client";
-import { THEME_CSS_ATTRIBUTES } from "..";
+import { THEME_CSS_ATTRIBUTES } from "../main";
 
 export type ButtonProps<R> = Omit<JSX.IntrinsicElements['button'], 'onClick' | 'ref'> & {
     onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => (R | void | Promise<R | void>)

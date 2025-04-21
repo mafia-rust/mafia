@@ -18,7 +18,7 @@ export class HistoryPoller<T> {
 
     poll(history: HistoryQueue<T>): T | undefined {
         this.index++;
-        let result = history.poll(this.index);
+        const result = history.poll(this.index);
         if (result === undefined) {
             this.index--;
         }
@@ -31,7 +31,7 @@ export class HistoryPoller<T> {
             this.index = -1;
             return undefined;
         } else {
-            let result = history.poll(this.index);
+            const result = history.poll(this.index);
             // History shrunk for some reason. Should be impossible but might as well account for it.
             if (result === undefined) {
                 return this.pollPrevious(history);

@@ -13,17 +13,17 @@ export default function IntegerSelectionMenu(props: Readonly<{
 }>): ReactElement {
 
     ///make array with numbers from available.min to available.max
-    let options = [];
+    const options = [];
     for(let i = props.available.min; i <= props.available.max; i++){
         options.push(i);
     }
 
-    let optionsSearch = new Map<number, [React.ReactNode, string]>();
+    const optionsSearch = new Map<number, [React.ReactNode, string]>();
     for(let i = props.available.min; i <= props.available.max; i++){
         let out: [React.ReactNode, string] = [<>{i}</>, i.toString()];
 
         if(props.id !== undefined){
-            let text = translateChecked("controllerId."+controllerIdToLink(props.id).replace(/\//g, ".") + ".integer." + i);
+            const text = translateChecked("controllerId."+controllerIdToLink(props.id).replace(/\//g, ".") + ".integer." + i);
             
             if(text !== null)
                 out = [<StyledText noLinks={true}>{text}</StyledText>, text];

@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 import "./lobbyChatMenu.css";
 import translate from "../../game/lang";
 import { ChatMessageSection, ChatTextInput } from "../game/gameScreenContent/ChatMenu";

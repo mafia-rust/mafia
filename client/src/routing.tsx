@@ -1,9 +1,8 @@
-import React from "react";
 import { ARTICLES, WikiArticleLink } from "./components/WikiArticleLink";
 import { AnchorController } from "./menu/Anchor";
 import StandaloneWiki from "./menu/main/StandaloneWiki";
 import { deleteReconnectData, loadReconnectData } from "./game/localStorage";
-import GAME_MANAGER from ".";
+import GAME_MANAGER from "./main.tsx";
 import StartMenu from "./menu/main/StartMenu";
 import GameModesEditor from "./components/gameModeSettings/GameModesEditor";
 import parseFromJson from "./components/gameModeSettings/gameMode/dataFixer";
