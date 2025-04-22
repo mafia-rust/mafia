@@ -83,9 +83,9 @@ impl RoleStateImpl for Coxswain {
                 actor_ref.set_role_state(game, self.clone());
                 
                 //set new
-                let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(
-                    ControllerID::role(actor_ref, Role::Coxswain, 0)
-                ) else {return};
+                let Some(PlayerListSelection(target)) = ControllerID::role(actor_ref, Role::Coxswain, 0)
+                    .get_player_list_selection(game)
+                    .cloned() else {return};
                 
                 if actor_ref.ability_deactivated_from_death(game) {return};
                 

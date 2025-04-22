@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
 
 
@@ -11,20 +11,18 @@ use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Escort;
 
-
-
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Escort {
     type ClientRoleState = Escort;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Roleblock {return;}
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
         if let Some(visit) = actor_visits.first(){
             let target_ref = visit.target;
 
-            target_ref.roleblock(game, true);
+            target_ref.roleblock(game, midnight_variables, true);
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {

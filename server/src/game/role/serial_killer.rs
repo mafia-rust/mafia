@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::player::PlayerReference;
 
@@ -15,11 +15,11 @@ use crate::game::ability_input::*;
 pub struct SerialKiller;
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armored;
 
 impl RoleStateImpl for SerialKiller {
     type ClientRoleState = SerialKiller;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Kill {return}
         if game.day_number() == 1 {return}
 
@@ -32,6 +32,7 @@ impl RoleStateImpl for SerialKiller {
             target_ref.try_night_kill_single_attacker(
                 actor_ref,
                 game,
+                midnight_variables,
                 GraveKiller::Role(Role::SerialKiller),
                 AttackPower::ArmorPiercing,
                 true

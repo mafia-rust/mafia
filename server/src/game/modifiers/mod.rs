@@ -1,5 +1,4 @@
 pub mod obscured_graves;
-pub mod random_love_links;
 pub mod dead_can_chat;
 pub mod no_abstaining;
 pub mod no_death_cause;
@@ -23,7 +22,6 @@ use no_night_chat::NoNightChat;
 use no_trial::NoTrialPhases;
 use no_whispers::NoWhispers;
 use obscured_graves::ObscuredGraves;
-use random_love_links::RandomLoveLinks;
 use no_death_cause::NoDeathCause;
 use role_set_grave_killers::RoleSetGraveKillers;
 use scheduled_nominations::ScheduledNominations;
@@ -36,7 +34,7 @@ use crate::{vec_map::VecMap, vec_set::VecSet};
 
 use super::{ability_input::AbilityInput,
     event::{
-        on_midnight::{OnMidnight, OnMidnightPriority},
+        on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority},
         on_whisper::{OnWhisper, WhisperFold, WhisperPriority}
     },
     grave::GraveReference, player::PlayerReference, Game
@@ -60,7 +58,6 @@ pub trait ModifierTrait where Self: Clone + Sized{
 #[derive(Clone, PartialEq, Eq)]
 pub enum ModifierState{
     ObscuredGraves(ObscuredGraves),
-    RandomLoveLinks(RandomLoveLinks),
     SkipDay1(SkipDay1),
     DeadCanChat(DeadCanChat),
     NoAbstaining(NoAbstaining),
@@ -79,7 +76,6 @@ pub enum ModifierState{
 #[serde(rename_all = "camelCase")]
 pub enum ModifierType{
     ObscuredGraves,
-    RandomLoveLinks,
     SkipDay1,
     DeadCanChat,
     NoAbstaining,
@@ -98,7 +94,6 @@ impl ModifierType{
     pub fn default_state(&self)->ModifierState{
         match self{
             Self::ObscuredGraves => ModifierState::ObscuredGraves(ObscuredGraves),
-            Self::RandomLoveLinks => ModifierState::RandomLoveLinks(RandomLoveLinks),
             Self::SkipDay1 => ModifierState::SkipDay1(SkipDay1),
             Self::DeadCanChat => ModifierState::DeadCanChat(DeadCanChat),
             Self::NoAbstaining => ModifierState::NoAbstaining(NoAbstaining),
@@ -119,7 +114,6 @@ impl From<&ModifierState> for ModifierType{
     fn from(state: &ModifierState)->Self{
         match state {
             ModifierState::ObscuredGraves(_) => Self::ObscuredGraves,
-            ModifierState::RandomLoveLinks(_) => Self::RandomLoveLinks,
             ModifierState::SkipDay1(_) => Self::SkipDay1,
             ModifierState::DeadCanChat(_) => Self::DeadCanChat,
             ModifierState::NoAbstaining(_) => Self::NoAbstaining,
@@ -175,7 +169,7 @@ impl Modifiers{
             modifiers,
         }
     }
-    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut MidnightVariables, priority: OnMidnightPriority){
         for modifier in game.modifiers.modifiers.clone(){
             modifier.1.on_midnight(game, priority);
         }

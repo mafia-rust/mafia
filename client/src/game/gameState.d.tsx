@@ -149,9 +149,9 @@ export type ChatGroup = "all" | "dead" | "mafia" | "cult" | "jail" | "kidnapper"
 export type InsiderGroup = (typeof INSIDER_GROUPS)[number];
 export const INSIDER_GROUPS = ["mafia", "cult", "puppeteer"] as const;
 export type PhaseTimes = Record<Exclude<PhaseType, "recess">, number>;
+export type DefensePower = "none"|"armored"|"protected"|"invincible";
 
 export type Tag = 
-    "disguise" |
     "syndicateGun" |
     "godfatherBackup" |
     "werewolfTracked" |
@@ -159,13 +159,12 @@ export type Tag =
     "revolutionaryTarget" |
     "morticianTagged" |
     "puppeteerMarionette" |
-    "loveLinked" |
     "frame" |
     "forfeitVote" |
     "spiraling";
 
 export const MODIFIERS = [
-    "obscuredGraves", "randomLoveLinks",
+    "obscuredGraves",
     "skipDay1",
     "deadCanChat", "noAbstaining",
     "noDeathCause",

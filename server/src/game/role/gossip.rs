@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::game::components::confused::Confused;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 
@@ -20,7 +20,7 @@ pub struct Gossip;
 
 impl RoleStateImpl for Gossip {
     type ClientRoleState = Gossip;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Investigative {return;}
 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
@@ -29,12 +29,12 @@ impl RoleStateImpl for Gossip {
             let enemies = if Confused::is_confused(game, actor_ref){
                 false
             }else{
-                Gossip::enemies(game, visit.target)
+                Gossip::enemies_night(game, midnight_variables, visit.target)
             };
 
             let message = ChatMessageVariant::GossipResult{ enemies };
             
-            actor_ref.push_night_message(game, message);
+            actor_ref.push_night_message(midnight_variables, message);
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
@@ -56,16 +56,16 @@ impl RoleStateImpl for Gossip {
 }
 
 impl Gossip {
-    pub fn enemies(game: &Game, player_ref: PlayerReference) -> bool {
+    pub fn enemies_night(game: &Game, midnight_variables: &mut MidnightVariables, player_ref: PlayerReference) -> bool {
 
-        match player_ref.night_appeared_visits(game) {
+        match player_ref.night_appeared_visits(midnight_variables) {
             Some(x) => x.clone(),
             None => player_ref.all_night_visits_cloned(game),
         }
             .iter()
             .map(|v|v.target)
             .any(|targets_target|
-                Detective::player_is_suspicious(game, targets_target)
+                Detective::player_is_suspicious(game, midnight_variables, targets_target)
             )
     }
 }

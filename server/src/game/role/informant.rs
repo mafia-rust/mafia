@@ -1,7 +1,6 @@
 use rand::prelude::SliceRandom;
 use serde::Serialize;
-
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
@@ -20,32 +19,34 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Informant {
     type ClientRoleState = Informant;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Investigative {return}
         
 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-        if let Some(visit) = actor_visits.first(){
+        for visit in actor_visits{
             let target_ref = visit.target;
 
-            let mut visited_by: Vec<PlayerReference> =  visit.target.all_appeared_visitors(game).into_iter().filter(|p|actor_ref!=*p).collect();
+            let mut visited_by: Vec<PlayerReference> =  visit.target.all_appeared_visitors(game, midnight_variables).into_iter().filter(|p|actor_ref!=*p).collect();
             visited_by.shuffle(&mut rand::rng());
 
-            let mut visited: Vec<PlayerReference> = target_ref.tracker_seen_visits(game).iter().map(|v|v.target).collect();
+            let mut visited: Vec<PlayerReference> = target_ref.tracker_seen_visits(game, midnight_variables).iter().map(|v|v.target).collect();
             visited.shuffle(&mut rand::rng());
 
             let message = ChatMessageVariant::InformantResult{
+                player: target_ref,
                 role: target_ref.role(game), 
                 visited_by: PlayerReference::ref_vec_to_index(visited_by.as_mut_slice()),
                 visited: PlayerReference::ref_vec_to_index(visited.as_slice())
             };
-            actor_ref.push_night_message(game, message);
+            actor_ref.push_night_message(midnight_variables, message);
+            actor_ref.reveal_players_role(game, target_ref);
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::Informant, 0))
-            .single_player_selection_typical(actor_ref, false, false)
+            .player_list_selection_typical(actor_ref, false, false, false, Some(2))
             .night_typical(actor_ref)
             .add_grayed_out_condition(false)
             .build_map()

@@ -4,14 +4,12 @@ use serde::Serialize;
 
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
+use crate::game::components::tags::{TagSetID, Tags};
 use crate::game::grave::Grave;
 use crate::game::phase::{PhaseState, PhaseType};
 use crate::game::player::PlayerReference;
 use crate::game::role::RoleState;
-
 use crate::game::role_list::RoleSet;
-use crate::game::tag::Tag;
-
 use crate::game::Game;
 use super::jester::Jester;
 use super::{GetClientRoleState, Role, RoleStateImpl};
@@ -47,7 +45,7 @@ impl Default for RevolutionaryTarget {
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armored;
 
 impl RoleStateImpl for Revolutionary {
     type ClientRoleState = ClientRoleState;
@@ -69,7 +67,10 @@ impl RoleStateImpl for Revolutionary {
         }
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
-        
+        Tags::add_viewer(game, TagSetID::RevolutionaryTarget(actor_ref), actor_ref);
+
+
+
         if let Some(target) = PlayerReference::all_players(game)
             .filter(|p|
                 RoleSet::Town.get_roles().contains(&p.role(game)) &&
@@ -85,9 +86,9 @@ impl RoleStateImpl for Revolutionary {
             ).collect::<Vec<PlayerReference>>()
             .choose(&mut rand::rng())
         {
-            actor_ref.push_player_tag(game, *target, Tag::RevolutionaryTarget);
+            Tags::add_tag(game, TagSetID::RevolutionaryTarget(actor_ref), *target);
             actor_ref.set_role_state(game, RoleState::Revolutionary(Revolutionary{target: RevolutionaryTarget::Target(*target)}));
-            actor_ref.insert_role_label(game, *target);
+            actor_ref.reveal_players_role(game, *target);
         }else{
             actor_ref.set_role_and_win_condition_and_revealed_group(game, RoleState::Jester(Jester::default()))
         };
@@ -96,6 +97,10 @@ impl RoleStateImpl for Revolutionary {
         if Some(dead_player_ref) == self.target.get_target() && self.target != RevolutionaryTarget::Won {
             actor_ref.set_role_and_win_condition_and_revealed_group(game, RoleState::Jester(Jester::default()))
         }
+    }
+    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _new: super::RoleState, _old: super::RoleState) {
+        if actor_ref != player {return}
+        Tags::remove_viewer(game, TagSetID::RevolutionaryTarget(actor_ref), actor_ref);
     }
 }
 impl GetClientRoleState<ClientRoleState> for Revolutionary {

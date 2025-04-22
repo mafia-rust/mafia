@@ -2,6 +2,7 @@ use std::vec;
 
 use serde::{Serialize, Deserialize};
 
+use super::event::on_midnight::MidnightVariables;
 use super::phase::PhaseType;
 use super::Game;
 use super::player::PlayerReference;
@@ -80,16 +81,16 @@ impl Grave{
     }
 
 
-    pub fn from_player_night(game: &Game, player_ref: PlayerReference) -> Grave {
+    pub fn from_player_night(game: &Game, midnight_variables: &MidnightVariables, player_ref: PlayerReference) -> Grave {
         Grave {
             player: player_ref,
             died_phase: GravePhase::Night,
             day_number:  game.phase_machine.day_number,
             information: GraveInformation::Normal{
-                role: player_ref.night_grave_role(game).unwrap_or(player_ref.role(game)),
-                will: player_ref.night_grave_will(game).clone(),
-                death_cause: GraveDeathCause::Killers(player_ref.night_grave_killers(game).clone()),
-                death_notes: player_ref.night_grave_death_notes(game).clone()
+                role: player_ref.night_grave_role(midnight_variables).unwrap_or(player_ref.role(game)),
+                will: player_ref.night_grave_will(midnight_variables).clone(),
+                death_cause: GraveDeathCause::Killers(player_ref.night_grave_killers(midnight_variables).clone()),
+                death_notes: player_ref.night_grave_death_notes(midnight_variables).clone()
             },
         }
     }

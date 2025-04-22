@@ -1,10 +1,13 @@
 use rand::seq::IndexedRandom;
 
-use crate::{game::{ 
-    ability_input::{AvailablePlayerListSelection, ControllerID, ControllerParametersMap, PlayerListSelection}, attack_power::AttackPower, chat::{ChatGroup, ChatMessageVariant}, event::on_midnight::{OnMidnight, OnMidnightPriority}, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::RoleState, role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, Game
+use crate::{game::{
+    ability_input::{AvailablePlayerListSelection, ControllerParametersMap}, attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessageVariant}, event::{
+        on_add_insider::OnAddInsider,
+        on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority}, on_remove_insider::OnRemoveInsider
+    }, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::RoleState, role_list::RoleSet, visit::{Visit, VisitTag}, ControllerID, Game, PlayerListSelection
 }, vec_set::{vec_set, VecSet}};
 
-use super::{detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits, syndicate_gun_item::SyndicateGunItem};
+use super::{fragile_vest::FragileVests, detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits, syndicate_gun_item::SyndicateGunItem, tags::Tags};
 
 #[derive(Clone)]
 pub struct Mafia;
@@ -29,7 +32,7 @@ impl Mafia{
     }
 
     pub fn controller_parameters_map(game: &Game)->ControllerParametersMap{
-        let players_with_gun = Self::players_with_gun(game);
+        let players_with_gun = Self::syndicate_killing_players(game);
 
         let available_backup_players = PlayerReference::all_players(game)
             .filter(|p|
@@ -49,12 +52,9 @@ impl Mafia{
             .allow_players(players_with_gun.clone())
             .build_map();
 
-        if let Some(PlayerListSelection(player_list)) = game.saved_controllers.get_controller_current_selection_player_list(
-            ControllerID::syndicate_choose_backup()
-        ){
+        if let Some(PlayerListSelection(player_list)) = ControllerID::syndicate_choose_backup().get_player_list_selection(game){
             if let Some(backup) = player_list.first(){
 
-                
                 let attackable_players = PlayerReference::all_players(game)
                     .filter(|p|
                         !InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p) &&
@@ -82,7 +82,7 @@ impl Mafia{
         out
     }
     
-    pub fn players_with_gun(game: &Game)->VecSet<PlayerReference>{
+    pub fn syndicate_killing_players(game: &Game)->VecSet<PlayerReference>{
         PlayerReference::all_players(game)
             .filter(|p|
                 InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p) &&
@@ -95,21 +95,21 @@ impl Mafia{
     }
     pub fn on_phase_start(_game: &mut Game, _phase: PhaseType){
     }
-    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, midnight_variables: &mut MidnightVariables, priority: OnMidnightPriority){
         if game.day_number() <= 1 {return}
         match priority {
             OnMidnightPriority::TopPriority => {
-                let Some(PlayerListSelection(backup)) = game.saved_controllers.get_controller_current_selection_player_list(ControllerID::syndicate_choose_backup()) else {return};
+                let Some(PlayerListSelection(backup)) = ControllerID::syndicate_choose_backup().get_player_list_selection(game) else {return};
                 let Some(backup) = backup.first() else {return};
 
-                let Some(PlayerListSelection(backup_target)) = game.saved_controllers.get_controller_current_selection_player_list(ControllerID::syndicate_backup_attack()) else {return};
+                let Some(PlayerListSelection(backup_target)) = ControllerID::syndicate_backup_attack().get_player_list_selection(game) else {return};
                 let Some(backup_target) = backup_target.first() else {return};
 
                 let new_visit = Visit::new(*backup, *backup_target, true, crate::game::visit::VisitTag::SyndicateBackupAttack);
                 NightVisits::add_visit(game, new_visit);
             }
             OnMidnightPriority::Deception => {
-                if Self::players_with_gun(game).into_iter().any(|p|!p.night_blocked(game) && p.alive(game)) {
+                if Self::syndicate_killing_players(game).into_iter().any(|p|!p.night_blocked(midnight_variables) && p.alive(game)) {
                     NightVisits::retain(game, |v|v.tag != crate::game::visit::VisitTag::SyndicateBackupAttack);
                 }
             }
@@ -118,7 +118,7 @@ impl Mafia{
                 let all_backup_visits: Vec<Visit> = NightVisits::all_visits(game).into_iter().filter(|v|v.tag == crate::game::visit::VisitTag::SyndicateBackupAttack).copied().collect();
                 for backup_visit in all_backup_visits {
                     backup_visit.target.try_night_kill_single_attacker(
-                        backup_visit.visitor, game, GraveKiller::RoleSet(RoleSet::Mafia),
+                        backup_visit.visitor, game, midnight_variables, GraveKiller::RoleSet(RoleSet::Mafia),
                         AttackPower::Basic, false
                     );
                     game.add_message_to_chat_group(ChatGroup::Mafia, 
@@ -145,27 +145,19 @@ impl Mafia{
 
             let Some(insider) = insiders.choose(&mut rand::rng()) else {return};
 
-            SyndicateGunItem::give_gun(game, *insider);
+            SyndicateGunItem::give_gun_to_player(game, *insider);
+            FragileVests::add_defense_item(game, *insider, DefensePower::Armored, vec_set![*insider]);
         }
     }
 
     pub fn on_controller_selection_changed(game: &mut Game, controller_id: ControllerID){
         if controller_id != ControllerID::syndicate_choose_backup() {return};
 
-        let backup = 
-            game.saved_controllers.get_controller_current_selection_player_list(controller_id)
+        let backup = controller_id.get_player_list_selection(game)
             .and_then(|b|b.0.first().copied());
 
-        
-        for player_ref in PlayerReference::all_players(game){
-            if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player_ref) {continue}
-            player_ref.remove_player_tag_on_all(game, Tag::GodfatherBackup);
-        }
         if let Some(backup) = backup{
-            for player_ref in PlayerReference::all_players(game){
-                if !InsiderGroupID::Mafia.is_player_in_revealed_group(game, player_ref) {continue}
-                player_ref.push_player_tag(game, backup, Tag::GodfatherBackup);
-            }
+            Tags::set_tagged(game, super::tags::TagSetID::SyndicateBackup, &vec_set![backup]);
         }
     }
 
@@ -180,6 +172,12 @@ impl Mafia{
         if RoleSet::MafiaKilling.get_roles().contains(&old.role()) {
             Mafia::give_mafia_killing_role(game, old);
         }
+    }
+    pub fn on_add_insider(game: &mut Game, _event: &OnAddInsider, _fold: &mut (), _priority: ()){
+        Tags::set_viewers(game, super::tags::TagSetID::SyndicateBackup, &InsiderGroupID::Mafia.players(game).clone());
+    }
+    pub fn on_remove_insider(game: &mut Game, _event: &OnRemoveInsider, _fold: &mut (), _priority: ()){
+        Tags::set_viewers(game, super::tags::TagSetID::SyndicateBackup, &InsiderGroupID::Mafia.players(game).clone());
     }
 
 

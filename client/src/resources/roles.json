@@ -149,10 +149,10 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "auditorResult", "roleOutline":[{"roleSet": "any"}],"result": {"type":"two","roles":["godfather","jester"]}},
-            {"type": "auditorResult", "roleOutline":[{"role":"vigilante"},{"role":"marksman"}],"result": {"type":"one","role":["vigilante"]}},
-            {"type": "auditorResult", "roleOutline":[{"role":"fiendsWildcard"}],"result": {"type":"one","role":["fiendsWildcard"]}},
-            {"type": "auditorResult", "roleOutline":[{"roleSet":"townSupport"}],"result": {"type":"two","roles":["escort","medium"]}}
+            {"type": "auditorResult", "roleOutline":[{"roleSet": "any"}],"result": ["godfather","jester","apostle","escort"]},
+            {"type": "auditorResult", "roleOutline":[{"role":"vigilante"},{"role":"marksman"}],"result": ["vigilante"]},
+            {"type": "auditorResult", "roleOutline":[{"role":"arsonist"}],"result": ["arsonist"]},
+            {"type": "auditorResult", "roleOutline":[{"roleSet":"townSupport"}],"result": ["escort","medium","coxswain"]}
         ]
     },
     "snoop": {
@@ -203,8 +203,8 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "targetWasAttacked"},
-            {"type": "youWereProtected"},
+            {"type": "youGuardedSomeone"},
+            {"type": "youWereGuarded"},
             {"type": "youSurvivedAttack"}
         ]
     },
@@ -218,8 +218,8 @@
         "canBeConvertedTo": [],
         "chatMessages":[
             {"type": "youAttackedSomeone"},
-            {"type": "targetWasAttacked"},
-            {"type": "youWereProtected"},
+            {"type": "youGuardedSomeone"},
+            {"type": "youWereGuarded"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
@@ -253,8 +253,8 @@
             {"type": "trapStateEndOfNight", "state":{"type":"set"}},
             {"type": "engineerVisitorsRole", "role": "framer"},
             {"type": "youAttackedSomeone"},
-            {"type": "targetWasAttacked"},
-            {"type": "youWereProtected"},
+            {"type": "youGuardedSomeone"},
+            {"type": "youWereGuarded"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
@@ -268,8 +268,8 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "targetWasAttacked"},
-            {"type": "youWereProtected"},
+            {"type": "youGuardedSomeone"},
+            {"type": "youWereGuarded"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
@@ -283,9 +283,9 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "armorsmithArmorBroke"},
-            {"type": "targetWasAttacked"},
-            {"type": "youWereProtected"},
+            {"type": "fragileVestBreak", "playerWithVest": 29, "defense":"protected"},
+            {"type": "youGuardedSomeone"},
+            {"type": "youWereGuarded"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youSurvivedAttack"}
         ]
@@ -298,12 +298,7 @@
         "maxCount": null,
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
-        "chatMessages":[
-            {"type": "targetWasAttacked"},
-            {"type": "youWereProtected"},
-            {"type": "someoneSurvivedYourAttack"},
-            {"type": "youSurvivedAttack"}
-        ]
+        "chatMessages":[]
     },
     "vigilante": {
         "mainRoleSet": "town",
@@ -479,6 +474,18 @@
             {"type": "transported"}
         ]
     },
+    "porter":{
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townSupport"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "transported"}
+        ]
+    },
     "coxswain":{
         "mainRoleSet": "town",
         "roleSets": ["town", "townCommon", "townSupport"],
@@ -615,7 +622,7 @@
             {"type": "roleBlocked","immune": true},
             {"type": "roleBlocked","immune": false},
             {"type": "youSurvivedAttack"},
-            {"type": "youWereProtected"},
+            {"type": "youWereGuarded"},
             {"type": "transported"},
             {"type": "youWerePossessed", "immune": false},
             {"type": "youWerePossessed", "immune": true},
@@ -656,8 +663,8 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": ["godfather"],
         "chatMessages":[
-            {"type": "informantResult", "role": "arsonist", "visitedBy":[31,32], "visited":[33]},
-            {"type": "informantResult", "role": "vigilante", "visitedBy":[], "visited":[]}
+            {"type": "informantResult", "player": 10, "role": "arsonist", "visitedBy":[31,32], "visited":[33]},
+            {"type": "informantResult", "player": 8, "role": "vigilante", "visitedBy":[], "visited":[]}
         ]
     },
     "mortician": {
@@ -787,19 +794,6 @@
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youAttackedSomeone"},
             {"type": "ambusherCaught", "ambusher": 17}
-        ]
-    },
-    "cupid": {
-        "mainRoleSet": "mafia",
-        "roleSets": ["mafia", "mafiaSupport"],
-        "armor": false,
-        "aura": null,
-        "maxCount": 1,
-        "canWriteDeathNote": false,
-        "canBeConvertedTo": ["godfather"],
-        "chatMessages":[
-            {"type": "youAreLoveLinked", "player": 20},
-            {"type": "playerDiedOfABrokenHeart", "player": 20, "lover": 25}
         ]
     },
     "mafiaSupportWildcard": {

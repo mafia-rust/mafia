@@ -56,6 +56,9 @@
     "role/transporter/0": {
         "midnight": true
     },
+    "role/porter/0": {
+        "midnight": true
+    },
     "role/coxswain/0": {
         "midnight": false
     },
@@ -144,9 +147,6 @@
         "midnight": true
     },
     "role/ambusher/0": {
-        "midnight": true
-    },
-    "role/cupid/0": {
         "midnight": true
     },
     "role/mafiaSupportWildcard/0": {

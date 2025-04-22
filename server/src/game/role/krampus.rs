@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::Grave;
 use crate::game::phase::PhaseType;
@@ -33,11 +33,11 @@ pub enum KrampusAbility {
 }
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armored;
 
 impl RoleStateImpl for Krampus {
     type ClientRoleState = ();
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
 
         match (priority, self.ability) {
@@ -45,7 +45,7 @@ impl RoleStateImpl for Krampus {
                 if let Some(visit) = actor_visits.first() {
                     let target_ref = visit.target;
 
-                    target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Krampus), AttackPower::Basic, true);
+                    target_ref.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Role(Role::Krampus), AttackPower::Basic, true);
 
                     actor_ref.set_role_state(game, Krampus {
                         last_used_ability: Some(KrampusAbility::Kill),
@@ -57,10 +57,10 @@ impl RoleStateImpl for Krampus {
                 if let Some(visit) = actor_visits.first() {
                     let target_ref = visit.target;
 
-                    actor_ref.push_night_message(game, 
+                    actor_ref.push_night_message(midnight_variables, 
                         ChatMessageVariant::TargetHasRole { role: target_ref.role(game) }
                     );
-                    actor_ref.push_night_message(game, 
+                    actor_ref.push_night_message(midnight_variables, 
                         ChatMessageVariant::TargetHasWinCondition { win_condition: target_ref.win_condition(game).clone() }
                     );
                 }

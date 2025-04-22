@@ -3,6 +3,7 @@ use serde::Serialize;
 use crate::game::ability_input::AvailablePlayerListSelection;
 use crate::game::attack_power::AttackPower;
 use crate::game::attack_power::DefensePower;
+use crate::game::event::on_midnight::MidnightVariables;
 use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
@@ -40,7 +41,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Marksman {
     type ClientRoleState = Marksman;
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(mut self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Kill {return};
 
         let visiting_players: Vec<_> = actor_ref
@@ -49,18 +50,14 @@ impl RoleStateImpl for Marksman {
             .flat_map(|p|p.target.all_night_visitors_cloned(game))
             .collect();
 
-        let Some(PlayerListSelection(marks)) = 
-            game.saved_controllers.get_controller_current_selection_player_list(
-                ControllerID::role(actor_ref, Role::Marksman, 0)
-            ) else 
-        {
-            return;
-        };
+        let Some(PlayerListSelection(marks)) = ControllerID::role(actor_ref, Role::Marksman, 0)
+            .get_player_list_selection(game)
+            .cloned() else {return};
 
         for mark in marks {
             if !visiting_players.contains(&mark) {continue};
             
-            let killed = mark.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Marksman), AttackPower::Basic, false);
+            let killed = mark.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Role(Role::Marksman), AttackPower::Basic, false);
 
             if killed && mark.win_condition(game).is_loyalist_for(GameConclusion::Town) {
                 self.state = MarksmanState::ShotTownie;
@@ -103,8 +100,8 @@ impl RoleStateImpl for Marksman {
                 .night_typical(actor_ref)
                 .add_grayed_out_condition(
                     self.state != MarksmanState::Loaded 
-                    || game.saved_controllers
-                        .get_controller_current_selection_player_list(ControllerID::role(actor_ref, Role::Marksman, 0))
+                    || ControllerID::role(actor_ref, Role::Marksman, 0)
+                        .get_player_list_selection(game)
                         .is_none_or(|players| players.0.is_empty())
                 )
                 .build_map()
