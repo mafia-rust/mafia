@@ -38,7 +38,7 @@ impl RoleStateImpl for Cop {
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 
-                actor_ref.set_protected_player(game, midnight_variables, target_ref);
+                actor_ref.guard_player(game, midnight_variables, target_ref);
             }
             OnMidnightPriority::Kill => {
                 

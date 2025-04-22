@@ -86,7 +86,7 @@ impl RoleStateImpl for Bodyguard {
                         ..self
                     });
                     
-                    actor_ref.set_protected_player(game, midnight_variables, target_ref);
+                    actor_ref.guard_player(game, midnight_variables, target_ref);
                 }
             },
             OnMidnightPriority::Kill => {

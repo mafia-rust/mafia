@@ -2,20 +2,20 @@ use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::ability_input::ControllerParametersMap;
+use crate::game::components::fragile_vest::FragileVests;
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
-use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
+use crate::game::attack_power::DefensePower;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::Game;
+use crate::vec_set;
 use super::{common_role, ControllerID, GetClientRoleState, Role, RoleStateImpl};
 
 #[derive(Clone, Debug)]
 pub struct Armorsmith {
     open_shops_remaining: u8,
     night_open_shop: bool,
-
-    players_armor: Vec<PlayerReference>
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -29,7 +29,6 @@ impl Default for Armorsmith {
         Self { 
             open_shops_remaining: 3,
             night_open_shop: false,
-            players_armor: Vec::new()
         }
     }
 }
@@ -50,35 +49,23 @@ impl RoleStateImpl for Armorsmith {
                         self.night_open_shop = true;
                         self.open_shops_remaining = self.open_shops_remaining.saturating_sub(1);
 
-                        actor_ref.set_protected_player(game, midnight_variables, actor_ref);
+                        actor_ref.guard_player(game, midnight_variables, actor_ref);
 
 
                         let visitors = actor_ref.all_night_visitors_cloned(game);
 
                         for visitor in visitors.iter(){
-                            actor_ref.set_protected_player(game, midnight_variables, *visitor);
+                            actor_ref.guard_player(game, midnight_variables, *visitor);
                         }
+
+                        //players with armor will have defense here because they are visitors to armorsmith
                         if visitors.contains(&visit.target){
-                            self.players_armor.push(visit.target);
+                            FragileVests::add_defense_item(game, visit.target, DefensePower::Protected, vec_set![actor_ref]);
                         }else if let Some(random_visitor) = visitors.choose(&mut rand::rng()) {
-                            self.players_armor.push(*random_visitor);
+                            FragileVests::add_defense_item(game, *random_visitor, DefensePower::Protected, vec_set![actor_ref]);
                         }
                     }
                 };
-
-                for player in self.players_armor.iter(){
-                    actor_ref.set_protected_player(game, midnight_variables, *player);
-                }
-
-                actor_ref.set_role_state(game, self);
-            }
-            OnMidnightPriority::Investigative => {
-                for player_armor in self.players_armor.clone() {
-                    if player_armor.night_attacked(midnight_variables){
-                        player_armor.push_night_message(midnight_variables, ChatMessageVariant::ArmorsmithArmorBroke);
-                        self.players_armor.retain(|x| *x != player_armor);
-                    }
-                }
 
                 actor_ref.set_role_state(game, self);
             }

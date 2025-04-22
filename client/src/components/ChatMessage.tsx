@@ -3,7 +3,7 @@ import React, { ReactElement } from "react";
 import GAME_MANAGER, { find, replaceMentions } from "..";
 import StyledText, { KeywordDataMap, PLAYER_SENDER_KEYWORD_DATA } from "./StyledText";
 import "./chatMessage.css"
-import { ChatGroup, Conclusion, PhaseState, PlayerIndex, Tag, translateConclusion, translateWinCondition, Verdict, WinCondition } from "../game/gameState.d";
+import { ChatGroup, Conclusion, DefensePower, PhaseState, PlayerIndex, Tag, translateConclusion, translateWinCondition, Verdict, WinCondition } from "../game/gameState.d";
 import { Role, RoleState } from "../game/roleState.d";
 import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
@@ -772,10 +772,12 @@ export function translateChatMessage(
         }
         case "playerForwardedMessage":
             return translate(`chatMessage.playerForwardedMessage`, playerNames[message.forwarder]);
+        case "fragileVestBreak":
+            return translate(`chatMessage.fragileVestBreak`, playerNames[message.playerWithVest], message.defense)
         case "deputyShotYou":
         case "mediumExists":
-        case "targetWasAttacked":
-        case "youWereProtected":
+        case "youGuardedSomeone":
+        case "youWereGuarded":
         case "revolutionaryWon":
         case "jesterWon":
         case "wardblocked":
@@ -799,7 +801,6 @@ export function translateChatMessage(
         case "politicianCountdownStarted":
         case "youAttackedSomeone":
         case "youWereAttacked":
-        case "armorsmithArmorBroke":
         case "werewolfTracked":
             return translate("chatMessage."+message.type);
         case "playerDied":
@@ -1031,11 +1032,13 @@ export type ChatMessageVariant = {
         type: "dismantled" | "ready" | "set"
     }
 } | {
-    type: "armorsmithArmorBroke"
+    type: "fragileVestBreak",
+    playerWithVest: PlayerIndex,
+    defense: DefensePower
 } | {
-    type: "targetWasAttacked"
+    type: "youGuardedSomeone"
 } | {
-    type: "youWereProtected"
+    type: "youWereGuarded"
 } | {
     type: "youDied"
 } | {

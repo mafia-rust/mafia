@@ -52,7 +52,7 @@ export default function WikiArticle(props: {
                     }
                     {roleData.armor && 
                         <WikiStyledText>
-                            {"### "+translate("defense")+": "+translate("defense.1")+"\n"}
+                            {"### "+translate("defense")+": "+translate("defense.armored")+"\n"}
                         </WikiStyledText>
                     }
                     {roleData.maxCount !== null &&
@@ -93,7 +93,7 @@ export default function WikiArticle(props: {
                         {(translateChecked("wiki.article.role."+role+".extra") ?? translate("wiki.article.role.noExtra"))+"\n"}
 
                         {"### "+translate("wiki.article.standard.roleLimit.title")+": "+(roleData.maxCount === null ? translate("none") : roleData.maxCount)+"\n"}
-                        {"### "+translate("defense")+": "+translate("defense."+(roleData.armor ? "1" : "0"))+"\n"}
+                        {"### "+translate("defense")+": "+translate("defense."+(roleData.armor ? "armored" : "none"))+"\n"}
                         {"### "+translate("wiki.article.standard.aura.title")+": "+(roleData.aura?translate(roleData.aura+"Aura"):translate("none"))+"\n"}
                     </WikiStyledText>
                 </DetailsSummary>
@@ -275,7 +275,7 @@ export function getSearchStrings(article: WikiArticleLink): string[]{
             if(guide)
                 out.push(guide);
             if(roleData.armor){
-                out.push(translate("defense.1"));
+                out.push(translate("defense.armored"));
                 out.push(translate("defense"));
             }
             let abilities = translateChecked("wiki.article.role."+role+".abilities");

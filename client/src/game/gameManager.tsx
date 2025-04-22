@@ -436,7 +436,7 @@ export function createGameManager(): GameManager {
             roleblock: boolean,
             youWereRoleblockedMessage: boolean,
             youSurvivedAttackMessage: boolean,
-            youWereProtectedMessage: boolean,
+            youWereGuardedMessage: boolean,
             youWereTransportedMessage: boolean,
             youWerePossessedMessage: boolean,
             yourTargetWasJailedMessage: boolean
@@ -447,7 +447,7 @@ export function createGameManager(): GameManager {
 
                 youWereRoleblockedMessage: youWereRoleblockedMessage ?? false,
                 youSurvivedAttackMessage: youSurvivedAttackMessage ?? false,
-                youWereProtectedMessage: youWereProtectedMessage ?? false,
+                youWereGuardedMessage: youWereGuardedMessage ?? false,
                 youWereTransportedMessage: youWereTransportedMessage ?? false,
                 youWerePossessedMessage: youWerePossessedMessage ?? false,
                 yourTargetWasJailedMessage: yourTargetWasJailedMessage ?? false
