@@ -21,7 +21,7 @@ pub struct ClientRoleState;
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armored;
 
 const ENRAGED_NUMERATOR: usize = 2;
 const ENRAGED_DENOMINATOR: usize = 3;

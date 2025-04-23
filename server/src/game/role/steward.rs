@@ -61,7 +61,7 @@ impl RoleStateImpl for Steward {
                     for player in PlayerReference::all_players(game){
                         if role != player.role(game) {continue;}
     
-                        player.increase_defense_to(game, midnight_variables, DefensePower::Protection);
+                        player.increase_defense_to(game, midnight_variables, DefensePower::Protected);
                         healed_players.push(player);
                     }
                 }
@@ -69,7 +69,7 @@ impl RoleStateImpl for Steward {
                     for player in PlayerReference::all_players(game){
                         if role != player.role(game) {continue;}
     
-                        player.increase_defense_to(game, midnight_variables, DefensePower::Protection);
+                        player.increase_defense_to(game, midnight_variables, DefensePower::Protected);
                         healed_players.push(player);
                     }
                 }
@@ -97,7 +97,7 @@ impl RoleStateImpl for Steward {
                             target_healed_ref.night_messages(midnight_variables)
                                 .iter()
                                 .filter(|m|
-                                    !matches!(m,ChatMessageVariant::YouWereProtected|ChatMessageVariant::YouSurvivedAttack)
+                                    !matches!(m,ChatMessageVariant::YouWereGuarded|ChatMessageVariant::YouSurvivedAttack)
                                 )
                                 .cloned()
                                 .collect()

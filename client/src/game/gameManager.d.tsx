@@ -98,7 +98,7 @@ export type GameManager = {
         roleblock: boolean, 
         youWereRoleblockedMessage: boolean, 
         youSurvivedAttackMessage: boolean, 
-        youWereProtectedMessage: boolean, 
+        youWereGuardedMessage: boolean, 
         youWereTransportedMessage: boolean, 
         youWerePossessedMessage: boolean, 
         yourTargetWasJailedMessage: boolean

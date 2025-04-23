@@ -120,7 +120,7 @@ impl RoleStateImpl for Martyr {
             for player in PlayerReference::all_players(game) {
                 if player == actor_ref {continue}
                 if !player.alive(game) {continue}
-                if player.role(game).defense().can_block(AttackPower::ProtectionPiercing) {continue}
+                if player.normal_defense(game).can_block(AttackPower::ProtectionPiercing) {continue}
                 player.die_and_add_grave(game, Grave::from_player_suicide(game, player));
             }
     
