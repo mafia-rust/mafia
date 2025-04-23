@@ -16,8 +16,10 @@ struct Config{
 /// 
 #[tokio::main]
 async fn main() -> ! {
+    let path_str = "./resources/config.json";
     let config = serde_json::from_str::<Config>(
-        &fs::read_to_string("./resources/config.json").expect("Failed to read the config file")
+        &fs::read_to_string(path_str)
+            .unwrap_or_else(|_| panic!("Failed to read the config file \"{}\"", path_str))
     ).unwrap();
 
     loop {
