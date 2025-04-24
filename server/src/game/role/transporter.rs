@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 
@@ -20,7 +20,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Transporter {
     type ClientRoleState = Transporter;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Transporter {return;}
     
         let transporter_visits = actor_ref.untagged_night_visits_cloned(game).clone();
@@ -28,8 +28,8 @@ impl RoleStateImpl for Transporter {
         let Some(second_visit) = transporter_visits.get(1) else {return};
         
         
-        first_visit.target.push_night_message(game, ChatMessageVariant::Transported);
-        second_visit.target.push_night_message(game, ChatMessageVariant::Transported);
+        first_visit.target.push_night_message(midnight_variables, ChatMessageVariant::Transported);
+        second_visit.target.push_night_message(midnight_variables, ChatMessageVariant::Transported);
     
         for player_ref in PlayerReference::all_players(game){
             if player_ref == actor_ref {continue;}

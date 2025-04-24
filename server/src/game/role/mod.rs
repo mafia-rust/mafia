@@ -14,7 +14,7 @@ use serde::{Serialize, Deserialize};
 
 use super::{
     ability_input::*, components::{insider_group::InsiderGroupID, night_visits::NightVisits},
-    event::{on_midnight::OnMidnightPriority, on_whisper::{OnWhisper, WhisperFold, WhisperPriority}},
+    event::{on_midnight::{MidnightVariables, OnMidnightPriority}, on_whisper::{OnWhisper, WhisperFold, WhisperPriority}},
     grave::GraveReference, visit::VisitTag, win_condition::WinCondition
 };
 
@@ -30,7 +30,7 @@ impl<T> GetClientRoleState<T> for T {
 
 pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<<Self as RoleStateImpl>::ClientRoleState> {
     type ClientRoleState: Clone + std::fmt::Debug + Serialize;
-    fn on_midnight(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: OnMidnightPriority) {}
+    fn on_midnight(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _priority: OnMidnightPriority) {}
 
     fn controller_parameters_map(self, _game: &Game, _actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::default()
@@ -68,7 +68,7 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference) {}
     fn on_game_start(self, _game: &mut Game, _actor_ref: PlayerReference) {}
     fn before_initial_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
-    fn on_remove_role_label(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _concealed_player: PlayerReference) {}
+    fn on_conceal_role(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _concealed_player: PlayerReference) {}
     fn on_player_roleblocked(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _invisible: bool) {
         if player != actor_ref {return}
 
@@ -123,6 +123,7 @@ macros::roles! {
     Reporter : reporter,
     Mayor : mayor,
     Transporter : transporter,
+    Porter : porter,
     Coxswain : coxswain,
 
     // Mafia
@@ -253,9 +254,9 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.on_visit_wardblocked(game, actor_ref, visit)),*
                     }
                 }
-                pub fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority){
+                pub fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority){
                     match self {
-                        $(Self::$name(role_struct) => role_struct.on_midnight(game, actor_ref, priority)),*
+                        $(Self::$name(role_struct) => role_struct.on_midnight(game, midnight_variables, actor_ref, priority)),*
                     }
                 }
                 pub fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
@@ -308,9 +309,9 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.on_phase_start(game, actor_ref, phase)),*
                     }
                 }
-                pub fn on_remove_role_label(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, concealed_player: PlayerReference){
+                pub fn on_conceal_role(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, concealed_player: PlayerReference){
                     match self {
-                        $(Self::$name(role_struct) => role_struct.on_remove_role_label(game, actor_ref, player, concealed_player)),*
+                        $(Self::$name(role_struct) => role_struct.on_conceal_role(game, actor_ref, player, concealed_player)),*
                     }
                 }
                 pub fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
@@ -376,7 +377,7 @@ impl Role{
             | Role::Bouncer
             | Role::Veteran | Role::Coxswain
             | Role::Transporter | Role::Retributionist
-            | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper
+            | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper | Role::Porter
             | Role::MafiaWitch | Role::Necromancer 
         )
     }

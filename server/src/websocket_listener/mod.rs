@@ -7,33 +7,42 @@ pub type RoomCode = usize;
 
 use std::{collections::HashMap, net::SocketAddr, sync::{Arc, Mutex}, time::Duration};
 
-use crate::{lobby::{lobby_client::LobbyClientID, Lobby}, packet::{RejectJoinReason, ToClientPacket}, websocket_connections::connection::Connection};
+use crate::{log, packet::{RejectJoinReason, ToClientPacket}, room::{JoinRoomClientResult, RemoveRoomClientResult, Room, RoomClientID, RoomState}, websocket_connections::connection::Connection};
 
-use self::client::{Client, ClientLocation, ClientReference, GetLobbyError};
+use self::client::{Client, ClientLocation, ClientReference, GetRoomError};
 use rand::random;
 
 
 
 pub struct WebsocketListener {
-    // Clients that are currently connected, if a client isnt connected it isnt here
+    /// Clients that are currently connected, if a client isnt connected it isnt here
+    ///
+    /// What to do in different connection sscenarios:
+    ///
+    ///  Listener has client | Lobby has client | Behavior
+    /// ---------------------|------------------|---------------------------
+    ///  No                  | No               | Hooray!
+    ///  No                  | Yes              | Reconnect (if possible)
+    ///  Yes                 | No               | Disconnect listener client
+    ///  Yes                 | Yes              | Hooray!
     clients: HashMap<SocketAddr, Client>,
-    lobbies: HashMap<RoomCode, Lobby>,
+    rooms: HashMap<RoomCode, Room>,
 }
 impl WebsocketListener{
     pub fn new() -> Self {
         Self {
-            lobbies: HashMap::new(),
+            rooms: HashMap::new(),
             clients: HashMap::new(),
         }
     }
     fn clients(&self) -> &HashMap<SocketAddr, Client> {
         &self.clients
     }
-    fn lobbies(&self) -> &HashMap<RoomCode, Lobby> {
-        &self.lobbies
+    fn rooms(&self) -> &HashMap<RoomCode, Room> {
+        &self.rooms
     }
-    fn lobbies_mut(&mut self) -> &mut HashMap<RoomCode, Lobby> {
-        &mut self.lobbies
+    fn rooms_mut(&mut self) -> &mut HashMap<RoomCode, Room> {
+        &mut self.rooms
     }
     fn get_client<'a>(&'a self, address: &SocketAddr) -> Option<&'a Client> {
         self.clients.get(address)
@@ -41,11 +50,11 @@ impl WebsocketListener{
     fn get_client_mut<'a>(&'a mut self, address: &SocketAddr) -> Option<&'a mut Client> {
         self.clients.get_mut(address)
     }
-    pub(super) fn get_lobby<'a>(&'a self, room_code: &RoomCode) -> Option<&'a Lobby> {
-        self.lobbies.get(room_code)
+    pub(super) fn get_room<'a>(&'a self, room_code: &RoomCode) -> Option<&'a Room> {
+        self.rooms.get(room_code)
     }
-    pub(super) fn get_lobby_mut<'a>(&'a mut self, room_code: &RoomCode) -> Option<&'a mut Lobby> {
-        self.lobbies.get_mut(room_code)
+    pub(super) fn get_room_mut<'a>(&'a mut self, room_code: &RoomCode) -> Option<&'a mut Room> {
+        self.rooms.get_mut(room_code)
     }
 
 
@@ -60,53 +69,80 @@ impl WebsocketListener{
     fn delete_client(&mut self, client: &ClientReference) {
         let Some(client) = self.clients.remove(&client.address(self).clone()) else {return};
 
-        //This produces a warning in the logs because sometimes the player is already disconnected
         //This ToClientPacket is still useful in the *rare* case that the player is still connected when they're being forced to disconnect
         //A player can be forced to disconnect if a seperate connection is made with the same ip and port address
         client.send(ToClientPacket::ForcedDisconnect);
 
 
-        let ClientLocation::InLobby { room_code, lobby_client_id } = client.location() else {return};
-        let Some(lobby) = self.lobbies.get_mut(room_code) else {return};
+        let ClientLocation::InRoom { room_code, room_client_id } = client.location() else {return};
+        let Some(room) = self.rooms.get_mut(room_code) else {return};
 
-        lobby.remove_player_rejoinable(*lobby_client_id);
+        match room.remove_client_rejoinable(*room_client_id) {
+            RemoveRoomClientResult::Success |
+            RemoveRoomClientResult::ClientNotInRoom => {},
+            RemoveRoomClientResult::RoomShouldClose => self.delete_room(*room_code)
+        }
     }
 
 
-    fn set_client_in_lobby(&mut self, client: &ClientReference, room_code: RoomCode){
+    fn set_client_in_room(&mut self, client: &ClientReference, room_code: RoomCode){
 
         let sender = &client.sender(self).clone();
-        let Some(lobby) = self.get_lobby_mut(&room_code) else {
+        let Some(room) = self.get_room_mut(&room_code) else {
             client.send(self, ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomDoesntExist });
             return
         };
-        let Ok(lobby_client_id) = lobby.join_player(sender) else {return};
+        match room.join_client(sender) {
+            Ok(JoinRoomClientResult { id: room_client_id, in_game, spectator }) => {
+                sender.send(ToClientPacket::AcceptJoin { room_code, in_game, player_id: room_client_id, spectator });
 
-        client.set_location(self, ClientLocation::InLobby { room_code, lobby_client_id });
+                room.initialize_client(room_client_id, sender);
+
+                client.set_location(self, ClientLocation::InRoom { room_code, room_client_id });
+            }
+            Err(reason) => {
+                client.send(self, ToClientPacket::RejectJoin { reason });
+            }
+        }
     }
-    fn set_client_in_lobby_reconnect(&mut self, client: ClientReference, room_code: RoomCode, lobby_client_id: LobbyClientID){
+    fn set_client_in_room_reconnect(&mut self, client: ClientReference, room_code: RoomCode, room_client_id: RoomClientID){
 
         let sender = &client.sender(self).clone();
-        let Some(lobby) = self.get_lobby_mut(&room_code) else {
+        let Some(room) = self.get_room_mut(&room_code) else {
             client.send(self, ToClientPacket::RejectJoin { reason: RejectJoinReason::RoomDoesntExist });
             return
         };
-        let Ok(()) = lobby.rejoin_player(sender, lobby_client_id) else {return};
+        match room.rejoin_client(sender, room_client_id) {
+            Ok(JoinRoomClientResult { id: room_client_id, in_game, spectator }) => {
+                sender.send(ToClientPacket::AcceptJoin { room_code, in_game, player_id: room_client_id, spectator });
 
-        client.set_location(self, ClientLocation::InLobby { room_code, lobby_client_id });
+                room.initialize_client(room_client_id, sender);
+
+                client.set_location(self, ClientLocation::InRoom { room_code, room_client_id });
+            }
+            Err(reason) => {
+                client.send(self, ToClientPacket::RejectJoin { reason });
+            }
+        }
     }
-    fn set_client_outside_lobby(&mut self, client: &ClientReference, rejoinable: bool) {
-        client.send(self, ToClientPacket::ForcedOutsideLobby);
+    fn set_client_outside_room(&mut self, client: &ClientReference, rejoinable: bool) {
+        client.send(self, ToClientPacket::ForcedOutsideRoom);
         
-        if let Ok((lobby, _, id)) = client.get_lobby_mut(self) {
-            if rejoinable {
-                lobby.remove_player_rejoinable(id);
+        if let Ok((room, room_code, id)) = client.get_room_mut(self) {
+            let result = if rejoinable {
+                room.remove_client_rejoinable(id)
             }else{
-                lobby.remove_player(id)
+                room.remove_client(id)
+            };
+
+            match result {
+                RemoveRoomClientResult::Success |
+                RemoveRoomClientResult::ClientNotInRoom => {}
+                RemoveRoomClientResult::RoomShouldClose => self.delete_room(room_code),
             }
         }
 
-        client.set_location(self, ClientLocation::OutsideLobby);
+        client.set_location(self, ClientLocation::OutsideRoom);
     }
 
 
@@ -116,25 +152,26 @@ impl WebsocketListener{
         (start..=usize::MAX)
             .chain(0..start)
             .find(
-                |code| !self.lobbies.contains_key(code)
+                |code| !self.rooms.contains_key(code)
             )
     }
-    pub(super) fn create_lobby(&mut self) -> Option<RoomCode>{
+    pub(super) fn create_room(&mut self) -> Option<RoomCode>{
         let room_code = self.generate_roomcode()?;
 
-        let lobby = Lobby::new(room_code);
-        self.lobbies.insert(room_code, lobby);
+        self.rooms.insert(room_code, Room::new());
         Some(room_code)
     }
-    pub(super) fn delete_lobby(&mut self, room_code: RoomCode){
+    pub(super) fn delete_room(&mut self, room_code: RoomCode){
+        self.rooms.remove(&room_code);
 
         for client in ClientReference::all_clients(self){
             if client.in_room(self, room_code) {
-                self.set_client_outside_lobby(&client, false);
+                client.send(self, ToClientPacket::ForcedOutsideRoom);
+                client.set_location(self, ClientLocation::OutsideRoom);
             }
         }
 
-        self.lobbies.remove(&room_code);
+        log!(important "Room"; "Closed {room_code}.");
     }
 
     
@@ -153,7 +190,7 @@ impl WebsocketListener{
                     return;
                 }
 
-                tokio::time::sleep(DESIRED_FRAME_TIME.saturating_sub(tokio::time::Instant::now().saturating_duration_since(frame_start_time))).await;
+                tokio::time::sleep(DESIRED_FRAME_TIME.saturating_sub(frame_start_time.elapsed())).await;
             }
         });
     }
@@ -161,7 +198,7 @@ impl WebsocketListener{
 
     fn validate_client(&self, addr: &SocketAddr)->Result<ClientReference,ValidateClientError>{
         let Some(client) = ClientReference::new(addr, self) else {return Err(ValidateClientError::ClientDoesntExist)};
-        if let Err(GetLobbyError::LobbyDoesntExist) = client.get_lobby(self) {return Err(ValidateClientError::InLobbyThatDoesntExist)};
+        if let Err(GetRoomError::RoomDoesntExist) = client.get_room(self) {return Err(ValidateClientError::InRoomThatDoesntExist)};
         Ok(client)
     }
     
@@ -170,5 +207,5 @@ impl WebsocketListener{
 
 pub(super) enum ValidateClientError{
     ClientDoesntExist,
-    InLobbyThatDoesntExist
+    InRoomThatDoesntExist
 }

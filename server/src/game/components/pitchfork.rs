@@ -1,6 +1,6 @@
 use crate::{
     game::{
-        ability_input::*, attack_power::AttackPower, event::on_midnight::{OnMidnight, OnMidnightPriority}, game_conclusion::GameConclusion, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::Role, role_list::RoleSet, Game
+        ability_input::*, attack_power::AttackPower, event::on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority}, game_conclusion::GameConclusion, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::Role, role_list::RoleSet, Game
     },
     vec_map::VecMap, vec_set::VecSet
 };
@@ -79,15 +79,15 @@ impl Pitchfork{
             }
         }
     }
-    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, midnight_variables: &mut MidnightVariables, priority: OnMidnightPriority){
         if priority != OnMidnightPriority::Kill {return;}
         if game.day_number() <= 1 {return;}
-        if Pitchfork::usable_pitchfork_owners(game).is_empty() {return;}
+        if Pitchfork::usable_pitchfork_owners(game, midnight_variables).is_empty() {return;}
         
         if let Some(target) = Pitchfork::angry_mobbed_player(game) {
             target.try_night_kill(
-                &Pitchfork::usable_pitchfork_owners(game), 
-                game, 
+                &Pitchfork::usable_pitchfork_owners(game, midnight_variables), 
+                game, midnight_variables,
                 GraveKiller::RoleSet(RoleSet::Town), 
                 AttackPower::ProtectionPiercing, 
                 false
@@ -98,9 +98,9 @@ impl Pitchfork{
         }
     }
 
-    pub fn usable_pitchfork_owners(game: &Game) -> VecSet<PlayerReference> {
+    pub fn usable_pitchfork_owners(game: &Game, midnight_variables: &MidnightVariables) -> VecSet<PlayerReference> {
         Pitchfork::pitchfork_owners(game).iter()
-            .filter(|p|p.alive(game) && !p.night_blocked(game))
+            .filter(|p|p.alive(game) && !p.night_blocked(midnight_variables))
             .copied().collect()
     }
 
@@ -110,8 +110,8 @@ impl Pitchfork{
 
 
         for voter in PlayerReference::all_players(game){
-            let Some(PlayerListSelection(target)) = game.saved_controllers
-                .get_controller_current_selection_player_list(ControllerID::pitchfork_vote(voter))
+            let Some(PlayerListSelection(target)) = ControllerID::pitchfork_vote(voter)
+                .get_player_list_selection(game)
                 else {continue};
             let Some(target) = target.first() else {continue};
             if 

@@ -16,14 +16,16 @@ struct Config{
 /// 
 #[tokio::main]
 async fn main() -> ! {
+    let path_str = "./resources/config.json";
     let config = serde_json::from_str::<Config>(
-        &fs::read_to_string("./resources/config.json").expect("Failed to read the config file")
+        &fs::read_to_string(path_str)
+            .unwrap_or_else(|_| panic!("Failed to read the config file \"{}\"", path_str))
     ).unwrap();
 
     loop {
         create_ws_server(&config.address).await;
         // This delay is only to make sure disconnect messages are sent before the server restarts
         thread::sleep(Duration::from_secs(1));
-        log!(important "Main"; "Restarting server...");
+        log!(important "Server"; "Restarting...");
     }
 }

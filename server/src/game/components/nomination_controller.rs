@@ -4,6 +4,8 @@ use crate::{
     }, packet::ToClientPacket
 };
 
+use super::forfeit_vote::ForfeitVote;
+
 pub struct NominationController;
 
 impl NominationController{
@@ -23,7 +25,7 @@ impl NominationController{
             })
             .add_grayed_out_condition(
                 !actor.alive(game) ||
-                actor.forfeit_vote(game) ||
+                ForfeitVote::forfeited_vote(game, actor) ||
                 game.current_phase().phase() != crate::game::phase::PhaseType::Nomination
             )
             .reset_on_phase_start(crate::game::phase::PhaseType::Nomination)

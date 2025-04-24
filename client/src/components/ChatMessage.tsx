@@ -3,7 +3,7 @@ import React, { ReactElement } from "react";
 import GAME_MANAGER, { find, replaceMentions } from "..";
 import StyledText, { KeywordDataMap, PLAYER_SENDER_KEYWORD_DATA } from "./StyledText";
 import "./chatMessage.css"
-import { ChatGroup, Conclusion, PhaseState, PlayerIndex, Tag, translateConclusion, translateWinCondition, Verdict, WinCondition } from "../game/gameState.d";
+import { ChatGroup, Conclusion, DefensePower, PhaseState, PlayerIndex, Tag, translateConclusion, translateWinCondition, Verdict, WinCondition } from "../game/gameState.d";
 import { Role, RoleState } from "../game/roleState.d";
 import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
@@ -683,18 +683,10 @@ export function translateChatMessage(
                 playerNames[message.player]
             );
         case "auditorResult":
-            if(message.result.type === "one"){
-                return translate("chatMessage.auditorResult.one", 
-                    translateRoleOutline(message.roleOutline),
-                    translate("role."+message.result.role+".name")
-                );
-            }else{
-                return translate("chatMessage.auditorResult.two", 
-                    translateRoleOutline(message.roleOutline),
-                    translate("role."+message.result.roles[0]+".name"),
-                    translate("role."+message.result.roles[1]+".name")
-                );
-            }
+            return translate("chatMessage.auditorResult", 
+                translateRoleOutline(message.roleOutline),
+                message.result.map((role)=>translate("role."+role+".name")).join(", ")
+            );
         case "engineerVisitorsRole":
             return translate("chatMessage.engineerVisitorsRole", translate("role."+message.role+".name"));
         case "trapState":
@@ -709,7 +701,8 @@ export function translateChatMessage(
             );
         case "informantResult":
             return translate("chatMessage.informantResult",
-                translate("chatMessage.targetHasRole", translate("role."+message.role+".name")),
+                playerNames[message.player],
+                translate("role."+message.role+".name"),
                 translate("chatMessage.informantResult.visited", playerListToString(message.visited, playerNames)),
                 translate("chatMessage.informantResult.visitedBy", playerListToString(message.visitedBy, playerNames))
             );
@@ -779,10 +772,12 @@ export function translateChatMessage(
         }
         case "playerForwardedMessage":
             return translate(`chatMessage.playerForwardedMessage`, playerNames[message.forwarder]);
+        case "fragileVestBreak":
+            return translate(`chatMessage.fragileVestBreak`, playerNames[message.playerWithVest], message.defense)
         case "deputyShotYou":
         case "mediumExists":
-        case "targetWasAttacked":
-        case "youWereProtected":
+        case "youGuardedSomeone":
+        case "youWereGuarded":
         case "revolutionaryWon":
         case "jesterWon":
         case "wardblocked":
@@ -806,7 +801,6 @@ export function translateChatMessage(
         case "politicianCountdownStarted":
         case "youAttackedSomeone":
         case "youWereAttacked":
-        case "armorsmithArmorBroke":
         case "werewolfTracked":
             return translate("chatMessage."+message.type);
         case "playerDied":
@@ -1038,11 +1032,13 @@ export type ChatMessageVariant = {
         type: "dismantled" | "ready" | "set"
     }
 } | {
-    type: "armorsmithArmorBroke"
+    type: "fragileVestBreak",
+    playerWithVest: PlayerIndex,
+    defense: DefensePower
 } | {
-    type: "targetWasAttacked"
+    type: "youGuardedSomeone"
 } | {
-    type: "youWereProtected"
+    type: "youWereGuarded"
 } | {
     type: "youDied"
 } | {
@@ -1062,6 +1058,7 @@ export type ChatMessageVariant = {
     will: string
 } | {
     type: "informantResult", 
+    player: PlayerIndex
     role: Role,
     visitedBy: PlayerIndex[],
     visited: PlayerIndex[]

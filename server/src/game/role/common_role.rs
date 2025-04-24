@@ -5,7 +5,7 @@ use crate::game::{
     chat::ChatGroup,
     components::{
         detained::Detained,
-        puppeteer_marionette::PuppeteerMarionette
+        puppeteer_marionette::PuppeteerMarionette, silenced::Silenced
     },
     game_conclusion::GameConclusion,
     modifiers::{ModifierType, Modifiers},
@@ -18,9 +18,9 @@ use super::{medium::Medium, reporter::Reporter, warden::Warden, InsiderGroupID, 
 
 
 /// This function uses defaults. When using this function, consider if you need to override the defaults.
-pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: PlayerReference, ability_id: ControllerID, attack: bool) -> Vec<Visit> {
+pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: PlayerReference, controller_id: ControllerID, attack: bool) -> Vec<Visit> {
     
-    let Some(selection) = game.saved_controllers.get_controller_current_selection(ability_id) else {return Vec::new()};
+    let Some(selection) = controller_id.get_selection(game) else {return Vec::new()};
     
     match selection {
         AbilitySelection::Unit(_) => vec![Visit::new_none(actor_ref, actor_ref, attack)],
@@ -87,13 +87,13 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         }
         return vec![ChatGroup::Dead].into_iter().collect();
     }
-    if actor_ref.night_silenced(game){
+    if Silenced::silenced(game, actor_ref) {
         return HashSet::new();
     }
 
     match game.current_phase() {
         PhaseState::Briefing => HashSet::new(),
-        PhaseState::Obituary => {
+        PhaseState::Obituary { .. } => {
             let mut out = HashSet::new();
 
             //evil chat groups

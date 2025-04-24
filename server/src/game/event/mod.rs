@@ -1,26 +1,26 @@
 use super::Game;
-
-pub mod on_any_death;
-pub mod on_fast_forward;
-pub mod on_game_ending;
-pub mod on_phase_start;
-pub mod on_grave_added;
-pub mod on_game_start;
-pub mod on_role_switch;
-pub mod on_convert;
-pub mod before_role_switch;
-pub mod before_phase_end;
-pub mod on_midnight;
-pub mod on_remove_role_label;
-pub mod before_initial_role_creation;
-pub mod on_ability_input_received;
-pub mod on_validated_ability_input_received;
-pub mod on_controller_selection_changed;
-pub mod on_tick;
-pub mod on_player_roleblocked;
-pub mod on_visit_wardblocked;
-pub mod on_whisper;
-
+pub(super) mod on_any_death;
+pub(super) mod on_fast_forward;
+pub(super) mod on_game_ending;
+pub(super) mod on_phase_start;
+pub(super) mod on_grave_added;
+pub(super) mod on_game_start;
+pub(super) mod on_role_switch;
+pub(super) mod on_convert;
+pub(super) mod before_role_switch;
+pub(super) mod before_phase_end;
+pub(super) mod on_midnight;
+pub(super) mod on_conceal_role;
+pub(super) mod before_initial_role_creation;
+pub(super) mod on_ability_input_received;
+pub(super) mod on_validated_ability_input_received;
+pub(super) mod on_controller_selection_changed;
+pub(super) mod on_tick;
+pub(super) mod on_player_roleblocked;
+pub(super) mod on_visit_wardblocked;
+pub(super) mod on_whisper;
+pub(super) mod on_add_insider;
+pub(super) mod on_remove_insider;
 
 pub trait EventPriority: Sized + Copy {
     fn values() -> Vec<Self>;
@@ -37,15 +37,17 @@ pub trait Event: Sized {
     type Priority: EventPriority;
 
     fn listeners() -> Vec<EventListenerFunction<Self>>;
-    fn initial_fold_value(&self) -> Self::FoldValue;
-    fn invoke(self, game: &mut Game) {
-        let mut fold = self.initial_fold_value();
+    fn initial_fold_value(&self, game: &Game) -> Self::FoldValue;
+    fn invoke(self, game: &mut Game) -> Self::FoldValue {
+        let mut fold = self.initial_fold_value(game);
 
         for priority in Self::Priority::values() {
             for listener in Self::listeners() {
                 listener(game, &self, &mut fold, priority);
             }
         }
+
+        fold
     }
 }
 

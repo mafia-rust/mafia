@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::ControllerParametersMap;
 use crate::game::attack_power::{AttackPower, DefensePower};
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 
@@ -18,20 +18,36 @@ pub struct Godfather;
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armored;
 
 impl RoleStateImpl for Godfather {
     type ClientRoleState = Godfather;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
-        Self::night_ability(game, actor_ref, priority);
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        Self::night_kill_ability(game, midnight_variables, actor_ref, priority);
+
+        if priority == OnMidnightPriority::Deception{
+            let Some(PlayerListSelection(players)) = ControllerID::role(actor_ref, Role::Godfather, 1).get_player_list_selection(game) else {return};
+            let Some(appeared_into) = players.first() else {return};
+            actor_ref.set_night_appeared_visits(midnight_variables, Some(vec![
+                Visit::new_none(actor_ref, *appeared_into, false)
+            ]));
+        }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        ControllerParametersMap::builder(game)
-            .id(ControllerID::role(actor_ref, Role::Godfather, 0))
-            .single_player_selection_typical(actor_ref, false, false)
-            .night_typical(actor_ref)
-            .add_grayed_out_condition(game.day_number() <= 1)
-            .build_map()
+        ControllerParametersMap::combine([
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Godfather, 0))
+                .single_player_selection_typical(actor_ref, false, false)
+                .night_typical(actor_ref)
+                .add_grayed_out_condition(game.day_number() <= 1)
+                .build_map(),
+
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Godfather, 1))
+                .single_player_selection_typical(actor_ref, true, true)
+                .night_typical(actor_ref)
+                .build_map()
+        ])
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
@@ -49,7 +65,7 @@ impl RoleStateImpl for Godfather {
 }
 
 impl Godfather{
-    pub(super) fn night_ability(game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    pub(super) fn night_kill_ability(game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if game.day_number() == 1 {return}
 
         match priority {
@@ -58,7 +74,7 @@ impl Godfather{
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
                 let Some(visit) = actor_visits.first() else {return};
                 visit.target.clone().try_night_kill_single_attacker(
-                    actor_ref, game, GraveKiller::RoleSet(RoleSet::Mafia),
+                    actor_ref, game, midnight_variables, GraveKiller::RoleSet(RoleSet::Mafia),
                     AttackPower::Basic, false
                 );
             },

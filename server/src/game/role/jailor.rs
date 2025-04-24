@@ -6,7 +6,7 @@ use crate::game::ability_input::AvailableBooleanSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::detained::Detained;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -16,7 +16,7 @@ use crate::game::role::BooleanSelection;
 use crate::game::Game;
 
 use super::{
-    AbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection,
+    ControllerID, ControllerParametersMap, PlayerListSelection,
     Role, RoleStateImpl
 };
 
@@ -49,19 +49,19 @@ impl RoleStateImpl for Jailor {
             ..Self::default()
         }
     }
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(mut self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Kill => {
 
-                let Some(AbilitySelection::Boolean(BooleanSelection(true))) = game.saved_controllers.get_controller_current_selection(
-                    ControllerID::role(actor_ref, Role::Jailor, 1)) else {return};
+                let Some(BooleanSelection(true)) = ControllerID::role(actor_ref, Role::Jailor, 1).get_boolean_selection(game) else {return};
                 let Some(target) = self.jailed_target_ref else {return};
 
     
                 if Detained::is_detained(game, target){
                     target.try_night_kill_single_attacker(
                         actor_ref,
-                        game, 
+                        game,
+                        midnight_variables,
                         GraveKiller::Role(Role::Jailor), 
                         AttackPower::ProtectionPiercing, 
                         false
@@ -120,9 +120,9 @@ impl RoleStateImpl for Jailor {
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
             PhaseType::Night => {
-                let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(
-                    ControllerID::role(actor_ref, Role::Jailor, 0)
-                ) else {return};
+                let Some(PlayerListSelection(target)) = ControllerID::role(actor_ref, Role::Jailor, 0)
+                    .get_player_list_selection(game)
+                    .cloned() else {return};
                 let Some(target) = target.first() else {return};
 
                 if actor_ref.ability_deactivated_from_death(game) || !target.alive(game) {return};

@@ -2,7 +2,7 @@ use std::{collections::VecDeque, time::Instant};
 
 use serde::Serialize;
 
-use crate::game::{player::PlayerIndex, spectator::spectator_pointer::SpectatorIndex};
+use super::{player::PlayerReference, spectator::spectator_pointer::SpectatorPointer};
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -17,13 +17,13 @@ pub struct GameClient{
 #[derive(Clone, Debug, Serialize)]
 #[serde(tag = "type", content = "index", rename_all="camelCase")]
 pub enum GameClientLocation {
-    Player(PlayerIndex),
-    Spectator(SpectatorIndex)
+    Player(PlayerReference),
+    Spectator(SpectatorPointer)
 }
 impl GameClient {
-    pub fn new_spectator(index: SpectatorIndex, host: bool)->Self{
+    pub fn new_spectator(pointer: SpectatorPointer, host: bool)->Self{
         GameClient{
-            client_location: GameClientLocation::Spectator(index),
+            client_location: GameClientLocation::Spectator(pointer),
             host,
             last_message_times: VecDeque::new(),
         }

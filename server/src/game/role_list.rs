@@ -101,6 +101,11 @@ impl RoleOutline{
             .collect::<Vec<_>>();
         options.choose(&mut rand::rng()).cloned()
     }
+    pub fn get_all_roles(&self) -> Vec<Role>{
+        self.options.iter()
+            .flat_map(|outline_opt|outline_opt.roles.get_roles().into_iter())
+            .collect()
+    }
     pub fn simplify(&mut self){
         let mut new_options = self.options.to_vec();
 
@@ -309,7 +314,7 @@ impl RoleSet{
             RoleSet::TownSupport => 
                 vec![
                     Role::Medium, Role::Coxswain,
-                    Role::Retributionist, Role::Transporter, Role::Escort, 
+                    Role::Retributionist, Role::Transporter, Role::Porter, Role::Escort, 
                     Role::Mayor, Role::Reporter
                 ],
             RoleSet::Mafia =>
