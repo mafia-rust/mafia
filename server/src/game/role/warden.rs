@@ -1,7 +1,7 @@
 use serde::Serialize;
 use crate::game::ability_input::{AvailableBooleanSelection, AvailablePlayerListSelection};
 use crate::game::components::insider_group::InsiderGroupID;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::{game::attack_power::AttackPower, vec_set::VecSet};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::grave::GraveKiller;
@@ -9,10 +9,7 @@ use crate::game::phase::PhaseType;
 use crate::game::attack_power::DefensePower;
 use crate::game::player::PlayerReference;
 use crate::game::Game;
-use super::{
-    common_role, BooleanSelection, ControllerID, ControllerParametersMap, PlayerListSelection, Role, RoleStateImpl
-};
-
+use super::{common_role, ControllerID, ControllerParametersMap, PlayerListSelection, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct Warden{
@@ -25,18 +22,18 @@ const MAX_PLAYERS_IN_PRISON: u8 = 3;
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armored;
 
 impl RoleStateImpl for Warden {
     type ClientRoleState = Warden;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         match priority {
             OnMidnightPriority::Roleblock => {
                 if game.day_number() == 1 {return}
                 for &player in self.players_in_prison.iter() {
                     if player != actor_ref {
-                        player.roleblock(game, true);
+                        player.roleblock(game, midnight_variables, true);
                     }
                 }
             }
@@ -47,7 +44,7 @@ impl RoleStateImpl for Warden {
         
                     player.try_night_kill_single_attacker(
                         actor_ref,
-                        game,
+                        game, midnight_variables,
                         GraveKiller::Role(Role::Warden),
                         AttackPower::ArmorPiercing,
                         true
@@ -96,9 +93,10 @@ impl RoleStateImpl for Warden {
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
         match phase {
             PhaseType::Night => {
-                let Some(PlayerListSelection(players_in_prison)) = game.saved_controllers.get_controller_current_selection_player_list(
-                    ControllerID::role(actor_ref, Role::Warden, 0)
-                ) else {return};
+                let Some(PlayerListSelection(players_in_prison)) = ControllerID::role(actor_ref, Role::Warden, 0)
+                    .get_player_list_selection(game)
+                    .cloned()
+                    else {return};
 
                 if actor_ref.ability_deactivated_from_death(game) || players_in_prison.iter().any(|p|!p.alive(game)) {return};
                 
@@ -138,11 +136,10 @@ impl Warden {
 
         for &player in self.players_in_prison.iter(){
             if
-                !if let Some(BooleanSelection(chose_to_live)) = game.saved_controllers.get_controller_current_selection_boolean(
-                    ControllerID::WardenLiveOrDie { warden: actor_ref, player }
-                ) {
-                    chose_to_live
-                } else {true}
+                !(ControllerID::WardenLiveOrDie { warden: actor_ref, player })
+                    .get_boolean_selection(game)
+                    .map(|b|b.0)
+                    .unwrap_or(true)
             {
                 players_who_chose_die.insert(player);
             }

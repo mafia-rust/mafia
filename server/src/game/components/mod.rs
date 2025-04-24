@@ -1,6 +1,5 @@
 pub mod mafia;
 pub mod cult;
-pub mod arsonist_doused;
 pub mod puppeteer_marionette;
 pub mod verdicts_today;
 pub mod mafia_recruits;
@@ -17,3 +16,8 @@ pub mod synopsis;
 pub mod dead_can_still_play_message;
 pub mod nomination_controller;
 pub mod forward_messages;
+pub mod silenced;
+pub mod tags;
+pub mod enfranchise;
+pub mod guard;
+pub mod fragile_vest;

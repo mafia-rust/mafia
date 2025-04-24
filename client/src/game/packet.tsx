@@ -273,7 +273,7 @@ export type ToServerPacket = {
     
     youWereRoleblockedMessage: boolean,
     youSurvivedAttackMessage: boolean,
-    youWereProtectedMessage: boolean,
+    youWereGuardedMessage: boolean,
     youWereTransportedMessage: boolean,
     youWerePossessedMessage: boolean,
     yourTargetWasJailedMessage: boolean

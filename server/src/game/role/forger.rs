@@ -4,14 +4,14 @@ use serde::Serialize;
 use crate::game::ability_input::{AvailableRoleOptionSelection, AvailableStringSelection, RoleOptionSelection};
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Role, StringSelection};
+use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Role};
 use super::{RoleState, RoleStateImpl};
 
 
@@ -49,7 +49,7 @@ impl RoleStateImpl for Forger {
             ..Self::default()
         }
     }
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if self.forges_remaining == 0 {return}
 
         match priority {
@@ -59,19 +59,19 @@ impl RoleStateImpl for Forger {
 
                 let target_ref = visit.target;
 
-                let fake_role = game.saved_controllers
-                    .get_controller_current_selection_role_option(ControllerID::role(actor_ref, Role::Forger, 1))
+                let fake_role = ControllerID::role(actor_ref, Role::Forger, 1)
+                    .get_role_option_selection(game)
                     .and_then(|p| p.0);
 
-                target_ref.set_night_grave_role(game, fake_role);
+                target_ref.set_night_grave_role(midnight_variables, fake_role);
 
-                let fake_alibi = if let Some(StringSelection(string)) = game.saved_controllers
-                    .get_controller_current_selection_string(ControllerID::role(actor_ref, Role::Forger, 2)) {
-                    string
-                } else {
-                    "".to_owned()
-                };
-                target_ref.set_night_grave_will(game, fake_alibi);
+
+                let fake_alibi = ControllerID::role(actor_ref, Role::Forger, 2)
+                    .get_string_selection(game)
+                    .map(|s|s.0.clone())
+                    .unwrap_or("".to_string());
+
+                target_ref.set_night_grave_will(midnight_variables, fake_alibi);
 
                 actor_ref.set_role_state(game, Forger { 
                     forges_remaining: self.forges_remaining.saturating_sub(1), 
@@ -80,8 +80,8 @@ impl RoleStateImpl for Forger {
             },
             OnMidnightPriority::Investigative=>{
                 if let Some(forged_ref) = self.forged_ref {
-                    if forged_ref.night_died(game) {
-                        actor_ref.push_night_message(game, ChatMessageVariant::PlayerRoleAndAlibi{
+                    if forged_ref.night_died(midnight_variables) {
+                        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::PlayerRoleAndAlibi{
                             player: forged_ref,
                             role: forged_ref.role(game),
                             will: forged_ref.will(game).to_string(),

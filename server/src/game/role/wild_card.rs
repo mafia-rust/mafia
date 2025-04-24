@@ -24,7 +24,7 @@ impl RoleStateImpl for Wildcard {
         match phase {
             PhaseType::Night => {
                 if actor_ref.ability_deactivated_from_death(game) {return;}
-                self.become_role(game, actor_ref);
+                Wildcard::become_role(game, actor_ref, Role::Wildcard);
             },
             _ => {}
         }
@@ -44,11 +44,12 @@ impl RoleStateImpl for Wildcard {
 }
 
 impl Wildcard {
-    fn become_role(&self, game: &mut Game, actor_ref: PlayerReference) {
+    pub fn become_role(game: &mut Game, actor_ref: PlayerReference, role: Role) {
 
-        let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
-            ControllerID::role(actor_ref, Role::Wildcard, 0)
-        ) else {return};
+        let Some(RoleOptionSelection(Some(role))) = ControllerID::role(actor_ref, role, 0)
+            .get_role_option_selection(game)
+            .cloned()
+            else {return};
 
         if 
             role_can_generate(

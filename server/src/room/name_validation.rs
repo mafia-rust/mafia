@@ -22,7 +22,7 @@ lazy_static!(
 
 const MAX_NAME_LENGTH: usize = 20;
 const MAX_SERVER_NAME_LENGTH: usize = 20;
-pub const DEFAULT_SERVER_NAME: &str = "Mafia Lobby";
+pub const DEFAULT_SERVER_NAME: &str = "Mafia Room";
 
 /// Sanitizes a player name.
 /// If the desired name is invalid or taken, this generates a random acceptable name.

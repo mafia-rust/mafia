@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::Grave;
@@ -24,7 +24,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Scarecrow {
     type ClientRoleState = Scarecrow;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Ward {return;}
         
 
@@ -33,7 +33,7 @@ impl RoleStateImpl for Scarecrow {
 
         let target_ref = visit.target;
 
-        let mut blocked_players = target_ref.ward(game, &[*visit]);
+        let mut blocked_players = target_ref.ward(game, midnight_variables, &[*visit]);
         blocked_players.shuffle(&mut rand::rng());
 
         let message = ChatMessageVariant::ScarecrowResult { players:
@@ -41,11 +41,11 @@ impl RoleStateImpl for Scarecrow {
         };
 
         for player_ref in blocked_players.iter(){
-            actor_ref.insert_role_label(game, *player_ref);
+            actor_ref.reveal_players_role(game, *player_ref);
         }
-        actor_ref.insert_role_label(game, target_ref);
+        actor_ref.reveal_players_role(game, target_ref);
         
-        actor_ref.push_night_message(game, message);
+        actor_ref.push_night_message(midnight_variables, message);
         
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {

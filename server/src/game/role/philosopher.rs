@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
 use crate::game::components::confused::Confused;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
@@ -23,7 +23,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Philosopher {
     type ClientRoleState = Philosopher;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Investigative {return;}
 
         let actor_visits = actor_ref.untagged_night_visits_cloned(game);
@@ -33,14 +33,14 @@ impl RoleStateImpl for Philosopher {
         let enemies = if first_visit.target == second_visit.target {
             false
         } else if Confused::is_confused(game, actor_ref) {
-            Philosopher::players_are_enemies_confused(game,first_visit.target, second_visit.target, actor_ref)
+            Philosopher::players_are_enemies_confused(game, first_visit.target, second_visit.target, actor_ref)
         } else {
-            Philosopher::players_are_enemies(game, first_visit.target, second_visit.target)
+            Philosopher::players_are_enemies_night(game, midnight_variables, first_visit.target, second_visit.target)
         };
 
         let message = ChatMessageVariant::PhilosopherResult{ enemies };
         
-        actor_ref.push_night_message(game, message);
+        actor_ref.push_night_message(midnight_variables, message);
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
 
@@ -69,8 +69,8 @@ impl RoleStateImpl for Philosopher {
     }
 }
 impl Philosopher{
-    pub fn players_are_enemies(game: &Game, a: PlayerReference, b: PlayerReference) -> bool {
-        if a.has_suspicious_aura(game) || b.has_suspicious_aura(game) {
+    pub fn players_are_enemies_night(game: &Game, midnight_variables: &MidnightVariables, a: PlayerReference, b: PlayerReference) -> bool {
+        if a.has_suspicious_aura(game, midnight_variables) || b.has_suspicious_aura(game, midnight_variables){
             true
         } else if a.has_innocent_aura(game) || b.has_innocent_aura(game) {
             false

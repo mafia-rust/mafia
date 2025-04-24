@@ -49,15 +49,15 @@ impl PhaseTimeSettings {
 impl Default for PhaseTimeSettings{
     fn default() -> Self {
         Self{
-            briefing: 45,
-            obituary: 60,
-            discussion: 120,
-            nomination: 120,
-            testimony: 30,
-            judgement: 60,
-            final_words: 30,
-            dusk: 30,
-            night: 60,
+            briefing:45,
+            obituary:20,
+            discussion:100,
+            nomination:100,
+            testimony:30,
+            judgement:30,
+            final_words:10,
+            dusk:30,
+            night:60,
         }
     }
 }
