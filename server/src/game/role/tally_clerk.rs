@@ -57,7 +57,7 @@ impl TallyClerk {
             !player_ref.win_condition(game).is_loyalist_for(GameConclusion::Town)
         }
     }
-    pub fn player_is_suspicious_confused(game: &Game, player_ref: PlayerReference, actor_ref: PlayerReference) -> bool {
-        Detective::player_is_suspicious_confused(game, player_ref, actor_ref)
+    pub fn player_is_suspicious_confused(game: &Game, midnight_variables: &MidnightVariables, player_ref: PlayerReference, actor_ref: PlayerReference) -> bool {
+        Detective::player_is_suspicious_confused(game, midnight_variables, player_ref, actor_ref)
     }
 }

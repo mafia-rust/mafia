@@ -33,7 +33,7 @@ impl RoleStateImpl for Philosopher {
         let enemies = if first_visit.target == second_visit.target {
             false
         } else if Confused::is_confused(game, actor_ref) {
-            Philosopher::players_are_enemies_confused(game, first_visit.target, second_visit.target, actor_ref)
+            Philosopher::players_are_enemies_confused(game, midnight_variables, first_visit.target, second_visit.target, actor_ref)
         } else {
             Philosopher::players_are_enemies_night(game, midnight_variables, first_visit.target, second_visit.target)
         };
@@ -78,8 +78,8 @@ impl Philosopher{
             !WinCondition::are_friends(a.win_condition(game), b.win_condition(game))
         }
     }
-    pub fn players_are_enemies_confused(game: &Game, a: PlayerReference, b: PlayerReference, actor_ref: PlayerReference) -> bool {
-        Detective::player_is_suspicious_confused(game, a, actor_ref) ^
-        Detective::player_is_suspicious_confused(game, b, actor_ref)
+    pub fn players_are_enemies_confused(game: &Game, midnight_variables: &MidnightVariables, a: PlayerReference, b: PlayerReference, actor_ref: PlayerReference) -> bool {
+        Detective::player_is_suspicious_confused(game, midnight_variables, a, actor_ref) ^
+        Detective::player_is_suspicious_confused(game, midnight_variables, b, actor_ref)
     }
 }

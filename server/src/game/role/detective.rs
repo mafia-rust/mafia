@@ -27,16 +27,16 @@ impl RoleStateImpl for Detective {
         let Some(visit) = actor_visits.first() else {return};
         let target_ref = visit.target;
         let suspicious = if Confused::is_confused(game, actor_ref) {
-            Self::player_is_suspicious_confused(game, target_ref, actor_ref)
+            Self::player_is_suspicious_confused(game, midnight_variables, target_ref, actor_ref)
         }else{
-            Detective::player_is_suspicious(game, target_ref)
+            Detective::player_is_suspicious(game, midnight_variables, target_ref)
         };
 
         let message = ChatMessageVariant::DetectiveResult {
             suspicious
         };
         
-        actor_ref.push_night_message(game, message);
+        actor_ref.push_night_message(midnight_variables, message);
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::builder(game)
@@ -66,8 +66,8 @@ impl Detective {
             !player_ref.win_condition(game).friends_with_resolution_state(GameConclusion::Town)
         }
     }
-    pub fn player_is_suspicious_confused(game: &Game, player_ref: PlayerReference, actor_ref: PlayerReference) -> bool {
-        player_ref.has_suspicious_aura(game) ||
+    pub fn player_is_suspicious_confused(game: &Game, midnight_variables: &MidnightVariables, player_ref: PlayerReference, actor_ref: PlayerReference) -> bool {
+        player_ref.has_suspicious_aura(game, midnight_variables) ||
         Confused::is_red_herring(game, actor_ref, player_ref)
     }
 }
