@@ -1,10 +1,10 @@
 use rand::seq::IndexedRandom;
 
 use crate::{game::{
-    ability_input::{AvailablePlayerListSelection, ControllerID, ControllerParametersMap, PlayerListSelection}, attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessageVariant}, event::{
+    ability_input::{AbilitySelection, AvailablePlayerListSelection, ControllerID, ControllerParametersMap, PlayerListSelection}, attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessageVariant}, event::{
         on_add_insider::OnAddInsider,
         on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority}, on_remove_insider::OnRemoveInsider
-    }, grave::GraveKiller, modifiers::{ModifierType, Modifiers}, phase::PhaseType, player::PlayerReference, role::RoleState, role_list::RoleSet, tag::Tag, visit::{Visit, VisitTag}, ControllerID, Game, PlayerListSelection
+    }, grave::GraveKiller, modifiers::{ModifierType, Modifiers}, phase::PhaseType, player::PlayerReference, role::{Role, RoleState}, role_list::RoleSet, visit::{Visit, VisitTag}, Game
 }, vec_set::{vec_set, VecSet}};
 
 use super::{fragile_vest::FragileVests, detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits, syndicate_gun_item::SyndicateGunItem, tags::Tags};
@@ -163,14 +163,14 @@ impl Mafia{
 
     /// - This must go after role state on any death
     /// - Godfathers backup should become godfather if godfather dies as part of the godfathers ability
-    pub fn on_any_death(game: &mut Game, dead_player: PlayerReference) {
-        if RoleSet::MafiaKilling.get_roles().contains(&dead_player.role(game)) {
-            Mafia::on_mafia_killing_death(game, dead_player.role_state(game).clone());
+    pub fn on_any_death(game: &mut Game, player: PlayerReference) {
+        if RoleSet::MafiaKilling.get_roles().contains(&player.role(game)) {
+            MafiaAttacker::Role(player.role_state(game).clone()).on_removal(game, player)
         }
     }
-    pub fn on_role_switch(game: &mut Game, old: RoleState, _new: RoleState) {
-        if RoleSet::MafiaKilling.get_roles().contains(&old.role()) {
-            Mafia::on_mafia_killing_death(game, old);
+    pub fn on_role_switch(game: &mut Game, player: PlayerReference, old: RoleState, new: Role) {
+        if RoleSet::MafiaKilling.get_roles().contains(&old.role()) && !RoleSet::MafiaKilling.get_roles().contains(&new){
+            MafiaAttacker::Role(old).on_removal(game, player);
         }
     }
     pub fn on_add_insider(game: &mut Game, _event: &OnAddInsider, _fold: &mut (), _priority: ()){
@@ -179,39 +179,79 @@ impl Mafia{
     pub fn on_remove_insider(game: &mut Game, _event: &OnRemoveInsider, _fold: &mut (), _priority: ()){
         Tags::set_viewers(game, super::tags::TagSetID::SyndicateBackup, &InsiderGroupID::Mafia.players(game).clone());
     }
+    pub fn backup_of(game: &Game, player: PlayerReference) -> Option<PlayerReference>{
+        if let AbilitySelection::PlayerList(players) = 
+                game.saved_controllers
+                    .controllers_allowed_to_player(player)
+                    .all_controllers()
+                    .get(&ControllerID::SyndicateChooseBackup)
+                    .map(|c|c.selection())? {
+                        return players.0.first().copied()
+                    };
+        None
+    }
+}
+
+#[derive(Clone)]
+pub enum MafiaAttacker {
+    Gun,
+    Role(RoleState)
+}
 
 
-    pub fn on_mafia_killing_death(game: &mut Game, role: RoleState){
-        let players_to_convert = InsiderGroupID::Mafia.players(game)
+impl PartialEq for MafiaAttacker {
+    /// Returns true if both are Gun or if both are Role and the role of the RoleState is the same even if the state itself is different.
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (MafiaAttacker::Gun, MafiaAttacker::Gun) => true,
+            (MafiaAttacker::Gun, MafiaAttacker::Role(_)) => false,
+            (MafiaAttacker::Role(_), MafiaAttacker::Gun) => false,
+            (MafiaAttacker::Role(a), MafiaAttacker::Role(b)) => a.role() ==  b.role(),
+        }
+    }
+}
+
+impl MafiaAttacker {
+    pub fn on_removal(self, game: &mut Game, prev_player: PlayerReference) {
+        println!("on_attacker_removal");
+        let candidates = InsiderGroupID::Mafia.players(game)
             .iter()
             .filter(|p|
                 p.alive(game)
             )
             .collect::<Vec<_>>();
-        if players_to_convert.is_empty() {return}
-        //if they already have a mafia killing then return
-        if players_to_convert.iter().any(|p|
-            RoleSet::MafiaKilling.get_roles().contains(&p.role(game))
-        ) {return;}
-        let target = 
-            if let Some(PlayerListSelection(backup)) = game.saved_controllers
-                .get_controller_current_selection_player_list(
-                ControllerID::syndicate_choose_backup()
-                ) {
-                    if backup.first().is_some_and(|b|players_to_convert.contains(&b)) {
-                        backup.first().copied()
-                    } else {
-                        players_to_convert.choose(&mut rand::rng()).copied().copied()
-                    }
-            } else {
-                players_to_convert.choose(&mut rand::rng()).copied().copied()
-            };
-        if let Some(target) = target {
-            if Modifiers::modifier_is_enabled(game, ModifierType::BackupGetsGun) {
-                SyndicateGunItem::give_gun(game, target);
-            } else {
-                target.set_role(game, role);
+        let mk_roles = RoleSet::MafiaKilling.get_roles();
+        //If they already have a mafia killing then return
+        if candidates.iter().any(|p|
+            mk_roles.contains(&p.role(game))
+        ) {return}
+        //If there is 1 player to convert, convert that player. If there are no players to convert, return
+        if candidates.len() < 2 {
+            if let Some(target) = candidates.first() {
+                Self::set(self, game, **target);
             }
+            return;
+        }
+        //if the backup cannot be converted, it should not be converted.
+        let backup =  Mafia::backup_of(game, prev_player).take_if(|b|!candidates.contains(&&*b));
+        let target = backup.unwrap_or_else(||
+            **candidates.choose_multiple(&mut rand::rng(), 2)
+                .find(|p|***p != prev_player)
+                .expect("There's already a check to make sure that there at least 2 players to convert and because players_to_convert comes from a VecSet so it must contain a player that is not the old player if this statement is reached.")
+        );
+        
+        Self::set(self, game, target);
+    }
+    /// If a role is passed but the BackupGetsGun modifier is enabled, the target gets a gun instead.
+    pub fn set(self, game: &mut Game, target: PlayerReference) {
+        match self {
+            MafiaAttacker::Gun => SyndicateGunItem::give_gun_to_player(game, target),
+            MafiaAttacker::Role(role) => 
+                if Modifiers::modifier_is_enabled(game, ModifierType::BackupGetsGun) {
+                    SyndicateGunItem::give_gun_to_player(game, target)
+                } else {
+                    target.set_role(game, role)
+                }
         }
     }
 }

@@ -3,7 +3,6 @@ use std::{ops::Deref, vec};
 
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
-use mafia_server::vec_set;
 
 use mafia_server::game::attack_power::DefensePower;
 pub use mafia_server::game::{
@@ -1399,41 +1398,6 @@ fn godfather_backup_kills_jail() {
 }
 
 #[test]
-fn godfathers_backup_tag_works() {
-    kit::scenario!(game in Night 2 where
-        godfather: Godfather,
-        blackmailer: Blackmailer,
-        hypnotist: Hypnotist,
-        _vigi: Vigilante
-    );
-
-    godfather.send_ability_input(AbilityInput::new(
-        ControllerID::syndicate_choose_backup(),
-        PlayerListSelection(vec![blackmailer.player_ref()])
-    ));
-    assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).expect("blackmailer doesnt have tag").contains(&Tag::GodfatherBackup));
-    
-    godfather.send_ability_input(AbilityInput::new(
-        ControllerID::syndicate_choose_backup(),
-        PlayerListSelection(vec![])
-    ));
-    assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).is_none());
-
-    godfather.send_ability_input(AbilityInput::new(
-        ControllerID::syndicate_choose_backup(),
-        PlayerListSelection(vec![blackmailer.player_ref()])
-    ));
-    assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).expect("blackmailer doesnt have tag").contains(&Tag::GodfatherBackup));
-    
-    godfather.send_ability_input(AbilityInput::new(
-        ControllerID::syndicate_choose_backup(),
-        PlayerListSelection(vec![hypnotist.player_ref()])
-    ));
-    assert!(blackmailer.get_player_tags().get(&hypnotist.player_ref()).expect("hypnotist doesnt have tag").contains(&Tag::GodfatherBackup));
-    assert!(blackmailer.get_player_tags().get(&blackmailer.player_ref()).is_none());
-}
-
-#[test]
 fn backup_gets_converted_on_killing_death() {
     for _ in 0..20 {
         kit::scenario!(game in Night 2 where
@@ -1452,7 +1416,6 @@ fn backup_gets_converted_on_killing_death() {
             _maf9: Reeducator,
             _maf10: Disguiser
         );
-        assert_eq!(Mafia::players_with_gun(&game), vec_set![sk.player_ref()]);
         assert!(game.syndicate_gun_item.player_with_gun().is_none());
 
         sk.send_ability_input_player_list_other(backup, ControllerID::SyndicateChooseBackup);
@@ -1461,7 +1424,8 @@ fn backup_gets_converted_on_killing_death() {
         assert!(!sk.alive());
         assert!(backup.alive());
         assert!(vigi.alive());
-        assert_contains!(Mafia::players_with_gun(&game), backup.player_ref());
+        assert!(backup.role() == Role::Mafioso);
+        assert!(game.deref().syndicate_gun_item.player_with_gun().is_none())
     }
 }
 
@@ -1482,8 +1446,7 @@ fn backup_gets_gun_on_gunner_death() {
             _maf8: Forger,
             _maf9: Reeducator
         );
-        SyndicateGunItem::give_gun(&mut game, gunner.player_ref());
-        assert_eq!(Mafia::players_with_gun(&game), vec_set![gunner.player_ref()]);
+        SyndicateGunItem::give_gun_to_player(&mut game, gunner.player_ref());
         assert_eq!(game.syndicate_gun_item.player_with_gun(), Some(gunner.player_ref()));
 
         gunner.send_ability_input_player_list_other(backup, ControllerID::SyndicateChooseBackup);
@@ -1495,7 +1458,6 @@ fn backup_gets_gun_on_gunner_death() {
         assert!(backup.alive());
         assert!(vigi.alive());
 
-        assert_contains!(Mafia::players_with_gun(&game), backup.player_ref());
         assert_eq!(game.syndicate_gun_item.player_with_gun(), Some(backup.player_ref()));    
     }
 }

@@ -20,7 +20,7 @@ impl OnRoleSwitch{
         game.on_role_switch(self.player, self.old.role(), self.new.role());
 
         Cult::on_role_switch(game, self.old.role(), self.new.role());
-        Mafia::on_role_switch(game, self.old.clone(), self.new.clone());
+        Mafia::on_role_switch(game, self.player, self.old.clone(), self.new.role());
         DrunkAura::on_role_switch(game, self.player);
 
         SynopsisTracker::on_role_switch(game, self.player, self.old.role(), self.new.role());

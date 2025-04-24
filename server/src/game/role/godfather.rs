@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::ability_input::ControllerParametersMap;
+use crate::game::ability_input::{ControllerParametersMap, PlayerListSelection};
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
@@ -24,7 +24,7 @@ impl RoleStateImpl for Godfather {
     type ClientRoleState = Godfather;
     fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         Self::night_kill_ability(game, midnight_variables, actor_ref, priority);
-
+        
         if priority == OnMidnightPriority::Deception{
             let Some(PlayerListSelection(players)) = ControllerID::role(actor_ref, Role::Godfather, 1).get_player_list_selection(game) else {return};
             let Some(appeared_into) = players.first() else {return};
