@@ -18,9 +18,9 @@ impl OnAnyDeath{
         }
 
         Mafia::on_any_death(game, self.dead_player);
+        SyndicateGunItem::on_any_death(game, self.dead_player);
         Cult::on_any_death(game, self.dead_player);
         Modifiers::on_any_death(game, self.dead_player);
-        SyndicateGunItem::on_any_death(game, self.dead_player);
         DeadCanStillPlayMessage::on_any_death(game, self.dead_player);
 
         game.on_any_death(self.dead_player);

@@ -162,8 +162,8 @@ impl Mafia{
     }
 
     /// - This must go after role state on any death
-    /// - Godfathers backup should become godfather if godfather dies as part of the godfathers ability
     pub fn on_any_death(game: &mut Game, player: PlayerReference) {
+        
         if RoleSet::MafiaKilling.get_roles().contains(&player.role(game)) {
             MafiaAttacker::Role(player.role_state(game).clone()).on_removal(game, player)
         }
@@ -192,7 +192,7 @@ impl Mafia{
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum MafiaAttacker {
     Gun,
     Role(RoleState)
@@ -213,7 +213,6 @@ impl PartialEq for MafiaAttacker {
 
 impl MafiaAttacker {
     pub fn on_removal(self, game: &mut Game, prev_player: PlayerReference) {
-        println!("on_attacker_removal");
         let candidates = InsiderGroupID::Mafia.players(game)
             .iter()
             .filter(|p|
@@ -233,13 +232,12 @@ impl MafiaAttacker {
             return;
         }
         //if the backup cannot be converted, it should not be converted.
-        let backup =  Mafia::backup_of(game, prev_player).take_if(|b|!candidates.contains(&&*b));
+        let backup =  Mafia::backup_of(game, prev_player).filter(|b|candidates.contains(&b));
         let target = backup.unwrap_or_else(||
             **candidates.choose_multiple(&mut rand::rng(), 2)
                 .find(|p|***p != prev_player)
                 .expect("There's already a check to make sure that there at least 2 players to convert and because players_to_convert comes from a VecSet so it must contain a player that is not the old player if this statement is reached.")
         );
-        
         Self::set(self, game, target);
     }
     /// If a role is passed but the BackupGetsGun modifier is enabled, the target gets a gun instead.

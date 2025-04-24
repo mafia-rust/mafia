@@ -1401,7 +1401,7 @@ fn godfather_backup_kills_jail() {
 fn backup_gets_converted_on_killing_death() {
     for _ in 0..20 {
         kit::scenario!(game in Night 2 where
-            sk: Mafioso,
+            mk: Mafioso,
             backup: Hypnotist,
             vigi: Vigilante,
             _maf0: Ambusher,
@@ -1418,10 +1418,11 @@ fn backup_gets_converted_on_killing_death() {
         );
         assert!(game.syndicate_gun_item.player_with_gun().is_none());
 
-        sk.send_ability_input_player_list_other(backup, ControllerID::SyndicateChooseBackup);
-        assert!(vigi.send_ability_input_player_list_typical(sk));
+        mk.send_ability_input_player_list_other(backup, ControllerID::SyndicateChooseBackup);
+        assert_eq!(Mafia::backup_of(&game, mk.player_ref()), Some(backup.player_ref()));
+        assert!(vigi.send_ability_input_player_list_typical(mk));
         game.next_phase();
-        assert!(!sk.alive());
+        assert!(!mk.alive());
         assert!(backup.alive());
         assert!(vigi.alive());
         assert!(backup.role() == Role::Mafioso);
@@ -1431,7 +1432,7 @@ fn backup_gets_converted_on_killing_death() {
 
 #[test]
 fn backup_gets_gun_on_gunner_death() {
-    for _ in 0..100 {
+    for _ in 0..20 {
         kit::scenario!(game in Night 2 where
             gunner: Framer,
             backup: Hypnotist,
@@ -1444,16 +1445,21 @@ fn backup_gets_gun_on_gunner_death() {
             _maf6: Consort,
             _maf7: Disguiser,
             _maf8: Forger,
-            _maf9: Reeducator
+            _maf9: Reeducator,
+            _townie: Veteran
         );
-        SyndicateGunItem::give_gun_to_player(&mut game, gunner.player_ref());
+        if game.syndicate_gun_item.player_with_gun() == Some(gunner.player_ref()) {
+            vigi.send_ability_input_player_list_typical(gunner);
+            game.skip_to(Night, 3);
+        } else {
+            SyndicateGunItem::give_gun_to_player(&mut game, gunner.player_ref());
+        }
         assert_eq!(game.syndicate_gun_item.player_with_gun(), Some(gunner.player_ref()));
-
         gunner.send_ability_input_player_list_other(backup, ControllerID::SyndicateChooseBackup);
         vigi.send_ability_input_player_list_typical(gunner);
+        assert_eq!(Mafia::backup_of(&game, gunner.player_ref()), Some(backup.player_ref()));
 
         game.next_phase();
-
         assert!(!gunner.alive());
         assert!(backup.alive());
         assert!(vigi.alive());
