@@ -1,11 +1,14 @@
 use serde::Serialize;
 
 use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
+use crate::game::components::transporting::transport;
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
-use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
+use crate::game::attack_power::DefensePower;
 use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 use crate::game::Game;
+
+use crate::vec_map::VecMap;
 
 use super::{common_role, ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
@@ -20,27 +23,14 @@ impl RoleStateImpl for Porter {
     fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Warper {return;}
     
-        let transporter_visits = actor_ref.untagged_night_visits_cloned(game).clone();
-        let Some(first_visit) = transporter_visits.get(0) else {return};
-        let Some(second_visit) = transporter_visits.get(1) else {return};
+        let transporter_visits = actor_ref.untagged_night_visits_cloned(game);
+        let Some(first_visit) = transporter_visits.get(0).map(|v| v.target) else {return};
+        let Some(second_visit) = transporter_visits.get(1).map(|v| v.target) else {return};
         
-        
-        first_visit.target.push_night_message(midnight_variables, ChatMessageVariant::Transported);
-    
-        for player_ref in PlayerReference::all_players(game){
-            if player_ref == actor_ref {continue;}
-            if player_ref.role(game) == Role::Porter {continue;}
-            if player_ref.role(game) == Role::Warper {continue;}
-            if player_ref.role(game) == Role::Transporter {continue;}
-
-            let new_visits = player_ref.all_night_visits_cloned(game).clone().into_iter().map(|mut v|{
-                if v.target == first_visit.target {
-                    v.target = second_visit.target;
-                }
-                v
-            }).collect();
-            player_ref.set_night_visits(game, new_visits);
-        }
+        transport(
+            &actor_ref, game, midnight_variables,
+            &VecMap::new_from_vec(vec![(first_visit, second_visit)]), true, &|_| true
+        );
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         ControllerParametersMap::builder(game)

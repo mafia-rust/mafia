@@ -192,18 +192,10 @@ impl PlayerReference{
                 );
 
                 //remove the second role visit from the possessor
-                let mut found_first = false;
-                let mut new_witch_visits = vec![];
-                for visit in self.all_night_visits_cloned(game){
-                    if !found_first || visit.tag != VisitTag::Role {
-                        new_witch_visits.push(visit);
-                    }
-                    if visit.tag == VisitTag::Role {
-                        found_first = true;
-                    }
-                }
-
-                self.set_night_visits(game, new_witch_visits);
+                self.set_night_visits(
+                    game,
+                    self.all_night_visits_cloned(game).into_iter().filter(|v|v.tag != VisitTag::Role { role: self.role(game), id: 1 }).collect()
+                );
                 Some(possessed_visit.target)
             },
             OnMidnightPriority::Investigative => {
