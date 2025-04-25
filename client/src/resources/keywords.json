@@ -47,15 +47,6 @@
     "grave.killer.quit": { "style": "keyword-info"},
     "random.gay": { "style": "keyword-pride","replacement": "random.gay","link": "role/transporter"},
     "random.trans": { "style": "keyword-trans","replacement": "random.trans","link": "role/transporter"},
-    
-    "role.polymath.investigate.key": {"link":"role/polymath", "style": "keyword-investigate",  "replacement": "role.polymath.investigate.text"},
-    "role.polymath.protect.key": {"link":"role/polymath",  "style": "keyword-good",  "replacement": "role.polymath.protect.text"},
-    "role.polymath.guard.key": {"link":"role/polymath",  "style": "keyword-good",  "replacement": "role.polymath.guard.text"},
-    "role.polymath.support.key": {"link":"role/polymath",  "style": "keyword-neutral",  "replacement": "role.polymath.support.text"},
-    "role.polymath.move.key": {"link":"role/polymath",  "style": "keyword-neutral",  "replacement": "role.polymath.move.text"},
-    "role.polymath.kill.key": {"link":"role/polymath",  "style": "keyword-evil",  "replacement": "role.polymath.kill.text"},
-    "role.polymath.mark.key": {"link":"role/polymath",  "style": "keyword-evil",  "replacement": "role.polymath.mark.text"},
-    "role.polymath.camp.key": {"link":"role/polymath",  "style": "keyword-evil",  "replacement": "role.polymath.camp.text"},
 
     "role.wildcard.name": { "style": "keyword-pride", "replacement": "role.wildcard.name", "link":"role/wildcard"},
     "role.trueWildcard.name": { "style": "keyword-pride", "replacement": "role.trueWildcard.name", "link":"role/trueWildcard"},
