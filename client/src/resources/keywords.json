@@ -49,9 +49,8 @@
     "random.trans": { "style": "keyword-trans","replacement": "random.trans","link": "role/transporter"},
     
     "role.polymath.investigate.key": {"link":"role/polymath", "style": "keyword-investigate",  "replacement": "role.polymath.investigate.text"},
-    "role.polymath.examine.key": {"link":"role/polymath", "style": "keyword-investigate",  "replacement": "role.polymath.examine.text"},
     "role.polymath.protect.key": {"link":"role/polymath",  "style": "keyword-good",  "replacement": "role.polymath.protect.text"},
-    "role.polymath.heal.key": {"link":"role/polymath",  "style": "keyword-good",  "replacement": "role.polymath.heal.text"},
+    "role.polymath.guard.key": {"link":"role/polymath",  "style": "keyword-good",  "replacement": "role.polymath.guard.text"},
     "role.polymath.support.key": {"link":"role/polymath",  "style": "keyword-neutral",  "replacement": "role.polymath.support.text"},
     "role.polymath.move.key": {"link":"role/polymath",  "style": "keyword-neutral",  "replacement": "role.polymath.move.text"},
     "role.polymath.kill.key": {"link":"role/polymath",  "style": "keyword-evil",  "replacement": "role.polymath.kill.text"},
