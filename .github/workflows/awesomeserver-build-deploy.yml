@@ -47,36 +47,40 @@ jobs:
           build-args: |
             REACT_APP_WS_ADDRESS=wss://wss.midnightmachinations.net
 
-      # 5. Configure SSH for deployment
-      - name: Configure SSH
+      # 5. Decode SSH key from Base64 secret
+      - name: Decode SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_KEY_B64 }}" | base64 --decode > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/id_rsa
+
+      # 6. Add server to known_hosts
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
           ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts || true
 
-      # 6. Deploy to Server
+      # 7. Deploy to Server via SSH
       - name: Deploy to Server
-        run: |
-          ssh -o StrictHostKeyChecking=yes -p ${{ secrets.SSH_PORT }} \
-              ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
-            # Pull latest images
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SERVER_USER }}
+          key_path: ~/.ssh/id_rsa
+          script: |
+            # Pull & restart server container
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
-
-            # Restart server container
             docker stop mm-server || true
             docker rm mm-server || true
             docker run -d --restart always \
               --name mm-server -p 80:80 \
               ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
 
-            # Restart client container
+            # Pull & restart client container
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
             docker stop mm-client || true
             docker rm mm-client || true
             docker run -d --restart always \
               --name mm-client -p 3000:3000 \
               ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
-          EOF
