@@ -58,6 +58,7 @@ pub use mafia_server::game::{
         mayor::Mayor,
         medium::Medium,
         retributionist::Retributionist,
+        jack::Jack,
 
         godfather::Godfather,
         impostor::Impostor,
@@ -1336,7 +1337,7 @@ fn snoop_basic() {
     assert!(det.send_ability_input_player_list_typical(snoop));
     game.next_phase();
     assert_contains!(
-        snoop.get_messages(),
+        snoop.get_messages_after_night(1),
         ChatMessageVariant::SnoopResult { townie: false }
     );
 
@@ -1345,7 +1346,7 @@ fn snoop_basic() {
     assert!(snoop.send_ability_input_player_list_typical(det));
     game.next_phase();
     assert_contains!(
-        snoop.get_messages(),
+        snoop.get_messages_after_night(2),
         ChatMessageVariant::SnoopResult { townie: true }
     );
 
@@ -1354,10 +1355,107 @@ fn snoop_basic() {
     assert!(snoop.send_ability_input_player_list_typical(gf));
     game.next_phase();
     assert_contains!(
-        snoop.get_messages_after_last_message(
-            ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 3 }
-        ),
+        snoop.get_messages_after_night(3),
         ChatMessageVariant::SnoopResult { townie: false }
+    );
+}
+
+#[test]
+fn jack_snoop_basic() {
+    kit::scenario!(game in Night 1 where
+        gf: Godfather,
+        framer: Framer,
+        det: Detective,
+        jack: Jack
+    );
+    let mut night = 1;
+    jack.send_ability_input_role_typical(Some(Role::Snoop));
+    assert!(jack.send_ability_input_player_list(det, 1));
+    assert!(det.send_ability_input_player_list_typical(jack));
+    game.next_phase();
+    assert_contains!(
+        jack.get_messages_after_night(night),
+        ChatMessageVariant::JackSnoopResult { inno: false }
+    );
+    night += 1;
+    game.skip_to(Night, night);
+
+    assert!(jack.send_ability_input_player_list(det, 1));
+    assert!(jack.send_ability_input_player_list_typical(det));
+    game.next_phase();
+    assert_contains!(
+        jack.get_messages_after_night(night),
+        ChatMessageVariant::JackSnoopResult { inno: true }
+    );
+
+    night += 1;
+    game.skip_to(Night, night);
+
+    assert!(jack.send_ability_input_player_list(det, 1));
+    assert!(jack.send_ability_input_player_list_typical(gf));
+    game.next_phase();
+    assert_contains!(
+        jack.get_messages_after_night(night),
+        ChatMessageVariant::JackSnoopResult { inno: true }
+    );
+
+    night += 1;
+    game.skip_to(Night, night);
+
+    assert!(jack.send_ability_input_player_list(det, 1));
+    assert!(det.send_ability_input_player_list_typical(jack));
+    game.next_phase();
+    assert_contains!(
+        jack.get_messages_after_night(night),
+        ChatMessageVariant::JackSnoopResult { inno: false }
+    );
+
+
+    night += 1;
+    game.skip_to(Night, night);
+
+    assert!(jack.send_ability_input_player_list(det, 1));
+    assert!(framer.send_ability_input_player_list_typical(det));
+    game.next_phase();
+    assert_contains!(
+        jack.get_messages_after_night(night),
+        ChatMessageVariant::JackSnoopResult { inno: false }
+    );
+}
+
+#[test]
+fn jack_marksman_armorsmith_basic() {
+    kit::scenario!(game in Night 2 where
+        armor: Jack,
+        mark: Jack,
+        phil: Philosopher
+    );
+    
+    armor.send_ability_input_role_typical(Some(Role::Armorsmith));
+    mark.send_ability_input_role_typical(Some(Role::Marksman));
+    armor.send_ability_input_player_list(phil, 2);
+    mark.send_ability_input_player_list(phil, 3);
+    mark.send_ability_input_player_list(armor, 4);
+    phil.send_ability_input_two_player_typical(armor, mark);
+    game.next_phase();
+
+    assert!(armor.alive());
+    assert!(mark.alive());
+    assert!(phil.alive());
+
+    assert_contains!(
+        armor.get_messages_after_night(2),
+        ChatMessageVariant::YouGuardedSomeone
+    );
+
+    assert_contains!(
+        mark.get_messages_after_night(2),
+        ChatMessageVariant::SomeoneSurvivedYourAttack
+    );
+
+    assert_contains!(
+        phil.get_messages_after_night(2),
+        ChatMessageVariant::YouWereGuarded
     );
 }
 

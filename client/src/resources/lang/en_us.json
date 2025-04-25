@@ -982,6 +982,8 @@
     "chatMessage.auditorResult":"You audited \\0. It generated one of: \\1.",
     "chatMessage.snoopResult.townie":"Your target is a town loyalist.",
     "chatMessage.snoopResult.inconclusive":"You can't tell what your target is.",
+    "chatMessage.jackSnoopResult.inno":"Your target is innocent.",
+    "chatMessage.jackSnoopResult.inconclusive":"You can't tell what your target is.",
     "chatMessage.gossipResult.none": "Your target didn't visit a player that is enemies with town.",
     "chatMessage.gossipResult.enemies": "Your target visited a player that is enemies with town.",
     "chatMessage.tallyClerkResult": "\\0 evil players voted guilty at some point today.",

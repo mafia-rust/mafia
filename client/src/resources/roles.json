@@ -522,8 +522,8 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "snoopResult", "townie":true},
-            {"type": "snoopResult", "townie":false},
+            {"type": "jackSnoopResult", "inno": true},
+            {"type": "jackSnoopResult", "inno": false},
             {"type": "youAttackedSomeone"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youGuardedSomeone"}
@@ -712,11 +712,9 @@
             {"type": "framerResult", "mafiaMember": 1, "visitors": ["gossip", "detective"]},
             {"type": "framerResult", "mafiaMember": 4, "visitors": ["doctor"]},
             {"type": "framerResult", "mafiaMember": 20, "visitors": []},
-            {"type": "sheriffResult","suspicious":true},
-            {"type": "snoopResult", "townie":false},
-            {"type": "snoopResult", "townie":false},
+            {"type": "sheriffResult","suspicious": true},
+            {"type": "snoopResult", "townie": false},
             {"type": "seerResult", "enemies": true}
-            
         ]
     },
     "disguiser": {
