@@ -47,15 +47,20 @@ jobs:
           build-args: |
             REACT_APP_WS_ADDRESS=wss://wss.midnightmachinations.net
 
-      # 5. Deploy to production server via SSH Action
-      - name: Deploy to Server over SSH
-        uses: appleboy/ssh-action@master
+            # 5. Setup SSH agent
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.7.0
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # 6. Deploy to Server
+      - name: Deploy to Server
+        run: |
+          mkdir -p ~/.ssh
+          # add server to known hosts
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+          # run deployment commands over SSH
+          ssh -o StrictHostKeyChecking=yes -p ${{ secrets.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
             # Pull & run server container
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
             docker stop mm-server || true
@@ -73,3 +78,4 @@ jobs:
               --name mm-client \
               -p 3000:3000 \
               ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
+          EOF
