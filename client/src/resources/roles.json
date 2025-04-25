@@ -518,7 +518,7 @@
         "roleSets": ["town", "townCommon", "townSupport"],
         "armor": false,
         "aura": null,
-        "maxCount": 1,
+        "maxCount": null,
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
