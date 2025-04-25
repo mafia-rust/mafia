@@ -29,7 +29,7 @@ impl RoleStateImpl for Godfather {
             let Some(PlayerListSelection(players)) = ControllerID::role(actor_ref, Role::Godfather, 1).get_player_list_selection(game) else {return};
             let Some(appeared_into) = players.first() else {return};
             actor_ref.set_night_appeared_visits(midnight_variables, Some(vec![
-                Visit::new_none(actor_ref, *appeared_into, false)
+                Visit::new_role(actor_ref, *appeared_into, false, Role::Godfather, 0)
             ]));
         }
     }
@@ -54,7 +54,7 @@ impl RoleStateImpl for Godfather {
             game,
             actor_ref,
             ControllerID::role(actor_ref, Role::Godfather, 0),
-            true
+            true,
         )
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){

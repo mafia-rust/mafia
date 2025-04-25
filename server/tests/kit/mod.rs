@@ -54,7 +54,7 @@ macro_rules! assert_contains {
 #[allow(unused)]
 macro_rules! assert_not_contains {
     ($container:expr, $value:expr) => {
-        assert!(!$container.contains(&$value), "{}", format!("Expected {:#?} not to contain {:?}", $container, $value));
+        assert!(!$container.contains(&$value), "{}", format!("Expected {:#?} not to contain {:?}", $container, $value))
     };
 }
 

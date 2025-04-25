@@ -89,7 +89,7 @@ impl RoleStateImpl for Martyr {
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         let Some(BooleanSelection(true)) = ControllerID::role(actor_ref, Role::Martyr, 0).get_boolean_selection(game) else {return Vec::new()};
-        vec![Visit::new_none(actor_ref, actor_ref, true)]
+        vec![Visit::new_role(actor_ref, actor_ref, true, Role::Martyr, 0)]
     }
     fn on_phase_start(self,  game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         if phase == PhaseType::Obituary && matches!(self.state, MartyrState::StillPlaying {..}) {
