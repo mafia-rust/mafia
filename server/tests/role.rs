@@ -1460,7 +1460,7 @@ fn jack_snoop_basic() {
 }
 
 #[test]
-fn jack_marksman_armorsmith_basic() {
+fn jack_armorsmith_marksman_basic() {
     kit::scenario!(game in Night 2 where
         armor: Jack,
         mark: Jack,
@@ -1468,11 +1468,12 @@ fn jack_marksman_armorsmith_basic() {
     );
     
     armor.send_ability_input_integer_typical(2);
-    mark.send_ability_input_integer_typical(3);
     armor.send_ability_input_player_list(phil, 2);
-    mark.send_ability_input_player_list(phil, 3);
-    mark.send_ability_input_player_list(armor, 4);
+    mark.send_ability_input_integer_typical(4);
+    mark.send_ability_input_player_list(phil, 4);
+    mark.send_ability_input_player_list(armor, 5);
     phil.send_ability_input_two_player_typical(armor, mark);
+
     game.next_phase();
 
     assert!(armor.alive());
@@ -1480,15 +1481,15 @@ fn jack_marksman_armorsmith_basic() {
     assert!(phil.alive());
 
     assert_contains!(
-        armor.get_messages_after_night(2),
-        ChatMessageVariant::YouGuardedSomeone
-    );
-
-    assert_contains!(
-        mark.get_messages_after_night(2),
+        mark.get_messages_after_night(1),
         ChatMessageVariant::SomeoneSurvivedYourAttack
     );
 
+    assert_contains!(
+        armor.get_messages_after_night(2),
+        ChatMessageVariant::YouGuardedSomeone
+    );
+    
     assert_contains!(
         phil.get_messages_after_night(2),
         ChatMessageVariant::YouWereGuarded

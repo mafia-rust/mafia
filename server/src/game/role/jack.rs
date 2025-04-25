@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::game::ability_input::{AvailableIntegerSelection, IntegerSelection, PlayerListSelection};
+use crate::game::ability_input::{AvailableIntegerSelection, AvailableTwoPlayerOptionSelection, IntegerSelection, PlayerListSelection};
 use crate::game::attack_power::AttackPower;
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
@@ -45,9 +45,12 @@ impl RoleStateImpl for Jack {
                     actor_ref.guard_player(game, midnight_variables, target);
                 }
             },
+            (OnMidnightPriority::Transporter, JackAbilityType::Support) => {
+                todo!()
+            }
             (OnMidnightPriority::Kill, JackAbilityType::Kill) => {
                 let Some(&actor_visit) = actor_ref.untagged_night_visits_cloned(game).first() else {return};
-                let Some(PlayerListSelection(mark)) = ControllerID::role(actor_ref, Role::Jack, 3)
+                let Some(PlayerListSelection(mark)) = ControllerID::role(actor_ref, Role::Jack, 4)
                     .get_player_list_selection(game)
                     .cloned() else {return};
                 let Some(mark) = mark.first() else {return};
@@ -76,7 +79,7 @@ impl RoleStateImpl for Jack {
             .available_selection(AvailableIntegerSelection {
                 min: 0,
                 #[expect(clippy::cast_possible_wrap, clippy::arithmetic_side_effects, reason = "clamped")]
-                max: 1 + game.day_number().clamp(1, 2) as i8
+                max: 2 + game.day_number().clamp(1, 2) as i8
             })
             .default_selection(selection.into())
             .allow_players([actor_ref])
@@ -102,10 +105,23 @@ impl RoleStateImpl for Jack {
                 .add_grayed_out_condition(false)
                 .build_map()
             ),
+            JackAbilityType::Support => ctrl.combine_overwrite(
+                ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Jack, 3))
+                .available_selection(AvailableTwoPlayerOptionSelection::same_players(
+                    PlayerReference::all_players(game)
+                        .filter(|p|p.alive(game))
+                        .collect(), 
+                    false, 
+                    true
+                )).night_typical(actor_ref)
+                .add_grayed_out_condition(false)
+                .build_map()
+            ),
             JackAbilityType::Kill => {
                 ctrl.combine_overwrite( //
                     ControllerParametersMap::builder(game)
-                    .id(ControllerID::role(actor_ref, Role::Jack, 3))
+                    .id(ControllerID::role(actor_ref, Role::Jack, 4))
                     .single_player_selection_typical(actor_ref, false, true)
                     .night_typical(actor_ref)
                     .add_grayed_out_condition(game.day_number() == 1)
@@ -113,7 +129,7 @@ impl RoleStateImpl for Jack {
                 );
                 ctrl.combine_overwrite( //
                     ControllerParametersMap::builder(game)
-                    .id(ControllerID::role(actor_ref, Role::Jack, 4))
+                    .id(ControllerID::role(actor_ref, Role::Jack, 5))
                     .single_player_selection_typical(actor_ref, true, true)
                     .night_typical(actor_ref)
                     .add_grayed_out_condition(game.day_number() == 1)
@@ -139,10 +155,16 @@ impl RoleStateImpl for Jack {
                 ControllerID::role(actor_ref, Role::Jack, 2),
                 false
             ),
+            JackAbilityType::Support => crate::game::role::common_role::convert_controller_selection_to_visits(
+                game,
+                actor_ref,
+                ControllerID::role(actor_ref, Role::Jack, 3),
+                false
+            ),
             JackAbilityType::Kill => crate::game::role::common_role::convert_controller_selection_to_visits(
                 game,
                 actor_ref,
-                ControllerID::role(actor_ref, Role::Jack, 4),
+                ControllerID::role(actor_ref, Role::Jack, 5),
                 false
             ),
         }
@@ -164,27 +186,30 @@ enum JackAbilityType {
     None,
     Investigate,
     Protect,
+    Support,
     Kill,
 }
 
-impl From<i8> for JackAbilityType {
-    fn from(v: i8) -> JackAbilityType {
-        match v {
-            0 => JackAbilityType::None,
-            1 => JackAbilityType::Investigate,
-            2 => JackAbilityType::Protect,
-            3 => JackAbilityType::Kill,
-            _ => JackAbilityType::None
-        }
-    }
-}
 impl From<JackAbilityType> for i8 {
     fn from(v: JackAbilityType) -> i8 {
         match v {
             JackAbilityType::None => 0,
             JackAbilityType::Investigate => 1,
             JackAbilityType::Protect => 2,
-            JackAbilityType::Kill => 3,
+            JackAbilityType::Support => 3,
+            JackAbilityType::Kill => 4,
+        }
+    }
+}
+impl From<i8> for JackAbilityType {
+    fn from(v: i8) -> JackAbilityType {
+        match v {
+            0 => JackAbilityType::None,
+            1 => JackAbilityType::Investigate,
+            2 => JackAbilityType::Protect,
+            3 => JackAbilityType::Support,
+            4 => JackAbilityType::Kill,
+            _ => JackAbilityType::None
         }
     }
 }
