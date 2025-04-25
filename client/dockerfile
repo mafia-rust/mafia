@@ -31,10 +31,15 @@ COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=build    /app/build        ./build
 
 EXPOSE 3000
+
+ARG REACT_APP_WS_ADDRESS=ws://localhost:80
+ENV REACT_APP_WS_ADDRESS=${REACT_APP_WS_ADDRESS}
+
 RUN npm install -g serve
 CMD ["serve", "-s", "build", "-l", "3000"]
 
 
 
-# docker build -f dockerfile -t midnightmachinations-client .
+# docker build -f dockerfile --build-arg REACT_APP_WS_ADDRESS=ws://localhost:80 -t midnightmachinations-client .
 # docker run -p 3000:3000  midnightmachinations-client
+# wss://wss.midnightmachinations.net

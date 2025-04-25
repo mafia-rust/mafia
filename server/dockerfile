@@ -7,8 +7,12 @@ FROM rust:1.86.0-slim-bullseye
 COPY --from=builder /app/target/release/mafia_server /
 COPY --from=builder /app/resources /resources
 EXPOSE 80
+
+ARG WS_ADDRESS=0.0.0.0:80
+ENV WS_ADDRESS=${WS_ADDRESS}
+
 RUN chmod +x mafia_server
 CMD ["./mafia_server"]
 
-# docker build -f dockerfile -t midnightmachinations-server .
+# docker build -f dockerfile --build-arg WS_ADDRESS=0.0.0.0:80 -t midnightmachinations-server .
 # docker run -p 80:80  midnightmachinations-server
