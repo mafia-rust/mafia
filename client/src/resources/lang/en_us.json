@@ -1006,8 +1006,6 @@
     "chatMessage.auditorResult":"You audited \\0. It generated one of: \\1.",
     "chatMessage.snoopResult.townie":"Your target is a town loyalist.",
     "chatMessage.snoopResult.inconclusive":"You can't tell what your target is.",
-    "chatMessage.polymathSnoopResult.inno":"Your target is innocent.",
-    "chatMessage.polymathSnoopResult.inconclusive":"You can't tell what your target is.",
     "chatMessage.gossipResult.none": "Your target didn't visit a player that is enemies with town.",
     "chatMessage.gossipResult.enemies": "Your target visited a player that is enemies with town.",
     "chatMessage.tallyClerkResult": "\\0 evil players voted guilty at some point today.",
@@ -1611,7 +1609,7 @@
     "wiki.article.role.reporter.extra": "* If there is more than one Reporter with a public report, the reports are posted in player order\n* Your report does not get posted if you are silenced or blocked\n* If you interview a cultist or syndicate member, their teammates are told that the player is being interviewed",
 
     "wiki.article.role.polymath.reminder": "At night choose between using a weaker snoop, armorsmith, marksman or porter ability.",
-    "wiki.article.role.polymath.guide": "At night, pick one of the following abilities to use:\n\t- Select 1 player to examine. If they are friends with town or have an innocent aura, and you were not visited, and they do not have suspicious aura, you are told they are innocent. Otherwise you are told \"can't tell\".\n\t- Select 1 player to visit. If they visit you, you protect them.\n\t- Select 2 players to move. Transport all visits from the first player to the second. The players are not notified.\n\t- Select 1 player to mark. Select 1 player to camp. If the marked player visits the camped player, you attack the marked player with a basic attack.",
+    "wiki.article.role.polymath.guide": "At night, pick one of the following abilities to use:\n\t- Select 1 player to examine. \n\t\t- If they are friends with town you are told so.\n\t\t- If they have an innocent aura they appear to be friends with town.\n\t\t- If you are visited or the player has suspicious aura they appear to not be friends with town\n\t\t\t- This takes priority over innocent aura.\n\t- Select 1 player to heal. If they visit you, you protect them.\n\t- Select 2 players to move. Transport all visits from the first player to the second. The players are not notified.\n\t- Select 1 player to mark. Select 1 player to camp. If the marked player visits the camped player, you attack the marked player with a basic attack.",
     "wiki.article.role.polymath.abilities":"- Each night* use a worse version of one Snoop's, Armorsmith's, or Marksman's ability.",
     "wiki.article.role.polymath.attributes":"- You can't use the Marksman ability night 1.\n- You visit players you select to examine, heal, move, and camp.\n-You don't visit players you select to mark.",
     "wiki.article.role.polymath.extra":"- You only have a basic attack.\n* You can't mark yourself",
