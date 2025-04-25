@@ -44,31 +44,39 @@ jobs:
           build-args: |
             REACT_APP_WS_ADDRESS=wss://wss.midnightmachinations.net
 
-      # 5. Setup SSH agent for deployment
-      - name: Setup SSH agent
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      # 5. Prepare SSH key for deployment
+      - name: Configure SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          # Add server to known hosts to prevent prompt
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
       # 6. Deploy images to the production server
       - name: Deploy to Server
+        env:
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          DH_USER: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
-            # Server container deployment
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
+          ssh -o StrictHostKeyChecking=yes -p $SSH_PORT $SERVER_USER@$SERVER_HOST << 'EOF'
+            # Pull & run server container
+            docker pull $DH_USER/midnightmachinations-server:latest
             docker stop mm-server || true
             docker rm mm-server || true
             docker run -d --restart always \
               --name mm-server \
               -p 80:80 \
-              ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
+              $DH_USER/midnightmachinations-server:latest
 
-            # Client container deployment
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
+            # Pull & run client container
+            docker pull $DH_USER/midnightmachinations-client:latest
             docker stop mm-client || true
             docker rm mm-client || true
             docker run -d --restart always \
               --name mm-client \
               -p 3000:3000 \
-              ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
+              $DH_USER/midnightmachinations-client:latest
           EOF
