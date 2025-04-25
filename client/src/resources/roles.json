@@ -513,7 +513,7 @@
             {"type": "targetIsPossessionImmune"}
         ]
     },
-    "jack": {
+    "polymath": {
         "mainRoleSet": "town",
         "roleSets": ["town", "townCommon", "townSupport"],
         "armor": false,
@@ -522,8 +522,8 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "jackSnoopResult", "inno": true},
-            {"type": "jackSnoopResult", "inno": false},
+            {"type": "polymathSnoopResult", "inno": true},
+            {"type": "polymathSnoopResult", "inno": false},
             {"type": "youAttackedSomeone"},
             {"type": "someoneSurvivedYourAttack"},
             {"type": "youGuardedSomeone"}
