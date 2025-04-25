@@ -3,7 +3,8 @@ name: CI/CD
 on:
   push:
     branches:
-      - prod
+      - prod  # ensure this matches your branch name
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -12,6 +13,8 @@ jobs:
       # 1. Checkout repository code
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          ref: prod
 
       # 2. Log in to Docker Hub
       - name: Login to DockerHub
@@ -48,10 +51,11 @@ jobs:
       - name: Configure SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          printf '%s
+' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          # Add server to known hosts to prevent prompt
-          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+          # attempt to add server to known hosts; ignore errors
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts || true
 
       # 6. Deploy images to the production server
       - name: Deploy to Server
