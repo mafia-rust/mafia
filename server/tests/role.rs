@@ -1369,7 +1369,7 @@ fn jack_snoop_basic() {
         jack: Jack
     );
     let mut night = 1;
-    jack.send_ability_input_role_typical(Some(Role::Snoop));
+    jack.send_ability_input_integer_typical(1);
     assert!(jack.send_ability_input_player_list(det, 1));
     assert!(det.send_ability_input_player_list_typical(jack));
     game.next_phase();
@@ -1380,8 +1380,8 @@ fn jack_snoop_basic() {
     night += 1;
     game.skip_to(Night, night);
 
+    jack.send_ability_input_integer_typical(1);
     assert!(jack.send_ability_input_player_list(det, 1));
-    assert!(jack.send_ability_input_player_list_typical(det));
     game.next_phase();
     assert_contains!(
         jack.get_messages_after_night(night),
@@ -1391,8 +1391,8 @@ fn jack_snoop_basic() {
     night += 1;
     game.skip_to(Night, night);
 
-    assert!(jack.send_ability_input_player_list(det, 1));
-    assert!(jack.send_ability_input_player_list_typical(gf));
+    jack.send_ability_input_integer_typical(1);
+    assert!(jack.send_ability_input_player_list(gf, 1));
     game.next_phase();
     assert_contains!(
         jack.get_messages_after_night(night),
@@ -1402,6 +1402,7 @@ fn jack_snoop_basic() {
     night += 1;
     game.skip_to(Night, night);
 
+    jack.send_ability_input_integer_typical(1);
     assert!(jack.send_ability_input_player_list(det, 1));
     assert!(det.send_ability_input_player_list_typical(jack));
     game.next_phase();
@@ -1431,8 +1432,8 @@ fn jack_marksman_armorsmith_basic() {
         phil: Philosopher
     );
     
-    armor.send_ability_input_role_typical(Some(Role::Armorsmith));
-    mark.send_ability_input_role_typical(Some(Role::Marksman));
+    armor.send_ability_input_integer_typical(2);
+    mark.send_ability_input_integer_typical(3);
     armor.send_ability_input_player_list(phil, 2);
     mark.send_ability_input_player_list(phil, 3);
     mark.send_ability_input_player_list(armor, 4);

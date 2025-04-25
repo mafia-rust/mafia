@@ -48,12 +48,20 @@
     "random.gay": { "style": "keyword-pride","replacement": "random.gay","link": "role/transporter"},
     "random.trans": { "style": "keyword-trans","replacement": "random.trans","link": "role/transporter"},
     
+    "role.jack.investigate": {"link":"role/jack", "style": "keyword-investigate",  "replacement": "role.jack.investigate.text"},
+    "role.jack.examine": {"link":"role/jack", "style": "keyword-investigate",  "replacement": "role.jack.examine.text"},
+    "role.jack.protect": {"link":"role/jack",  "style": "keyword-good",  "replacement": "role.jack.protect.text"},
+    "role.jack.heal": {"link":"role/jack",  "style": "keyword-good",  "replacement": "role.jack.heal.text"},
+    "role.jack.kill": {"link":"role/jack",  "style": "keyword-evil",  "replacement": "role.jack.kill.text"},
+    "role.jack.mark": {"link":"role/jack",  "style": "keyword-evil",  "replacement": "role.jack.mark.text"},
+    "role.jack.camp": {"link":"role/jack",  "style": "keyword-evil",  "replacement": "role.jack.camp.text"},
     "role.wildcard.name": { "style": "keyword-pride", "replacement": "role.wildcard.name", "link":"role/wildcard"},
     "role.trueWildcard.name": { "style": "keyword-pride", "replacement": "role.trueWildcard.name", "link":"role/trueWildcard"},
     "role.kira.name": { "style": "keyword-kira keyword-fiends", "replacement": "role.kira.name", "link":"role/kira"},
     "role.spiral.name": { "style": "keyword-spiral keyword-fiends", "replacement": "role.spiral.name", "link":"role/spiral"},
     "role.santaClaus.name": { "style": "keyword-christmas", "replacement": "role.santaClaus.name", "link": "role/santaClaus" },
     "role.krampus.name": { "style": "keyword-christmas keyword-naughty", "replacement": "role.krampus.name", "link": "role/krampus" },
+
 
 
     "noAll.icon": {"link":"standard/chatGroup"},
@@ -66,7 +74,6 @@
     "chatGroup.dead.icon": {"link":"standard/chatGroup"},
     "noGroup.icon": {"link":"standard/chatGroup"},
     "messageSender.livingToDead.icon": {"link":"standard/chatGroup"},
-
 
     "day": {"link":"standard/howToPlay", "style": "keyword-info"},
 
