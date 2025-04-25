@@ -13,8 +13,6 @@ jobs:
       # 1. Checkout code from prod branch
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          ref: prod
 
       # 2. Log in to Docker Hub
       - name: Login to DockerHub
@@ -47,40 +45,25 @@ jobs:
           build-args: |
             REACT_APP_WS_ADDRESS=wss://wss.midnightmachinations.net
 
-      # 5. Decode SSH key from Base64 secret
-      - name: Decode SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY_B64 }}" | base64 --decode > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-
-      # 6. Add server to known_hosts
-      - name: Add server to known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts || true
-
-      # 7. Deploy to Server via SSH
-      - name: Deploy to Server
-        uses: appleboy/ssh-action@v1
+      # 5. Deploy to server via SSH
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          port: ${{ secrets.SSH_PORT }}
-          username: ${{ secrets.SERVER_USER }}
-          key_path: ~/.ssh/id_rsa
+          host: ${{ secrets.SERVER_HOST }}         # e.g., your.server.com or IP
+          username: ${{ secrets.SERVER_USER }}     # SSH user
+          key: ${{ secrets.SERVER_SSH_KEY }}       # SSH private key
+          port: ${{ secrets.SERVER_SSH_PORT }}     # optional, defaults to 22
           script: |
-            # Pull & restart server container
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
-            docker stop mm-server || true
-            docker rm mm-server || true
-            docker run -d --restart always \
-              --name mm-server -p 80:80 \
-              ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
-
-            # Pull & restart client container
+            # Pull the latest images
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
-            docker stop mm-client || true
-            docker rm mm-client || true
-            docker run -d --restart always \
-              --name mm-client -p 3000:3000 \
-              ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
+
+            # Restart client container
+            docker stop midnightmachinations-client || true
+            docker rm midnightmachinations-client || true
+            docker run -d --name midnightmachinations-client -p 3000:3000 ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
+
+            # Restart server container
+            docker stop midnightmachinations-server || true
+            docker rm midnightmachinations-server || true
+            docker run -d --name midnightmachinations-server -p 80:80 ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
