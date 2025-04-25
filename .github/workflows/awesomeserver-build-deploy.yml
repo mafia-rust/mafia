@@ -24,8 +24,8 @@ jobs:
       - name: Build and push server image
         uses: docker/build-push-action@v4
         with:
-          context: ./mafia/server
-          file: ./mafia/server/dockerfile
+          context: ./server
+          file: ./server/dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
@@ -36,8 +36,8 @@ jobs:
       - name: Build and push client image
         uses: docker/build-push-action@v4
         with:
-          context: ./mafia/client
-          file: ./mafia/client/dockerfile
+          context: ./client
+          file: ./client/dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
