@@ -73,14 +73,14 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
         if player != actor_ref {return}
 
         NightVisits::retain(game, |v|
-            v.tag != VisitTag::Role || v.visitor != actor_ref
+            !matches!(v.tag, VisitTag::Role{..}) || v.visitor != actor_ref
         );
     }
     fn on_visit_wardblocked(self, game: &mut Game, actor_ref: PlayerReference, visit: Visit) {
         if actor_ref != visit.visitor {return};
 
         NightVisits::retain(game, |v|
-            v.tag != VisitTag::Role || v.visitor != actor_ref
+            !matches!(v.tag, VisitTag::Role{..}) || v.visitor != actor_ref
         );
     }
     fn on_whisper(self, _game: &mut Game, _actor_ref: PlayerReference, _event: &OnWhisper, _fold: &mut WhisperFold, _priority: WhisperPriority) {}
