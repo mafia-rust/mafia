@@ -2,6 +2,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::{AvailableIntegerSelection, AvailableTwoPlayerOptionSelection, IntegerSelection, PlayerListSelection};
 use crate::game::attack_power::AttackPower;
+use crate::game::components::transport::{Transport, TransportPriority};
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
@@ -10,6 +11,7 @@ use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
+use crate::vec_map;
 
 use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
@@ -45,8 +47,19 @@ impl RoleStateImpl for Jack {
                     actor_ref.guard_player(game, midnight_variables, target);
                 }
             },
-            (OnMidnightPriority::Transporter, JackAbilityType::Support) => {
-                todo!()
+            (OnMidnightPriority::Warper, JackAbilityType::Support) => {    
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let Some(from) = actor_visits.first().map(|v| v.target) else {return};
+                let Some(to) = actor_visits.get(1).map(|v| v.target) else {return};
+                
+                Transport::transport(
+                    game, 
+                    midnight_variables, 
+                    TransportPriority::Warper, 
+                    &vec_map![(from, to)],
+                    |_| true,
+                    false,
+                );
             }
             (OnMidnightPriority::Kill, JackAbilityType::Kill) => {
                 let Some(&actor_visit) = actor_ref.untagged_night_visits_cloned(game).first() else {return};
