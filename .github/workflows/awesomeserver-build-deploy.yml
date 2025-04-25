@@ -3,14 +3,14 @@ name: CI/CD
 on:
   push:
     branches:
-      - prod  # ensure this matches your branch name
+      - prod
   workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      # 1. Checkout repository code
+      # 1. Checkout code from prod branch
       - name: Checkout code
         uses: actions/checkout@v3
         with:
@@ -23,7 +23,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 3. Build & push the server image
+      # 3. Build & push server image
       - name: Build and push server image
         uses: docker/build-push-action@v4
         with:
@@ -35,7 +35,7 @@ jobs:
           build-args: |
             WS_ADDRESS=0.0.0.0:80
 
-      # 4. Build & push the client image
+      # 4. Build & push client image
       - name: Build and push client image
         uses: docker/build-push-action@v4
         with:
@@ -47,35 +47,36 @@ jobs:
           build-args: |
             REACT_APP_WS_ADDRESS=wss://wss.midnightmachinations.net
 
-            # 5. Setup SSH agent
-      - name: Setup SSH agent
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      # 5. Configure SSH for deployment
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts || true
 
       # 6. Deploy to Server
       - name: Deploy to Server
         run: |
-          mkdir -p ~/.ssh
-          # add server to known hosts
-          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
-          # run deployment commands over SSH
-          ssh -o StrictHostKeyChecking=yes -p ${{ secrets.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
-            # Pull & run server container
+          ssh -o StrictHostKeyChecking=yes -p ${{ secrets.SSH_PORT }} \
+              ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            # Pull latest images
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
+
+            # Restart server container
             docker stop mm-server || true
             docker rm mm-server || true
             docker run -d --restart always \
-              --name mm-server \
-              -p 80:80 \
+              --name mm-server -p 80:80 \
               ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
 
-            # Pull & run client container
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
+            # Restart client container
             docker stop mm-client || true
             docker rm mm-client || true
             docker run -d --restart always \
-              --name mm-client \
-              -p 3000:3000 \
+              --name mm-client -p 3000:3000 \
               ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
           EOF
