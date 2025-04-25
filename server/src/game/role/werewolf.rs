@@ -42,7 +42,6 @@ impl RoleStateImpl for Werewolf {
                 if !enraged && target_ref.all_night_visits_cloned(game).is_empty() {return}
                     
                 NightVisits::all_visits_mut(game)
-                    .into_iter()
                     .filter(|visit| 
                         visit.visitor == actor_ref && visit.target == target_ref && visit.tag == VisitTag::Role{role: Role::Werewolf, id: 0}
                     ).for_each(|visit| {

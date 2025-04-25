@@ -7,10 +7,10 @@ use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
-use crate::game::components::transporting::transport;
+use crate::game::components::transport::{Transport, TransportPriority};
 use crate::vec_set;
 
-use crate::vec_map::VecMap;
+use crate::vec_map::vec_map;
 
 use super::{common_role, ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
@@ -30,9 +30,9 @@ impl RoleStateImpl for Transporter {
         let Some(first_visit) = transporter_visits.get(0).map(|v| v.target) else {return};
         let Some(second_visit) = transporter_visits.get(1).map(|v| v.target) else {return};
         
-        transport(
-            &actor_ref, game, midnight_variables,
-            &VecMap::new_from_vec(vec![(first_visit, second_visit), (second_visit, first_visit)]), true, &|_| true
+        Transport::transport(
+            game, midnight_variables, TransportPriority::Transporter, 
+            &vec_map![(first_visit, second_visit), (second_visit, first_visit)], |_| true, true
         );
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {

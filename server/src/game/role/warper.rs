@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
-use crate::game::components::transporting::transport;
+use crate::game::components::transport::{Transport, TransportPriority};
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::Grave;
 use crate::game::phase::PhaseType;
@@ -11,7 +11,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 use crate::game::Game;
 
-use crate::vec_map::VecMap;
+use crate::vec_map::vec_map;
 
 use super::{common_role, ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
@@ -30,9 +30,9 @@ impl RoleStateImpl for Warper {
         let Some(first_visit) = transporter_visits.get(0).map(|v| v.target) else {return};
         let Some(second_visit) = transporter_visits.get(1).map(|v| v.target) else {return};
         
-        transport(
-            &actor_ref, game, midnight_variables,
-            &VecMap::new_from_vec(vec![(first_visit, second_visit)]), true, &|_| true
+        Transport::transport(
+            game, midnight_variables, TransportPriority::Warper, 
+            &vec_map![(first_visit, second_visit)], |_| true, true, 
         );
         
         actor_ref.push_night_message(
