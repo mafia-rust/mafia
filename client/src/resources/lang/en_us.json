@@ -318,6 +318,17 @@
     "controllerId.role.reporter.1.name": "Publicize",
     "controllerId.role.reporter.2.name": "Report",
 
+    "role.jack.name": "The Jack",
+    "role.jack.name:var.0": "Jack",
+    "role.jack.name:var.1": "The Jacks",
+    "role.jack.name:var.2": "Jacks",
+    "controllerId.role.jack.0.name": "Ability Type",
+    "controllerId.role.jack.1.name": "Snoop",
+    "controllerId.role.jack.2.name": "Armorsmith",
+    "controllerId.role.jack.3.name": "Marksman (Mark)",
+    "controllerId.role.jack.4.name": "Marksman (Camp)",
+
+
     "role.vigilante.name": "Vigilante",
     "role.vigilante.name:var.0": "Vigilantes",
     "role.vigilante.roleDataText.suicide": "You killed an innocent townie and will commit suicide tonight",
@@ -1573,6 +1584,12 @@
     "wiki.article.role.reporter.attributes":"*  You can talk with the player you interview at night\n* Your report is posted anonymously, nobody knows who wrote it\n* Players you interview do not see your name on your messages, instead, the messages you send appear to be from the reporter.",
     "wiki.article.role.reporter.extra": "* If there is more than one Reporter with a public report, the reports are posted in player order\n* Your report does not get posted if you are silenced or blocked\n* If you interview a cultist or syndicate member, their teammates are told that the player is being interviewed",
 
+    "wiki.article.role.jack.reminder": "At night, pick one of the following abilities to use:\n\t- Select 1 player. If they are friends with town and you were not visited, you learn they're innocent.\n\t- Select 1 player. If they visit you, you protect them.\n\t- Select 1 player to mark. Select 1 player to camp. If the marked player visits the camped player, you attack them.",
+    "wiki.article.role.jack.guide": "At night, pick one of the following abilities to use:\n\t- Select 1 player to visit. If they are friends with town or have an innocent aura, and you were not visited, and they do not have suspicious aura, you are told they are innocent. Otherwise you are told \"can't tell\".\n\t- Select 1 player to visit. If they visit you, you protect them. \n\t- Select 1 player to mark. Select 1 player to camp. If the marked player visits the camped player, you attack the marked player with a basic attack.",
+    "wiki.article.role.jack.abilities":"- Each night* use a worse version of one Snoop's, Armorsmith's, or Marksman's ability.",
+    "wiki.article.role.jack.attributes":"- You can't use the Marksman ability night 1.",
+    "wiki.article.role.jack.extra":"- None",
+    
     "wiki.article.role.vigilante.reminder": "Each night, select a player to attack. If you kill a town loyalist, you die the following night.",
     "wiki.article.role.vigilante.guide": "- At night, select a player to attack\n- If you kill a town loyalist, you will commit suicide on the following night (and probably cause town to lose)\n- You have X bullets (X = Total players ÷ 5 (round up))\n- You can't shoot on night one\n\n If you attack someone and they survive it is likely that they were either protected by a protective role, or they are a role that is armored. Most roles that are armored are evil.",
     "wiki.article.role.vigilante.abilities":"* Visit a player to attack and spend a bullet\n* If you kill a town loyalist you will commit suicide on the following night\n* You have three bullets",

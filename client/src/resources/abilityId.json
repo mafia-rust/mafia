@@ -74,6 +74,21 @@
     "role/reporter/2": {
         "midnight": true
     },
+    "role/jack/0": {
+        "midnight": true
+    },
+    "role/jack/1": {
+        "midnight": true
+    },
+    "role/jack/2": {
+        "midnight": true
+    },
+    "role/jack/3": {
+        "midnight": true
+    },
+    "role/jack/4": {
+        "midnight": true
+    },
     "role/godfather/0": {
         "midnight": true
     },

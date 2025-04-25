@@ -125,6 +125,7 @@ macros::roles! {
     Transporter : transporter,
     Porter : porter,
     Coxswain : coxswain,
+    Jack : jack,
 
     // Mafia
     Godfather : godfather,

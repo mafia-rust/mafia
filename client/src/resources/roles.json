@@ -513,6 +513,22 @@
             {"type": "targetIsPossessionImmune"}
         ]
     },
+    "jack": {
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townSupport"],
+        "armor": false,
+        "aura": null,
+        "maxCount": 1,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "snoopResult", "townie":true},
+            {"type": "snoopResult", "townie":false},
+            {"type": "youAttackedSomeone"},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youGuardedSomeone"}
+        ]
+    },
     "godfather": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaKilling"],
