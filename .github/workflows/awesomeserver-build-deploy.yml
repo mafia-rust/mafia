@@ -51,8 +51,7 @@ jobs:
       - name: Configure SSH key
         run: |
           mkdir -p ~/.ssh
-          printf '%s
-' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           # attempt to add server to known hosts; ignore errors
           ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts || true
