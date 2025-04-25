@@ -22,7 +22,7 @@ export type RoleState = {
 } | {
     type: "coxswain"
 } | {
-    type: "jack"
+    type: "polymath"
 } | {
     type: "detective"
 } | {

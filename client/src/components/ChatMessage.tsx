@@ -657,8 +657,8 @@ export function translateChatMessage(
             return translate("chatMessage.sheriffResult." + (message.suspicious ? "suspicious" : "innocent"));
         case "snoopResult":
             return translate("chatMessage.snoopResult." + (message.townie ? "townie" : "inconclusive"));
-        case "jackSnoopResult":
-            return translate("chatMessage.jackSnoopResult." + (message.inno ? "inno" : "inconclusive"));
+        case "polymathSnoopResult":
+            return translate(message.inno ? "chatMessage.sheriffResult.innocent" : "chatMessage.snoopResult.inconclusive");
         case "gossipResult":
             return translate("chatMessage.gossipResult." + (message.enemies ? "enemies" : "none"));
         case "tallyClerkResult":
@@ -987,7 +987,7 @@ export type ChatMessageVariant = {
     type: "snoopResult", 
     townie: boolean
 } | {
-    type: "jackSnoopResult", 
+    type: "polymathSnoopResult", 
     inno: boolean
 } | {
     type: "gossipResult",

@@ -170,7 +170,7 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     AuditorResult{role_outline: RoleOutline, result: AuditorResult},
     SnoopResult{townie: bool},
-    JackSnoopResult{inno: bool},
+    PolymathSnoopResult{inno: bool},
     GossipResult{enemies: bool},
     #[serde(rename_all = "camelCase")]
     TallyClerkResult{evil_count: u8},

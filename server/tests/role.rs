@@ -58,7 +58,7 @@ pub use mafia_server::game::{
         mayor::Mayor,
         medium::Medium,
         retributionist::Retributionist,
-        jack::Jack,
+        polymath::Polymath,
 
         godfather::Godfather,
         impostor::Impostor,
@@ -1396,74 +1396,74 @@ fn snoop_basic() {
 }
 
 #[test]
-fn jack_snoop_basic() {
+fn polymath_snoop_basic() {
     kit::scenario!(game in Night 1 where
         gf: Godfather,
         framer: Framer,
         det: Detective,
-        jack: Jack
+        polymath: Polymath
     );
     let mut night = 1;
-    jack.send_ability_input_integer_typical(1);
-    assert!(jack.send_ability_input_player_list(det, 1));
-    assert!(det.send_ability_input_player_list_typical(jack));
+    polymath.send_ability_input_integer_typical(1);
+    assert!(polymath.send_ability_input_player_list(det, 1));
+    assert!(det.send_ability_input_player_list_typical(polymath));
     game.next_phase();
     assert_contains!(
-        jack.get_messages_after_night(night),
-        ChatMessageVariant::JackSnoopResult { inno: false }
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: false }
     );
     night += 1;
     game.skip_to(Night, night);
 
-    jack.send_ability_input_integer_typical(1);
-    assert!(jack.send_ability_input_player_list(det, 1));
+    polymath.send_ability_input_integer_typical(1);
+    assert!(polymath.send_ability_input_player_list(det, 1));
     game.next_phase();
     assert_contains!(
-        jack.get_messages_after_night(night),
-        ChatMessageVariant::JackSnoopResult { inno: true }
-    );
-
-    night += 1;
-    game.skip_to(Night, night);
-
-    jack.send_ability_input_integer_typical(1);
-    assert!(jack.send_ability_input_player_list(gf, 1));
-    game.next_phase();
-    assert_contains!(
-        jack.get_messages_after_night(night),
-        ChatMessageVariant::JackSnoopResult { inno: true }
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: true }
     );
 
     night += 1;
     game.skip_to(Night, night);
 
-    jack.send_ability_input_integer_typical(1);
-    assert!(jack.send_ability_input_player_list(det, 1));
-    assert!(det.send_ability_input_player_list_typical(jack));
+    polymath.send_ability_input_integer_typical(1);
+    assert!(polymath.send_ability_input_player_list(gf, 1));
     game.next_phase();
     assert_contains!(
-        jack.get_messages_after_night(night),
-        ChatMessageVariant::JackSnoopResult { inno: false }
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: true }
+    );
+
+    night += 1;
+    game.skip_to(Night, night);
+
+    polymath.send_ability_input_integer_typical(1);
+    assert!(polymath.send_ability_input_player_list(det, 1));
+    assert!(det.send_ability_input_player_list_typical(polymath));
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: false }
     );
 
 
     night += 1;
     game.skip_to(Night, night);
 
-    assert!(jack.send_ability_input_player_list(det, 1));
+    assert!(polymath.send_ability_input_player_list(det, 1));
     assert!(framer.send_ability_input_player_list_typical(det));
     game.next_phase();
     assert_contains!(
-        jack.get_messages_after_night(night),
-        ChatMessageVariant::JackSnoopResult { inno: false }
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: false }
     );
 }
 
 #[test]
-fn jack_armorsmith_marksman_basic() {
+fn polymath_armorsmith_marksman_basic() {
     kit::scenario!(game in Night 2 where
-        armor: Jack,
-        mark: Jack,
+        armor: Polymath,
+        mark: Polymath,
         phil: Philosopher
     );
     
