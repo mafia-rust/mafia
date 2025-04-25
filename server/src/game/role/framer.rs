@@ -36,23 +36,16 @@ impl RoleStateImpl for Framer {
                 let Some(second_visit) = framer_visits.get(1) else {return};
             
                 first_visit.target.set_night_appeared_visits(midnight_variables, Some(vec![
-                    Visit::new_none(first_visit.target, second_visit.target, false)
+                    Visit::new_role(first_visit.target, second_visit.target, false, first_visit.target.role(game), 0)
                 ]));
 
-                //this code erases only the second framer visit
-                let mut new_visits = vec![];
-                let mut got_first = false;
-                for visit in actor_ref.all_night_visits_cloned(game){
-                    if visit.tag == VisitTag::Role {
-                        if !got_first {
-                            new_visits.push(visit);
-                        }
-                        got_first = true;
-                    }else{
-                        new_visits.push(visit);
-                    }
-                }
-                actor_ref.set_night_visits(game, new_visits);
+                actor_ref.set_night_visits(
+                    game,
+                    actor_ref.all_night_visits_cloned(game)
+                        .into_iter()
+                        .filter(|v|v.tag!=VisitTag::Role { role: Role::Framer, id: 1 })
+                        .collect::<Vec<_>>()
+                );
             },
             OnMidnightPriority::Investigative => {
                 Tags::set_tagged(
@@ -100,13 +93,14 @@ impl RoleStateImpl for Framer {
             game,
             actor_ref,
             ControllerID::role(actor_ref, Role::Framer, 0),
-            false
+            false,
         ).into_iter().chain(
-            crate::game::role::common_role::convert_controller_selection_to_visits(
+            crate::game::role::common_role::convert_controller_selection_to_visits_visit_tag(
                 game,
                 actor_ref,
                 ControllerID::role(actor_ref, Role::Framer, 1),
-                false
+                false,
+                VisitTag::Role { role: Role::Framer, id: 1 }
             )
         ).collect()
     }

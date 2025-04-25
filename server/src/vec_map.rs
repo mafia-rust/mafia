@@ -264,7 +264,7 @@ mod macros {
     #[macro_export]
     macro_rules! vec_map {
         ($(($key:expr, $value:expr)),*) => {{
-            let mut map = VecMap::new();
+            let mut map = $crate::vec_map::VecMap::new();
             $(map.insert($key, $value);)*
             map
         }};
