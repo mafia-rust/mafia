@@ -3,6 +3,7 @@ use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
 use crate::game::attack_power::DefensePower;
+use crate::game::components::transporting::transport;
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -11,6 +12,9 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
+
+use crate::vec_map::VecMap;
+
 use super::{
     ControllerID, ControllerParametersMap,
     GetClientRoleState, Role,
@@ -51,22 +55,14 @@ impl RoleStateImpl for Bodyguard {
         match priority {
             OnMidnightPriority::Bodyguard => {
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-                let Some(visit) = actor_visits.first() else {return};
-                let target_ref = visit.target;
+                let Some(target_ref) = actor_visits.get(0).map(|v| v.target) else {return};
+                
                 if actor_ref == target_ref {return}
-
-                let mut redirected_player_refs = vec![];
-                for attacker_ref in PlayerReference::all_players(game){
-                    let mut new_visits = vec![];
-                    for mut attacking_visit in attacker_ref.all_night_visits_cloned(game).clone(){
-                        if attacking_visit.target == target_ref && attacking_visit.attack {
-                            attacking_visit.target = actor_ref;
-                            redirected_player_refs.push(attacker_ref);
-                        }
-                        new_visits.push(attacking_visit);
-                    }
-                    attacker_ref.set_night_visits(game, new_visits);
-                }
+                
+                let redirected_player_refs = transport(
+                    &actor_ref, game, midnight_variables,
+                    &VecMap::new_from_vec(vec![(target_ref, actor_ref)]), false, &|v| v.attack
+                ).iter().map(|v| v.visitor).collect();
 
                 actor_ref.set_role_state(game, Bodyguard {
                     self_shields_remaining: self.self_shields_remaining, 
