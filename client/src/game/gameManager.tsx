@@ -2,7 +2,6 @@ import { ANCHOR_CONTROLLER } from "./../menu/Anchor";
 import StartMenu from "./../menu/main/StartMenu";
 import GAME_MANAGER from "./../index";
 import messageListener from "./messageListener";
-import CONFIG from "./../resources/config.json"
 import React from "react";
 import { PhaseType, PhaseTimes, Verdict, PlayerIndex } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
@@ -436,7 +435,7 @@ export function createGameManager(): GameManager {
             roleblock: boolean,
             youWereRoleblockedMessage: boolean,
             youSurvivedAttackMessage: boolean,
-            youWereProtectedMessage: boolean,
+            youWereGuardedMessage: boolean,
             youWereTransportedMessage: boolean,
             youWerePossessedMessage: boolean,
             yourTargetWasJailedMessage: boolean
@@ -447,7 +446,7 @@ export function createGameManager(): GameManager {
 
                 youWereRoleblockedMessage: youWereRoleblockedMessage ?? false,
                 youSurvivedAttackMessage: youSurvivedAttackMessage ?? false,
-                youWereProtectedMessage: youWereProtectedMessage ?? false,
+                youWereGuardedMessage: youWereGuardedMessage ?? false,
                 youWereTransportedMessage: youWereTransportedMessage ?? false,
                 youWerePossessedMessage: youWerePossessedMessage ?? false,
                 yourTargetWasJailedMessage: yourTargetWasJailedMessage ?? false
@@ -511,7 +510,10 @@ function createServer(){
         ws: null,
 
         open : () => {
-            let address = CONFIG.address;
+            let address = process.env.REACT_APP_WS_ADDRESS;
+            if(!address){
+                throw new Error("Missing env var REACT_APP_WS_ADDRES, make sure you defined it in .env");
+            }
             try {
                 Server.ws = new WebSocket(address);
             } catch {

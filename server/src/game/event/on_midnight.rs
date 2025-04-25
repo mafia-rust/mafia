@@ -1,6 +1,6 @@
 use crate::{event_priority, game::{
     attack_power::DefensePower, chat::ChatMessageVariant, components::{
-        detained::Detained, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, protected_message::NightProtected, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem
+        fragile_vest::FragileVests, detained::Detained, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, guard::Guard, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem
     }, grave::GraveKiller, modifiers::Modifiers, player::PlayerReference, role::{Role, RoleState}, visit::Visit, Game
 }};
 use super::Event;
@@ -58,7 +58,8 @@ impl Event for OnMidnight {
             Mafia::on_midnight,
             
             PlayerReference::on_midnight,
-            NightProtected::on_midnight,
+            FragileVests::on_midnight,
+            Guard::on_midnight,
         ]
     }
 
@@ -113,7 +114,7 @@ pub struct PlayerMidnightVariables {
     pub grave_will: String,
     pub grave_death_notes: Vec<String>,
 
-    pub protected_players: Vec<PlayerReference>
+    pub guarded_players: Vec<PlayerReference>
 }
 
 impl PartialEq for PlayerMidnightVariables {
@@ -151,7 +152,7 @@ impl PlayerMidnightVariables {
             grave_killers: Vec::new(),
             grave_will: player_ref.will(game).clone(),
             grave_death_notes: Vec::new(),
-            protected_players: Vec::new(),
+            guarded_players: Vec::new(),
         }
     }
 }
@@ -248,13 +249,5 @@ impl PlayerReference {
     }
     pub fn set_night_grave_death_notes(self, midnight_variables: &mut MidnightVariables, grave_death_notes: Vec<String>){
         midnight_variables.get_mut(self).grave_death_notes = grave_death_notes;
-    }
-
-    pub fn set_protected_player(self, game: &mut Game, midnight_variables: &mut MidnightVariables, protected: PlayerReference){
-        protected.increase_defense_to(game, midnight_variables, DefensePower::Protection);
-        midnight_variables.get_mut(self).protected_players.push(protected);
-    }
-    pub fn protected_players(self, midnight_variables: &MidnightVariables)->&Vec<PlayerReference>{
-        &midnight_variables.get(self).protected_players
     }
 }

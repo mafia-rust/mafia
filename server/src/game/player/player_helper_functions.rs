@@ -7,8 +7,7 @@ use crate::{
         attack_power::{AttackPower, DefensePower},
         chat::{ChatGroup, ChatMessage, ChatMessageVariant},
         components::{
-            drunk_aura::DrunkAura,
-            insider_group::InsiderGroupID, night_visits::NightVisits
+            fragile_vest::FragileVests, drunk_aura::DrunkAura, insider_group::InsiderGroupID, night_visits::NightVisits
         },
         event::{
             before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath,
@@ -286,8 +285,10 @@ impl PlayerReference{
     
     
     pub fn normal_defense(&self, game: &Game)->DefensePower{
-        self.role(game).defense()
-        
+        DefensePower::max(
+            self.role(game).defense(),
+            FragileVests::get_defense_from_items(game, *self)
+        )
     }
     pub fn increase_defense_to(&self, game: &mut Game, midnight_variables: &mut MidnightVariables, defense: DefensePower){
         if defense.is_stronger(self.night_defense(game, midnight_variables)) {

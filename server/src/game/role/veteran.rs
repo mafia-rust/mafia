@@ -58,7 +58,7 @@ impl RoleStateImpl for Veteran {
             }
             OnMidnightPriority::Heal=>{
                 if !self.alerting_tonight {return}
-                actor_ref.increase_defense_to(game, midnight_variables, DefensePower::Protection);
+                actor_ref.increase_defense_to(game, midnight_variables, DefensePower::Protected);
             }
             OnMidnightPriority::Kill => {
                 if !self.alerting_tonight {return}

@@ -1,0 +1,45 @@
+# 1) Base with PNPM
+FROM node:23-slim AS base
+ENV PNPM_HOME="/pnpm" \
+    PATH="$PNPM_HOME:$PATH" \
+    # disable CRA’s ESLint plugin during build:
+    DISABLE_ESLINT_PLUGIN=true \
+    SKIP_PREFLIGHT_CHECK=true
+RUN corepack enable
+
+WORKDIR /app
+COPY . .
+
+# 2) deps: install everything, hoisting peers
+FROM base AS deps
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile --shamefully-hoist
+
+# 3) build: uses the hoisted deps + disables ESLint
+FROM deps AS build
+RUN pnpm run build
+
+# 4) prod-deps: slim down to only prod deps
+FROM deps AS prod-deps
+RUN rm -rf node_modules \
+    && pnpm install --prod --frozen-lockfile
+
+# 5) final runtime
+FROM node:23-slim
+WORKDIR /app
+COPY --from=prod-deps /app/node_modules ./node_modules
+COPY --from=build    /app/build        ./build
+
+EXPOSE 3000
+
+ARG REACT_APP_WS_ADDRESS=ws://localhost:80
+ENV REACT_APP_WS_ADDRESS=${REACT_APP_WS_ADDRESS}
+
+RUN npm install -g serve
+CMD ["serve", "-s", "build", "-l", "3000"]
+
+
+
+# docker build -f dockerfile --build-arg REACT_APP_WS_ADDRESS=ws://localhost:80 -t midnightmachinations-client .
+# docker run -p 3000:3000  midnightmachinations-client
+# wss://wss.midnightmachinations.net

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::{
-    ability_input::*, components::{synopsis::Synopsis, tags::Tag}, grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
+    ability_input::*, attack_power::DefensePower, components::{synopsis::Synopsis, tags::Tag}, grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
         auditor::AuditorResult, engineer::TrapState, kira::KiraResult, krampus::KrampusAbility, santa_claus::SantaListKind, spy::SpyBug, Role
     }, role_list::RoleOutline, verdict::Verdict, win_condition::WinCondition
 };
@@ -144,8 +144,8 @@ pub enum ChatMessageVariant {
 
     SomeoneSurvivedYourAttack,
     YouSurvivedAttack,
-    TargetWasAttacked,
-    YouWereProtected,
+    YouGuardedSomeone,
+    YouWereGuarded,
     YouDied,
     YouWereAttacked,
     YouAttackedSomeone,
@@ -177,9 +177,9 @@ pub enum ChatMessageVariant {
     EngineerVisitorsRole{role: Role},
     TrapState{state: TrapState},
     TrapStateEndOfNight{state: TrapState},
-
     
-    ArmorsmithArmorBroke,
+    #[serde(rename_all = "camelCase")]
+    FragileVestBreak{player_with_item: PlayerReference, defense: DefensePower},
 
     Transported,
 

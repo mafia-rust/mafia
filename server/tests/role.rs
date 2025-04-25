@@ -4,6 +4,7 @@ use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
+use mafia_server::game::attack_power::DefensePower;
 pub use mafia_server::game::{
     ability_input::{ControllerID, IntegerSelection, PlayerListSelection, RoleOptionSelection},
     game_conclusion::GameConclusion,
@@ -506,7 +507,7 @@ fn bodyguard_basic() {
 
     game.skip_to(Obituary, 3);
 
-    // assert!(townie.get_messages().contains(&ChatMessageVariant::YouWereProtected));
+    // assert!(townie.get_messages().contains(&ChatMessageVariant::YouWereGuarded));
 
     assert!(townie.alive());
     assert!(!bg.alive());
@@ -526,8 +527,8 @@ fn doctor_basic() {
 
     game.skip_to(Obituary, 3);
 
-    assert!(townie.get_messages().contains(&ChatMessageVariant::YouWereProtected));
-    assert!(bg.get_messages().contains(&ChatMessageVariant::TargetWasAttacked));
+    assert!(townie.get_messages().contains(&ChatMessageVariant::YouWereGuarded));
+    assert!(bg.get_messages().contains(&ChatMessageVariant::YouGuardedSomeone));
 
     assert!(townie.alive());
     assert!(bg.alive());
@@ -613,9 +614,9 @@ fn bodyguard_protects_transported_target() {
     assert!(!bg.alive());
     assert!(!maf.alive());
 
-    // assert_not_contains!(t1.get_messages(), ChatMessageVariant::YouWereProtected);
-    // assert_contains!(t2.get_messages(), ChatMessageVariant::YouWereProtected);
-    // assert_contains!(bg.get_messages(), ChatMessageVariant::TargetWasAttacked);
+    // assert_not_contains!(t1.get_messages(), ChatMessageVariant::YouWereGuarded);
+    // assert_contains!(t2.get_messages(), ChatMessageVariant::YouWereGuarded);
+    // assert_contains!(bg.get_messages(), ChatMessageVariant::YouGuardedSomeone);
 }
 
 #[test]
@@ -830,7 +831,8 @@ fn ambusher_basic(){
     assert!(protected_player.alive());
     assert!(townie1.alive() || townie2.alive());
     assert!(!townie1.alive() || !townie2.alive());
-    assert!(!blackmailer.alive());
+    // assert!(!blackmailer.alive());
+    assert!(blackmailer.get_messages().contains(&ChatMessageVariant::YouSurvivedAttack)||!blackmailer.alive());
     assert!(townie1.alive() == townie1_status);
     assert!(townie2.alive() == townie2_status);
     
@@ -875,9 +877,9 @@ fn ambusher_attacks_self(){
 
     game.next_phase();
 
-    // assert_contains!(ambusher.get_messages(), ChatMessageVariant::YouSurvivedAttack);
+    assert_contains!(ambusher.get_messages(), ChatMessageVariant::YouSurvivedAttack);
 
-    assert!(!ambusher.alive());
+    assert!(ambusher.alive());
     assert!(!protected_player.alive());
     assert!(townie.alive());
 }
@@ -2485,14 +2487,14 @@ fn armorsmith_doesnt_get_wardblocked_when_warded(){
         bouncer.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 2 }
         ),
-        ChatMessageVariant::YouWereProtected
+        ChatMessageVariant::YouWereGuarded
     );
     
     assert_contains!(
-        bouncer.get_messages_after_last_message(
+        armor.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 2 }
         ),
-        ChatMessageVariant::ArmorsmithArmorBroke
+        ChatMessageVariant::FragileVestBreak{ player_with_item: bouncer.player_ref(), defense: DefensePower::Protected }
     );
 }
 

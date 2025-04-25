@@ -1,13 +1,13 @@
 use rand::seq::IndexedRandom;
 
 use crate::{game::{
-    ability_input::{AvailablePlayerListSelection, ControllerParametersMap}, attack_power::AttackPower, chat::{ChatGroup, ChatMessageVariant}, event::{
+    ability_input::{AvailablePlayerListSelection, ControllerParametersMap}, attack_power::{AttackPower, DefensePower}, chat::{ChatGroup, ChatMessageVariant}, event::{
         on_add_insider::OnAddInsider,
         on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority}, on_remove_insider::OnRemoveInsider
     }, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::RoleState, role_list::RoleSet, visit::{Visit, VisitTag}, ControllerID, Game, PlayerListSelection
 }, vec_set::{vec_set, VecSet}};
 
-use super::{detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits, syndicate_gun_item::SyndicateGunItem, tags::Tags};
+use super::{fragile_vest::FragileVests, detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits, syndicate_gun_item::SyndicateGunItem, tags::Tags};
 
 #[derive(Clone)]
 pub struct Mafia;
@@ -146,6 +146,7 @@ impl Mafia{
             let Some(insider) = insiders.choose(&mut rand::rng()) else {return};
 
             SyndicateGunItem::give_gun_to_player(game, *insider);
+            FragileVests::add_defense_item(game, *insider, DefensePower::Armored, vec_set![*insider]);
         }
     }
 

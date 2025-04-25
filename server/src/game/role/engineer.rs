@@ -97,7 +97,7 @@ impl RoleStateImpl for Engineer {
                 }
     
                 if let RoleState::Engineer(Engineer{trap: Trap::Set{target, ..}}) = actor_ref.role_state(game).clone(){
-                    actor_ref.set_protected_player(game, midnight_variables, target);
+                    actor_ref.guard_player(game, midnight_variables, target);
                 }
             }
             OnMidnightPriority::Kill => {

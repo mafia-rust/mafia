@@ -1,0 +1,74 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Log in to Docker Hub
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 3. Build & push the server image
+      - name: Build and push server image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./mafia/server
+          file: ./mafia/server/dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
+          build-args: |
+            WS_ADDRESS=0.0.0.0:80
+
+      # 4. Build & push the client image
+      - name: Build and push client image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./mafia/client
+          file: ./mafia/client/dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
+          build-args: |
+            REACT_APP_WS_ADDRESS=wss://wss.midnightmachinations.net
+
+      # 5. Setup SSH agent for deployment
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # 6. Deploy images to the production server
+      - name: Deploy to Server
+        run: |
+          ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            # Server container deployment
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
+            docker stop mm-server || true
+            docker rm mm-server || true
+            docker run -d --restart always \
+              --name mm-server \
+              -p 80:80 \
+              ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
+
+            # Client container deployment
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
+            docker stop mm-client || true
+            docker rm mm-client || true
+            docker run -d --restart always \
+              --name mm-client \
+              -p 3000:3000 \
+              ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
+          EOF

@@ -69,7 +69,7 @@ impl RoleStateImpl for Hypnotist {
                     target_ref.push_night_message(midnight_variables, ChatMessageVariant::YouSurvivedAttack);
                 }
                 if self.you_were_protected_message {
-                    target_ref.push_night_message(midnight_variables, ChatMessageVariant::YouWereProtected);
+                    target_ref.push_night_message(midnight_variables, ChatMessageVariant::YouWereGuarded);
                 }
                 if self.you_were_transported_message {
                     target_ref.push_night_message(midnight_variables, ChatMessageVariant::Transported);
