@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
+use crate::game::components::transport::{Transport, TransportPriority};
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::Grave;
 use crate::game::phase::PhaseType;
@@ -9,6 +10,8 @@ use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 use crate::game::Game;
+
+use crate::vec_map::vec_map;
 
 use super::{common_role, ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
@@ -23,28 +26,18 @@ impl RoleStateImpl for Warper {
     fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Warper {return;}
     
-        let transporter_visits = actor_ref.untagged_night_visits_cloned(game).clone();
-        let Some(first_visit) = transporter_visits.get(0) else {return};
-        let Some(second_visit) = transporter_visits.get(1) else {return};
+        let transporter_visits = actor_ref.untagged_night_visits_cloned(game);
+        let Some(first_visit) = transporter_visits.get(0).map(|v| v.target) else {return};
+        let Some(second_visit) = transporter_visits.get(1).map(|v| v.target) else {return};
         
+        Transport::transport(
+            game, midnight_variables, TransportPriority::Warper, 
+            &vec_map![(first_visit, second_visit)], |_| true, true, 
+        );
         
-        first_visit.target.push_night_message(midnight_variables, ChatMessageVariant::Transported);
-        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::TargetHasRole { role: first_visit.target.role(game) });
-    
-        for player_ref in PlayerReference::all_players(game){
-            if player_ref == actor_ref {continue;}
-            if player_ref.role(game) == Role::Porter {continue;}
-            if player_ref.role(game) == Role::Warper {continue;}
-            if player_ref.role(game) == Role::Transporter {continue;}
-
-            let new_visits = player_ref.all_night_visits_cloned(game).clone().into_iter().map(|mut v|{
-                if v.target == first_visit.target {
-                    v.target = second_visit.target;
-                }
-                v
-            }).collect();
-            player_ref.set_night_visits(game, new_visits);
-        }
+        actor_ref.push_night_message(
+            midnight_variables, ChatMessageVariant::TargetHasRole { role: first_visit.role(game) }
+        );
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         if

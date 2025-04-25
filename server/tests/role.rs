@@ -1229,6 +1229,41 @@ fn drunk_suspicious_aura() {
 }
 
 #[test]
+fn framer_second_visit_erased() {
+    kit::scenario!(game in Night 2 where
+        framer: Framer,
+        lookout: Lookout,
+        v: Villager
+    );
+
+    framer.send_ability_input_player_list_typical(lookout);
+    framer.send_ability_input_player_list(v, 1);
+    lookout.send_ability_input_player_list_typical(v);
+
+    assert_not_contains!(
+        lookout.get_messages(),
+        ChatMessageVariant::LookoutResult { players: vec![framer.index()] }
+    )
+}
+
+#[test]
+fn witch_second_visit_erased() {
+    kit::scenario!(game in Night 2 where
+        witch: MafiaWitch,
+        lookout: Lookout,
+        v: Villager
+    );
+
+    witch.send_ability_input_two_player_typical(lookout, v);
+    lookout.send_ability_input_player_list_typical(v);
+
+    assert_not_contains!(
+        lookout.get_messages(),
+        ChatMessageVariant::LookoutResult { players: vec![witch.index()] }
+    )
+}
+
+#[test]
 fn drunk_framer() {
     kit::scenario!(game in Night 2 where
         drunk: Drunk,

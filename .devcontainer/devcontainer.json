@@ -12,7 +12,8 @@
 			"version": "1.85.0"
 		},
 		//https://github.com/devcontainers/features/tree/main/src/node
-		"ghcr.io/devcontainers/features/node:1": {}
+		"ghcr.io/devcontainers/features/node:1": {},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
 	}
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
