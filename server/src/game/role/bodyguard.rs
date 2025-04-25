@@ -3,7 +3,8 @@ use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
 use crate::game::attack_power::DefensePower;
-use crate::game::components::transporting::transport;
+use crate::game::components::transport::Transport;
+use crate::game::components::transport::TransportPriority;
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
@@ -13,7 +14,7 @@ use crate::game::visit::Visit;
 
 use crate::game::Game;
 
-use crate::vec_map::VecMap;
+use crate::vec_map::vec_map;
 
 use super::{
     ControllerID, ControllerParametersMap,
@@ -59,14 +60,14 @@ impl RoleStateImpl for Bodyguard {
                 
                 if actor_ref == target_ref {return}
                 
-                let redirected_player_refs = transport(
-                    &actor_ref, game, midnight_variables,
-                    &VecMap::new_from_vec(vec![(target_ref, actor_ref)]), false, &|v| v.attack
+                let redirected_player_refs = Transport::transport(
+                    game, midnight_variables, TransportPriority::Bodyguard,
+                    &vec_map![(target_ref, actor_ref)], |v| v.attack, false, 
                 ).iter().map(|v| v.visitor).collect();
 
                 actor_ref.set_role_state(game, Bodyguard {
-                    self_shields_remaining: self.self_shields_remaining, 
-                    redirected_player_refs
+                    redirected_player_refs,
+                    ..self
                 });
                 
             },

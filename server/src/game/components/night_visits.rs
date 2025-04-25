@@ -38,8 +38,8 @@ impl NightVisits{
     pub fn all_visits(game: &Game) -> Vec<&Visit>{
         game.night_visits.visits.iter().collect()
     }
-    pub fn all_visits_mut(game: &mut Game) -> Vec<&mut Visit>{
-        game.night_visits.visits.iter_mut().collect()
+    pub fn all_visits_mut(game: &mut Game) -> impl Iterator<Item = &mut Visit>{
+        game.night_visits.visits.iter_mut()
     }
     pub fn all_visits_cloned(game: &mut Game) -> Vec<Visit>{
         game.night_visits.visits.to_vec()
