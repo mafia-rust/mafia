@@ -99,7 +99,7 @@ impl PlayerVests{
     fn break_defense_items(&mut self, midnight_variables: &mut MidnightVariables, player: PlayerReference){
         for item in self.items.iter_mut() {
             for infomed_player in item.informed_players.iter() {
-                infomed_player.push_night_message(midnight_variables, ChatMessageVariant::FragileVestBreak{defense: item.power, player_with_item: player});
+                infomed_player.push_night_message(midnight_variables, ChatMessageVariant::FragileVestBreak{defense: item.power, player_with_vest: player});
             }
         }
         self.items = Vec::new();

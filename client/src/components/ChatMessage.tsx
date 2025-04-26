@@ -775,7 +775,12 @@ export function translateChatMessage(
         case "playerForwardedMessage":
             return translate(`chatMessage.playerForwardedMessage`, playerNames[message.forwarder]);
         case "fragileVestBreak":
-            return translate(`chatMessage.fragileVestBreak`, playerNames[message.playerWithVest], message.defense)
+            console.log(playerNames);
+            return translate(
+                `chatMessage.fragileVestBreak`,
+                translate("defense."+message.defense),
+                playerNames[message.playerWithVest]
+            );
         case "deputyShotYou":
         case "mediumExists":
         case "youGuardedSomeone":

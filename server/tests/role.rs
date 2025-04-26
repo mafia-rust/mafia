@@ -2629,7 +2629,7 @@ fn armorsmith_doesnt_get_wardblocked_when_warded(){
         armor.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 2 }
         ),
-        ChatMessageVariant::FragileVestBreak{ player_with_item: bouncer.player_ref(), defense: DefensePower::Protected }
+        ChatMessageVariant::FragileVestBreak{ player_with_vest: bouncer.player_ref(), defense: DefensePower::Protected }
     );
 }
 

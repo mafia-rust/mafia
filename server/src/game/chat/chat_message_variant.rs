@@ -180,7 +180,7 @@ pub enum ChatMessageVariant {
     TrapStateEndOfNight{state: TrapState},
     
     #[serde(rename_all = "camelCase")]
-    FragileVestBreak{player_with_item: PlayerReference, defense: DefensePower},
+    FragileVestBreak{player_with_vest: PlayerReference, defense: DefensePower},
 
     Transported,
 

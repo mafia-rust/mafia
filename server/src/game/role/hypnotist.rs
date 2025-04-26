@@ -15,10 +15,10 @@ pub struct Hypnotist{
     pub roleblock: bool,
     pub you_were_roleblocked_message: bool,
     pub you_survived_attack_message: bool,
-    pub you_were_protected_message: bool,
+    pub you_were_guarded_message: bool,
     pub you_were_transported_message: bool,
     pub you_were_possessed_message: bool,
-    pub your_target_was_jailed_message: bool,
+    pub you_were_wardblocked_message: bool,
 }
 
 
@@ -28,10 +28,10 @@ impl Default for Hypnotist {
             roleblock: true,
             you_were_roleblocked_message: true,
             you_survived_attack_message: false,
-            you_were_protected_message: false,
+            you_were_guarded_message: false,
             you_were_transported_message: false,
             you_were_possessed_message: false,
-            your_target_was_jailed_message: false,
+            you_were_wardblocked_message: false,
         }
     }
 }
@@ -68,7 +68,7 @@ impl RoleStateImpl for Hypnotist {
                 if self.you_survived_attack_message {
                     target_ref.push_night_message(midnight_variables, ChatMessageVariant::YouSurvivedAttack);
                 }
-                if self.you_were_protected_message {
+                if self.you_were_guarded_message {
                     target_ref.push_night_message(midnight_variables, ChatMessageVariant::YouWereGuarded);
                 }
                 if self.you_were_transported_message {
@@ -81,7 +81,7 @@ impl RoleStateImpl for Hypnotist {
                         target_ref.push_night_message(midnight_variables, ChatMessageVariant::YouWerePossessed { immune: false });
                     }
                 }
-                if self.your_target_was_jailed_message {
+                if self.you_were_wardblocked_message {
                     target_ref.push_night_message(midnight_variables, ChatMessageVariant::Wardblocked);
                 }
             },
@@ -116,10 +116,10 @@ impl Hypnotist {
         if
             !self.you_were_roleblocked_message && 
             !self.you_survived_attack_message && 
-            !self.you_were_protected_message && 
+            !self.you_were_guarded_message && 
             !self.you_were_transported_message && 
             !self.you_were_possessed_message && 
-            !self.your_target_was_jailed_message
+            !self.you_were_wardblocked_message
         {
             self.you_were_roleblocked_message = true;
         }
