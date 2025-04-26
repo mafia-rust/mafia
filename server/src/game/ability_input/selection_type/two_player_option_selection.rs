@@ -43,6 +43,16 @@ pub struct AvailableTwoPlayerOptionSelection{
     pub can_choose_duplicates: bool,
     pub can_choose_none: bool
 }
+impl AvailableTwoPlayerOptionSelection{
+    pub fn same_players(available_players: VecSet<PlayerReference>, can_choose_duplicates: bool, can_choose_none: bool) -> Self {
+        Self { 
+            available_first_players: available_players.clone(), 
+            available_second_players: available_players, 
+            can_choose_duplicates, 
+            can_choose_none 
+        }
+    }
+}
 impl PartialOrd for AvailableTwoPlayerOptionSelection{
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering>{
         Some(self.cmp(other))

@@ -58,6 +58,7 @@ pub use mafia_server::game::{
         mayor::Mayor,
         medium::Medium,
         retributionist::Retributionist,
+        polymath::Polymath,
 
         godfather::Godfather,
         impostor::Impostor,
@@ -1371,7 +1372,7 @@ fn snoop_basic() {
     assert!(det.send_ability_input_player_list_typical(snoop));
     game.next_phase();
     assert_contains!(
-        snoop.get_messages(),
+        snoop.get_messages_after_night(1),
         ChatMessageVariant::SnoopResult { townie: false }
     );
 
@@ -1380,7 +1381,7 @@ fn snoop_basic() {
     assert!(snoop.send_ability_input_player_list_typical(det));
     game.next_phase();
     assert_contains!(
-        snoop.get_messages(),
+        snoop.get_messages_after_night(2),
         ChatMessageVariant::SnoopResult { townie: true }
     );
 
@@ -1389,10 +1390,109 @@ fn snoop_basic() {
     assert!(snoop.send_ability_input_player_list_typical(gf));
     game.next_phase();
     assert_contains!(
-        snoop.get_messages_after_last_message(
-            ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 3 }
-        ),
+        snoop.get_messages_after_night(3),
         ChatMessageVariant::SnoopResult { townie: false }
+    );
+}
+
+#[test]
+fn polymath_snoop_basic() {
+    kit::scenario!(game in Night 1 where
+        gf: Godfather,
+        framer: Framer,
+        det: Detective,
+        polymath: Polymath
+    );
+    let mut night = 1;
+    polymath.send_ability_input_integer_typical(1);
+    assert!(polymath.send_ability_input_player_list(det, 1));
+    assert!(det.send_ability_input_player_list_typical(polymath));
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: false }
+    );
+    night += 1;
+    game.skip_to(Night, night);
+
+    polymath.send_ability_input_integer_typical(1);
+    assert!(polymath.send_ability_input_player_list(det, 1));
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: true }
+    );
+
+    night += 1;
+    game.skip_to(Night, night);
+
+    polymath.send_ability_input_integer_typical(1);
+    assert!(polymath.send_ability_input_player_list(gf, 1));
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: true }
+    );
+
+    night += 1;
+    game.skip_to(Night, night);
+
+    polymath.send_ability_input_integer_typical(1);
+    assert!(polymath.send_ability_input_player_list(det, 1));
+    assert!(det.send_ability_input_player_list_typical(polymath));
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: false }
+    );
+
+
+    night += 1;
+    game.skip_to(Night, night);
+
+    assert!(polymath.send_ability_input_player_list(det, 1));
+    assert!(framer.send_ability_input_player_list_typical(det));
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: false }
+    );
+}
+
+#[test]
+fn polymath_armorsmith_marksman_basic() {
+    kit::scenario!(game in Night 2 where
+        armor: Polymath,
+        mark: Polymath,
+        phil: Philosopher
+    );
+    
+    armor.send_ability_input_integer_typical(2);
+    armor.send_ability_input_player_list(phil, 2);
+    mark.send_ability_input_integer_typical(4);
+    mark.send_ability_input_player_list(phil, 4);
+    mark.send_ability_input_player_list(armor, 5);
+    phil.send_ability_input_two_player_typical(armor, mark);
+
+    game.next_phase();
+
+    assert!(armor.alive());
+    assert!(mark.alive());
+    assert!(phil.alive());
+
+    assert_contains!(
+        mark.get_messages_after_night(1),
+        ChatMessageVariant::SomeoneSurvivedYourAttack
+    );
+
+    assert_contains!(
+        armor.get_messages_after_night(2),
+        ChatMessageVariant::YouGuardedSomeone
+    );
+    
+    assert_contains!(
+        phil.get_messages_after_night(2),
+        ChatMessageVariant::YouWereGuarded
     );
 }
 

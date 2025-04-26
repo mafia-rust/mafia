@@ -315,7 +315,7 @@ impl RoleSet{
                 vec![
                     Role::Medium, Role::Coxswain,
                     Role::Retributionist, Role::Transporter, Role::Porter, Role::Escort, 
-                    Role::Mayor, Role::Reporter
+                    Role::Mayor, Role::Reporter, Role::Polymath
                 ],
             RoleSet::Mafia =>
                 vec![
