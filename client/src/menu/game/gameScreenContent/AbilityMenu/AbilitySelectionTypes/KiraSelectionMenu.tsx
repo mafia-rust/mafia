@@ -12,11 +12,11 @@ import { useGameState, usePlayerState } from "../../../../../components/useHooks
 export const KIRA_GUESSES = [
     "none",
     "nonTown",
-    "jailor", "villager",  
+    "jailor", "villager",
     "detective", "lookout", "spy", "tracker", "philosopher", "psychic", "auditor", "snoop", "gossip", "tallyClerk",
     "doctor",  "bodyguard",  "cop", "bouncer", "engineer", "armorsmith", "steward",
     "vigilante",  "veteran", "marksman", "deputy", "rabblerouser",
-    "escort",  "medium",  "retributionist", "reporter", "mayor",  "transporter", "porter"
+    "escort",  "medium",  "retributionist", "reporter", "mayor",  "transporter", "porter", "polymath"
 ];
 export type KiraGuessResult = "correct" | "notInGame" | "wrongSpot";
 export type KiraSelection = ListMapData<PlayerIndex, KiraGuess>;

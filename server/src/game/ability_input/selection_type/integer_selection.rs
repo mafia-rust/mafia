@@ -36,3 +36,9 @@ impl AbilityInput{
         Some(selection)
     }
 }
+
+impl From<i8> for IntegerSelection {
+    fn from(value: i8) -> Self {
+        IntegerSelection(value)
+    }
+}
