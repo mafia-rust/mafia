@@ -59,11 +59,11 @@ jobs:
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/dev-midnightmachinations-server:latest
 
             # Restart client container
-            docker stop midnightmachinations-client || true
-            docker rm midnightmachinations-client || true
-            docker run -d --name midnightmachinations-client -p 2002:3000 ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
+            docker stop dev-midnightmachinations-client || true
+            docker rm dev-midnightmachinations-client || true
+            docker run -d --name dev-midnightmachinations-client -p 2002:3000 ${{ secrets.DOCKERHUB_USERNAME }}/dev-midnightmachinations-client:latest
 
             # Restart server container
-            docker stop midnightmachinations-server || true
-            docker rm midnightmachinations-server || true
-            docker run -d --name midnightmachinations-server -p 2003:80 ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
+            docker stop dev-midnightmachinations-server || true
+            docker rm dev-midnightmachinations-server || true
+            docker run -d --name dev-midnightmachinations-server -p 2003:80 ${{ secrets.DOCKERHUB_USERNAME }}/dev-midnightmachinations-server:latest
