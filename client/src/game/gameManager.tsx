@@ -438,7 +438,7 @@ export function createGameManager(): GameManager {
             youWereGuardedMessage: boolean,
             youWereTransportedMessage: boolean,
             youWerePossessedMessage: boolean,
-            yourTargetWasJailedMessage: boolean
+            youWereWardblockedMessage: boolean
         ): void {
             this.server.sendPacket({
                 type: "setConsortOptions",
@@ -449,7 +449,7 @@ export function createGameManager(): GameManager {
                 youWereGuardedMessage: youWereGuardedMessage ?? false,
                 youWereTransportedMessage: youWereTransportedMessage ?? false,
                 youWerePossessedMessage: youWerePossessedMessage ?? false,
-                yourTargetWasJailedMessage: yourTargetWasJailedMessage ?? false
+                youWereWardblockedMessage: youWereWardblockedMessage ?? false
             });
         },
 

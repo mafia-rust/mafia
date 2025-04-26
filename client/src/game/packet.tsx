@@ -276,7 +276,7 @@ export type ToServerPacket = {
     youWereGuardedMessage: boolean,
     youWereTransportedMessage: boolean,
     youWerePossessedMessage: boolean,
-    yourTargetWasJailedMessage: boolean
+    youWereWardblockedMessage: boolean
 } | {
     type: "voteFastForwardPhase",
     fastForward: boolean
