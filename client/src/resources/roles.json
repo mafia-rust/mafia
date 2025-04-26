@@ -513,6 +513,22 @@
             {"type": "targetIsPossessionImmune"}
         ]
     },
+    "polymath": {
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townSupport"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "polymathSnoopResult", "inno": true},
+            {"type": "polymathSnoopResult", "inno": false},
+            {"type": "youAttackedSomeone"},
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youGuardedSomeone"}
+        ]
+    },
     "godfather": {
         "mainRoleSet": "mafia",
         "roleSets": ["mafia", "mafiaKilling"],
@@ -698,9 +714,7 @@
             {"type": "framerResult", "mafiaMember": 20, "visitors": []},
             {"type": "detectiveResult","suspicious":true},
             {"type": "snoopResult", "townie":false},
-            {"type": "snoopResult", "townie":false},
             {"type": "philosopherResult", "enemies": true}
-            
         ]
     },
     "disguiser": {

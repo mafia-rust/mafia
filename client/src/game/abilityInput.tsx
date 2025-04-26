@@ -171,8 +171,8 @@ export type AbilitySelection = {
     type: "playerList",
     selection: PlayerListSelection
 } | {
-    type: "roleOption"
-    selection: RoleOptionSelection
+    type: "roleList"
+    selection: RoleListSelection
 } | {
     type: "twoRoleOption"
     selection: TwoRoleOptionSelection
@@ -203,8 +203,8 @@ export function defaultAbilitySelection(available: AvailableAbilitySelection): A
             return {type: "twoPlayerOption", selection: null};
         case "playerList":
             return {type: "playerList", selection: []};
-        case "roleOption":
-            return {type: "roleOption", selection: null};
+        case "roleList":
+            return {type: "roleList", selection: []};
         case "twoRoleOption":
             return {type: "twoRoleOption", selection: [null, null]};
         case "twoRoleOutlineOption":
@@ -232,8 +232,8 @@ export type AvailableAbilitySelection = {
     type: "playerList",
     selection: AvailablePlayerListSelection,
 } | {
-    type: "roleOption"
-    selection: AvailableRoleOptionSelection,
+    type: "roleList"
+    selection: AvailableRoleListSelection,
 } | {
     type: "twoRoleOption"
     selection: AvailableTwoRoleOptionSelection,
@@ -271,8 +271,12 @@ export type AvailablePlayerListSelection = {
     maxPlayers: number | null
 }
 
-export type RoleOptionSelection = Role | null;
-export type AvailableRoleOptionSelection = (Role | null)[];
+export type RoleListSelection = Role[];
+export type AvailableRoleListSelection = {
+    availableRoles: Role[],
+    canChooseDuplicates: boolean,
+    maxRoles: number | null
+}
 
 
 export type TwoRoleOptionSelection = [Role | null, Role | null];

@@ -8,6 +8,7 @@ pub enum AttackPower {
     ProtectionPiercing = 3
 }
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum DefensePower {
     None = 0,
     Armored = 1,

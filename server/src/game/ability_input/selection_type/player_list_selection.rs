@@ -41,3 +41,15 @@ impl AbilityInput{
         Some(selection)
     }
 }
+impl ControllerID{
+    pub fn get_player_list_selection<'a>(&self, game: &'a Game)->Option<&'a PlayerListSelection>{
+        self.get_selection(game)
+            .and_then(|selection| 
+                if let AbilitySelection::PlayerList(selection) = selection {
+                    Some(selection)
+                }else{
+                    None
+                }
+            )
+    }
+}

@@ -36,3 +36,21 @@ impl AbilityInput{
         Some(selection)
     }
 }
+impl ControllerID{
+    pub fn get_integer_selection<'a>(&self, game: &'a Game)->Option<&'a IntegerSelection>{
+        self.get_selection(game)
+            .and_then(|selection| 
+                if let AbilitySelection::Integer(selection) = selection {
+                    Some(selection)
+                }else{
+                    None
+                }
+            )
+    }
+}
+
+impl From<i8> for IntegerSelection {
+    fn from(value: i8) -> Self {
+        IntegerSelection(value)
+    }
+}

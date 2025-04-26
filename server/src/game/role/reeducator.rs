@@ -1,7 +1,7 @@
 use rand::seq::IteratorRandom;
 use serde::Serialize;
 
-use crate::game::ability_input::{AvailablePlayerListSelection, AvailableRoleOptionSelection, ControllerID};
+use crate::game::ability_input::{AvailablePlayerListSelection, ControllerID};
 use crate::game::attack_power::AttackPower;
 use crate::game::components::insider_group::InsiderGroupID;
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
@@ -14,7 +14,7 @@ use crate::game::visit::{Visit, VisitTag};
 
 use crate::game::Game;
 use super::{
-    common_role, ControllerParametersMap, Role, RoleOptionSelection, 
+    common_role, ControllerParametersMap, Role, RoleListSelection, 
     RoleStateImpl
 };
 
@@ -73,14 +73,12 @@ impl RoleStateImpl for Reeducator {
                 let Some(visit) = visits.first() else {return};
 
                 let role = 
-                if let Some(RoleOptionSelection(Some(role))) = ControllerID::role(actor_ref, Role::Reeducator, 1)
-                    .get_role_option_selection(game)
+                if let Some(role) = ControllerID::role(actor_ref, Role::Reeducator, 1)
+                    .get_role_list_selection_first(game)
                 {
                     *role
-                }else if let Some(role) = Reeducator::default_role(game){
-                    role
                 }else{
-                    return
+                    Reeducator::default_role(game)
                 };
 
                 let new_state = role.new_state(game);
@@ -134,14 +132,11 @@ impl RoleStateImpl for Reeducator {
                 .build_map(),
             ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Reeducator, 1))
-                .available_selection(AvailableRoleOptionSelection(
-                    RoleSet::MafiaSupport.get_roles().into_iter()
-                        .filter(|p|game.settings.enabled_roles.contains(p))
-                        .filter(|p|*p!=Role::Reeducator)
-                        .map(Some)
-                        .collect()
-                ))
-                .default_selection(RoleOptionSelection(Reeducator::default_role(game)))
+                .single_role_selection_typical(game, |role|
+                    RoleSet::MafiaSupport.get_roles().contains(role) &&
+                    *role != Role::Reeducator
+                )
+                .default_selection(RoleListSelection(vec![Reeducator::default_role(game)]))
                 .allow_players([actor_ref])
                 .build_map()
         ])
@@ -166,10 +161,10 @@ impl RoleStateImpl for Reeducator {
 }
 
 impl Reeducator {
-    pub fn default_role(game: &Game) -> Option<Role> {
+    pub fn default_role(game: &Game) -> Role {
         RoleSet::MafiaSupport.get_roles().into_iter()
             .filter(|p|game.settings.enabled_roles.contains(p))
             .filter(|p|*p!=Role::Reeducator)
-            .choose(&mut rand::rng())
+            .choose(&mut rand::rng()).unwrap_or(Role::Reeducator)
     }
 }

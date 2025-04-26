@@ -6,7 +6,7 @@ pub(crate) use kit::{assert_contains, assert_not_contains};
 
 use mafia_server::game::attack_power::DefensePower;
 pub use mafia_server::game::{
-    ability_input::{ControllerID, IntegerSelection, PlayerListSelection, RoleOptionSelection},
+    ability_input::{ControllerID, IntegerSelection, PlayerListSelection, RoleListSelection},
     game_conclusion::GameConclusion,
     role::engineer::Trap,
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
@@ -58,6 +58,7 @@ pub use mafia_server::game::{
         mayor::Mayor,
         medium::Medium,
         retributionist::Retributionist,
+        polymath::Polymath,
 
         godfather::Godfather,
         impostor::Impostor,
@@ -1623,7 +1624,7 @@ fn snoop_basic() {
     assert!(det.send_ability_input_player_list_typical(snoop));
     game.next_phase();
     assert_contains!(
-        snoop.get_messages(),
+        snoop.get_messages_after_night(1),
         ChatMessageVariant::SnoopResult { townie: false }
     );
 
@@ -1632,7 +1633,7 @@ fn snoop_basic() {
     assert!(snoop.send_ability_input_player_list_typical(det));
     game.next_phase();
     assert_contains!(
-        snoop.get_messages(),
+        snoop.get_messages_after_night(2),
         ChatMessageVariant::SnoopResult { townie: true }
     );
 
@@ -1641,10 +1642,120 @@ fn snoop_basic() {
     assert!(snoop.send_ability_input_player_list_typical(gf));
     game.next_phase();
     assert_contains!(
-        snoop.get_messages_after_last_message(
-            ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 3 }
-        ),
+        snoop.get_messages_after_night(3),
         ChatMessageVariant::SnoopResult { townie: false }
+    );
+}
+
+#[test]
+fn polymath_snoop_basic() {
+    kit::scenario!(game in Night 1 where
+        gf: Godfather,
+        framer: Framer,
+        det: Detective,
+        polymath: Polymath
+    );
+    let mut night = 1;
+    polymath.send_ability_input_integer_typical(1);
+    assert!(polymath.send_ability_input_player_list(det, 1));
+    assert!(det.send_ability_input_player_list_typical(polymath));
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: false }
+    );
+    night += 1;
+    game.skip_to(Night, night);
+
+    polymath.send_ability_input_integer_typical(1);
+    assert!(polymath.send_ability_input_player_list(det, 1));
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: true }
+    );
+
+    night += 1;
+    game.skip_to(Night, night);
+
+    polymath.send_ability_input_integer_typical(1);
+    assert!(polymath.send_ability_input_player_list(gf, 1));
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: true }
+    );
+
+    night += 1;
+    game.skip_to(Night, night);
+
+    polymath.send_ability_input_integer_typical(1);
+    polymath.send_ability_input_player_list(det, 1);
+    det.send_ability_input_player_list_typical(polymath);
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: false }
+    );
+
+    night += 1;
+    game.skip_to(Night, night);
+
+    framer.send_ability_input_player_list_typical(det);
+    polymath.send_ability_input_integer_typical(1);
+    polymath.send_ability_input_player_list(det, 1);
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: false }
+    );
+
+    night += 1;
+    game.skip_to(Night, night);
+
+    polymath.send_ability_input_integer_typical(1);
+    polymath.send_ability_input_player_list(framer, 1);
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: false }
+    );
+}
+
+#[test]
+fn polymath_armorsmith_marksman_basic() {
+    kit::scenario!(game in Night 2 where
+        armor: Polymath,
+        mark: Polymath,
+        phil: Philosopher
+    );
+    
+    armor.send_ability_input_integer_typical(2);
+    armor.send_ability_input_player_list(phil, 2);
+    mark.send_ability_input_integer_typical(4);
+    mark.send_ability_input_player_list(phil, 4);
+    mark.send_ability_input_player_list(armor, 5);
+    phil.send_ability_input_two_player_typical(armor, mark);
+
+    game.next_phase();
+
+    assert!(armor.alive());
+    assert!(mark.alive());
+    assert!(phil.alive());
+
+    assert_contains!(
+        mark.get_messages_after_night(1),
+        ChatMessageVariant::SomeoneSurvivedYourAttack
+    );
+
+    assert_contains!(
+        armor.get_messages_after_night(2),
+        ChatMessageVariant::YouGuardedSomeone
+    );
+    
+    assert_contains!(
+        phil.get_messages_after_night(2),
+        ChatMessageVariant::YouWereGuarded
     );
 }
 
@@ -2532,7 +2643,7 @@ fn yer() {
     yer.send_ability_input_player_list(detective, 1);
     yer.send_ability_input(AbilityInput::new(
         ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
-        RoleOptionSelection(Some(Role::TallyClerk)) 
+        RoleListSelection(vec!(Role::TallyClerk)) 
     ));
 
     game.skip_to(PhaseType::Dusk, 2);
@@ -2550,7 +2661,7 @@ fn yer() {
     yer.send_ability_input_player_list(detective, 1);
     yer.send_ability_input(AbilityInput::new(
         ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
-        RoleOptionSelection(Some(Role::Mafioso)) 
+        RoleListSelection(vec!(Role::Mafioso)) 
     ));
     
     game.skip_to(PhaseType::Dusk, 3);
@@ -2589,7 +2700,7 @@ fn yer() {
     yer.send_ability_input_player_list(convertee, 1);
     yer.send_ability_input(AbilityInput::new(
         ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
-        RoleOptionSelection(Some(Role::Zealot)) 
+        RoleListSelection(vec!(Role::Zealot)) 
     ));
     
     game.skip_to(PhaseType::Dusk, 4);
@@ -2626,7 +2737,7 @@ fn yer() {
     convertee.send_ability_input_player_list(informant, 1);
     convertee.send_ability_input(AbilityInput::new(
         ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
-        RoleOptionSelection(Some(Role::Zealot)) 
+        RoleListSelection(vec!(Role::Zealot)) 
     ));
     
     game.skip_to(PhaseType::Dusk, 5);
@@ -2779,7 +2890,7 @@ fn armorsmith_doesnt_get_wardblocked_when_warded(){
         armor.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 2 }
         ),
-        ChatMessageVariant::FragileVestBreak{ player_with_item: bouncer.player_ref(), defense: DefensePower::Protected }
+        ChatMessageVariant::FragileVestBreak{ player_with_vest: bouncer.player_ref(), defense: DefensePower::Protected }
     );
 }
 
@@ -2811,7 +2922,7 @@ fn fiends_wildcard_defense_upgrade(){
     
     fiend.send_ability_input(AbilityInput::new(
         ControllerID::role(fiend.player_ref(), Role::FiendsWildcard, 0),
-        RoleOptionSelection(Some(Role::Puppeteer))
+        RoleListSelection(vec!(Role::Puppeteer))
     ));
 
     game.next_phase();
@@ -2821,7 +2932,7 @@ fn fiends_wildcard_defense_upgrade(){
         IntegerSelection(1)
     ));
 
-    assert!(fiend.role() == Role::Puppeteer);
+    assert_eq!(fiend.role(), Role::Puppeteer);
     assert!(mafia.send_ability_input_player_list_typical(fiend));
     assert!(fiend.send_ability_input_player_list_typical(mafia));
 
