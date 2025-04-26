@@ -27,7 +27,7 @@ impl RoleStateImpl for TrueWildcard {
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::TrueWildcard, 0))
-            .single_role_selection_typical(game, |role|*role != Role::TrueWildcard)
+            .single_role_selection_typical(game, |_|true)
             .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
             .allow_players([actor_ref])
             .build_map()

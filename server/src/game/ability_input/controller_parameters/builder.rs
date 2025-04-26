@@ -3,7 +3,7 @@ use crate::{
         ability_input::{
             AvailablePlayerListSelection, AvailableRoleListSelection,
             AvailableSelectionKind, ControllerID, ControllerParameters
-        }, components::{detained::Detained, insider_group::InsiderGroupID}, phase::PhaseType, player::PlayerReference, role::Role, Game
+        }, components::{detained::Detained, insider_group::InsiderGroupID}, phase::PhaseType, player::PlayerReference, role::Role, role_list::RoleSet, Game
     },
     vec_set::VecSet
 };
@@ -110,6 +110,16 @@ impl<'a, I: BuilderIDState> ControllerParametersBuilder<'a, NoAbilitySelection, 
     ) -> ControllerParametersBuilder<'a, AvailableRoleListSelection, I> {
         self.available_selection(AvailableRoleListSelection{
             available_roles: game.settings.enabled_roles.clone().into_iter().filter(filter).collect(),
+            can_choose_duplicates: false,
+            max_roles: Some(1)
+        })
+    }
+
+    pub fn single_role_selection_role_set(
+        self, game: &Game, role_set: RoleSet
+    ) -> ControllerParametersBuilder<'a, AvailableRoleListSelection, I> {
+        self.available_selection(AvailableRoleListSelection{
+            available_roles: game.settings.enabled_roles.intersection(&role_set.get_roles()),
             can_choose_duplicates: false,
             max_roles: Some(1)
         })
