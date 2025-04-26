@@ -1675,7 +1675,7 @@
     "wiki.article.role.mafiaKillingWildcard.guide": "* Choose a syndicate killing role to instantly become it.",
     "wiki.article.role.mafiaKillingWildcard.abilities":"* Become a role you choose at the start of night",
     "wiki.article.role.mafiaKillingWildcard.attributes":"* You can not become a role that is disabled\n* You can not become a role that is taken by too many players",
-    "wiki.article.role.mafiaKillingWildcard.extra":"If you choose a role that was disabled you stay as the Wildcard\n* You can't become a role that is at its role limit, if there is a veteran in the game, you can't become one, even if the veteran is dead",
+    "wiki.article.role.mafiaKillingWildcard.extra":"If you choose a role that was disabled you stay as the Wildcard\n* You can't become a role that is at its role limit, if there is a godfather in the game, you can't become one, even if the godfather is dead",
 
     "wiki.article.role.goon.reminder": "No ability besides being a syndicate insider.",
     "wiki.article.role.goon.guide": "You have no night time ability besides chatting with the syndicate. Try to help the syndicate come up with lies and come up with a fake claim.",

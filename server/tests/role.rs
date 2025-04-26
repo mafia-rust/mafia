@@ -2671,7 +2671,7 @@ fn fiends_wildcard_defense_upgrade(){
         IntegerSelection(1)
     ));
 
-    assert!(fiend.role() == Role::Puppeteer);
+    assert_eq!(fiend.role(), Role::Puppeteer);
     assert!(mafia.send_ability_input_player_list_typical(fiend));
     assert!(fiend.send_ability_input_player_list_typical(mafia));
 
