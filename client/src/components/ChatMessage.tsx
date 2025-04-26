@@ -387,6 +387,15 @@ function playerListToString(playerList: PlayerIndex[], playerNames: string[]): s
     }).join(", ");
 }
 
+function roleListToString(roleList: Role[]): string {
+    if (roleList === null || roleList.length === 0) {
+        return translate("none");
+    }
+    return roleList.map((role) => {
+        return translate("role."+role+".name")
+    }).join(", ");
+}
+
 export function sanitizePlayerMessage(text: string): string {
     return DOMPurify.sanitize(text, { 
         ALLOWED_TAGS: []
@@ -557,9 +566,9 @@ export function translateChatMessage(
                         playerListToString(message.selection.selection===null?[]:message.selection.selection, playerNames)
                     );
                     break;
-                case "roleOption":
-                    out = translate("chatMessage.abilityUsed.selection.roleOption",
-                        message.selection.selection===null?translate("none"):translate("role."+message.selection.selection+".name")
+                case "roleList":
+                    out = translate("chatMessage.abilityUsed.selection.roleList",
+                        roleListToString(message.selection.selection)
                     );
                     break;
                 case "twoRoleOption":

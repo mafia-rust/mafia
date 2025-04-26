@@ -6,7 +6,7 @@ pub(crate) use kit::{assert_contains, assert_not_contains};
 
 use mafia_server::game::attack_power::DefensePower;
 pub use mafia_server::game::{
-    ability_input::{ControllerID, IntegerSelection, PlayerListSelection, RoleOptionSelection},
+    ability_input::{ControllerID, IntegerSelection, PlayerListSelection, RoleListSelection},
     game_conclusion::GameConclusion,
     role::engineer::Trap,
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
@@ -2380,7 +2380,7 @@ fn yer() {
     yer.send_ability_input_player_list(detective, 1);
     yer.send_ability_input(AbilityInput::new(
         ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
-        RoleOptionSelection(Some(Role::TallyClerk)) 
+        RoleListSelection(vec!(Role::TallyClerk)) 
     ));
 
     game.skip_to(PhaseType::Dusk, 2);
@@ -2398,7 +2398,7 @@ fn yer() {
     yer.send_ability_input_player_list(detective, 1);
     yer.send_ability_input(AbilityInput::new(
         ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
-        RoleOptionSelection(Some(Role::Mafioso)) 
+        RoleListSelection(vec!(Role::Mafioso)) 
     ));
     
     game.skip_to(PhaseType::Dusk, 3);
@@ -2437,7 +2437,7 @@ fn yer() {
     yer.send_ability_input_player_list(convertee, 1);
     yer.send_ability_input(AbilityInput::new(
         ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
-        RoleOptionSelection(Some(Role::Zealot)) 
+        RoleListSelection(vec!(Role::Zealot)) 
     ));
     
     game.skip_to(PhaseType::Dusk, 4);
@@ -2474,7 +2474,7 @@ fn yer() {
     convertee.send_ability_input_player_list(informant, 1);
     convertee.send_ability_input(AbilityInput::new(
         ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
-        RoleOptionSelection(Some(Role::Zealot)) 
+        RoleListSelection(vec!(Role::Zealot)) 
     ));
     
     game.skip_to(PhaseType::Dusk, 5);
@@ -2661,7 +2661,7 @@ fn fiends_wildcard_defense_upgrade(){
     
     fiend.send_ability_input(AbilityInput::new(
         ControllerID::role(fiend.player_ref(), Role::FiendsWildcard, 0),
-        RoleOptionSelection(Some(Role::Puppeteer))
+        RoleListSelection(vec!(Role::Puppeteer))
     ));
 
     game.next_phase();

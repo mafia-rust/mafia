@@ -7,7 +7,7 @@ use crate::game::player::PlayerReference;
 use crate::game::role_list::role_can_generate;
 use crate::game::Game;
 
-use super::{ControllerID, ControllerParametersMap, Role, RoleOptionSelection, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
@@ -30,11 +30,7 @@ impl RoleStateImpl for TrueWildcard {
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::TrueWildcard, 0))
-            .available_selection(AvailableRoleOptionSelection(
-                Role::values().into_iter().filter(|role|
-                    game.settings.enabled_roles.contains(role) && *role != Role::TrueWildcard
-                ).map(Some).chain(std::iter::once(None)).collect()
-            ))
+            .single_role_selection_typical(game, |role|*role != Role::TrueWildcard)
             .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
             .allow_players([actor_ref])
             .build_map()
