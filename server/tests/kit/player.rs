@@ -38,6 +38,20 @@ impl TestPlayer {
         );
     }
 
+    pub fn send_ability_input_integer_typical(&self, int: i8) {
+        self.send_ability_input(AbilityInput::new(
+            ControllerID::role(self.player_ref(), self.role(), 0),
+            IntegerSelection(int),
+        ))
+    }
+
+    pub fn send_ability_input_role_typical(&self, role: Vec<Role>){
+        self.send_ability_input(AbilityInput::new(
+            ControllerID::role(self.player_ref(), self.role(), 0),
+            RoleListSelection(role),
+        ))
+    }
+
     pub fn send_ability_input_unit_typical(&self)->bool{
         self.send_ability_input(
             AbilityInput::new(

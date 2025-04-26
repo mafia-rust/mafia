@@ -10,7 +10,6 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use crate::vec_set::VecSet;
 use super::{Role, RoleState, RoleStateImpl};
 use crate::game::ability_input::*;
 
@@ -119,12 +118,8 @@ impl RoleStateImpl for Yer {
                 .build_map(),
             ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Yer, 2))
-                .available_selection(AvailableRoleOptionSelection(
-                    game.settings.enabled_roles.iter()
-                        .map(|role| Some(*role))
-                        .collect::<VecSet<Option<Role>>>()
-                ))
-                .default_selection(RoleOptionSelection(Some(self.old_role)))
+                .single_role_selection_typical(game, |_|true)
+                .default_selection(RoleListSelection(vec!(self.old_role)))
                 .add_grayed_out_condition(
                     self.star_passes_remaining == 0 ||
                     actor_ref.ability_deactivated_from_death(game) ||
@@ -147,10 +142,8 @@ impl RoleStateImpl for Yer {
 
 impl Yer{
     pub fn current_fake_role(&self, game: &Game, actor_ref: PlayerReference) -> Role {
-        ControllerID::role(actor_ref, Role::Yer, 2)
-            .get_role_option_selection(game)
-            .cloned()
-            .and_then(|r|r.0)
-            .unwrap_or(self.old_role)
+        *ControllerID::role(actor_ref, Role::Yer, 2)
+            .get_role_list_selection_first(game)
+            .unwrap_or(&self.old_role)
     }
 }

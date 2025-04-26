@@ -1,4 +1,12 @@
-use crate::{game::{ability_input::{AvailablePlayerListSelection, AvailableSelectionKind, ControllerID, ControllerParameters}, components::{detained::Detained, insider_group::InsiderGroupID}, phase::PhaseType, player::PlayerReference, Game}, vec_set::VecSet};
+use crate::{
+    game::{
+        ability_input::{
+            AvailablePlayerListSelection, AvailableRoleListSelection,
+            AvailableSelectionKind, ControllerID, ControllerParameters
+        }, components::{detained::Detained, insider_group::InsiderGroupID}, phase::PhaseType, player::PlayerReference, role::Role, Game
+    },
+    vec_set::VecSet
+};
 
 use super::ControllerParametersMap;
 
@@ -96,6 +104,17 @@ impl<'a, I: BuilderIDState> ControllerParametersBuilder<'a, NoAbilitySelection, 
             max_players
         })
     }
+
+    pub fn single_role_selection_typical(
+        self, game: &Game, filter: impl FnMut(&Role) -> bool
+    ) -> ControllerParametersBuilder<'a, AvailableRoleListSelection, I> {
+        self.available_selection(AvailableRoleListSelection{
+            available_roles: game.settings.enabled_roles.clone().into_iter().filter(filter).collect(),
+            can_choose_duplicates: false,
+            max_roles: Some(1)
+        })
+    }
+    
 }
 
 impl<A: BuilderAvailableAbilitySelectionState, I: BuilderIDState> ControllerParametersBuilder<'_, A, I> {

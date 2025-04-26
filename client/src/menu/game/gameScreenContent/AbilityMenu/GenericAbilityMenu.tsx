@@ -7,7 +7,7 @@ import {
     translateControllerID,
     AvailableAbilitySelection,
     TwoRoleOutlineOptionSelection,
-    RoleOptionSelection,
+    RoleListSelection,
     SavedController,
     controllerIdToLink,
     singleAbilityJsonData,
@@ -25,7 +25,7 @@ import TwoRoleOptionSelectionMenu from "./AbilitySelectionTypes/TwoRoleOptionSel
 import TwoPlayerOptionSelectionMenu from "./AbilitySelectionTypes/TwoPlayerOptionSelectionMenu";
 import StyledText from "../../../../components/StyledText";
 import KiraSelectionMenu, { KiraSelection } from "./AbilitySelectionTypes/KiraSelectionMenu";
-import RoleOptionSelectionMenu from "./AbilitySelectionTypes/RoleOptionSelectionMenu";
+import RoleListSelectionMenu from "./AbilitySelectionTypes/RoleListSelectionMenu";
 import "./genericAbilityMenu.css";
 import DetailsSummary from "../../../../components/DetailsSummary";
 import translate from "../../../../game/lang";
@@ -336,25 +336,25 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
                 }}
             />;
         }
-        case "roleOption":{
-            let input: RoleOptionSelection;
+        case "roleList":{
+            let input: RoleListSelection;
             if(
                 props.selected === null ||
-                props.selected.type !== "roleOption"
+                props.selected.type !== "roleList"
             ){
-                input = null;
+                input = [];
             }else{
                 input = props.selected.selection;
             }
 
-            return <RoleOptionSelectionMenu
+            return <RoleListSelectionMenu
                 selection={input}
-                enabledRoles={available.selection}
+                availableSelection={available.selection}
                 onChoose={(selection) => {
                     GAME_MANAGER.sendAbilityInput({
                         id, 
                         selection: {
-                            type: "roleOption",
+                            type: "roleList",
                             selection
                         }
                     });

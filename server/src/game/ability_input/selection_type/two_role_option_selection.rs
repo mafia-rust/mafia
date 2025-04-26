@@ -70,3 +70,15 @@ impl AbilityInput{
         Some(selection)
     }
 }
+impl ControllerID{
+    pub fn get_two_role_option_selection<'a>(&self, game: &'a Game)->Option<&'a TwoRoleOptionSelection>{
+        self.get_selection(game)
+            .and_then(|selection| 
+                if let AbilitySelection::TwoRoleOption(selection) = selection {
+                    Some(selection)
+                }else{
+                    None
+                }
+            )
+    }
+}

@@ -46,20 +46,17 @@ impl RoleStateImpl for Impostor {
                 .build_map(),
             ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Impostor, 1))
-                .available_selection(AvailableRoleOptionSelection(
-                    Role::values().into_iter()
-                        .map(Some)
-                        .collect()
-                ))
-                .default_selection(RoleOptionSelection(Some(Role::Impostor)))
+                .single_role_selection_typical(game, |_|true)
+                .default_selection(RoleListSelection(vec!(Role::Impostor)))
                 .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
                 .allow_players([actor_ref])
                 .build_map()
         ])
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: crate::game::grave::GraveReference) {
-        let Some(RoleOptionSelection(Some(role))) = ControllerID::role(actor_ref, Role::Impostor, 1)
-            .get_role_option_selection(game).cloned() else {return};
+        let Some(RoleListSelection(roles)) = ControllerID::role(actor_ref, Role::Impostor, 1)
+            .get_role_list_selection(game).cloned() else {return};
+        let Some(role) = roles.first().copied() else {return};
         
         
         if grave.deref(game).player == actor_ref {

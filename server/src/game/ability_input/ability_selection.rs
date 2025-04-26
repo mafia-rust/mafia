@@ -1,8 +1,16 @@
 use serde::{Deserialize, Serialize};
 
-use super::{selection_type::{
-    kira_selection::KiraSelection, role_option_selection::RoleOptionSelection, two_player_option_selection::TwoPlayerOptionSelection, two_role_option_selection::TwoRoleOptionSelection, two_role_outline_option_selection::TwoRoleOutlineOptionSelection, BooleanSelection
-}, *, ChatMessageSelection, IntegerSelection, PlayerListSelection, StringSelection, UnitSelection};
+use super::{
+    selection_type::{
+        kira_selection::KiraSelection, 
+        two_player_option_selection::TwoPlayerOptionSelection,
+        two_role_option_selection::TwoRoleOptionSelection,
+        two_role_outline_option_selection::TwoRoleOutlineOptionSelection,
+        BooleanSelection
+    },
+    *,
+    ChatMessageSelection, IntegerSelection, PlayerListSelection, StringSelection, UnitSelection
+};
 
 macro_rules! selection_kinds {
     (
@@ -55,10 +63,13 @@ macro_rules! selection_kinds {
 selection_kinds! {
     Unit: AvailableUnitSelection, UnitSelection;
     Boolean: AvailableBooleanSelection, BooleanSelection;
-    TwoPlayerOption: AvailableTwoPlayerOptionSelection, TwoPlayerOptionSelection;
+
     PlayerList: AvailablePlayerListSelection, PlayerListSelection;
-    RoleOption: AvailableRoleOptionSelection, RoleOptionSelection;
+    TwoPlayerOption: AvailableTwoPlayerOptionSelection, TwoPlayerOptionSelection;
+
+    RoleList: AvailableRoleListSelection, RoleListSelection;
     TwoRoleOption: AvailableTwoRoleOptionSelection, TwoRoleOptionSelection;
+
     TwoRoleOutlineOption: AvailableTwoRoleOutlineOptionSelection, TwoRoleOutlineOptionSelection;
     String: AvailableStringSelection, StringSelection;
     Integer: AvailableIntegerSelection, IntegerSelection;
