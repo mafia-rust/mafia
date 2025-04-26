@@ -328,7 +328,7 @@
     "controllerId.role.polymath.0.integer.4": "Killing",
     "controllerId.role.polymath.1.name": "Investigate",
     "controllerId.role.polymath.2.name": "Guard",
-    "controllerId.role.polymath.3.name": "Move",
+    "controllerId.role.polymath.3.name": "Transport",
     "controllerId.role.polymath.4.name": "Mark",
     "controllerId.role.polymath.5.name": "Camp",
 
@@ -1587,11 +1587,11 @@
     "wiki.article.role.reporter.attributes":"*  You can talk with the player you interview at night\n* Your report is posted anonymously, nobody knows who wrote it\n* Players you interview do not see your name on your messages, instead, the messages you send appear to be from the reporter.",
     "wiki.article.role.reporter.extra": "* If there is more than one Reporter with a public report, the reports are posted in player order\n* Your report does not get posted if you are silenced or blocked\n* If you interview a cultist or syndicate member, their teammates are told that the player is being interviewed",
 
-    "wiki.article.role.polymath.reminder": "At night choose between using a weaker Snoop, Armorsmith, Marksman or Porter ability.",
-    "wiki.article.role.polymath.guide": "- At night, pick one of the following abilities to use:\n    - Select 1 player to investigate. \n        - If they are friends with town you are told so.\n        - If they have an innocent aura they appear to be friends with town.\n        - If you are visited or the player has suspicious aura they appear to not be friends with town\n            - This takes priority over innocent aura.\n    - Select 1 player to guard.\n        - If they visit you, you protect them.\n    - Select 2 players to move.\n        - Transport all visits from the first player to the second.\n        - The players are not notified.\n    - Select 1 player to mark. Select 1 player to camp.\n        -  If the marked player visits the camped player, you attack the marked player with an indirect basic attack.",
+    "wiki.article.role.polymath.reminder": "Each night, choose between using one of a weaker Detective, Doctor, Marksman or Porter ability.",
+    "wiki.article.role.polymath.guide": "- At night, choose one of the following abilities to use:\n    - Select 1 player to investigate.\n        - You are told can't tell if you are visited by anybody or a detective would find them suspicous. Otherwise you are told that your target is friends with town.\n    - Select 1 player to guard.\n        - If they visit you, you protect them.\n    - Select 2 players to transport the first one.\n        - Transport all visits from the first player to the second.\n        - The transported player is not told they were transported.\n    - Select 1 player to mark. Select 1 player to camp.\n        -  If the marked player visits the camped player, you attack the marked player with an indirect basic attack.\n        - You can't use the Killing ability night 1.",
     "wiki.article.role.polymath.abilities":"- None",
-    "wiki.article.role.polymath.attributes":"- You can't use the Marksman ability night 1.\n- You visit players you select to investigate, guard, move, and camp.\n- You don't visit players you select to mark.",
-    "wiki.article.role.polymath.extra":"- You only have a basic attack.\n* You can't mark yourself",
+    "wiki.article.role.polymath.attributes":"- You visit players you select to investigate, guard, transport, and camp.\n- You don't visit players you select to mark.",
+    "wiki.article.role.polymath.extra":"* You can't mark yourself",
     
     "wiki.article.role.vigilante.reminder": "Each night, select a player to attack. If you kill a town loyalist, you die the following night.",
     "wiki.article.role.vigilante.guide": "- At night, select a player to attack\n- If you kill a town loyalist, you will commit suicide on the following night (and probably cause town to lose)\n- You have X bullets (X = Total players ÷ 5 (round up))\n- You can't shoot on night one\n\n If you attack someone and they survive it is likely that they were either protected by a protective role, or they are a role that is armored. Most roles that are armored are evil.",

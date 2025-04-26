@@ -6,13 +6,13 @@ use crate::game::components::transport::{Transport, TransportPriority};
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
-use crate::game::game_conclusion::GameConclusion;
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_map;
 
+use super::detective::Detective;
 use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 
@@ -28,16 +28,11 @@ impl RoleStateImpl for Polymath {
         let selection = Self::ability_type_selection(game, actor_ref);
         match (priority, selection) {
             (OnMidnightPriority::Investigative, PolymathAbilityType::Investigate) => {
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
-                let Some(visit) = actor_visits.first() else {return};
-                let inno = actor_ref.all_night_visitors_cloned(game).is_empty() &&
-                    !visit.target.has_suspicious_aura(game, midnight_variables) && 
-                    (
-                        visit.target.win_condition(game).friends_with_resolution_state(GameConclusion::Town) ||
-                        visit.target.has_innocent_aura(game)
-                    );
                 actor_ref.push_night_message(midnight_variables, 
-                    ChatMessageVariant::PolymathSnoopResult { inno }
+                    ChatMessageVariant::PolymathSnoopResult {inno:
+                        actor_ref.all_night_visitors_cloned(game).is_empty() &&
+                        !Detective::player_is_suspicious(game, midnight_variables, actor_ref)
+                    }
                 );
             },
             (OnMidnightPriority::Heal, PolymathAbilityType::Protect) => {
