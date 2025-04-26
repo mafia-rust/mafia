@@ -178,7 +178,7 @@ impl PlayerReference{
                         },
                         AbilitySelection::Unit(..) |
                         AbilitySelection::ChatMessage(..) |
-                        AbilitySelection::RoleOption(..) |
+                        AbilitySelection::RoleList(..) |
                         AbilitySelection::TwoRoleOption(..) |
                         AbilitySelection::TwoRoleOutlineOption(..) |
                         AbilitySelection::String(..) |

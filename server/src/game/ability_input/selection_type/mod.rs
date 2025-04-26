@@ -1,7 +1,7 @@
 pub mod two_player_option_selection; pub use two_player_option_selection::*;
 pub mod two_role_option_selection; pub use two_role_option_selection::*;
 pub mod two_role_outline_option_selection; pub use two_role_outline_option_selection::*;
-pub mod role_option_selection; pub use role_option_selection::*;
+pub mod role_list_selection; pub use role_list_selection::*;
 pub mod kira_selection; pub use kira_selection::*;
 pub mod player_list_selection; pub use player_list_selection::*;
 pub mod integer_selection; pub use integer_selection::*;

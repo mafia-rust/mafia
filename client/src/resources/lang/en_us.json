@@ -925,7 +925,7 @@
     "chatMessage.abilityUsed.selection.boolean":" set to \\0",
     "chatMessage.abilityUsed.selection.playerList":" selecting \\0",
     "chatMessage.abilityUsed.selection.twoPlayerOption":" selecting \\0",
-    "chatMessage.abilityUsed.selection.roleOption":" selecting \\0",
+    "chatMessage.abilityUsed.selection.roleList":" selecting \\0",
     "chatMessage.abilityUsed.selection.twoRoleOption":" selecting \\0 and \\1",
     "chatMessage.abilityUsed.selection.twoRoleOutlineOption":" selecting \\0 and \\1",
     "chatMessage.abilityUsed.selection.string":" set to:\n\\0",

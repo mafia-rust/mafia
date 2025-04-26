@@ -45,10 +45,10 @@ impl TestPlayer {
         ))
     }
 
-    pub fn send_ability_input_role_typical(&self, role: Option<Role>){
+    pub fn send_ability_input_role_typical(&self, role: Vec<Role>){
         self.send_ability_input(AbilityInput::new(
             ControllerID::role(self.player_ref(), self.role(), 0),
-            RoleOptionSelection(role),
+            RoleListSelection(role),
         ))
     }
 
