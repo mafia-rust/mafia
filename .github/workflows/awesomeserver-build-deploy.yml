@@ -61,9 +61,9 @@ jobs:
             # Restart client container
             docker stop midnightmachinations-client || true
             docker rm midnightmachinations-client || true
-            docker run -d --name midnightmachinations-client -p 3000:3000 ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
+            docker run -d --name midnightmachinations-client -p 2000:3000 ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
 
             # Restart server container
             docker stop midnightmachinations-server || true
             docker rm midnightmachinations-server || true
-            docker run -d --name midnightmachinations-server -p 80:80 ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
+            docker run -d --name midnightmachinations-server -p 2001:80 ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
