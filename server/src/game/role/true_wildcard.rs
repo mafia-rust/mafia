@@ -21,7 +21,7 @@ impl RoleStateImpl for TrueWildcard {
     type ClientRoleState = TrueWildcard;
     fn on_validated_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, _: AbilityInput) {
         if input_player == actor_ref {
-            Self::become_role(game, actor_ref, Role::MafiaKillingWildcard);
+            Self::become_role(game, actor_ref, Role::TrueWildcard);
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
