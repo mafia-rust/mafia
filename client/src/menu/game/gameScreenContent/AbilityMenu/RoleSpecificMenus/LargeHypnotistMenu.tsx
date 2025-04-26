@@ -14,7 +14,7 @@ export type Hypnotist = {
     youWereGuardedMessage: boolean,
     youWereTransportedMessage: boolean,
     youWerePossessedMessage: boolean,
-    yourTargetWasJailedMessage: boolean
+    youWereWardblockedMessage: boolean
 }
 
 type LargeHypnotistMenuProps = {
@@ -27,7 +27,7 @@ type LargeHypnotistMenuState = {
     youWereGuardedMessage: boolean,
     youWereTransportedMessage: boolean,
     youWerePossessedMessage: boolean,
-    yourTargetWasJailedMessage: boolean
+    youWereWardblockedMessage: boolean
 }
 export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMenuProps, LargeHypnotistMenuState> {
     listener: () => void;
@@ -43,7 +43,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                 youWereGuardedMessage: GAME_MANAGER.state.clientState.roleState?.youWereGuardedMessage?? false,
                 youWereTransportedMessage: GAME_MANAGER.state.clientState.roleState?.youWereTransportedMessage?? false,
                 youWerePossessedMessage: GAME_MANAGER.state.clientState.roleState?.youWerePossessedMessage?? false,
-                yourTargetWasJailedMessage: GAME_MANAGER.state.clientState.roleState?.yourTargetWasJailedMessage?? false
+                youWereWardblockedMessage: GAME_MANAGER.state.clientState.roleState?.youWereWardblockedMessage?? false
             };
         this.listener = ()=>{
             if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && GAME_MANAGER.state.clientState.roleState?.type === "hypnotist"){
@@ -55,7 +55,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                     youWereGuardedMessage: GAME_MANAGER.state.clientState.roleState?.youWereGuardedMessage?? false,
                     youWereTransportedMessage: GAME_MANAGER.state.clientState.roleState?.youWereTransportedMessage?? false,
                     youWerePossessedMessage: GAME_MANAGER.state.clientState.roleState?.youWerePossessedMessage?? false,
-                    yourTargetWasJailedMessage: GAME_MANAGER.state.clientState.roleState?.yourTargetWasJailedMessage?? false
+                    youWereWardblockedMessage: GAME_MANAGER.state.clientState.roleState?.youWereWardblockedMessage?? false
                 })
             }
         };  
@@ -75,7 +75,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
             this.state.youWereGuardedMessage, 
             this.state.youWereTransportedMessage, 
             this.state.youWerePossessedMessage, 
-            this.state.yourTargetWasJailedMessage
+            this.state.youWereWardblockedMessage
         );
     }
     handleYouWereRoleblockedMessageToggle(){
@@ -86,7 +86,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
             this.state.youWereGuardedMessage, 
             this.state.youWereTransportedMessage, 
             this.state.youWerePossessedMessage, 
-            this.state.yourTargetWasJailedMessage
+            this.state.youWereWardblockedMessage
         );
     }
     handleYouSurvivedAttackMessageToggle(){
@@ -97,7 +97,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
             this.state.youWereGuardedMessage, 
             this.state.youWereTransportedMessage, 
             this.state.youWerePossessedMessage, 
-            this.state.yourTargetWasJailedMessage
+            this.state.youWereWardblockedMessage
         );
     }
     handleYouWereGuardedMessageToggle(){
@@ -108,7 +108,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
             !this.state.youWereGuardedMessage, 
             this.state.youWereTransportedMessage, 
             this.state.youWerePossessedMessage, 
-            this.state.yourTargetWasJailedMessage
+            this.state.youWereWardblockedMessage
         );
     }
     handleYouWereTransportedMessageToggle(){
@@ -119,7 +119,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
             this.state.youWereGuardedMessage, 
             !this.state.youWereTransportedMessage, 
             this.state.youWerePossessedMessage, 
-            this.state.yourTargetWasJailedMessage
+            this.state.youWereWardblockedMessage
         );
     }
     handleYouWerePossessedMessageToggle(){
@@ -130,7 +130,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
             this.state.youWereGuardedMessage, 
             this.state.youWereTransportedMessage, 
             !this.state.youWerePossessedMessage, 
-            this.state.yourTargetWasJailedMessage
+            this.state.youWereWardblockedMessage
         );
     }
     handleYourTargetWasJailedMessageToggle(){
@@ -141,7 +141,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
             this.state.youWereGuardedMessage, 
             this.state.youWereTransportedMessage, 
             this.state.youWerePossessedMessage, 
-            !this.state.yourTargetWasJailedMessage
+            !this.state.youWereWardblockedMessage
         );
     }
 
@@ -214,7 +214,7 @@ export default class LargeHypnotistMenu extends React.Component<LargeHypnotistMe
                     },
                     chatGroup:null
                 }}/>
-                <CheckBox checked={this.state.yourTargetWasJailedMessage} onChange={(checked)=>this.handleYourTargetWasJailedMessageToggle()}/>
+                <CheckBox checked={this.state.youWereWardblockedMessage} onChange={(checked)=>this.handleYourTargetWasJailedMessageToggle()}/>
             </div>            
         </div>
     }
