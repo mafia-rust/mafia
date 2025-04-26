@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 
-use crate::game::ability_input::{AbilityInput, AvailableRoleOptionSelection};
+use crate::game::ability_input::AbilityInput;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::player::PlayerReference;
@@ -19,13 +19,10 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for TrueWildcard {
     type ClientRoleState = TrueWildcard;
-    fn on_validated_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, _input_player: PlayerReference, ability_input: AbilityInput) {
-        let Some(RoleOptionSelection(Some(role))) = ability_input.get_role_option_selection_if_id(ControllerID::role(
-            actor_ref, 
-            Role::TrueWildcard, 
-            0
-        )) else {return};
-        Self::become_role(game, actor_ref, role);
+    fn on_validated_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, _: AbilityInput) {
+        if input_player == actor_ref {
+            Self::become_role(game, actor_ref, Role::MafiaKillingWildcard);
+        }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         ControllerParametersMap::builder(game)
@@ -38,12 +35,16 @@ impl RoleStateImpl for TrueWildcard {
 }
 
 impl TrueWildcard {
-    fn become_role(game: &mut Game, actor_ref: PlayerReference, role: Role) {
+    ///Function allows for inputting which wildcard for future proofing in the case of something like True Fiends Wildcard.
+    pub fn become_role(game: &mut Game, actor_ref: PlayerReference, wildcard: Role) {
+        let Some(&role) = ControllerID::role(actor_ref, wildcard, 0)
+            .get_role_list_selection_first(game)
+            else {return};
         if 
             role_can_generate(
                 role, 
                 &game.settings.enabled_roles, 
-                &Vec::new(),    //True wildcard can be whatever they want
+                &[],
             )
         {
             actor_ref.set_role_and_win_condition_and_revealed_group(game, role.new_state(game));
