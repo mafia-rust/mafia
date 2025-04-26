@@ -28,10 +28,12 @@ impl RoleStateImpl for Polymath {
         let selection = Self::ability_type_selection(game, actor_ref);
         match (priority, selection) {
             (OnMidnightPriority::Investigative, PolymathAbilityType::Investigate) => {
+                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let Some(target) = actor_visits.first().map(|v|v.target) else {return};
                 actor_ref.push_night_message(midnight_variables, 
                     ChatMessageVariant::PolymathSnoopResult {inno:
                         actor_ref.all_night_visitors_cloned(game).is_empty() &&
-                        !Detective::player_is_suspicious(game, midnight_variables, actor_ref)
+                        !Detective::player_is_suspicious(game, midnight_variables, target)
                     }
                 );
             },
