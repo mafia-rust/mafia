@@ -1,9 +1,8 @@
 use serde::{Serialize, Deserialize};
 
-use crate::game::ability_input::AvailableRoleOptionSelection;
+use crate::game::ability_input::{AbilityInput, AvailableRoleOptionSelection};
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::role_can_generate;
 use crate::game::Game;
@@ -20,14 +19,13 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Wildcard {
     type ClientRoleState = Wildcard;
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
-        match phase {
-            PhaseType::Night => {
-                if actor_ref.ability_deactivated_from_death(game) {return;}
-                Wildcard::become_role(game, actor_ref, Role::Wildcard);
-            },
-            _ => {}
-        }
+    fn on_validated_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, _input_player: PlayerReference, ability_input: AbilityInput) {
+        let Some(RoleOptionSelection(Some(role))) = ability_input.get_role_option_selection_if_id(ControllerID::role(
+            actor_ref, 
+            Role::Wildcard, 
+            0
+        )) else {return};
+        Self::become_role(game, actor_ref, role);
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         ControllerParametersMap::builder(game)
@@ -45,7 +43,6 @@ impl RoleStateImpl for Wildcard {
 
 impl Wildcard {
     pub fn become_role(game: &mut Game, actor_ref: PlayerReference, role: Role) {
-
         let Some(RoleOptionSelection(Some(role))) = ControllerID::role(actor_ref, role, 0)
             .get_role_option_selection(game)
             .cloned()
