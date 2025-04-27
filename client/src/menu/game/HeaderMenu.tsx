@@ -164,7 +164,7 @@ export function PhaseSpecificInformation(props: Readonly<{
                             return translate("judgement.cannotVote.dead");
                         } else {
                             return (
-                                enabledModifiers.includes("Abstaining") ? 
+                                enabledModifiers.includes("abstaining") ? 
                                     ["guilty", "abstain", "innocent"] as const :
                                     ["guilty", "innocent"] as const 
                                 ).map((verdict) => {
