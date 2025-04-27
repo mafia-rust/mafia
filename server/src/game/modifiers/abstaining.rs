@@ -12,10 +12,4 @@ impl From<&Abstaining> for ModifierType{
         ModifierType::Abstaining
     }
 }
-impl ModifierTrait for Abstaining{
-    // fn on_game_start(self, game: &mut crate::game::Game) {
-    //     for player in PlayerReference::all_players(game) {
-    //         player.set_verdict(game, Verdict::Innocent)
-    //     }
-    // }
-}
+impl ModifierTrait for Abstaining{}
