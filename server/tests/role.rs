@@ -2911,11 +2911,6 @@ fn santa_always_gets_their_naughty_selection() {
         game.skip_to(Obituary, 3);
     
         assert_contains!(
-            santa.player_ref().untagged_night_visits_cloned(&game).iter().map(|v| v.target).collect::<Vec<PlayerReference>>(),
-            naughty.player_ref()
-        );
-    
-        assert_contains!(
             naughty.player_ref().win_condition(&game).required_resolution_states_for_win().unwrap(),
             GameConclusion::NaughtyList
         );

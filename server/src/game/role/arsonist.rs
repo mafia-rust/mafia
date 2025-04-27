@@ -26,14 +26,14 @@ impl RoleStateImpl for Arsonist {
         match priority {
             OnMidnightPriority::Deception => {
                 //douse target
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 if let Some(visit) = actor_visits.first(){
                     let target_ref = visit.target;
                     Self::douse(game, target_ref);
                 }
                 
                 //douse all visitors
-                for other_player_ref in actor_ref.all_night_visitors_cloned(game)
+                for other_player_ref in actor_ref.all_night_visitors_cloned(midnight_variables)
                     .into_iter()
                     .filter(|other_player_ref| *other_player_ref != actor_ref)
                     .collect::<Vec<PlayerReference>>()
@@ -44,7 +44,7 @@ impl RoleStateImpl for Arsonist {
             OnMidnightPriority::Kill => {
                 if game.day_number() <= 1 {return};
 
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);             
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);             
                 if let Some(visit) = actor_visits.first(){
                     if actor_ref == visit.target{
                         Self::ignite(game, actor_ref, midnight_variables);
