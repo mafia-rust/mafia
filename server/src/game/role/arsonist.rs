@@ -42,6 +42,8 @@ impl RoleStateImpl for Arsonist {
                 }
             },
             OnMidnightPriority::Kill => {
+                if game.day_number() <= 1 {return};
+
                 let actor_visits = actor_ref.untagged_night_visits_cloned(game);             
                 if let Some(visit) = actor_visits.first(){
                     if actor_ref == visit.target{
