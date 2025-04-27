@@ -1438,20 +1438,31 @@ fn polymath_snoop_basic() {
     game.skip_to(Night, night);
 
     polymath.send_ability_input_integer_typical(1);
-    assert!(polymath.send_ability_input_player_list(det, 1));
-    assert!(det.send_ability_input_player_list_typical(polymath));
+    polymath.send_ability_input_player_list(det, 1);
+    det.send_ability_input_player_list_typical(polymath);
     game.next_phase();
     assert_contains!(
         polymath.get_messages_after_night(night),
         ChatMessageVariant::PolymathSnoopResult { inno: false }
     );
 
+    night += 1;
+    game.skip_to(Night, night);
+
+    framer.send_ability_input_player_list_typical(det);
+    polymath.send_ability_input_integer_typical(1);
+    polymath.send_ability_input_player_list(det, 1);
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: false }
+    );
 
     night += 1;
     game.skip_to(Night, night);
 
-    assert!(polymath.send_ability_input_player_list(det, 1));
-    assert!(framer.send_ability_input_player_list_typical(det));
+    polymath.send_ability_input_integer_typical(1);
+    polymath.send_ability_input_player_list(framer, 1);
     game.next_phase();
     assert_contains!(
         polymath.get_messages_after_night(night),
@@ -2671,7 +2682,7 @@ fn fiends_wildcard_defense_upgrade(){
         IntegerSelection(1)
     ));
 
-    assert!(fiend.role() == Role::Puppeteer);
+    assert_eq!(fiend.role(), Role::Puppeteer);
     assert!(mafia.send_ability_input_player_list_typical(fiend));
     assert!(fiend.send_ability_input_player_list_typical(mafia));
 
