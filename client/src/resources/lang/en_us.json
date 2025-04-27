@@ -819,6 +819,8 @@
     "simplify":"Simplify",
     "backToLobby": "Back To Lobby",
 
+    "numberedRoleOutline":"\\0№\\1",
+
     "verdict.guilty": "Guilty",
     "verdict.innocent": "Innocent",
     "verdict.innocent:var.0": "Inno",

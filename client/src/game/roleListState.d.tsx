@@ -55,6 +55,7 @@ export type RoleOutlineOption = ({
     insiderGroups?: InsiderGroup[]
 }
 
+
 export type RoleOrRoleSet = ({
     type: "roleSet",
     roleSet: RoleSet
@@ -68,6 +69,26 @@ export type RoleOrRoleSet = ({
 
 export function translateRoleOutline(roleOutline: RoleOutline): string {
     return roleOutline.map(translateRoleOutlineOption).join(" "+translate("union")+" ")
+}
+export function translateSpecificRoleOutline(roleList: RoleOutline[] | undefined, outlineIndex: number): string {
+    if (roleList === undefined) {
+        return "Translation Error. Passed undefined role list to translateSpecificRoleOutline. outlineIndex = "+outlineIndex.toString()
+    }
+    if (outlineIndex === undefined) {
+        return "Translation Error. Passed undefined outline to translateSpecificRoleOutline. outlineIndex = "+outlineIndex
+    }
+    if (outlineIndex >= roleList.length || outlineIndex < 0) {
+        return "Translation Error. Passed out of bounds outline index to translateSpecificRoleOutline. outlineIndex = "+outlineIndex.toString()
+    }
+    const outline = translateRoleOutline(roleList[outlineIndex]);
+
+    let count = 1;
+    for(let i = 0; i<outlineIndex; i++){
+        if(translateRoleOutline(roleList[i])===outline) {
+            count++
+        }
+    }
+    return translate("numberedRoleOutline", outline, count.toString());
 }
 export function translateRoleOutlineOption(roleOutlineOption: RoleOutlineOption): string {
     let out = "";
