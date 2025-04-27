@@ -1,6 +1,6 @@
 pub mod obscured_graves;
 pub mod dead_can_chat;
-pub mod no_abstaining;
+pub mod abstaining;
 pub mod no_death_cause;
 pub mod role_set_grave_killers;
 pub mod no_due_process;
@@ -15,7 +15,7 @@ pub mod hidden_whispers;
 
 use dead_can_chat::DeadCanChat;
 use hidden_whispers::HiddenWhispers;
-use no_abstaining::NoAbstaining;
+use abstaining::Abstaining;
 use no_chat::NoChat;
 use no_due_process::AutoGuilty;
 use no_night_chat::NoNightChat;
@@ -60,7 +60,7 @@ pub enum ModifierState{
     ObscuredGraves(ObscuredGraves),
     SkipDay1(SkipDay1),
     DeadCanChat(DeadCanChat),
-    NoAbstaining(NoAbstaining),
+    Abstaining(Abstaining),
     NoDeathCause(NoDeathCause),
     RoleSetGraveKillers(RoleSetGraveKillers),
     AutoGuilty(AutoGuilty),
@@ -78,7 +78,7 @@ pub enum ModifierType{
     ObscuredGraves,
     SkipDay1,
     DeadCanChat,
-    NoAbstaining,
+    Abstaining,
     NoDeathCause,
     RoleSetGraveKillers,
     AutoGuilty,
@@ -96,7 +96,7 @@ impl ModifierType{
             Self::ObscuredGraves => ModifierState::ObscuredGraves(ObscuredGraves),
             Self::SkipDay1 => ModifierState::SkipDay1(SkipDay1),
             Self::DeadCanChat => ModifierState::DeadCanChat(DeadCanChat),
-            Self::NoAbstaining => ModifierState::NoAbstaining(NoAbstaining),
+            Self::Abstaining => ModifierState::Abstaining(Abstaining),
             Self::NoDeathCause => ModifierState::NoDeathCause(NoDeathCause),
             Self::RoleSetGraveKillers => ModifierState::RoleSetGraveKillers(RoleSetGraveKillers),
             Self::AutoGuilty => ModifierState::AutoGuilty(AutoGuilty),
@@ -116,7 +116,7 @@ impl From<&ModifierState> for ModifierType{
             ModifierState::ObscuredGraves(_) => Self::ObscuredGraves,
             ModifierState::SkipDay1(_) => Self::SkipDay1,
             ModifierState::DeadCanChat(_) => Self::DeadCanChat,
-            ModifierState::NoAbstaining(_) => Self::NoAbstaining,
+            ModifierState::Abstaining(_) => Self::Abstaining,
             ModifierState::NoDeathCause(_) => Self::NoDeathCause,
             ModifierState::RoleSetGraveKillers(_) => Self::RoleSetGraveKillers,
             ModifierState::AutoGuilty(_) => Self::AutoGuilty,
@@ -140,7 +140,7 @@ pub struct Modifiers{
 }
 
 impl Modifiers{
-    pub fn modifier_is_enabled(game: &Game, modifier: ModifierType)->bool{
+    pub fn is_enabled(game: &Game, modifier: ModifierType)->bool{
         game.modifiers.modifiers.contains(&modifier)
     }
     pub fn get_modifier(game: &Game, modifier: ModifierType)->Option<&ModifierState>{

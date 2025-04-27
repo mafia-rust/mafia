@@ -166,7 +166,7 @@ export type Tag =
 export const MODIFIERS = [
     "obscuredGraves",
     "skipDay1",
-    "deadCanChat", "noAbstaining",
+    "deadCanChat", "Abstaining",
     "noDeathCause",
     "roleSetGraveKillers", "autoGuilty", 
     "twoThirdsMajority", "noTrialPhases", 
