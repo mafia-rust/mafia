@@ -141,6 +141,7 @@ pub struct Game {
     pub tags: Tags,
     pub silenced: Silenced,
     pub defense_items: FragileVests,
+    pub time_since_user_interaction: Duration,
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -166,6 +167,10 @@ pub enum GameOverReason {
 
 impl Game {
     pub const DISCONNECT_TIMER_SECS: u16 = 60 * 2;
+    pub const AFK_ROOM_TIMER_SECS: Duration = Duration::new(60*60, 0);
+    pub fn reset_afk_timer(&mut self){
+        self.time_since_user_interaction = Duration::default()
+    }
 
     /// `players` must have length 255 or lower.
     pub fn new(room_name: String, settings: Settings, clients: VecMap<RoomClientID, GameClient>, players: Vec<PlayerInitializeParameters>, spectators: Vec<SpectatorInitializeParameters>) -> Result<Self, RejectStartReason>{
@@ -262,7 +267,9 @@ impl Game {
                 synopsis_tracker: SynopsisTracker::new(num_players),
                 tags: Tags::default(),
                 silenced: Silenced::default(),
-                defense_items: FragileVests::new(num_players)
+                defense_items: FragileVests::new(num_players),
+                
+                time_since_user_interaction:  Duration::default(),
             };
 
             // Just distribute insider groups, this is for game over checking (Keeps game running syndicate gun)
@@ -657,6 +664,8 @@ impl Game {
     }
 }
 
+
+
 impl RoomState for Game {
     fn tick(&mut self, time_passed: Duration) -> RoomTickResult {
         if !self.ticking { 
@@ -686,8 +695,10 @@ impl RoomState for Game {
 
         OnTick::new().invoke(self);
 
+        self.time_since_user_interaction = self.time_since_user_interaction.saturating_add(time_passed);
+
         RoomTickResult {
-            close_room: !self.is_any_client_connected()
+            close_room: !self.is_any_client_connected() || self.time_since_user_interaction > Game::AFK_ROOM_TIMER_SECS
         }
     }
     
@@ -861,6 +872,8 @@ impl RoomState for Game {
 
 pub mod test {
 
+    use std::time::Duration;
+
     use crate::vec_map::VecMap;
 
     use super::{
@@ -937,7 +950,8 @@ pub mod test {
             synopsis_tracker: SynopsisTracker::new(number_of_players),
             tags: Tags::default(),
             silenced: Silenced::default(),
-            defense_items: FragileVests::new(number_of_players)
+            defense_items: FragileVests::new(number_of_players),
+            time_since_user_interaction: Duration::default(),
         };
 
         //set wincons and revealed groups

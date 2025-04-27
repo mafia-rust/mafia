@@ -40,6 +40,7 @@ impl Game {
     }
 
     pub fn on_player_message(&mut self, room_client_id: RoomClientID, sender_player_ref: PlayerReference, incoming_packet: ToServerPacket) -> GameClientMessageResult {
+        let mut valid: bool = true;
         'packet_match: {match incoming_packet {
             ToServerPacket::SetName{ name } => {
                 self.set_player_name(sender_player_ref, name);
@@ -230,10 +231,13 @@ impl Game {
                 sender_player_ref.set_fast_forward_vote(self, fast_forward);
             },
             _ => {
-                log!(error "Game"; "Recieved invalid packet for Game state: {incoming_packet:?}");
+                valid = false;
+                log!(error "Game"; "Received invalid packet for Game state: {incoming_packet:?}");
             }
         }}
-        
+        if valid {
+            self.reset_afk_timer();
+        }
         for player_ref in PlayerReference::all_players(self){
             player_ref.send_repeating_data(self)
         }

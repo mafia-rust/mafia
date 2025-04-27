@@ -40,11 +40,12 @@ impl SavedControllersMap{
         actor: PlayerReference,
         ability_input: AbilityInput
     )->bool{
+        game.reset_afk_timer();
         let AbilityInput{
             id, selection: incoming_selection
         } = ability_input.clone();
 
-        if !Self::set_selection_in_controller(game, actor, id.clone(), incoming_selection.clone(), false) {
+        if !Self::set_selection_in_controller(game, actor, id.clone(), incoming_selection.clone(), false) {            
             return false;
         }
 
