@@ -50,7 +50,7 @@ impl PlayerReference{
         }
         game.send_packet_to_all(ToClientPacket::PlayerAlive { alive: alive_players });
         game.count_nomination_and_start_trial(
-            Modifiers::is_enabled(game, crate::game::modifiers::ModifierType::UnscheduledNominations)
+            Modifiers::is_enabled(game, ModifierType::UnscheduledNominations)
         );
     }
 
