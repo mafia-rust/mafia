@@ -36,6 +36,7 @@ use components::forfeit_vote::ForfeitVote;
 use components::mafia::Mafia;
 use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
+use components::player_component::PlayerComponent;
 use components::poison::Poison;
 use components::detained::Detained;
 use components::insider_group::InsiderGroupID;
@@ -141,6 +142,7 @@ pub struct Game {
     pub tags: Tags,
     pub silenced: Silenced,
     pub defense_items: FragileVests,
+    pub win_condition: PlayerComponent<WinCondition>
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -262,7 +264,8 @@ impl Game {
                 synopsis_tracker: SynopsisTracker::new(num_players),
                 tags: Tags::default(),
                 silenced: Silenced::default(),
-                defense_items: FragileVests::new(num_players)
+                defense_items: FragileVests::new(num_players),
+                win_condition: unsafe{ PlayerComponent::<WinCondition>::new(num_players, |player|players.get(player.index())) }
             };
 
             // Just distribute insider groups, this is for game over checking (Keeps game running syndicate gun)
