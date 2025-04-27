@@ -172,7 +172,7 @@ export const MODIFIERS = [
     "twoThirdsMajority", "noTrialPhases", 
     "noWhispers", "hiddenWhispers",
     "noNightChat", "noChat", 
-    "scheduledNominations"
+    "unscheduledNominations"
 ] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 

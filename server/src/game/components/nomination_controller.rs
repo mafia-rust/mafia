@@ -41,7 +41,7 @@ impl NominationController{
             });
 
             game.count_nomination_and_start_trial(
-                !Modifiers::is_enabled(game, ModifierType::ScheduledNominations)
+                Modifiers::is_enabled(game, ModifierType::UnscheduledNominations)
             );
 
             game.send_packet_to_all(ToClientPacket::PlayerVotes {

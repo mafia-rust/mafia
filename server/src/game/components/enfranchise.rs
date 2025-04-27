@@ -12,7 +12,7 @@ impl Enfranchise{
         Tags::add_tag(game, super::tags::TagSetID::Enfranchised, player);
 
         game.count_nomination_and_start_trial(
-            !Modifiers::is_enabled(game, crate::game::modifiers::ModifierType::ScheduledNominations)
+            Modifiers::is_enabled(game, crate::game::modifiers::ModifierType::UnscheduledNominations)
         );
     }
     pub fn unenfranchise(game: &mut Game, player: PlayerReference){

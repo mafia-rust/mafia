@@ -1,15 +1,15 @@
 use super::{ModifierTrait, ModifierType};
 
 #[derive(Clone, Default, PartialEq, Eq, Hash)]
-pub struct ScheduledNominations;
+pub struct UnscheduledNominations;
 
 /*
     There is modifier specific code in the common_role::get_send_chat_groups() function
 */
-impl From<&ScheduledNominations> for ModifierType{
-    fn from(_: &ScheduledNominations) -> Self {
-        ModifierType::ScheduledNominations
+impl From<&UnscheduledNominations> for ModifierType{
+    fn from(_: &UnscheduledNominations) -> Self {
+        ModifierType::UnscheduledNominations
     }
 }
 
-impl ModifierTrait for ScheduledNominations{}
+impl ModifierTrait for UnscheduledNominations{}

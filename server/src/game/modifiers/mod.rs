@@ -24,7 +24,7 @@ use no_whispers::NoWhispers;
 use obscured_graves::ObscuredGraves;
 use no_death_cause::NoDeathCause;
 use role_set_grave_killers::RoleSetGraveKillers;
-use scheduled_nominations::ScheduledNominations;
+use scheduled_nominations::UnunscheduledNominations;
 
 use serde::{Deserialize, Serialize};
 use skip_day_1::SkipDay1;
@@ -70,7 +70,7 @@ pub enum ModifierState{
     NoNightChat(NoNightChat),
     NoChat(NoChat),
     HiddenWhispers(HiddenWhispers),
-    ScheduledNominations(ScheduledNominations),
+    UnscheduledNominations(UnscheduledNominations),
 }
 #[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Debug, Hash)]
 #[serde(rename_all = "camelCase")]
@@ -88,7 +88,7 @@ pub enum ModifierType{
     NoNightChat,
     NoChat,
     HiddenWhispers,
-    ScheduledNominations,
+    UnscheduledNominations,
 }
 impl ModifierType{
     pub fn default_state(&self)->ModifierState{
@@ -106,7 +106,7 @@ impl ModifierType{
             Self::NoNightChat => ModifierState::NoNightChat(NoNightChat),
             Self::NoChat => ModifierState::NoChat(NoChat),
             Self::HiddenWhispers => ModifierState::HiddenWhispers(HiddenWhispers),
-            Self::ScheduledNominations => ModifierState::ScheduledNominations(ScheduledNominations),
+            Self::UnscheduledNominations => ModifierState::UnscheduledNominations(UnscheduledNominations),
         }
     }
 }
@@ -126,7 +126,7 @@ impl From<&ModifierState> for ModifierType{
             ModifierState::NoNightChat(_) => Self::NoNightChat,
             ModifierState::NoChat(_) => Self::NoChat,
             ModifierState::HiddenWhispers(_) => Self::HiddenWhispers,
-            ModifierState::ScheduledNominations(_) => Self::ScheduledNominations,
+            ModifierState::UnscheduledNominations(_) => Self::UnscheduledNominations,
         }
     }
 }
