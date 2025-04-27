@@ -206,20 +206,20 @@ impl Game {
                 roleblock, 
                 you_were_roleblocked_message, 
                 you_survived_attack_message, 
-                you_were_protected_message, 
+                you_were_guarded_message, 
                 you_were_transported_message, 
                 you_were_possessed_message, 
-                your_target_was_jailed_message 
+                you_were_wardblocked_message 
             } => {
                 if let RoleState::Hypnotist(mut hypnotist) = sender_player_ref.role_state(self).clone(){
                     hypnotist.roleblock = roleblock;
 
                     hypnotist.you_were_roleblocked_message = you_were_roleblocked_message;
                     hypnotist.you_survived_attack_message = you_survived_attack_message;
-                    hypnotist.you_were_protected_message = you_were_protected_message;
+                    hypnotist.you_were_guarded_message = you_were_guarded_message;
                     hypnotist.you_were_transported_message = you_were_transported_message;
                     hypnotist.you_were_possessed_message = you_were_possessed_message;
-                    hypnotist.your_target_was_jailed_message = your_target_was_jailed_message;
+                    hypnotist.you_were_wardblocked_message = you_were_wardblocked_message;
 
                     //There must be at least one message enabled, so if none are, enable roleblocked message
                     hypnotist.ensure_at_least_one_message();

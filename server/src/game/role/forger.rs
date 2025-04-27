@@ -1,7 +1,7 @@
 
 use serde::Serialize;
 
-use crate::game::ability_input::{AvailableRoleOptionSelection, AvailableStringSelection, RoleOptionSelection};
+use crate::game::ability_input::{AvailableRoleListSelection, AvailableStringSelection, RoleListSelection};
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
@@ -60,8 +60,8 @@ impl RoleStateImpl for Forger {
                 let target_ref = visit.target;
 
                 let fake_role = ControllerID::role(actor_ref, Role::Forger, 1)
-                    .get_role_option_selection(game)
-                    .and_then(|p| p.0);
+                    .get_role_list_selection(game)
+                    .and_then(|p| p.0.first().copied());
 
                 target_ref.set_night_grave_role(midnight_variables, fake_role);
 
@@ -104,12 +104,12 @@ impl RoleStateImpl for Forger {
             // Role
             ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Forger, 1))
-                .available_selection(AvailableRoleOptionSelection(
-                    Role::values().into_iter()
-                        .map(Some)
-                        .collect()
-                ))
-                .default_selection(RoleOptionSelection(Some(Role::Forger)))
+                .available_selection(AvailableRoleListSelection{
+                    available_roles: Role::values(),
+                    can_choose_duplicates: false,
+                    max_roles: Some(1)
+                })
+                .default_selection(RoleListSelection(vec!(Role::Forger)))
                 .add_grayed_out_condition(
                     self.forges_remaining == 0 ||
                     actor_ref.ability_deactivated_from_death(game)

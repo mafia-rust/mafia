@@ -387,6 +387,15 @@ function playerListToString(playerList: PlayerIndex[], playerNames: string[]): s
     }).join(", ");
 }
 
+function roleListToString(roleList: Role[]): string {
+    if (roleList === null || roleList.length === 0) {
+        return translate("none");
+    }
+    return roleList.map((role) => {
+        return translate("role."+role+".name")
+    }).join(", ");
+}
+
 export function sanitizePlayerMessage(text: string): string {
     return DOMPurify.sanitize(text, { 
         ALLOWED_TAGS: []
@@ -557,9 +566,9 @@ export function translateChatMessage(
                         playerListToString(message.selection.selection===null?[]:message.selection.selection, playerNames)
                     );
                     break;
-                case "roleOption":
-                    out = translate("chatMessage.abilityUsed.selection.roleOption",
-                        message.selection.selection===null?translate("none"):translate("role."+message.selection.selection+".name")
+                case "roleList":
+                    out = translate("chatMessage.abilityUsed.selection.roleList",
+                        roleListToString(message.selection.selection)
                     );
                     break;
                 case "twoRoleOption":
@@ -657,6 +666,8 @@ export function translateChatMessage(
             return translate("chatMessage.sheriffResult." + (message.suspicious ? "suspicious" : "innocent"));
         case "snoopResult":
             return translate("chatMessage.snoopResult." + (message.townie ? "townie" : "inconclusive"));
+        case "polymathSnoopResult":
+            return translate(message.inno ? "chatMessage.sheriffResult.innocent" : "chatMessage.snoopResult.inconclusive");
         case "gossipResult":
             return translate("chatMessage.gossipResult." + (message.enemies ? "enemies" : "none"));
         case "tallyClerkResult":
@@ -773,7 +784,12 @@ export function translateChatMessage(
         case "playerForwardedMessage":
             return translate(`chatMessage.playerForwardedMessage`, playerNames[message.forwarder]);
         case "fragileVestBreak":
-            return translate(`chatMessage.fragileVestBreak`, playerNames[message.playerWithVest], message.defense)
+            console.log(playerNames);
+            return translate(
+                `chatMessage.fragileVestBreak`,
+                translate("defense."+message.defense),
+                playerNames[message.playerWithVest]
+            );
         case "deputyShotYou":
         case "mediumExists":
         case "youGuardedSomeone":
@@ -984,6 +1000,9 @@ export type ChatMessageVariant = {
 } | {
     type: "snoopResult", 
     townie: boolean
+} | {
+    type: "polymathSnoopResult", 
+    inno: boolean
 } | {
     type: "gossipResult",
     enemies: boolean

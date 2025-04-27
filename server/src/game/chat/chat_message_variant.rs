@@ -170,6 +170,7 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     AuditorResult{role_outline: RoleOutline, result: AuditorResult},
     SnoopResult{townie: bool},
+    PolymathSnoopResult{inno: bool},
     GossipResult{enemies: bool},
     #[serde(rename_all = "camelCase")]
     TallyClerkResult{evil_count: u8},
@@ -179,7 +180,7 @@ pub enum ChatMessageVariant {
     TrapStateEndOfNight{state: TrapState},
     
     #[serde(rename_all = "camelCase")]
-    FragileVestBreak{player_with_item: PlayerReference, defense: DefensePower},
+    FragileVestBreak{player_with_vest: PlayerReference, defense: DefensePower},
 
     Transported,
 

@@ -1,6 +1,5 @@
 use serde::{Serialize, Deserialize};
 
-use crate::game::ability_input::AvailableRoleOptionSelection;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::phase::PhaseType;
@@ -8,7 +7,7 @@ use crate::game::player::PlayerReference;
 use crate::game::role_list::role_can_generate;
 use crate::game::Game;
 
-use super::{ControllerID, ControllerParametersMap, Role, RoleOptionSelection, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
@@ -32,11 +31,7 @@ impl RoleStateImpl for Wildcard {
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::Wildcard, 0))
-            .available_selection(AvailableRoleOptionSelection(
-                Role::values().into_iter().filter(|role|
-                    game.settings.enabled_roles.contains(role) && *role != Role::Wildcard
-                ).map(Some).chain(std::iter::once(None)).collect()
-            ))
+            .single_role_selection_typical(game, |role|*role != Role::Wildcard)
             .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
             .allow_players([actor_ref])
             .build_map()
@@ -46,9 +41,8 @@ impl RoleStateImpl for Wildcard {
 impl Wildcard {
     pub fn become_role(game: &mut Game, actor_ref: PlayerReference, role: Role) {
 
-        let Some(RoleOptionSelection(Some(role))) = ControllerID::role(actor_ref, role, 0)
-            .get_role_option_selection(game)
-            .cloned()
+        let Some(&role) = ControllerID::role(actor_ref, role, 0)
+            .get_role_list_selection_first(game)
             else {return};
 
         if 

@@ -3,7 +3,7 @@ name: CI/CD
 on:
   push:
     branches:
-      - prod
+      - main
   workflow_dispatch:
 
 jobs:
@@ -29,7 +29,7 @@ jobs:
           file: ./server/dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/dev-midnightmachinations-server:latest
           build-args: |
             WS_ADDRESS=0.0.0.0:80
 
@@ -41,9 +41,9 @@ jobs:
           file: ./client/dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/dev-midnightmachinations-client:latest
           build-args: |
-            REACT_APP_WS_ADDRESS=wss://wss.midnightmachinations.net
+            REACT_APP_WS_ADDRESS=wss://wssdev.midnightmachinations.net
 
       # 5. Deploy to server via SSH
       - name: Deploy to server via SSH
@@ -55,15 +55,15 @@ jobs:
           port: ${{ secrets.SERVER_SSH_PORT }}     # optional, defaults to 22
           script: |
             # Pull the latest images
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/dev-midnightmachinations-client:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/dev-midnightmachinations-server:latest
 
             # Restart client container
-            docker stop midnightmachinations-client || true
-            docker rm midnightmachinations-client || true
-            docker run -d --name midnightmachinations-client -p 3000:3000 ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-client:latest
+            docker stop dev-midnightmachinations-client || true
+            docker rm dev-midnightmachinations-client || true
+            docker run -d --name dev-midnightmachinations-client -p 2002:3000 ${{ secrets.DOCKERHUB_USERNAME }}/dev-midnightmachinations-client:latest
 
             # Restart server container
-            docker stop midnightmachinations-server || true
-            docker rm midnightmachinations-server || true
-            docker run -d --name midnightmachinations-server -p 80:80 ${{ secrets.DOCKERHUB_USERNAME }}/midnightmachinations-server:latest
+            docker stop dev-midnightmachinations-server || true
+            docker rm dev-midnightmachinations-server || true
+            docker run -d --name dev-midnightmachinations-server -p 2003:80 ${{ secrets.DOCKERHUB_USERNAME }}/dev-midnightmachinations-server:latest

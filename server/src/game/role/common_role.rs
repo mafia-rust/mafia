@@ -42,14 +42,20 @@ pub(super) fn convert_controller_selection_to_visits_visit_tag(game: &Game, acto
                 .map(|target_ref| Visit::new(actor_ref, *target_ref, attack, tag))
                 .collect()
         }
-        AbilitySelection::RoleOption(selection) => {
-            let mut out = Vec::new();
-            for player in PlayerReference::all_players(game){
-                if Some(player.role(game)) == selection.0 {
-                    out.push(Visit::new(actor_ref, player, attack, tag));
-                }
-            }
-            out
+        AbilitySelection::RoleList(selection) => {
+            selection.0
+                .iter()
+                .flat_map(|role|
+                    PlayerReference::all_players(game)
+                        .filter_map(|player|
+                            if player.role(game) == *role {
+                                Some(Visit::new(actor_ref, player, attack, tag))
+                            }else{
+                                None
+                            }
+                        )
+                )
+                .collect()
         }
         AbilitySelection::TwoRoleOption(selection) => {
             let mut out = Vec::new();

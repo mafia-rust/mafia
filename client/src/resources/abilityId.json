@@ -74,6 +74,21 @@
     "role/reporter/2": {
         "midnight": true
     },
+    "role/polymath/0": {
+        "midnight": true
+    },
+    "role/polymath/1": {
+        "midnight": true
+    },
+    "role/polymath/2": {
+        "midnight": true
+    },
+    "role/polymath/3": {
+        "midnight": true
+    },
+    "role/polymath/4": {
+        "midnight": true
+    },
     "role/godfather/0": {
         "midnight": true
     },

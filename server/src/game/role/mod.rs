@@ -1,7 +1,7 @@
 #![allow(clippy::single_match, reason = "May add more cases for more priorities later")]
 
 use std::collections::HashSet;
-use crate::vec_set::VecSet;
+use crate::vec_set::{vec_set, VecSet};
 
 use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
@@ -125,6 +125,7 @@ macros::roles! {
     Transporter : transporter,
     Porter : porter,
     Coxswain : coxswain,
+    Polymath : polymath,
 
     // Mafia
     Godfather : godfather,
@@ -200,8 +201,8 @@ mod macros {
                 $($name),*
             }
             impl Role {
-                pub fn values() -> Vec<Role> {
-                    return vec![$(Role::$name),*];
+                pub fn values() -> VecSet<Role> {
+                    return vec_set![$(Role::$name),*];
                 }
                 pub fn default_state(&self) -> RoleState {
                     match self {
