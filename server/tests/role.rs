@@ -2104,7 +2104,7 @@ fn recruits_dont_get_converted_to_mk(){
 
 #[test]
 fn arsonist_ignites_and_aura(){
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         arso: Arsonist,
         townie: Detective,
         townie2: Detective,
@@ -2126,10 +2126,10 @@ fn arsonist_ignites_and_aura(){
     assert!(vigi.alive());
 
     assert_contains!(sher.get_messages_after_last_message(
-        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 1}
+        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 2}
     ), ChatMessageVariant::SheriffResult{ suspicious: true });
 
-    game.skip_to(Night, 2);
+    game.skip_to(Night, 3);
     
     assert!(arso.send_ability_input_player_list_typical(townie2));
     assert!(sher.send_ability_input_player_list_typical(townie2));
@@ -2137,27 +2137,27 @@ fn arsonist_ignites_and_aura(){
     game.next_phase();
 
     assert_contains!(sher.get_messages_after_last_message(
-        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 2}
+        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 3}
     ), ChatMessageVariant::SheriffResult{ suspicious: true });
 
-    game.skip_to(Nomination, 3);
+    game.skip_to(Nomination, 4);
 
     townie2.vote_for_player(Some(arso));
     gf.vote_for_player(Some(arso));
     vigi.vote_for_player(Some(arso));
 
-    game.skip_to(Judgement, 3);
+    game.skip_to(Judgement, 4);
 
     gf.set_verdict(mafia_server::game::verdict::Verdict::Guilty);
 
-    game.skip_to(Night, 3);
+    game.skip_to(Night, 4);
 
     assert!(sher.send_ability_input_player_list_typical(townie2));
 
     game.next_phase();
     
     assert_contains!(sher.get_messages_after_last_message(
-        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 3}
+        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 4}
     ), ChatMessageVariant::SheriffResult{ suspicious: false });
 
     

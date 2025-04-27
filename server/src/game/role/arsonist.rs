@@ -57,7 +57,7 @@ impl RoleStateImpl for Arsonist {
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::Arsonist, 0))
-            .single_player_selection_typical(actor_ref, true, true)
+            .single_player_selection_typical(actor_ref, game.day_number() > 1, true)
             .night_typical(actor_ref)
             .add_grayed_out_condition(false)
             .build_map()
