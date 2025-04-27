@@ -9,7 +9,7 @@ pub mod no_trial;
 pub mod no_whispers;
 pub mod no_night_chat;
 pub mod no_chat;
-pub mod scheduled_nominations;
+pub mod unscheduled_nominations;
 pub mod skip_day_1;
 pub mod hidden_whispers;
 
@@ -24,7 +24,7 @@ use no_whispers::NoWhispers;
 use obscured_graves::ObscuredGraves;
 use no_death_cause::NoDeathCause;
 use role_set_grave_killers::RoleSetGraveKillers;
-use scheduled_nominations::UnunscheduledNominations;
+use unscheduled_nominations::UnscheduledNominations;
 
 use serde::{Deserialize, Serialize};
 use skip_day_1::SkipDay1;

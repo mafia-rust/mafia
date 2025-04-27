@@ -1,4 +1,3 @@
-use crate::game::{player::PlayerReference, verdict::Verdict};
 
 use super::{ModifierTrait, ModifierType};
 
