@@ -2,16 +2,18 @@
 use rand::seq::IndexedRandom;
 use serde::Serialize;
 
+use crate::game::ability_input::{AvailableBooleanSelection, BooleanSelection, ControllerID, ControllerParametersMap};
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::tags::{TagSetID, Tags};
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
+use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::Grave;
 use crate::game::phase::{PhaseState, PhaseType};
 use crate::game::player::PlayerReference;
 use crate::game::role::RoleState;
-use crate::game::role_list::RoleSet;
+use crate::game::visit::{Visit, VisitTag};
 use crate::game::Game;
-use super::jester::Jester;
 use super::{GetClientRoleState, Role, RoleStateImpl};
 
 
@@ -23,24 +25,11 @@ pub struct Revolutionary {
 #[derive(Clone, Serialize, Debug)]
 pub struct ClientRoleState;
 
-#[derive(Clone, Serialize, Debug, PartialEq, Eq)]
+#[derive(Clone, Serialize, Debug, Default, PartialEq, Eq)]
 pub enum RevolutionaryTarget{
     Target(PlayerReference),
+    #[default]
     Won,
-}
-impl RevolutionaryTarget {
-    fn get_target(&self)->Option<PlayerReference>{
-        if let Self::Target(p) = self {
-            Some(*p)
-        }else{
-            None
-        }
-    }
-}
-impl Default for RevolutionaryTarget {
-    fn default() -> Self {
-        Self::Won
-    }
 }
 
 
@@ -49,15 +38,23 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armored;
 
 impl RoleStateImpl for Revolutionary {
     type ClientRoleState = ClientRoleState;
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if priority != OnMidnightPriority::Investigative {return};
+        let Some(new_target) = actor_ref.untagged_night_visits(game).first().map(|v|v.target) else {return};
+        if new_target.night_died(midnight_variables) || !new_target.win_condition(game).is_loyalist_for(GameConclusion::Town) {
+            actor_ref.push_night_message(midnight_variables, ChatMessageVariant::RevolutionaryRefreshFailed);
+        } else {
+            self.set_target(game, actor_ref, new_target);
+        }
+    }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
-
         if self.target == RevolutionaryTarget::Won || !actor_ref.alive(game){
             return;
         }
 
         match *game.current_phase() {
             PhaseState::FinalWords { player_on_trial } => {
-                if Some(player_on_trial) == self.target.get_target() {
+                if Some(player_on_trial) == self.get_target() {
                     game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::RevolutionaryWon);
                     actor_ref.set_role_state(game, RoleState::Revolutionary(Revolutionary { target: RevolutionaryTarget::Won }));
                     actor_ref.die_and_add_grave(game, Grave::from_player_leave_town(game, actor_ref));
@@ -68,39 +65,46 @@ impl RoleStateImpl for Revolutionary {
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
         Tags::add_viewer(game, TagSetID::RevolutionaryTarget(actor_ref), actor_ref);
-
-
-
-        if let Some(target) = PlayerReference::all_players(game)
-            .filter(|p|
-                RoleSet::Town.get_roles().contains(&p.role(game)) &&
-                
-                p.role(game) != Role::Jailor &&
-
-                p.role(game) != Role::Deputy &&
-                p.role(game) != Role::Veteran &&
-
-                p.role(game) != Role::Transporter &&
-                p.role(game) != Role::Mayor &&
-                p.role(game) != Role::Reporter
-            ).collect::<Vec<PlayerReference>>()
-            .choose(&mut rand::rng())
-        {
-            Tags::add_tag(game, TagSetID::RevolutionaryTarget(actor_ref), *target);
-            actor_ref.set_role_state(game, RoleState::Revolutionary(Revolutionary{target: RevolutionaryTarget::Target(*target)}));
-            actor_ref.reveal_players_role(game, *target);
-        }else{
-            actor_ref.set_role_and_win_condition_and_revealed_group(game, RoleState::Jester(Jester::default()))
-        };
+        Self::random_valid_target(game, None).inspect(|t|self.set_target(game, actor_ref, *t));
     }
-    fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference){
-        if Some(dead_player_ref) == self.target.get_target() && self.target != RevolutionaryTarget::Won {
-            actor_ref.set_role_and_win_condition_and_revealed_group(game, RoleState::Jester(Jester::default()))
+    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _new: RoleState, _old: RoleState) {
+        if actor_ref != player {return}
+        if let RevolutionaryTarget::Target(old_target) = self.target {
+            Self::conceal_target(game, actor_ref, old_target);
         }
     }
-    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _new: super::RoleState, _old: super::RoleState) {
-        if actor_ref != player {return}
-        Tags::remove_viewer(game, TagSetID::RevolutionaryTarget(actor_ref), actor_ref);
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Revolutionary, 0))
+            .available_selection(AvailableBooleanSelection)
+            .add_grayed_out_condition(self.won())
+            .allow_players([actor_ref])
+            .build_map()
+    }
+    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
+        let Some(BooleanSelection(selection)) = ControllerID::role(actor_ref, Role::Revolutionary, 0)
+            .get_boolean_selection(game) else {return Vec::new()};
+        if *selection {
+            if let Some(target) = Self::random_valid_target(game, self.get_target()) {
+                vec![Visit::new(
+                    actor_ref, 
+                    target, 
+                    false, 
+                    VisitTag::Role { role: Role::Revolutionary, id: 0 }
+                )]
+            } else if let Some(target) = Self::random_valid_target(game, None) {
+                vec![Visit::new(
+                    actor_ref, 
+                    target, 
+                    false, 
+                    VisitTag::Role { role: Role::Revolutionary, id: 0 }
+                )]
+            } else {
+                Vec::new()
+            }
+        } else {
+            Vec::new()
+        }
     }
 }
 impl GetClientRoleState<ClientRoleState> for Revolutionary {
@@ -112,5 +116,35 @@ impl GetClientRoleState<ClientRoleState> for Revolutionary {
 impl Revolutionary {
     pub fn won(&self)->bool{
         self.target == RevolutionaryTarget::Won
+    }
+    pub fn random_valid_target(game: &Game, excluding: Option<PlayerReference>) -> Option<PlayerReference> {
+        PlayerReference::all_players(game)
+            .filter(|p|
+                p.alive(game) &&
+                excluding.is_none_or(|e|*p != e) &&
+                p.win_condition(game).is_loyalist_for(GameConclusion::Town)
+            )
+            .collect::<Vec<PlayerReference>>()
+            .choose(&mut rand::rng())
+            .copied()
+    }
+    pub fn set_target(self, game: &mut Game, actor_ref: PlayerReference, target: PlayerReference) {
+        if let Some(old_target) = self.get_target() {
+            Self::conceal_target(game, actor_ref, old_target);
+        }
+        Tags::add_tag(game, TagSetID::RevolutionaryTarget(actor_ref), target);
+        actor_ref.set_role_state(game, RoleState::Revolutionary(Revolutionary{target: RevolutionaryTarget::Target(target)}));
+        actor_ref.reveal_players_role(game, target);
+    }
+    pub fn conceal_target(game: &mut Game, actor_ref: PlayerReference, target: PlayerReference) {
+        Tags::remove_tag(game, TagSetID::RevolutionaryTarget(actor_ref), target);
+        actor_ref.conceal_players_role(game, target);
+    }
+    pub fn get_target(&self)->Option<PlayerReference>{
+        if let RevolutionaryTarget::Target(p) = self.target {
+            Some(p)
+        }else{
+            None
+        }
     }
 }
