@@ -1,5 +1,5 @@
 mod kit;
-use std::{ops::Deref, vec};
+use std::{iter::once, ops::Deref, vec};
 
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
@@ -2613,7 +2613,6 @@ fn seeker_basic(){
         hider1: Lookout,
         hider2: Lookout,
         hider3: Lookout,
-        hider4: Lookout,
         _maf: Godfather
     );
 
@@ -2628,11 +2627,20 @@ fn seeker_basic(){
     assert_contains!(
         seek.get_messages_after_night(1),
         ChatMessageVariant::SeekerCaught { 
-            hider: hider0.player_ref(), 
+            hider: hider0.index(), 
             players_left: 2, 
             role_state_win_con: true
         }
     );
+    if let RoleState::Seeker(rs) = seek.role_state() {
+        assert_eq!(
+            rs.clone(),
+            Seeker {
+                followers: [hider0.player_ref()].into(), 
+                new_follower: None
+            }
+        );
+    } else {panic!()}
 
     assert_contains!(
         hider0.get_messages_after_night(1),
@@ -2652,9 +2660,6 @@ fn seeker_basic(){
         &ChatMessageVariant::LookoutResult { players: vec![] }
     );
 
-
-
-
     game.skip_to(PhaseType::Night, 2);
 
     seek.send_ability_input_player_list_typical(hider1);
@@ -2669,11 +2674,20 @@ fn seeker_basic(){
     assert!(
         !seek.get_messages_after_night(2)
         .contains(&ChatMessageVariant::SeekerCaught { 
-            hider: hider0.player_ref(), 
+            hider: hider0.index(), 
             players_left: 2, 
             role_state_win_con: true
         })
     );
+    if let RoleState::Seeker(rs) = seek.role_state() {
+        assert_eq!(
+            rs.clone(),
+            Seeker {
+                followers: [hider0.player_ref()].into(), 
+                new_follower: None
+            }
+        );
+    } else {panic!()}
 
     assert!(
         !hider0.get_messages_after_night(2)
@@ -2703,7 +2717,97 @@ fn seeker_basic(){
     );
 
 
-    
+    game.skip_to(PhaseType::Night, 3);
+
+    seek.send_ability_input_player_list_typical(hider1);
+    seek.send_ability_input_player_list(hider2, 1);
+    hider1.send_ability_input_player_list_typical(hider2);
+
+    game.next_phase();
+
+    assert!(!seek.get_won_game());
+    assert_contains!(
+        seek.get_messages_after_night(3),
+        ChatMessageVariant::SeekerCaught { 
+            hider: hider1.index(), 
+            players_left: 1, 
+            role_state_win_con: true
+        }
+    );
+    if let RoleState::Seeker(rs) = seek.role_state() {
+        assert_eq!(
+            rs.clone(),
+            Seeker {
+                followers: [hider0.player_ref(), hider1.player_ref()].into(), 
+                new_follower: None
+            }
+        );
+    } else {panic!()}
+
+
+    assert!(
+        hider0.get_messages_after_night(3)
+        .contains(&ChatMessageVariant::LookoutResult { players: vec![seek.index(), hider1.index()] }) ^
+        hider0.get_messages_after_night(3)
+        .contains(&ChatMessageVariant::LookoutResult { players: vec![hider1.index(), seek.index()] })
+    );
+    assert_contains!(
+        hider0.get_messages_after_night(3),
+        ChatMessageVariant::YouWerePossessed { immune: false }
+    );
+
+    assert!(
+        hider1.get_messages_after_night(3)
+        .contains(&ChatMessageVariant::LookoutResult { players: vec![seek.index(), hider0.index()] }) ^
+        hider1.get_messages_after_night(3)
+        .contains(&ChatMessageVariant::LookoutResult { players: vec![hider0.index(), seek.index()] })
+    );
+    assert_contains!(
+        hider1.get_messages_after_night(3),
+        ChatMessageVariant::CaughtBySeeker
+    );
+
+    game.skip_to(PhaseType::Night, 4);
+
+    seek.send_ability_input_player_list_typical(hider2);
+    seek.send_ability_input_player_list(hider3, 1);
+    hider3.send_ability_input_player_list_typical(hider3);
+
+    game.next_phase();
+
+    assert!(seek.get_won_game());
+    assert!(!seek.alive());
+    assert_contains!(
+        seek.get_messages_after_night(4),
+        ChatMessageVariant::SeekerCaught { 
+            hider: hider2.index(), 
+            players_left: 0, 
+            role_state_win_con: true
+        }
+    );
+    if let RoleState::Seeker(rs) = seek.role_state() {
+        assert_eq!(
+            rs.clone(),
+            Seeker {
+                followers: [hider0.player_ref(), hider1.player_ref()].into(), 
+                new_follower: None
+            }
+        );
+    } else {panic!()}
+
+    assert_contains!(
+        hider0.get_messages_after_night(4),
+        ChatMessageVariant::YouWerePossessed { immune: false }
+    );
+    assert_contains!(
+        hider1.get_messages_after_night(4),
+        ChatMessageVariant::YouWerePossessed { immune: false }
+    );
+
+    assert_contains!(
+        hider2.get_messages_after_night(4),
+        ChatMessageVariant::CaughtBySeeker
+    );
 }
 
 #[test]

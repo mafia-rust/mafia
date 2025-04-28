@@ -15,11 +15,11 @@ use crate::game::Game;
 use crate::vec_set::VecSet;
 use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
-#[derive(Clone, Debug, Serialize, Default)]
+#[derive(Clone, Debug, Serialize, Default, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Seeker {
-    followers: HashSet<PlayerReference>,
-    new_follower: Option<PlayerReference>,
+    pub followers: HashSet<PlayerReference>,
+    pub new_follower: Option<PlayerReference>,
 }
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -43,7 +43,7 @@ impl RoleStateImpl for Seeker {
                 if hiding_spot.all_night_visitors_cloned(midnight_variables).iter().any(|p|*p==hider) {
                     self.new_follower = Some(hider);
                     actor_ref.push_night_message(midnight_variables, ChatMessageVariant::SeekerCaught {
-                        hider,
+                        hider: hider.index(),
                         #[expect(clippy::cast_possible_truncation, reason="come on")]
                         //2 not 3 because the player you just caught isn't in the list yet
                         players_left: 2i8.saturating_sub(self.followers.len() as i8),
