@@ -85,6 +85,7 @@ pub use mafia_server::game::{
         martyr::Martyr,
         santa_claus::SantaClaus,
         krampus::Krampus,
+        seeker::Seeker,
 
         apostle::Apostle,
         zealot::Zealot,
@@ -2602,6 +2603,107 @@ fn witch_leaves_by_winning_puppeteer(){
     assert!(!t.alive());
     assert!(!t2.alive());
     assert!(pup.alive());
+}
+
+#[test]
+fn seeker_basic(){
+    kit::scenario!(game in Night 1 where
+        seek: Seeker,
+        hider0: Lookout,
+        hider1: Lookout,
+        hider2: Lookout,
+        hider3: Lookout,
+        hider4: Lookout,
+        _maf: Godfather
+    );
+
+    seek.send_ability_input_player_list_typical(hider0);
+    seek.send_ability_input_player_list(hider1, 1);
+    hider0.send_ability_input_player_list_typical(hider1);
+    hider1.send_ability_input_player_list_typical(hider0);
+
+    game.next_phase();
+
+    assert!(!seek.get_won_game());
+    assert_contains!(
+        seek.get_messages_after_night(1),
+        ChatMessageVariant::SeekerCaught { 
+            hider: hider0.player_ref(), 
+            players_left: 2, 
+            role_state_win_con: true
+        }
+    );
+
+    assert_contains!(
+        hider0.get_messages_after_night(1),
+        ChatMessageVariant::CaughtBySeeker
+    );
+    assert_contains!(
+        hider0.get_messages_after_night(1),
+        ChatMessageVariant::LookoutResult { players: vec![seek.index()] }
+    );
+
+    assert!(
+        !hider1.get_messages_after_night(1)
+        .contains(&ChatMessageVariant::CaughtBySeeker)
+    );
+    assert_contains!(
+        hider1.get_messages_after_night(1),
+        &ChatMessageVariant::LookoutResult { players: vec![] }
+    );
+
+
+
+
+    game.skip_to(PhaseType::Night, 2);
+
+    seek.send_ability_input_player_list_typical(hider1);
+    seek.send_ability_input_player_list(hider2, 1);
+    hider0.send_ability_input_player_list_typical(hider3);
+    hider1.send_ability_input_player_list_typical(hider3);
+    hider2.send_ability_input_player_list_typical(hider3);
+
+    game.next_phase();
+
+    assert!(!seek.get_won_game());
+    assert!(
+        !seek.get_messages_after_night(2)
+        .contains(&ChatMessageVariant::SeekerCaught { 
+            hider: hider0.player_ref(), 
+            players_left: 2, 
+            role_state_win_con: true
+        })
+    );
+
+    assert!(
+        !hider0.get_messages_after_night(2)
+        .contains(&ChatMessageVariant::CaughtBySeeker)
+    );
+    assert_contains!(
+        hider0.get_messages_after_night(2),
+        ChatMessageVariant::LookoutResult { players: vec![seek.index()] }
+    );
+    assert_contains!(
+        hider0.get_messages_after_night(2),
+        ChatMessageVariant::YouWerePossessed { immune: false }
+    );
+
+    assert!(
+        !hider1.get_messages_after_night(2)
+        .contains(&ChatMessageVariant::CaughtBySeeker)
+    );
+    assert_contains!(
+        hider1.get_messages_after_night(2),
+        ChatMessageVariant::LookoutResult { players: vec![hider2.index()] }
+    );
+
+    assert_contains!(
+        hider2.get_messages_after_night(2),
+        ChatMessageVariant::LookoutResult { players: vec![hider1.index()] }
+    );
+
+
+    
 }
 
 #[test]
