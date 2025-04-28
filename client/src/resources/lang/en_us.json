@@ -1754,7 +1754,7 @@
     "wiki.article.role.ambusher.reminder": "At night, choose a player to attack a random visitor to them",
     "wiki.article.role.ambusher.guide": "- At night, choose a player to camp\n    - You attack a random visitor to the player you chose to camp\n        - The attack prioritizes town loyalists\n   - All other visitors to your target are told you are the ambusher\n    - You can't use your ability night 1\n    - You only visit the player you camp",
     "wiki.article.role.ambusher.abilities":"- At night, choose a player to camp\n    - You attack a random visitor to the player you chose to camp\n        - The attack prioritizes town loyalists\n   - All other visitors to your target are told you are the ambusher\n    - You can't use your ability night 1\n    - You only visit the player you camp",
-    "wiki.article.role.ambusher.attributes":"- The ambushers attack has an attack power of basic\n- You can attack yourself if you somehow visit yourself with another ability (for exmaple: syndicate gun)\n - If another player visits your target twice, they could potentially get the message saying they caught an ambusher twice, or get attacked and get the message once.",
+    "wiki.article.role.ambusher.attributes":"- The ambushers attack has an attack power of basic\n- You can attack yourself if you somehow visit yourself with another ability (for example: syndicate gun)\n - If another player visits your target twice, they could potentially get the message saying they caught an ambusher twice, or get attacked and get the message once.",
     "wiki.article.role.ambusher.extra":"- You can't select yourself or other syndicate members\n - You don't visit the player you attack",
 
     "wiki.article.role.mafiaSupportWildcard.guide": "* Choose a syndicate support role to become that role\n    * You become that role when night starts\n* You likely can't become a role if someone already has that role (You can't become a role that has exceeded its role limit)",
@@ -1850,9 +1850,9 @@
     "wiki.article.role.werewolf.attributes":"* You enrage once at least 2/3rds of the living players are either tracked or are yourself. While enraged, you always attack when visiting\n* You are told who each player you have tracked visits.\n* You still track players after you die\n* Your attack is armor-piercing",
     "wiki.article.role.werewolf.extra":"* At the start of every night, every tracked player is told they are tracked",
 
-    "wiki.article.role.ojo.reminder": "Each night*, attack a player. Everyones roles are revealed to you, you track everyone, and you can read other players whispers.",
-    "wiki.article.role.ojo.guide":"- Each night*, attack a player. Everyones roles are revealed to you, and you track everyone, and you can read other players whispers.",
-    "wiki.article.role.ojo.abilities":"- Each night except the first, attack a player.\n- Everyones roles are revealed to you. When a player is concealed, they get revealed again\n- You are told who every player visits.\n- You are sent whispers that were not sent to you.",
+    "wiki.article.role.ojo.reminder": "Each night*, attack a player. Everyone's roles are revealed to you, you track everyone, and you can read other players whispers.",
+    "wiki.article.role.ojo.guide":"- Each night*, attack a player. Everyone's roles are revealed to you, and you track everyone, and you can read other players whispers.",
+    "wiki.article.role.ojo.abilities":"- Each night except the first, attack a player.\n- Everyone's roles are revealed to you. When a player is concealed, they get revealed again\n- You are told who every player visits.\n- You are sent whispers that were not sent to you.",
     "wiki.article.role.ojo.attributes":"",
     "wiki.article.role.ojo.extra":"- If you are blocked, you are still told who visits who.",
 
@@ -1923,5 +1923,6 @@
     
     
     "random.gay":"GAY",
-    "random.trans":"TRANS"
+    "random.trans":"TRANS",
+    "random.poly":"POLY"
 }

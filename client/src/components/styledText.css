@@ -66,8 +66,9 @@
     font-style: italic;
     color: gray;
 }
-.keyword-pride, .keyword-trans, .keyword-christmas {
+.keyword-pride, .keyword-trans, .keyword-christmas, .keyword-poly {
     background-clip: text;
+    background-repeat: repeat-x; /*added in case the word/phrase this is styling is has more characters in another language. Also it because shouldn't do it vertically*/
     color: rgba(255,255,255,.2);
     -webkit-background-clip: text;
     -webkit-text-fill-color: rgba(255,255,255,.2);
@@ -93,6 +94,16 @@
     background-size: 6em;
     font-weight: bold;
     filter: drop-shadow(0 0 .2em var(--spiral-shine))
+            drop-shadow(.1rem .1rem .1rem rgb(0, 0, 0));
+}
+.keyword-poly {
+    /*
+        Not scrolling because I looked it up and one of the reasons pi is on there is that is pi is greek letter for p so p should be yellow
+        Gradient is massive because it makes it stop being a gradient and makes the number of each color allows the color to line up with the character near exactly (only not exact because kerning means that the L & Y overlap)
+    */
+    background-image: linear-gradient(to right,yellow,yellow,yellow,yellow,yellow,blue,blue,blue,blue,blue,red,red,red, black,black,black,black,black);
+    background-size: 100%;
+    filter: drop-shadow(-.05rem -.05rem .1rem #ffffff88)
             drop-shadow(.1rem .1rem .1rem rgb(0, 0, 0));
 }
 .keyword-christmas.keyword-naughty {
