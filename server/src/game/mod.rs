@@ -51,11 +51,8 @@ use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
 use rand::seq::SliceRandom;
 use role_list::RoleAssignment;
-use role_list::RoleOutlineOptionInsiderGroups;
-use role_list::RoleOutlineOptionWinCondition;
 use role_outline_reference::RoleOutlineReference;
 use serde::Serialize;
-use win_condition::WinCondition;
 
 use crate::client_connection::ClientConnection;
 use crate::game::event::on_game_start::OnGameStart;
@@ -216,20 +213,11 @@ impl Game {
                 };
 
                 // Set win condition & Insider group here so we can check if game ends
-                let win_condition = match &assignment.win_condition {
-                    RoleOutlineOptionWinCondition::RoleDefault => assignment.role.default_state().default_win_condition(),
-                    RoleOutlineOptionWinCondition::GameConclusionReached { win_if_any } => {
-                        WinCondition::GameConclusionReached { 
-                            win_if_any: win_if_any.iter().cloned().collect()
-                        }
-                    },
-                };
-
                 let new_player = Player::new(
                     player.name.clone(),
                     sender.clone(),
-                    assignment.role,
-                    win_condition
+                    assignment.role(),
+                    assignment.win_condition()
                 );
                 
                 new_players.push(new_player);
@@ -285,10 +273,7 @@ impl Game {
                         return Err(RejectStartReason::RoleListTooSmall)
                     };
                 
-                let insider_groups = match &assignment.insider_groups {
-                    RoleOutlineOptionInsiderGroups::RoleDefault => assignment.role.default_state().default_revealed_groups(),
-                    RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().copied().collect(),
-                };
+                let insider_groups = assignment.insider_groups();
                 
                 for group in insider_groups{
                     unsafe {
@@ -312,7 +297,6 @@ impl Game {
 
         //set wincons and revealed groups
         for player in PlayerReference::all_players(&game){
-            let role_data = player.role(&game).new_state(&game);
 
             let Some((_, _, assignment)) = assignments
                 .iter()
@@ -323,14 +307,9 @@ impl Game {
             // We already set this earlier, now we just need to call the on_convert event. Hope this doesn't end the game!
             let win_condition = player.win_condition(&game).clone();
             player.set_win_condition(&mut game, win_condition);
-
-            let insider_groups = match &assignment.insider_groups {
-                RoleOutlineOptionInsiderGroups::RoleDefault => role_data.clone().default_revealed_groups(),
-                RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().copied().collect(),
-            };
             
             InsiderGroupID::start_game_set_player_insider_groups(
-                insider_groups,
+                assignment.insider_groups(),
                 &mut game,
                 player
             );
@@ -453,7 +432,7 @@ impl Game {
                     .map(|(player, _)| *player)
                     .collect();
 
-                if max_votes_players.len() == 1 {
+                if max_votes_players.count() == 1 {
                     voted_player = max_votes_players.iter().next().copied();
                 }
             }
@@ -904,7 +883,7 @@ pub mod test {
 
         let assignments = Game::assign_players_to_assignments(random_outline_assignments);
         
-        let shuffled_roles = assignments.iter().map(|(_,_,r)|r.role).collect::<Vec<Role>>();
+        let shuffled_roles = assignments.iter().map(|(_,_,r)|r.role()).collect::<Vec<Role>>();
 
 
         let mut players = Vec::new();

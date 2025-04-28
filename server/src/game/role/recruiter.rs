@@ -131,7 +131,7 @@ impl RoleStateImpl for Recruiter {
             }]}.get_random_role_assignments(
                 &game.settings.enabled_roles,
                 PlayerReference::all_players(game).map(|p|p.role(game)).collect::<Vec<_>>().as_slice()
-            ).map(|assignment| assignment.role);
+            ).map(|assignment| assignment.role());
 
             if let Some(random_town_role) = random_town_role {
                 //special case here. I don't want to use set_role because it alerts the player their role changed

@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream:server/src/game/components/win_condition.rs
 use crate::game::game_conclusion::GameConclusion;
 
 use super::player_component::PlayerComponentBox;
@@ -6,6 +7,11 @@ use serde::{Deserialize, Serialize};
 
 
 
+=======
+use serde::{Deserialize, Serialize};
+use crate::vec_set::{vec_set, VecSet};
+use super::game_conclusion::GameConclusion;
+>>>>>>> Stashed changes:server/src/game/win_condition.rs
 
 /// Related functions require RoleStateWon to be independent of GameConclusion. 
 /// RoleStateWon needs to be able to win with any GameConclusion.
@@ -14,7 +20,7 @@ use serde::{Deserialize, Serialize};
 pub enum WinCondition{
     #[serde(rename_all = "camelCase")]
     GameConclusionReached{
-        win_if_any: HashSet<GameConclusion>
+        win_if_any: VecSet<GameConclusion>
     },
     RoleStateWon,
 }
@@ -34,7 +40,7 @@ impl Ord for WinCondition {
 
 
 impl WinCondition{
-    pub fn required_resolution_states_for_win(&self)->Option<HashSet<GameConclusion>>{
+    pub fn required_resolution_states_for_win(&self)->Option<VecSet<GameConclusion>>{
         match self{
             WinCondition::GameConclusionReached{win_if_any} => Some(win_if_any.clone()),
             WinCondition::RoleStateWon => None,
@@ -57,20 +63,18 @@ impl WinCondition{
     }
     pub fn is_loyalist_for(&self, resolution_state: GameConclusion)->bool{
         match self{
-            WinCondition::GameConclusionReached{win_if_any} => win_if_any.len() == 1 && win_if_any.contains(&resolution_state),
+            WinCondition::GameConclusionReached{win_if_any} => win_if_any.count() == 1 && win_if_any.contains(&resolution_state),
             WinCondition::RoleStateWon => false,
         }
     }
     pub fn is_loyalist(&self)->bool{
         match self{
-            WinCondition::GameConclusionReached{win_if_any} => win_if_any.len() == 1,
+            WinCondition::GameConclusionReached{win_if_any} => win_if_any.count() == 1,
             WinCondition::RoleStateWon => false,
         }
     }
     
     pub fn new_loyalist(resolution_state: GameConclusion) -> WinCondition {
-        let mut win_if_any = HashSet::new();
-        win_if_any.insert(resolution_state);
-        WinCondition::GameConclusionReached { win_if_any }
+        WinCondition::GameConclusionReached { win_if_any: vec_set![resolution_state] }
     }
 }
