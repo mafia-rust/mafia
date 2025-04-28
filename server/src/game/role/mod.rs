@@ -380,7 +380,7 @@ impl Role{
             | Role::Veteran | Role::Coxswain
             | Role::Transporter | Role::Retributionist
             | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper | Role::Porter
-            | Role::MafiaWitch | Role::Necromancer 
+            | Role::MafiaWitch | Role::Necromancer | Role::Seeker
         )
     }
     pub fn has_innocent_aura(&self, game: &Game)->bool{

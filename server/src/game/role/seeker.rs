@@ -33,18 +33,22 @@ impl RoleStateImpl for Seeker {
         }
         match (priority, &self.new_follower) {
             (OnMidnightPriority::Investigative, _) => {
-                let Some(camp) = actor_ref.untagged_night_visits(midnight_variables).first().map(|v|v.target) else {return};
-                let Some(&mark) = ControllerID::role(actor_ref, Role::Seeker, 0)
+                let Some(hiding_spot) = actor_ref.untagged_night_visits(midnight_variables).first().map(|v|v.target) else {return};
+                let Some(&hider) = ControllerID::role(actor_ref, Role::Seeker, 0)
                     .get_player_list_selection(game)
                     .cloned()
                     .unwrap_or_default()
                     .0.first()
                         else {return};
-                if camp.all_night_visitors_cloned(midnight_variables).iter().any(|p|*p==mark) {
-                    self.new_follower = Some(mark);
+                if hiding_spot.all_night_visitors_cloned(midnight_variables).iter().any(|p|*p==hider) {
+                    self.new_follower = Some(hider);
+                    actor_ref.push_night_message(midnight_variables, ChatMessageVariant::SeekerCaught{
+                        player: hider,
+                        #[expect(clippy::cast_possible_truncation, reason="come on")]
+                        players_left: 2i8.saturating_sub(self.followers.len() as i8) //2 not 3 because the player you just caught isn't in the list yet
+                    });
+                    hider.push_night_message(midnight_variables, ChatMessageVariant::CaughtBySeeker);
                     actor_ref.set_role_state(game, self);
-                    mark.push_night_message(midnight_variables, ChatMessageVariant::CaughtBySeeker);
-                    actor_ref.push_night_message(midnight_variables, ChatMessageVariant::SeekerCaught{player: mark});
                 }
             }
             (OnMidnightPriority::FinalizeNight, Some(follower)) => {
@@ -67,7 +71,8 @@ impl RoleStateImpl for Seeker {
                     available_players: PlayerReference::all_players(game)
                         .filter(|p|
                             p.alive(game) && 
-                            *p != actor_ref
+                            *p != actor_ref &&
+                            !self.followers.contains(p)
                         )
                         .collect::<VecSet<_>>(),
                     can_choose_duplicates: false,
@@ -81,10 +86,7 @@ impl RoleStateImpl for Seeker {
                 .id(ControllerID::role(actor_ref, Role::Seeker, 1))
                 .available_selection(AvailablePlayerListSelection {
                     available_players: PlayerReference::all_players(game)
-                        .filter(|p|
-                            p.alive(game) && 
-                            *p != actor_ref
-                        )
+                        .filter(|p|p.alive(game))
                         .collect::<VecSet<_>>(),
                     can_choose_duplicates: false,
                     max_players: Some(1)
@@ -107,7 +109,7 @@ impl RoleStateImpl for Seeker {
 impl Seeker {
     pub fn won(&self) -> bool {
         self.followers.len() >= 3 ||
-        !self.new_follower.is_some_and(|f|
+        self.new_follower.is_some_and(|f|
             self.followers.len() == 2 && !self.followers.contains(&f)
         )
     }

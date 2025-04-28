@@ -791,7 +791,7 @@ export function translateChatMessage(
                 playerNames[message.playerWithVest]
             );
         case "seekerCaught":
-            return translate("chatMessage.seekerCaught", playerNames[message.player]);
+            return translate("chatMessage.seekerCaught", playerNames[message.player], message.players_left);
         case "caughtBySeeker":
         case "deputyShotYou":
         case "mediumExists":
@@ -1160,6 +1160,7 @@ export type ChatMessageVariant = {
 } | {
     type: "seekerCaught"
     player: PlayerIndex
+    players_left: number
 } | {
     type: "caughtBySeeker"
 }
