@@ -1,17 +1,31 @@
-<<<<<<< Updated upstream:server/src/game/components/win_condition.rs
-use crate::game::game_conclusion::GameConclusion;
+use serde::{Deserialize, Serialize};
+use crate::{game::{event::on_convert::OnConvert, game_conclusion::GameConclusion, player::PlayerReference, role_list::RoleAssignment, role_outline_reference::RoleOutlineReference, Game}, vec_map::VecMap, vec_set::{vec_set, VecSet}};
 
 use super::player_component::PlayerComponentBox;
-use std::collections::HashSet;
-use serde::{Deserialize, Serialize};
+
+impl PlayerComponentBox::<WinCondition>{
+    /// # Safety
+    /// num_players must be correct
+    pub unsafe fn new(num_players: u8, assignments: &VecMap<PlayerReference, (RoleOutlineReference,RoleAssignment)>)->Self{
+        PlayerComponentBox::<WinCondition>::new_component_box(
+            num_players,
+            |player|assignments.get(&player).expect("Already checked this was fine").1.win_condition()
+        )
+    }
+}
+impl PlayerReference{
+    pub fn win_condition<'a>(&self, game: &'a Game) -> &'a WinCondition {
+        game.win_condition.get(*self)
+    }
+    pub fn set_win_condition(&self, game: &mut Game, win_condition: WinCondition){
+        let old_win_condition = self.win_condition(game).clone();
+        *game.win_condition.get_mut(*self) = win_condition.clone();
+
+        OnConvert::new(*self, old_win_condition, win_condition).invoke(game)
+    }
+}
 
 
-
-=======
-use serde::{Deserialize, Serialize};
-use crate::vec_set::{vec_set, VecSet};
-use super::game_conclusion::GameConclusion;
->>>>>>> Stashed changes:server/src/game/win_condition.rs
 
 /// Related functions require RoleStateWon to be independent of GameConclusion. 
 /// RoleStateWon needs to be able to win with any GameConclusion.

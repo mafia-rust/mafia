@@ -7,7 +7,7 @@ use crate::{
         attack_power::{AttackPower, DefensePower},
         chat::{ChatGroup, ChatMessage, ChatMessageVariant},
         components::{
-            fragile_vest::FragileVests, drunk_aura::DrunkAura, insider_group::InsiderGroupID, night_visits::NightVisits
+            drunk_aura::DrunkAura, fragile_vest::FragileVests, insider_group::InsiderGroupID, night_visits::NightVisits, win_condition::WinCondition
         },
         event::{
             before_role_switch::BeforeRoleSwitch, on_any_death::OnAnyDeath,
@@ -20,7 +20,7 @@ use crate::{
         modifiers::{ModifierType, Modifiers}, phase::PhaseType,
         role::{arsonist::Arsonist,chronokaiser::Chronokaiser, Role, RoleState},
         visit::{Visit, VisitTag},
-        win_condition::WinCondition, Game
+        Game
     },
     packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet
 };

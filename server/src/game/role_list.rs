@@ -7,7 +7,7 @@ use vec1::{
 
 use crate::vec_set::{vec_set, VecSet};
 
-use super::{components::insider_group::InsiderGroupID, game_conclusion::GameConclusion, role::Role, win_condition::WinCondition};
+use super::{components::{insider_group::InsiderGroupID, win_condition::WinCondition}, game_conclusion::GameConclusion, role::Role};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RoleList(pub Vec<RoleOutline>);

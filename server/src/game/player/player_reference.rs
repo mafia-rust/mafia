@@ -78,6 +78,8 @@ impl PlayerReference{
             game.players.len().try_into().unwrap_or(u8::MAX)
         )}
     }
+    /// # Safety
+    /// player_count is less than or equal to the number of players in the game
     pub unsafe fn all_players_from_count(player_count: u8) -> PlayerReferenceIterator {
         PlayerReferenceIterator {
             current: 0,
