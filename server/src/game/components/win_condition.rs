@@ -12,6 +12,9 @@ impl PlayerComponent::<WinCondition>{
             |player|assignments.get(&player).expect("Already checked this was fine").1.win_condition()
         )
     }
+    pub fn invoke_on_convert(){
+        
+    }
 }
 impl PlayerReference{
     pub fn win_condition<'a>(&self, game: &'a Game) -> &'a WinCondition {

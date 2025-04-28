@@ -213,7 +213,6 @@ impl Game {
                     return Err(RejectStartReason::RoleListTooSmall)
                 };
 
-                // Set win condition & Insider group here so we can check if game ends
                 let new_player = Player::new(
                     player.name.clone(),
                     sender.clone(),
