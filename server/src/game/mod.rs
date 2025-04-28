@@ -18,7 +18,6 @@ pub mod spectator;
 pub mod game_listeners;
 pub mod attack_power;
 pub mod modifiers;
-pub mod win_condition;
 pub mod role_outline_reference;
 pub mod ability_input;
 
@@ -36,7 +35,7 @@ use components::forfeit_vote::ForfeitVote;
 use components::mafia::Mafia;
 use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
-use components::player_component::PlayerComponent;
+use components::player_component::PlayerComponentBox;
 use components::poison::Poison;
 use components::detained::Detained;
 use components::insider_group::InsiderGroupID;
@@ -142,7 +141,7 @@ pub struct Game {
     pub tags: Tags,
     pub silenced: Silenced,
     pub defense_items: FragileVests,
-    pub win_condition: PlayerComponent<WinCondition>
+    pub win_condition: PlayerComponentBox<WinCondition>
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -170,7 +169,13 @@ impl Game {
     pub const DISCONNECT_TIMER_SECS: u16 = 60 * 2;
 
     /// `players` must have length 255 or lower.
-    pub fn new(room_name: String, settings: Settings, clients: VecMap<RoomClientID, GameClient>, players: Vec<PlayerInitializeParameters>, spectators: Vec<SpectatorInitializeParameters>) -> Result<Self, RejectStartReason>{
+    pub fn new(
+        room_name: String,
+        settings: Settings,
+        clients: VecMap<RoomClientID, GameClient>,
+        players: Vec<PlayerInitializeParameters>,
+        spectators: Vec<SpectatorInitializeParameters>
+    ) -> Result<Self, RejectStartReason>{
         //check settings are not completly off the rails
         if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
@@ -265,7 +270,11 @@ impl Game {
                 tags: Tags::default(),
                 silenced: Silenced::default(),
                 defense_items: FragileVests::new(num_players),
-                win_condition: unsafe{ PlayerComponent::<WinCondition>::new(num_players, |player|players.get(player.index())) }
+                win_condition: unsafe{
+                    PlayerComponentBox::<WinCondition>::new(
+                        num_players,
+                    )
+                }
             };
 
             // Just distribute insider groups, this is for game over checking (Keeps game running syndicate gun)
