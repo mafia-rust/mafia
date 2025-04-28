@@ -228,9 +228,7 @@ impl PlayerReference{
         self.die(game);
     }
     pub fn leave_town(&self, game: &mut Game){
-        if !self.alive(game) { return }
-        game.add_grave(Grave::from_player_leave_town(game, *self));
-        self.die(game);
+        self.die_and_add_grave(game, Grave::from_player_leave_town(game, *self));
     }
 
     /// if the player is already dead, this does nothing

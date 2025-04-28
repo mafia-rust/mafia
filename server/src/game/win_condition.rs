@@ -70,4 +70,7 @@ impl WinCondition{
         win_if_any.insert(resolution_state);
         WinCondition::GameConclusionReached { win_if_any }
     }
+    pub fn is_role_state(&self) -> bool {
+        matches!(self, Self::RoleStateWon)
+    }
 }

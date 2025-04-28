@@ -42,10 +42,12 @@ impl RoleStateImpl for Seeker {
                         else {return};
                 if hiding_spot.all_night_visitors_cloned(midnight_variables).iter().any(|p|*p==hider) {
                     self.new_follower = Some(hider);
-                    actor_ref.push_night_message(midnight_variables, ChatMessageVariant::SeekerCaught{
-                        player: hider,
+                    actor_ref.push_night_message(midnight_variables, ChatMessageVariant::SeekerCaught {
+                        hider,
                         #[expect(clippy::cast_possible_truncation, reason="come on")]
-                        players_left: 2i8.saturating_sub(self.followers.len() as i8) //2 not 3 because the player you just caught isn't in the list yet
+                        //2 not 3 because the player you just caught isn't in the list yet
+                        players_left: 2i8.saturating_sub(self.followers.len() as i8),
+                        role_state_win_con: actor_ref.win_condition(game).is_role_state()
                     });
                     hider.push_night_message(midnight_variables, ChatMessageVariant::CaughtBySeeker);
                     actor_ref.set_role_state(game, self);
@@ -54,7 +56,9 @@ impl RoleStateImpl for Seeker {
             (OnMidnightPriority::FinalizeNight, Some(follower)) => {
                 self.followers.insert(*follower);
                 self.new_follower = None;
-                if self.won() {
+                //not self.won because if their win condition is different they should not leave the game 
+                //but doesn't check for role state won because its easier to explain in the manual as any win con and it really doesn't matter for any of the other ones.
+                if actor_ref.get_won_game(game) {
                     actor_ref.leave_town(game);
                 }
                 actor_ref.set_role_state(game, self);
@@ -62,6 +66,7 @@ impl RoleStateImpl for Seeker {
             _=>(),
         }
     }
+    fn on_player_roleblocked(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         ControllerParametersMap::combine([
             // Mark
@@ -91,8 +96,10 @@ impl RoleStateImpl for Seeker {
                     can_choose_duplicates: false,
                     max_players: Some(1)
                 })
+                //not self.won because if their win condition is different they still be able to possess players
+                //but doesn't check for role state won because its easier to explain in the manual as any win con and it really doesn't matter for any of the other ones.
+                .add_grayed_out_condition(actor_ref.get_won_game(game))
                 .night_typical(actor_ref)
-                .add_grayed_out_condition(self.won())
                 .build_map()
         ])
     }

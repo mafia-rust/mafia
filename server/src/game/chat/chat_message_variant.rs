@@ -137,7 +137,7 @@ pub enum ChatMessageVariant {
     CultKillsNext,
 
     CaughtBySeeker,
-    SeekerCaught{player: PlayerReference, players_left: i8},
+    SeekerCaught{hider: PlayerReference, players_left: i8, role_state_win_con: bool},
 
     NextSantaAbility { ability: SantaListKind },
     AddedToNiceList,
