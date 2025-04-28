@@ -309,7 +309,7 @@ impl RoleSet{
                 ],
             RoleSet::TownKilling => 
                 vec_set![
-                    Role::Vigilante, Role::Veteran, Role::Deputy, Role::Marksman, Role::Rabblerouser
+                    Role::Vigilante, Role::Vigiloop, Role::Veteran, Role::Deputy, Role::Marksman, Role::Rabblerouser
                 ],
             RoleSet::TownSupport => 
                 vec_set![

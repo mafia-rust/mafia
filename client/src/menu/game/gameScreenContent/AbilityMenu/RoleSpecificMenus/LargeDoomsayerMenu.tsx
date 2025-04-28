@@ -19,7 +19,7 @@ export const DOOMSAYER_GUESSES = [
     "nonTown",
     "jailor", "villager",  
     "doctor",  "bodyguard",  "cop", "bouncer", "engineer", "armorsmith", "steward",
-    "vigilante",  "veteran", "marksman", "deputy", "rabblerouser",
+    "vigilante", "vigiloop", "veteran", "marksman", "deputy", "rabblerouser",
     "escort",  "medium",  "retributionist", "reporter", "mayor",  "transporter", "porter", "polymath"
 ];
 

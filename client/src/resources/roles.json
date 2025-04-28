@@ -313,6 +313,19 @@
             {"type": "youAttackedSomeone"}
         ]
     },
+    "vigiloop": {
+        "mainRoleSet": "town",
+        "roleSets": ["town", "townCommon", "townKilling"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": [],
+        "chatMessages":[
+            {"type": "someoneSurvivedYourAttack"},
+            {"type": "youAttackedSomeone"}
+        ]
+    },
     "veteran": {
         "mainRoleSet": "town",
         "roleSets": ["town", "townCommon", "townKilling"],

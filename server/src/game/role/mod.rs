@@ -112,6 +112,7 @@ macros::roles! {
     Steward : steward,
 
     Vigilante : vigilante,
+    Vigiloop : vigiloop,
     Veteran : veteran,
     Marksman: marksman,
     Deputy : deputy,

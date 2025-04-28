@@ -339,6 +339,12 @@
     "role.vigilante.roleDataText.notLoaded": "You are reloading your gun. You can not shoot yet.",
     "controllerId.role.vigilante.0.name": "Shoot",
 
+    "role.vigiloop.name": "Vigiloop",
+    "role.vigiloop.name:var.0": "Vigiloops",
+    "role.vigiloop.roleDataText": "\\0 bullets remaining",
+    "role.vigiloop.roleDataText.notLoaded": "You are reloading your gun. You can not shoot yet.",
+    "controllerId.role.vigiloop.0.name": "Shoot",
+
     "role.veteran.name": "Veteran",
     "role.veteran.name:var.0": "Veterans",
     "role.veteran.target": "Rampage",
@@ -1601,6 +1607,12 @@
     "wiki.article.role.vigilante.abilities":"* Visit a player to attack and spend a bullet\n* If you kill a town loyalist you will commit suicide on the following night\n* You have three bullets",
     "wiki.article.role.vigilante.attributes":"* If your attack overpowers a town loyalist's defense and they die, you commit suicide on the following night\n* When it is night one, when you have 0 bullets left, when you are going to commit suicide, or when you have already committed suicide, you can not select or attack anyone",
     "wiki.article.role.vigilante.extra": "* You only have a basic attack\n* Even while dead, killing someone requires and spends a bullet (such as when you get possessed)",
+
+    "wiki.article.role.vigiloop.reminder": "Each night, select a player to attack. If you are visited, your attack fails, and you are told your target had defense.",
+    "wiki.article.role.vigiloop.guide": "- At night, select a player to attack\n- If you are visited, your attack fails, and you are told your target had defense.\n- You have X bullets (X = Total players ÷ 5 (round up))\n- You can't shoot on night one",
+    "wiki.article.role.vigiloop.abilities":"* Visit a player to attack and spend a bullet\n* If you are visited, your attack fails, and you are told your target had defense.\n- You have X bullets (X = Total players ÷ 5 (round up))\n- You can't shoot on night one",
+    "wiki.article.role.vigiloop.attributes":"* If you are visited, your attack fails, and you are told your target had defense.\n* When it is night one or you have 0 bullets left, you can not select nor attack anyone",
+    "wiki.article.role.vigiloop.extra": "* You only have a basic attack\n* Even while dead, killing someone requires and spends a bullet (such as when you get possessed)",
 
     "wiki.article.role.rabblerouser.reminder": "If 2/3rds of town vote to pitchfork someone, that player dies at night.",
     "wiki.article.role.rabblerouser.guide":"- If a Rabblerouser is in the game, everyone can vote using the pitchfork menu\n- If two-thirds of town loyalists vote the same player, that player is killed\n- This ability can be used up to X times (X = Total players ÷ 5 (round up))\n- This ability doesn't work on night 1\n- This ability only works if there is an alive rabblerouser who isn't blocked",

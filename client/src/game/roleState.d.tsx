@@ -80,6 +80,8 @@ export type RoleState = {
 } | {
     type: "deputy"
 } | {
+    type: "vigiloop"
+} | {
     type: "rabblerouser"
 } | {
     type: "escort"
