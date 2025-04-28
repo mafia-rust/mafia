@@ -101,7 +101,7 @@
         Not scrolling because I looked it up and one of the reasons pi is on there is that is pi is greek letter for p so p should be yellow
         Gradient is massive because it makes it stop being a gradient and makes the number of each color allows the color to line up with the character near exactly (only not exact because kerning means that the L & Y overlap)
     */
-    background-image: linear-gradient(to right,yellow,yellow,yellow,yellow,yellow,blue,blue,blue,blue,blue,red,red,red, black,black,black,black,black);
+    background-image: linear-gradient(to right, yellow,yellow,yellow,yellow,yellow, blue,blue,blue,blue,blue, red,red,red, black,black,black,black,black);
     background-size: 100%;
     filter: drop-shadow(-.05rem -.05rem .1rem #ffffff88)
             drop-shadow(.1rem .1rem .1rem rgb(0, 0, 0));
