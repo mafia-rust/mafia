@@ -227,6 +227,12 @@ impl PlayerReference{
         game.add_grave(grave);
         self.die(game);
     }
+    pub fn leave_town(&self, game: &mut Game){
+        if !self.alive(game) { return }
+        game.add_grave(Grave::from_player_leave_town(game, *self));
+        self.die(game);
+    }
+
     /// if the player is already dead, this does nothing
     pub fn die(&self, game: &mut Game){
         if !self.alive(game) { return }
@@ -379,6 +385,7 @@ impl PlayerReference{
                     RoleState::Revolutionary(r) => r.won(),
                     RoleState::Chronokaiser(_) => Chronokaiser::won(game, *self),
                     RoleState::Martyr(r) => r.won(),
+                    RoleState::Seeker(r) => r.won(),
                     _ => false
                 }
             },

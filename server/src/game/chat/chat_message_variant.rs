@@ -136,6 +136,9 @@ pub enum ChatMessageVariant {
     CultConvertsNext,
     CultKillsNext,
 
+    CaughtBySeeker,
+    SeekerCaught{player: PlayerReference},
+
     NextSantaAbility { ability: SantaListKind },
     AddedToNiceList,
     NextKrampusAbility { ability: KrampusAbility },

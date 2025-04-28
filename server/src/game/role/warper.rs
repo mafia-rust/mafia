@@ -3,7 +3,6 @@ use serde::Serialize;
 use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
 use crate::game::components::transport::{Transport, TransportPriority};
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
-use crate::game::grave::Grave;
 use crate::game::phase::PhaseType;
 use crate::game::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
@@ -50,7 +49,7 @@ impl RoleStateImpl for Warper {
                 )
 
         {
-            actor_ref.die_and_add_grave(game, Grave::from_player_leave_town(game, actor_ref));
+            actor_ref.leave_town(game);
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {

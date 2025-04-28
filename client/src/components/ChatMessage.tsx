@@ -790,6 +790,9 @@ export function translateChatMessage(
                 translate("defense."+message.defense),
                 playerNames[message.playerWithVest]
             );
+        case "seekerCaught":
+            return translate("chatMessage.seekerCaught", playerNames[message.player]);
+        case "caughtBySeeker":
         case "deputyShotYou":
         case "mediumExists":
         case "youGuardedSomeone":
@@ -1154,6 +1157,11 @@ export type ChatMessageVariant = {
     player: PlayerIndex
 } | {
     type: "werewolfTracked"
+} | {
+    type: "seekerCaught"
+    player: PlayerIndex
+} | {
+    type: "caughtBySeeker"
 }
 
 export type MessageSender = {

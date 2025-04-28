@@ -155,6 +155,7 @@ macros::roles! {
     Jester : jester,
     Revolutionary : revolutionary,
     Politician : politician,
+    Seeker : seeker,
     Doomsayer : doomsayer,
     Wildcard : wild_card,
     TrueWildcard : true_wildcard,
