@@ -28,14 +28,14 @@ use ability_input::saved_controllers_map::SavedControllersMap;
 use ability_input::ControllerID;
 use ability_input::PlayerListSelection;
 use components::confused::Confused;
-use components::fragile_vest::FragileVests;
 use components::drunk_aura::DrunkAura;
 use components::enfranchise::Enfranchise;
 use components::forfeit_vote::ForfeitVote;
+use components::fragile_vest::FragileVests;
 use components::mafia::Mafia;
 use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
-use components::player_component::PlayerComponentBox;
+use components::player_component::PlayerComponent;
 use components::poison::Poison;
 use components::detained::Detained;
 use components::insider_group::InsiderGroupID;
@@ -138,8 +138,8 @@ pub struct Game {
     pub synopsis_tracker: SynopsisTracker,
     pub tags: Tags,
     pub silenced: Silenced,
-    pub defense_items: FragileVests,
-    pub win_condition: PlayerComponentBox<WinCondition>
+    pub fragile_vests: PlayerComponent<FragileVests>,
+    pub win_condition: PlayerComponent<WinCondition>
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -257,8 +257,8 @@ impl Game {
                 synopsis_tracker: SynopsisTracker::new(num_players),
                 tags: Tags::default(),
                 silenced: Silenced::default(),
-                defense_items: FragileVests::new(num_players),
-                win_condition: unsafe{PlayerComponentBox::<WinCondition>::new(num_players, &assignments)}
+                fragile_vests: unsafe{PlayerComponent::<FragileVests>::new(num_players)},
+                win_condition: unsafe{PlayerComponent::<WinCondition>::new(num_players, &assignments)}
             };
 
             // Just distribute insider groups, this is for game over checking (Keeps game running syndicate gun)
@@ -849,7 +849,7 @@ pub mod test {
     use super::{
         ability_input::saved_controllers_map::SavedControllersMap,
         components::{
-            cult::Cult, fragile_vest::FragileVests, insider_group::InsiderGroupID, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, player_component::PlayerComponentBox, poison::Poison, puppeteer_marionette::PuppeteerMarionette, silenced::Silenced, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday, win_condition::WinCondition
+            cult::Cult, fragile_vest::FragileVests, insider_group::InsiderGroupID, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, player_component::PlayerComponent, poison::Poison, puppeteer_marionette::PuppeteerMarionette, silenced::Silenced, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday, win_condition::WinCondition
         }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine, player::{test::mock_player, PlayerReference},
@@ -918,8 +918,8 @@ pub mod test {
             synopsis_tracker: SynopsisTracker::new(number_of_players),
             tags: Tags::default(),
             silenced: Silenced::default(),
-            defense_items: FragileVests::new(number_of_players),
-            win_condition: unsafe{PlayerComponentBox::<WinCondition>::new(number_of_players, &assignments)}
+            fragile_vests: unsafe{PlayerComponent::<FragileVests>::new(number_of_players)},
+            win_condition: unsafe{PlayerComponent::<WinCondition>::new(number_of_players, &assignments)}
         };
 
         //set wincons and revealed groups

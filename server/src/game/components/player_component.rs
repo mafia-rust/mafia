@@ -1,9 +1,9 @@
 use crate::game::player::PlayerReference;
 
-pub struct PlayerComponentBox<T>{
+pub struct PlayerComponent<T>{
     data: Box<[T]>
 }
-impl<T> PlayerComponentBox<T>{
+impl<T> PlayerComponent<T>{
     /// # Safety
     /// player_count <= the games real player count
     pub unsafe fn new_component_box(player_count: u8, map: impl FnMut(PlayerReference)->T)->Self{

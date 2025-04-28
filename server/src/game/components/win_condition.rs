@@ -1,13 +1,13 @@
 use serde::{Deserialize, Serialize};
 use crate::{game::{event::on_convert::OnConvert, game_conclusion::GameConclusion, player::PlayerReference, role_list::RoleAssignment, role_outline_reference::RoleOutlineReference, Game}, vec_map::VecMap, vec_set::{vec_set, VecSet}};
 
-use super::player_component::PlayerComponentBox;
+use super::player_component::PlayerComponent;
 
-impl PlayerComponentBox::<WinCondition>{
+impl PlayerComponent::<WinCondition>{
     /// # Safety
     /// num_players must be correct
     pub unsafe fn new(num_players: u8, assignments: &VecMap<PlayerReference, (RoleOutlineReference,RoleAssignment)>)->Self{
-        PlayerComponentBox::<WinCondition>::new_component_box(
+        PlayerComponent::<WinCondition>::new_component_box(
             num_players,
             |player|assignments.get(&player).expect("Already checked this was fine").1.win_condition()
         )
