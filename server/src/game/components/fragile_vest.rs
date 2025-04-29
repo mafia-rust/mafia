@@ -1,21 +1,12 @@
 use crate::{game::{attack_power::DefensePower, chat::ChatMessageVariant, event::on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority}, player::PlayerReference, Game}, vec_set::VecSet};
 
-pub struct FragileVests{
-    players: Box<[PlayerVests]>
-}
-impl FragileVests{
-    pub fn new(player_count: u8)->Self{
-        Self{
-            players: (0..player_count)
-                .map(|_|PlayerVests::new())
-                .collect()
-        }
-    }
-    fn get(game: &Game)->&Self{
-        &game.defense_items
-    }
-    fn get_mut(game: &mut Game)->&mut Self{
-        &mut game.defense_items
+use super::player_component::PlayerComponent;
+
+impl PlayerComponent<FragileVests>{
+    /// # Safety
+    /// player_count is correct
+    pub unsafe fn new(player_count: u8)->Self{
+        PlayerComponent::new_component_box(player_count, |_|FragileVests::new())
     }
     
     pub fn add_defense_item(
@@ -24,11 +15,7 @@ impl FragileVests{
         power: DefensePower,
         informed_players: VecSet<PlayerReference>
     ){
-        //oh i cant be serious
-        Self::get_mut(game)
-            .players.get_mut(player.index() as usize)
-            .expect("Player reference is valid")
-            .add_defense_item(power, informed_players);
+        Self::get_mut(&mut game.fragile_vests, player).add_defense_item(power, informed_players);
     }
     pub fn add_defense_item_midnight(
         game: &mut Game,
@@ -37,34 +24,21 @@ impl FragileVests{
         power: DefensePower,
         informed_players: VecSet<PlayerReference>
     ){
-        
         player.increase_defense_to(game, midnight_variables, power);
-
-        //oh i cant be serious
-        Self::get_mut(game)
-            .players.get_mut(player.index() as usize)
-            .expect("Player reference is valid")
-            .add_defense_item(power, informed_players);
+        Self::add_defense_item(game, player, power, informed_players);
     }
-    pub fn break_defense_items(
+    fn break_defense_items(
         game: &mut Game,
         player: PlayerReference,
         midnight_variables: &mut MidnightVariables
     ){
-        //oh i cant be serious
-        Self::get_mut(game)
-            .players.get_mut(player.index() as usize)
-            .expect("Player reference is valid")
-            .break_defense_items(midnight_variables, player);
+        Self::get_mut(&mut game.fragile_vests, player).break_defense_items(midnight_variables, player);
     }
     pub fn get_defense_from_items(
         game: &Game,
         player: PlayerReference,
     )->DefensePower{
-        Self::get(game)
-            .players.get(player.index() as usize)
-            .expect("Player reference is valid")
-            .max_defense()
+        Self::get(&game.fragile_vests, player).max_defense()
     }
 
     pub fn on_midnight(game: &mut Game, _event: &OnMidnight, midnight_variables: &mut MidnightVariables, priority: OnMidnightPriority){
@@ -86,10 +60,10 @@ impl FragileVests{
     }
 }
 
-struct PlayerVests{
+pub struct FragileVests{
     items: Vec<PlayerVest>
 }
-impl PlayerVests{
+impl FragileVests{
     fn new()->Self{
         Self { items: Vec::new() }
     }
