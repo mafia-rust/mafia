@@ -6,11 +6,11 @@ use crate::game::ability_input::{AvailableBooleanSelection, BooleanSelection};
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::detained::Detained;
+use crate::game::components::win_condition::WinCondition;
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::win_condition::WinCondition;
 use crate::game::Game;
 
 use super::{

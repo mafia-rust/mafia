@@ -11,7 +11,7 @@ use crate::{game::{
     role_list::RoleSet, visit::{Visit, VisitTag}, ControllerID, Game, PlayerListSelection
 }, vec_set::{vec_set, VecSet}};
 
-use super::{fragile_vest::FragileVests, detained::Detained, insider_group::InsiderGroupID, night_visits::NightVisits, syndicate_gun_item::SyndicateGunItem, tags::Tags};
+use super::{detained::Detained, fragile_vest::FragileVests, insider_group::InsiderGroupID, night_visits::NightVisits, player_component::PlayerComponent, syndicate_gun_item::SyndicateGunItem, tags::Tags};
 
 #[derive(Clone)]
 pub struct Mafia;
@@ -150,7 +150,7 @@ impl Mafia{
             let Some(insider) = insiders.choose(&mut rand::rng()) else {return};
 
             SyndicateGunItem::give_gun_to_player(game, *insider);
-            FragileVests::add_defense_item(game, *insider, DefensePower::Armored, vec_set![*insider]);
+            PlayerComponent::<FragileVests>::add_defense_item(game, *insider, DefensePower::Armored, vec_set![*insider]);
         }
     }
 
