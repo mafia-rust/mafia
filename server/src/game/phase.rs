@@ -110,7 +110,7 @@ impl PhaseStateMachine {
 
         if
             phase == PhaseType::Nomination &&
-            Modifiers::modifier_is_enabled(game, ModifierType::ScheduledNominations)
+            !Modifiers::is_enabled(game, ModifierType::UnscheduledNominations)
         {
             time = time.map(|o|o.div(3));
         }
@@ -219,7 +219,7 @@ impl PhaseState {
             PhaseState::Nomination {trials_left, ..} => {
 
 
-                if Modifiers::modifier_is_enabled(game, ModifierType::ScheduledNominations){
+                if !Modifiers::is_enabled(game, ModifierType::UnscheduledNominations){
                     
                     if let Some(player_on_trial) = game.count_nomination_and_start_trial(false){    
                         Self::Testimony{
@@ -265,7 +265,7 @@ impl PhaseState {
                     innocent, guilty 
                 });
 
-                let hang = if Modifiers::modifier_is_enabled(game, ModifierType::TwoThirdsMajority) {
+                let hang = if Modifiers::is_enabled(game, ModifierType::TwoThirdsMajority) {
                     innocent <= guilty.div(2)
                 } else {
                     innocent < guilty

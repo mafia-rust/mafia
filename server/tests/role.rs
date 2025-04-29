@@ -188,6 +188,7 @@ fn mortician_obscures_on_stand(){
 
     game.skip_to(Judgement, 2);
     jail.set_verdict(Verdict::Guilty);
+    gf.set_verdict(Verdict::Guilty);
 
     game.skip_to(Night, 2);
     
@@ -213,6 +214,7 @@ fn mortician_obscures_fail_after_death(){
 
     game.skip_to(Judgement, 2);
     jail.set_verdict(Verdict::Guilty);
+    gf.set_verdict(Verdict::Guilty);
 
     game.skip_to(Night, 2);
     gf.send_ability_input_player_list_typical(townie);
@@ -631,6 +633,7 @@ fn mayor_reveals_after_they_vote(){
     game.skip_to(Nomination, 2);
     mayor.vote_for_player(Some(mafioso));
     mayor.send_ability_input_unit_typical();
+    game.next_phase();
     assert_eq!(game.current_phase().phase(), Testimony);
 }
 
@@ -1995,6 +1998,7 @@ fn puppeteer_marionettes_win(){
     game.skip_to(Judgement, 3);
 
     puppeteer.set_verdict(Verdict::Guilty);
+    townie.set_verdict(Verdict::Guilty);
 
     game.skip_to(Dusk, 3);
 
@@ -2110,35 +2114,37 @@ fn arsonist_ignites_and_aura(){
         townie2: Detective,
         gf: Godfather,
         vigi: Vigilante,
-        sher: Detective
+        det: Detective
     );
 
     assert!(townie.send_ability_input_player_list_typical(arso));
     assert!(arso.send_ability_input_player_list_typical(arso));
-    assert!(sher.send_ability_input_player_list_typical(townie));
+    assert!(det.send_ability_input_player_list_typical(townie));
 
     game.next_phase();
 
     assert!(arso.alive());
     assert!(!townie.alive());
-    assert!(sher.alive());
+    assert!(det.alive());
     assert!(gf.alive());
     assert!(vigi.alive());
 
-    assert_contains!(sher.get_messages_after_last_message(
-        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 2}
-    ), ChatMessageVariant::SheriffResult{ suspicious: true });
+    assert_contains!(
+        det.get_messages_after_night(2), 
+        ChatMessageVariant::SheriffResult{ suspicious: true }
+    );
 
     game.skip_to(Night, 3);
     
     assert!(arso.send_ability_input_player_list_typical(townie2));
-    assert!(sher.send_ability_input_player_list_typical(townie2));
+    assert!(det.send_ability_input_player_list_typical(townie2));
 
     game.next_phase();
 
-    assert_contains!(sher.get_messages_after_last_message(
-        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 3}
-    ), ChatMessageVariant::SheriffResult{ suspicious: true });
+    assert_contains!(
+        det.get_messages_after_night(3), 
+        ChatMessageVariant::SheriffResult{ suspicious: true }
+    );
 
     game.skip_to(Nomination, 4);
 
@@ -2148,17 +2154,21 @@ fn arsonist_ignites_and_aura(){
 
     game.skip_to(Judgement, 4);
 
-    gf.set_verdict(mafia_server::game::verdict::Verdict::Guilty);
+    townie2.set_verdict(Verdict::Guilty);
+    gf.set_verdict(Verdict::Guilty);
+    vigi.set_verdict(Verdict::Guilty);
+
 
     game.skip_to(Night, 4);
 
-    assert!(sher.send_ability_input_player_list_typical(townie2));
+    assert!(det.send_ability_input_player_list_typical(townie2));
 
     game.next_phase();
     
-    assert_contains!(sher.get_messages_after_last_message(
-        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 4}
-    ), ChatMessageVariant::SheriffResult{ suspicious: false });
+    assert_contains!(
+        det.get_messages_after_night(4), 
+        ChatMessageVariant::SheriffResult{ suspicious: false }
+    );
 
     
 }

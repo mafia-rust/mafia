@@ -418,9 +418,9 @@ impl PlayerReference{
         self.role_state(game).clone().on_role_creation(game, *self)
     }
     pub fn get_current_send_chat_groups(&self, game: &Game) -> HashSet<ChatGroup> {
-        if Modifiers::modifier_is_enabled(game, ModifierType::NoChat)
+        if Modifiers::is_enabled(game, ModifierType::NoChat)
             || (
-                Modifiers::modifier_is_enabled(game, ModifierType::NoNightChat) 
+                Modifiers::is_enabled(game, ModifierType::NoNightChat) 
                 && self.alive(game)
                 && matches!(game.current_phase().phase(), PhaseType::Night | PhaseType::Obituary)
             )
