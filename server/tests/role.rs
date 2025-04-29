@@ -2651,9 +2651,9 @@ fn seeker_basic(){
         ChatMessageVariant::LookoutResult { players: vec![seek.index()] }
     );
 
-    assert!(
-        !hider1.get_messages_after_night(1)
-        .contains(&ChatMessageVariant::CaughtBySeeker)
+    assert_not_contains!(
+        hider1.get_messages_after_night(1),
+        ChatMessageVariant::CaughtBySeeker
     );
     assert_contains!(
         hider1.get_messages_after_night(1),
@@ -2671,13 +2671,13 @@ fn seeker_basic(){
     game.next_phase();
 
     assert!(!seek.get_won_game());
-    assert!(
-        !seek.get_messages_after_night(2)
-        .contains(&ChatMessageVariant::SeekerCaught { 
+    assert_not_contains!(
+        seek.get_messages_after_night(2),
+        ChatMessageVariant::SeekerCaught { 
             hider: hider0.index(), 
             players_left: 2, 
             role_state_win_con: true
-        })
+        }
     );
     if let RoleState::Seeker(rs) = seek.role_state() {
         assert_eq!(
@@ -2689,9 +2689,9 @@ fn seeker_basic(){
         );
     } else {panic!()}
 
-    assert!(
-        !hider0.get_messages_after_night(2)
-        .contains(&ChatMessageVariant::CaughtBySeeker)
+    assert_not_contains!(
+        hider0.get_messages_after_night(2),
+        ChatMessageVariant::CaughtBySeeker
     );
     assert_contains!(
         hider0.get_messages_after_night(2),
@@ -2702,9 +2702,9 @@ fn seeker_basic(){
         ChatMessageVariant::YouWerePossessed { immune: false }
     );
 
-    assert!(
-        !hider1.get_messages_after_night(2)
-        .contains(&ChatMessageVariant::CaughtBySeeker)
+    assert_not_contains!(
+        hider1.get_messages_after_night(2),
+        ChatMessageVariant::CaughtBySeeker
     );
     assert_contains!(
         hider1.get_messages_after_night(2),
@@ -2771,7 +2771,7 @@ fn seeker_basic(){
 
     seek.send_ability_input_player_list_typical(hider2);
     seek.send_ability_input_player_list(hider3, 1);
-    hider3.send_ability_input_player_list_typical(hider3);
+    hider2.send_ability_input_player_list_typical(hider3);
 
     game.next_phase();
 
@@ -2789,7 +2789,7 @@ fn seeker_basic(){
         assert_eq!(
             rs.clone(),
             Seeker {
-                followers: [hider0.player_ref(), hider1.player_ref()].into(), 
+                followers: [hider0.player_ref(), hider1.player_ref(), hider2.player_ref()].into(), 
                 new_follower: None
             }
         );
