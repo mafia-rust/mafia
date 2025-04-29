@@ -3,10 +3,10 @@ use std::collections::HashSet;
 use crate::{game::{
     attack_power::AttackPower, chat::ChatMessageVariant,
     event::{on_add_insider::OnAddInsider, on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority}, on_remove_insider::OnRemoveInsider},
-    game_conclusion::GameConclusion, player::PlayerReference, role::Role, win_condition::WinCondition, Game
+    game_conclusion::GameConclusion, player::PlayerReference, role::Role, Game
 }, vec_set::VecSet};
 
-use super::{insider_group::InsiderGroupID, tags::Tags};
+use super::{insider_group::InsiderGroupID, tags::Tags, win_condition::WinCondition};
 
 impl Game{
     pub fn puppeteer_marionette(&self)->&PuppeteerMarionette{
