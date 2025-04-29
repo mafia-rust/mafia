@@ -6,10 +6,11 @@ use crate::{
             on_conceal_role::OnConcealRole
         },
         modifiers::{ModifierType, Modifiers}, role::{Role, RoleState},
-        verdict::Verdict, win_condition::WinCondition, Game
+        verdict::Verdict, Game
     }, 
     packet::ToClientPacket, vec_set::VecSet, 
 };
+use crate::game::components::win_condition::WinCondition;
 use super::PlayerReference;
 
 

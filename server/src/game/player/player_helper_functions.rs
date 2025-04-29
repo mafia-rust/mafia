@@ -20,10 +20,12 @@ use crate::{
         modifiers::{ModifierType, Modifiers}, phase::PhaseType,
         role::{arsonist::Arsonist,chronokaiser::Chronokaiser, Role, RoleState},
         visit::{Visit, VisitTag},
-        win_condition::WinCondition, Game
+        Game
     },
     packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet
 };
+use crate::game::components::win_condition::WinCondition;
+
 
 use super::PlayerReference;
 

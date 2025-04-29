@@ -3,8 +3,9 @@ use std::collections::HashSet;
 use crate::{game::{
     attack_power::AttackPower, chat::ChatMessageVariant,
     event::{on_add_insider::OnAddInsider, on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority}, on_remove_insider::OnRemoveInsider},
-    game_conclusion::GameConclusion, player::PlayerReference, role::Role, win_condition::WinCondition, Game
+    game_conclusion::GameConclusion, player::PlayerReference, role::Role, Game
 }, vec_set::VecSet};
+use crate::game::components::win_condition::WinCondition;
 
 use super::{insider_group::InsiderGroupID, tags::Tags};
 

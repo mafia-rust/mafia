@@ -6,10 +6,10 @@ use crate::{game::{
         on_add_insider::OnAddInsider, on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority},
         on_remove_insider::OnRemoveInsider
     },
-    game_conclusion::GameConclusion, player::PlayerReference, role::Role, role_list::RoleSet, win_condition::WinCondition, Game, InsiderGroupID
+    game_conclusion::GameConclusion, player::PlayerReference, role::Role, role_list::RoleSet, Game, InsiderGroupID
 }, vec_set::VecSet};
 
-use super::tags::Tags;
+use super::{tags::Tags, win_condition::WinCondition};
 
 impl Game{
     pub fn mafia_recruits(&self)->&MafiaRecruits{

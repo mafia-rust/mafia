@@ -4,7 +4,8 @@ use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
 use crate::game::components::transport::{Transport, TransportPriority};
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::phase::PhaseType;
-use crate::game::win_condition::WinCondition;
+use crate::game::components::win_condition::WinCondition;
+
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;

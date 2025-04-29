@@ -18,7 +18,6 @@ pub mod spectator;
 pub mod game_listeners;
 pub mod attack_power;
 pub mod modifiers;
-pub mod win_condition;
 pub mod role_outline_reference;
 pub mod ability_input;
 
@@ -45,6 +44,7 @@ use components::syndicate_gun_item::SyndicateGunItem;
 use components::synopsis::SynopsisTracker;
 use components::tags::Tags;
 use components::verdicts_today::VerdictsToday;
+use components::win_condition::WinCondition;
 use event::on_tick::OnTick;
 use modifiers::ModifierType;
 use modifiers::Modifiers;
@@ -55,7 +55,6 @@ use role_list::RoleOutlineOptionInsiderGroups;
 use role_list::RoleOutlineOptionWinCondition;
 use role_outline_reference::RoleOutlineReference;
 use serde::Serialize;
-use win_condition::WinCondition;
 
 use crate::client_connection::ClientConnection;
 use crate::game::event::on_game_start::OnGameStart;

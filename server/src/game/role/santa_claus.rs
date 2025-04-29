@@ -1,10 +1,10 @@
 use serde::{Deserialize, Serialize};
 use crate::game::ability_input::AvailablePlayerListSelection;
 use crate::game::chat::ChatMessageVariant;
+use crate::game::components::win_condition::WinCondition;
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::phase::PhaseType;
-use crate::game::win_condition::WinCondition;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
