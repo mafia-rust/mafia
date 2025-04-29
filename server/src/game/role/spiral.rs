@@ -26,7 +26,7 @@ impl RoleStateImpl for Spiral {
         if priority != OnMidnightPriority::Poison { return };
         
         if Tags::tagged(game, TagSetID::UzumakiSpiral(actor_ref)).is_empty() && game.day_number() > 1 {
-            if let Some(visit) = actor_ref.untagged_night_visits_cloned(game).first(){
+            if let Some(visit) = actor_ref.untagged_night_visits_cloned(midnight_variables).first(){
                 let target_ref = visit.target;
                 
                 target_ref.try_night_kill_single_attacker(
@@ -93,7 +93,7 @@ impl Spiral {
     }
 
     fn spiral_visitors(game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, target: PlayerReference) {
-        for visitor_to_spiraling in target.all_night_visitors_cloned(game)
+        for visitor_to_spiraling in target.all_night_visitors_cloned(midnight_variables)
             .into_iter().filter(|other_player_ref|
                 other_player_ref.alive(game) &&
                 *other_player_ref != target // Let doctor self-heal

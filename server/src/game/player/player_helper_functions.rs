@@ -33,7 +33,7 @@ impl PlayerReference{
     }
     pub fn ward(&self, game: &mut Game, midnight_variables: &mut MidnightVariables, dont_wardblock: &[Visit]) -> Vec<PlayerReference> {
         let mut out = Vec::new();
-        for visit in NightVisits::all_visits_cloned(game) {
+        for visit in NightVisits::all_visits_cloned(midnight_variables) {
             if dont_wardblock.contains(&visit) {
                 continue;
             }
@@ -114,7 +114,7 @@ impl PlayerReference{
     pub fn possess_night_action(&self, game: &mut Game, midnight_variables: &mut MidnightVariables, priority: OnMidnightPriority, currently_used_player: Option<PlayerReference>)->Option<PlayerReference>{
         match priority {
             OnMidnightPriority::Possess => {
-                let untagged_possessor_visits = self.untagged_night_visits_cloned(game);
+                let untagged_possessor_visits = self.untagged_night_visits_cloned(midnight_variables);
                 let possessed_visit = untagged_possessor_visits.get(0)?;
                 let possessed_into_visit = untagged_possessor_visits.get(1)?;
                 
@@ -187,14 +187,14 @@ impl PlayerReference{
                     }
                 }
 
-                possessed_visit.target.set_night_visits(game,
+                possessed_visit.target.set_night_visits(midnight_variables,
                     possessed_visit.target.convert_selection_to_visits(game)
                 );
 
                 //remove the second role visit from the possessor
                 self.set_night_visits(
-                    game,
-                    self.all_night_visits_cloned(game).into_iter().filter(|v|v.tag != VisitTag::Role { role: self.role(game), id: 1 }).collect()
+                    midnight_variables,
+                    self.all_night_visits_cloned(midnight_variables).into_iter().filter(|v|v.tag != VisitTag::Role { role: self.role(game), id: 1 }).collect()
                 );
                 Some(possessed_visit.target)
             },
@@ -289,11 +289,11 @@ impl PlayerReference{
     }
     
     
-    pub fn tracker_seen_visits(self, game: &Game, midnight_variables: &MidnightVariables) -> Vec<Visit> {
+    pub fn tracker_seen_visits(self, _game: &Game, midnight_variables: &MidnightVariables) -> Vec<Visit> {
         if let Some(v) = self.night_appeared_visits(midnight_variables) {
             v.clone()
         } else {
-            self.all_night_visits_cloned(game)
+            self.all_night_visits_cloned(midnight_variables)
         }
     }
     pub fn all_appeared_visitors(self, game: &Game, midnight_variables: &MidnightVariables) -> Vec<PlayerReference> {

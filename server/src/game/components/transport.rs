@@ -1,6 +1,5 @@
 use crate::game::visit::VisitTag;
 use crate::game::{
-    Game,
     chat::ChatMessageVariant,
     event::on_midnight::MidnightVariables,
     player::PlayerReference,
@@ -43,7 +42,7 @@ impl TransportPriority{
 pub struct Transport;
 impl Transport{
     pub fn transport(
-        game: &mut Game, midnight_variables: &mut MidnightVariables, transport_priority: TransportPriority, 
+        midnight_variables: &mut MidnightVariables, transport_priority: TransportPriority, 
         player_map: &VecMap<PlayerReference, PlayerReference>, filter: impl Fn(&Visit) -> bool, send_message: bool, 
     ) -> Vec<Visit> {
 
@@ -56,7 +55,7 @@ impl Transport{
         }
         let mut out = vec![];
         
-        NightVisits::all_visits_mut(game)
+        NightVisits::all_visits_mut(midnight_variables)
             .filter(|v|filter(v))
             .filter(|v|transport_priority.can_transport(&TransportPriority::from_visit_tag(&v.tag)))
             .for_each(|v|

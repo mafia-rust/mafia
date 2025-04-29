@@ -36,12 +36,12 @@ impl RoleStateImpl for Ambusher {
 
         match priority {
             OnMidnightPriority::Kill => {
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(ambush_visit) = actor_visits.first() else {return};
                 let target_ref = ambush_visit.target;
 
                 let player_to_attacks_visit = 
-                if let Some(priority_visitor) = NightVisits::all_visits(game).into_iter()
+                if let Some(priority_visitor) = NightVisits::all_visits(midnight_variables).into_iter()
                     .filter(|visit|
                         ambush_visit != *visit &&
                         visit.target == target_ref &&
@@ -53,7 +53,7 @@ impl RoleStateImpl for Ambusher {
                 {
                     Some(priority_visitor.visitor)
                 } else {
-                    NightVisits::all_visits(game).into_iter()
+                    NightVisits::all_visits(midnight_variables).into_iter()
                         .filter(|visit|
                             ambush_visit != *visit &&
                             visit.target == target_ref &&
@@ -74,7 +74,7 @@ impl RoleStateImpl for Ambusher {
                         false
                     );
 
-                    for visitor in target_ref.all_night_visitors_cloned(game){
+                    for visitor in target_ref.all_night_visitors_cloned(midnight_variables){
                         if visitor == player_to_attack || visitor == actor_ref {continue;}
                         visitor.push_night_message(midnight_variables, ChatMessageVariant::AmbusherCaught { ambusher: actor_ref });
                     }

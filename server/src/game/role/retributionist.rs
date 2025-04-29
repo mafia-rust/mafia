@@ -77,7 +77,7 @@ impl RoleStateImpl for Retributionist {
             actor_ref.set_role_state(game, Retributionist { currently_used_player: None, ..self });
         }
     }
-    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
+    fn on_player_roleblocked(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
 impl GetClientRoleState<ClientRoleState> for Retributionist {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

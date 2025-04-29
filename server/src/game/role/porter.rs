@@ -20,15 +20,15 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Porter {
     type ClientRoleState = Porter;
-    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, _game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Warper {return;}
     
-        let transporter_visits = actor_ref.untagged_night_visits_cloned(game);
+        let transporter_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
         let Some(first_visit) = transporter_visits.get(0).map(|v| v.target) else {return};
         let Some(second_visit) = transporter_visits.get(1).map(|v| v.target) else {return};
         
         Transport::transport(
-            game, midnight_variables, TransportPriority::Warper, 
+            midnight_variables, TransportPriority::Warper, 
             &vec_map![(first_visit, second_visit)], |_| true, true
         );
     }
@@ -57,5 +57,5 @@ impl RoleStateImpl for Porter {
             false
         )
     }
-    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
+    fn on_player_roleblocked(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }

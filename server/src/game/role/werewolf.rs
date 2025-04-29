@@ -31,7 +31,7 @@ impl RoleStateImpl for Werewolf {
     fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Deception => {
-                let visits = actor_ref.untagged_night_visits_cloned(game);
+                let visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(first_visit) = visits.first() else {return};
 
                 let target_ref = first_visit.target;
@@ -39,9 +39,9 @@ impl RoleStateImpl for Werewolf {
                     .filter(|p|p.alive(game)||*p==actor_ref)
                     .count().saturating_mul(ENRAGED_NUMERATOR);
 
-                if !enraged && target_ref.all_night_visits_cloned(game).is_empty() {return}
+                if !enraged && target_ref.all_night_visits_cloned(midnight_variables).is_empty() {return}
                     
-                NightVisits::all_visits_mut(game)
+                NightVisits::all_visits_mut(midnight_variables)
                     .filter(|visit| 
                         visit.visitor == actor_ref && visit.target == target_ref && visit.tag == VisitTag::Role{role: Role::Werewolf, id: 0}
                     ).for_each(|visit| {
@@ -49,7 +49,7 @@ impl RoleStateImpl for Werewolf {
                     });
             }
             OnMidnightPriority::Kill => {
-                let visits = actor_ref.untagged_night_visits_cloned(game);
+                let visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(first_visit) = visits.first() else {return};
                 let target_ref = first_visit.target;
 
@@ -61,7 +61,7 @@ impl RoleStateImpl for Werewolf {
                     if game.day_number() <= 1 {return}
                 
                     //rampage target
-                    for other_player in NightVisits::all_visits(game).into_iter()
+                    for other_player in NightVisits::all_visits(midnight_variables).into_iter()
                         .filter(|visit|
                             *first_visit != **visit &&
                             visit.target == target_ref

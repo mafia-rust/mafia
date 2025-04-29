@@ -17,9 +17,9 @@ impl OnVisitWardblocked{
         self.visit.visitor.push_night_message(midnight_variables, ChatMessageVariant::Wardblocked);
 
         for player_ref in PlayerReference::all_players(game){
-            player_ref.on_visit_wardblocked(game, self.visit);
+            player_ref.on_visit_wardblocked(game, midnight_variables, self.visit);
         }
-        Mafia::on_visit_wardblocked(game, self.visit);
-        SyndicateGunItem::on_visit_wardblocked(game, self.visit);
+        Mafia::on_visit_wardblocked(game, midnight_variables, self.visit);
+        SyndicateGunItem::on_visit_wardblocked(game, midnight_variables, self.visit);
     }
 }
