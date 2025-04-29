@@ -6,6 +6,7 @@ use crate::game::ability_input::AvailableIntegerSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::components::mafia_recruits::MafiaRecruits;
 use crate::game::components::insider_group::InsiderGroupID;
+use crate::game::components::win_condition::WinCondition;
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -131,14 +132,14 @@ impl RoleStateImpl for Recruiter {
             }]}.get_random_role_assignments(
                 &game.settings.enabled_roles,
                 PlayerReference::all_players(game).map(|p|p.role(game)).collect::<Vec<_>>().as_slice()
-            ).map(|assignment| assignment.role);
+            ).map(|assignment| assignment.role());
 
             if let Some(random_town_role) = random_town_role {
                 //special case here. I don't want to use set_role because it alerts the player their role changed
                 //NOTE: It will still send a packet to the player that their role state updated,
                 //so it might be deducable that there is a recruiter
                 InsiderGroupID::Mafia.remove_player_from_insider_group(game, random_mafia_player);
-                random_mafia_player.set_win_condition(game, crate::game::win_condition::WinCondition::GameConclusionReached{
+                random_mafia_player.set_win_condition(game, WinCondition::GameConclusionReached{
                     win_if_any: vec![GameConclusion::Town].into_iter().collect()
                 });
                 random_mafia_player.set_role_state(game, random_town_role.new_state(game));

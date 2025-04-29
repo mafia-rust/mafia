@@ -17,9 +17,7 @@ use crate::{
     },
     websocket_connections::connection::ClientSender,
 };
-
 use super::chat::ChatMessage;
-use super::win_condition::WinCondition;
 
 pub struct PlayerInitializeParameters {
     pub connection: ClientConnection,
@@ -42,8 +40,6 @@ pub struct Player {
     chat_messages: Vec<ChatMessage>,
     queued_chat_messages: Vec<ChatMessage>, // Not yet sent to the client
 
-    win_condition: WinCondition,
-
     fast_forward_vote: bool,
 
     voting_variables: PlayerVotingVariables,
@@ -52,7 +48,7 @@ struct PlayerVotingVariables{
     verdict:        Verdict,
 }
 impl Player {
-    pub fn new(name: String, sender: ClientSender, role: Role, win_condition: WinCondition) -> Self {
+    pub fn new(name: String, sender: ClientSender, role: Role) -> Self {
         Self {
             connection: ClientConnection::Connected(sender),
 
@@ -65,8 +61,6 @@ impl Player {
             death_note: None,
 
             role_labels: VecSet::new(),
-
-            win_condition,
 
             chat_messages: Vec::new(),
             queued_chat_messages: Vec::new(),
@@ -101,8 +95,6 @@ pub mod test {
             death_note: None,
 
             role_labels: VecSet::new(),
-
-            win_condition: role.default_state().default_win_condition(),
 
             chat_messages: Vec::new(),
             queued_chat_messages: Vec::new(),

@@ -39,7 +39,7 @@ impl <K> VecSet<K> where K: Eq {
         self.vec.iter().map(|(k, _)| k)
     }
 
-    pub fn len(&self) -> usize {
+    pub fn count(&self) -> usize {
         self.vec.len()
     }
 
@@ -115,7 +115,7 @@ impl<T: Eq> PartialOrd for VecSet<T> {
 
 impl<T: Eq> Ord for VecSet<T> {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.len().cmp(&other.len())
+        self.count().cmp(&other.count())
     }
 }
 
