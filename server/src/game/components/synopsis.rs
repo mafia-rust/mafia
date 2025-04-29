@@ -2,8 +2,7 @@ use std::cmp::Ordering;
 
 use serde::{Deserialize, Serialize};
 
-use crate::game::{game_conclusion::GameConclusion, phase::PhaseType, player::PlayerReference, role::Role, Game};
-use crate::game::components::win_condition::WinCondition;
+use crate::game::{game_conclusion::GameConclusion, phase::PhaseType, player::PlayerReference, role::Role, win_condition::WinCondition, Game};
 
 pub struct SynopsisTracker {
     player_synopses: Vec<PartialPlayerSynopsis>

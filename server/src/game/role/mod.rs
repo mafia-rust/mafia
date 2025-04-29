@@ -9,14 +9,13 @@ use crate::game::Game;
 use crate::game::chat::ChatGroup;
 use crate::game::phase::PhaseType;
 use crate::game::attack_power::DefensePower;
-use crate::game::components::win_condition::WinCondition;
 
 use serde::{Serialize, Deserialize};
 
 use super::{
     ability_input::*, components::{insider_group::InsiderGroupID, night_visits::NightVisits},
     event::{on_midnight::{MidnightVariables, OnMidnightPriority}, on_whisper::{OnWhisper, WhisperFold, WhisperPriority}},
-    grave::GraveReference, visit::VisitTag
+    grave::GraveReference, visit::VisitTag, win_condition::WinCondition
 };
 
 pub trait GetClientRoleState<CRS> {

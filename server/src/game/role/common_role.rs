@@ -5,12 +5,12 @@ use crate::game::{
     chat::ChatGroup,
     components::{
         detained::Detained,
-        puppeteer_marionette::PuppeteerMarionette, silenced::Silenced, win_condition::WinCondition
+        puppeteer_marionette::PuppeteerMarionette, silenced::Silenced
     },
     game_conclusion::GameConclusion,
     modifiers::{ModifierType, Modifiers},
     phase::{PhaseState, PhaseType}, player::PlayerReference,
-    role_list::RoleSet, visit::{Visit, VisitTag},
+    role_list::RoleSet, visit::{Visit, VisitTag}, win_condition::WinCondition,
     Game
 };
 

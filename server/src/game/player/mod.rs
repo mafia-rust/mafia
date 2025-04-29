@@ -19,7 +19,7 @@ use crate::{
 };
 
 use super::chat::ChatMessage;
-use crate::game::components::win_condition::WinCondition;
+use super::win_condition::WinCondition;
 
 pub struct PlayerInitializeParameters {
     pub connection: ClientConnection,

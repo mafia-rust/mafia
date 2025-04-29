@@ -1,7 +1,6 @@
 use crate::game::{
-    components::synopsis::SynopsisTracker, player::PlayerReference, Game
+    components::synopsis::SynopsisTracker, player::PlayerReference, win_condition::WinCondition, Game
 };
-use crate::game::components::win_condition::WinCondition;
 
 #[must_use = "Event must be invoked"]
 pub struct OnConvert{

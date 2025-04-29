@@ -10,8 +10,8 @@ use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
+use crate::game::win_condition::WinCondition;
 use crate::game::Game;
-use crate::game::components::win_condition::WinCondition;
 
 use super::{
     ControllerID,
