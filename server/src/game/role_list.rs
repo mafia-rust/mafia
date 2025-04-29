@@ -38,9 +38,31 @@ impl RoleList {
 
 #[derive(Clone, PartialEq, Eq)]
 pub struct RoleAssignment {
-    pub role: Role,
-    pub insider_groups: RoleOutlineOptionInsiderGroups,
-    pub win_condition: RoleOutlineOptionWinCondition
+    role: Role,
+    insider_groups: RoleOutlineOptionInsiderGroups,
+    win_condition: RoleOutlineOptionWinCondition
+}
+impl RoleAssignment{
+    pub fn role(&self)->Role{
+        self.role
+    }
+    pub fn insider_groups(&self)->VecSet<InsiderGroupID>{
+        match &self.insider_groups {
+            RoleOutlineOptionInsiderGroups::RoleDefault => {
+                self.role.default_state().default_revealed_groups()
+            },
+            RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.clone(),
+        }
+    }
+    pub fn win_condition(&self)->WinCondition{
+        match &self.win_condition {
+            RoleOutlineOptionWinCondition::RoleDefault => {
+                self.role.default_state().default_win_condition()
+            },
+            RoleOutlineOptionWinCondition::GameConclusionReached { win_if_any } => 
+                WinCondition::GameConclusionReached { win_if_any: win_if_any.clone() },
+        }
+    }
 }
 
 impl RoleAssignment {
@@ -257,7 +279,7 @@ impl PartialOrd for RoleOutlineOptionRoles {
 }
 impl Ord for RoleOutlineOptionRoles {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        other.get_roles().len().cmp(&self.get_roles().len())
+        other.get_roles().count().cmp(&self.get_roles().count())
     }
 }
 
