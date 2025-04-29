@@ -55,13 +55,13 @@ impl RoleStateImpl for Bodyguard {
         
         match priority {
             OnMidnightPriority::Bodyguard => {
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(target_ref) = actor_visits.get(0).map(|v| v.target) else {return};
                 
                 if actor_ref == target_ref {return}
                 
                 let redirected_player_refs = Transport::transport(
-                    game, midnight_variables, TransportPriority::Bodyguard,
+                    midnight_variables, TransportPriority::Bodyguard,
                     &vec_map![(target_ref, actor_ref)], |v| v.attack, false, 
                 ).iter().map(|v| v.visitor).collect();
 
@@ -72,7 +72,7 @@ impl RoleStateImpl for Bodyguard {
                 
             },
             OnMidnightPriority::Heal => {
-                let actors_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actors_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(visit) = actors_visits.first() else {return};
                 let target_ref = visit.target;
     

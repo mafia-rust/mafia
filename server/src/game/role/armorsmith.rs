@@ -43,7 +43,7 @@ impl RoleStateImpl for Armorsmith {
 
         match priority {
             OnMidnightPriority::Heal => {
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 if let Some(visit) = actor_visits.first() {
                     if self.open_shops_remaining != 0 {
                         self.night_open_shop = true;
@@ -52,7 +52,7 @@ impl RoleStateImpl for Armorsmith {
                         actor_ref.guard_player(game, midnight_variables, actor_ref);
 
 
-                        let visitors = actor_ref.all_night_visitors_cloned(game);
+                        let visitors = actor_ref.all_night_visitors_cloned(midnight_variables);
 
                         for visitor in visitors.iter(){
                             actor_ref.guard_player(game, midnight_variables, *visitor);

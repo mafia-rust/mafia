@@ -28,7 +28,7 @@ impl RoleStateImpl for Scarecrow {
         if priority != OnMidnightPriority::Ward {return;}
         
 
-        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
         let Some(visit) = actor_visits.first() else {return};
 
         let target_ref = visit.target;
@@ -78,6 +78,6 @@ impl RoleStateImpl for Scarecrow {
             actor_ref.die_and_add_grave(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
-    fn on_visit_wardblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _visit: Visit) {}
-    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
+    fn on_visit_wardblocked(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _visit: Visit) {}
+    fn on_player_roleblocked(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }

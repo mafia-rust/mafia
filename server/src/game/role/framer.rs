@@ -23,7 +23,7 @@ impl RoleStateImpl for Framer {
     fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Deception => {
-                let framer_visits = actor_ref.untagged_night_visits_cloned(game).clone();
+                let framer_visits = actor_ref.untagged_night_visits_cloned(midnight_variables).clone();
 
                 let Some(first_visit) = framer_visits.first() else {return};
 
@@ -40,8 +40,8 @@ impl RoleStateImpl for Framer {
                 ]));
 
                 actor_ref.set_night_visits(
-                    game,
-                    actor_ref.all_night_visits_cloned(game)
+                    midnight_variables,
+                    actor_ref.all_night_visits_cloned(midnight_variables)
                         .into_iter()
                         .filter(|v|v.tag!=VisitTag::Role { role: Role::Framer, id: 1 })
                         .collect::<Vec<_>>()
@@ -54,7 +54,7 @@ impl RoleStateImpl for Framer {
                     &Tags::tagged(game, TagSetID::Framer(actor_ref))
                         .into_iter()
                         .filter(|p|
-                            !p.all_night_visitors_cloned(game).iter().any(|visitor| {
+                            !p.all_night_visitors_cloned(midnight_variables).iter().any(|visitor| {
                                 RoleSet::TownInvestigative.get_roles().contains(&visitor.role(game))
                             })
                         )

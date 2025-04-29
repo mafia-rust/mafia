@@ -1,5 +1,5 @@
 use crate::{game::{
-    ability_input::*, attack_power::AttackPower, event::{on_add_insider::OnAddInsider, on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority}, on_remove_insider::OnRemoveInsider}, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role_list::RoleSet, visit::{Visit, VisitTag}, Game
+    ability_input::*
 }, vec_set};
 
 use super::{detained::Detained, insider_group::InsiderGroupID, mafia::MafiaAttacker, night_visits::NightVisits, tags::{TagSetID, Tags}};
@@ -10,13 +10,13 @@ pub struct SyndicateGunItem {
 }
 
 impl SyndicateGunItem {
-    pub fn on_visit_wardblocked(game: &mut Game, visit: Visit){
-        NightVisits::retain(game, |v|
+    pub fn on_visit_wardblocked(_game: &mut Game, midnight_variables: &mut MidnightVariables, visit: Visit){
+        NightVisits::retain(midnight_variables, |v|
             v.tag != VisitTag::SyndicateGunItem || v.visitor != visit.visitor
         );
     }
-    pub fn on_player_roleblocked(game: &mut Game, player: PlayerReference){
-        NightVisits::retain(game, |v|
+    pub fn on_player_roleblocked(_game: &mut Game, midnight_variables: &mut MidnightVariables, player: PlayerReference){
+        NightVisits::retain(midnight_variables, |v|
             v.tag != VisitTag::SyndicateGunItem || v.visitor != player
         );
     }
@@ -126,12 +126,12 @@ impl SyndicateGunItem {
                 let Some(gun_target) = gun_target.first() else {return};
 
                 NightVisits::add_visit(
-                    game, 
+                    midnight_variables, 
                     Visit::new(player_with_gun, *gun_target, true, VisitTag::SyndicateGunItem)
                 );
             }
             OnMidnightPriority::Kill => {
-                let targets: Vec<(PlayerReference, PlayerReference)> = NightVisits::all_visits(game)
+                let targets: Vec<(PlayerReference, PlayerReference)> = NightVisits::all_visits(midnight_variables)
                     .iter()
                     .filter(|visit| visit.tag == VisitTag::SyndicateGunItem)
                     .map(|visit| (visit.visitor, visit.target))

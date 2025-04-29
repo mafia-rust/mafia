@@ -31,11 +31,11 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Disguiser {
     type ClientRoleState = Disguiser;
-    fn on_midnight(mut self, game: &mut Game, _midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(mut self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         if priority != OnMidnightPriority::Deception {return}
                 
-        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
         let Some(first_visit) = actor_visits.first() else {return};
         
         if !InsiderGroupID::in_same_revealed_group(game, actor_ref, first_visit.target) {return}

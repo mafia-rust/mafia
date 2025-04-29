@@ -23,7 +23,7 @@ impl RoleStateImpl for Detective {
     fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Investigative {return;}
         
-        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
         if let Some(visit) = actor_visits.first(){
             let suspicious = if Confused::is_confused(game, actor_ref) {
                 false

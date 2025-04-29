@@ -34,7 +34,6 @@ use components::drunk_aura::DrunkAura;
 use components::enfranchise::Enfranchise;
 use components::forfeit_vote::ForfeitVote;
 use components::mafia::Mafia;
-use components::night_visits::NightVisits;
 use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
 use components::poison::Poison;
@@ -125,7 +124,6 @@ pub struct Game {
     
     //components with data
     pub saved_controllers: SavedControllersMap,
-    night_visits: NightVisits,
     pub syndicate_gun_item: SyndicateGunItem,
     pub cult: Cult,
     pub mafia: Mafia,
@@ -249,7 +247,6 @@ impl Game {
                 settings,
 
                 saved_controllers: SavedControllersMap::default(),
-                night_visits: NightVisits::default(),
                 syndicate_gun_item: SyndicateGunItem::default(),
                 cult: Cult::default(),
                 mafia: Mafia,
@@ -869,7 +866,9 @@ pub mod test {
     use super::{
         ability_input::saved_controllers_map::SavedControllersMap,
         components::{
-            cult::Cult, fragile_vest::FragileVests, insider_group::InsiderGroupID, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, silenced::Silenced, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday
+            cult::Cult, fragile_vest::FragileVests, insider_group::InsiderGroupID, mafia::Mafia, mafia_recruits::MafiaRecruits,
+            pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, silenced::Silenced,
+            syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday
         }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine, player::{test::mock_player, PlayerReference},
@@ -923,7 +922,6 @@ pub mod test {
             settings,
 
             saved_controllers: SavedControllersMap::default(),
-            night_visits: NightVisits::default(),
             syndicate_gun_item: SyndicateGunItem::default(),
             cult: Cult::default(),
             mafia: Mafia,
