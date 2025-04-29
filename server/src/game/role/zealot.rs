@@ -26,7 +26,7 @@ impl RoleStateImpl for Zealot {
         if priority != OnMidnightPriority::Kill || Cult::next_ability(game) != CultAbility::Kill {return}
 
         
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(visit) = actor_visits.first() else {return};
         let target_ref = visit.target;
         

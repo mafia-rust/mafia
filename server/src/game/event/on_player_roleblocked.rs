@@ -22,9 +22,9 @@ impl OnPlayerRoleblocked{
         }
         
         for player_ref in PlayerReference::all_players(game){
-            player_ref.on_player_roleblocked(game, self.player, self.invisible);
+            player_ref.on_player_roleblocked(game, midnight_variables, self.player, self.invisible);
         }
-        Mafia::on_player_roleblocked(game, self.player);
-        SyndicateGunItem::on_player_roleblocked(game, self.player);
+        Mafia::on_player_roleblocked(game, midnight_variables, self.player);
+        SyndicateGunItem::on_player_roleblocked(game, midnight_variables, self.player);
     }
 }

@@ -63,7 +63,7 @@ impl RoleStateImpl for Veteran {
             OnMidnightPriority::Kill => {
                 if !self.alerting_tonight {return}
 
-                for other_player_ref in actor_ref.all_night_visitors_cloned(game)
+                for other_player_ref in actor_ref.all_night_visitors_cloned(midnight_variables)
                     .into_iter().filter(|other_player_ref|
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref
@@ -88,7 +88,7 @@ impl RoleStateImpl for Veteran {
             game,
             Veteran { alerts_remaining: self.alerts_remaining, alerting_tonight: false });   
     }
-    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
+    fn on_player_roleblocked(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
 impl GetClientRoleState<ClientRoleState> for Veteran {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
