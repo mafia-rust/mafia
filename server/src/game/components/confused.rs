@@ -19,7 +19,7 @@ impl ConfusionData {
     }
     pub fn generate_red_herrings(game: &Game, player: PlayerReference) -> Vec<PlayerReference> {
         let count = game.assignments.iter()
-            .filter(|a|!a.2.friends_with_town())
+            .filter(|a|!a.1.1.friends_with_town())
             .count();
         PlayerReference::all_players(game)
                 .filter(|p|*p != player)

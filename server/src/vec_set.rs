@@ -18,6 +18,9 @@ impl <K> VecSet<K> where K: Eq {
     pub fn new() -> Self {
         VecSet { vec: VecMap::new() }
     }
+    pub fn len(&self) -> usize {
+        self.vec.len()
+    }
 
     pub fn insert(&mut self, key: K) -> Option<K> {
         self.vec.insert(key, ()).map(|(k, _)| k)
