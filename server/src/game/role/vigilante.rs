@@ -52,7 +52,7 @@ impl RoleStateImpl for Vigilante {
             
                 match self.state {
                     VigilanteState::Loaded { bullets } if bullets > 0 => {
-                        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                        let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                         if let Some(visit) = actor_visits.first(){
 
                             let target_ref = visit.target;

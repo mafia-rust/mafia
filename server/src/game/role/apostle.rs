@@ -31,7 +31,7 @@ impl RoleStateImpl for Apostle {
         match (priority, Cult::next_ability(game)) {
             (OnMidnightPriority::Kill, CultAbility::Kill) if game.cult().ordered_cultists.len() == 1 => {
 
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
                 
@@ -43,7 +43,7 @@ impl RoleStateImpl for Apostle {
             }
             (OnMidnightPriority::Convert, CultAbility::Convert) => {
                 
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 

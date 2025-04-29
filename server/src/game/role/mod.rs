@@ -69,17 +69,17 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn on_game_start(self, _game: &mut Game, _actor_ref: PlayerReference) {}
     fn before_initial_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
     fn on_conceal_role(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _concealed_player: PlayerReference) {}
-    fn on_player_roleblocked(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _invisible: bool) {
+    fn on_player_roleblocked(self, _game: &mut Game, midnight_machinations: &mut MidnightVariables, actor_ref: PlayerReference, player: PlayerReference, _invisible: bool) {
         if player != actor_ref {return}
 
-        NightVisits::retain(game, |v|
+        NightVisits::retain(midnight_machinations, |v|
             !matches!(v.tag, VisitTag::Role{..}) || v.visitor != actor_ref
         );
     }
-    fn on_visit_wardblocked(self, game: &mut Game, actor_ref: PlayerReference, visit: Visit) {
+    fn on_visit_wardblocked(self, _game: &mut Game, midnight_machinations: &mut MidnightVariables, actor_ref: PlayerReference, visit: Visit) {
         if actor_ref != visit.visitor {return};
 
-        NightVisits::retain(game, |v|
+        NightVisits::retain(midnight_machinations, |v|
             !matches!(v.tag, VisitTag::Role{..}) || v.visitor != actor_ref
         );
     }
@@ -245,14 +245,14 @@ mod macros {
                     }
                 }
                 
-                pub fn on_player_roleblocked(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, invisible: bool){
+                pub fn on_player_roleblocked(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, player: PlayerReference, invisible: bool){
                     match self {
-                        $(Self::$name(role_struct) => role_struct.on_player_roleblocked(game, actor_ref, player, invisible)),*
+                        $(Self::$name(role_struct) => role_struct.on_player_roleblocked(game, midnight_variables, actor_ref, player, invisible)),*
                     }
                 }
-                pub fn on_visit_wardblocked(self, game: &mut Game, actor_ref: PlayerReference, visit: Visit) {
+                pub fn on_visit_wardblocked(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, visit: Visit) {
                     match self {
-                        $(Self::$name(role_struct) => role_struct.on_visit_wardblocked(game, actor_ref, visit)),*
+                        $(Self::$name(role_struct) => role_struct.on_visit_wardblocked(game, midnight_variables, actor_ref, visit)),*
                     }
                 }
                 pub fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority){

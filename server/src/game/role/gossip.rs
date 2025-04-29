@@ -23,7 +23,7 @@ impl RoleStateImpl for Gossip {
     fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Investigative {return;}
 
-        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
         if let Some(visit) = actor_visits.first(){
             
             let enemies = if Confused::is_confused(game, actor_ref){
@@ -60,7 +60,7 @@ impl Gossip {
 
         match player_ref.night_appeared_visits(midnight_variables) {
             Some(x) => x.clone(),
-            None => player_ref.all_night_visits_cloned(game),
+            None => player_ref.all_night_visits_cloned(midnight_variables),
         }
             .iter()
             .map(|v|v.target)

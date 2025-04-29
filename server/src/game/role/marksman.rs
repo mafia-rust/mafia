@@ -45,9 +45,9 @@ impl RoleStateImpl for Marksman {
         if priority != OnMidnightPriority::Kill {return};
 
         let visiting_players: Vec<_> = actor_ref
-            .untagged_night_visits_cloned(game)
+            .untagged_night_visits_cloned(midnight_variables)
             .into_iter()
-            .flat_map(|p|p.target.all_night_visitors_cloned(game))
+            .flat_map(|p|p.target.all_night_visitors_cloned(midnight_variables))
             .collect();
 
         let Some(PlayerListSelection(marks)) = ControllerID::role(actor_ref, Role::Marksman, 0)

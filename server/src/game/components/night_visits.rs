@@ -1,64 +1,47 @@
 use crate::game::{
-    phase::PhaseType, player::PlayerReference, visit::{Visit, VisitTag}, Game
+    event::on_midnight::MidnightVariables, player::PlayerReference, visit::{Visit, VisitTag}
 };
 
 #[derive(Default)]
-pub struct NightVisits{
-    pub visits: Vec<Visit>,
-}
+pub struct NightVisits;
 
 
 impl NightVisits{
-    //event listeners
-    pub fn on_phase_start(game: &mut Game, phase: PhaseType){
-        if phase == PhaseType::Night{
-            Self::clear_all_visits(game);
-        }
-    }
-
-
-
-
     // mutators
-    fn clear_all_visits(game: &mut Game){
-        game.night_visits.visits.clear();
+    fn clear_visits_from_visitor(midnight_variables: &mut MidnightVariables, visitor: PlayerReference){
+        Self::retain(midnight_variables, |visit| visit.visitor != visitor);
+    }
+    pub fn add_visit(midnight_variables: &mut MidnightVariables, visits: Visit){
+        midnight_variables.visits_mut().push(visits);
+    }
+    fn add_visits(midnight_variables: &mut MidnightVariables, visits: Vec<Visit>){
+        midnight_variables.visits_mut().extend(visits);
     }
 
-
-    fn clear_visits_from_visitor(game: &mut Game, visitor: PlayerReference){
-        Self::retain(game, |visit| visit.visitor != visitor);
+    pub fn all_visits(midnight_variables: &MidnightVariables) -> Vec<&Visit>{
+        midnight_variables.visits().iter().collect()
     }
-    pub fn add_visit(game: &mut Game, visits: Visit){
-        game.night_visits.visits.push(visits);
+    pub fn all_visits_mut(midnight_variables: &mut MidnightVariables) -> impl Iterator<Item = &mut Visit>{
+        midnight_variables.visits_mut().iter_mut()
     }
-    fn add_visits(game: &mut Game, visits: Vec<Visit>){
-        game.night_visits.visits.extend(visits);
-    }
-
-    pub fn all_visits(game: &Game) -> Vec<&Visit>{
-        game.night_visits.visits.iter().collect()
-    }
-    pub fn all_visits_mut(game: &mut Game) -> impl Iterator<Item = &mut Visit>{
-        game.night_visits.visits.iter_mut()
-    }
-    pub fn all_visits_cloned(game: &mut Game) -> Vec<Visit>{
-        game.night_visits.visits.to_vec()
+    pub fn all_visits_cloned(midnight_variables: &mut MidnightVariables) -> Vec<Visit>{
+        midnight_variables.visits_mut().to_vec()
     }
 
     //Only keeps elements where f is true
-    pub fn retain(game: &mut Game, f: impl FnMut(&Visit) -> bool){
-        game.night_visits.visits.retain(f);
+    pub fn retain(midnight_variables: &mut MidnightVariables, f: impl FnMut(&Visit) -> bool){
+        midnight_variables.visits_mut().retain(f);
     }
 
     //accessors
-    fn get_untagged_visits_from_visitor(game: &Game, visitor: PlayerReference) -> Vec<&Visit>{
-        game.night_visits.visits.iter()
+    fn get_untagged_visits_from_visitor(midnight_variables: &MidnightVariables, visitor: PlayerReference) -> Vec<&Visit>{
+        midnight_variables.visits().iter()
             .filter(|visit| visit.visitor == visitor)
             .filter(|visit| matches!(visit.tag, VisitTag::Role{..}))
             .collect()
     }
-    fn get_untagged_visits_from_visitor_mut(game: &mut Game, visitor: PlayerReference) -> Vec<&mut Visit>{
-        game.night_visits.visits.iter_mut()
+    fn get_untagged_visits_from_visitor_mut(midnight_variables: &mut MidnightVariables, visitor: PlayerReference) -> Vec<&mut Visit>{
+        midnight_variables.visits_mut().iter_mut()
             .filter(|visit| visit.visitor == visitor)
             .filter(|visit| matches!(visit.tag, VisitTag::Role{..}))
             .collect()
@@ -66,36 +49,36 @@ impl NightVisits{
 }
 
 impl PlayerReference{
-    pub fn untagged_night_visits<'a>(&self, game: &'a Game) -> Vec<&'a Visit>{
-        NightVisits::get_untagged_visits_from_visitor(game, *self)
+    pub fn untagged_night_visits<'a>(&self, midnight_variables: &'a MidnightVariables) -> Vec<&'a Visit>{
+        NightVisits::get_untagged_visits_from_visitor(midnight_variables, *self)
     }
-    pub fn untagged_night_visits_mut<'a>(&self, game: &'a mut Game) -> Vec<&'a mut Visit>{
-        NightVisits::get_untagged_visits_from_visitor_mut(game, *self)
+    pub fn untagged_night_visits_mut<'a>(&self, midnight_variables: &'a mut MidnightVariables) -> Vec<&'a mut Visit>{
+        NightVisits::get_untagged_visits_from_visitor_mut(midnight_variables, *self)
     }
-    pub fn untagged_night_visits_cloned(&self, game: &Game) -> Vec<Visit>{
-        NightVisits::get_untagged_visits_from_visitor(game, *self)
+    pub fn untagged_night_visits_cloned(&self, midnight_variables: &MidnightVariables) -> Vec<Visit>{
+        NightVisits::get_untagged_visits_from_visitor(midnight_variables, *self)
             .into_iter()
             .copied()
             .collect()
     }
     /// Returns all vists where the player is the visitor
-    pub fn all_night_visits_cloned(&self, game: &Game) -> Vec<Visit>{
-        NightVisits::all_visits(game)
+    pub fn all_night_visits_cloned(&self, midnight_variables: &MidnightVariables) -> Vec<Visit>{
+        NightVisits::all_visits(midnight_variables)
             .into_iter()
             .filter(|visit| visit.visitor == *self)
             .copied()
             .collect()
     }
     /// Returns all vists where the player is the target
-    pub fn all_night_visitors_cloned(self, game: &Game) -> Vec<PlayerReference> {
-        NightVisits::all_visits(game)
+    pub fn all_night_visitors_cloned(self, midnight_variables: &MidnightVariables) -> Vec<PlayerReference> {
+        NightVisits::all_visits(midnight_variables)
             .into_iter()
             .filter(|visit| visit.target == self)
             .map(|visit| visit.visitor)
             .collect()
     }
-    pub fn set_night_visits(&self, game: &mut Game, visits: Vec<Visit>){
-        NightVisits::clear_visits_from_visitor(game, *self);
-        NightVisits::add_visits(game, visits);
+    pub fn set_night_visits(&self, midnight_variables: &mut MidnightVariables, visits: Vec<Visit>){
+        NightVisits::clear_visits_from_visitor(midnight_variables, *self);
+        NightVisits::add_visits(midnight_variables, visits);
     }
 }

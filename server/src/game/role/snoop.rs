@@ -24,14 +24,14 @@ impl RoleStateImpl for Snoop {
         if priority != OnMidnightPriority::Investigative {return;}
 
 
-        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
         if let Some(visit) = actor_visits.first(){
 
             let townie = if Confused::is_confused(game, actor_ref) {
                 false
             }else{
                 visit.target.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
-                    actor_ref.all_night_visitors_cloned(game).is_empty() &&
+                    actor_ref.all_night_visitors_cloned(midnight_variables).is_empty() &&
                     !visit.target.has_suspicious_aura(game, midnight_variables)
             };
 

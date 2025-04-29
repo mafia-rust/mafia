@@ -22,7 +22,7 @@ impl RoleStateImpl for Bouncer {
         if priority != OnMidnightPriority::Ward {return;}
         
 
-        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
         if let Some(visit) = actor_visits.first(){
             let target_ref = visit.target;
             target_ref.ward(game, midnight_variables, &[*visit]);
@@ -44,6 +44,6 @@ impl RoleStateImpl for Bouncer {
             false
         )
     }
-    fn on_visit_wardblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _visit: Visit) {}
-    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
+    fn on_visit_wardblocked(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _visit: Visit) {}
+    fn on_player_roleblocked(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
