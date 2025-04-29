@@ -452,7 +452,7 @@ impl Game {
             .filter(|p| p.alive(self) && !ForfeitVote::forfeited_vote(self, *p))
             .count() as u8;
 
-        if Modifiers::modifier_is_enabled(self, ModifierType::TwoThirdsMajority) {
+        if Modifiers::is_enabled(self, ModifierType::TwoThirdsMajority) {
             // equivalent to x - (x - (x + 1)/3)/2 to prevent overflow issues
             eligible_voters
             .saturating_sub(
