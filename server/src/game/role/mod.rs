@@ -12,10 +12,11 @@ use crate::game::attack_power::DefensePower;
 
 use serde::{Serialize, Deserialize};
 
+use super::components::win_condition::WinCondition;
 use super::{
     ability_input::*, components::{insider_group::InsiderGroupID, night_visits::NightVisits},
     event::{on_midnight::{MidnightVariables, OnMidnightPriority}, on_whisper::{OnWhisper, WhisperFold, WhisperPriority}},
-    grave::GraveReference, visit::VisitTag, win_condition::WinCondition
+    grave::GraveReference, visit::VisitTag,
 };
 
 pub trait GetClientRoleState<CRS> {
