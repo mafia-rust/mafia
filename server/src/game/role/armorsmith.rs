@@ -3,6 +3,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::ControllerParametersMap;
 use crate::game::components::fragile_vest::FragileVests;
+use crate::game::components::player_component::PlayerComponent;
 use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::attack_power::DefensePower;
 use crate::game::phase::PhaseType;
@@ -58,11 +59,10 @@ impl RoleStateImpl for Armorsmith {
                             actor_ref.guard_player(game, midnight_variables, *visitor);
                         }
 
-                        //players with armor will have defense here because they are visitors to armorsmith
                         if visitors.contains(&visit.target){
-                            FragileVests::add_defense_item(game, visit.target, DefensePower::Protected, vec_set![actor_ref]);
+                            PlayerComponent::<FragileVests>::add_defense_item_midnight(game, midnight_variables, visit.target, DefensePower::Protected, vec_set![actor_ref]);
                         }else if let Some(random_visitor) = visitors.choose(&mut rand::rng()) {
-                            FragileVests::add_defense_item(game, *random_visitor, DefensePower::Protected, vec_set![actor_ref]);
+                            PlayerComponent::<FragileVests>::add_defense_item_midnight(game, midnight_variables, *random_visitor, DefensePower::Protected, vec_set![actor_ref]);
                         }
                     }
                 };

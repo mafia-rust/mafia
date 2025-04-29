@@ -90,7 +90,7 @@ impl Auditor{
         let mut all_possible_fake_roles = outline
             .get_role_assignments()
             .into_iter()
-            .map(|data| data.role)
+            .map(|data| data.role())
             .filter(|x|game.settings.enabled_roles.contains(x))
             .collect::<Vec<Role>>();
         all_possible_fake_roles.shuffle(&mut rand::rng());
@@ -106,7 +106,7 @@ impl Auditor{
         //at most 2 fake roles
         //at most outline_size - 1 fake roles
         for role in all_possible_fake_roles.iter(){
-            if out.len() >= Auditor::MAX_RESULT_COUNT || out.len() >= all_possible_fake_roles.len().saturating_sub(1) {break}
+            if out.count() >= Auditor::MAX_RESULT_COUNT || out.count() >= all_possible_fake_roles.len().saturating_sub(1) {break}
             out.insert(*role);
         }
 
