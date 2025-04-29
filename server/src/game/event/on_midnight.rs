@@ -1,6 +1,6 @@
 use crate::{event_priority, game::{
     attack_power::DefensePower, chat::ChatMessageVariant, components::{
-        fragile_vest::FragileVests, detained::Detained, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, poison::Poison, guard::Guard, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem
+        detained::Detained, fragile_vest::FragileVests, guard::Guard, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, player_component::PlayerComponent, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem
     }, grave::GraveKiller, modifiers::Modifiers, player::PlayerReference, role::{Role, RoleState}, visit::Visit, Game
 }};
 use super::Event;
@@ -58,7 +58,7 @@ impl Event for OnMidnight {
             Mafia::on_midnight,
             
             PlayerReference::on_midnight,
-            FragileVests::on_midnight,
+            PlayerComponent::<FragileVests>::on_midnight,
             Guard::on_midnight,
         ]
     }

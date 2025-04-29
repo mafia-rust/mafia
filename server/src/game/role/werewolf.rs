@@ -35,7 +35,7 @@ impl RoleStateImpl for Werewolf {
                 let Some(first_visit) = visits.first() else {return};
 
                 let target_ref = first_visit.target;
-                let enraged = Tags::tagged(game, TagSetID::WerewolfTracked(actor_ref)).len().saturating_mul(ENRAGED_DENOMINATOR) >= PlayerReference::all_players(game)
+                let enraged = Tags::tagged(game, TagSetID::WerewolfTracked(actor_ref)).count().saturating_mul(ENRAGED_DENOMINATOR) >= PlayerReference::all_players(game)
                     .filter(|p|p.alive(game)||*p==actor_ref)
                     .count().saturating_mul(ENRAGED_NUMERATOR);
 
