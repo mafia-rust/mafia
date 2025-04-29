@@ -214,6 +214,7 @@ fn mortician_obscures_fail_after_death(){
 
     game.skip_to(Judgement, 2);
     jail.set_verdict(Verdict::Guilty);
+    gf.set_verdict(Verdict::Guilty);
 
     game.skip_to(Night, 2);
     gf.send_ability_input_player_list_typical(townie);
@@ -632,6 +633,7 @@ fn mayor_reveals_after_they_vote(){
     game.skip_to(Nomination, 2);
     mayor.vote_for_player(Some(mafioso));
     mayor.send_ability_input_unit_typical();
+    game.next_phase();
     assert_eq!(game.current_phase().phase(), Testimony);
 }
 
