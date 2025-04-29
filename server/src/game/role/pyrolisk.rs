@@ -35,7 +35,7 @@ impl RoleStateImpl for Pyrolisk {
 
                 let mut killed_at_least_once = false;
 
-                for other_player_ref in actor_ref.all_night_visitors_cloned(game)
+                for other_player_ref in actor_ref.all_night_visitors_cloned(midnight_variables)
                     .into_iter().filter(|other_player_ref|
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref
@@ -50,7 +50,7 @@ impl RoleStateImpl for Pyrolisk {
                 }
 
                 if !killed_at_least_once {
-                    let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                    let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                     if let Some(visit) = actor_visits.first(){
                         let attack_success = visit.target.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Role(Role::Pyrolisk), AttackPower::ArmorPiercing, true);
                         if attack_success {

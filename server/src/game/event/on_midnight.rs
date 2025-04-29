@@ -70,28 +70,37 @@ impl Event for OnMidnight {
 
 #[derive(Default, Clone, Debug, PartialEq, Eq)]
 pub struct MidnightVariables {
-    data: Vec<PlayerMidnightVariables>
+    player_data: Vec<PlayerMidnightVariables>,
+    visits: Vec<Visit>,
 }
 
 impl MidnightVariables {
     pub fn new(game: &Game) -> Self {
         Self {
-            data: PlayerReference::all_players(game)
+            player_data: PlayerReference::all_players(game)
                 .map(|player_ref| PlayerMidnightVariables::new(game, player_ref))
-                .collect()
+                .collect(),
+            visits: Vec::new()
         }
     }
 
     pub fn get(&self, player_ref: PlayerReference) -> &PlayerMidnightVariables {
         unsafe {
-            self.data.get_unchecked(player_ref.index() as usize)
+            self.player_data.get_unchecked(player_ref.index() as usize)
         }
     }
 
     pub fn get_mut(&mut self, player_ref: PlayerReference) -> &mut PlayerMidnightVariables {
         unsafe {
-            self.data.get_unchecked_mut(player_ref.index() as usize)
+            self.player_data.get_unchecked_mut(player_ref.index() as usize)
         }
+    }
+
+    pub fn visits(&self)->&Vec<Visit>{
+        &self.visits
+    }
+    pub fn visits_mut(&mut self)->&mut Vec<Visit>{
+        &mut self.visits
     }
 }
 

@@ -29,7 +29,7 @@ impl RoleStateImpl for Detective {
         let suspicious = if Confused::is_confused(game, actor_ref) {
             Self::player_is_suspicious_confused(game, midnight_variables, target_ref, actor_ref)
         }else{
-            Detective::player_is_suspicious(game, midnight_variables, target_ref)
+            Self::player_is_suspicious(game, midnight_variables, target_ref)
         };
 
         let message = ChatMessageVariant::DetectiveResult {

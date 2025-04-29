@@ -84,7 +84,7 @@ impl RoleStateImpl for Engineer {
                             actor_ref.set_role_state(game, Engineer {trap: Trap::Ready});
                         },
                         Trap::Ready => {
-                            if let Some(visit) = actor_ref.untagged_night_visits_cloned(game).first(){
+                            if let Some(visit) = actor_ref.untagged_night_visits_cloned(midnight_variables).first(){
                                 actor_ref.set_role_state(game, Engineer {trap: Trap::Set{target: visit.target}});
                             }
                         },
@@ -102,7 +102,7 @@ impl RoleStateImpl for Engineer {
             }
             OnMidnightPriority::Kill => {
                 if let Trap::Set { target, .. } = self.trap {
-                    for visit in NightVisits::all_visits(game).into_iter().copied().collect::<Vec<_>>() {
+                    for visit in NightVisits::all_visits(midnight_variables).into_iter().copied().collect::<Vec<_>>() {
                         if 
                             visit.attack &&
                             visit.target == target &&
@@ -122,7 +122,7 @@ impl RoleStateImpl for Engineer {
                         should_dismantle = true;
                     }
 
-                    for visitor in target.all_night_visitors_cloned(game) {
+                    for visitor in target.all_night_visitors_cloned(midnight_variables) {
                         if visitor != actor_ref{
                             actor_ref.push_night_message(midnight_variables, ChatMessageVariant::EngineerVisitorsRole { role: visitor.role(game) });
                             should_dismantle = true;

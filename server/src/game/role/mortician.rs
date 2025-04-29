@@ -46,10 +46,10 @@ impl RoleStateImpl for Mortician {
             cremations_remaining: game.num_players().div_ceil(5)
         }
     }
-    fn on_midnight(self, game: &mut Game, _midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Deception=>{
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(visit) = actor_visits.first() else{return};
 
                 Tags::add_tag(game, TagSetID::MorticianTag(actor_ref), visit.target);
