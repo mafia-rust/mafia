@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::game::ability_input::AvailableTwoPlayerOptionSelection;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::role_list::RoleSet;
 use crate::game::{attack_power::DefensePower, phase::PhaseType};
 use crate::game::player::PlayerReference;
@@ -29,8 +29,8 @@ pub struct ClientRoleState;
 
 impl RoleStateImpl for Retributionist {
     type ClientRoleState = ClientRoleState;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
-        if let Some(currently_used_player) = actor_ref.possess_night_action(game, priority, self.currently_used_player){
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if let Some(currently_used_player) = actor_ref.possess_night_action(game, midnight_variables, priority, self.currently_used_player){
             let mut used_bodies = self.used_bodies;
             used_bodies.push(currently_used_player);
 
@@ -68,11 +68,8 @@ impl RoleStateImpl for Retributionist {
             .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
-        common_role::convert_controller_selection_to_visits(
-            game,
-            actor_ref,
-            ControllerID::role(actor_ref, Role::Retributionist, 0),
-            false
+        common_role::convert_controller_selection_to_visits_possession(
+            game, actor_ref, ControllerID::role(actor_ref, Role::Retributionist, 0)
         )
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
@@ -80,7 +77,7 @@ impl RoleStateImpl for Retributionist {
             actor_ref.set_role_state(game, Retributionist { currently_used_player: None, ..self });
         }
     }
-    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
+    fn on_player_roleblocked(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
 impl GetClientRoleState<ClientRoleState> for Retributionist {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

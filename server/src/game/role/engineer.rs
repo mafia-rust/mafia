@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::game::ability_input::AvailableBooleanSelection;
 use crate::game::attack_power::AttackPower;
 use crate::game::components::night_visits::NightVisits;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::phase::PhaseType;
@@ -73,18 +73,18 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Engineer {
     type ClientRoleState = ClientRoleState;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Heal => {
                 //upgrade state
 
-                if !actor_ref.night_blocked(game) {
+                if !actor_ref.night_blocked(midnight_variables) {
                     match self.trap {
                         Trap::Dismantled => {
                             actor_ref.set_role_state(game, Engineer {trap: Trap::Ready});
                         },
                         Trap::Ready => {
-                            if let Some(visit) = actor_ref.untagged_night_visits_cloned(game).first(){
+                            if let Some(visit) = actor_ref.untagged_night_visits_cloned(midnight_variables).first(){
                                 actor_ref.set_role_state(game, Engineer {trap: Trap::Set{target: visit.target}});
                             }
                         },
@@ -97,18 +97,18 @@ impl RoleStateImpl for Engineer {
                 }
     
                 if let RoleState::Engineer(Engineer{trap: Trap::Set{target, ..}}) = actor_ref.role_state(game).clone(){
-                    target.increase_defense_to(game, DefensePower::Protection);
+                    actor_ref.guard_player(game, midnight_variables, target);
                 }
             }
             OnMidnightPriority::Kill => {
                 if let Trap::Set { target, .. } = self.trap {
-                    for visit in NightVisits::all_visits(game).into_iter().copied().collect::<Vec<_>>() {
+                    for visit in NightVisits::all_visits(midnight_variables).into_iter().copied().collect::<Vec<_>>() {
                         if 
                             visit.attack &&
                             visit.target == target &&
                             visit.visitor != actor_ref
                         {
-                            visit.visitor.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Engineer), AttackPower::ArmorPiercing, false);
+                            visit.visitor.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Role(Role::Engineer), AttackPower::ArmorPiercing, false);
                         }
                     }
                 }
@@ -118,15 +118,13 @@ impl RoleStateImpl for Engineer {
 
                     let mut should_dismantle = false;
 
-                    if target.night_attacked(game){
-                        actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
-                        target.push_night_message(game, ChatMessageVariant::YouWereProtected);
+                    if target.night_attacked(midnight_variables){
                         should_dismantle = true;
                     }
 
-                    for visitor in target.all_night_visitors_cloned(game) {
+                    for visitor in target.all_night_visitors_cloned(midnight_variables) {
                         if visitor != actor_ref{
-                            actor_ref.push_night_message(game, ChatMessageVariant::EngineerVisitorsRole { role: visitor.role(game) });
+                            actor_ref.push_night_message(midnight_variables, ChatMessageVariant::EngineerVisitorsRole { role: visitor.role(game) });
                             should_dismantle = true;
                         }
                     }
@@ -137,7 +135,7 @@ impl RoleStateImpl for Engineer {
                 }
 
                 if let RoleState::Engineer(Engineer { trap }) = actor_ref.role_state(game){
-                    actor_ref.push_night_message(game, ChatMessageVariant::TrapStateEndOfNight { state: trap.state() });
+                    actor_ref.push_night_message(midnight_variables, ChatMessageVariant::TrapStateEndOfNight { state: trap.state() });
                 }
             }
             _ => {}

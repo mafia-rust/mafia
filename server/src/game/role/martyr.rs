@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::game::ability_input::AvailableBooleanSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::{Grave, GraveDeathCause, GraveInformation, GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -53,22 +53,22 @@ impl RoleStateImpl for Martyr {
             state: MartyrState::StillPlaying { bullets: game.num_players().div_ceil(5) }
         }
     }
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(mut self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Kill {return}
         let MartyrState::StillPlaying { bullets } = self.state else {return};
         if bullets == 0 {return}
-        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
         if let Some(visit) = actor_visits.first() {
             let target_ref = visit.target;
 
             self.state = MartyrState::StillPlaying { bullets: bullets.saturating_sub(1) };
 
             if target_ref == actor_ref {
-                if target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Suicide, AttackPower::Basic, true) {
+                if target_ref.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Suicide, AttackPower::Basic, true) {
                     self.state = MartyrState::Won;
                 }
             } else {
-                target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Martyr), AttackPower::Basic, true);
+                target_ref.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Role(Role::Martyr), AttackPower::Basic, true);
             }
         };
 
@@ -89,7 +89,7 @@ impl RoleStateImpl for Martyr {
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         let Some(BooleanSelection(true)) = ControllerID::role(actor_ref, Role::Martyr, 0).get_boolean_selection(game) else {return Vec::new()};
-        vec![Visit::new_none(actor_ref, actor_ref, true)]
+        vec![Visit::new_role(actor_ref, actor_ref, true, Role::Martyr, 0)]
     }
     fn on_phase_start(self,  game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         if phase == PhaseType::Obituary && matches!(self.state, MartyrState::StillPlaying {..}) {
@@ -103,7 +103,7 @@ impl RoleStateImpl for Martyr {
     fn on_role_creation(self,  game: &mut Game, actor_ref: PlayerReference) {
         game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::MartyrRevealed { martyr: actor_ref.index() });
         for player in PlayerReference::all_players(game){
-            player.insert_role_label(game, actor_ref);
+            player.reveal_players_role(game, actor_ref);
         }
     }
     fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference) {
@@ -120,7 +120,7 @@ impl RoleStateImpl for Martyr {
             for player in PlayerReference::all_players(game) {
                 if player == actor_ref {continue}
                 if !player.alive(game) {continue}
-                if player.defense(game).can_block(AttackPower::ProtectionPiercing) {continue}
+                if player.normal_defense(game).can_block(AttackPower::ProtectionPiercing) {continue}
                 player.die_and_add_grave(game, Grave::from_player_suicide(game, player));
             }
     

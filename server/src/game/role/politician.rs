@@ -9,7 +9,7 @@ use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::Grave;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
-use crate::game::win_condition::WinCondition;
+use crate::game::components::win_condition::WinCondition;
 use crate::game::Game;
 
 use super::{ControllerID, ControllerParametersMap, GetClientRoleState, Role, RoleState, RoleStateImpl};
@@ -54,7 +54,7 @@ pub struct ClientRoleState;
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armored;
 
 impl RoleStateImpl for Politician {
     type ClientRoleState = ClientRoleState;
@@ -123,7 +123,7 @@ impl RoleStateImpl for Politician {
         self.check_and_start_countdown(game, actor_ref);
     }
 
-    fn default_win_condition(self) -> crate::game::win_condition::WinCondition where RoleState: From<Self> {
+    fn default_win_condition(self) -> WinCondition where RoleState: From<Self> {
         WinCondition::GameConclusionReached{win_if_any: vec![GameConclusion::Politician].into_iter().collect()}
     }
     

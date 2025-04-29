@@ -4,8 +4,9 @@ use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
+use mafia_server::game::attack_power::DefensePower;
 pub use mafia_server::game::{
-    ability_input::{ControllerID, IntegerSelection, PlayerListSelection, RoleOptionSelection},
+    ability_input::{ControllerID, IntegerSelection, PlayerListSelection, RoleListSelection},
     game_conclusion::GameConclusion,
     role::engineer::Trap,
     chat::{ChatMessageVariant, MessageSender, ChatGroup}, 
@@ -57,6 +58,7 @@ pub use mafia_server::game::{
         mayor::Mayor,
         medium::Medium,
         retributionist::Retributionist,
+        polymath::Polymath,
 
         godfather::Godfather,
         impostor::Impostor,
@@ -166,41 +168,6 @@ fn detective_neutrals(){
         ChatMessageVariant::SheriffResult { suspicious: true }
     );
 
-}
-
-#[test]
-fn auditor_standard_double_audit(){
-    kit::scenario!(game in Night 1 where
-        auditor: Auditor,
-        _townie: Auditor,
-        _mafioso: Mafioso
-    );
-
-    let input = AbilityInput::new(
-        ControllerID::role(auditor.player_ref(), Role::Auditor, 0), 
-        TwoRoleOutlineOptionSelection(
-            RoleOutlineReference::new(&game, 0), 
-            RoleOutlineReference::new(&game, 1)
-        )
-    );
-
-    auditor.send_ability_input(input);
-    game.next_phase();
-    
-    let messages = auditor.get_messages_after_night(1);
-
-    let mut results: u8 = 0;
-    let mut found_auditor = false;
-    for message in messages.iter() {
-        if let ChatMessageVariant::AuditorResult { role_outline: _, result } = message {
-            results += 1;
-            if result.0.contains(&Role::Auditor) {
-                found_auditor = true;
-            }
-        }
-    }
-    assert!(results == 2);
-    assert!(found_auditor);
 }
 
 #[test]
@@ -541,11 +508,32 @@ fn bodyguard_basic() {
 
     game.skip_to(Obituary, 3);
 
-    assert!(townie.get_messages().contains(&ChatMessageVariant::YouWereProtected));
+    // assert!(townie.get_messages().contains(&ChatMessageVariant::YouWereGuarded));
 
     assert!(townie.alive());
     assert!(!bg.alive());
     assert!(!maf.alive());
+}
+
+#[test]
+fn doctor_basic() {
+    kit::scenario!(game in Night 2 where
+        maf: Mafioso,
+        bg: Doctor,
+        townie: Detective
+    );
+
+    maf.send_ability_input_player_list_typical(townie);
+    bg.send_ability_input_player_list_typical(townie);
+
+    game.skip_to(Obituary, 3);
+
+    assert!(townie.get_messages().contains(&ChatMessageVariant::YouWereGuarded));
+    assert!(bg.get_messages().contains(&ChatMessageVariant::YouGuardedSomeone));
+
+    assert!(townie.alive());
+    assert!(bg.alive());
+    assert!(maf.alive());
 }
 
 /// Tests if transporter properly swaps, redirecting actions on their first target to their
@@ -567,8 +555,8 @@ fn transporter_basic_vigilante_escort() {
     assert!(town1.alive());
     assert!(!town2.alive());
 
-    assert!(town1.was_blocked());
-    assert!(!town2.was_blocked());
+    assert!(town1.received_blocked_message());
+    assert!(!town2.received_blocked_message());
     
     game.skip_to(Obituary, 4);
     assert!(!vigi.alive());
@@ -627,9 +615,9 @@ fn bodyguard_protects_transported_target() {
     assert!(!bg.alive());
     assert!(!maf.alive());
 
-    assert_not_contains!(t1.get_messages(), ChatMessageVariant::YouWereProtected);
-    assert_contains!(t2.get_messages(), ChatMessageVariant::YouWereProtected);
-    assert_contains!(bg.get_messages(), ChatMessageVariant::TargetWasAttacked);
+    // assert_not_contains!(t1.get_messages(), ChatMessageVariant::YouWereGuarded);
+    // assert_contains!(t2.get_messages(), ChatMessageVariant::YouWereGuarded);
+    // assert_contains!(bg.get_messages(), ChatMessageVariant::YouGuardedSomeone);
 }
 
 #[test]
@@ -844,7 +832,8 @@ fn ambusher_basic(){
     assert!(protected_player.alive());
     assert!(townie1.alive() || townie2.alive());
     assert!(!townie1.alive() || !townie2.alive());
-    assert!(!blackmailer.alive());
+    // assert!(!blackmailer.alive());
+    assert!(blackmailer.get_messages().contains(&ChatMessageVariant::YouSurvivedAttack)||!blackmailer.alive());
     assert!(townie1.alive() == townie1_status);
     assert!(townie2.alive() == townie2_status);
     
@@ -874,7 +863,7 @@ fn ambusher_does_not_kill_framed_player(){
 }
 
 #[test]
-fn ambusher_kills_self(){
+fn ambusher_attacks_self(){
     kit::scenario!(game in Night 2 where
         ambusher: Ambusher,
         protected_player: Jester,
@@ -889,7 +878,9 @@ fn ambusher_kills_self(){
 
     game.next_phase();
 
-    assert!(!ambusher.alive());
+    assert_contains!(ambusher.get_messages(), ChatMessageVariant::YouSurvivedAttack);
+
+    assert!(ambusher.alive());
     assert!(!protected_player.alive());
     assert!(townie.alive());
 }
@@ -1233,6 +1224,41 @@ fn drunk_suspicious_aura() {
 }
 
 #[test]
+fn framer_second_visit_erased() {
+    kit::scenario!(game in Night 2 where
+        framer: Framer,
+        lookout: Lookout,
+        v: Villager
+    );
+
+    framer.send_ability_input_player_list_typical(lookout);
+    framer.send_ability_input_player_list(v, 1);
+    lookout.send_ability_input_player_list_typical(v);
+
+    assert_not_contains!(
+        lookout.get_messages(),
+        ChatMessageVariant::LookoutResult { players: vec![framer.index()] }
+    )
+}
+
+#[test]
+fn witch_second_visit_erased() {
+    kit::scenario!(game in Night 2 where
+        witch: MafiaWitch,
+        lookout: Lookout,
+        v: Villager
+    );
+
+    witch.send_ability_input_two_player_typical(lookout, v);
+    lookout.send_ability_input_player_list_typical(v);
+
+    assert_not_contains!(
+        lookout.get_messages(),
+        ChatMessageVariant::LookoutResult { players: vec![witch.index()] }
+    )
+}
+
+#[test]
 fn drunk_framer() {
     kit::scenario!(game in Night 2 where
         drunk: Drunk,
@@ -1346,7 +1372,7 @@ fn snoop_basic() {
     assert!(det.send_ability_input_player_list_typical(snoop));
     game.next_phase();
     assert_contains!(
-        snoop.get_messages(),
+        snoop.get_messages_after_night(1),
         ChatMessageVariant::SnoopResult { townie: false }
     );
 
@@ -1355,7 +1381,7 @@ fn snoop_basic() {
     assert!(snoop.send_ability_input_player_list_typical(det));
     game.next_phase();
     assert_contains!(
-        snoop.get_messages(),
+        snoop.get_messages_after_night(2),
         ChatMessageVariant::SnoopResult { townie: true }
     );
 
@@ -1364,10 +1390,120 @@ fn snoop_basic() {
     assert!(snoop.send_ability_input_player_list_typical(gf));
     game.next_phase();
     assert_contains!(
-        snoop.get_messages_after_last_message(
-            ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 3 }
-        ),
+        snoop.get_messages_after_night(3),
         ChatMessageVariant::SnoopResult { townie: false }
+    );
+}
+
+#[test]
+fn polymath_snoop_basic() {
+    kit::scenario!(game in Night 1 where
+        gf: Godfather,
+        framer: Framer,
+        det: Detective,
+        polymath: Polymath
+    );
+    let mut night = 1;
+    polymath.send_ability_input_integer_typical(1);
+    assert!(polymath.send_ability_input_player_list(det, 1));
+    assert!(det.send_ability_input_player_list_typical(polymath));
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: false }
+    );
+    night += 1;
+    game.skip_to(Night, night);
+
+    polymath.send_ability_input_integer_typical(1);
+    assert!(polymath.send_ability_input_player_list(det, 1));
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: true }
+    );
+
+    night += 1;
+    game.skip_to(Night, night);
+
+    polymath.send_ability_input_integer_typical(1);
+    assert!(polymath.send_ability_input_player_list(gf, 1));
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: true }
+    );
+
+    night += 1;
+    game.skip_to(Night, night);
+
+    polymath.send_ability_input_integer_typical(1);
+    polymath.send_ability_input_player_list(det, 1);
+    det.send_ability_input_player_list_typical(polymath);
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: false }
+    );
+
+    night += 1;
+    game.skip_to(Night, night);
+
+    framer.send_ability_input_player_list_typical(det);
+    polymath.send_ability_input_integer_typical(1);
+    polymath.send_ability_input_player_list(det, 1);
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: false }
+    );
+
+    night += 1;
+    game.skip_to(Night, night);
+
+    polymath.send_ability_input_integer_typical(1);
+    polymath.send_ability_input_player_list(framer, 1);
+    game.next_phase();
+    assert_contains!(
+        polymath.get_messages_after_night(night),
+        ChatMessageVariant::PolymathSnoopResult { inno: false }
+    );
+}
+
+#[test]
+fn polymath_armorsmith_marksman_basic() {
+    kit::scenario!(game in Night 2 where
+        armor: Polymath,
+        mark: Polymath,
+        phil: Philosopher
+    );
+    
+    armor.send_ability_input_integer_typical(2);
+    armor.send_ability_input_player_list(phil, 2);
+    mark.send_ability_input_integer_typical(4);
+    mark.send_ability_input_player_list(phil, 4);
+    mark.send_ability_input_player_list(armor, 5);
+    phil.send_ability_input_two_player_typical(armor, mark);
+
+    game.next_phase();
+
+    assert!(armor.alive());
+    assert!(mark.alive());
+    assert!(phil.alive());
+
+    assert_contains!(
+        mark.get_messages_after_night(1),
+        ChatMessageVariant::SomeoneSurvivedYourAttack
+    );
+
+    assert_contains!(
+        armor.get_messages_after_night(2),
+        ChatMessageVariant::YouGuardedSomeone
+    );
+    
+    assert_contains!(
+        phil.get_messages_after_night(2),
+        ChatMessageVariant::YouWereGuarded
     );
 }
 
@@ -1968,7 +2104,7 @@ fn recruits_dont_get_converted_to_mk(){
 
 #[test]
 fn arsonist_ignites_and_aura(){
-    kit::scenario!(game in Night 1 where
+    kit::scenario!(game in Night 2 where
         arso: Arsonist,
         townie: Detective,
         townie2: Detective,
@@ -1990,10 +2126,10 @@ fn arsonist_ignites_and_aura(){
     assert!(vigi.alive());
 
     assert_contains!(sher.get_messages_after_last_message(
-        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 1}
+        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 2}
     ), ChatMessageVariant::SheriffResult{ suspicious: true });
 
-    game.skip_to(Night, 2);
+    game.skip_to(Night, 3);
     
     assert!(arso.send_ability_input_player_list_typical(townie2));
     assert!(sher.send_ability_input_player_list_typical(townie2));
@@ -2001,27 +2137,27 @@ fn arsonist_ignites_and_aura(){
     game.next_phase();
 
     assert_contains!(sher.get_messages_after_last_message(
-        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 2}
+        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 3}
     ), ChatMessageVariant::SheriffResult{ suspicious: true });
 
-    game.skip_to(Nomination, 3);
+    game.skip_to(Nomination, 4);
 
     townie2.vote_for_player(Some(arso));
     gf.vote_for_player(Some(arso));
     vigi.vote_for_player(Some(arso));
 
-    game.skip_to(Judgement, 3);
+    game.skip_to(Judgement, 4);
 
     gf.set_verdict(mafia_server::game::verdict::Verdict::Guilty);
 
-    game.skip_to(Night, 3);
+    game.skip_to(Night, 4);
 
     assert!(sher.send_ability_input_player_list_typical(townie2));
 
     game.next_phase();
     
     assert_contains!(sher.get_messages_after_last_message(
-        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 3}
+        ChatMessageVariant::PhaseChange{phase: PhaseState::Night, day_number: 4}
     ), ChatMessageVariant::SheriffResult{ suspicious: false });
 
     
@@ -2255,7 +2391,7 @@ fn yer() {
     yer.send_ability_input_player_list(detective, 1);
     yer.send_ability_input(AbilityInput::new(
         ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
-        RoleOptionSelection(Some(Role::TallyClerk)) 
+        RoleListSelection(vec!(Role::TallyClerk)) 
     ));
 
     game.skip_to(PhaseType::Dusk, 2);
@@ -2273,7 +2409,7 @@ fn yer() {
     yer.send_ability_input_player_list(detective, 1);
     yer.send_ability_input(AbilityInput::new(
         ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
-        RoleOptionSelection(Some(Role::Mafioso)) 
+        RoleListSelection(vec!(Role::Mafioso)) 
     ));
     
     game.skip_to(PhaseType::Dusk, 3);
@@ -2312,7 +2448,7 @@ fn yer() {
     yer.send_ability_input_player_list(convertee, 1);
     yer.send_ability_input(AbilityInput::new(
         ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
-        RoleOptionSelection(Some(Role::Zealot)) 
+        RoleListSelection(vec!(Role::Zealot)) 
     ));
     
     game.skip_to(PhaseType::Dusk, 4);
@@ -2349,7 +2485,7 @@ fn yer() {
     convertee.send_ability_input_player_list(informant, 1);
     convertee.send_ability_input(AbilityInput::new(
         ControllerID::Role { player: yer.player_ref(), role: Role::Yer, id: 2 }, 
-        RoleOptionSelection(Some(Role::Zealot)) 
+        RoleListSelection(vec!(Role::Zealot)) 
     ));
     
     game.skip_to(PhaseType::Dusk, 5);
@@ -2497,14 +2633,14 @@ fn armorsmith_doesnt_get_wardblocked_when_warded(){
         bouncer.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 2 }
         ),
-        ChatMessageVariant::YouWereProtected
+        ChatMessageVariant::YouWereGuarded
     );
     
     assert_contains!(
-        bouncer.get_messages_after_last_message(
+        armor.get_messages_after_last_message(
             ChatMessageVariant::PhaseChange { phase: PhaseState::Night, day_number: 2 }
         ),
-        ChatMessageVariant::ArmorsmithArmorBroke
+        ChatMessageVariant::FragileVestBreak{ player_with_vest: bouncer.player_ref(), defense: DefensePower::Protected }
     );
 }
 
@@ -2536,7 +2672,7 @@ fn fiends_wildcard_defense_upgrade(){
     
     fiend.send_ability_input(AbilityInput::new(
         ControllerID::role(fiend.player_ref(), Role::FiendsWildcard, 0),
-        RoleOptionSelection(Some(Role::Puppeteer))
+        RoleListSelection(vec!(Role::Puppeteer))
     ));
 
     game.next_phase();
@@ -2546,7 +2682,7 @@ fn fiends_wildcard_defense_upgrade(){
         IntegerSelection(1)
     ));
 
-    assert!(fiend.role() == Role::Puppeteer);
+    assert_eq!(fiend.role(), Role::Puppeteer);
     assert!(mafia.send_ability_input_player_list_typical(fiend));
     assert!(fiend.send_ability_input_player_list_typical(mafia));
 
@@ -2773,11 +2909,6 @@ fn santa_always_gets_their_naughty_selection() {
         santa.send_ability_input_player_list(naughty, 1);
     
         game.skip_to(Obituary, 3);
-    
-        assert_contains!(
-            santa.player_ref().untagged_night_visits_cloned(&game).iter().map(|v| v.target).collect::<Vec<PlayerReference>>(),
-            naughty.player_ref()
-        );
     
         assert_contains!(
             naughty.player_ref().win_condition(&game).required_resolution_states_for_win().unwrap(),

@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::{AvailableBooleanSelection, ControllerParametersMap};
 use crate::game::attack_power::AttackPower;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -44,7 +44,7 @@ impl RoleStateImpl for Veteran {
             ..Self::default()
         }
     }
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::TopPriority => {
                 let can_alert = self.alerts_remaining > 0 && game.day_number() > 1;
@@ -58,18 +58,18 @@ impl RoleStateImpl for Veteran {
             }
             OnMidnightPriority::Heal=>{
                 if !self.alerting_tonight {return}
-                actor_ref.increase_defense_to(game, DefensePower::Protection);
+                actor_ref.increase_defense_to(game, midnight_variables, DefensePower::Protected);
             }
             OnMidnightPriority::Kill => {
                 if !self.alerting_tonight {return}
 
-                for other_player_ref in actor_ref.all_night_visitors_cloned(game)
+                for other_player_ref in actor_ref.all_night_visitors_cloned(midnight_variables)
                     .into_iter().filter(|other_player_ref|
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref
                     ).collect::<Vec<PlayerReference>>()
                 {
-                    other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Veteran), AttackPower::ArmorPiercing, false);
+                    other_player_ref.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Role(Role::Veteran), AttackPower::ArmorPiercing, false);
                 }
             }
             _=>{}
@@ -88,7 +88,7 @@ impl RoleStateImpl for Veteran {
             game,
             Veteran { alerts_remaining: self.alerts_remaining, alerting_tonight: false });   
     }
-    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
+    fn on_player_roleblocked(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
 impl GetClientRoleState<ClientRoleState> for Veteran {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

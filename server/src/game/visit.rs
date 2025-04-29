@@ -1,4 +1,4 @@
-use super::player::PlayerReference;
+use super::{player::PlayerReference, role::Role};
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Visit {
@@ -9,12 +9,12 @@ pub struct Visit {
     pub attack: bool,
 }
 impl Visit {
-    pub fn new_none(visitor: PlayerReference, target: PlayerReference, attack: bool) -> Self {
+    pub fn new_role(visitor: PlayerReference, target: PlayerReference, attack: bool, role: Role, id: u8) -> Self {
         Self {
             visitor,
             target,
             attack,
-            tag: VisitTag::Role,
+            tag: VisitTag::Role{role, id},
         }
     }
     pub fn new(visitor: PlayerReference, target: PlayerReference, attack: bool, tag: VisitTag) -> Self {
@@ -27,10 +27,9 @@ impl Visit {
     }
 }
 
-#[derive(Default, Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum VisitTag{
-    #[default]
-    Role,   //The order matters
+    Role{role: Role, id: u8},
     SyndicateGunItem,
     SyndicateBackupAttack
 }

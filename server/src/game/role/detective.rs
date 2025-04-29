@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::ControllerID;
 use crate::game::components::confused::Confused;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::player::PlayerReference;
@@ -20,22 +20,22 @@ pub struct Detective;
 
 impl RoleStateImpl for Detective {
     type ClientRoleState = Detective;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Investigative {return;}
         
-        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
         if let Some(visit) = actor_visits.first(){
             let suspicious = if Confused::is_confused(game, actor_ref) {
                 false
             }else{
-                Detective::player_is_suspicious(game, visit.target)
+                Detective::player_is_suspicious(game, midnight_variables, visit.target)
             };
 
             let message = ChatMessageVariant::SheriffResult {
                 suspicious
             };
             
-            actor_ref.push_night_message(game, message);
+            actor_ref.push_night_message(midnight_variables, message);
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
@@ -57,9 +57,8 @@ impl RoleStateImpl for Detective {
 }
 
 impl Detective {
-    pub fn player_is_suspicious(game: &Game, player_ref: PlayerReference) -> bool {
-
-        if player_ref.has_suspicious_aura(game){
+    pub fn player_is_suspicious(game: &Game, midnight_variables: &MidnightVariables, player_ref: PlayerReference) -> bool {
+        if player_ref.has_suspicious_aura(game, midnight_variables){
             true
         }else if player_ref.has_innocent_aura(game){
             false

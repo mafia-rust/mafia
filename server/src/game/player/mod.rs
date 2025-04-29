@@ -13,17 +13,11 @@ use crate::vec_set::VecSet;
 use crate::{
     game::{
         role::{Role, RoleState}, 
-        chat::ChatMessageVariant, 
-        visit::Visit, 
-        grave::GraveKiller, 
         verdict::Verdict,
     },
     websocket_connections::connection::ClientSender,
 };
-
-use super::attack_power::DefensePower;
 use super::chat::ChatMessage;
-use super::win_condition::WinCondition;
 
 pub struct PlayerInitializeParameters {
     pub connection: ClientConnection,
@@ -46,38 +40,15 @@ pub struct Player {
     chat_messages: Vec<ChatMessage>,
     queued_chat_messages: Vec<ChatMessage>, // Not yet sent to the client
 
-    win_condition: WinCondition,
-
     fast_forward_vote: bool,
 
     voting_variables: PlayerVotingVariables,
-    night_variables: PlayerNightVariables,
 }
 struct PlayerVotingVariables{
     verdict:        Verdict,
 }
-struct PlayerNightVariables{
-    died: bool,
-    attacked: bool,
-    blocked: bool,
-    upgraded_defense: Option<DefensePower>,
-
-    convert_role_to: Option<RoleState>,
-
-    appeared_visits: Option<Vec<Visit>>,
-    framed: bool,
-
-    silenced: bool,
-
-    messages: Vec<ChatMessageVariant>,
-
-    grave_role: Option<Role>,
-    grave_killers: Vec<GraveKiller>,
-    grave_will: String,
-    grave_death_notes: Vec<String>,
-}
 impl Player {
-    pub fn new(name: String, sender: ClientSender, role: Role, win_condition: WinCondition) -> Self {
+    pub fn new(name: String, sender: ClientSender, role: Role) -> Self {
         Self {
             connection: ClientConnection::Connected(sender),
 
@@ -91,8 +62,6 @@ impl Player {
 
             role_labels: VecSet::new(),
 
-            win_condition,
-
             chat_messages: Vec::new(),
             queued_chat_messages: Vec::new(),
             
@@ -100,25 +69,6 @@ impl Player {
 
             voting_variables: PlayerVotingVariables{
                 verdict : Verdict::Abstain,
-            },
-            night_variables: PlayerNightVariables{
-                died: false,
-                attacked: false,
-                blocked: false,
-                upgraded_defense: None,
-                appeared_visits: None,
-                framed: false,
-
-                convert_role_to: None,
-
-                silenced: false,
-
-                messages: vec![],
-
-                grave_role: None,
-                grave_killers: vec![],
-                grave_will: "".to_string(),
-                grave_death_notes: vec![],
             },
         }
     }
@@ -129,7 +79,7 @@ pub mod test {
 
     use crate::{client_connection::ClientConnection, game::{role::Role, verdict::Verdict}, vec_set::VecSet};
 
-    use super::{Player, PlayerVotingVariables, PlayerNightVariables};
+    use super::{Player, PlayerVotingVariables};
 
     pub fn mock_player(name: String, role: Role) -> Player {
         Player {
@@ -146,8 +96,6 @@ pub mod test {
 
             role_labels: VecSet::new(),
 
-            win_condition: role.default_state().default_win_condition(),
-
             chat_messages: Vec::new(),
             queued_chat_messages: Vec::new(),
 
@@ -155,25 +103,6 @@ pub mod test {
 
             voting_variables: PlayerVotingVariables{
                 verdict : Verdict::Abstain,
-            },
-            night_variables: PlayerNightVariables{
-                died: false,
-                attacked: false,
-                blocked: false,
-                upgraded_defense: None,
-                appeared_visits: None,
-                framed: false,
-
-                convert_role_to: None,
-
-                silenced: false,
-
-                messages: vec![],
-
-                grave_role: None,
-                grave_killers: vec![],
-                grave_will: "".to_string(),
-                grave_death_notes: vec![],
             },
         }
     }

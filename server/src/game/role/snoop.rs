@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::game::components::confused::Confused;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::player::PlayerReference;
@@ -20,22 +20,22 @@ pub struct Snoop;
 
 impl RoleStateImpl for Snoop {
     type ClientRoleState = Snoop;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Investigative {return;}
 
 
-        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
         if let Some(visit) = actor_visits.first(){
 
             let townie = if Confused::is_confused(game, actor_ref) {
                 false
             }else{
                 visit.target.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
-                    actor_ref.all_night_visitors_cloned(game).is_empty() &&
-                    !visit.target.has_suspicious_aura(game)
+                    actor_ref.all_night_visitors_cloned(midnight_variables).is_empty() &&
+                    !visit.target.has_suspicious_aura(game, midnight_variables)
             };
 
-            actor_ref.push_night_message(game, 
+            actor_ref.push_night_message(midnight_variables, 
                 ChatMessageVariant::SnoopResult { townie }
             );
         }

@@ -1,8 +1,8 @@
-
 use crate::{game::{
     ability_input::*,
     attack_power::AttackPower,
-    event::{on_add_insider::OnAddInsider, on_midnight::{OnMidnight, OnMidnightPriority}, on_remove_insider::OnRemoveInsider},
+    event::{on_add_insider::OnAddInsider, on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority},
+    on_remove_insider::OnRemoveInsider},
     grave::GraveKiller, phase::PhaseType, player::PlayerReference, role_list::RoleSet, visit::{Visit, VisitTag}, Game
 }, vec_set};
 
@@ -14,13 +14,13 @@ pub struct SyndicateGunItem {
 }
 
 impl SyndicateGunItem {
-    pub fn on_visit_wardblocked(game: &mut Game, visit: Visit){
-        NightVisits::retain(game, |v|
+    pub fn on_visit_wardblocked(_game: &mut Game, midnight_variables: &mut MidnightVariables, visit: Visit){
+        NightVisits::retain(midnight_variables, |v|
             v.tag != VisitTag::SyndicateGunItem || v.visitor != visit.visitor
         );
     }
-    pub fn on_player_roleblocked(game: &mut Game, player: PlayerReference){
-        NightVisits::retain(game, |v|
+    pub fn on_player_roleblocked(_game: &mut Game, midnight_variables: &mut MidnightVariables, player: PlayerReference){
+        NightVisits::retain(midnight_variables, |v|
             v.tag != VisitTag::SyndicateGunItem || v.visitor != player
         );
     }
@@ -39,6 +39,9 @@ impl SyndicateGunItem {
 
     pub fn player_with_gun(&self) -> Option<PlayerReference> {
         self.player_with_gun
+    }
+    pub fn player_has_gun(game: &Game, player: PlayerReference) -> bool{
+        game.syndicate_gun_item.player_with_gun().is_some_and(|s|s==player)
     }
 
     //available ability
@@ -95,7 +98,7 @@ impl SyndicateGunItem {
             }
         }
     }
-    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority) {
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, midnight_variables: &mut MidnightVariables, priority: OnMidnightPriority) {
         if game.day_number() <= 1 {return}
         match priority {
             OnMidnightPriority::TopPriority => {
@@ -105,12 +108,12 @@ impl SyndicateGunItem {
                 let Some(gun_target) = gun_target.first() else {return};
 
                 NightVisits::add_visit(
-                    game, 
+                    midnight_variables, 
                     Visit::new(player_with_gun, *gun_target, true, VisitTag::SyndicateGunItem)
                 );
             }
             OnMidnightPriority::Kill => {
-                let targets: Vec<(PlayerReference, PlayerReference)> = NightVisits::all_visits(game)
+                let targets: Vec<(PlayerReference, PlayerReference)> = NightVisits::all_visits(midnight_variables)
                     .iter()
                     .filter(|visit| visit.tag == VisitTag::SyndicateGunItem)
                     .map(|visit| (visit.visitor, visit.target))
@@ -119,7 +122,7 @@ impl SyndicateGunItem {
                 for (attacker, target) in targets {
                     target.try_night_kill_single_attacker(
                         attacker,
-                        game,
+                        game, midnight_variables,
                         GraveKiller::RoleSet(RoleSet::Mafia),
                         AttackPower::Basic,
                         false

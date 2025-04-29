@@ -5,7 +5,7 @@ use serde::Serialize;
 use crate::game::ability_input::AvailablePlayerListSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::phase::{PhaseType, PhaseState};
 use crate::game::player::PlayerReference;
 
@@ -31,7 +31,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Jester {
     type ClientRoleState = ClientRoleState;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::TopPriority {return;}
         if actor_ref.alive(game) {return;}
         if !self.lynched_yesterday {return}
@@ -61,7 +61,7 @@ impl RoleStateImpl for Jester {
         };
         
         
-        target_ref.try_night_kill_single_attacker(actor_ref, game, 
+        target_ref.try_night_kill_single_attacker(actor_ref, game, midnight_variables,
             crate::game::grave::GraveKiller::Role(super::Role::Jester), AttackPower::ProtectionPiercing, true
         );
     }
@@ -93,7 +93,7 @@ impl RoleStateImpl for Jester {
                     });
                 }
             }
-            PhaseState::Obituary => {
+            PhaseState::Obituary { .. } => {
                 actor_ref.set_role_state(game, Jester { 
                     lynched_yesterday: false,
                     won: self.won

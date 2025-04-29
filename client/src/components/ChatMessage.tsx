@@ -3,7 +3,7 @@ import React, { ReactElement } from "react";
 import GAME_MANAGER, { find, replaceMentions } from "..";
 import StyledText, { KeywordDataMap, PLAYER_SENDER_KEYWORD_DATA } from "./StyledText";
 import "./chatMessage.css"
-import { ChatGroup, Conclusion, PhaseState, PlayerIndex, Tag, translateConclusion, translateWinCondition, Verdict, WinCondition } from "../game/gameState.d";
+import { ChatGroup, Conclusion, DefensePower, PhaseState, PlayerIndex, Tag, translateConclusion, translateWinCondition, Verdict, WinCondition } from "../game/gameState.d";
 import { Role, RoleState } from "../game/roleState.d";
 import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
@@ -387,6 +387,15 @@ function playerListToString(playerList: PlayerIndex[], playerNames: string[]): s
     }).join(", ");
 }
 
+function roleListToString(roleList: Role[]): string {
+    if (roleList === null || roleList.length === 0) {
+        return translate("none");
+    }
+    return roleList.map((role) => {
+        return translate("role."+role+".name")
+    }).join(", ");
+}
+
 export function sanitizePlayerMessage(text: string): string {
     return DOMPurify.sanitize(text, { 
         ALLOWED_TAGS: []
@@ -557,9 +566,9 @@ export function translateChatMessage(
                         playerListToString(message.selection.selection===null?[]:message.selection.selection, playerNames)
                     );
                     break;
-                case "roleOption":
-                    out = translate("chatMessage.abilityUsed.selection.roleOption",
-                        message.selection.selection===null?translate("none"):translate("role."+message.selection.selection+".name")
+                case "roleList":
+                    out = translate("chatMessage.abilityUsed.selection.roleList",
+                        roleListToString(message.selection.selection)
                     );
                     break;
                 case "twoRoleOption":
@@ -657,6 +666,8 @@ export function translateChatMessage(
             return translate("chatMessage.sheriffResult." + (message.suspicious ? "suspicious" : "innocent"));
         case "snoopResult":
             return translate("chatMessage.snoopResult." + (message.townie ? "townie" : "inconclusive"));
+        case "polymathSnoopResult":
+            return translate(message.inno ? "chatMessage.sheriffResult.innocent" : "chatMessage.snoopResult.inconclusive");
         case "gossipResult":
             return translate("chatMessage.gossipResult." + (message.enemies ? "enemies" : "none"));
         case "tallyClerkResult":
@@ -701,7 +712,8 @@ export function translateChatMessage(
             );
         case "informantResult":
             return translate("chatMessage.informantResult",
-                translate("chatMessage.targetHasRole", translate("role."+message.role+".name")),
+                playerNames[message.player],
+                translate("role."+message.role+".name"),
                 translate("chatMessage.informantResult.visited", playerListToString(message.visited, playerNames)),
                 translate("chatMessage.informantResult.visitedBy", playerListToString(message.visitedBy, playerNames))
             );
@@ -771,10 +783,17 @@ export function translateChatMessage(
         }
         case "playerForwardedMessage":
             return translate(`chatMessage.playerForwardedMessage`, playerNames[message.forwarder]);
+        case "fragileVestBreak":
+            console.log(playerNames);
+            return translate(
+                `chatMessage.fragileVestBreak`,
+                translate("defense."+message.defense),
+                playerNames[message.playerWithVest]
+            );
         case "deputyShotYou":
         case "mediumExists":
-        case "targetWasAttacked":
-        case "youWereProtected":
+        case "youGuardedSomeone":
+        case "youWereGuarded":
         case "revolutionaryWon":
         case "jesterWon":
         case "wardblocked":
@@ -798,7 +817,6 @@ export function translateChatMessage(
         case "politicianCountdownStarted":
         case "youAttackedSomeone":
         case "youWereAttacked":
-        case "armorsmithArmorBroke":
         case "werewolfTracked":
             return translate("chatMessage."+message.type);
         case "playerDied":
@@ -983,6 +1001,9 @@ export type ChatMessageVariant = {
     type: "snoopResult", 
     townie: boolean
 } | {
+    type: "polymathSnoopResult", 
+    inno: boolean
+} | {
     type: "gossipResult",
     enemies: boolean
 } | {
@@ -1030,11 +1051,13 @@ export type ChatMessageVariant = {
         type: "dismantled" | "ready" | "set"
     }
 } | {
-    type: "armorsmithArmorBroke"
+    type: "fragileVestBreak",
+    playerWithVest: PlayerIndex,
+    defense: DefensePower
 } | {
-    type: "targetWasAttacked"
+    type: "youGuardedSomeone"
 } | {
-    type: "youWereProtected"
+    type: "youWereGuarded"
 } | {
     type: "youDied"
 } | {
@@ -1054,6 +1077,7 @@ export type ChatMessageVariant = {
     will: string
 } | {
     type: "informantResult", 
+    player: PlayerIndex
     role: Role,
     visitedBy: PlayerIndex[],
     visited: PlayerIndex[]

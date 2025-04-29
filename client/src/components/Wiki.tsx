@@ -287,7 +287,7 @@ export function partitionWikiPages(
             "standard/backup", "standard/block", "standard/convert", "standard/douse", "standard/forged",
             "standard/frame", "standard/haunt", "standard/hypnotize", "standard/interview", "standard/detain",
             "standard/marionette", "standard/obscured", "standard/possess", 
-            "standard/protect", "standard/rampage", "standard/report", "standard/roleblock", "standard/silenced",
+            "standard/guard", "standard/fragileVest", "standard/rampage", "standard/report", "standard/roleblock", "standard/silenced",
             "standard/spiral", "standard/syndicateGunItem", "standard/transport", "standard/ward",
             "standard/forfeitVote", "standard/aura", "standard/fastForward", "standard/appearedVisit", 
             "standard/defense", "standard/confused", "standard/trial",

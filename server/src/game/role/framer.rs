@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::components::tags::{TagSetID, Tags};
 use crate::game::ability_input::AvailablePlayerListSelection;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::role_list::RoleSet;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
 
@@ -20,40 +20,33 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Framer {
     type ClientRoleState = Framer;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Deception => {
-                let framer_visits = actor_ref.untagged_night_visits_cloned(game).clone();
+                let framer_visits = actor_ref.untagged_night_visits_cloned(midnight_variables).clone();
 
                 let Some(first_visit) = framer_visits.first() else {return};
 
                 Tags::add_tag(game, TagSetID::Framer(actor_ref), first_visit.target);
 
                 for framed_target in Tags::tagged(game, TagSetID::Framer(actor_ref)){
-                    framed_target.set_night_framed(game, true);
+                    framed_target.set_night_framed(midnight_variables, true);
                 }
 
                 let Some(second_visit) = framer_visits.get(1) else {return};
             
-                first_visit.target.set_night_appeared_visits(game, Some(vec![
-                    Visit::new_none(first_visit.target, second_visit.target, false)
+                first_visit.target.set_night_appeared_visits(midnight_variables, Some(vec![
+                    Visit::new_role(first_visit.target, second_visit.target, false, first_visit.target.role(game), 0)
                 ]));
 
-                //this code erases only the second framer visit
-                let mut new_visits = vec![];
-                let mut got_first = false;
-                for visit in actor_ref.all_night_visits_cloned(game){
-                    if visit.tag == VisitTag::Role {
-                        if !got_first {
-                            new_visits.push(visit);
-                        }
-                        got_first = true;
-                    }else{
-                        new_visits.push(visit);
-                    }
-                }
-                actor_ref.set_night_visits(game, new_visits);
-            }
+                actor_ref.set_night_visits(
+                    midnight_variables,
+                    actor_ref.all_night_visits_cloned(midnight_variables)
+                        .into_iter()
+                        .filter(|v|v.tag!=VisitTag::Role { role: Role::Framer, id: 1 })
+                        .collect::<Vec<_>>()
+                );
+            },
             OnMidnightPriority::Investigative => {
                 Tags::set_tagged(
                     game,
@@ -61,13 +54,13 @@ impl RoleStateImpl for Framer {
                     &Tags::tagged(game, TagSetID::Framer(actor_ref))
                         .into_iter()
                         .filter(|p|
-                            !p.all_night_visitors_cloned(game).iter().any(|visitor| {
+                            !p.all_night_visitors_cloned(midnight_variables).iter().any(|visitor| {
                                 RoleSet::TownInvestigative.get_roles().contains(&visitor.role(game))
                             })
                         )
                         .collect()
                 );
-            }
+            },
             _ => {}
         }
     }
@@ -100,13 +93,14 @@ impl RoleStateImpl for Framer {
             game,
             actor_ref,
             ControllerID::role(actor_ref, Role::Framer, 0),
-            false
+            false,
         ).into_iter().chain(
-            crate::game::role::common_role::convert_controller_selection_to_visits(
+            crate::game::role::common_role::convert_controller_selection_to_visits_visit_tag(
                 game,
                 actor_ref,
                 ControllerID::role(actor_ref, Role::Framer, 1),
-                false
+                false,
+                VisitTag::Role { role: Role::Framer, id: 1 }
             )
         ).collect()
     }

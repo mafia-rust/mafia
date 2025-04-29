@@ -6,7 +6,8 @@ use crate::game::ability_input::AvailableIntegerSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::components::mafia_recruits::MafiaRecruits;
 use crate::game::components::insider_group::InsiderGroupID;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::components::win_condition::WinCondition;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 use crate::game::game_conclusion::GameConclusion;
@@ -48,7 +49,7 @@ impl RoleStateImpl for Recruiter {
             recruits_remaining: game.num_players().div_ceil(5),
         }
     }
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         let choose_attack = Self::choose_attack(game, actor_ref);
 
@@ -58,9 +59,9 @@ impl RoleStateImpl for Recruiter {
 
         match priority {
             OnMidnightPriority::Kill => {
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 if let Some(visit) = actor_visits.first(){
-                    if Recruiter::night_ability(self.clone(), game, actor_ref, visit.target) {
+                    if Recruiter::night_ability(self.clone(), game, midnight_variables, actor_ref, visit.target) {
                         if choose_attack {
                             actor_ref.set_role_state(game, Recruiter{recruits_remaining: self.recruits_remaining.saturating_add(1)})
                         }else{
@@ -131,14 +132,14 @@ impl RoleStateImpl for Recruiter {
             }]}.get_random_role_assignments(
                 &game.settings.enabled_roles,
                 PlayerReference::all_players(game).map(|p|p.role(game)).collect::<Vec<_>>().as_slice()
-            ).map(|assignment| assignment.role);
+            ).map(|assignment| assignment.role());
 
             if let Some(random_town_role) = random_town_role {
                 //special case here. I don't want to use set_role because it alerts the player their role changed
                 //NOTE: It will still send a packet to the player that their role state updated,
                 //so it might be deducable that there is a recruiter
-                InsiderGroupID::Mafia.remove_player_from_revealed_group(game, random_mafia_player);
-                random_mafia_player.set_win_condition(game, crate::game::win_condition::WinCondition::GameConclusionReached{
+                InsiderGroupID::Mafia.remove_player_from_insider_group(game, random_mafia_player);
+                random_mafia_player.set_win_condition(game, WinCondition::GameConclusionReached{
                     win_if_any: vec![GameConclusion::Town].into_iter().collect()
                 });
                 random_mafia_player.set_role_state(game, random_town_role.new_state(game));
@@ -157,19 +158,20 @@ impl RoleStateImpl for Recruiter {
 impl Recruiter {
     /// returns true if target_ref is killed when trying to kill
     /// returns true if target_ref is recruited when trying to recruit
-    pub fn night_ability(self, game: &mut Game, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
+    pub fn night_ability(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, target_ref: PlayerReference) -> bool {
         let choose_attack = Self::choose_attack(game, actor_ref);
 
         if choose_attack {
             target_ref.try_night_kill_single_attacker(
                 actor_ref,
                 game,
+                midnight_variables,
                 GraveKiller::RoleSet(RoleSet::Mafia),
                 AttackPower::Basic,
                 false
             )
-        }else if AttackPower::Basic.can_pierce(target_ref.defense(game)) {
-            MafiaRecruits::recruit(game, target_ref)
+        }else if AttackPower::Basic.can_pierce(target_ref.night_defense(game, midnight_variables)) {
+            MafiaRecruits::recruit(game, midnight_variables, target_ref)
         }else{
             false
         }

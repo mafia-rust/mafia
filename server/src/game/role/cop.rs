@@ -3,12 +3,11 @@ use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::attack_power::DefensePower;
 use crate::game::components::night_visits::NightVisits;
-use crate::game::event::on_midnight::OnMidnightPriority;
-use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
-use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
@@ -16,46 +15,39 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use super::{
     ControllerID, ControllerParametersMap,
-    GetClientRoleState, Role, RoleStateImpl
+    Role, RoleStateImpl
 };
 
 
 
-#[derive(Clone, Debug, Default)]
-pub struct Cop {
-    target_protected_ref: Option<PlayerReference>
-}
-
-#[derive(Clone, Debug, Serialize)]
-pub struct ClientRoleState;
-
+#[derive(Clone, Debug, Default, Serialize)]
+pub struct Cop;
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Cop {
-    type ClientRoleState = ClientRoleState;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    type ClientRoleState = Self;
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if game.day_number() <= 1 {return}
 
         match priority {
             OnMidnightPriority::Heal => {
                 
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 
-                target_ref.increase_defense_to(game, DefensePower::Protection);
-                actor_ref.set_role_state(game, Cop {target_protected_ref: Some(target_ref)});
+                actor_ref.guard_player(game, midnight_variables, target_ref);
             }
             OnMidnightPriority::Kill => {
                 
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(ambush_visit) = actor_visits.first() else {return};
                 let target_ref = ambush_visit.target;
 
                 let player_to_attacks_visit = 
-                if let Some(priority_visitor) = NightVisits::all_visits(game).into_iter()
+                if let Some(priority_visitor) = NightVisits::all_visits(midnight_variables).into_iter()
                     .filter(|visit|
                         ambush_visit != *visit &&
                         visit.target == target_ref &&
@@ -67,7 +59,7 @@ impl RoleStateImpl for Cop {
                 {
                     Some(priority_visitor.visitor)
                 } else {
-                    NightVisits::all_visits(game).into_iter()
+                    NightVisits::all_visits(midnight_variables).into_iter()
                         .filter(|visit|
                             ambush_visit != *visit &&
                             visit.target == target_ref &&
@@ -82,19 +74,11 @@ impl RoleStateImpl for Cop {
                     player_to_attack.try_night_kill_single_attacker(
                         actor_ref,
                         game,
+                        midnight_variables,
                         GraveKiller::Role(Role::Cop),
                         AttackPower::Basic,
                         false
                     );
-                }
-            }
-            OnMidnightPriority::Investigative => {
-                if let Some(target_protected_ref) = self.target_protected_ref {
-                    if target_protected_ref.night_attacked(game){
-                        
-                        actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
-                        target_protected_ref.push_night_message(game, ChatMessageVariant::YouWereProtected);
-                    }
                 }
             }
             _ => {}
@@ -115,14 +99,5 @@ impl RoleStateImpl for Cop {
             ControllerID::role(actor_ref, Role::Cop, 0),
             false
         )
-    }
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType){
-        if phase != PhaseType::Night {return;}
-        actor_ref.set_role_state(game, Cop {target_protected_ref: None});
-    }
-}
-impl GetClientRoleState<ClientRoleState> for Cop {
-    fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
-        ClientRoleState
     }
 }

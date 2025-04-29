@@ -1,7 +1,7 @@
 use rand::prelude::SliceRandom;
 use serde::Serialize;
 
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::player::PlayerReference;
 
@@ -19,21 +19,21 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Tracker {
     type ClientRoleState = Tracker;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Investigative {return;}
 
 
-        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
         if let Some(visit) = actor_visits.first(){
             
-            let mut seen_players: Vec<PlayerReference> = visit.target.tracker_seen_visits(game).into_iter().map(|v|v.target).collect();
+            let mut seen_players: Vec<PlayerReference> = visit.target.tracker_seen_visits(game, midnight_variables).into_iter().map(|v|v.target).collect();
             seen_players.shuffle(&mut rand::rng());
 
             let message = ChatMessageVariant::TrackerResult { players:
                 PlayerReference::ref_vec_to_index(seen_players.as_slice())
             };
             
-            actor_ref.push_night_message(game, message);
+            actor_ref.push_night_message(midnight_variables, message);
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {

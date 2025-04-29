@@ -18,7 +18,6 @@ pub mod spectator;
 pub mod game_listeners;
 pub mod attack_power;
 pub mod modifiers;
-pub mod win_condition;
 pub mod role_outline_reference;
 pub mod ability_input;
 
@@ -32,29 +31,29 @@ use components::confused::Confused;
 use components::drunk_aura::DrunkAura;
 use components::enfranchise::Enfranchise;
 use components::forfeit_vote::ForfeitVote;
+use components::fragile_vest::FragileVests;
 use components::mafia::Mafia;
-use components::night_visits::NightVisits;
 use components::pitchfork::Pitchfork;
 use components::mafia_recruits::MafiaRecruits;
+use components::player_component::PlayerComponent;
 use components::poison::Poison;
 use components::detained::Detained;
 use components::insider_group::InsiderGroupID;
 use components::insider_group::InsiderGroups;
+use components::silenced::Silenced;
 use components::syndicate_gun_item::SyndicateGunItem;
 use components::synopsis::SynopsisTracker;
 use components::tags::Tags;
 use components::verdicts_today::VerdictsToday;
+use components::win_condition::WinCondition;
 use event::on_tick::OnTick;
 use modifiers::ModifierType;
 use modifiers::Modifiers;
 use event::before_initial_role_creation::BeforeInitialRoleCreation;
 use rand::seq::SliceRandom;
 use role_list::RoleAssignment;
-use role_list::RoleOutlineOptionInsiderGroups;
-use role_list::RoleOutlineOptionWinCondition;
 use role_outline_reference::RoleOutlineReference;
 use serde::Serialize;
-use win_condition::WinCondition;
 
 use crate::client_connection::ClientConnection;
 use crate::game::event::on_game_start::OnGameStart;
@@ -109,7 +108,7 @@ pub struct Game {
     pub spectator_chat_messages: Vec<ChatMessageVariant>,
 
     /// indexed by role outline reference
-    pub assignments: Vec<(PlayerReference, RoleOutlineReference, RoleAssignment)>,
+    pub assignments: VecMap<PlayerReference, (RoleOutlineReference, RoleAssignment)>,
 
     pub players: Box<[Player]>,
     pub graves: Vec<Grave>,
@@ -123,7 +122,6 @@ pub struct Game {
     
     //components with data
     pub saved_controllers: SavedControllersMap,
-    night_visits: NightVisits,
     syndicate_gun_item: SyndicateGunItem,
     pub cult: Cult,
     pub mafia: Mafia,
@@ -138,7 +136,10 @@ pub struct Game {
     pub confused: Confused,
     pub drunk_aura: DrunkAura,
     pub synopsis_tracker: SynopsisTracker,
-    pub tags: Tags
+    pub tags: Tags,
+    pub silenced: Silenced,
+    pub fragile_vests: PlayerComponent<FragileVests>,
+    pub win_condition: PlayerComponent<WinCondition>
 }
 
 #[derive(Serialize, Debug, Clone, Copy)]
@@ -160,13 +161,17 @@ pub enum GameOverReason {
     Draw
 }
 
-
-
 impl Game {
     pub const DISCONNECT_TIMER_SECS: u16 = 60 * 2;
 
     /// `players` must have length 255 or lower.
-    pub fn new(room_name: String, settings: Settings, clients: VecMap<RoomClientID, GameClient>, players: Vec<PlayerInitializeParameters>, spectators: Vec<SpectatorInitializeParameters>) -> Result<Self, RejectStartReason>{
+    pub fn new(
+        room_name: String,
+        settings: Settings,
+        clients: VecMap<RoomClientID, GameClient>,
+        players: Vec<PlayerInitializeParameters>,
+        spectators: Vec<SpectatorInitializeParameters>
+    ) -> Result<Self, RejectStartReason>{
         //check settings are not completly off the rails
         if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
@@ -198,29 +203,20 @@ impl Game {
             // Create list of players
             let mut new_players = Vec::new();
             for (player_index, player) in players.iter().enumerate() {
+                let Ok(player_index) = player_index.try_into() else {return Err(RejectStartReason::TooManyClients)};
+                let player_ref = unsafe{PlayerReference::new_unchecked(player_index)};
 
                 let ClientConnection::Connected(ref sender) = player.connection else {
                     return Err(RejectStartReason::PlayerDisconnected)
                 };
-                let Some((_, _, assignment)) = assignments.iter().find(|(p,_,_)|p.index() as usize == player_index) else {
+                let Some((_, assignment)) = assignments.get(&player_ref) else {
                     return Err(RejectStartReason::RoleListTooSmall)
-                };
-
-                // Set win condition & Insider group here so we can check if game ends
-                let win_condition = match &assignment.win_condition {
-                    RoleOutlineOptionWinCondition::RoleDefault => assignment.role.default_state().default_win_condition(),
-                    RoleOutlineOptionWinCondition::GameConclusionReached { win_if_any } => {
-                        WinCondition::GameConclusionReached { 
-                            win_if_any: win_if_any.iter().cloned().collect()
-                        }
-                    },
                 };
 
                 let new_player = Player::new(
                     player.name.clone(),
                     sender.clone(),
-                    assignment.role,
-                    win_condition
+                    assignment.role()
                 );
                 
                 new_players.push(new_player);
@@ -245,7 +241,6 @@ impl Game {
                 settings,
 
                 saved_controllers: SavedControllersMap::default(),
-                night_visits: NightVisits::default(),
                 syndicate_gun_item: SyndicateGunItem::default(),
                 cult: Cult::default(),
                 mafia: Mafia,
@@ -259,25 +254,23 @@ impl Game {
                 confused: Confused::default(),
                 drunk_aura: DrunkAura::default(),
                 synopsis_tracker: SynopsisTracker::new(num_players),
-                tags: Tags::default()
+                tags: Tags::default(),
+                silenced: Silenced::default(),
+                fragile_vests: unsafe{PlayerComponent::<FragileVests>::new(num_players)},
+                win_condition: unsafe{PlayerComponent::<WinCondition>::new(num_players, &assignments)}
             };
 
             // Just distribute insider groups, this is for game over checking (Keeps game running syndicate gun)
             for player in PlayerReference::all_players(&game){
-                let Some((player, _, assignment)) = assignments
-                    .iter()
-                    .find(|(p,_,_)|*p == player) else {
-                        return Err(RejectStartReason::RoleListTooSmall)
-                    };
-                
-                let insider_groups = match &assignment.insider_groups {
-                    RoleOutlineOptionInsiderGroups::RoleDefault => assignment.role.default_state().default_revealed_groups(),
-                    RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().copied().collect(),
+                let Some((_, assignment)) = assignments.get(&player) else {
+                    return Err(RejectStartReason::RoleListTooSmall)
                 };
+                
+                let insider_groups = assignment.insider_groups();
                 
                 for group in insider_groups{
                     unsafe {
-                        group.add_player_to_revealed_group_unchecked(&mut game, *player);
+                        group.add_player_to_revealed_group_unchecked(&mut game, player);
                     }
                 }
             }
@@ -297,25 +290,17 @@ impl Game {
 
         //set wincons and revealed groups
         for player in PlayerReference::all_players(&game){
-            let role_data = player.role(&game).new_state(&game);
 
-            let Some((_, _, assignment)) = assignments
-                .iter()
-                .find(|(p,_,_)|*p == player) else {
-                    return Err(RejectStartReason::RoleListTooSmall)
-                };
+            let Some(( _, assignment)) = assignments.get(&player) else {
+                return Err(RejectStartReason::RoleListTooSmall)
+            };
 
             // We already set this earlier, now we just need to call the on_convert event. Hope this doesn't end the game!
             let win_condition = player.win_condition(&game).clone();
             player.set_win_condition(&mut game, win_condition);
-
-            let insider_groups = match &assignment.insider_groups {
-                RoleOutlineOptionInsiderGroups::RoleDefault => role_data.clone().default_revealed_groups(),
-                RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.iter().copied().collect(),
-            };
             
-            InsiderGroupID::start_game_set_player_revealed_groups(
-                insider_groups,
+            InsiderGroupID::start_game_set_player_insider_groups(
+                assignment.insider_groups(),
                 &mut game,
                 player
             );
@@ -349,7 +334,7 @@ impl Game {
     
     /// `initialization_data` must have length 255 or lower
     #[expect(clippy::cast_possible_truncation, reason = "See doc comment")]
-    fn assign_players_to_assignments(initialization_data: Vec<RoleAssignment>)->Vec<(PlayerReference, RoleOutlineReference, RoleAssignment)>{
+    fn assign_players_to_assignments(initialization_data: Vec<RoleAssignment>)->VecMap<PlayerReference, (RoleOutlineReference, RoleAssignment)>{
         let mut player_indices: Vec<PlayerIndex> = (0..initialization_data.len() as PlayerIndex).collect();
         player_indices.shuffle(&mut rand::rng());
 
@@ -360,7 +345,7 @@ impl Game {
             .map(|((o_index, assignment), p_index)|
                 // We are iterating through playerlist and outline list, so this unsafe should be fine
                 unsafe {
-                    (PlayerReference::new_unchecked(p_index), RoleOutlineReference::new_unchecked(o_index as u8), assignment)
+                    (PlayerReference::new_unchecked(p_index), (RoleOutlineReference::new_unchecked(o_index as u8), assignment))
                 }
             )
             .collect()
@@ -438,7 +423,7 @@ impl Game {
                     .map(|(player, _)| *player)
                     .collect();
 
-                if max_votes_players.len() == 1 {
+                if max_votes_players.count() == 1 {
                     voted_player = max_votes_players.iter().next().copied();
                 }
             }
@@ -863,7 +848,7 @@ pub mod test {
     use super::{
         ability_input::saved_controllers_map::SavedControllersMap,
         components::{
-            cult::Cult, insider_group::InsiderGroupID, mafia::Mafia, mafia_recruits::MafiaRecruits, night_visits::NightVisits, pitchfork::Pitchfork, poison::Poison, puppeteer_marionette::PuppeteerMarionette, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday
+            cult::Cult, fragile_vest::FragileVests, insider_group::InsiderGroupID, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, player_component::PlayerComponent, poison::Poison, puppeteer_marionette::PuppeteerMarionette, silenced::Silenced, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday, win_condition::WinCondition
         }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine, player::{test::mock_player, PlayerReference},
@@ -887,7 +872,7 @@ pub mod test {
 
         let assignments = Game::assign_players_to_assignments(random_outline_assignments);
         
-        let shuffled_roles = assignments.iter().map(|(_,_,r)|r.role).collect::<Vec<Role>>();
+        let shuffled_roles = assignments.iter().map(|(_,(_,r))|r.role()).collect::<Vec<Role>>();
 
 
         let mut players = Vec::new();
@@ -907,7 +892,7 @@ pub mod test {
             room_name: "Test".to_string(),
             pitchfork: Pitchfork::new(number_of_players),
             
-            assignments,
+            assignments: assignments.clone(),
             ticking: true,
             spectators: Vec::new(),
             spectator_chat_messages: Vec::new(),
@@ -917,7 +902,6 @@ pub mod test {
             settings,
 
             saved_controllers: SavedControllersMap::default(),
-            night_visits: NightVisits::default(),
             syndicate_gun_item: SyndicateGunItem::default(),
             cult: Cult::default(),
             mafia: Mafia,
@@ -931,7 +915,10 @@ pub mod test {
             confused: Default::default(),
             drunk_aura: Default::default(),
             synopsis_tracker: SynopsisTracker::new(number_of_players),
-            tags: Tags::default()
+            tags: Tags::default(),
+            silenced: Silenced::default(),
+            fragile_vests: unsafe{PlayerComponent::<FragileVests>::new(number_of_players)},
+            win_condition: unsafe{PlayerComponent::<WinCondition>::new(number_of_players, &assignments)}
         };
 
         //set wincons and revealed groups
@@ -940,7 +927,7 @@ pub mod test {
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         
-            InsiderGroupID::start_game_set_player_revealed_groups(
+            InsiderGroupID::start_game_set_player_insider_groups(
                 role_data.clone().default_revealed_groups(),
                 &mut game,
                 player

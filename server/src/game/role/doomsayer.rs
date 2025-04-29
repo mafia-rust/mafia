@@ -2,7 +2,7 @@ use serde::{Serialize, Deserialize};
 
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
@@ -32,7 +32,7 @@ pub enum DoomsayerGuess{
     // No TI
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith, Steward,
     Vigilante, Veteran, Marksman, Deputy, Rabblerouser,
-    Escort, Medium, Retributionist, Reporter, Mayor, Transporter, Coxswain
+    Escort, Medium, Retributionist, Reporter, Mayor, Porter, Transporter, Coxswain, Polymath
 }
 impl DoomsayerGuess{
     fn convert_to_guess(role: Role)->Option<DoomsayerGuess>{
@@ -63,8 +63,10 @@ impl DoomsayerGuess{
             Role::Retributionist => Some(DoomsayerGuess::Retributionist),
             Role::Reporter => Some(DoomsayerGuess::Reporter),
             Role::Mayor => Some(DoomsayerGuess::Mayor),
+            Role::Porter => Some(DoomsayerGuess::Porter),
             Role::Transporter => Some(DoomsayerGuess::Transporter),
             Role::Coxswain => Some(DoomsayerGuess::Coxswain),
+            Role::Polymath => Some(DoomsayerGuess::Polymath),
 
             //Mafia
             Role::Godfather | Role::Mafioso | 
@@ -110,10 +112,10 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Doomsayer {
     type ClientRoleState = ClientRoleState;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::TopPriority {return;}
 
-        if actor_ref.night_blocked(game) {return;}
+        if actor_ref.night_blocked(midnight_variables) {return;}
         if !actor_ref.alive(game) {return;}
 
 
@@ -134,10 +136,10 @@ impl RoleStateImpl for Doomsayer {
 
         if won{
             actor_ref.add_private_chat_message(game, ChatMessageVariant::DoomsayerWon);
-            self.guesses[0].0.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), AttackPower::ProtectionPiercing, true);
-            self.guesses[1].0.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), AttackPower::ProtectionPiercing, true);
-            self.guesses[2].0.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(super::Role::Doomsayer), AttackPower::ProtectionPiercing, true);
-            actor_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Suicide, AttackPower::ProtectionPiercing, false);
+            self.guesses[0].0.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Role(super::Role::Doomsayer), AttackPower::ProtectionPiercing, true);
+            self.guesses[1].0.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Role(super::Role::Doomsayer), AttackPower::ProtectionPiercing, true);
+            self.guesses[2].0.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Role(super::Role::Doomsayer), AttackPower::ProtectionPiercing, true);
+            actor_ref.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Suicide, AttackPower::ProtectionPiercing, false);
             actor_ref.set_role_state(game, RoleState::Doomsayer(Doomsayer { guesses: self.guesses, won: true }));
         }else{
             actor_ref.add_private_chat_message(game, ChatMessageVariant::DoomsayerFailed);

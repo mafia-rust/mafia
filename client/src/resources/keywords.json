@@ -23,10 +23,10 @@
     "any": { "style": "keyword-info"},
     "none": { "style": "keyword-info"},
     "nonTown": { "style": "keyword-info"},
-    "defense.0": { "style": "keyword-info", "link": "standard/defense"},
-    "defense.1": { "style": "keyword-info", "link": "standard/defense"},
-    "defense.2": { "style": "keyword-info", "link": "standard/defense"},
-    "defense.3": { "style": "keyword-info", "link": "standard/defense"},
+    "defense.none": { "style": "keyword-info", "link": "standard/defense"},
+    "defense.armored": { "style": "keyword-info", "link": "standard/defense"},
+    "defense.protected": { "style": "keyword-info", "link": "standard/defense"},
+    "defense.invincible": { "style": "keyword-info", "link": "standard/defense"},
     "dead": { "style": "keyword-evil", "link": "standard/dead"},
     "wiki.article.role.reminder": { "style": "keyword-info"},
     "wiki.article.role.attributes": { "style": "keyword-info"},
@@ -47,7 +47,6 @@
     "grave.killer.quit": { "style": "keyword-info"},
     "random.gay": { "style": "keyword-pride","replacement": "random.gay","link": "role/transporter"},
     "random.trans": { "style": "keyword-trans","replacement": "random.trans","link": "role/transporter"},
-    
     "role.wildcard.name": { "style": "keyword-pride", "replacement": "role.wildcard.name", "link":"role/wildcard"},
     "role.trueWildcard.name": { "style": "keyword-pride", "replacement": "role.trueWildcard.name", "link":"role/trueWildcard"},
     "role.kira.name": { "style": "keyword-kira keyword-fiends", "replacement": "role.kira.name", "link":"role/kira"},
@@ -66,7 +65,6 @@
     "chatGroup.dead.icon": {"link":"standard/chatGroup"},
     "noGroup.icon": {"link":"standard/chatGroup"},
     "messageSender.livingToDead.icon": {"link":"standard/chatGroup"},
-
 
     "day": {"link":"standard/howToPlay", "style": "keyword-info"},
 

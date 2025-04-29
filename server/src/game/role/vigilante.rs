@@ -2,7 +2,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, game_conclusion::GameConclusion};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -40,11 +40,11 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Vigilante {
     type ClientRoleState = Vigilante;
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(mut self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority{
             OnMidnightPriority::TopPriority => {
                 if VigilanteState::WillSuicide == self.state {
-                    actor_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Suicide, AttackPower::ProtectionPiercing, false);
+                    actor_ref.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Suicide, AttackPower::ProtectionPiercing, false);
                     self.state = VigilanteState::Suicided;
                 }
             },
@@ -52,12 +52,12 @@ impl RoleStateImpl for Vigilante {
             
                 match self.state {
                     VigilanteState::Loaded { bullets } if bullets > 0 => {
-                        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                        let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                         if let Some(visit) = actor_visits.first(){
 
                             let target_ref = visit.target;
 
-                            let killed = target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Vigilante), AttackPower::Basic, false);
+                            let killed = target_ref.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Role(Role::Vigilante), AttackPower::Basic, false);
                             self.state = VigilanteState::Loaded { bullets: bullets.saturating_sub(1) };
 
                             if killed && target_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) {

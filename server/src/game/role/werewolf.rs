@@ -3,8 +3,8 @@ use serde::Serialize;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::night_visits::NightVisits;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::components::tags::{TagSetID, Tags};
-use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::grave::GraveKiller;
 use crate::game::player::{PlayerIndex, PlayerReference};
 use crate::game::visit::{Visit, VisitTag};
@@ -21,36 +21,35 @@ pub struct ClientRoleState;
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armored;
 
 const ENRAGED_NUMERATOR: usize = 2;
 const ENRAGED_DENOMINATOR: usize = 3;
 
 impl RoleStateImpl for Werewolf {
     type ClientRoleState = ClientRoleState;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Deception => {
-                let visits = actor_ref.untagged_night_visits_cloned(game);
+                let visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(first_visit) = visits.first() else {return};
 
                 let target_ref = first_visit.target;
-                let enraged = Tags::tagged(game, TagSetID::WerewolfTracked(actor_ref)).len().saturating_mul(ENRAGED_DENOMINATOR) >= PlayerReference::all_players(game)
+                let enraged = Tags::tagged(game, TagSetID::WerewolfTracked(actor_ref)).count().saturating_mul(ENRAGED_DENOMINATOR) >= PlayerReference::all_players(game)
                     .filter(|p|p.alive(game)||*p==actor_ref)
                     .count().saturating_mul(ENRAGED_NUMERATOR);
 
-                if !enraged && target_ref.all_night_visits_cloned(game).is_empty() {return}
+                if !enraged && target_ref.all_night_visits_cloned(midnight_variables).is_empty() {return}
                     
-                NightVisits::all_visits_mut(game)
-                    .into_iter()
+                NightVisits::all_visits_mut(midnight_variables)
                     .filter(|visit| 
-                        visit.target == target_ref && visit.visitor == actor_ref && visit.tag == VisitTag::Role  
+                        visit.visitor == actor_ref && visit.target == target_ref && visit.tag == VisitTag::Role{role: Role::Werewolf, id: 0}
                     ).for_each(|visit| {
                         visit.attack = true;
                     });
             }
             OnMidnightPriority::Kill => {
-                let visits = actor_ref.untagged_night_visits_cloned(game);
+                let visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(first_visit) = visits.first() else {return};
                 let target_ref = first_visit.target;
 
@@ -62,7 +61,7 @@ impl RoleStateImpl for Werewolf {
                     if game.day_number() <= 1 {return}
                 
                     //rampage target
-                    for other_player in NightVisits::all_visits(game).into_iter()
+                    for other_player in NightVisits::all_visits(midnight_variables).into_iter()
                         .filter(|visit|
                             *first_visit != **visit &&
                             visit.target == target_ref
@@ -73,6 +72,7 @@ impl RoleStateImpl for Werewolf {
                         other_player.try_night_kill_single_attacker(
                             actor_ref,
                             game,
+                            midnight_variables,
                             GraveKiller::Role(Role::Werewolf),
                             AttackPower::ArmorPiercing,
                             true
@@ -84,6 +84,7 @@ impl RoleStateImpl for Werewolf {
                         target_ref.try_night_kill_single_attacker(
                             actor_ref,
                             game,
+                            midnight_variables,
                             GraveKiller::Role(Role::Werewolf),
                             AttackPower::ArmorPiercing,
                             true
@@ -99,10 +100,10 @@ impl RoleStateImpl for Werewolf {
                     .into_iter()
                     .for_each(|player_ref|{
 
-                    let mut players: Vec<PlayerIndex> = player_ref.tracker_seen_visits(game).into_iter().map(|p|p.target.index()).collect();
+                    let mut players: Vec<PlayerIndex> = player_ref.tracker_seen_visits(game, midnight_variables).into_iter().map(|p|p.target.index()).collect();
                     players.shuffle(&mut rand::rng());
 
-                    actor_ref.push_night_message(game, 
+                    actor_ref.push_night_message(midnight_variables, 
                         ChatMessageVariant::WerewolfTrackingResult{
                             tracked_player: player_ref.index(), 
                             players

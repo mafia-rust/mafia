@@ -1,7 +1,8 @@
 use serde::Serialize;
 
-use crate::game::event::on_midnight::OnMidnightPriority;
-use crate::game::win_condition::WinCondition;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
+
+use crate::game::components::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::Grave;
 use crate::game::phase::PhaseType;
@@ -24,16 +25,16 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Scarecrow {
     type ClientRoleState = Scarecrow;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Ward {return;}
         
 
-        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
         let Some(visit) = actor_visits.first() else {return};
 
         let target_ref = visit.target;
 
-        let mut blocked_players = target_ref.ward(game, &[*visit]);
+        let mut blocked_players = target_ref.ward(game, midnight_variables, &[*visit]);
         blocked_players.shuffle(&mut rand::rng());
 
         let message = ChatMessageVariant::ScarecrowResult { players:
@@ -41,11 +42,11 @@ impl RoleStateImpl for Scarecrow {
         };
 
         for player_ref in blocked_players.iter(){
-            actor_ref.insert_role_label(game, *player_ref);
+            actor_ref.reveal_players_role(game, *player_ref);
         }
-        actor_ref.insert_role_label(game, target_ref);
+        actor_ref.reveal_players_role(game, target_ref);
         
-        actor_ref.push_night_message(game, message);
+        actor_ref.push_night_message(midnight_variables, message);
         
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
@@ -78,6 +79,6 @@ impl RoleStateImpl for Scarecrow {
             actor_ref.die_and_add_grave(game, Grave::from_player_leave_town(game, actor_ref));
         }
     }
-    fn on_visit_wardblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _visit: Visit) {}
-    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
+    fn on_visit_wardblocked(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _visit: Visit) {}
+    fn on_player_roleblocked(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }

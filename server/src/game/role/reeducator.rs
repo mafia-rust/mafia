@@ -1,20 +1,21 @@
 use rand::seq::IteratorRandom;
 use serde::Serialize;
 
-use crate::game::ability_input::{AvailablePlayerListSelection, AvailableRoleOptionSelection, ControllerID};
+use crate::game::ability_input::{AvailablePlayerListSelection, ControllerID};
 use crate::game::attack_power::AttackPower;
 use crate::game::components::insider_group::InsiderGroupID;
-use crate::game::event::on_midnight::OnMidnightPriority;
-use crate::game::grave::GraveKiller;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::role_list::RoleSet;
-use crate::game::win_condition::WinCondition;
+use crate::game::grave::GraveKiller;
+
+use crate::game::components::win_condition::WinCondition;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
 
 use crate::game::visit::{Visit, VisitTag};
 
 use crate::game::Game;
 use super::{
-    common_role, ControllerParametersMap, Role, RoleOptionSelection, 
+    common_role, ControllerParametersMap, Role, RoleListSelection, 
     RoleStateImpl
 };
 
@@ -37,7 +38,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Reeducator {
     type ClientRoleState = Reeducator;
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(mut self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
             OnMidnightPriority::Roleblock => {
                 if !self.convert_charges_remaining || game.day_number() <= 1 {return}
@@ -45,14 +46,14 @@ impl RoleStateImpl for Reeducator {
                 let mut converting = false;
 
                 actor_ref.set_night_visits(
-                    game, 
+                    midnight_variables, 
                     actor_ref
-                        .all_night_visits_cloned(game)
+                        .all_night_visits_cloned(midnight_variables)
                         .into_iter()
                         .map(|mut v|{
                             if 
                                 !InsiderGroupID::in_same_revealed_group(game, actor_ref, v.target) &&
-                                v.tag == VisitTag::Role
+                                v.tag == (VisitTag::Role{role: Role::Reeducator, id: 0})
                             {
                                 v.attack = true;
                                 converting = true;
@@ -64,23 +65,21 @@ impl RoleStateImpl for Reeducator {
 
                 if converting {
                     for fellow_insider in InsiderGroupID::Mafia.players(game).clone().iter(){
-                        fellow_insider.roleblock(game, true);
+                        fellow_insider.roleblock(game, midnight_variables, true);
                     }
                 }
             },
             OnMidnightPriority::Convert => {
-                let visits = actor_ref.untagged_night_visits_cloned(game);
+                let visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(visit) = visits.first() else {return};
 
                 let role = 
-                if let Some(RoleOptionSelection(Some(role))) = ControllerID::role(actor_ref, Role::Reeducator, 1)
-                    .get_role_option_selection(game)
+                if let Some(role) = ControllerID::role(actor_ref, Role::Reeducator, 1)
+                    .get_role_list_selection_first(game)
                 {
                     *role
-                }else if let Some(role) = Reeducator::default_role(game){
-                    role
                 }else{
-                    return
+                    Reeducator::default_role(game)
                 };
 
                 let new_state = role.new_state(game);
@@ -90,6 +89,7 @@ impl RoleStateImpl for Reeducator {
                         actor_ref.try_night_kill_single_attacker(
                             actor_ref,
                             game,
+                            midnight_variables,
                             GraveKiller::RoleSet(RoleSet::Mafia),
                             AttackPower::ProtectionPiercing,
                             false,
@@ -100,13 +100,13 @@ impl RoleStateImpl for Reeducator {
                             game,
                             WinCondition::new_loyalist(crate::game::game_conclusion::GameConclusion::Mafia)
                         );
-                        visit.target.set_night_convert_role_to(game, Some(new_state));
+                        visit.target.set_night_convert_role_to(midnight_variables, Some(new_state));
     
                         self.convert_charges_remaining = false;
                         actor_ref.set_role_state(game, self);
                     }
                 }else{
-                    visit.target.set_night_convert_role_to(game, Some(new_state));
+                    visit.target.set_night_convert_role_to(midnight_variables, Some(new_state));
                 };
             },
             _ => {}
@@ -133,14 +133,11 @@ impl RoleStateImpl for Reeducator {
                 .build_map(),
             ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Reeducator, 1))
-                .available_selection(AvailableRoleOptionSelection(
-                    RoleSet::MafiaSupport.get_roles().into_iter()
-                        .filter(|p|game.settings.enabled_roles.contains(p))
-                        .filter(|p|*p!=Role::Reeducator)
-                        .map(Some)
-                        .collect()
-                ))
-                .default_selection(RoleOptionSelection(Reeducator::default_role(game)))
+                .single_role_selection_typical(game, |role|
+                    RoleSet::MafiaSupport.get_roles().contains(role) &&
+                    *role != Role::Reeducator
+                )
+                .default_selection(RoleListSelection(vec![Reeducator::default_role(game)]))
                 .allow_players([actor_ref])
                 .build_map()
         ])
@@ -161,14 +158,14 @@ impl RoleStateImpl for Reeducator {
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
-    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
+    fn on_player_roleblocked(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
 
 impl Reeducator {
-    pub fn default_role(game: &Game) -> Option<Role> {
+    pub fn default_role(game: &Game) -> Role {
         RoleSet::MafiaSupport.get_roles().into_iter()
             .filter(|p|game.settings.enabled_roles.contains(p))
             .filter(|p|*p!=Role::Reeducator)
-            .choose(&mut rand::rng())
+            .choose(&mut rand::rng()).unwrap_or(Role::Reeducator)
     }
 }

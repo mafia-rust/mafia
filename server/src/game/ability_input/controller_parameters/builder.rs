@@ -1,4 +1,12 @@
-use crate::{game::{ability_input::{AvailablePlayerListSelection, AvailableSelectionKind, ControllerID, ControllerParameters}, components::{detained::Detained, insider_group::InsiderGroupID}, phase::PhaseType, player::PlayerReference, Game}, vec_set::VecSet};
+use crate::{
+    game::{
+        ability_input::{
+            AvailablePlayerListSelection, AvailableRoleListSelection,
+            AvailableSelectionKind, ControllerID, ControllerParameters
+        }, components::{detained::Detained, insider_group::InsiderGroupID}, phase::PhaseType, player::PlayerReference, role::Role, Game
+    },
+    vec_set::VecSet
+};
 
 use super::ControllerParametersMap;
 
@@ -66,8 +74,17 @@ impl<'a, I: BuilderIDState> ControllerParametersBuilder<'a, NoAbilitySelection, 
         can_select_self: bool,
         can_select_insiders: bool,
     ) -> ControllerParametersBuilder<'a, AvailablePlayerListSelection, I> {
+        self.player_list_selection_typical(actor_ref, can_select_self, can_select_insiders, false, Some(1))
+    }
+    pub fn player_list_selection_typical(
+        self,
+        actor_ref: PlayerReference,
+        can_select_self: bool,
+        can_select_insiders: bool,
+        can_select_duplicates: bool,
+        max_players: Option<u8>
+    ) -> ControllerParametersBuilder<'a, AvailablePlayerListSelection, I> {
         let game = self.game;
-
         self.available_selection(AvailablePlayerListSelection {
             available_players: PlayerReference::all_players(game)
                 .filter(|player|
@@ -83,10 +100,21 @@ impl<'a, I: BuilderIDState> ControllerParametersBuilder<'a, NoAbilitySelection, 
 
                 )
                 .collect(),
-            can_choose_duplicates: false,
-            max_players: Some(1)
+            can_choose_duplicates: can_select_duplicates,
+            max_players
         })
     }
+
+    pub fn single_role_selection_typical(
+        self, game: &Game, filter: impl FnMut(&Role) -> bool
+    ) -> ControllerParametersBuilder<'a, AvailableRoleListSelection, I> {
+        self.available_selection(AvailableRoleListSelection{
+            available_roles: game.settings.enabled_roles.clone().into_iter().filter(filter).collect(),
+            can_choose_duplicates: false,
+            max_roles: Some(1)
+        })
+    }
+    
 }
 
 impl<A: BuilderAvailableAbilitySelectionState, I: BuilderIDState> ControllerParametersBuilder<'_, A, I> {

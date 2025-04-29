@@ -10,7 +10,7 @@ pub(super) mod on_convert;
 pub(super) mod before_role_switch;
 pub(super) mod before_phase_end;
 pub(super) mod on_midnight;
-pub(super) mod on_remove_role_label;
+pub(super) mod on_conceal_role;
 pub(super) mod before_initial_role_creation;
 pub(super) mod on_ability_input_received;
 pub(super) mod on_validated_ability_input_received;
@@ -37,15 +37,17 @@ pub trait Event: Sized {
     type Priority: EventPriority;
 
     fn listeners() -> Vec<EventListenerFunction<Self>>;
-    fn initial_fold_value(&self) -> Self::FoldValue;
-    fn invoke(self, game: &mut Game) {
-        let mut fold = self.initial_fold_value();
+    fn initial_fold_value(&self, game: &Game) -> Self::FoldValue;
+    fn invoke(self, game: &mut Game) -> Self::FoldValue {
+        let mut fold = self.initial_fold_value(game);
 
         for priority in Self::Priority::values() {
             for listener in Self::listeners() {
                 listener(game, &self, &mut fold, priority);
             }
         }
+
+        fold
     }
 }
 

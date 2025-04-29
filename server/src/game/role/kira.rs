@@ -2,7 +2,7 @@ use kira_selection::{AvailableKiraSelection, KiraSelection};
 use serde::{Serialize, Deserialize};
 
 use crate::game::attack_power::AttackPower;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -25,7 +25,7 @@ pub enum KiraGuess{
     Detective, Lookout, Tracker, Psychic, Philosopher, Gossip, Auditor, Snoop, Spy, TallyClerk,
     Doctor, Bodyguard, Cop, Bouncer, Engineer, Armorsmith, Steward,
     Vigilante, Veteran, Marksman, Deputy, Rabblerouser,
-    Escort, Medium, Retributionist, Reporter, Mayor, Transporter, Coxswain
+    Escort, Medium, Retributionist, Reporter, Mayor, Transporter, Porter, Coxswain, Polymath
 }
 impl KiraGuess{
     fn convert_to_guess(role: Role)->Option<KiraGuess>{
@@ -64,7 +64,9 @@ impl KiraGuess{
             Role::Reporter => Some(Self::Reporter),
             Role::Mayor => Some(Self::Mayor),
             Role::Transporter => Some(Self::Transporter),
+            Role::Porter => Some(Self::Porter),
             Role::Coxswain => Some(Self::Coxswain),
+            Role::Polymath => Some(Self::Polymath),
 
             //Mafia
             Role::Godfather | Role::Mafioso |
@@ -157,12 +159,12 @@ pub enum KiraGuessResult {
 pub struct KiraAbilityInput(Vec<(PlayerReference, KiraGuess)>);
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armored;
 
 impl RoleStateImpl for Kira {
     type ClientRoleState = Kira;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
-        if actor_ref.night_blocked(game) {return;}
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if actor_ref.night_blocked(midnight_variables) {return;}
         if actor_ref.ability_deactivated_from_death(game) {return;}
 
         let Some(KiraSelection(selection)) = ControllerID::role(actor_ref, Role::Kira, 0).get_kira_selection(game)
@@ -176,12 +178,12 @@ impl RoleStateImpl for Kira {
                 
                 for (player, (guess, result)) in result.guesses.iter(){
                     if player.alive(game) && *result == KiraGuessResult::Correct && *guess != KiraGuess::None {
-                        player.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(super::Role::Kira), AttackPower::ArmorPiercing, true);
+                        player.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Role(super::Role::Kira), AttackPower::ArmorPiercing, true);
                     }
                 }
             },
             OnMidnightPriority::Investigative => {
-                actor_ref.push_night_message(game, ChatMessageVariant::KiraResult { result });
+                actor_ref.push_night_message(midnight_variables, ChatMessageVariant::KiraResult { result });
             },
             _ => {},
         }    

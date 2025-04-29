@@ -38,6 +38,20 @@ impl TestPlayer {
         );
     }
 
+    pub fn send_ability_input_integer_typical(&self, int: i8) {
+        self.send_ability_input(AbilityInput::new(
+            ControllerID::role(self.player_ref(), self.role(), 0),
+            IntegerSelection(int),
+        ))
+    }
+
+    pub fn send_ability_input_role_typical(&self, role: Vec<Role>){
+        self.send_ability_input(AbilityInput::new(
+            ControllerID::role(self.player_ref(), self.role(), 0),
+            RoleListSelection(role),
+        ))
+    }
+
     pub fn send_ability_input_unit_typical(&self)->bool{
         self.send_ability_input(
             AbilityInput::new(
@@ -112,8 +126,11 @@ impl TestPlayer {
         self.0.alive(game!(self))
     }
 
-    pub fn was_blocked(&self) -> bool {
-        self.0.night_blocked(game!(self))
+    pub fn received_blocked_message(&self) -> bool {
+        let messages = self.get_messages_after_night(game!(self).day_number() - 1);
+
+        messages.contains(&ChatMessageVariant::RoleBlocked) ||
+        messages.contains(&ChatMessageVariant::Wardblocked)
     }
 
     pub fn get_messages(&self) -> Vec<ChatMessageVariant> {

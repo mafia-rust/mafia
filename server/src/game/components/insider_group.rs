@@ -9,10 +9,10 @@ pub struct InsiderGroups{
     puppeteer: InsiderGroup
 }
 impl InsiderGroups{
-    pub fn on_remove_role_label(game: &mut Game, player: PlayerReference, concealed_player: PlayerReference){
-        InsiderGroupID::Mafia.on_remove_role_label(game, player, concealed_player);
-        InsiderGroupID::Cult.on_remove_role_label(game, player, concealed_player);
-        InsiderGroupID::Puppeteer.on_remove_role_label(game, player, concealed_player);
+    pub fn on_conceal_role(game: &mut Game, player: PlayerReference, concealed_player: PlayerReference){
+        InsiderGroupID::Mafia.on_conceal_role(game, player, concealed_player);
+        InsiderGroupID::Cult.on_conceal_role(game, player, concealed_player);
+        InsiderGroupID::Puppeteer.on_conceal_role(game, player, concealed_player);
     }
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, Serialize, Deserialize)]
@@ -100,7 +100,7 @@ impl InsiderGroupID{
         OnAddInsider::new(player, *self).invoke(game);
         Self::send_player_insider_groups(game, player);
     }
-    pub fn remove_player_from_revealed_group(&self, game: &mut Game, player: PlayerReference){
+    pub fn remove_player_from_insider_group(&self, game: &mut Game, player: PlayerReference){
         let players: &mut VecSet<PlayerReference> = self.revealed_group_mut(game).into();
         if players.remove(&player).is_some() {
             self.reveal_group_players(game);
@@ -108,16 +108,16 @@ impl InsiderGroupID{
         OnRemoveInsider::new(player, *self).invoke(game);
         Self::send_player_insider_groups(game, player);
     }
-    pub fn set_player_revealed_groups(set: VecSet<InsiderGroupID>, game: &mut Game, player: PlayerReference){
+    pub fn set_player_insider_groups(set: VecSet<InsiderGroupID>, game: &mut Game, player: PlayerReference){
         for group in InsiderGroupID::all(){
             if set.contains(&group){
                 group.add_player_to_revealed_group(game, player);
             }else{
-                group.remove_player_from_revealed_group(game, player);
+                group.remove_player_from_insider_group(game, player);
             }
         }
     }
-    pub fn start_game_set_player_revealed_groups(set: VecSet<InsiderGroupID>, game: &mut Game, player: PlayerReference){
+    pub fn start_game_set_player_insider_groups(set: VecSet<InsiderGroupID>, game: &mut Game, player: PlayerReference){
         for group in InsiderGroupID::all(){
             if set.contains(&group){
                 let players: &mut VecSet<PlayerReference> = group.revealed_group_mut(game).into();
@@ -145,13 +145,13 @@ impl InsiderGroupID{
         for a in players.clone() {
             Self::send_fellow_insiders(game, a);
             for b in players.clone() {
-                a.insert_role_label(game, b);
+                a.reveal_players_role(game, b);
             }
         }
     }
 
     // Events
-    pub fn on_remove_role_label(&self, game: &mut Game, player: PlayerReference, concealed_player: PlayerReference){
+    pub fn on_conceal_role(&self, game: &mut Game, player: PlayerReference, concealed_player: PlayerReference){
         
         let players: &VecSet<PlayerReference> = self.revealed_group(game).into();
         if players.contains(&concealed_player) && players.contains(&player) {

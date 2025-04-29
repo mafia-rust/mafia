@@ -16,5 +16,12 @@ pub mod synopsis;
 pub mod dead_can_still_play_message;
 pub mod nomination_controller;
 pub mod forward_messages;
+pub mod silenced;
 pub mod tags;
 pub mod enfranchise;
+pub mod guard;
+pub mod fragile_vest;
+pub mod transport;
+pub mod win_condition;
+
+pub mod player_component;

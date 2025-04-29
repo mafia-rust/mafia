@@ -5,12 +5,12 @@ use crate::game::{
     chat::ChatGroup,
     components::{
         detained::Detained,
-        puppeteer_marionette::PuppeteerMarionette
+        puppeteer_marionette::PuppeteerMarionette, silenced::Silenced, win_condition::WinCondition
     },
     game_conclusion::GameConclusion,
     modifiers::{ModifierType, Modifiers},
     phase::{PhaseState, PhaseType}, player::PlayerReference,
-    role_list::RoleSet, visit::Visit, win_condition::WinCondition,
+    role_list::RoleSet, visit::{Visit, VisitTag},
     Game
 };
 
@@ -18,15 +18,20 @@ use super::{medium::Medium, reporter::Reporter, warden::Warden, InsiderGroupID, 
 
 
 /// This function uses defaults. When using this function, consider if you need to override the defaults.
+/// Defaults to VisitTag::Role { role: actor_ref.role(game), id: 0 }
 pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: PlayerReference, controller_id: ControllerID, attack: bool) -> Vec<Visit> {
+    convert_controller_selection_to_visits_visit_tag(game, actor_ref, controller_id, attack, VisitTag::Role { role: actor_ref.role(game), id: 0 })
+}
+
+pub(super) fn convert_controller_selection_to_visits_visit_tag(game: &Game, actor_ref: PlayerReference, controller_id: ControllerID, attack: bool, tag: VisitTag) -> Vec<Visit> {
     
     let Some(selection) = controller_id.get_selection(game) else {return Vec::new()};
-    
+
     match selection {
-        AbilitySelection::Unit(_) => vec![Visit::new_none(actor_ref, actor_ref, attack)],
+        AbilitySelection::Unit(_) => vec![Visit::new(actor_ref, actor_ref, attack, tag)],
         AbilitySelection::TwoPlayerOption(selection) => {
             if let Some((target_1, target_2)) = selection.0 {
-                vec![Visit::new_none(actor_ref, target_1, attack), Visit::new_none(actor_ref, target_2, attack)]
+                vec![Visit::new(actor_ref, target_1, attack, tag), Visit::new(actor_ref, target_2, attack, tag)]
             }else{
                 vec![]
             }
@@ -34,26 +39,32 @@ pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: Pla
         AbilitySelection::PlayerList(selection) => {
             selection.0
                 .iter()
-                .map(|target_ref| Visit::new_none(actor_ref, *target_ref, attack))
+                .map(|target_ref| Visit::new(actor_ref, *target_ref, attack, tag))
                 .collect()
         }
-        AbilitySelection::RoleOption(selection) => {
-            let mut out = Vec::new();
-            for player in PlayerReference::all_players(game){
-                if Some(player.role(game)) == selection.0 {
-                    out.push(Visit::new_none(actor_ref, player, attack));
-                }
-            }
-            out
+        AbilitySelection::RoleList(selection) => {
+            selection.0
+                .iter()
+                .flat_map(|role|
+                    PlayerReference::all_players(game)
+                        .filter_map(|player|
+                            if player.role(game) == *role {
+                                Some(Visit::new(actor_ref, player, attack, tag))
+                            }else{
+                                None
+                            }
+                        )
+                )
+                .collect()
         }
         AbilitySelection::TwoRoleOption(selection) => {
             let mut out = Vec::new();
             for player in PlayerReference::all_players(game){
                 if Some(player.role(game)) == selection.0 {
-                    out.push(Visit::new_none(actor_ref, player, attack));
+                    out.push(Visit::new(actor_ref, player, attack, tag));
                 }
                 if Some(player.role(game)) == selection.1 {
-                    out.push(Visit::new_none(actor_ref, player, attack));
+                    out.push(Visit::new(actor_ref, player, attack, tag));
                 }
             }
             out
@@ -62,17 +73,35 @@ pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: Pla
             let mut out = vec![];
             if let Some(chosen_outline) = selection.0{
                 let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-                out.push(Visit::new_none(actor_ref, player, false));
+                out.push(Visit::new(actor_ref, player, false, tag));
             }
             if let Some(chosen_outline) = selection.1{
                 let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-                out.push(Visit::new_none(actor_ref, player, false));
+                out.push(Visit::new(actor_ref, player, false, tag));
             }
             out
         },
         _ => Vec::new()
     }
 }
+
+pub(super) fn convert_controller_selection_to_visits_possession(game: &Game, actor_ref: PlayerReference, controller_id: ControllerID) -> Vec<Visit> {
+    let Some(selection) = controller_id.get_selection(game) else {return Vec::new()};
+
+    if let AbilitySelection::TwoPlayerOption(selection) = selection {
+        if let Some((target_1, target_2)) = selection.0 {
+            vec![Visit::new(actor_ref, target_1, false, VisitTag::Role { role: actor_ref.role(game), id: 0 }), Visit::new(actor_ref, target_2, false, VisitTag::Role { role: actor_ref.role(game), id: 1 })]
+        }else{
+            vec![]
+        }
+    }else{
+        vec![]
+    }
+}
+
+
+
+
 
 pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference, mut night_chat_groups: Vec<ChatGroup>) -> HashSet<ChatGroup> {
     if game.current_phase().phase() == PhaseType::Recess {
@@ -87,13 +116,13 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
         }
         return vec![ChatGroup::Dead].into_iter().collect();
     }
-    if actor_ref.night_silenced(game){
+    if Silenced::silenced(game, actor_ref) {
         return HashSet::new();
     }
 
     match game.current_phase() {
         PhaseState::Briefing => HashSet::new(),
-        PhaseState::Obituary => {
+        PhaseState::Obituary { .. } => {
             let mut out = HashSet::new();
 
             //evil chat groups

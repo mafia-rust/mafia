@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::game::ability_input::*;
 use crate::game::attack_power::DefensePower;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveInformation;
 use crate::game::player::PlayerReference;
 
@@ -25,8 +25,8 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Impostor {
     type ClientRoleState = Impostor;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
-        Godfather::night_kill_ability(game, actor_ref, priority);
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        Godfather::night_kill_ability(game, midnight_variables, actor_ref, priority);
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
@@ -46,20 +46,17 @@ impl RoleStateImpl for Impostor {
                 .build_map(),
             ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Impostor, 1))
-                .available_selection(AvailableRoleOptionSelection(
-                    Role::values().into_iter()
-                        .map(Some)
-                        .collect()
-                ))
-                .default_selection(RoleOptionSelection(Some(Role::Impostor)))
+                .single_role_selection_typical(game, |_|true)
+                .default_selection(RoleListSelection(vec!(Role::Impostor)))
                 .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
                 .allow_players([actor_ref])
                 .build_map()
         ])
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: crate::game::grave::GraveReference) {
-        let Some(RoleOptionSelection(Some(role))) = ControllerID::role(actor_ref, Role::Impostor, 1)
-            .get_role_option_selection(game).cloned() else {return};
+        let Some(RoleListSelection(roles)) = ControllerID::role(actor_ref, Role::Impostor, 1)
+            .get_role_list_selection(game).cloned() else {return};
+        let Some(role) = roles.first().copied() else {return};
         
         
         if grave.deref(game).player == actor_ref {

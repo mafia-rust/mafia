@@ -2,21 +2,21 @@ use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::ability_input::ControllerParametersMap;
-use crate::game::event::on_midnight::OnMidnightPriority;
-use crate::game::{attack_power::DefensePower, chat::ChatMessageVariant};
+use crate::game::components::fragile_vest::FragileVests;
+use crate::game::components::player_component::PlayerComponent;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
+use crate::game::attack_power::DefensePower;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::Game;
+use crate::vec_set;
 use super::{common_role, ControllerID, GetClientRoleState, Role, RoleStateImpl};
 
 #[derive(Clone, Debug)]
 pub struct Armorsmith {
     open_shops_remaining: u8,
     night_open_shop: bool,
-
-    protected_visiting_players: Vec<PlayerReference>,
-    players_armor: Vec<PlayerReference>
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -30,8 +30,6 @@ impl Default for Armorsmith {
         Self { 
             open_shops_remaining: 3,
             night_open_shop: false,
-            protected_visiting_players: Vec::new(),
-            players_armor: Vec::new()
         }
     }
 }
@@ -42,59 +40,32 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Armorsmith {
     type ClientRoleState = ClientRoleState;
-    fn on_midnight(mut self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(mut self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         match priority {
             OnMidnightPriority::Heal => {
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 if let Some(visit) = actor_visits.first() {
                     if self.open_shops_remaining != 0 {
                         self.night_open_shop = true;
                         self.open_shops_remaining = self.open_shops_remaining.saturating_sub(1);
 
+                        actor_ref.guard_player(game, midnight_variables, actor_ref);
 
-                        actor_ref.increase_defense_to(game, DefensePower::Protection);
 
-                        let visitors = actor_ref.all_night_visitors_cloned(game);
+                        let visitors = actor_ref.all_night_visitors_cloned(midnight_variables);
 
                         for visitor in visitors.iter(){
-                            visitor.increase_defense_to(game, DefensePower::Protection);
+                            actor_ref.guard_player(game, midnight_variables, *visitor);
                         }
 
                         if visitors.contains(&visit.target){
-                            self.players_armor.push(visit.target);
+                            PlayerComponent::<FragileVests>::add_defense_item_midnight(game, midnight_variables, visit.target, DefensePower::Protected, vec_set![actor_ref]);
                         }else if let Some(random_visitor) = visitors.choose(&mut rand::rng()) {
-                            self.players_armor.push(*random_visitor);
+                            PlayerComponent::<FragileVests>::add_defense_item_midnight(game, midnight_variables, *random_visitor, DefensePower::Protected, vec_set![actor_ref]);
                         }
-
-                        self.protected_visiting_players = visitors;
                     }
                 };
-
-                for player in self.players_armor.iter(){
-                    player.increase_defense_to(game, DefensePower::Protection);
-                }
-
-                actor_ref.set_role_state(game, self);
-            }
-            OnMidnightPriority::Investigative => {
-
-                for protected_player in self.protected_visiting_players.iter(){
-                    if protected_player.night_attacked(game){
-                        actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
-                        protected_player.push_night_message(game, ChatMessageVariant::YouWereProtected);
-                    }
-                }
-
-                for player_armor in self.players_armor.clone() {
-                    if player_armor.night_attacked(game){
-                        actor_ref.push_night_message(game, ChatMessageVariant::TargetWasAttacked);
-                        player_armor.push_night_message(game, ChatMessageVariant::YouWereProtected);
-
-                        player_armor.push_night_message(game, ChatMessageVariant::ArmorsmithArmorBroke);
-                        self.players_armor.retain(|x| *x != player_armor);
-                    }
-                }
 
                 actor_ref.set_role_state(game, self);
             }
@@ -121,7 +92,6 @@ impl RoleStateImpl for Armorsmith {
         actor_ref.set_role_state(game, 
             Armorsmith{
                 night_open_shop: false,
-                protected_visiting_players: Vec::new(),
                 ..self
             });
     }

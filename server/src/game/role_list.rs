@@ -5,9 +5,9 @@ use vec1::{
     Vec1
 };
 
-use crate::vec_set::VecSet;
+use crate::vec_set::{vec_set, VecSet};
 
-use super::{components::insider_group::InsiderGroupID, game_conclusion::GameConclusion, role::Role};
+use super::{components::{insider_group::InsiderGroupID, win_condition::WinCondition}, game_conclusion::GameConclusion, role::Role};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RoleList(pub Vec<RoleOutline>);
@@ -38,9 +38,31 @@ impl RoleList {
 
 #[derive(Clone, PartialEq, Eq)]
 pub struct RoleAssignment {
-    pub role: Role,
-    pub insider_groups: RoleOutlineOptionInsiderGroups,
-    pub win_condition: RoleOutlineOptionWinCondition
+    role: Role,
+    insider_groups: RoleOutlineOptionInsiderGroups,
+    win_condition: RoleOutlineOptionWinCondition
+}
+impl RoleAssignment{
+    pub fn role(&self)->Role{
+        self.role
+    }
+    pub fn insider_groups(&self)->VecSet<InsiderGroupID>{
+        match &self.insider_groups {
+            RoleOutlineOptionInsiderGroups::RoleDefault => {
+                self.role.default_state().default_revealed_groups()
+            },
+            RoleOutlineOptionInsiderGroups::Custom { insider_groups } => insider_groups.clone(),
+        }
+    }
+    pub fn win_condition(&self)->WinCondition{
+        match &self.win_condition {
+            RoleOutlineOptionWinCondition::RoleDefault => {
+                self.role.default_state().default_win_condition()
+            },
+            RoleOutlineOptionWinCondition::GameConclusionReached { win_if_any } => 
+                WinCondition::GameConclusionReached { win_if_any: win_if_any.clone() },
+        }
+    }
 }
 
 
@@ -100,6 +122,11 @@ impl RoleOutline{
             .filter(|r|role_can_generate(r.role, enabled_roles, taken_roles))
             .collect::<Vec<_>>();
         options.choose(&mut rand::rng()).cloned()
+    }
+    pub fn get_all_roles(&self) -> Vec<Role>{
+        self.options.iter()
+            .flat_map(|outline_opt|outline_opt.roles.get_roles().into_iter())
+            .collect()
     }
     pub fn simplify(&mut self){
         let mut new_options = self.options.to_vec();
@@ -222,13 +249,13 @@ impl Default for RoleOutlineOptionRoles {
     }
 }
 impl RoleOutlineOptionRoles{
-    pub fn get_roles(&self) -> Vec<Role> {
+    pub fn get_roles(&self) -> VecSet<Role> {
         match self {
             RoleOutlineOptionRoles::RoleSet { role_set } => {
                 role_set.get_roles()
             }
             RoleOutlineOptionRoles::Role { role } => 
-                vec![*role]
+                vec_set![*role]
         }
     }
     pub fn is_subset(&self, other: &RoleOutlineOptionRoles) -> bool {
@@ -242,7 +269,7 @@ impl PartialOrd for RoleOutlineOptionRoles {
 }
 impl Ord for RoleOutlineOptionRoles {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        other.get_roles().len().cmp(&self.get_roles().len())
+        other.get_roles().count().cmp(&self.get_roles().count())
     }
 }
 
@@ -270,7 +297,7 @@ pub enum RoleSet {
     Minions
 }
 impl RoleSet{
-    pub fn get_roles(&self) -> Vec<Role> {
+    pub fn get_roles(&self) -> VecSet<Role> {
         match self {
             RoleSet::Any => Role::values(),
             RoleSet::Town => 
@@ -290,30 +317,30 @@ impl RoleSet{
                 ).collect()
             },
             RoleSet::TownInvestigative => 
-                vec![
+                vec_set![
                     Role::Detective, Role::Philosopher, Role::Gossip, 
                     Role::Psychic, Role::Auditor, Role::Spy, 
                     Role::Lookout, Role::Tracker, Role::Snoop,
                     Role::TallyClerk
                 ],
             RoleSet::TownProtective => 
-                vec![
+                vec_set![
                     Role::Bodyguard, Role::Cop, Role::Doctor,
                     Role::Bouncer, Role::Engineer, Role::Armorsmith,
                     Role::Steward
                 ],
             RoleSet::TownKilling => 
-                vec![
+                vec_set![
                     Role::Vigilante, Role::Veteran, Role::Deputy, Role::Marksman, Role::Rabblerouser
                 ],
             RoleSet::TownSupport => 
-                vec![
+                vec_set![
                     Role::Medium, Role::Coxswain,
-                    Role::Retributionist, Role::Transporter, Role::Escort, 
-                    Role::Mayor, Role::Reporter
+                    Role::Retributionist, Role::Transporter, Role::Porter, Role::Escort, 
+                    Role::Mayor, Role::Reporter, Role::Polymath
                 ],
             RoleSet::Mafia =>
-                vec![
+                vec_set![
                     Role::Goon, Role::MafiaSupportWildcard, Role::MafiaKillingWildcard
                 ].into_iter().chain(
                     RoleSet::MafiaKilling.get_roles()
@@ -321,36 +348,36 @@ impl RoleSet{
                     RoleSet::MafiaSupport.get_roles()
                 ).collect(),
             RoleSet::MafiaKilling => 
-                vec![
+                vec_set![
                     Role::Godfather, Role::Counterfeiter,
                     Role::Impostor, Role::Recruiter,
                     Role::Mafioso
                 ],
             RoleSet::MafiaSupport => 
-                vec![
+                vec_set![
                     Role::Blackmailer, Role::Informant, Role::Hypnotist, Role::Consort,
                     Role::Forger, Role::Framer, Role::Mortician, Role::Disguiser,
                     Role::MafiaWitch, Role::Necromancer, Role::Reeducator,
-                    Role::Ambusher,
+                    Role::Ambusher
                 ],
             RoleSet::Minions => 
-                vec![
+                vec_set![
                     Role::Witch, Role::Scarecrow, Role::Warper, Role::Kidnapper
                 ],
             RoleSet::Neutral =>
-                vec![
+                vec_set![
                     Role::Jester, Role::Revolutionary, Role::Politician, Role::Doomsayer,
-                    Role::Martyr, Role::Chronokaiser, Role::SantaClaus, Role::Krampus,
+                    Role::Martyr, Role::Chronokaiser, Role::SantaClaus, Role::Krampus
                 ],
             RoleSet::Fiends =>
-                vec![
+                vec_set![
                     Role::Arsonist, Role::Werewolf, Role::Ojo,
                     Role::Puppeteer, Role::Pyrolisk, Role::Kira,
                     Role::SerialKiller, Role::FiendsWildcard,
                     Role::Spiral, Role::Warden, Role::Yer
                 ],
             RoleSet::Cult =>
-                vec![
+                vec_set![
                     Role::Apostle, Role::Disciple, Role::Zealot
                 ],
         }

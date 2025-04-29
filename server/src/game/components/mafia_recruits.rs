@@ -1,11 +1,15 @@
 use std::collections::HashSet;
 
 use crate::{game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, event::{on_add_insider::OnAddInsider, on_midnight::{OnMidnight, OnMidnightPriority}, on_remove_insider::OnRemoveInsider},
-    game_conclusion::GameConclusion, player::PlayerReference, role::Role, role_list::RoleSet, win_condition::WinCondition, Game, InsiderGroupID
+    attack_power::AttackPower, chat::ChatMessageVariant,
+    event::{
+        on_add_insider::OnAddInsider, on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority},
+        on_remove_insider::OnRemoveInsider
+    },
+    game_conclusion::GameConclusion, player::PlayerReference, role::Role, role_list::RoleSet, Game, InsiderGroupID
 }, vec_set::VecSet};
 
-use super::tags::Tags;
+use super::{tags::Tags, win_condition::WinCondition};
 
 impl Game{
     pub fn mafia_recruits(&self)->&MafiaRecruits{
@@ -21,7 +25,7 @@ pub struct MafiaRecruits{
     recruits: HashSet<PlayerReference>,
 }
 impl MafiaRecruits{
-    pub fn recruit(game: &mut Game, player: PlayerReference)->bool{
+    pub fn recruit(game: &mut Game, midnight_variables: &mut MidnightVariables, player: PlayerReference)->bool{
         let mut recruiter_recruits = game.mafia_recruits().clone();
 
         if InsiderGroupID::Mafia.is_player_in_revealed_group(game, player) {return false;}
@@ -34,13 +38,13 @@ impl MafiaRecruits{
 
 
         for mafia in MafiaRecruits::mafia_and_recruits(game){
-            mafia.push_night_message(game, ChatMessageVariant::RecruiterPlayerIsNowRecruit{player: player.index()});
+            mafia.push_night_message(midnight_variables, ChatMessageVariant::RecruiterPlayerIsNowRecruit{player: player.index()});
         }
 
         true
     }
 
-    pub fn kill_recruits(game: &mut Game){
+    pub fn kill_recruits(game: &mut Game, midnight_variables: &mut MidnightVariables){
         let marionettes = 
             game.mafia_recruits()
                 .recruits
@@ -49,16 +53,16 @@ impl MafiaRecruits{
                 .copied()
                 .collect::<Vec<_>>();
 
-                MafiaRecruits::attack_players(game, marionettes, AttackPower::ProtectionPiercing);
+                MafiaRecruits::attack_players(game, midnight_variables, marionettes, AttackPower::ProtectionPiercing);
     }
-    fn attack_players(game: &mut Game, players: Vec<PlayerReference>, attack_power: AttackPower){
+    fn attack_players(game: &mut Game, midnight_variables: &mut MidnightVariables, players: Vec<PlayerReference>, attack_power: AttackPower){
         
         let recruiters: VecSet<_> = PlayerReference::all_players(game)
             .filter(|p|p.role(game)==Role::Recruiter)
             .collect();
 
         for player in players{
-            player.try_night_kill(&recruiters, game, crate::game::grave::GraveKiller::RoleSet(RoleSet::Mafia), attack_power, false);
+            player.try_night_kill(&recruiters, game, midnight_variables, crate::game::grave::GraveKiller::RoleSet(RoleSet::Mafia), attack_power, false);
         }
     }
 
@@ -92,9 +96,9 @@ impl MafiaRecruits{
     pub fn on_remove_insider(game: &mut Game, _event: &OnRemoveInsider, _fold: &mut (), _priority: ()){
         Tags::set_viewers(game, super::tags::TagSetID::SyndicateRecruit, &InsiderGroupID::Mafia.players(game).clone());
     }
-    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut (), priority: OnMidnightPriority){
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, midnight_variables: &mut MidnightVariables, priority: OnMidnightPriority){
         if priority == OnMidnightPriority::Kill{
-            MafiaRecruits::kill_recruits(game);
+            MafiaRecruits::kill_recruits(game, midnight_variables);
         }
     }
 }

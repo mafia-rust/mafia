@@ -6,6 +6,7 @@ use crate::game::attack_power::AttackPower;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::night_visits::NightVisits;
+use crate::game::event::on_midnight::MidnightVariables;
 use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::grave::GraveKiller;
@@ -30,17 +31,17 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Ambusher {
     type ClientRoleState = Ambusher;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if game.day_number() <= 1 {return}
 
         match priority {
             OnMidnightPriority::Kill => {
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(ambush_visit) = actor_visits.first() else {return};
                 let target_ref = ambush_visit.target;
 
                 let player_to_attacks_visit = 
-                if let Some(priority_visitor) = NightVisits::all_visits(game).into_iter()
+                if let Some(priority_visitor) = NightVisits::all_visits(midnight_variables).into_iter()
                     .filter(|visit|
                         ambush_visit != *visit &&
                         visit.target == target_ref &&
@@ -52,7 +53,7 @@ impl RoleStateImpl for Ambusher {
                 {
                     Some(priority_visitor.visitor)
                 } else {
-                    NightVisits::all_visits(game).into_iter()
+                    NightVisits::all_visits(midnight_variables).into_iter()
                         .filter(|visit|
                             ambush_visit != *visit &&
                             visit.target == target_ref &&
@@ -67,14 +68,15 @@ impl RoleStateImpl for Ambusher {
                     player_to_attack.try_night_kill_single_attacker(
                         actor_ref,
                         game,
+                        midnight_variables,
                         GraveKiller::Role(Role::Ambusher),
                         AttackPower::Basic,
                         false
                     );
 
-                    for visitor in target_ref.all_night_visitors_cloned(game){
+                    for visitor in target_ref.all_night_visitors_cloned(midnight_variables){
                         if visitor == player_to_attack || visitor == actor_ref {continue;}
-                        visitor.push_night_message(game, ChatMessageVariant::AmbusherCaught { ambusher: actor_ref });
+                        visitor.push_night_message(midnight_variables, ChatMessageVariant::AmbusherCaught { ambusher: actor_ref });
                     }
                 }
             }

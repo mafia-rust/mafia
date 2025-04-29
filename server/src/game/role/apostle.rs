@@ -5,14 +5,14 @@ use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::ChatMessageVariant;
 use crate::game::components::cult::{Cult, CultAbility};
 use crate::game::components::insider_group::InsiderGroupID;
-use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::components::win_condition::WinCondition;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
 use crate::game::game_conclusion::GameConclusion;
 
 use crate::game::role_list::RoleSet;
 use crate::game::visit::Visit;
-use crate::game::win_condition::WinCondition;
 use crate::game::Game;
 use super::{common_role, ControllerID, Role, RoleStateImpl};
 
@@ -26,33 +26,33 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Apostle {
     type ClientRoleState = Apostle;
-    fn on_midnight(self, game: &mut Game, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
         match (priority, Cult::next_ability(game)) {
             (OnMidnightPriority::Kill, CultAbility::Kill) if game.cult().ordered_cultists.len() == 1 => {
 
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
                 
                 if target_ref.try_night_kill_single_attacker(
-                    actor_ref, game, GraveKiller::RoleSet(RoleSet::Cult), AttackPower::Basic, false
+                    actor_ref, game, midnight_variables, GraveKiller::RoleSet(RoleSet::Cult), AttackPower::Basic, false
                 ) {
                     Cult::set_ability_used_last_night(game, Some(CultAbility::Kill));
                 }
             }
             (OnMidnightPriority::Convert, CultAbility::Convert) => {
                 
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 
-                if target_ref.night_defense(game).can_block(AttackPower::Basic) {
-                    actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                if target_ref.night_defense(game, midnight_variables).can_block(AttackPower::Basic) {
+                    actor_ref.push_night_message(midnight_variables, ChatMessageVariant::YourConvertFailed);
                     return
                 }
 
-                target_ref.set_night_convert_role_to(game, Some(Role::Zealot.new_state(game)));
+                target_ref.set_night_convert_role_to(midnight_variables, Some(Role::Zealot.new_state(game)));
                 InsiderGroupID::Cult.add_player_to_revealed_group(game, target_ref);
                 target_ref.set_win_condition(game, WinCondition::new_loyalist(GameConclusion::Cult));
                 
