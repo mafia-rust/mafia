@@ -40,7 +40,7 @@ impl RoleStateImpl for Revolutionary {
     type ClientRoleState = ClientRoleState;
     fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Investigative {return};
-        let Some(new_target) = actor_ref.untagged_night_visits(game).first().map(|v|v.target) else {return};
+        let Some(new_target) = actor_ref.untagged_night_visits(midnight_variables).first().map(|v|v.target) else {return};
         if new_target.night_died(midnight_variables) || !new_target.win_condition(game).is_loyalist_for(GameConclusion::Town) {
             actor_ref.push_night_message(midnight_variables, ChatMessageVariant::RevolutionaryRefreshFailed);
         } else {
