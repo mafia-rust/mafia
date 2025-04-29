@@ -45,9 +45,9 @@ impl RoleStateImpl for Reeducator {
                 let mut converting = false;
 
                 actor_ref.set_night_visits(
-                    game, 
+                    midnight_variables, 
                     actor_ref
-                        .all_night_visits_cloned(game)
+                        .all_night_visits_cloned(midnight_variables)
                         .into_iter()
                         .map(|mut v|{
                             if 
@@ -69,7 +69,7 @@ impl RoleStateImpl for Reeducator {
                 }
             },
             OnMidnightPriority::Convert => {
-                let visits = actor_ref.untagged_night_visits_cloned(game);
+                let visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(visit) = visits.first() else {return};
 
                 let role = 
@@ -157,7 +157,7 @@ impl RoleStateImpl for Reeducator {
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
-    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
+    fn on_player_roleblocked(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
 
 impl Reeducator {

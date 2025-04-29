@@ -34,7 +34,7 @@ impl RoleStateImpl for Cop {
         match priority {
             OnMidnightPriority::Heal => {
                 
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(visit) = actor_visits.first() else {return};
                 let target_ref = visit.target;
 
@@ -42,12 +42,12 @@ impl RoleStateImpl for Cop {
             }
             OnMidnightPriority::Kill => {
                 
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(ambush_visit) = actor_visits.first() else {return};
                 let target_ref = ambush_visit.target;
 
                 let player_to_attacks_visit = 
-                if let Some(priority_visitor) = NightVisits::all_visits(game).into_iter()
+                if let Some(priority_visitor) = NightVisits::all_visits(midnight_variables).into_iter()
                     .filter(|visit|
                         ambush_visit != *visit &&
                         visit.target == target_ref &&
@@ -59,7 +59,7 @@ impl RoleStateImpl for Cop {
                 {
                     Some(priority_visitor.visitor)
                 } else {
-                    NightVisits::all_visits(game).into_iter()
+                    NightVisits::all_visits(midnight_variables).into_iter()
                         .filter(|visit|
                             ambush_visit != *visit &&
                             visit.target == target_ref &&

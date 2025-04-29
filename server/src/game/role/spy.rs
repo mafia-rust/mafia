@@ -51,7 +51,7 @@ impl RoleStateImpl for Spy {
                 actor_ref.push_night_message(midnight_variables, ChatMessageVariant::SpyMafiaVisit { players: mafia_visits });               
             },
             OnMidnightPriority::SpyBug => {
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(visit) = actor_visits.first() else {return};
 
                 for message in visit.target.night_messages(midnight_variables).clone(){

@@ -43,7 +43,7 @@ impl RoleStateImpl for Hypnotist {
     type ClientRoleState = Hypnotist;
     fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
-        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
         let Some(visit) = actor_visits.first() else {
             return;
         };
@@ -109,7 +109,7 @@ impl RoleStateImpl for Hypnotist {
             crate::game::components::insider_group::InsiderGroupID::Mafia
         ].into_iter().collect()
     }
-    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
+    fn on_player_roleblocked(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
 impl Hypnotist {
     pub fn ensure_at_least_one_message(&mut self){

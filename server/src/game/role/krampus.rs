@@ -38,7 +38,7 @@ pub(super) const DEFENSE: DefensePower = DefensePower::Armored;
 impl RoleStateImpl for Krampus {
     type ClientRoleState = ();
     fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
-        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
 
         match (priority, self.ability) {
             (OnMidnightPriority::Kill, KrampusAbility::Kill) => {

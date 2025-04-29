@@ -25,7 +25,7 @@ impl RoleStateImpl for Psychic {
         if priority != OnMidnightPriority::Investigative {return}
 
         
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 let Some(visit) = actor_visits.first() else {return};
 
         actor_ref.push_night_message(midnight_variables, 

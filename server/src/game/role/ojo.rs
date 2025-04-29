@@ -28,7 +28,7 @@ impl RoleStateImpl for Ojo {
         match priority {
             OnMidnightPriority::Kill => {
                 if game.day_number() == 1 {return}
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 if let Some(visit) = actor_visits.first(){
                     let target_ref = visit.target;
             
@@ -46,7 +46,7 @@ impl RoleStateImpl for Ojo {
                 PlayerReference::all_players(game)
                     .for_each(|player_ref|{
 
-                    let mut players: Vec<PlayerIndex> = player_ref.all_night_visits_cloned(game).into_iter().map(|p|p.target.index()).collect();
+                    let mut players: Vec<PlayerIndex> = player_ref.all_night_visits_cloned(midnight_variables).into_iter().map(|p|p.target.index()).collect();
                     players.shuffle(&mut rand::rng());
 
                     actor_ref.push_night_message(midnight_variables, 

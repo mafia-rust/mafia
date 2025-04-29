@@ -12,7 +12,7 @@ impl PlayerReference {
 
             for player_ref in PlayerReference::all_players(game){
                 let visits = player_ref.convert_selection_to_visits(game);
-                player_ref.set_night_visits(game, visits.clone());
+                player_ref.set_night_visits(midnight_variables, visits.clone());
             }
         }
 
@@ -56,11 +56,11 @@ impl PlayerReference {
     pub fn before_initial_role_creation(&self, game: &mut Game){
         self.role_state(game).clone().before_initial_role_creation(game, *self)
     }
-    pub fn on_player_roleblocked(&self, game: &mut Game, player: PlayerReference, invisible: bool) {
-        self.role_state(game).clone().on_player_roleblocked(game, *self, player, invisible)
+    pub fn on_player_roleblocked(&self, game: &mut Game, midnight_variables: &mut MidnightVariables, player: PlayerReference, invisible: bool) {
+        self.role_state(game).clone().on_player_roleblocked(game, midnight_variables, *self, player, invisible)
     }
-    pub fn on_visit_wardblocked(&self, game: &mut Game, visit: Visit) {
-        self.role_state(game).clone().on_visit_wardblocked(game, *self, visit)
+    pub fn on_visit_wardblocked(&self, game: &mut Game, midnight_variables: &mut MidnightVariables, visit: Visit) {
+        self.role_state(game).clone().on_visit_wardblocked(game, midnight_variables, *self, visit)
     }
     pub fn on_whisper(game: &mut Game, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority) {
         for player in PlayerReference::all_players(game){
