@@ -1878,7 +1878,7 @@ fn cult_alternates() {
     assert!(apostle.send_ability_input_player_list_typical(b));
     game.next_phase();
     assert!(b.alive());
-    assert!(InsiderGroupID::Cult.is_player_in_revealed_group(game.deref(), b.player_ref()));
+    assert!(InsiderGroupID::Cult.contains_player(game.deref(), b.player_ref()));
 
     //zealot kills, apostle waits
     game.skip_to(Night, 2);
@@ -1888,7 +1888,7 @@ fn cult_alternates() {
     game.next_phase();
     assert!(!c.alive());
     assert!(d.alive());
-    assert!(!InsiderGroupID::Cult.is_player_in_revealed_group(game.deref(), d.player_ref()));
+    assert!(!InsiderGroupID::Cult.contains_player(game.deref(), d.player_ref()));
 
     //zealot waits, apostle converts
     game.skip_to(Night, 3);
@@ -1897,7 +1897,7 @@ fn cult_alternates() {
     game.next_phase();
     assert!(e.alive());
     assert!(d.alive());
-    assert!(InsiderGroupID::Cult.is_player_in_revealed_group(game.deref(), d.player_ref()));
+    assert!(InsiderGroupID::Cult.contains_player(game.deref(), d.player_ref()));
 
     //zealot kills, apostle waits
     game.skip_to(Night, 4);
