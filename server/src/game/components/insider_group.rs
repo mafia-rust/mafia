@@ -32,6 +32,21 @@ impl InsiderGroups{
         }
         player.send_packet(game, ToClientPacket::YourInsiderGroups{insider_groups: groups});
     }
+
+    fn get_group(&self, id: InsiderGroupID)->&InsiderGroup{
+        match id {
+            InsiderGroupID::Mafia => &self.mafia,
+            InsiderGroupID::Cult => &self.cult,
+            InsiderGroupID::Puppeteer => &self.puppeteer,
+        }
+    }
+    fn get_group_mut(&mut self, id: InsiderGroupID)->&mut InsiderGroup{
+        match id {
+            InsiderGroupID::Mafia => &mut self.mafia,
+            InsiderGroupID::Cult => &mut self.cult,
+            InsiderGroupID::Puppeteer => &mut self.puppeteer,
+        }
+    }
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -70,18 +85,10 @@ impl InsiderGroupID{
         None
     }
     fn deref<'a>(&self, game: &'a Game)->&'a InsiderGroup{
-        match self{
-            InsiderGroupID::Mafia=>&game.revealed_groups.mafia,
-            InsiderGroupID::Cult=>&game.revealed_groups.cult,
-            InsiderGroupID::Puppeteer=>&game.revealed_groups.puppeteer
-        }
+        game.insider_groups.get_group(*self)
     }
     fn deref_mut<'a>(&self, game: &'a mut Game)->&'a mut InsiderGroup{
-        match self{
-            InsiderGroupID::Mafia=>&mut game.revealed_groups.mafia,
-            InsiderGroupID::Cult=>&mut game.revealed_groups.cult,
-            InsiderGroupID::Puppeteer=>&mut game.revealed_groups.puppeteer
-        }
+        game.insider_groups.get_group_mut(*self)
     }
     pub fn players<'a>(&self, game: &'a Game)->&'a VecSet<PlayerReference>{
         &self.deref(game).players
