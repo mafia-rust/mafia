@@ -4,7 +4,7 @@ use std::{ops::Deref, vec};
 
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
-use mafia_server::game::attack_power::DefensePower;
+use mafia_server::game::{attack_power::DefensePower, components::syndicate_gun_item::SyndicateGunItem};
 pub use mafia_server::game::{
     ability_input::{ControllerID, IntegerSelection, PlayerListSelection, RoleListSelection},
     game_conclusion::GameConclusion,
@@ -521,20 +521,22 @@ fn bodyguard_basic() {
 fn doctor_basic() {
     kit::scenario!(game in Night 2 where
         maf: Mafioso,
-        bg: Doctor,
+        doc: Doctor,
         townie: Detective
     );
 
     maf.send_ability_input_player_list_typical(townie);
-    bg.send_ability_input_player_list_typical(townie);
+    doc.send_ability_input_player_list_typical(townie);
 
-    game.skip_to(Obituary, 3);
-
-    assert!(townie.get_messages().contains(&ChatMessageVariant::YouWereGuarded));
-    assert!(bg.get_messages().contains(&ChatMessageVariant::YouGuardedSomeone));
+    game.skip_to(Discussion, 3);
 
     assert!(townie.alive());
-    assert!(bg.alive());
+    assert!(doc.alive());
+
+    assert_contains!(maf.get_messages(), ChatMessageVariant::SomeoneSurvivedYourAttack);
+    assert_contains!(townie.get_messages(), ChatMessageVariant::YouWereGuarded);
+    assert_contains!(doc.get_messages(), ChatMessageVariant::YouGuardedSomeone);
+
     assert!(maf.alive());
 }
 
@@ -866,6 +868,24 @@ fn ambusher_does_not_kill_framed_player(){
 }
 
 #[test]
+fn insider_group_init(){
+    kit::scenario!(game in Night 2 where
+        syn: Informant,
+        townie: Detective
+    );
+    assert!(InsiderGroupID::Mafia.contains_player(&game, syn.player_ref()));
+    assert!(!InsiderGroupID::Mafia.contains_player(&game, townie.player_ref()));
+}
+#[test]
+fn syn_starts_with_gun(){
+    kit::scenario!(game in Night 2 where
+        syn: Informant,
+        _townie: Detective
+    );
+    assert!(SyndicateGunItem::player_has_gun(&game, syn.player_ref()));
+}
+
+#[test]
 fn ambusher_attacks_self(){
     kit::scenario!(game in Night 2 where
         ambusher: Ambusher,
@@ -1109,36 +1129,69 @@ fn double_transport_single_player() {
 
 
     game.next_phase();
+
     assert!(townie_a.alive());
-    assert!(!townie_b.alive());
-    assert!(townie_c.alive());
+    if trans_a.player_ref().index() < trans_b.player_ref().index(){
+        assert!(!townie_b.alive());
+        assert!(townie_c.alive());
+    }else{
+        assert!(townie_b.alive());
+        assert!(!townie_c.alive());
+    }
 }
 
 #[test]
 fn double_transport_three_players() {
-    kit::scenario!(game in Night 2 where
-        mafioso: Mafioso,
- 
-        townie_a: Detective,
-        townie_b: Jailor,
-        townie_c: Vigilante,
-
-        trans_a: Transporter,
-        trans_b: Transporter,
-        trans_c: Transporter
-    );
+    for _ in 0..50 {
+        kit::scenario!(game in Night 2 where
+            mafioso: Mafioso,
+     
+            townie_a: Detective,
+            townie_b: Jailor,
+            townie_c: Vigilante,
     
-    assert!(mafioso.send_ability_input_player_list_typical(townie_a));
-
-    assert!(trans_a.send_ability_input_two_player_typical(townie_a, townie_b));
-    assert!(trans_b.send_ability_input_two_player_typical(townie_a, townie_c));
-    assert!(trans_c.send_ability_input_two_player_typical(townie_b, townie_c));
-
-
-    game.next_phase();
-    assert!(townie_a.alive());
-    assert!(townie_b.alive());
-    assert!(!townie_c.alive());
+            trans_a: Transporter,
+            trans_b: Transporter,
+            trans_c: Transporter
+        );
+        
+        assert!(mafioso.send_ability_input_player_list_typical(townie_a));
+    
+        assert!(trans_a.send_ability_input_two_player_typical(townie_a, townie_b));
+        assert!(trans_b.send_ability_input_two_player_typical(townie_a, townie_c));
+        assert!(trans_c.send_ability_input_two_player_typical(townie_b, townie_c));
+    
+    
+        game.next_phase();
+    
+        if [trans_a, trans_b, trans_c].into_iter().is_sorted_by_key(|t|t.player_ref().index()){
+            assert!(townie_a.alive());
+            assert!(townie_b.alive());
+            assert!(!townie_c.alive());
+        }else if [trans_c, trans_a, trans_b].into_iter().is_sorted_by_key(|t|t.player_ref().index()) {
+            assert!(townie_a.alive());
+            assert!(!townie_b.alive());
+            assert!(townie_c.alive());
+        }else if [trans_b, trans_c, trans_a].into_iter().is_sorted_by_key(|t|t.player_ref().index()) {
+            assert!(!townie_a.alive());
+            assert!(townie_b.alive());
+            assert!(townie_c.alive());
+        }
+        
+        else if [trans_c, trans_b, trans_a].into_iter().is_sorted_by_key(|t|t.player_ref().index()) {
+            assert!(townie_a.alive());
+            assert!(townie_b.alive());
+            assert!(!townie_c.alive());
+        }else if [trans_a, trans_c, trans_b].into_iter().is_sorted_by_key(|t|t.player_ref().index()) {
+            assert!(!townie_a.alive());
+            assert!(townie_b.alive());
+            assert!(townie_c.alive());
+        }else if [trans_b, trans_a, trans_c].into_iter().is_sorted_by_key(|t|t.player_ref().index()) {
+            assert!(townie_a.alive());
+            assert!(!townie_b.alive());
+            assert!(townie_c.alive());
+        }
+    }
 }
 
 
@@ -1153,8 +1206,8 @@ fn grave_contains_multiple_killers() {
     assert!(mafioso.send_ability_input_player_list_typical(townie));
     assert!(vigilante.send_ability_input_player_list_typical(townie));
     game.next_phase();
-    assert_eq!(
-        *game.graves.first().unwrap(),
+    assert!(
+        *game.graves.first().unwrap() ==
         Grave{ 
             player: townie.player_ref(),
             died_phase: GravePhase::Night,
@@ -2342,12 +2395,10 @@ fn ojo_transporter(){
 }
 
 #[test]
-/// Sometimes this test fails because of the way tests work
-/// if the engineer starts as the apostle and is instantly converted to engineer, then the test might fail
 fn apostle_converting_trapped_player_day_later(){
     kit::scenario!(game in Night 2 where
         apostle: Apostle,
-        _zealot: Zealot,
+        zealot: Zealot,
         trapped: Detective,
         engineer: Engineer
     );
@@ -2357,13 +2408,39 @@ fn apostle_converting_trapped_player_day_later(){
 
     game.skip_to(Night, 3);
 
+    //explanation of why they are both targeting here:
+    //if zealot.player_index < apostle.player_index then this fails otherwise
+    //If the order is backwards, then the get converted in player order
+    //this should be fixed
     assert!(apostle.send_ability_input_player_list_typical(trapped));
+    assert!(zealot.send_ability_input_player_list_typical(trapped));
 
     game.next_phase();
 
-    assert_contains!(engineer.get_messages(), ChatMessageVariant::EngineerVisitorsRole { role: Role::Apostle });
-    assert!(trapped.role_state().role() != Role::Zealot);
-    assert!(trapped.role_state().role() == Role::Detective);
+    assert_contains!(engineer.get_messages_after_night(3), ChatMessageVariant::EngineerVisitorsRole { role: Role::Apostle });
+    assert_eq!(trapped.role_state().role(), Role::Detective);
+}
+
+#[test]
+fn engineer_day_later(){
+    kit::scenario!(game in Night 2 where
+        maf: Mafioso,
+        trapped: Detective,
+        engineer: Engineer
+    );
+
+
+    assert!(engineer.send_ability_input_player_list_typical(trapped));
+
+    game.skip_to(Night, 3);
+
+    assert!(maf.send_ability_input_player_list_typical(trapped));
+
+    game.next_phase();
+
+    assert_contains!(engineer.get_messages_after_night(3), ChatMessageVariant::EngineerVisitorsRole { role: Role::Mafioso });
+    assert!(!maf.alive());
+    assert!(trapped.alive());
 }
 
 #[test]

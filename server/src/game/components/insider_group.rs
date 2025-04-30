@@ -1,14 +1,47 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{game::{chat::{ChatGroup, ChatMessageVariant}, event::{on_add_insider::OnAddInsider, on_remove_insider::OnRemoveInsider, Event}, player::PlayerReference, Game}, packet::ToClientPacket, vec_set::VecSet};
+use crate::{game::{chat::{ChatGroup, ChatMessageVariant}, event::{on_add_insider::OnAddInsider, on_remove_insider::OnRemoveInsider, Event}, player::PlayerReference, role_list::RoleAssignment, role_outline_reference::RoleOutlineReference, Game}, packet::ToClientPacket, vec_map::VecMap, vec_set::VecSet};
 
-#[derive(Default)]
+#[derive(Debug)]
 pub struct InsiderGroups{
     mafia: InsiderGroup,
     cult: InsiderGroup,
     puppeteer: InsiderGroup
 }
 impl InsiderGroups{
+
+    pub fn broken_new()->Self{
+        Self{
+            mafia: InsiderGroup::default(),
+            cult: InsiderGroup::default(),
+            puppeteer: InsiderGroup::default(),
+        }
+    }
+
+    /// # Safety
+    /// player_count is correct
+    /// assignments contains all players
+    pub unsafe fn new(player_count: u8, assignments: &VecMap<PlayerReference, (RoleOutlineReference, RoleAssignment)>)->Self{
+        let mut out = Self{
+            mafia: InsiderGroup::default(),
+            cult: InsiderGroup::default(),
+            puppeteer: InsiderGroup::default()
+        };
+        for player in PlayerReference::all_players_from_count(player_count){
+            for group in assignments
+                .get(&player)
+                .expect("assignments is required to hold all players for safety").1
+                .insider_groups()
+            {
+                out.get_group_mut(group).players.insert(player);
+            }
+        }
+        println!("I: {:?}", out.cult.players);
+        out
+    }
+
+
+    
     pub fn on_conceal_role(game: &mut Game, player: PlayerReference, concealed_player: PlayerReference){
         InsiderGroupID::Mafia.on_conceal_role(game, player, concealed_player);
         InsiderGroupID::Cult.on_conceal_role(game, player, concealed_player);
@@ -55,7 +88,7 @@ pub enum InsiderGroupID{
     Cult,
     Puppeteer
 }
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct InsiderGroup{
     players: VecSet<PlayerReference>
 }
@@ -135,16 +168,6 @@ impl InsiderGroupID{
                 group.remove_player_from_insider_group(game, player);
             }
         }
-    }
-    pub fn start_game_set_player_insider_groups(set: VecSet<InsiderGroupID>, game: &mut Game, player: PlayerReference){
-        for group in InsiderGroupID::all(){
-            if set.contains(&group){
-                group.players_mut(game).insert(player);
-                OnAddInsider::new(player, group).invoke(game);
-            }
-        }
-        InsiderGroups::send_player_insider_groups_packet(game, player);
-        
     }
 
     // Events

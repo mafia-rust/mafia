@@ -161,6 +161,8 @@ pub enum GameOverReason {
     Draw
 }
 
+type Assignments = VecMap<PlayerReference, (RoleOutlineReference, RoleAssignment)>;
+
 impl Game {
     pub const DISCONNECT_TIMER_SECS: u16 = 60 * 2;
 
@@ -180,7 +182,7 @@ impl Game {
 
         let mut role_generation_tries = 0u8;
         const MAX_ROLE_GENERATION_TRIES: u8 = 250;
-        let (mut game, assignments) = loop {
+        let mut game = loop {
 
             if role_generation_tries >= MAX_ROLE_GENERATION_TRIES {
                 return Err(RejectStartReason::RoleListCannotCreateRoles);
@@ -249,7 +251,7 @@ impl Game {
                 verdicts_today: VerdictsToday::default(),
                 poison: Poison::default(),
 
-                insider_groups: InsiderGroups::default(),
+                insider_groups: unsafe{InsiderGroups::new(num_players, &assignments)},
                 detained: Detained::default(),
                 confused: Confused::default(),
                 drunk_aura: DrunkAura::default(),
@@ -277,7 +279,7 @@ impl Game {
 
 
             if !game.game_is_over() {
-                break (game, assignments);
+                break game;
             }
             role_generation_tries = role_generation_tries.saturating_add(1);
         };
@@ -288,22 +290,12 @@ impl Game {
         
         game.send_packet_to_all(ToClientPacket::StartGame);
 
-        //set wincons and revealed groups
+        //set wincons
         for player in PlayerReference::all_players(&game){
-
-            let Some(( _, assignment)) = assignments.get(&player) else {
-                return Err(RejectStartReason::RoleListTooSmall)
-            };
-
             // We already set this earlier, now we just need to call the on_convert event. Hope this doesn't end the game!
             let win_condition = player.win_condition(&game).clone();
             player.set_win_condition(&mut game, win_condition);
-            
-            InsiderGroupID::start_game_set_player_insider_groups(
-                assignment.insider_groups(),
-                &mut game,
-                player
-            );
+            InsiderGroups::send_player_insider_groups_packet(&game, player);
         }
 
         BeforeInitialRoleCreation::invoke(&mut game);
@@ -334,7 +326,7 @@ impl Game {
     
     /// `initialization_data` must have length 255 or lower
     #[expect(clippy::cast_possible_truncation, reason = "See doc comment")]
-    fn assign_players_to_assignments(initialization_data: Vec<RoleAssignment>)->VecMap<PlayerReference, (RoleOutlineReference, RoleAssignment)>{
+    fn assign_players_to_assignments(initialization_data: Vec<RoleAssignment>)->Assignments{
         let mut player_indices: Vec<PlayerIndex> = (0..initialization_data.len() as PlayerIndex).collect();
         player_indices.shuffle(&mut rand::rng());
 
@@ -846,16 +838,17 @@ pub mod test {
     use crate::vec_map::VecMap;
 
     use super::{
-        ability_input::saved_controllers_map::SavedControllersMap,
-        components::{
-            cult::Cult, fragile_vest::FragileVests, insider_group::InsiderGroupID, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, player_component::PlayerComponent, poison::Poison, puppeteer_marionette::PuppeteerMarionette, silenced::Silenced, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday, win_condition::WinCondition
-        }, 
-        event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
+        ability_input::saved_controllers_map::SavedControllersMap, components::{
+            cult::Cult, fragile_vest::FragileVests, insider_group::InsiderGroups,
+            mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, player_component::PlayerComponent,
+            poison::Poison, puppeteer_marionette::PuppeteerMarionette, silenced::Silenced, syndicate_gun_item::SyndicateGunItem,
+            synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday, win_condition::WinCondition
+        }, event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine, player::{test::mock_player, PlayerReference},
-        role::Role, settings::Settings, Game, RejectStartReason
+        settings::Settings, Assignments, Game, RejectStartReason
     };
     
-    pub fn mock_game(settings: Settings, number_of_players: u8) -> Result<Game, RejectStartReason> {
+    pub fn mock_game(settings: Settings, num_players: u8) -> Result<(Game, Assignments), RejectStartReason> {
 
         //check settings are not completly off the rails
         if settings.phase_times.game_ends_instantly() {
@@ -871,16 +864,13 @@ pub mod test {
         };
 
         let assignments = Game::assign_players_to_assignments(random_outline_assignments);
-        
-        let shuffled_roles = assignments.iter().map(|(_,(_,r))|r.role()).collect::<Vec<Role>>();
-
 
         let mut players = Vec::new();
-        for player_index in 0..number_of_players {
+        for player in unsafe{PlayerReference::all_players_from_count(num_players)} {
             let new_player = mock_player(
-                format!("{}",player_index),
-                match shuffled_roles.get(player_index as usize){
-                    Some(role) => *role,
+                format!("{}",player.index()),
+                match assignments.get(&player).map(|a|a.1.role()){
+                    Some(role) => role,
                     None => return Err(RejectStartReason::RoleListTooSmall),
                 }
             );
@@ -890,7 +880,7 @@ pub mod test {
         let mut game = Game{
             clients: VecMap::new(),
             room_name: "Test".to_string(),
-            pitchfork: Pitchfork::new(number_of_players),
+            pitchfork: Pitchfork::new(num_players),
             
             assignments: assignments.clone(),
             ticking: true,
@@ -910,28 +900,23 @@ pub mod test {
             verdicts_today: VerdictsToday::default(),
             poison: Poison::default(),
             modifiers: Default::default(),
-            insider_groups: Default::default(),
+            insider_groups: unsafe{InsiderGroups::new(num_players, &assignments)},
             detained: Default::default(),
             confused: Default::default(),
             drunk_aura: Default::default(),
-            synopsis_tracker: SynopsisTracker::new(number_of_players),
+            synopsis_tracker: SynopsisTracker::new(num_players),
             tags: Tags::default(),
             silenced: Silenced::default(),
-            fragile_vests: unsafe{PlayerComponent::<FragileVests>::new(number_of_players)},
-            win_condition: unsafe{PlayerComponent::<WinCondition>::new(number_of_players, &assignments)}
+            fragile_vests: unsafe{PlayerComponent::<FragileVests>::new(num_players)},
+            win_condition: unsafe{PlayerComponent::<WinCondition>::new(num_players, &assignments)}
         };
 
-        //set wincons and revealed groups
+
+        //set wincons
         for player in PlayerReference::all_players(&game){
             let role_data = player.role(&game).new_state(&game);
-
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
-        
-            InsiderGroupID::start_game_set_player_insider_groups(
-                role_data.clone().default_revealed_groups(),
-                &mut game,
-                player
-            );
+            InsiderGroups::send_player_insider_groups_packet(&game, player);
         }
         
         BeforeInitialRoleCreation::invoke(&mut game);
@@ -943,6 +928,6 @@ pub mod test {
 
         OnGameStart::invoke(&mut game);
 
-        Ok(game)
+        Ok((game, assignments))
     }
 }
