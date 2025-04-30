@@ -36,7 +36,6 @@ impl InsiderGroups{
                 out.get_group_mut(group).players.insert(player);
             }
         }
-        println!("I: {:?}", out.cult.players);
         out
     }
 
