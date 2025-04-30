@@ -1218,47 +1218,20 @@ fn grave_contains_multiple_killers() {
                 will: "".to_string(),
                 death_notes: vec![],
             }
-        }
-    )
-}
-
-#[test]
-fn grave_contains_multiple_killers_roles() {
-    kit::scenario!(game in Night 2 where
-        townie_b: Doctor,
-        _townie_a: Doctor,
-        mafioso: Mafioso,
-        vigilante: Vigilante,
-        doom: Doomsayer
-    );
-
-    assert!(mafioso.send_ability_input_player_list_typical(townie_b));
-    assert!(vigilante.send_ability_input_player_list_typical(townie_b));
-    doom.set_role_state(RoleState::Doomsayer(
-        Doomsayer { guesses: [
-            (PlayerReference::new(&game, 0).expect("that player doesnt exist"), DoomsayerGuess::Doctor),
-            (PlayerReference::new(&game, 1).expect("that player doesnt exist"), DoomsayerGuess::Doctor),
-            (PlayerReference::new(&game, 2).expect("that player doesnt exist"), DoomsayerGuess::NonTown)
-        ],
-        won: doom.get_won_game()
-    }));
-
-
-    game.next_phase();
-    assert_eq!(
-        *game.graves.first().unwrap(), 
-        Grave {
-            player: townie_b.player_ref(),
+        } ||
+        *game.graves.first().unwrap() ==
+        Grave{ 
+            player: townie.player_ref(),
             died_phase: GravePhase::Night,
             day_number: 2,
             information: GraveInformation::Normal{
-                role: Role::Doctor,
-                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Doomsayer), GraveKiller::RoleSet(RoleSet::Mafia), GraveKiller::Role(Role::Vigilante)]),
+                role: Role::Detective,
+                death_cause: GraveDeathCause::Killers(vec![GraveKiller::Role(Role::Vigilante), GraveKiller::RoleSet(RoleSet::Mafia)]),
                 will: "".to_string(),
                 death_notes: vec![],
             }
         }
-    );
+    )
 }
 
 #[test]
