@@ -107,7 +107,7 @@ impl SavedControllersMap{
         };
 
         let mut target_message_sent = false;
-        for insider_group in InsiderGroupID::all_insider_groups_with_player(game, player_ref){
+        for insider_group in InsiderGroupID::all_groups_with_player(game, player_ref){
             game.add_message_to_chat_group( insider_group.get_insider_chat_group(), chat_message.clone());
             target_message_sent = true;
         }

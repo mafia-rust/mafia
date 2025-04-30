@@ -131,7 +131,7 @@ pub struct Game {
     pub pitchfork: Pitchfork,
     pub poison: Poison,
     pub modifiers: Modifiers,
-    pub revealed_groups: InsiderGroups,
+    pub insider_groups: InsiderGroups,
     pub detained: Detained,
     pub confused: Confused,
     pub drunk_aura: DrunkAura,
@@ -249,7 +249,7 @@ impl Game {
                 verdicts_today: VerdictsToday::default(),
                 poison: Poison::default(),
 
-                revealed_groups: InsiderGroups::default(),
+                insider_groups: unsafe{InsiderGroups::new(num_players, &assignments)},
                 detained: Detained::default(),
                 confused: Confused::default(),
                 drunk_aura: DrunkAura::default(),
@@ -260,21 +260,7 @@ impl Game {
                 win_condition: unsafe{PlayerComponent::<WinCondition>::new(num_players, &assignments)}
             };
 
-            // Just distribute insider groups, this is for game over checking (Keeps game running syndicate gun)
-            for player in PlayerReference::all_players(&game){
-                let Some((_, assignment)) = assignments.get(&player) else {
-                    return Err(RejectStartReason::RoleListTooSmall)
-                };
-                
-                let insider_groups = assignment.insider_groups();
-                
-                for group in insider_groups{
-                    unsafe {
-                        group.add_player_to_revealed_group_unchecked(&mut game, player);
-                    }
-                }
-            }
-
+            InsiderGroups::invoke_on_add_insider(&mut game);
 
             if !game.game_is_over() {
                 break (game, assignments);
@@ -299,7 +285,7 @@ impl Game {
             let win_condition = player.win_condition(&game).clone();
             player.set_win_condition(&mut game, win_condition);
             
-            InsiderGroupID::start_game_set_player_insider_groups(
+            InsiderGroups::start_game_set_player_insider_groups(
                 assignment.insider_groups(),
                 &mut game,
                 player
@@ -848,7 +834,7 @@ pub mod test {
     use super::{
         ability_input::saved_controllers_map::SavedControllersMap,
         components::{
-            cult::Cult, fragile_vest::FragileVests, insider_group::InsiderGroupID, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, player_component::PlayerComponent, poison::Poison, puppeteer_marionette::PuppeteerMarionette, silenced::Silenced, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday, win_condition::WinCondition
+            cult::Cult, fragile_vest::FragileVests, insider_group::InsiderGroups, mafia::Mafia, mafia_recruits::MafiaRecruits, pitchfork::Pitchfork, player_component::PlayerComponent, poison::Poison, puppeteer_marionette::PuppeteerMarionette, silenced::Silenced, syndicate_gun_item::SyndicateGunItem, synopsis::SynopsisTracker, tags::Tags, verdicts_today::VerdictsToday, win_condition::WinCondition
         }, 
         event::{before_initial_role_creation::BeforeInitialRoleCreation, on_game_start::OnGameStart},
         phase::PhaseStateMachine, player::{test::mock_player, PlayerReference},
@@ -910,7 +896,7 @@ pub mod test {
             verdicts_today: VerdictsToday::default(),
             poison: Poison::default(),
             modifiers: Default::default(),
-            revealed_groups: Default::default(),
+            insider_groups: unsafe{InsiderGroups::new(number_of_players, &assignments)},
             detained: Default::default(),
             confused: Default::default(),
             drunk_aura: Default::default(),
@@ -921,13 +907,15 @@ pub mod test {
             win_condition: unsafe{PlayerComponent::<WinCondition>::new(number_of_players, &assignments)}
         };
 
+        InsiderGroups::invoke_on_add_insider(&mut game);
+
         //set wincons and revealed groups
         for player in PlayerReference::all_players(&game){
             let role_data = player.role(&game).new_state(&game);
 
             player.set_win_condition(&mut game, role_data.clone().default_win_condition());
         
-            InsiderGroupID::start_game_set_player_insider_groups(
+            InsiderGroups::start_game_set_player_insider_groups(
                 role_data.clone().default_revealed_groups(),
                 &mut game,
                 player

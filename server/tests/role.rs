@@ -510,8 +510,6 @@ fn bodyguard_basic() {
 
     game.skip_to(Obituary, 3);
 
-    // assert!(townie.get_messages().contains(&ChatMessageVariant::YouWereGuarded));
-
     assert!(townie.alive());
     assert!(!bg.alive());
     assert!(!maf.alive());
@@ -521,20 +519,22 @@ fn bodyguard_basic() {
 fn doctor_basic() {
     kit::scenario!(game in Night 2 where
         maf: Mafioso,
-        bg: Doctor,
+        doc: Doctor,
         townie: Detective
     );
 
     maf.send_ability_input_player_list_typical(townie);
-    bg.send_ability_input_player_list_typical(townie);
+    doc.send_ability_input_player_list_typical(townie);
 
-    game.skip_to(Obituary, 3);
-
-    assert!(townie.get_messages().contains(&ChatMessageVariant::YouWereGuarded));
-    assert!(bg.get_messages().contains(&ChatMessageVariant::YouGuardedSomeone));
+    game.skip_to(Discussion, 3);
 
     assert!(townie.alive());
-    assert!(bg.alive());
+    assert!(doc.alive());
+
+    assert_contains!(maf.get_messages(), ChatMessageVariant::SomeoneSurvivedYourAttack);
+    assert_contains!(townie.get_messages(), ChatMessageVariant::YouWereGuarded);
+    assert_contains!(doc.get_messages(), ChatMessageVariant::YouGuardedSomeone);
+
     assert!(maf.alive());
 }
 
@@ -1878,7 +1878,7 @@ fn cult_alternates() {
     assert!(apostle.send_ability_input_player_list_typical(b));
     game.next_phase();
     assert!(b.alive());
-    assert!(InsiderGroupID::Cult.is_player_in_revealed_group(game.deref(), b.player_ref()));
+    assert!(InsiderGroupID::Cult.contains_player(game.deref(), b.player_ref()));
 
     //zealot kills, apostle waits
     game.skip_to(Night, 2);
@@ -1888,7 +1888,7 @@ fn cult_alternates() {
     game.next_phase();
     assert!(!c.alive());
     assert!(d.alive());
-    assert!(!InsiderGroupID::Cult.is_player_in_revealed_group(game.deref(), d.player_ref()));
+    assert!(!InsiderGroupID::Cult.contains_player(game.deref(), d.player_ref()));
 
     //zealot waits, apostle converts
     game.skip_to(Night, 3);
@@ -1897,7 +1897,7 @@ fn cult_alternates() {
     game.next_phase();
     assert!(e.alive());
     assert!(d.alive());
-    assert!(InsiderGroupID::Cult.is_player_in_revealed_group(game.deref(), d.player_ref()));
+    assert!(InsiderGroupID::Cult.contains_player(game.deref(), d.player_ref()));
 
     //zealot kills, apostle waits
     game.skip_to(Night, 4);

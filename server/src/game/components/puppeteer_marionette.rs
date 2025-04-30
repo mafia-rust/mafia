@@ -30,7 +30,7 @@ impl PuppeteerMarionette{
         Tags::add_tag(game, super::tags::TagSetID::PuppeteerMarionette, player);
 
         game.set_puppeteer_marionette(puppeteer_marionette);
-        InsiderGroupID::Puppeteer.add_player_to_revealed_group(game, player);
+        InsiderGroupID::Puppeteer.add_player(game, player);
         player.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any: vec![GameConclusion::Fiends].into_iter().collect() });
 
         for fiend in PuppeteerMarionette::marionettes_and_puppeteer(game){

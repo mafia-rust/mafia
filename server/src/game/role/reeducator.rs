@@ -95,7 +95,7 @@ impl RoleStateImpl for Reeducator {
                             false,
                         );
     
-                        InsiderGroupID::Mafia.add_player_to_revealed_group(game, visit.target);
+                        InsiderGroupID::Mafia.add_player(game, visit.target);
                         visit.target.set_win_condition(
                             game,
                             WinCondition::new_loyalist(crate::game::game_conclusion::GameConclusion::Mafia)

@@ -138,7 +138,7 @@ impl RoleStateImpl for Recruiter {
                 //special case here. I don't want to use set_role because it alerts the player their role changed
                 //NOTE: It will still send a packet to the player that their role state updated,
                 //so it might be deducable that there is a recruiter
-                InsiderGroupID::Mafia.remove_player_from_insider_group(game, random_mafia_player);
+                InsiderGroupID::Mafia.remove_player(game, random_mafia_player);
                 random_mafia_player.set_win_condition(game, WinCondition::GameConclusionReached{
                     win_if_any: vec![GameConclusion::Town].into_iter().collect()
                 });

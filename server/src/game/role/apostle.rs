@@ -53,7 +53,7 @@ impl RoleStateImpl for Apostle {
                 }
 
                 target_ref.set_night_convert_role_to(midnight_variables, Some(Role::Zealot.new_state(game)));
-                InsiderGroupID::Cult.add_player_to_revealed_group(game, target_ref);
+                InsiderGroupID::Cult.add_player(game, target_ref);
                 target_ref.set_win_condition(game, WinCondition::new_loyalist(GameConclusion::Cult));
                 
                 Cult::set_ability_used_last_night(game, Some(CultAbility::Convert));

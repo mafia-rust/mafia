@@ -28,12 +28,12 @@ impl MafiaRecruits{
     pub fn recruit(game: &mut Game, midnight_variables: &mut MidnightVariables, player: PlayerReference)->bool{
         let mut recruiter_recruits = game.mafia_recruits().clone();
 
-        if InsiderGroupID::Mafia.is_player_in_revealed_group(game, player) {return false;}
+        if InsiderGroupID::Mafia.contains_player(game, player) {return false;}
         if !recruiter_recruits.recruits.insert(player){return false;}
         Tags::add_tag(game, super::tags::TagSetID::SyndicateRecruit, player);
 
         game.set_recruiter_recruits(recruiter_recruits);
-        InsiderGroupID::Mafia.add_player_to_revealed_group(game, player);
+        InsiderGroupID::Mafia.add_player(game, player);
         player.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any: vec![GameConclusion::Mafia].into_iter().collect() });
 
 
@@ -78,7 +78,7 @@ impl MafiaRecruits{
     }
     pub fn mafia_members(game: &Game)->HashSet<PlayerReference>{
         PlayerReference::all_players(game)
-            .filter(|p|InsiderGroupID::Mafia.is_player_in_revealed_group(game, *p))
+            .filter(|p|InsiderGroupID::Mafia.contains_player(game, *p))
             .collect()
     }
     pub fn mafia_and_recruits(game: &Game)->HashSet<PlayerReference>{
