@@ -14,11 +14,8 @@ use super::RoleStateImpl;
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
-
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct TallyClerk;
-
-
 impl RoleStateImpl for TallyClerk {
     type ClientRoleState = TallyClerk;
     fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
@@ -46,7 +43,7 @@ impl RoleStateImpl for TallyClerk {
             }
         }
 
-        
+
         let message = ChatMessageVariant::TallyClerkResult{ evil_count };
         actor_ref.push_night_message(midnight_variables, message);
     }

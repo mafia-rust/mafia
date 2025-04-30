@@ -174,6 +174,8 @@ pub enum ChatMessageVariant {
     GossipResult{enemies: bool},
     #[serde(rename_all = "camelCase")]
     TallyClerkResult{evil_count: u8},
+    #[serde(rename_all = "camelCase")]
+    SupervisorResult{visited: u8, visitors: u8},
 
     EngineerVisitorsRole{role: Role},
     TrapState{state: TrapState},

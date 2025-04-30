@@ -238,7 +238,11 @@
 
     "role.tallyClerk.name": "Tally Clerk",
     "role.tallyClerk.name:var.0": "Tally Clerks",
-    "role.tallyClerk.target": "Distribute",
+    "controllerId.role.tallyClerk.0.name": "Distribute",
+
+    "role.supervisor.name": "Supervisor",
+    "role.supervisor.name:var.0": "Supervisors",
+    "controllerId.role.supervisor.0.name": "Supervise",
 
     "role.doctor.name": "Doctor",
     "role.doctor.name:var.0": "Doctors",
@@ -982,6 +986,7 @@
     "chatMessage.snoopResult.inconclusive":"You can't tell what your target is.",
     "chatMessage.gossipResult.none": "Your target didn't visit a player that is enemies with town.",
     "chatMessage.gossipResult.enemies": "Your target visited a player that is enemies with town.",
+    "chatMessage.supervisorResult": "Your target visited \\0 players, and was visited by \\0 players.",
     "chatMessage.tallyClerkResult": "\\0 evil players voted guilty at some point today.",
     "chatMessage.playerForwardedMessage":"\\0 forwarded:",
     "chatMessage.targetsMessage":"Your target got the following message:",
@@ -1271,7 +1276,7 @@
     "wiki.article.standard.confused.title:var.0": "Confuses",
     "wiki.article.standard.confused.title:var.1": "Confusing",
     "wiki.article.standard.confused.title:var.2": "Confuse",
-    "wiki.article.standard.confused.text": "The role of a player who is confused might not function correctly. Confused affects each role differently. You might not be told that you are confused.\n How this affects every role:\n   - Snoop: You are always told that you can't tell\n   - Detective: You are always told innocent\n   - Philosopher: You are always told friends\n   - Gossip: You are always told that your target didn't visit an enemy\n   - Psychic: You are told a random list of 3 players for your evil vision, You are told a random list of 2 players for your good vision.\n - Tally Clerk: You are told either 1 more or 1 less than the correct number you should be told. If it would exceed the number of players who voted guilty, it is that number instead. If it were to go under 0, it is 0 instead.\n - Auditor: You get random roles, they might be correct or incorrect. You are only told roles that could have come from that slot.",
+    "wiki.article.standard.confused.text": "The role of a player who is confused might not function correctly. Confused affects each role differently. You might not be told that you are confused.\n How this affects every role:\n - Snoop: You are always told that you can't tell\n - Detective: You are always told innocent\n - Philosopher: You are always told friends\n - Gossip: You are always told that your target didn't visit an enemy\n - Psychic: You are told a random list of 3 players for your evil vision, You are told a random list of 2 players for your good vision.\n - Tally Clerk: You are told either 1 more or 1 less than the correct number you should be told. If it would exceed the number of players who voted guilty, it is that number instead. If it were to go under 0, it is 0 instead.\n - Auditor: You get random roles, they might be correct or incorrect. You are only told roles that could have come from that slot.",
     "wiki.article.standard.marionette.title": "String Up",
     "wiki.article.standard.marionette.title:var.0": "String",
     "wiki.article.standard.marionette.title:var.1": "Marionette",
@@ -1513,7 +1518,13 @@
     "wiki.article.role.tallyClerk.guide": "- At night, you are told how many players are not town loyalists from the players who voted guilty during any of the trials today\n- If any player has innocent aura, they register as a town loyalist\n- If any player has suspicious aura, they register as not a town loyalist",
     "wiki.article.role.tallyClerk.abilities":"- At night, you are told how many players are not town loyalists from the players who voted guilty today\n- If you are blocked, you aren't told anything\n- Your ability doesn't depend on visits",
     "wiki.article.role.tallyClerk.attributes":"- A suspicious aura makes a player register as not a town loyalist\n- An innocent aura makes a player register as a town loyalist\n- A suspicious aura overwrites innocent aura to the Tally Clerk",
-    "wiki.article.role.tallyClerk.extra":"",
+    "wiki.article.role.tallyClerk.extra":"A drunk may be assigned Tally Clerk.",
+
+    "wiki.article.role.supervisor.reminder": "At night, select a player to learn how many players they visited and how players visited them.",
+    "wiki.article.role.supervisor.guide": "- At night, select a player to learn how many players they visited and how players visited them\n- The counts include yourself",
+    "wiki.article.role.supervisor.abilities":"- Visit a player to count their visitors and players visited",
+    "wiki.article.role.supervisor.attributes":"- Your ability works on the player you visit.\n- The counts include yourself.",
+    "wiki.article.role.supervisor.extra":"",
 
     "wiki.article.role.doctor.reminder": "At night, select a player to guard from attacks. You can guard yourself once per game.",
     "wiki.article.role.doctor.guide": "- At night, select a player to guard\n    - Guarding a player gives the protected defense, so most attacks can't kill them.\n- You can select yourself to guard yourself once per game.",

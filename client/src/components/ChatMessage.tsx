@@ -672,6 +672,8 @@ export function translateChatMessage(
             return translate("chatMessage.gossipResult." + (message.enemies ? "enemies" : "none"));
         case "tallyClerkResult":
             return translate("chatMessage.tallyClerkResult", message.evilCount);
+        case "supervisorResult":
+            return translate("chatMessage.supervisorResult", message.visited, message.visitors);
         case "lookoutResult":
             return translate("chatMessage.lookoutResult", playerListToString(message.players, playerNames));
         case "spyMafiaVisit":
@@ -1009,6 +1011,10 @@ export type ChatMessageVariant = {
 } | {
     type: "tallyClerkResult",
     evilCount: number
+} | {
+    type: "supervisorResult",
+    visitors: number,
+    visited: number,
 } | {
     type: "lookoutResult", 
     players: PlayerIndex[]

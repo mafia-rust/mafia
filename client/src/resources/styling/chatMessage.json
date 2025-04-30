@@ -47,6 +47,7 @@
     "polymathSnoopResult": "result",
     "gossipResult": "result",
     "tallyClerkResult": "result",
+    "supervisorResult": "result",
     "playerRoleAndAlibi": "result",
     "informantResult": "result",
     "framerResult": "result",
