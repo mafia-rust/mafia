@@ -243,7 +243,7 @@ impl PlayerReference{
         }
         self.set_win_condition(game, self.win_condition(game).clone());
         InsiderGroupID::set_player_insider_groups(
-            InsiderGroupID::all_insider_groups_with_player(game, *self), 
+            InsiderGroupID::all_groups_with_player(game, *self), 
             game, *self
         );
     }
@@ -389,8 +389,8 @@ impl PlayerReference{
     /// Mafia kills with MK or gun
     /// Cult kills / converts
     pub fn keeps_game_running(&self, game: &Game) -> bool {
-        if InsiderGroupID::Mafia.is_player_in_revealed_group(game, *self) {return true;}
-        if InsiderGroupID::Cult.is_player_in_revealed_group(game, *self) {return true;}
+        if InsiderGroupID::Mafia.contains_player(game, *self) {return true;}
+        if InsiderGroupID::Cult.contains_player(game, *self) {return true;}
         if self.win_condition(game).is_loyalist_for(GameConclusion::Town) {return true;}
         
         GameConclusion::keeps_game_running(self.role(game))
@@ -418,9 +418,9 @@ impl PlayerReference{
         self.role_state(game).clone().on_role_creation(game, *self)
     }
     pub fn get_current_send_chat_groups(&self, game: &Game) -> HashSet<ChatGroup> {
-        if Modifiers::modifier_is_enabled(game, ModifierType::NoChat)
+        if Modifiers::is_enabled(game, ModifierType::NoChat)
             || (
-                Modifiers::modifier_is_enabled(game, ModifierType::NoNightChat) 
+                Modifiers::is_enabled(game, ModifierType::NoNightChat) 
                 && self.alive(game)
                 && matches!(game.current_phase().phase(), PhaseType::Night | PhaseType::Obituary)
             )
