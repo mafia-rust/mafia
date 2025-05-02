@@ -2,7 +2,7 @@
 use rand::seq::IndexedRandom;
 use serde::Serialize;
 
-use crate::game::ability_input::{AvailableBooleanSelection, BooleanSelection, ControllerID, ControllerParametersMap};
+use crate::game::ability_input::{AvailableBooleanSelection, ControllerID, ControllerParametersMap};
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::tags::{TagSetID, Tags};
@@ -12,7 +12,6 @@ use crate::game::grave::Grave;
 use crate::game::phase::{PhaseState, PhaseType};
 use crate::game::player::PlayerReference;
 use crate::game::role::RoleState;
-use crate::game::visit::{Visit, VisitTag};
 use crate::game::Game;
 use super::{GetClientRoleState, Role, RoleStateImpl};
 
@@ -40,15 +39,14 @@ impl RoleStateImpl for Revolutionary {
     type ClientRoleState = ClientRoleState;
     fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if priority != OnMidnightPriority::Investigative {return};
-        let Some(new_target) = actor_ref.untagged_night_visits(midnight_variables).first().map(|v|v.target) else {return};
-        if new_target.night_died(midnight_variables) || !new_target.win_condition(game).is_loyalist_for(GameConclusion::Town) {
-            actor_ref.push_night_message(midnight_variables, ChatMessageVariant::RevolutionaryRefreshFailed);
-        } else {
+        if let Some(new_target) = Self::random_valid_target(game, self.get_target(), actor_ref) {
             self.set_target(game, actor_ref, new_target);
-        }
+        } else {
+            actor_ref.push_night_message(midnight_variables, ChatMessageVariant::RevolutionaryRefreshFailed);
+        };
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
-        if self.target == RevolutionaryTarget::Won || !actor_ref.alive(game){
+        if self.target == RevolutionaryTarget::Won || !actor_ref.alive(game) {
             return;
         }
 
@@ -65,7 +63,8 @@ impl RoleStateImpl for Revolutionary {
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
         Tags::add_viewer(game, TagSetID::RevolutionaryTarget(actor_ref), actor_ref);
-        Self::random_valid_target(game, None).inspect(|t|self.set_target(game, actor_ref, *t));
+        Self::random_valid_target(game, None, actor_ref)
+            .inspect(|t|self.set_target(game, actor_ref, *t));
     }
     fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _new: RoleState, _old: RoleState) {
         if actor_ref != player {return}
@@ -81,31 +80,6 @@ impl RoleStateImpl for Revolutionary {
             .allow_players([actor_ref])
             .build_map()
     }
-    fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
-        let Some(BooleanSelection(selection)) = ControllerID::role(actor_ref, Role::Revolutionary, 0)
-            .get_boolean_selection(game) else {return Vec::new()};
-        if *selection {
-            if let Some(target) = Self::random_valid_target(game, self.get_target()) {
-                vec![Visit::new(
-                    actor_ref, 
-                    target, 
-                    false, 
-                    VisitTag::Role { role: Role::Revolutionary, id: 0 }
-                )]
-            } else if let Some(target) = Self::random_valid_target(game, None) {
-                vec![Visit::new(
-                    actor_ref, 
-                    target, 
-                    false, 
-                    VisitTag::Role { role: Role::Revolutionary, id: 0 }
-                )]
-            } else {
-                Vec::new()
-            }
-        } else {
-            Vec::new()
-        }
-    }
 }
 impl GetClientRoleState<ClientRoleState> for Revolutionary {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {
@@ -117,10 +91,11 @@ impl Revolutionary {
     pub fn won(&self)->bool{
         self.target == RevolutionaryTarget::Won
     }
-    pub fn random_valid_target(game: &Game, excluding: Option<PlayerReference>) -> Option<PlayerReference> {
+    pub fn random_valid_target(game: &Game, excluding: Option<PlayerReference>, actor_ref: PlayerReference) -> Option<PlayerReference> {
         PlayerReference::all_players(game)
             .filter(|p|
                 p.alive(game) &&
+                *p != actor_ref &&
                 excluding.is_none_or(|e|*p != e) &&
                 p.win_condition(game).is_loyalist_for(GameConclusion::Town)
             )
