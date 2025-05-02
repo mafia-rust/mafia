@@ -48,7 +48,7 @@ impl RoleStateImpl for Seeker {
                     actor_ref.push_night_message(midnight_variables, ChatMessageVariant::SeekerCaught {
                         hider: hider.index(),
                         #[expect(clippy::cast_possible_truncation, reason="come on")]
-                        //2 not 3 because the player youse just caught isn't in the list yet
+                        //2 not 3 because the player you just caught isn't in the list yet
                         players_left: 2i8.saturating_sub(self.followers.len() as i8),
                         role_state_win_con: actor_ref.win_condition(game).is_role_state()
                     });
