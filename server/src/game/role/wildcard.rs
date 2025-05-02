@@ -1,10 +1,10 @@
 use serde::{Serialize, Deserialize};
 
-use crate::game::ability_input::AbilityInput;
+use crate::{game::ability_input::AbilityInput, vec_set};
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::player::PlayerReference;
-use crate::game::role_list::role_can_generate;
+use crate::game::role_list::{role_can_generate, RoleSet};
 use crate::game::Game;
 
 use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
@@ -27,7 +27,7 @@ impl RoleStateImpl for Wildcard {
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::Wildcard, 0))
-            .single_role_selection_typical(game, |_|true)
+            .single_role_selection_role_set(game, RoleSet::Any, &vec_set![Role::TrueWildcard, Role::Wildcard])
             .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
             .allow_players([actor_ref])
             .build_map()

@@ -5,8 +5,9 @@ use crate::game::attack_power::DefensePower;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::RoleSet;
 use crate::game::Game;
+use crate::vec_set;
 
-use super::wild_card::Wildcard;
+use super::wildcard::Wildcard;
 use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
@@ -27,7 +28,7 @@ impl RoleStateImpl for FiendsWildcard {
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::FiendsWildcard, 0))
-            .single_role_selection_role_set(game, RoleSet::Fiends)
+            .single_role_selection_role_set(game, RoleSet::Fiends, &vec_set![Role::FiendsWildcard])
             .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
             .allow_players([actor_ref])
             .build_map()

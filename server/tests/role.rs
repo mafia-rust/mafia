@@ -81,7 +81,7 @@ pub use mafia_server::game::{
         witch::Witch,
         politician::Politician,
         doomsayer::{Doomsayer, DoomsayerGuess},
-        wild_card::Wildcard,
+        wildcard::Wildcard,
         martyr::Martyr,
         santa_claus::SantaClaus,
         krampus::Krampus,

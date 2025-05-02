@@ -14,6 +14,7 @@ use crate::game::{attack_power::DefensePower, player::PlayerReference};
 use crate::game::visit::{Visit, VisitTag};
 
 use crate::game::Game;
+use crate::vec_set;
 use super::{
     common_role, ControllerParametersMap, Role, RoleListSelection, 
     RoleStateImpl
@@ -133,10 +134,7 @@ impl RoleStateImpl for Reeducator {
                 .build_map(),
             ControllerParametersMap::builder(game)
                 .id(ControllerID::role(actor_ref, Role::Reeducator, 1))
-                .single_role_selection_typical(game, |role|
-                    RoleSet::MafiaSupport.get_roles().contains(role) &&
-                    *role != Role::Reeducator
-                )
+                .single_role_selection_role_set(game, RoleSet::MafiaSupport,&vec_set![Role::Reeducator])
                 .default_selection(RoleListSelection(vec![Reeducator::default_role(game)]))
                 .allow_players([actor_ref])
                 .build_map()

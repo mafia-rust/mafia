@@ -116,10 +116,10 @@ impl<'a, I: BuilderIDState> ControllerParametersBuilder<'a, NoAbilitySelection, 
     }
 
     pub fn single_role_selection_role_set(
-        self, game: &Game, role_set: RoleSet
+        self, game: &Game, role_set: RoleSet, exclude: &VecSet<Role>
     ) -> ControllerParametersBuilder<'a, AvailableRoleListSelection, I> {
         self.available_selection(AvailableRoleListSelection{
-            available_roles: game.settings.enabled_roles.intersection(&role_set.get_roles()),
+            available_roles: game.settings.enabled_roles.intersection(&role_set.get_roles()).subtract(exclude),
             can_choose_duplicates: false,
             max_roles: Some(1)
         })
