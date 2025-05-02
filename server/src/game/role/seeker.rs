@@ -8,6 +8,7 @@ use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::event::on_midnight::MidnightVariables;
 use crate::game::event::on_midnight::OnMidnightPriority;
+use crate::game::game_conclusion::GameConclusion;
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
@@ -47,7 +48,7 @@ impl RoleStateImpl for Seeker {
                     actor_ref.push_night_message(midnight_variables, ChatMessageVariant::SeekerCaught {
                         hider: hider.index(),
                         #[expect(clippy::cast_possible_truncation, reason="come on")]
-                        //2 not 3 because the player you just caught isn't in the list yet
+                        //2 not 3 because the player youse just caught isn't in the list yet
                         players_left: 2i8.saturating_sub(self.followers.len() as i8),
                         role_state_win_con: actor_ref.win_condition(game).is_role_state()
                     });
@@ -56,19 +57,27 @@ impl RoleStateImpl for Seeker {
                 }
             }
             (OnMidnightPriority::FinalizeNight, Some(follower)) => {
-                self.followers.insert(*follower);
-                self.new_follower = None;
                 //not self.won because if their win condition is different they should not leave the game 
                 //but doesn't check for role state won because its easier to explain in the manual as any win con and it really doesn't matter for any of the other win cons.
+                self.followers.insert(*follower);
+                self.new_follower = None;
                 if actor_ref.get_won_game(game) {
                     actor_ref.leave_town(game);
-                    self.followers
+                    if let Some(&apprentice) = self.followers
                         .iter()
-                        .collect::<Vec<&PlayerReference>>()
+                        .filter(|p|
+                            p.win_condition(game).is_loyalist_for(GameConclusion::Town)
+                        ).collect::<Vec<&PlayerReference>>()
                         .choose(&mut rand::rng())
-                        .inspect(|p|
-                            p.set_night_convert_role_to(midnight_variables, Some(Role::Seeker.default_state()))
-                        );
+                        .copied()
+                        .or_else(||
+                            self.followers.iter()
+                                .collect::<Vec<&PlayerReference>>()
+                                .choose(&mut rand::rng())
+                                .copied()
+                        ) {
+                            apprentice.set_night_convert_role_to(midnight_variables, Some(Role::Seeker.default_state()));
+                    }
                 }
                 actor_ref.set_role_state(game, self);
             }
