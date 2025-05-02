@@ -36,25 +36,8 @@ impl RoleStateImpl for Auditor {
         
         let Some(TwoRoleOutlineOptionSelection(first, second)) = ControllerID::role(actor_ref, Role::Auditor, 0).get_two_role_outline_option_selection(game).cloned()else{return};
 
-        if let Some(chosen_outline) = first{
-            let result = Self::get_result(game, chosen_outline, Confused::is_confused(game, actor_ref));
-            actor_ref.push_night_message(midnight_variables, ChatMessageVariant::AuditorResult {
-                outline_index: chosen_outline.index(),
-                result: result.clone(),
-            });
-
-            self.previously_given_results.insert(chosen_outline, result);
-        }
-
-        if let Some(chosen_outline) = second{
-            let result = Self::get_result(game, chosen_outline, Confused::is_confused(game, actor_ref));
-            actor_ref.push_night_message(midnight_variables, ChatMessageVariant::AuditorResult {
-                outline_index: chosen_outline.index(),
-                result: result.clone()
-            });
-
-            self.previously_given_results.insert(chosen_outline, result);
-        }
+        first.inspect(|o|self.investigate_outline(game, actor_ref, midnight_variables, *o));
+        second.inspect(|o|self.investigate_outline(game, actor_ref, midnight_variables, *o));
 
         actor_ref.set_role_state(game, self);
     }
@@ -111,5 +94,14 @@ impl Auditor{
         }
 
         AuditorResult(out)
+    }
+    fn investigate_outline(&mut self, game: &Game, actor_ref: PlayerReference, midnight_variables: &mut MidnightVariables, outline: RoleOutlineReference) {
+        let result = Self::get_result(game, outline, Confused::is_confused(game, actor_ref));
+            actor_ref.push_night_message(midnight_variables, ChatMessageVariant::AuditorResult {
+                outline,
+                result: result.clone(),
+            });
+
+        self.previously_given_results.insert(outline, result);
     }
 }

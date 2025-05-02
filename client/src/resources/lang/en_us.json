@@ -819,7 +819,8 @@
     "simplify":"Simplify",
     "backToLobby": "Back To Lobby",
 
-    "numberedRoleOutline":"\\0№\\1",
+    "numberedRoleOutline.single":"\\0",
+    "numberedRoleOutline.multiple":"\\0№\\1",
 
     "verdict.guilty": "Guilty",
     "verdict.innocent": "Innocent",

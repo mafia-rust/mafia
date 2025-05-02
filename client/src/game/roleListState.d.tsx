@@ -1,5 +1,5 @@
 
-import { Conclusion, InsiderGroup, translateWinCondition } from "./gameState.d";
+import { Conclusion, InsiderGroup, RoleOutlineReference, translateWinCondition } from "./gameState.d";
 import translate from "./lang";
 import { Role, roleJsonData } from "./roleState.d";
 
@@ -70,25 +70,37 @@ export type RoleOrRoleSet = ({
 export function translateRoleOutline(roleOutline: RoleOutline): string {
     return roleOutline.map(translateRoleOutlineOption).join(" "+translate("union")+" ")
 }
-export function translateSpecificRoleOutline(roleList: RoleOutline[] | undefined, outlineIndex: number): string {
+export function translateSpecificRoleOutline(roleList: RoleOutline[] | undefined, outline: RoleOutlineReference): string {
     if (roleList === undefined) {
-        return "Translation Error. Passed undefined role list to translateSpecificRoleOutline. outlineIndex = "+outlineIndex.toString()
+        return "Translation Error. Passed undefined role list to translateSpecificRoleOutline. outline index = "+outline
     }
-    if (outlineIndex === undefined) {
-        return "Translation Error. Passed undefined outline to translateSpecificRoleOutline. outlineIndex = "+outlineIndex
+    if (outline === undefined) {
+        return "Translation Error. Passed undefined outline to translateSpecificRoleOutline. outline index = "+outline
     }
-    if (outlineIndex >= roleList.length || outlineIndex < 0) {
-        return "Translation Error. Passed out of bounds outline index to translateSpecificRoleOutline. outlineIndex = "+outlineIndex.toString()
+    if (outline >= roleList.length || outline < 0) {
+        return "Translation Error. Passed out of bounds outline to translateSpecificRoleOutline. outline index = "+outline
     }
-    const outline = translateRoleOutline(roleList[outlineIndex]);
+    const outlineText = translateRoleOutline(roleList[outline]);
 
     let count = 1;
-    for(let i = 0; i<outlineIndex; i++){
-        if(translateRoleOutline(roleList[i])===outline) {
+    for(let i = 0; i<outline; i++){
+        if(translateRoleOutline(roleList[i])===outlineText) {
             count++
         }
     }
-    return translate("numberedRoleOutline", outline, count.toString());
+    if(count == 1) {
+        let single = true;
+        for(let i = outline+1; i<roleList.length; i++){
+            if(translateRoleOutline(roleList[i])===outlineText) {
+                single = false;
+                break;
+            }
+        }
+        if(single) {
+            return translate("numberedRoleOutline.single", outlineText)
+        }
+    }
+    return translate("numberedRoleOutline.multiple", outlineText, count.toString());
 }
 export function translateRoleOutlineOption(roleOutlineOption: RoleOutlineOption): string {
     let out = "";

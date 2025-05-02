@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::game::{
     ability_input::*, attack_power::DefensePower, components::{synopsis::Synopsis, tags::Tag, win_condition::WinCondition}, grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
         auditor::AuditorResult, engineer::TrapState, kira::KiraResult, krampus::KrampusAbility, santa_claus::SantaListKind, spy::SpyBug, Role
-    }, verdict::Verdict
+    }, role_outline_reference::RoleOutlineReference, verdict::Verdict
 };
 
 
@@ -168,7 +168,7 @@ pub enum ChatMessageVariant {
     PsychicEvil{first: PlayerReference, second: PlayerReference},
     PsychicFailed,
     #[serde(rename_all = "camelCase")]
-    AuditorResult{outline_index: u8, result: AuditorResult},
+    AuditorResult{outline: RoleOutlineReference, result: AuditorResult},
     SnoopResult{townie: bool},
     PolymathSnoopResult{inno: bool},
     GossipResult{enemies: bool},
