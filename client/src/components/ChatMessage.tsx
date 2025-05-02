@@ -695,7 +695,16 @@ export function translateChatMessage(
             );
         case "auditorResult":
             return translate("chatMessage.auditorResult", 
-                translateSpecificRoleOutline(roleList, message.outlineIndex),
+                translateSpecificRoleOutline(roleList, message.outline),
+                message.result.map((role)=>translate("role."+role+".name")).join(", ")
+            );
+        case "exampleAuditorResult":
+            let outlineText = translateRoleOutline(message.outline);
+            if(message.index !== null){
+                outlineText = translate("numberedRoleOutline.multiple", outlineText, message.index)
+            }
+            return translate("chatMessage.auditorResult", 
+                outlineText,
                 message.result.map((role)=>translate("role."+role+".name")).join(", ")
             );
         case "engineerVisitorsRole":
@@ -1035,7 +1044,12 @@ export type ChatMessageVariant = {
     type: "psychicFailed"
 } | {
     type: "auditorResult",  
-    outlineIndex: RoleOutlineReference,
+    outline: RoleOutlineReference,
+    result: AuditorResult,
+} | {
+    type: "exampleAuditorResult",  
+    index: number | null,
+    outline: RoleOutline,
     result: AuditorResult,
 } | {
     type: "engineerVisitorsRole",

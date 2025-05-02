@@ -820,7 +820,7 @@
     "backToLobby": "Back To Lobby",
 
     "numberedRoleOutline.single":"\\0",
-    "numberedRoleOutline.multiple":"\\0№\\1",
+    "numberedRoleOutline.multiple":"\\0 №\\1",
 
     "verdict.guilty": "Guilty",
     "verdict.innocent": "Innocent",

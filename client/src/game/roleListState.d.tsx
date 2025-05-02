@@ -77,7 +77,7 @@ export function translateSpecificRoleOutline(roleList: RoleOutline[] | undefined
     if (outline === undefined) {
         return "Translation Error. Passed undefined outline to translateSpecificRoleOutline. outline index = "+outline
     }
-    if (outline >= roleList.length || outline < 0) {
+    if (!(outline < roleList.length && outline >= 0)) {
         return "Translation Error. Passed out of bounds outline to translateSpecificRoleOutline. outline index = "+outline
     }
     const outlineText = translateRoleOutline(roleList[outline]);
@@ -88,7 +88,7 @@ export function translateSpecificRoleOutline(roleList: RoleOutline[] | undefined
             count++
         }
     }
-    if(count == 1) {
+    if(count === 1) {
         let single = true;
         for(let i = outline+1; i<roleList.length; i++){
             if(translateRoleOutline(roleList[i])===outlineText) {
