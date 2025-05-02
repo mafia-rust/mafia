@@ -46,7 +46,7 @@ impl RoleStateImpl for Kidnapper {
 
         match priority {
             OnMidnightPriority::Kill => {
-                let Some(BooleanSelection(true)) = ControllerID::role(actor_ref, Role::Jailor, 1).get_boolean_selection(game) else {return};
+                let Some(BooleanSelection(true)) = ControllerID::role(actor_ref, Role::Kidnapper, 1).get_boolean_selection(game) else {return};
                 let Some(target) = self.jailed_target_ref else {return};
                 
                 if Detained::is_detained(game, target){
@@ -54,7 +54,7 @@ impl RoleStateImpl for Kidnapper {
                         actor_ref, 
                         game, 
                         midnight_variables,
-                        GraveKiller::Role(Role::Jailor), 
+                        GraveKiller::Role(Role::Jailor),
                         AttackPower::ProtectionPiercing, 
                         false
                     );
