@@ -66,7 +66,7 @@ impl Cult{
         // Remove dead
         cult.ordered_cultists = cult.ordered_cultists.iter().copied().filter(|p|
             RoleSet::Cult.get_roles().contains(&p.role(game)) &&
-            InsiderGroupID::Cult.is_player_in_revealed_group(game, *p) &&
+            InsiderGroupID::Cult.contains_player(game, *p) &&
             p.alive(game)
         ).collect();
 
@@ -74,7 +74,7 @@ impl Cult{
         for player in PlayerReference::all_players(game){
             if 
                 RoleSet::Cult.get_roles().contains(&player.role(game)) &&
-                InsiderGroupID::Cult.is_player_in_revealed_group(game, player) &&
+                InsiderGroupID::Cult.contains_player(game, player) &&
                 player.alive(game) &&
                 !cult.ordered_cultists.contains(&player)
             {

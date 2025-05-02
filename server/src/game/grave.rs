@@ -1,5 +1,7 @@
 use std::vec;
 
+use rand::rng;
+use rand::seq::SliceRandom;
 use serde::{Serialize, Deserialize};
 
 use super::event::on_midnight::MidnightVariables;
@@ -82,6 +84,8 @@ impl Grave{
 
 
     pub fn from_player_night(game: &Game, midnight_variables: &MidnightVariables, player_ref: PlayerReference) -> Grave {
+        let mut killers = player_ref.night_grave_killers(midnight_variables).clone();
+        killers.shuffle(&mut rng());
         Grave {
             player: player_ref,
             died_phase: GravePhase::Night,
@@ -89,7 +93,7 @@ impl Grave{
             information: GraveInformation::Normal{
                 role: player_ref.night_grave_role(midnight_variables).unwrap_or(player_ref.role(game)),
                 will: player_ref.night_grave_will(midnight_variables).clone(),
-                death_cause: GraveDeathCause::Killers(player_ref.night_grave_killers(midnight_variables).clone()),
+                death_cause: GraveDeathCause::Killers(killers),
                 death_notes: player_ref.night_grave_death_notes(midnight_variables).clone()
             },
         }

@@ -52,7 +52,7 @@ impl RoleStateImpl for Reeducator {
                         .into_iter()
                         .map(|mut v|{
                             if 
-                                !InsiderGroupID::in_same_revealed_group(game, actor_ref, v.target) &&
+                                !InsiderGroupID::in_same_group(game, actor_ref, v.target) &&
                                 v.tag == (VisitTag::Role{role: Role::Reeducator, id: 0})
                             {
                                 v.attack = true;
@@ -121,7 +121,7 @@ impl RoleStateImpl for Reeducator {
                         .filter(|player| 
                             player.alive(game) &&
                             (
-                                InsiderGroupID::in_same_revealed_group(game, actor_ref, *player) || 
+                                InsiderGroupID::in_same_group(game, actor_ref, *player) || 
                                 (game.day_number() > 1 && self.convert_charges_remaining)
                             )
                         )
