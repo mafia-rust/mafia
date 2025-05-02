@@ -2637,7 +2637,8 @@ fn seeker_basic(){
             rs.clone(),
             Seeker {
                 followers: [hider0.player_ref()].into(), 
-                new_follower: None
+                new_follower: None,
+                left_town: false,
             }
         );
     } else {panic!()}
@@ -2684,7 +2685,8 @@ fn seeker_basic(){
             rs.clone(),
             Seeker {
                 followers: [hider0.player_ref()].into(), 
-                new_follower: None
+                new_follower: None,
+                left_town: false,
             }
         );
     } else {panic!()}
@@ -2739,7 +2741,8 @@ fn seeker_basic(){
             rs.clone(),
             Seeker {
                 followers: [hider0.player_ref(), hider1.player_ref()].into(), 
-                new_follower: None
+                new_follower: None,
+                left_town: false,
             }
         );
     } else {panic!()}
@@ -2790,7 +2793,8 @@ fn seeker_basic(){
             rs.clone(),
             Seeker {
                 followers: [hider0.player_ref(), hider1.player_ref(), hider2.player_ref()].into(), 
-                new_follower: None
+                new_follower: None,
+                left_town: false,
             }
         );
     } else {panic!()}
@@ -2808,6 +2812,11 @@ fn seeker_basic(){
         hider2.get_messages_after_night(4),
         ChatMessageVariant::CaughtBySeeker
     );
+    assert!(
+        (hider0.role() == Role::Seeker) ^
+        (hider1.role() == Role::Seeker) ^
+        (hider2.role() == Role::Seeker)
+    )
 }
 
 #[test]

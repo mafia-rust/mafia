@@ -369,6 +369,7 @@ mod macros {
                         RoleState::$name(role_struct)
                     }
                 }
+                
             )*
         }
     }
@@ -395,5 +396,10 @@ impl Role{
     }
     pub fn has_suspicious_aura(&self, _game: &Game)->bool{
         false
+    }
+}
+impl From<Role> for RoleState {
+    fn from(role: Role) -> Self {
+        role.default_state()
     }
 }

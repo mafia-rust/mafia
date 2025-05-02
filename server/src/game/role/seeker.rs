@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 
+use rand::seq::IndexedRandom;
 use serde::Serialize;
 
 use crate::game::ability_input::AvailablePlayerListSelection;
@@ -20,6 +21,7 @@ use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 pub struct Seeker {
     pub followers: HashSet<PlayerReference>,
     pub new_follower: Option<PlayerReference>,
+    pub left_town: bool
 }
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
@@ -57,9 +59,16 @@ impl RoleStateImpl for Seeker {
                 self.followers.insert(*follower);
                 self.new_follower = None;
                 //not self.won because if their win condition is different they should not leave the game 
-                //but doesn't check for role state won because its easier to explain in the manual as any win con and it really doesn't matter for any of the other ones.
+                //but doesn't check for role state won because its easier to explain in the manual as any win con and it really doesn't matter for any of the other win cons.
                 if actor_ref.get_won_game(game) {
                     actor_ref.leave_town(game);
+                    self.followers
+                        .iter()
+                        .collect::<Vec<&PlayerReference>>()
+                        .choose(&mut rand::rng())
+                        .inspect(|p|
+                            p.set_night_convert_role_to(midnight_variables, Some(Role::Seeker.default_state()))
+                        );
                 }
                 actor_ref.set_role_state(game, self);
             }
@@ -111,6 +120,15 @@ impl RoleStateImpl for Seeker {
             false
         )
     }
+    // fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player: PlayerReference) {
+    //     if actor_ref == dead_player && self.left_town {
+    //         self.followers
+    //             .iter()
+    //             .collect::<Vec<&PlayerReference>>()
+    //             .choose(&mut rand::rng())
+    //             .inspect(|p|p.set_role(game, Role::Seeker));
+    //     }
+    // }
 }
 
 impl Seeker {
