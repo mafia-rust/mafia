@@ -126,13 +126,13 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
             let mut out = HashSet::new();
 
             //evil chat groups
-            if InsiderGroupID::Puppeteer.is_player_in_revealed_group(game, actor_ref) {
+            if InsiderGroupID::Puppeteer.contains_player(game, actor_ref) {
                 out.insert(ChatGroup::Puppeteer);
             }
-            if InsiderGroupID::Cult.is_player_in_revealed_group(game, actor_ref) {
+            if InsiderGroupID::Cult.contains_player(game, actor_ref) {
                 out.insert(ChatGroup::Cult);
             }
-            if InsiderGroupID::Mafia.is_player_in_revealed_group(game, actor_ref) {
+            if InsiderGroupID::Mafia.contains_player(game, actor_ref) {
                 out.insert(ChatGroup::Mafia);
             }
 
@@ -227,13 +227,13 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
             ) {
                 vec![ChatGroup::Kidnapped]
             }else{
-                if InsiderGroupID::Puppeteer.is_player_in_revealed_group(game, actor_ref){
+                if InsiderGroupID::Puppeteer.contains_player(game, actor_ref){
                     night_chat_groups.push(ChatGroup::Puppeteer);
                 }
-                if InsiderGroupID::Mafia.is_player_in_revealed_group(game, actor_ref){
+                if InsiderGroupID::Mafia.contains_player(game, actor_ref){
                     night_chat_groups.push(ChatGroup::Mafia);
                 }
-                if InsiderGroupID::Cult.is_player_in_revealed_group(game, actor_ref){
+                if InsiderGroupID::Cult.contains_player(game, actor_ref){
                     night_chat_groups.push(ChatGroup::Cult);
                 }
                 night_chat_groups
@@ -254,13 +254,13 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
         out.push(ChatGroup::Dead);
     }
 
-    if InsiderGroupID::Mafia.is_player_in_revealed_group(game, actor_ref) {
+    if InsiderGroupID::Mafia.contains_player(game, actor_ref) {
         out.push(ChatGroup::Mafia);
     }
-    if InsiderGroupID::Cult.is_player_in_revealed_group(game, actor_ref) {
+    if InsiderGroupID::Cult.contains_player(game, actor_ref) {
         out.push(ChatGroup::Cult);
     }
-    if InsiderGroupID::Puppeteer.is_player_in_revealed_group(game, actor_ref){
+    if InsiderGroupID::Puppeteer.contains_player(game, actor_ref){
         out.push(ChatGroup::Puppeteer);
     }
 
