@@ -3,9 +3,9 @@ import { RoleSet } from "./roleListState.d"
 import ROLES from "./../resources/roles.json";
 import { ChatMessageVariant } from "../components/ChatMessage";
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
-import { Hypnotist } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeHypnotistMenu";
 import { Doomsayer } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
 import { TwoRoleOptionSelection } from "./abilityInput";
+import { Hypnotist } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/HypnotistMenu";
 
 export type RoleState = {
     type: "jailor",
