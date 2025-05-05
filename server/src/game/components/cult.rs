@@ -56,11 +56,6 @@ impl Cult{
         Cult::set_ordered_cultists(game);
     }
 
-    fn is_living_cultist(game: &Game, player: PlayerReference) -> bool {
-        player.alive(game) &&
-        RoleSet::Cult.get_roles().contains(&player.role(game)) &&
-        InsiderGroupID::Cult.contains_player(game, player)
-    }
     pub fn on_game_start(game: &mut Game) {
         let mut apostle = None;
         let mut zealot = None;
@@ -87,23 +82,29 @@ impl Cult{
     }
 
     pub fn set_ordered_cultists(game: &mut Game){
-        
         let mut cult = game.cult().clone();
 
         // Remove dead & converted
-        cult.ordered_cultists.retain(|&p|Self::is_living_cultist(game, p));
+        cult.ordered_cultists.retain(|&p|
+            p.alive(game) &&
+            RoleSet::Cult.get_roles().contains(&p.role(game)) &&
+            InsiderGroupID::Cult.contains_player(game, p)
+        );
 
         // Add new
-        for player in PlayerReference::all_players(game){
-            if Self::is_living_cultist(game, player) && !cult.ordered_cultists.contains(&player) {
-                cult.ordered_cultists.push(player);
+        for player in InsiderGroupID::Cult.players(game).iter() {
+            if 
+                player.alive(game) && 
+                RoleSet::Cult.get_roles().contains(&player.role(game)) && 
+                !cult.ordered_cultists.contains(player) 
+            {
+                cult.ordered_cultists.push(*player);
             }
         }
 
         let zealot = cult.ordered_cultists.len().saturating_sub(1);
         for (i, player_ref) in cult.ordered_cultists.iter().enumerate(){
-            let role =
-                if i == 0 {
+            let role = if i == 0 {
                     Role::Apostle
                 } else if i == zealot {
                     Role::Zealot
