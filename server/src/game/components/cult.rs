@@ -58,44 +58,42 @@ impl Cult{
     pub fn on_role_switch(game: &mut Game, _old: Role, _new: Role) {
         Cult::set_ordered_cultists(game);
     }
-
+        
     pub fn set_ordered_cultists(game: &mut Game){
-
         let mut cult = game.cult().clone();
 
-        // Remove dead
-        cult.ordered_cultists = cult.ordered_cultists.iter().copied().filter(|p|
-            RoleSet::Cult.get_roles().contains(&p.role(game)) &&
-            InsiderGroupID::Cult.contains_player(game, *p) &&
-            p.alive(game)
-        ).collect();
+        // Remove dead & converted
+        cult.ordered_cultists.retain(|&p|Self::is_living_cultist(game, p));
 
         // Add new
         for player in PlayerReference::all_players(game){
-            if 
-                RoleSet::Cult.get_roles().contains(&player.role(game)) &&
-                InsiderGroupID::Cult.contains_player(game, player) &&
-                player.alive(game) &&
-                !cult.ordered_cultists.contains(&player)
-            {
+            if Self::is_living_cultist(game, player) && !cult.ordered_cultists.contains(&player) {
                 cult.ordered_cultists.push(player);
             }
         }
 
+        let zealot = cult.ordered_cultists.len().saturating_sub(1);
         for (i, player_ref) in cult.ordered_cultists.iter().enumerate(){
-            let role = if i == 0 {
-                RoleState::Apostle(Apostle)
-            }else if cult.ordered_cultists.len().checked_sub(1).is_some_and(|last_index| last_index == i) {
-                RoleState::Zealot(Zealot)
-            }else{
-                RoleState::Disciple(Disciple)
-            };
+            let role = 
+                if i == 0 {
+                    RoleState::Apostle(Apostle)
+                } else if i == zealot {
+                    RoleState::Zealot(Zealot)
+                } else {
+                    RoleState::Disciple(Disciple)
+                };
             
-            if player_ref.role(game) == role.role() {continue}
-            player_ref.set_role_and_win_condition_and_revealed_group(game, role);
+            if player_ref.role(game) != role.role() {
+                player_ref.set_role(game, role);
+            }
         }
 
         game.set_cult(cult);
+    }
+    pub fn is_living_cultist(game: &Game, player: PlayerReference) -> bool {
+        player.alive(game) &&
+        RoleSet::Cult.get_roles().contains(&player.role(game)) &&
+        InsiderGroupID::Cult.contains_player(game, player)
     }
 
     pub fn next_ability(game: &Game)->CultAbility{
