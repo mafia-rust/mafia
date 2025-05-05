@@ -2,7 +2,8 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-evenly;
 }
-.large-doomsayer-menu > div > * {
+.large-doomsayer-menu > div > select {
     width: 100%;
 }

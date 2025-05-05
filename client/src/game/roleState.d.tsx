@@ -4,7 +4,7 @@ import ROLES from "./../resources/roles.json";
 import { ChatMessageVariant } from "../components/ChatMessage";
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
 import { Hypnotist } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeHypnotistMenu";
-import { Doomsayer } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
+import { Doomsayer } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/DoomsayerMenu";
 import { TwoRoleOptionSelection } from "./abilityInput";
 
 export type RoleState = {
