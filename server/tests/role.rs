@@ -2,6 +2,7 @@ mod kit;
 use std::{ops::Deref, vec};
 
 
+use kit::player::TestPlayer;
 pub(crate) use kit::{assert_contains, assert_not_contains};
 
 use mafia_server::game::{attack_power::DefensePower, components::syndicate_gun_item::SyndicateGunItem};
@@ -1887,54 +1888,6 @@ fn godfather_wardblock_still_kills() {
 }
 
 #[test]
-fn cult_alternates() {
-    kit::scenario!(game in Night 1 where
-        apostle: Apostle,
-        b: Detective,
-        c: Detective,
-        d: Detective,
-        e: Detective,
-        f: Detective,
-        g: Detective
-    );
-
-
-    //apostle converts
-    assert!(game.cult().next_ability == CultAbility::Convert);
-    assert!(apostle.send_ability_input_player_list_typical(b));
-    game.next_phase();
-    assert!(b.alive());
-    assert!(InsiderGroupID::Cult.contains_player(game.deref(), b.player_ref()));
-
-    //zealot kills, apostle waits
-    game.skip_to(Night, 2);
-    assert!(game.cult().next_ability == CultAbility::Kill);
-    assert!(game.cult().ordered_cultists.len() == 2);
-    assert!(b.send_ability_input_player_list_typical(c));
-    game.next_phase();
-    assert!(!c.alive());
-    assert!(d.alive());
-    assert!(!InsiderGroupID::Cult.contains_player(game.deref(), d.player_ref()));
-
-    //zealot waits, apostle converts
-    game.skip_to(Night, 3);
-    assert!(game.cult().ordered_cultists.len() == 2);
-    assert!(apostle.send_ability_input_player_list_typical(d));
-    game.next_phase();
-    assert!(e.alive());
-    assert!(d.alive());
-    assert!(InsiderGroupID::Cult.contains_player(game.deref(), d.player_ref()));
-
-    //zealot kills, apostle waits
-    game.skip_to(Night, 4);
-    assert!(game.cult().ordered_cultists.len() == 3);
-    assert!(d.send_ability_input_player_list_typical(g));
-    game.next_phase();
-    assert!(f.alive());
-    assert!(!g.alive());
-}
-
-#[test]
 fn puppeteer_marionettes_philosopher(){
     kit::scenario!(game in Night 2 where
         puppeteer: Puppeteer,
@@ -2368,30 +2321,114 @@ fn ojo_transporter(){
 }
 
 #[test]
+fn cult_alternates() {
+    kit::scenario!(game in Night 1 where
+        _cult: Apostle,
+        b: Detective,
+        c: Detective,
+        d: Detective,
+        e: Detective,
+        f: Detective,
+        g: Detective
+    );
+    let apostle = TestPlayer::get_apostle(&game);
+
+    //apostle converts
+    assert!(game.cult().next_ability == CultAbility::Convert);
+    assert!(apostle.send_ability_input_player_list_typical(b));
+    game.next_phase();
+    assert!(b.alive());
+    assert!(InsiderGroupID::Cult.contains_player(game.deref(), b.player_ref()));
+
+    //zealot kills, apostle waits
+    game.skip_to(Night, 2);
+    assert!(game.cult().next_ability == CultAbility::Kill);
+    assert!(game.cult().ordered_cultists.len() == 2);
+    assert!(b.send_ability_input_player_list_typical(c));
+    game.next_phase();
+    assert!(!c.alive());
+    assert!(d.alive());
+    assert!(!InsiderGroupID::Cult.contains_player(game.deref(), d.player_ref()));
+
+    //zealot waits, apostle converts
+    game.skip_to(Night, 3);
+    assert!(game.cult().ordered_cultists.len() == 2);
+    assert!(apostle.send_ability_input_player_list_typical(d));
+    game.next_phase();
+    assert!(e.alive());
+    assert!(d.alive());
+    assert!(InsiderGroupID::Cult.contains_player(game.deref(), d.player_ref()));
+
+    //zealot kills, apostle waits
+    game.skip_to(Night, 4);
+    assert!(game.cult().ordered_cultists.len() == 3);
+    assert!(d.send_ability_input_player_list_typical(g));
+    game.next_phase();
+    assert!(f.alive());
+    assert!(!g.alive());
+}
+
+#[test]
 fn apostle_converting_trapped_player_day_later(){
+    for _ in 0..200 {
+        kit::scenario!(game in Night 2 where
+            _cult0: Cultist,
+            _cult1: Cultist,
+            trapped: Detective,
+            engineer: Engineer
+        );
+        let apostle = TestPlayer::get_apostle(&game);
+        let zealot = TestPlayer::get_zealot(&game);
+
+        assert!(engineer.send_ability_input_player_list_typical(trapped));
+    
+        game.skip_to(Night, 3);
+    
+        //explanation of why they are both targeting here:
+        //if zealot.player_index < apostle.player_index then this fails otherwise
+        //If the order is backwards, then the get converted in player order
+        //this should be fixed
+        assert!(apostle.send_ability_input_player_list_typical(trapped));
+        assert!(zealot.send_ability_input_player_list_typical(trapped));
+    
+        game.next_phase();
+    
+        assert_contains!(
+            engineer.get_messages_after_night(3),
+            ChatMessageVariant::EngineerVisitorsRole {role: Role::Apostle}
+        );
+        assert_eq!(trapped.role_state().role(), Role::Detective);
+        assert!(!apostle.alive());
+        assert!(zealot.alive());
+        assert!(trapped.alive());
+        assert!(engineer.alive());
+    }
+}
+
+#[test]
+fn apostle_converting_trapped_player_same_day(){
     kit::scenario!(game in Night 2 where
-        apostle: Apostle,
-        zealot: Zealot,
+        _cult0: Apostle,
+        _cult1: Zealot,
         trapped: Detective,
         engineer: Engineer
     );
-
+    let apostle = TestPlayer::get_apostle(&game);
 
     assert!(engineer.send_ability_input_player_list_typical(trapped));
-
-    game.skip_to(Night, 3);
-
-    //explanation of why they are both targeting here:
-    //if zealot.player_index < apostle.player_index then this fails otherwise
-    //If the order is backwards, then the get converted in player order
-    //this should be fixed
     assert!(apostle.send_ability_input_player_list_typical(trapped));
-    assert!(zealot.send_ability_input_player_list_typical(trapped));
 
     game.next_phase();
 
-    assert_contains!(engineer.get_messages_after_night(3), ChatMessageVariant::EngineerVisitorsRole { role: Role::Apostle });
-    assert_eq!(trapped.role_state().role(), Role::Detective);
+    assert!(trapped.role_state().role() != Role::Zealot);
+    assert!(trapped.role_state().role() == Role::Detective);
+    assert_contains!(
+        engineer.get_messages_after_night(2),
+        ChatMessageVariant::EngineerVisitorsRole { role: Role::Apostle}
+    );
+    assert!(!apostle.alive());
+    assert!(trapped.alive());
+    assert!(engineer.alive());
 }
 
 #[test]
@@ -2414,25 +2451,6 @@ fn engineer_day_later(){
     assert_contains!(engineer.get_messages_after_night(3), ChatMessageVariant::EngineerVisitorsRole { role: Role::Mafioso });
     assert!(!maf.alive());
     assert!(trapped.alive());
-}
-
-#[test]
-fn apostle_converting_trapped_player_same_day(){
-    kit::scenario!(game in Night 2 where
-        apostle: Apostle,
-        _zealot: Zealot,
-        trapped: Detective,
-        engineer: Engineer
-    );
-
-
-    assert!(engineer.send_ability_input_player_list_typical(trapped));
-    assert!(apostle.send_ability_input_player_list_typical(trapped));
-
-    game.next_phase();
-
-    assert!(trapped.role_state().role() != Role::Zealot);
-    assert!(trapped.role_state().role() == Role::Detective);
 }
 
 #[test]
@@ -2846,7 +2864,7 @@ fn santa_cannot_convert_naughty_player() {
     game.skip_to(Night, 2);
 
     assert_contains!(
-        nice.player_ref().win_condition(&game).required_resolution_states_for_win().unwrap(),
+        nice.player_ref().win_condition(&game).resolution_states_for_win().unwrap(),
         GameConclusion::NiceList
     );
 
@@ -2858,7 +2876,7 @@ fn santa_cannot_convert_naughty_player() {
     game.skip_to(Night, 3);
 
     assert_contains!(
-        naughty.player_ref().win_condition(&game).required_resolution_states_for_win().unwrap(),
+        naughty.player_ref().win_condition(&game).resolution_states_for_win().unwrap(),
         GameConclusion::NaughtyList
     );
 
@@ -2867,12 +2885,12 @@ fn santa_cannot_convert_naughty_player() {
     game.skip_to(Obituary, 4);
 
     assert_contains!(
-        naughty.player_ref().win_condition(&game).required_resolution_states_for_win().unwrap(),
+        naughty.player_ref().win_condition(&game).resolution_states_for_win().unwrap(),
         GameConclusion::NaughtyList
     );
 
     assert_not_contains!(
-        naughty.player_ref().win_condition(&game).required_resolution_states_for_win().unwrap(),
+        naughty.player_ref().win_condition(&game).resolution_states_for_win().unwrap(),
         GameConclusion::NiceList
     );
 }
@@ -2971,7 +2989,7 @@ fn santa_always_gets_their_naughty_selection() {
         game.skip_to(Obituary, 3);
     
         assert_contains!(
-            naughty.player_ref().win_condition(&game).required_resolution_states_for_win().unwrap(),
+            naughty.player_ref().win_condition(&game).resolution_states_for_win().unwrap(),
             GameConclusion::NaughtyList
         );
     }

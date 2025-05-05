@@ -1,5 +1,7 @@
 use mafia_server::{game::{ability_input::*, chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, verdict::Verdict, Game}, packet::ToServerPacket};
 
+use super::game::TestGame;
+
 #[derive(Clone, Copy, Debug)]
 pub struct TestPlayer(PlayerReference, *mut Game);
 
@@ -20,6 +22,55 @@ macro_rules! game {
 impl TestPlayer {
     pub fn new(player: PlayerReference, game: &Game) -> Self {
         TestPlayer(player, game as *const Game as *mut Game)
+    }
+    
+    pub fn get_apostle(game: &TestGame) -> Self {
+        let apostle = Self::new(
+            *game
+                .cult()
+                .ordered_cultists
+                .first()
+                .unwrap(), 
+            game
+        );
+        assert_eq!(apostle.role(), Role::Apostle);
+        apostle
+    }
+    pub fn get_zealot(game: &TestGame) -> Self {
+        let zealot = Self::new(
+            *game
+                .cult()
+                .ordered_cultists
+                .last()
+                .unwrap(), 
+            game
+        );
+        assert_eq!(zealot.role(), Role::Zealot);
+        zealot
+    }
+    pub fn get_disciple(game: &TestGame) -> Self {
+        let disciple = Self::new(
+            *game
+                .cult()
+                .ordered_cultists
+                .get(1)
+                .unwrap(), 
+            game
+        );
+        assert_eq!(disciple.role(), Role::Disciple);
+        disciple
+    }
+    pub fn get_disciples(game: &TestGame) -> Vec<Self> {
+        let disciples = game
+            .cult()
+            .ordered_cultists[1..game.cult.ordered_cultists.len()-1]
+            .iter()
+            .map(|p|Self::new(*p, game))
+            .collect::<Vec<Self>>();
+        for player in disciples.iter() {
+            assert_eq!(player.role(), Role::Disciple);
+        }
+        disciples
     }
 
     pub fn index(&self) -> PlayerIndex {

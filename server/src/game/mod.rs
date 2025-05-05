@@ -850,12 +850,11 @@ pub mod test {
     
     pub fn mock_game(settings: Settings, num_players: u8) -> Result<(Game, Assignments), RejectStartReason> {
 
-        //check settings are not completly off the rails
+        //check settings are not completely off the rails
         if settings.phase_times.game_ends_instantly() {
             return Err(RejectStartReason::ZeroTimeGame);
         }
 
-        let settings = settings.clone();
         let role_list = settings.role_list.clone();
         
         let random_outline_assignments = match role_list.create_random_role_assignments(&settings.enabled_roles){

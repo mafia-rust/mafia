@@ -578,6 +578,9 @@
     "role.zealot.name:var.0": "Zealots",
     "controllerId.role.zealot.0.name": "Attack",
 
+    "role.cultist.name": "Cultist",
+    "role.cultist.name:var.0": "Cultists",
+
     "role.martyr.name": "Martyr",
     "role.martyr.name:var.0": "Martyrs",
     "role.martyr.target": "Shoot",
@@ -1074,7 +1077,7 @@
     "wiki.article.standard.mafia.text": "The syndicate hierarchy is the system which keeps the syndicate being able to kill every night. The syndicate hierarchy is a collection of players who are usually also syndicate insiders and syndicate loyalists. The system follows two rules:\n* If there is a Syndicate Killing role in the hierarchy - such as Godfather or Impostor - when they die, another member of the hierarchy will inherit their role.\n* If there is no Syndicate Killing role in the hierarchy, a syndicate member is given the syndicate gun. When the player with the syndicate gun dies, another member of the hierarchy inherits it.\n\nPlayers that are in the syndicate hierarchy tend to also be syndicate insiders and loyalists. This means they win by eliminating every other team and can talk together during night and obituary.",
     "wiki.article.standard.cult.title": "Cult Hierarchy",
     "wiki.article.standard.cult.title:var.0": "Cult",
-    "wiki.article.standard.cult.text": "The cult hierarchy is the system which keeps the cult being able to either kill or convert each night. The cult hierarchy is a collection of players who are usually also cult insiders and cult loyalists. The cult hierarchy maintains 2 abilities, kill and convert. They alternate, converting first, and killing after.\n* The cult can only kill after they have successfully converted someone. After that, they can only convert after successfully killing someone.\n* If for some reason a kill or convert doesn't work (e.g. the killer/converter was blocked), then the same ability is tried again the next night - it doesn't switch. Because of this, killing/converting is not inherently \"every other night\".\n\nThese are how the cult roles execute the duties of the cult:\n* Apostle: The cult hierarchy guarantees there is always an apostle. If the apostle dies, the player who has been in the cult hierarchy the longest becomes the apostle. The apostle's ability is to convert players, however if there is no zealot, then the apostle kills.\n* Disciple: The disciple has no ability. A disciple may become an apostle if the apostle dies.\n* Zealot: The player who has been in the cult hierarchy the shortest is the only zealot. If there is a zealot, it will perform killings rather than the apostle.", 
+    "wiki.article.standard.cult.text": "The cult hierarchy is the system which keeps the cult being able to either kill or convert each night. The cult hierarchy is a collection of players who are usually also cult insiders and cult loyalists. The cult hierarchy maintains 2 abilities, kill and convert. They alternate, converting first, and killing after.\n* The cult can only kill after they have successfully converted someone. After that, they can only convert after successfully killing someone.\n* If for some reason a kill or convert doesn't work (e.g. the killer/converter was blocked), then the same ability is tried again the next night - it doesn't switch. Because of this, killing/converting is not inherently \"every other night\".\n\nThese are how the cult roles execute the duties of the cult:\n* Apostle: The cult hierarchy guarantees there is always an apostle. If the apostle dies, the player who has been in the cult hierarchy the longest becomes the apostle. The apostle's ability is to convert players, however if there is no zealot, then the apostle kills.\n* Disciple: The disciple has no ability. A disciple may become an apostle if the apostle dies.\n* Zealot: The player who has been in the cult hierarchy the shortest is the only zealot. If there is a zealot, it will perform killings rather than the apostle. \nCultists similarly to drunks, are instantly converted to a different cult role and are never told of this. To an auditor all cult roles are cultists.", 
 
     "wiki.article.standard.whisper.title": "Whisper",
     "wiki.article.standard.whisper.title:var.0": "Whispers",
@@ -1912,6 +1915,12 @@
     "wiki.article.role.zealot.attributes":"* When another player is converted to a zealot, you become a disciple.",
     "wiki.article.role.zealot.extra":"* There can never be more than one zealot\n* You can not select other cultists",
     
+    "wiki.article.role.cultist.reminder": "Cultists are instantly converted to a different cult role. To an auditor all cult roles are cultists.",
+    "wiki.article.role.cultist.guide": "This role exists solely so that the game functions and an auditor's information is not explicitly wrong.",
+    "wiki.article.role.cultist.abilities":"",
+    "wiki.article.role.cultist.attributes":"",
+    "wiki.article.role.cultist.extra":"The issue with auditor would occur if a player is assigned Apostle but a lower-numbered player is also assigned a cult role then the lower number player becomes the Apostle and the higher numbered player becomes a zealot.",
+
     "credits":"Credits",
     "leadDevelopers":"Lead Developers",
     "otherContributors":"Other Contributors",

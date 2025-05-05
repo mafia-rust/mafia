@@ -58,7 +58,7 @@ impl Cult{
     pub fn on_role_switch(game: &mut Game, _old: Role, _new: Role) {
         Cult::set_ordered_cultists(game);
     }
-        
+
     pub fn set_ordered_cultists(game: &mut Game){
         let mut cult = game.cult().clone();
 
@@ -67,7 +67,7 @@ impl Cult{
 
         // Add new
         for player in PlayerReference::all_players(game){
-            if Self::is_living_cultist(game, player) && !cult.ordered_cultists.contains(&player) {
+            if !cult.ordered_cultists.contains(&player) && Self::is_living_cultist(game, player) {
                 cult.ordered_cultists.push(player);
             }
         }

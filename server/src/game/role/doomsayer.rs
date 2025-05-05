@@ -94,7 +94,7 @@ impl DoomsayerGuess{
             Role::FiendsWildcard => Some(DoomsayerGuess::NonTown),
             
             //Cult
-            Role::Apostle | Role::Disciple | Role::Zealot => Some(DoomsayerGuess::NonTown),
+            Role::Apostle | Role::Disciple | Role::Zealot | Role::Cultist => Some(DoomsayerGuess::NonTown),
         }
     }
     fn guess_matches_role(&self, role: Role)->bool{

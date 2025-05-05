@@ -60,7 +60,7 @@ pub enum TrapState {
     Set
 }
 
-//engineer prioritys
+//engineer priorities
 //tell player state
 
 //Set trap / ready up / choose to unset and bring to ready

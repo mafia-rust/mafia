@@ -63,6 +63,14 @@ impl RoleAssignment{
                 WinCondition::GameConclusionReached { win_if_any: win_if_any.clone() },
         }
     }
+    pub fn collapse_cult_assignment(mut self) -> Self {
+        if RoleSet::Cult.get_roles().contains(&self.role()) &&
+            self.insider_groups() == vec_set![InsiderGroupID::Cult] 
+            {
+                self.role = Role::Cultist
+            }
+        self
+    }
 }
 
 
@@ -121,7 +129,7 @@ impl RoleOutline{
             .into_iter()
             .filter(|r|role_can_generate(r.role, enabled_roles, taken_roles))
             .collect::<Vec<_>>();
-        options.choose(&mut rand::rng()).cloned()
+       options.choose(&mut rand::rng()).map(|a|a.clone().collapse_cult_assignment())
     }
     pub fn get_all_roles(&self) -> Vec<Role>{
         self.options.iter()
@@ -378,7 +386,7 @@ impl RoleSet{
                 ],
             RoleSet::Cult =>
                 vec_set![
-                    Role::Apostle, Role::Disciple, Role::Zealot
+                    Role::Apostle, Role::Disciple, Role::Zealot, Role::Cultist
                 ],
         }
     }

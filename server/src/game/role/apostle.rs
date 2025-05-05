@@ -36,7 +36,12 @@ impl RoleStateImpl for Apostle {
                 let target_ref = visit.target;
                 
                 if target_ref.try_night_kill_single_attacker(
-                    actor_ref, game, midnight_variables, GraveKiller::RoleSet(RoleSet::Cult), AttackPower::Basic, false
+                    actor_ref, 
+                    game, 
+                    midnight_variables, 
+                    GraveKiller::RoleSet(RoleSet::Cult),
+                    AttackPower::Basic,
+                    false
                 ) {
                     Cult::set_ability_used_last_night(game, Some(CultAbility::Kill));
                 }
@@ -52,7 +57,7 @@ impl RoleStateImpl for Apostle {
                     return
                 }
 
-                target_ref.set_night_convert_role_to(midnight_variables, Some(Role::Zealot.new_state(game)));
+                target_ref.set_night_convert_role_to(midnight_variables, Some(Role::Cultist.new_state(game)));
                 InsiderGroupID::Cult.add_player_to_revealed_group(game, target_ref);
                 target_ref.set_win_condition(game, WinCondition::new_loyalist(GameConclusion::Cult));
                 

@@ -93,7 +93,7 @@ impl KiraGuess{
             Role::FiendsWildcard => Some(Self::NonTown),
             
             //Cult
-            Role::Apostle | Role::Disciple | Role::Zealot => Some(Self::NonTown),
+            Role::Apostle | Role::Disciple | Role::Zealot | Role::Cultist => Some(Self::NonTown),
         }
     }
     fn guess_matches_role(&self, role: Role)->bool{

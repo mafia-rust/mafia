@@ -1320,5 +1320,17 @@
             {"type": "cultConvertsNext"},
             {"type": "cultKillsNext"}
         ]
+    },
+    "cultist":{
+        "mainRoleSet": "cult",
+        "roleSets": ["cult"],
+        "armor": false,
+        "aura": null,
+        "maxCount": null,
+        "canWriteDeathNote": false,
+        "canBeConvertedTo": ["zealot","disciple","apostle"],
+        "chatMessages":[
+            
+        ]
     }
 }

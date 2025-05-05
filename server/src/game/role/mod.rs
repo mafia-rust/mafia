@@ -183,6 +183,7 @@ macros::roles! {
 
     Apostle : apostle,
     Disciple : disciple,
+    Cultist : cultist,
     Zealot : zealot
 }
 
