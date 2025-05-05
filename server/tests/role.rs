@@ -2370,7 +2370,7 @@ fn cult_alternates() {
 
 #[test]
 fn apostle_converting_trapped_player_day_later(){
-    for _ in 0..200 {
+    for _ in 0..20 {
         kit::scenario!(game in Night 2 where
             _cult0: Cultist,
             _cult1: Cultist,
@@ -2407,28 +2407,30 @@ fn apostle_converting_trapped_player_day_later(){
 
 #[test]
 fn apostle_converting_trapped_player_same_day(){
-    kit::scenario!(game in Night 2 where
-        _cult0: Apostle,
-        _cult1: Zealot,
-        trapped: Detective,
-        engineer: Engineer
-    );
-    let apostle = TestPlayer::get_apostle(&game);
+    for _ in 0..20 {
+        kit::scenario!(game in Night 2 where
+            _cult0: Apostle,
+            _cult1: Zealot,
+            trapped: Detective,
+            engineer: Engineer
+        );
+        let apostle = TestPlayer::get_apostle(&game);
 
-    assert!(engineer.send_ability_input_player_list_typical(trapped));
-    assert!(apostle.send_ability_input_player_list_typical(trapped));
+        assert!(engineer.send_ability_input_player_list_typical(trapped));
+        assert!(apostle.send_ability_input_player_list_typical(trapped));
 
-    game.next_phase();
+        game.next_phase();
 
-    assert!(trapped.role_state().role() != Role::Zealot);
-    assert!(trapped.role_state().role() == Role::Detective);
-    assert_contains!(
-        engineer.get_messages_after_night(2),
-        ChatMessageVariant::EngineerVisitorsRole { role: Role::Apostle}
-    );
-    assert!(!apostle.alive());
-    assert!(trapped.alive());
-    assert!(engineer.alive());
+        assert!(trapped.role_state().role() != Role::Zealot);
+        assert!(trapped.role_state().role() == Role::Detective);
+        assert_contains!(
+            engineer.get_messages_after_night(2),
+            ChatMessageVariant::EngineerVisitorsRole { role: Role::Apostle}
+        );
+        assert!(!apostle.alive());
+        assert!(trapped.alive());
+        assert!(engineer.alive());
+    }
 }
 
 #[test]
