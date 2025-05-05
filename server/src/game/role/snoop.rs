@@ -28,11 +28,9 @@ impl RoleStateImpl for Snoop {
         if let Some(visit) = actor_visits.first(){
 
             let townie = if Confused::is_confused(game, actor_ref) {
-                false
+                Snoop::confused_result()
             }else{
-                visit.target.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
-                !visit.target.has_suspicious_aura(game, midnight_variables) &&
-                actor_ref.all_night_visitors_cloned(midnight_variables).is_empty()
+                Snoop::result(game, midnight_variables, visit)
             };
 
             actor_ref.push_night_message(midnight_variables, 
@@ -55,5 +53,15 @@ impl RoleStateImpl for Snoop {
             ControllerID::role(actor_ref, Role::Snoop, 0),
             false
         )
+    }
+}
+
+impl Snoop{
+    fn result(game: &Game, midnight_variables: &MidnightVariables, visit: &Visit)->bool{
+        visit.target.win_condition(game).is_loyalist_for(GameConclusion::Town) &&
+        visit.visitor.all_night_visitors_cloned(midnight_variables).is_empty()
+    }
+    fn confused_result()->bool{
+        false
     }
 }

@@ -26,21 +26,7 @@ impl RoleStateImpl for TallyClerk {
         if actor_ref.ability_deactivated_from_death(game) {return}
         if priority != OnMidnightPriority::Investigative {return;}
 
-        let mut evil_count: u8 = 0;
-        let is_confused = Confused::is_confused(game, actor_ref);
-        
-        for player in PlayerReference::all_players(game)
-            .filter(|player|player.alive(game))
-            .filter(|player|VerdictsToday::player_guiltied_today(game, player))
-        {
-            if is_confused {
-                if Self::player_is_suspicious_confused(game, midnight_variables, player, actor_ref) {
-                    evil_count = evil_count.saturating_add(1);
-                }
-            } else if Self::player_is_suspicious(game, midnight_variables, player) {
-                evil_count =  evil_count.saturating_add(1);
-            }
-        }
+        let evil_count = Self::result(game, midnight_variables);
         
         let message = ChatMessageVariant::TallyClerkResult{ evil_count };
         actor_ref.push_night_message(midnight_variables, message);
@@ -48,7 +34,31 @@ impl RoleStateImpl for TallyClerk {
 }
 
 impl TallyClerk {
-    pub fn player_is_suspicious(game: &Game, midnight_variables: &MidnightVariables, player_ref: PlayerReference) -> bool {
+    fn result(game: &Game, midnight_variables: &MidnightVariables)->u8{
+        let mut out: u8 = 0;
+        let is_confused = Confused::is_confused(game, actor_ref);
+
+        for player in PlayerReference::all_players(game)
+            .filter(|player|
+              player.alive(game) &&
+              VerdictsToday::player_guiltied_today(game, player)
+            )
+        {
+            if is_confused {
+                if Self::player_is_suspicious_confused(game, midnight_variables, player, actor_ref) {
+                    is_confused = is_confused.saturating_add(1);
+                }
+            } else if Self::player_is_suspicious(game, midnight_variables, player) {
+                is_confused =  is_confused.saturating_add(1);
+            }
+        }
+            if TallyClerk::player_is_suspicious(game, midnight_variables, player){
+                out = out.saturating_add(1);
+            }
+        }
+        out
+    }
+    fn player_is_suspicious(game: &Game, midnight_variables: &MidnightVariables, player_ref: PlayerReference) -> bool {
         if player_ref.has_suspicious_aura(game, midnight_variables){
             true
         }else if player_ref.has_innocent_aura(game){
