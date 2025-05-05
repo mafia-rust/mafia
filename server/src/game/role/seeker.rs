@@ -6,6 +6,8 @@ use serde::Serialize;
 use crate::game::ability_input::AvailablePlayerListSelection;
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
+use crate::game::components::tags::TagSetID;
+use crate::game::components::tags::Tags;
 use crate::game::event::on_midnight::MidnightVariables;
 use crate::game::event::on_midnight::OnMidnightPriority;
 use crate::game::game_conclusion::GameConclusion;
@@ -15,6 +17,7 @@ use crate::game::visit::Visit;
 
 use crate::game::Game;
 use crate::vec_set::VecSet;
+use super::RoleState;
 use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default, PartialEq, Eq)]
@@ -60,6 +63,7 @@ impl RoleStateImpl for Seeker {
                 //not self.won because if their win condition is different they should not leave the game 
                 //but doesn't check for role state won because its easier to explain in the manual as any win con and it really doesn't matter for any of the other win cons.
                 self.followers.insert(*follower);
+                Tags::add_tag(game, TagSetID::Follower(actor_ref), *follower);
                 self.new_follower = None;
                 if actor_ref.get_won_game(game) {
                     actor_ref.leave_town(game);
@@ -128,6 +132,13 @@ impl RoleStateImpl for Seeker {
             ControllerID::role(actor_ref, Role::Seeker, 1),
             false
         )
+    }
+    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
+        Tags::add_viewer(game, TagSetID::Follower(actor_ref), actor_ref);
+    }
+    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _new: RoleState, _old: RoleState) {
+        if actor_ref != player {return}
+        Tags::delete_tag(game, TagSetID::Follower(actor_ref));
     }
     // fn on_any_death(self, game: &mut Game, actor_ref: PlayerReference, dead_player: PlayerReference) {
     //     if actor_ref == dead_player && self.left_town {

@@ -709,6 +709,8 @@
     "tag.disguise.name":"Disguise",
     "tag.syndicateGun":"🔫",
     "tag.syndicateGun.name":"Gun",
+    "tag.follower":"🔎",
+    "tag.follower.name":"Follower",
 
     "dead.icon":"💀",
     "trial.icon": "⚖️",
