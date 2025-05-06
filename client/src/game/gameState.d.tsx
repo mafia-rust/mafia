@@ -175,7 +175,7 @@ export const MODIFIERS = [
 ] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 
-export function conflicts_with(modifier: ModifierType): ModifierType[] {
+export function conflictsWith(modifier: ModifierType): ModifierType[] {
     switch(modifier) {
         case "unscheduledNominations":
             return ["noTrialPhases"];
@@ -206,6 +206,9 @@ export function conflicts_with(modifier: ModifierType): ModifierType[] {
         default:
             return [];
     }
+}
+export function toModifierType(modifier: string): ModifierType | undefined {
+    return MODIFIERS.find(mod => {return mod.toString() === modifier})
 }
 
 export type Player = {
