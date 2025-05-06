@@ -4,7 +4,7 @@ import translate from "../../game/lang";
 import "./enabledModifiersSelector.css"
 import { GameModeContext } from "./GameModesEditor";
 import CheckBox from "../CheckBox";
-import Select, { SelectOptionsSearch, set_options_typical } from "../Select";
+import Select, { SelectOptionsSearch, set_option_typical, set_options_typical } from "../Select";
 import { conflictsWith } from "../../game/gameState.d";
 
 export function EnabledModifiersSelector(props: Readonly<{
@@ -57,47 +57,31 @@ type EnabledModifiersDisplayProps = {
 
 export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): ReactElement { 
     let leftSideOptions: string[] = [""];
-    function select<K extends string>(options: (ModifierType | K)[], name: string, leftSide: boolean): ReactElement {
+    function select<K extends string>(defaultValue: K, modifiers: ModifierType[], name: string, leftSide: boolean): ReactElement {
+        const actualDefaultValue = "modifierMenu.fake."+defaultValue;
         if(leftSide){
-            leftSideOptions.concat(options)
+            leftSideOptions.concat(modifiers)
         }
-        function modifiersOnly(options: SelectOptionsSearch<ModifierType | K>): ModifierType[] {
-            let result: ModifierType[] = [];
-            for(const option of options){
-                const modifier = toModifierType(option[0]);
-                if(modifier !== undefined){
-                    result.push(modifier)
-                }
-            }
-            return result
-        }
-        function selectedOption(options: SelectOptionsSearch<ModifierType | K>): ModifierType | K | "error" {
-            let def: K | ModifierType | "error" = "error";
-            for(const option of options) {
-                const modifier = toModifierType(option[0]);
-                if(modifier === undefined){
-                    def = option[0]
-                } else if(props.enabledModifiers.includes(modifier)) {
-                    return modifier;
-                }
-            }
-            return def;
+        function selectedOption(): ModifierType | typeof actualDefaultValue {
+            let selected = modifiers.find(modifier => {return props.enabledModifiers.includes(modifier)});
+            return selected === undefined ? actualDefaultValue : selected
         }
         
-        const optionsMap: SelectOptionsSearch<ModifierType | K> = new Map();
-        set_options_typical(optionsMap, options);
+        const optionsMap: SelectOptionsSearch<ModifierType | typeof actualDefaultValue> = new Map();
+        set_options_typical(optionsMap, modifiers);
+        set_option_typical(optionsMap, actualDefaultValue)
 
         return <>
             <td style={{paddingRight:"1em", textAlign:"right"}}>{translate(name)}</td>
             <td style={{textAlign:"left"}}><Select 
-                value={selectedOption(optionsMap)}
+                value={selectedOption()}
                 onChange={value => {
                     if(props.modifiable === true){
                         const modifier = toModifierType(value);
                         if(modifier !== undefined) {
                             props.onEnableModifiers([modifier])
                         } else {
-                            props.onDisableModifiers(modifiersOnly(optionsMap));
+                            props.onDisableModifiers(modifiers);
                         }
                     }
                 }}
@@ -154,17 +138,17 @@ export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): Re
                 </thead>
                 <tbody>
                     <tr>{     /* Trial Phases            |   Chat            */}
-                        {select(["modifierMenu.fake.scheduledNominations", "unscheduledNominations", "noTrialPhases"], "modifierMenu.trialPhases", true)}
-                        {select(["modifierMenu.fake.allChat", "noNightChat", "noChat"], "modifierMenu.chat", false)}
+                        {select("scheduledNominations", ["unscheduledNominations", "noTrialPhases"], "modifierMenu.trialPhases", true)}
+                        {select("allChat", ["noNightChat", "noChat"], "modifierMenu.chat", false)}
                     </tr><tr>{/* Guilty Vote Requirement |   Dead Can Chat   */}
-                        {select(["modifierMenu.fake.popularVote", "twoThirdsMajority", "autoGuilty"], "modifierMenu.guiltyVoteRequirement", true)}
+                        {select("popularVote", ["twoThirdsMajority", "autoGuilty"], "modifierMenu.guiltyVoteRequirement", true)}
                         {checkBox("deadCanChat", false)}
                     </tr><tr>{/* Allow Abstaining        |   Whispers        */}
                         {checkBox("abstaining", false)}
-                        {select(["modifierMenu.fake.broadcastWhispers", "hiddenWhispers", "noWhispers"], "modifierMenu.whispers", false)}
+                        {select("broadcastWhispers", ["hiddenWhispers", "noWhispers"], "modifierMenu.whispers", false)}
                     </tr><tr>{/* Skip Day 1              |   Graves          */}
                         {checkBox("skipDay1", false)}
-                        {select(["modifierMenu.fake.normalGraves", "noDeathCause", "roleSetGraveKillers", "obscuredGraves"], "modifierMenu.graves", false)}
+                        {select("normalGraves", ["noDeathCause", "roleSetGraveKillers", "obscuredGraves"], "modifierMenu.graves", false)}
                     </tr>
                 </tbody>
             </table>
