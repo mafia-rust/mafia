@@ -2,18 +2,15 @@ import React, { ReactElement, useContext, useMemo } from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import { PhaseState, Player, Verdict } from "../../game/gameState.d";
-import { MenuControllerContext, ContentMenu, MENU_THEMES, MENU_TRANSLATION_KEYS } from "./GameScreen";
 import "./headerMenu.css";
 import StyledText from "../../components/StyledText";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
-import { useGameState, usePlayerState, useSpectator } from "../../components/useHooks";
 import { MobileContext } from "../Anchor";
+import { GameScreenMenuContext, GameScreenMenuType, MENU_TRANSLATION_KEYS } from "./GameScreenMenuContext";
 
 
-export default function HeaderMenu(props: Readonly<{
-    chatMenuNotification: boolean
-}>): ReactElement {
+export default function HeaderMenu(): ReactElement {
     const mobile = useContext(MobileContext)!;
     
     const phaseState = useGameState(
@@ -37,7 +34,7 @@ export default function HeaderMenu(props: Readonly<{
     return <div className={"header-menu " + backgroundStyle}>
         {!(spectator && !host) && <FastForwardButton spectatorAndHost={spectator && host}/>}
         <Information />
-        {!mobile && <MenuButtons chatMenuNotification={props.chatMenuNotification}/>}
+        {!mobile && <MenuButtons/>}
         <Timer />
     </div>
 }
@@ -197,17 +194,27 @@ function VerdictButton(props: Readonly<{ verdict: Verdict }>) {
     </Button>
 }
 
-export function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactElement | null {
-    const menuController = useContext(MenuControllerContext)!;
+export function MenuButtons(): ReactElement | null {
+    const menuController = useContext(GameScreenMenuContext)!;
+    const chatMenuNotification = useGameState(
+        (game) => game.missedChatMessages && !menuController.menuIsOpen(GameScreenMenuType.ChatMenu),
+        ["addChatMessages", "openGameMenu", "closeGameMenu"]
+    )!;
 
     return <div className="menu-buttons">
-        {menuController.menus().map(menu => {
+        {menuController.menusAvailable().map(menu => {
             return <Button key={menu} className={MENU_THEMES[menu] ?? ""}
                 highlighted={menuController.menusOpen().includes(menu)} 
-                onClick={()=>menuController.closeOrOpenMenu(menu)}
+                onClick={()=>{
+                    if(menuController.menusOpen().includes(menu)){
+                        menuController.closeMenu(menu)
+                    }else{
+                        menuController.openMenu(menu)
+                    }
+                }}
             >
-                {menu === ContentMenu.ChatMenu
-                    && props.chatMenuNotification
+                {menu === GameScreenMenuType.ChatMenu
+                    && chatMenuNotification
                     && <div className="chat-notification highlighted">!</div>
                 }
                 {translate(MENU_TRANSLATION_KEYS[menu] + ".icon")}

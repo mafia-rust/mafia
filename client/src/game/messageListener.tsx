@@ -1,6 +1,6 @@
 
 import { createPlayer } from "./gameState";
-import { ANCHOR_CONTROLLER, chatMessageToAudio } from "./../menu/Anchor";
+import { chatMessageToAudio } from "./../menu/Anchor";
 import GAME_MANAGER from "./../index";
 import GameScreen from "./../menu/game/GameScreen";
 import { ToClientPacket } from "./packet";
@@ -12,7 +12,6 @@ import { deleteReconnectData, loadSettingsParsed, saveReconnectData } from "./lo
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import React from "react";
 import WikiArticle from "../components/WikiArticle";
-import SpectatorGameScreen from "../menu/spectator/SpectatorGameScreen";
 import LobbyMenu from "../menu/lobby/LobbyMenu";
 import LoadingScreen from "../menu/LoadingScreen";
 import AudioController from "../menu/AudioController";
@@ -256,11 +255,7 @@ export default function messageListener(packet: ToClientPacket){
             if (GAME_MANAGER.state.stateType === "game") {
                 const isSpectator = GAME_MANAGER.state.clientState.type === "spectator";
                 GAME_MANAGER.state.initialized = true;
-                if(isSpectator){
-                    ANCHOR_CONTROLLER?.setContent(<SpectatorGameScreen/>);
-                }else{
-                    ANCHOR_CONTROLLER?.setContent(<GameScreen/>);
-                }
+                ANCHOR_CONTROLLER?.setContent(<GameScreen isSpectator={isSpectator}/>);
             }
             break;
         case "backToLobby":
