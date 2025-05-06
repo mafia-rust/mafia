@@ -16,6 +16,8 @@ export const WebsocketContext = createContext<WebSocketContext | undefined>(unde
 type WebSocketContext = {
     webSocket: WebSocket | null,
 
+    lastMessageRecieved: ToClientPacket | null,
+
     open(): Promise<boolean>;
     sendPacket(packets: ToServerPacket): void;
     close(): void;
@@ -87,16 +89,20 @@ type WebSocketContext = {
 export function useWebSocketContext(){
     const anchorContext = useContext(AnchorContext)!;
 
-    const defaultContext: WebSocketContext = {
+    const [lastMessageRecieved, setLastMessageRecieved] = useState<ToClientPacket | null>(null);
+
+    const defaultWebsocketContext: WebSocketContext = {
         webSocket: null,
 
-        open : () => {
+        lastMessageRecieved,
+
+        open: () => {
             let address = process.env.REACT_APP_WS_ADDRESS;
             if(!address){
                 throw new Error("Missing env var REACT_APP_WS_ADDRES, make sure you defined it in .env");
             }
             try {
-                defaultContext.webSocket = new WebSocket(address);
+                defaultWebsocketContext.webSocket = new WebSocket(address);
             } catch {
                 return Promise.resolve(false);
             }
@@ -113,16 +119,16 @@ export function useWebSocketContext(){
                 })
             ]);
 
-            defaultContext.webSocket.onopen = (event: Event)=>{
+            defaultWebsocketContext.webSocket.onopen = (event: Event)=>{
                 completePromise(true);
                 console.log("Connected to server.");
             };
-            defaultContext.webSocket.onclose = (event: CloseEvent)=>{
+            defaultWebsocketContext.webSocket.onclose = (event: CloseEvent)=>{
                 console.log("Disconnected from server.");
                 completePromise(false);
                 GAME_MANAGER.invokeStateListeners("connectionClosed");
-                if (defaultContext.webSocket === null) return; // We closed it ourselves
-                defaultContext.webSocket = null;
+                if (defaultWebsocketContext.webSocket === null) return; // We closed it ourselves
+                defaultWebsocketContext.webSocket = null;
 
                 anchorContext?.pushErrorCard({
                     title: translate("notification.connectionFailed"), 
@@ -130,13 +136,13 @@ export function useWebSocketContext(){
                 });
                 anchorContext.setContent(<StartMenu/>);
             };
-            defaultContext.webSocket.onmessage = (event: MessageEvent<string>)=>{
-                GAME_MANAGER.messageListener(
-                    JSON.parse(event.data) as ToClientPacket
-                );
+            defaultWebsocketContext.webSocket.onmessage = (event: MessageEvent<string>)=>{
+                const parsed = JSON.parse(event.data) as ToClientPacket;
+                setLastMessageRecieved(parsed);
+                GAME_MANAGER.messageListener(parsed);
             };
-            defaultContext.webSocket.onerror = (event: Event) => {
-                defaultContext.close();
+            defaultWebsocketContext.webSocket.onerror = (event: Event) => {
+                defaultWebsocketContext.close();
                 completePromise(false);
                 anchorContext.pushErrorCard({
                     title: translate("notification.connectionFailed"), 
@@ -147,24 +153,24 @@ export function useWebSocketContext(){
             return promise;
         },
 
-        sendPacket : (packet: ToServerPacket)=>{
-            if (defaultContext.webSocket === null) {
+        sendPacket: (packet: ToServerPacket)=>{
+            if (defaultWebsocketContext.webSocket === null) {
                 console.error("Attempted to send packet to null websocket!");
             } else {
-                defaultContext.webSocket.send(JSON.stringify(packet));
+                defaultWebsocketContext.webSocket.send(JSON.stringify(packet));
             }
         },
 
-        close : ()=>{
-            if(defaultContext.webSocket === null) return;
+        close: ()=>{
+            if(defaultWebsocketContext.webSocket === null) return;
             
-            defaultContext.webSocket.close();
-            defaultContext.webSocket = null;
+            defaultWebsocketContext.webSocket.close();
+            defaultWebsocketContext.webSocket = null;
         }
 
 
         sendLobbyListRequest() {
-            defaultContext.sendPacket({ type: "lobbyListRequest" });
+            defaultWebsocketContext.sendPacket({ type: "lobbyListRequest" });
         },
         sendHostPacket() {
             let completePromise: (success: boolean) => void;
@@ -181,7 +187,7 @@ export function useWebSocketContext(){
                 }
             };
             GAME_MANAGER.addStateListener(onJoined);
-            defaultContext.sendPacket({ type: "host" });
+            defaultWebsocketContext.sendPacket({ type: "host" });
     
             return promise;
         },
@@ -204,7 +210,7 @@ export function useWebSocketContext(){
             };
             GAME_MANAGER.addStateListener(onJoined);
     
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "reJoin",
                 roomCode,
                 playerId
@@ -232,7 +238,7 @@ export function useWebSocketContext(){
             };
             GAME_MANAGER.addStateListener(onJoined);
     
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "join",
                 roomCode
             });
@@ -240,52 +246,52 @@ export function useWebSocketContext(){
             return promise;
         },
         sendKickPlayerPacket(playerId: number) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "kick",
                 playerId: playerId
             });
         },
         sendSetPlayerHostPacket(playerId: number) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "setPlayerHost",
                 playerId: playerId
             });
         },
         sendRelinquishHostPacket() {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "relinquishHost",
             });
         },
     
         sendSetSpectatorPacket(spectator) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "setSpectator",
                 spectator: spectator
             });
         },
     
         sendSetNamePacket(name) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "setName",
                 name: name
             });
         },
     
         sendReadyUpPacket(ready) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "readyUp",
                 ready: ready
             });
         },
         sendSendLobbyMessagePacket(text) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "sendLobbyMessage",
                 text: text
             });
         },
     
         sendSetLobbyNamePacket(name) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "setLobbyName",
                 name: name
             });
@@ -306,20 +312,20 @@ export function useWebSocketContext(){
             };
             GAME_MANAGER.addStateListener(onJoined);
     
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "startGame"
             });
     
             return promise;
         },
         sendBackToLobbyPacket() {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "hostForceBackToLobby"
             });
         },
         sendSetPhaseTimePacket(phase: PhaseType, time: number) {
             if (isValidPhaseTime(time)) {
-                defaultContext.sendPacket({
+                defaultWebsocketContext.sendPacket({
                     type: "setPhaseTime",
                     phase: phase,
                     time: time
@@ -327,96 +333,96 @@ export function useWebSocketContext(){
             }
         },
         sendSetPhaseTimesPacket(phaseTimeSettings: PhaseTimes) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "setPhaseTimes",
                 phaseTimeSettings
             });
         },
         sendSetRoleListPacket(roleListEntries: RoleOutline[]) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "setRoleList",
                 roleList: roleListEntries
             });
         },
         sendSetRoleOutlinePacket(index: number, roleOutline: RoleOutline) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "setRoleOutline",
                 index,
                 roleOutline
             });
         },
         sendSimplifyRoleListPacket() {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "simplifyRoleList"
             });
         },
     
         sendJudgementPacket(judgement: Verdict) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "judgement",
                 verdict: judgement
             });
         },
     
         sendSaveWillPacket(will) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "saveWill",
                 will: will
             });
         },
         sendSaveNotesPacket(notes) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "saveNotes",
                 notes: notes
             });
         },
         sendSaveCrossedOutOutlinesPacket(crossedOutOutlines) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "saveCrossedOutOutlines",
                 crossedOutOutlines: crossedOutOutlines
             });
         },
         sendSaveDeathNotePacket(notes) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "saveDeathNote",
                 deathNote: notes.trim().length === 0 ? null : notes
             });
         },
         sendSendChatMessagePacket(text, block) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "sendChatMessage",
                 text: text,
                 block: block
             });
         },
         sendSendWhisperPacket(playerIndex, text) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "sendWhisper",
                 playerIndex: playerIndex,
                 text: text
             });
         },
         sendEnabledRolesPacket(roles) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "setEnabledRoles",
                 roles: roles
             });
         },
         sendEnabledModifiersPacket(modifiers) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "setEnabledModifiers",
                 modifiers: modifiers
             });
         },
     
         sendAbilityInput(input) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "abilityInput",
                 abilityInput: input
             });
         },
         sendSetDoomsayerGuess(guesses) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "setDoomsayerGuess",
                 guesses: guesses
             });
@@ -430,7 +436,7 @@ export function useWebSocketContext(){
             youWerePossessedMessage: boolean,
             youWereWardblockedMessage: boolean
         ): void {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "setConsortOptions",
                 roleblock: roleblock,
     
@@ -444,29 +450,29 @@ export function useWebSocketContext(){
         },
     
         sendVoteFastForwardPhase(fastForward: boolean) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "voteFastForwardPhase",
                 fastForward: fastForward
             });
         },
     
         sendHostDataRequest() {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "hostDataRequest"
             })
         },
         sendHostEndGamePacket() {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "hostForceEndGame"
             })
         },
         sendHostSkipPhase() {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "hostForceSkipPhase"
             })
         },
         sendHostSetPlayerNamePacket(playerId, name) {
-            defaultContext.sendPacket({
+            defaultWebsocketContext.sendPacket({
                 type: "hostForceSetPlayerName",
                 id: playerId,
                 name
@@ -474,7 +480,5 @@ export function useWebSocketContext(){
         }
     }
 
-    const [wsCtx, setWsCtx] = useState<WebSocketContext>(defaultContext);
-
-    return wsCtx;
+    return defaultWebsocketContext;
 }
