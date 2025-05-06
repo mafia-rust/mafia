@@ -121,7 +121,6 @@ export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): Re
             </tr>
         </tfoot>
     }
-    const [hideDisabled, setHideDisabled] = useState(true);
 
     const voteOptionMap: SelectOptionsSearch<ModifierType | "popularVote"> = new Map();
     set_options_typical(voteOptionMap, ["popularVote", "twoThirdsMajority", "autoGuilty"])
@@ -129,32 +128,23 @@ export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): Re
 
 
     return <div>
-        {!props.modifiable && <label className="centered-label">
-            {translate("hideDisabled")}
-            <CheckBox
-                checked={hideDisabled}
-                onChange={checked => setHideDisabled(checked)}
-            />
-        </label>}
-        <div>
-            <table className="modifier-table">
-                <tbody>
-                    <tr>{     /* Trial Phases            |   Chat            */}
-                        {select("scheduledNominations", ["unscheduledNominations", "noTrialPhases"], "trialPhases", true)}
-                        {select("allChat", ["noNightChat", "noChat"], "chat", false)}
-                    </tr><tr>{/* Guilty Vote Requirement |   Dead Can Chat   */}
-                        {select("popularVote", ["twoThirdsMajority", "autoGuilty"], "guiltyVoteRequirement", true)}
-                        {checkBox("deadCanChat", false)}
-                    </tr><tr>{/* Allow Abstaining        |   Whispers        */}
-                        {checkBox("abstaining", false)}
-                        {select("broadcastWhispers", ["hiddenWhispers", "noWhispers"], "whispers", false)}
-                    </tr><tr>{/* Skip Day 1              |   Graves          */}
-                        {checkBox("skipDay1", false)}
-                        {select("normalGraves", ["noDeathCause", "roleSetGraveKillers", "obscuredGraves"], "graves", false)}
-                    </tr>
-                </tbody>
-                {get_padding()}
-            </table>
-        </div>
+        <table className="modifier-table">
+            <tbody>
+                <tr>{     /* Trial Phases            |   Chat            */}
+                    {select("scheduledNominations", ["unscheduledNominations", "noTrialPhases"], "trialPhases", true)}
+                    {select("allChat", ["noNightChat", "noChat"], "chat", false)}
+                </tr><tr>{/* Guilty Vote Requirement |   Dead Can Chat   */}
+                    {select("popularVote", ["twoThirdsMajority", "autoGuilty"], "guiltyVoteRequirement", true)}
+                    {checkBox("deadCanChat", false)}
+                </tr><tr>{/* Allow Abstaining        |   Whispers        */}
+                    {checkBox("abstaining", false)}
+                    {select("broadcastWhispers", ["hiddenWhispers", "noWhispers"], "whispers", false)}
+                </tr><tr>{/* Skip Day 1              |   Graves          */}
+                    {checkBox("skipDay1", false)}
+                    {select("normalGraves", ["noDeathCause", "roleSetGraveKillers", "obscuredGraves"], "graves", false)}
+                </tr>
+            </tbody>
+            {get_padding()}
+        </table>
     </div>
 }
