@@ -164,17 +164,49 @@ export type Tag =
     "spiraling";
 
 export const MODIFIERS = [
-    "obscuredGraves",
+    "obscuredGraves", "noDeathCause", "roleSetGraveKillers",
     "skipDay1",
-    "deadCanChat", "abstaining",
-    "noDeathCause",
-    "roleSetGraveKillers", "autoGuilty", 
-    "twoThirdsMajority", "noTrialPhases", 
+    "deadCanChat",
+    "noChat", "noNightChat",
     "noWhispers", "hiddenWhispers",
-    "noNightChat", "noChat", 
-    "unscheduledNominations"
+    "abstaining",
+    "autoGuilty", "twoThirdsMajority",
+    "noTrialPhases", "unscheduledNominations"
 ] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
+
+export function conflicts_with(modifier: ModifierType): ModifierType[] {
+    switch(modifier) {
+        case "unscheduledNominations":
+            return ["noTrialPhases"];
+        case "noTrialPhases":
+            return ["unscheduledNominations", "twoThirdsMajority", "abstaining", "autoGuilty"];
+        case "twoThirdsMajority":
+            return ["noTrialPhases", "autoGuilty"];
+        case "autoGuilty":
+            return ["noTrialPhases", "twoThirdsMajority", "abstaining"];
+        case "abstaining":
+            return ["noTrialPhases", "autoGuilty"];
+        case "noWhispers":
+            return ["hiddenWhispers"]
+        case "hiddenWhispers":
+            return ["noWhispers"]
+        case "noChat":
+            return ["deadCanChat", "noNightChat"];
+        case "noNightChat":
+            return ["deadCanChat", "noChat"];
+        case "deadCanChat":
+            return ["noChat"];
+        case "noDeathCause":
+            return ["obscuredGraves", "roleSetGraveKillers"]
+        case "roleSetGraveKillers":
+            return ["obscuredGraves", "noDeathCause"]
+        case "obscuredGraves":
+            return ["noDeathCause", "roleSetGraveKillers"]
+        default:
+            return [];
+    }
+}
 
 export type Player = {
     name: string,

@@ -798,6 +798,7 @@
     "pitchfork.description": "Vote for a player before midnight. If two-thirds of town loyalists vote for a player, that player dies.",
     "nobodyDiedLastNight": "Nobody died last night.",
     "nobody": "nobody",
+
     "modifiers": "Modifiers",
     "obscuredGraves": "Obscured Graves",
     "skipDay1": "Skip Day 1",
@@ -815,6 +816,12 @@
     "noChat": "No Chat",
     "syndicateGunItem": "Syndicate Gun",
     "nightMessages": "Night Messages",
+    
+    "scheduledNominations": "Scheduled Nominations",
+    "popularVote": "Popular Vote",
+    "broadcastWhispers": "Broadcast Whispers",
+    "allChat": "All Chat",
+    "normalGraves": "Normal Graves",
     
     "simplify":"Simplify",
     "backToLobby": "Back To Lobby",
