@@ -69,8 +69,8 @@ export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): Re
         }
         
         const optionsMap: SelectOptionsSearch<ModifierType | typeof actualDefaultValue> = new Map();
-        set_options_typical(optionsMap, modifiers);
         set_option_typical(optionsMap, actualDefaultValue)
+        set_options_typical(optionsMap, modifiers);
 
         return <>
             <td style={{paddingRight:"1em", textAlign:"right"}}>{translate("modifierMenu."+name)}</td>
