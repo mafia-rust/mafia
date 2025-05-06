@@ -175,38 +175,6 @@ export const MODIFIERS = [
 ] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 
-export function conflictsWith(modifier: ModifierType): ModifierType[] {
-    switch(modifier) {
-        case "unscheduledNominations":
-            return ["noTrialPhases"];
-        case "noTrialPhases":
-            return ["unscheduledNominations", "twoThirdsMajority", "abstaining", "autoGuilty"];
-        case "twoThirdsMajority":
-            return ["noTrialPhases", "autoGuilty"];
-        case "autoGuilty":
-            return ["noTrialPhases", "twoThirdsMajority", "abstaining"];
-        case "abstaining":
-            return ["noTrialPhases", "autoGuilty"];
-        case "noWhispers":
-            return ["hiddenWhispers"]
-        case "hiddenWhispers":
-            return ["noWhispers"]
-        case "noChat":
-            return ["deadCanChat", "noNightChat"];
-        case "noNightChat":
-            return ["deadCanChat", "noChat"];
-        case "deadCanChat":
-            return ["noChat"];
-        case "noDeathCause":
-            return ["obscuredGraves", "roleSetGraveKillers"]
-        case "roleSetGraveKillers":
-            return ["obscuredGraves", "noDeathCause"]
-        case "obscuredGraves":
-            return ["noDeathCause", "roleSetGraveKillers"]
-        default:
-            return [];
-    }
-}
 export function toModifierType(modifier: string): ModifierType | undefined {
     return MODIFIERS.find(mod => {return mod.toString() === modifier})
 }

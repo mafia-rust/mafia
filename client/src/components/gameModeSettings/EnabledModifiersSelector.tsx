@@ -1,11 +1,10 @@
-import React, { ReactElement, useContext, useState } from "react";
+import React, { ReactElement, useContext } from "react";
 import { ModifierType, toModifierType } from "../../game/gameState.d";
 import translate from "../../game/lang";
 import "./enabledModifiersSelector.css"
 import { GameModeContext } from "./GameModesEditor";
 import CheckBox from "../CheckBox";
-import Select, { SelectOptionsSearch, set_option_typical, set_options_typical } from "../Select";
-import { conflictsWith } from "../../game/gameState.d";
+import Select, { SelectOptionsSearch, set_option_typical as setOptionTypical, set_options_typical as setOptionsTypical } from "../Select";
 
 export function EnabledModifiersSelector(props: Readonly<{
     disabled?: boolean,
@@ -22,6 +21,15 @@ export function EnabledModifiersSelector(props: Readonly<{
             disabled={props.disabled===undefined ? false : props.disabled}
             modifiable={!props.disabled}
             enabledModifiers={enabledModifiers}
+            onEnableDisableModifiers={(enable: ModifierType[], disable: ModifierType[])=>{
+                if (props.onChange) {
+                    props.onChange(
+                        enabledModifiers
+                            .filter(modifier => !disable.includes(modifier))
+                            .concat(enable)
+                    )
+                }
+            }}
             onDisableModifiers={(modifiers: ModifierType[]) => {
                 if (props.onChange) {
                     props.onChange(enabledModifiers.filter(modifier => !modifiers.includes(modifier)))
@@ -29,11 +37,8 @@ export function EnabledModifiersSelector(props: Readonly<{
             }}
             onEnableModifiers={(modifiers: ModifierType[]) => {
                 if (props.onChange) {
-                    const conflicting = modifiers.flatMap(modifier => conflictsWith(modifier));
                     props.onChange(
-                        enabledModifiers
-                            .filter(modifier => !conflicting.includes(modifier))
-                            .concat(modifiers)
+                        enabledModifiers.concat(modifiers)
                     )
                 }
             }}
@@ -46,6 +51,7 @@ type EnabledModifiersDisplayProps = {
 } & (
     {
         modifiable: true,
+        onEnableDisableModifiers:(enable: ModifierType[], disable: ModifierType[]) => void,
         onDisableModifiers: (modifiers: ModifierType[]) => void,
         onEnableModifiers: (modifiers: ModifierType[]) => void,
         disabled?: boolean,
@@ -56,7 +62,7 @@ type EnabledModifiersDisplayProps = {
 )
 
 export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): ReactElement { 
-    let leftSideOptions: string[] = [""];
+    let leftSideOptions: string[] = [];
     function select<K extends string>(defaultValue: K, modifiers: ModifierType[], name: string, leftSide: boolean): ReactElement {
         const actualDefaultValue = "modifierMenu.fake."+defaultValue;
         if(leftSide){
@@ -69,8 +75,8 @@ export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): Re
         }
         
         const optionsMap: SelectOptionsSearch<ModifierType | typeof actualDefaultValue> = new Map();
-        set_option_typical(optionsMap, actualDefaultValue)
-        set_options_typical(optionsMap, modifiers);
+        setOptionTypical(optionsMap, actualDefaultValue)
+        setOptionsTypical(optionsMap, modifiers);
 
         return <>
             <td style={{paddingRight:"1em", textAlign:"right"}}>{translate("modifierMenu."+name)}</td>
@@ -80,7 +86,7 @@ export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): Re
                     if(props.modifiable === true){
                         const modifier = toModifierType(value);
                         if(modifier !== undefined) {
-                            props.onEnableModifiers([modifier])
+                            props.onEnableDisableModifiers([modifier], modifiers)
                         } else {
                             props.onDisableModifiers(modifiers);
                         }
@@ -121,11 +127,6 @@ export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): Re
             </tr>
         </tfoot>
     }
-
-    const voteOptionMap: SelectOptionsSearch<ModifierType | "popularVote"> = new Map();
-    set_options_typical(voteOptionMap, ["popularVote", "twoThirdsMajority", "autoGuilty"])
-
-
 
     return <div>
         <table className="modifier-table">
