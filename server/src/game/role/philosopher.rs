@@ -11,6 +11,7 @@ use crate::game::visit::Visit;
 use crate::game::Game;
 use crate::vec_set;
 
+use super::detective::Detective;
 use super::{common_role, ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -29,13 +30,15 @@ impl RoleStateImpl for Philosopher {
         let Some(first_visit) = actor_visits.get(0) else {return;};
         let Some(second_visit) = actor_visits.get(1) else {return;};
 
-        let enemies = if Confused::is_confused(game, actor_ref) {
+        let enemies = if first_visit.target == second_visit.target {
             false
+        } else if Confused::is_confused(game, actor_ref) {
+            Philosopher::players_are_enemies_confused(game, midnight_variables, first_visit.target, second_visit.target, actor_ref)
         } else {
             Philosopher::players_are_enemies_night(game, midnight_variables, first_visit.target, second_visit.target)
         };
 
-        let message = ChatMessageVariant::SeerResult{ enemies };
+        let message = ChatMessageVariant::PhilosopherResult{ enemies };
         
         actor_ref.push_night_message(midnight_variables, message);
     }
@@ -69,10 +72,14 @@ impl Philosopher{
     pub fn players_are_enemies_night(game: &Game, midnight_variables: &MidnightVariables, a: PlayerReference, b: PlayerReference) -> bool {
         if a.has_suspicious_aura(game, midnight_variables) || b.has_suspicious_aura(game, midnight_variables){
             true
-        }else if a.has_innocent_aura(game) || b.has_innocent_aura(game){
+        } else if a.has_innocent_aura(game) || b.has_innocent_aura(game) {
             false
-        }else{
+        } else {
             !WinCondition::are_friends(a.win_condition(game), b.win_condition(game))
         }
+    }
+    pub fn players_are_enemies_confused(game: &Game, midnight_variables: &MidnightVariables, a: PlayerReference, b: PlayerReference, actor_ref: PlayerReference) -> bool {
+        Detective::player_is_suspicious_confused(game, midnight_variables, a, actor_ref) ^
+        Detective::player_is_suspicious_confused(game, midnight_variables, b, actor_ref)
     }
 }

@@ -65,7 +65,17 @@ impl RoleAssignment{
     }
 }
 
-
+impl RoleAssignment {
+    pub fn friends_with_town(&self)-> bool{
+        match self.win_condition.clone() {
+            RoleOutlineOptionWinCondition::GameConclusionReached { win_if_any } => 
+                WinCondition::GameConclusionReached{win_if_any}.friends_with_resolution_state(GameConclusion::Town),
+            RoleOutlineOptionWinCondition::RoleDefault => {
+                self.role.default_state().default_win_condition().friends_with_resolution_state(GameConclusion::Town)
+            },
+        }
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct RoleOutline {

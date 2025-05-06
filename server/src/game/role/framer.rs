@@ -47,7 +47,7 @@ impl RoleStateImpl for Framer {
                         .collect::<Vec<_>>()
                 );
             },
-            OnMidnightPriority::Investigative => {
+            OnMidnightPriority::FinalizeNight => {
                 Tags::set_tagged(
                     game,
                     TagSetID::Framer(actor_ref),

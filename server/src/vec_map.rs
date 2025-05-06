@@ -1,3 +1,5 @@
+
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug)]
@@ -21,10 +23,12 @@ impl<K, V> VecMap<K, V> where K: Eq {
         }
         out
     }
+    pub fn with_capacity(capacity: usize) -> Self{
+        VecMap { vec: Vec::with_capacity(capacity) }
+    }
 
     /// returns the old value if the key already exists
     pub fn insert(&mut self, key: K, value: V) -> Option<(K, V)>{
-
         if let Some((old_key, old_val)) = self.vec.iter_mut().find(|(k, _)| *k == key) {
             Some((
                 std::mem::replace(old_key, key), 
@@ -34,6 +38,13 @@ impl<K, V> VecMap<K, V> where K: Eq {
             self.vec.push((key, value));
             None
         }
+    }
+
+    pub fn insert_unsized(&mut self, key: K, value: V)  {
+        if let Some(i) = self.vec.iter().position(|(k, _)| *k == key) {
+            self.vec.swap_remove(i);
+        }
+        self.vec.push((key, value));
     }
 
     pub fn get(&self, key: &K) -> Option<&V> {
@@ -79,18 +90,12 @@ impl<K, V> VecMap<K, V> where K: Eq {
     }
 
     pub fn remove(&mut self, key: &K) -> Option<(K, V)> {
-        let mut index = None;
         for (i, (k, _)) in self.vec.iter().enumerate() {
             if k == key {
-                index = Some(i);
-                break;
+                return Some(self.vec.swap_remove(i));
             }
         }
-        if let Some(i) = index {
-            Some(self.vec.remove(i))
-        } else {
-            None
-        }
+        None
     }
 
     pub fn iter(&self) -> impl Iterator<Item = (&K, &V)> {
@@ -117,6 +122,10 @@ impl<K, V> VecMap<K, V> where K: Eq {
         self.vec.retain(|(k, v)| f(k, v));
     }
 
+    pub fn retain_mut<F>(&mut self, mut f: F) where F: FnMut(&K, &mut V) -> bool {
+        self.vec.retain_mut(|(k, v)| f(k, v));
+    }
+
     pub fn keys(&self) -> impl Iterator<Item = &K> {
         self.vec.iter().map(|(k, _)| k)
     }
@@ -130,6 +139,80 @@ impl<K, V> VecMap<K, V> where K: Eq {
 
     pub fn contains(&self, key: &K) -> bool {
         self.vec.iter().any(|(k, _)| k == key)
+    }
+}
+
+impl<K, V> VecMap<K, V> where K: Eq, V: PartialOrd {
+   /// Returns the old value if the key already exists, the last value of the tuple is the true if the old value was replaced
+   /// If the old value is greater than value, then it is not replaced
+   pub fn keep_greater(&mut self, key: K, value: V) -> Option<(K, V, bool)>{
+        if let Some((old_key, old_val)) = self.vec.iter_mut().find(|(k, _)| *k == key) {
+            if *old_val > value {
+                Some((
+                    key, 
+                    value,
+                    false,
+                ))
+            } else {
+                Some((
+                    std::mem::replace(old_key, key), 
+                    std::mem::replace(old_val, value),
+                    true,
+                ))
+            }
+            
+        }else{
+            self.vec.push((key, value));
+            None
+        }
+    }
+
+   /// If the old value is greater than value, then it is not replaced
+   pub fn keep_greater_unsized(&mut self, key: K, value: V) {
+        if let Some(i) = self.vec.iter().position(|(k, _)| *k == key) {
+            if self.vec.get(i).expect("somehow got a position thats oob").1 < value {
+                self.vec.swap_remove(i);
+                self.vec.push((key, value));
+            }
+            return;
+        }
+        self.vec.push((key, value));
+    }
+    
+    /// Returns the old value if the key already exists, the last value of the tuple is the true if the old value was replaced
+    /// If the old value is lesser than value, then it is not replaced
+    pub fn keep_lesser(&mut self, key: K, value: V) -> Option<(K, V, bool)>{
+        if let Some((old_key, old_val)) = self.vec.iter_mut().find(|(k, _)| *k == key) {
+            if *old_val < value {
+                Some((
+                    key, 
+                    value,
+                    false,
+                ))
+            } else {
+                Some((
+                    std::mem::replace(old_key, key), 
+                    std::mem::replace(old_val, value),
+                    true,
+                ))
+            }
+            
+        }else{
+            self.vec.push((key, value));
+            None
+        }
+    }
+
+    /// If the old value is lesser than value, then it is not replaced
+   pub fn keep_lesser_unsized(&mut self, key: K, value: V) {
+        if let Some(i) = self.vec.iter().position(|(k, _)| *k == key) {
+            if self.vec.get(i).expect("somehow got a position thats oob").1 > value {
+                self.vec.swap_remove(i);
+                self.vec.push((key, value));
+            }
+            return;
+        }
+        self.vec.push((key, value));
     }
 }
 
