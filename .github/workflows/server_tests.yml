@@ -24,3 +24,7 @@ jobs:
       run: |
         cd server
         cargo test --verbose
+    - name: Clippy
+      run: |
+        cd server
+        cargo clippy --verbose
