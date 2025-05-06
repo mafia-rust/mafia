@@ -26,7 +26,7 @@ impl RoleStateImpl for TallyClerk {
         if actor_ref.ability_deactivated_from_death(game) {return}
         if priority != OnMidnightPriority::Investigative {return;}
 
-        let evil_count = Self::result(game, midnight_variables);
+        let evil_count = Self::result(game, midnight_variables, actor_ref);
         
         let message = ChatMessageVariant::TallyClerkResult{ evil_count };
         actor_ref.push_night_message(midnight_variables, message);
@@ -34,28 +34,19 @@ impl RoleStateImpl for TallyClerk {
 }
 
 impl TallyClerk {
-    fn result(game: &Game, midnight_variables: &MidnightVariables)->u8{
-        let mut out: u8 = 0;
-        let is_confused = Confused::is_confused(game, actor_ref);
-
-        for player in PlayerReference::all_players(game)
+    fn result(game: &Game, midnight_variables: &MidnightVariables, actor_ref: PlayerReference)->u8{
+        let confused = Confused::is_confused(game, actor_ref);
+        #[expect(clippy::cast_possible_truncation, reason = "max 255 players")]
+        let out = PlayerReference::all_players(game)
             .filter(|player|
-              player.alive(game) &&
-              VerdictsToday::player_guiltied_today(game, player)
-            )
-        {
-            if is_confused {
-                if Self::player_is_suspicious_confused(game, midnight_variables, player, actor_ref) {
-                    is_confused = is_confused.saturating_add(1);
+                player.alive(game) &&
+                VerdictsToday::player_guiltied_today(game, player) &&
+                if confused {
+                    Self::player_is_suspicious_confused(game, midnight_variables, *player, actor_ref)
+                } else {
+                    Self::player_is_suspicious(game, midnight_variables, *player)
                 }
-            } else if Self::player_is_suspicious(game, midnight_variables, player) {
-                is_confused =  is_confused.saturating_add(1);
-            }
-        }
-            if TallyClerk::player_is_suspicious(game, midnight_variables, player){
-                out = out.saturating_add(1);
-            }
-        }
+            ).count() as u8;
         out
     }
     fn player_is_suspicious(game: &Game, midnight_variables: &MidnightVariables, player_ref: PlayerReference) -> bool {
