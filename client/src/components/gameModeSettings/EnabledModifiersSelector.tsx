@@ -60,7 +60,8 @@ export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): Re
     function select<K extends string>(defaultValue: K, modifiers: ModifierType[], name: string, leftSide: boolean): ReactElement {
         const actualDefaultValue = "modifierMenu.fake."+defaultValue;
         if(leftSide){
-            leftSideOptions.concat(modifiers)
+            modifiers.forEach(modifier=>{leftSideOptions.push(modifier)})
+            leftSideOptions.push(actualDefaultValue)
         }
         function selectedOption(): ModifierType | typeof actualDefaultValue {
             let selected = modifiers.find(modifier => {return props.enabledModifiers.includes(modifier)});
@@ -72,7 +73,7 @@ export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): Re
         set_option_typical(optionsMap, actualDefaultValue)
 
         return <>
-            <td style={{paddingRight:"1em", textAlign:"right"}}>{translate(name)}</td>
+            <td style={{paddingRight:"1em", textAlign:"right"}}>{translate("modifierMenu."+name)}</td>
             <td style={{textAlign:"left"}}><Select 
                 value={selectedOption()}
                 onChange={value => {
@@ -105,13 +106,22 @@ export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): Re
             } } /></td>
         </>
     }
-    const [hideDisabled, setHideDisabled] = useState(true);
 
-    let longestLeftSideOption: number = 10;
-    leftSideOptions.forEach(option => {longestLeftSideOption = Math.max(longestLeftSideOption, option.length)})
-    const padding: string = longestLeftSideOption.toString() +"ch";
-    console.log("fuck1 "+padding)
-    console.log("fuck2 "+leftSideOptions.toString())
+    function get_padding(): ReactElement {
+        let longest: number = 10;
+        leftSideOptions.forEach(option => {longest = Math.max(longest, translate(option).length)})
+        longest += 2;
+        const padding: string = longest.toString() +"ch";
+        return <tfoot>
+            <tr>
+                <td></td>
+                <td style = {{paddingRight: padding}}></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tfoot>
+    }
+    const [hideDisabled, setHideDisabled] = useState(true);
 
     const voteOptionMap: SelectOptionsSearch<ModifierType | "popularVote"> = new Map();
     set_options_typical(voteOptionMap, ["popularVote", "twoThirdsMajority", "autoGuilty"])
@@ -128,29 +138,22 @@ export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): Re
         </label>}
         <div>
             <table className="modifier-table">
-                <thead>
-                    <tr>
-                        <td></td>
-                        <td style = {{paddingRight: padding}}></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </thead>
                 <tbody>
                     <tr>{     /* Trial Phases            |   Chat            */}
-                        {select("scheduledNominations", ["unscheduledNominations", "noTrialPhases"], "modifierMenu.trialPhases", true)}
-                        {select("allChat", ["noNightChat", "noChat"], "modifierMenu.chat", false)}
+                        {select("scheduledNominations", ["unscheduledNominations", "noTrialPhases"], "trialPhases", true)}
+                        {select("allChat", ["noNightChat", "noChat"], "chat", false)}
                     </tr><tr>{/* Guilty Vote Requirement |   Dead Can Chat   */}
-                        {select("popularVote", ["twoThirdsMajority", "autoGuilty"], "modifierMenu.guiltyVoteRequirement", true)}
+                        {select("popularVote", ["twoThirdsMajority", "autoGuilty"], "guiltyVoteRequirement", true)}
                         {checkBox("deadCanChat", false)}
                     </tr><tr>{/* Allow Abstaining        |   Whispers        */}
                         {checkBox("abstaining", false)}
-                        {select("broadcastWhispers", ["hiddenWhispers", "noWhispers"], "modifierMenu.whispers", false)}
+                        {select("broadcastWhispers", ["hiddenWhispers", "noWhispers"], "whispers", false)}
                     </tr><tr>{/* Skip Day 1              |   Graves          */}
                         {checkBox("skipDay1", false)}
-                        {select("normalGraves", ["noDeathCause", "roleSetGraveKillers", "obscuredGraves"], "modifierMenu.graves", false)}
+                        {select("normalGraves", ["noDeathCause", "roleSetGraveKillers", "obscuredGraves"], "graves", false)}
                     </tr>
                 </tbody>
+                {get_padding()}
             </table>
         </div>
     </div>
