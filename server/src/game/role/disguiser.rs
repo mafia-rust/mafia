@@ -1,8 +1,9 @@
+
 use serde::Serialize;
 
 use crate::game::ability_input::*;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::components::detained::Detained;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveInformation;
 use crate::game::phase::PhaseType;
 use crate::game::{attack_power::DefensePower, player::PlayerReference};
@@ -11,39 +12,36 @@ use crate::game::visit::Visit;
 
 use crate::game::Game;
 use crate::vec_set::{vec_set, VecSet};
-use super::{InsiderGroupID, Priority, Role, RoleStateImpl};
+use super::{InsiderGroupID, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Disguiser{
-    pub current_target: Option<PlayerReference>
+    pub current_target: Option<PlayerReference>,
+    pub last_role_selection: Role,
 }
-impl Default for Disguiser{
+impl Default for Disguiser {
     fn default() -> Self {
-        Self{
-            current_target: None
-        }
+        Self { current_target: None, last_role_selection: Role::Disguiser }
     }
 }
-
 pub(super) const MAXIMUM_COUNT: Option<u8> = Some(1);
 pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Disguiser {
     type ClientRoleState = Disguiser;
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(mut self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
 
-        if priority != Priority::Deception {return}
+        if priority != OnMidnightPriority::Deception {return}
                 
-        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+        let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
         let Some(first_visit) = actor_visits.first() else {return};
         
-        if !InsiderGroupID::in_same_revealed_group(game, actor_ref, first_visit.target) {return}
+        if !InsiderGroupID::in_same_group(game, actor_ref, first_visit.target) {return}
 
-        actor_ref.remove_player_tag_on_all(game, crate::game::tag::Tag::Disguise);
         self.current_target = Some(first_visit.target);
-        actor_ref.push_player_tag(game, first_visit.target, crate::game::tag::Tag::Disguise);
+        self.last_role_selection = Self::disguised_role(&self, game, actor_ref);
 
         actor_ref.set_role_state(game, self);
     }
@@ -56,47 +54,36 @@ impl RoleStateImpl for Disguiser {
         )
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Disguiser, 0),
-            AvailableAbilitySelection::new_player_list(PlayerReference::all_players(game)
-                    .filter(|p|
-                        p.alive(game) &&
-                        InsiderGroupID::in_same_revealed_group(game, actor_ref, *p)
-                    )
-                    .collect(),
-                    false,
-                    Some(1)
-                ),
-            AbilitySelection::new_player_list(vec![]),
-            actor_ref.ability_deactivated_from_death(game) ||
-            Detained::is_detained(game, actor_ref),
-            Some(PhaseType::Obituary),
-            false,
-            vec_set!(actor_ref)
-        ).combine_overwrite_owned(
-            ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::role(actor_ref, Role::Disguiser, 1),
-                AvailableAbilitySelection::new_role_option(
-                    Role::values().into_iter()
-                        .map(|role| Some(role))
-                        .collect()
-                ),
-                AbilitySelection::new_role_option(Some(Role::Disguiser)),
-                actor_ref.ability_deactivated_from_death(game),
-                None,
-                false,
-                self.players_with_disguiser_menu(actor_ref)
-            )
-        )
+        ControllerParametersMap::combine([
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Disguiser, 0))
+                .available_selection(AvailablePlayerListSelection {
+                    available_players: PlayerReference::all_players(game)
+                        .filter(|p|
+                            p.alive(game) &&
+                            InsiderGroupID::in_same_group(game, actor_ref, *p)
+                        )
+                        .collect(),
+                    can_choose_duplicates: false,
+                    max_players: Some(1)
+                })
+                .night_typical(actor_ref)
+                .default_selection(PlayerListSelection::one(self.current_target))
+                .build_map(),
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Disguiser, 1))
+                .single_role_selection_typical(game, |_|true)
+                .default_selection(RoleListSelection(vec!(self.last_role_selection)))
+                .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
+                .allow_players(self.players_with_disguiser_menu(actor_ref))
+                .build_map()
+        ])
     }
     fn on_any_death(mut self, game: &mut Game, actor_ref: PlayerReference, dead_player_ref: PlayerReference) {
         if
             self.current_target.is_some_and(|p|p == dead_player_ref) || 
             actor_ref == dead_player_ref
         {
-            actor_ref.remove_player_tag_on_all(game, crate::game::tag::Tag::Disguise);
             self.current_target = None;
             actor_ref.set_role_state(game, self);
         }
@@ -104,7 +91,6 @@ impl RoleStateImpl for Disguiser {
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Night => {
-                actor_ref.remove_player_tag_on_all(game, crate::game::tag::Tag::Disguise);
                 self.current_target = None;
                 actor_ref.set_role_state(game, self);
             },
@@ -158,9 +144,9 @@ impl Disguiser{
         players
     }
     fn disguised_role(&self, game: &Game, actor_ref: PlayerReference)->Role{
-        if let Some(role) = game.saved_controllers.get_controller_current_selection_role_option(
-            ControllerID::role(actor_ref, Role::Disguiser, 1)
-        ).and_then(|selection| selection.0)
+        if let Some(role) = ControllerID::role(actor_ref, Role::Disguiser, 1)
+            .get_role_list_selection(game)
+            .and_then(|selection| selection.0.first().copied())
         {
             role
         }else{

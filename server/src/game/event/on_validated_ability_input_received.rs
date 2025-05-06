@@ -1,6 +1,9 @@
 use crate::game::{
     ability_input::AbilityInput,
-    components::{forfeit_vote::ForfeitVote, syndicate_gun_item::SyndicateGunItem},
+    components::{
+        forward_messages::ForwardMessages, nomination_controller::NominationController,
+        syndicate_gun_item::SyndicateGunItem
+    },
     player::PlayerReference,
     Game
 };
@@ -19,6 +22,7 @@ impl OnValidatedAbilityInputReceived{
             player_ref.on_validated_ability_input_received(game, self.actor_ref, self.input.clone())
         }
         SyndicateGunItem::on_validated_ability_input_received(game, self.actor_ref, self.input.clone());
-        ForfeitVote::on_validated_ability_input_received(game, self.actor_ref, self.input.clone());
+        ForwardMessages::on_validated_ability_input_received(game, self.actor_ref, self.input.clone());
+        NominationController::on_validated_ability_input_received(game, self.actor_ref, self.input.clone());
     }
 }

@@ -18,7 +18,7 @@ export default function HeaderMenu(props: Readonly<{
     
     const phaseState = useGameState(
         gameState => gameState.phaseState,
-        ["phase", "playerOnTrial"]
+        ["phase"]
     )!
 
     const backgroundStyle = 
@@ -27,15 +27,15 @@ export default function HeaderMenu(props: Readonly<{
         "background-day";
 
     const host = useGameState(
-        state => state.host,
+        state => state.host !== null,
         ["playersHost"]
     )!;
 
-    const spectator = useSpectator();
+    const spectator = useSpectator()!;
 
 
     return <div className={"header-menu " + backgroundStyle}>
-        {!(spectator && !host) && <FastForwardButton />}
+        {!(spectator && !host) && <FastForwardButton spectatorAndHost={spectator && host}/>}
         <Information />
         {!mobile && <MenuButtons chatMenuNotification={props.chatMenuNotification}/>}
         <Timer />
@@ -75,10 +75,10 @@ function Information(): ReactElement {
     const timeLeftMs = useGameState(
         gameState => gameState.timeLeftMs,
         ["phaseTimeLeft", "tick"]
-    )!
+    ) ?? null;
     const phaseState = useGameState(
         gameState => gameState.phaseState,
-        ["phase", "playerOnTrial"]
+        ["phase"]
     )!
     const players = useGameState(
         gameState => gameState.players,
@@ -99,7 +99,7 @@ function Information(): ReactElement {
 
 
     const timeLeftText = useMemo(() => {
-        if (timeLeftMs >= 1000000000000000000) {
+        if (timeLeftMs === null) {
             return "∞"
         } else {
             return Math.floor(timeLeftMs/1000);
@@ -163,13 +163,11 @@ export function PhaseSpecificInformation(props: Readonly<{
                         } else if (!props.players[props.myIndex!].alive) {
                             return translate("judgement.cannotVote.dead");
                         } else {
-                            return (["guilty", "abstain", "innocent"] as const)
-                                    .filter((verdict)=>{
-                                        if(enabledModifiers.includes("noAbstaining") && verdict === "abstain"){
-                                            return false;
-                                        }
-                                        return true
-                                    }).map((verdict) => {
+                            return (
+                                enabledModifiers.includes("abstaining") ? 
+                                    ["guilty", "abstain", "innocent"] as const :
+                                    ["guilty", "innocent"] as const 
+                                ).map((verdict) => {
                                 return <VerdictButton key={verdict} verdict={verdict}/>
                             })
                         }
@@ -219,14 +217,20 @@ export function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>):
     </div>
 }
 
-export function FastForwardButton(): ReactElement {
+export function FastForwardButton(props: { spectatorAndHost: boolean }): ReactElement {
     const fastForward = useGameState(
         gameState => gameState.fastForward,
         ["yourVoteFastForwardPhase"]
     )!
 
     return <Button 
-        onClick={()=>GAME_MANAGER.sendVoteFastForwardPhase(!fastForward)}
+        onClick={() => {
+            if (props.spectatorAndHost) {
+                GAME_MANAGER.sendHostSkipPhase()
+            } else {
+                GAME_MANAGER.sendVoteFastForwardPhase(!fastForward)
+            }
+        }}
         className="fast-forward-button"
         highlighted={fastForward}
     >

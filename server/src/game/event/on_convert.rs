@@ -1,5 +1,5 @@
 use crate::game::{
-    components::synopsis::SynopsisTracker, player::PlayerReference, win_condition::WinCondition, Game
+    components::{synopsis::SynopsisTracker, win_condition::WinCondition}, player::PlayerReference, Game
 };
 
 #[must_use = "Event must be invoked"]

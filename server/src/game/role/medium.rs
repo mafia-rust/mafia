@@ -9,10 +9,9 @@ use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::Game;
-use crate::vec_set;
 
 use super::{
-    AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, PlayerListSelection, Role, RoleStateImpl
+    ControllerID, ControllerParametersMap, PlayerListSelection, Role, RoleStateImpl
 };
 
 #[derive(Clone, Debug, Serialize)]
@@ -41,23 +40,13 @@ impl RoleStateImpl for Medium {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Medium, 0),
-            AvailableAbilitySelection::new_player_list(
-                PlayerReference::all_players(game)
-                    .filter(|p| p.alive(game))
-                    .filter(|p| *p != actor_ref)
-                    .collect(),
-                false,
-                Some(1)
-            ),
-            AbilitySelection::new_player_list(vec![]),
-            actor_ref.alive(game) || self.seances_remaining <= 0,
-            Some(PhaseType::Night),
-            false,
-            vec_set!(actor_ref)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Medium, 0))
+            .single_player_selection_typical(actor_ref, false, true)
+            .add_grayed_out_condition(actor_ref.alive(game) || self.seances_remaining == 0)
+            .reset_on_phase_start(PhaseType::Night)
+            .allow_players([actor_ref])
+            .build_map()
     }
     fn get_current_send_chat_groups(self, game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         let mut out = crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, vec![ChatGroup::Dead]);
@@ -94,14 +83,13 @@ impl RoleStateImpl for Medium {
                 actor_ref.set_role_state(game, self);
             },
             PhaseType::Night => {
-                let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(
-                    ControllerID::role(actor_ref, Role::Medium, 0)
-                ) else {return};
+                let Some(PlayerListSelection(target)) = ControllerID::role(actor_ref, Role::Medium, 0)
+                    .get_player_list_selection(game) else {return};
 
-                let Some(target) = target.first() else {return};
+                let Some(target) = target.first().copied() else {return};
                 
                 self.seances_remaining = self.seances_remaining.saturating_sub(1);
-                self.seanced_target = Some(target.clone());
+                self.seanced_target = Some(target);
                 
                 actor_ref.set_role_state(game, self);
 

@@ -1,17 +1,15 @@
 use std::collections::HashSet;
 
 use crate::{game::{
-    attack_power::AttackPower, chat::ChatMessageVariant, game_conclusion::GameConclusion, 
-    player::PlayerReference, 
-    role::{
-        Priority, Role
-    }, tag::Tag, win_condition::WinCondition, Game
+    attack_power::AttackPower, chat::ChatMessageVariant,
+    event::{on_add_insider::OnAddInsider, on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority}, on_remove_insider::OnRemoveInsider},
+    game_conclusion::GameConclusion, player::PlayerReference, role::Role, Game
 }, vec_set::VecSet};
 
-use super::insider_group::InsiderGroupID;
+use super::{insider_group::InsiderGroupID, tags::Tags, win_condition::WinCondition};
 
 impl Game{
-    pub fn puppeteer_marionette<'a>(&'a self)->&'a PuppeteerMarionette{
+    pub fn puppeteer_marionette(&self)->&PuppeteerMarionette{
         &self.puppeteer_marionette
     }
     pub fn set_puppeteer_marionette(&mut self, puppeteer_marionette: PuppeteerMarionette){
@@ -21,76 +19,62 @@ impl Game{
 
 #[derive(Default, Clone)]
 pub struct PuppeteerMarionette{
-    to_be_converted: HashSet<PlayerReference>,
+    marionettes: HashSet<PlayerReference>,
 }
 impl PuppeteerMarionette{
-    pub fn string(game: &mut Game, player: PlayerReference)->bool{
+    pub fn string(game: &mut Game, midnight_variables: &mut MidnightVariables, player: PlayerReference)->bool{
         let mut puppeteer_marionette = game.puppeteer_marionette().clone();
 
         if player.role(game) == Role::Puppeteer {return false;}
-        if !puppeteer_marionette.to_be_converted.insert(player){return false;}
+        if !puppeteer_marionette.marionettes.insert(player){return false;}
+        Tags::add_tag(game, super::tags::TagSetID::PuppeteerMarionette, player);
 
         game.set_puppeteer_marionette(puppeteer_marionette);
         InsiderGroupID::Puppeteer.add_player_to_revealed_group(game, player);
         player.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any: vec![GameConclusion::Fiends].into_iter().collect() });
 
         for fiend in PuppeteerMarionette::marionettes_and_puppeteer(game){
-            fiend.push_night_message(game, ChatMessageVariant::PuppeteerPlayerIsNowMarionette{player: player.index()});
+            fiend.push_night_message(midnight_variables, ChatMessageVariant::PuppeteerPlayerIsNowMarionette{player: player.index()});
         }
 
-        PuppeteerMarionette::give_tags_and_labels(game);
         true
     }
 
-    pub fn kill_marionettes(game: &mut Game){
+    pub fn kill_marionettes(game: &mut Game, midnight_variables: &mut MidnightVariables){
         let marionettes = 
             game.puppeteer_marionette()
-                .to_be_converted
+                .marionettes
                 .iter()
                 .filter(|p|p.alive(game))
-                .map(|p|p.clone())
+                .copied()
                 .collect::<Vec<_>>();
 
-        PuppeteerMarionette::attack_players(game, marionettes, AttackPower::ProtectionPiercing);
+        PuppeteerMarionette::attack_players(game, midnight_variables, marionettes, AttackPower::ProtectionPiercing);
     }
-    fn attack_players(game: &mut Game, players: Vec<PlayerReference>, attack_power: AttackPower){
+    fn attack_players(game: &mut Game, midnight_variables: &mut MidnightVariables, players: Vec<PlayerReference>, attack_power: AttackPower){
         
         let puppeteers: VecSet<_> = PlayerReference::all_players(game)
             .filter(|p|p.role(game)==Role::Puppeteer)
-            .map(|p|p.clone())
             .collect();
 
         for player in players{
-            player.try_night_kill(&puppeteers, game, crate::game::grave::GraveKiller::Role(Role::Puppeteer), attack_power, true);
-        }
-    }
-
-    pub fn give_tags_and_labels(game: &mut Game){
-        for player_a in InsiderGroupID::Puppeteer.players(game).clone() {
-            for player_b in PuppeteerMarionette::marionettes(game).clone() {
-                if 
-                    player_a.player_has_tag(game, player_b, Tag::PuppeteerMarionette) == 0
-                {
-                    player_a.push_player_tag(game, player_b, Tag::PuppeteerMarionette);
-                }
-            }
+            player.try_night_kill(&puppeteers, game, midnight_variables, crate::game::grave::GraveKiller::Role(Role::Puppeteer), attack_power, true);
         }
     }
 
     pub fn is_marionette(game: &Game, player: PlayerReference)->bool{
-        game.puppeteer_marionette().to_be_converted.contains(&player)
+        game.puppeteer_marionette().marionettes.contains(&player)
     }
     pub fn marionettes(game: &Game)->HashSet<PlayerReference>{
         PlayerReference::all_players(game)
             .filter(|p|
-                game.puppeteer_marionette().to_be_converted.contains(p)
+                game.puppeteer_marionette().marionettes.contains(p)
             )
             .collect()
     }
     pub fn puppeteers(game: &Game)->HashSet<PlayerReference>{
         PlayerReference::all_players(game)
             .filter(|p|p.role(game)==Role::Puppeteer)
-            .map(|p|p.clone())
             .collect()
     }
     pub fn marionettes_and_puppeteer(game: &Game)->HashSet<PlayerReference>{
@@ -102,13 +86,15 @@ impl PuppeteerMarionette{
 
 
     //event listeners
-
-    pub fn on_game_start(game: &mut Game){
-        PuppeteerMarionette::give_tags_and_labels(game);
+    pub fn on_add_insider(game: &mut Game, _event: &OnAddInsider, _fold: &mut (), _priority: ()){
+        Tags::set_viewers(game, super::tags::TagSetID::PuppeteerMarionette, &InsiderGroupID::Puppeteer.players(game).clone());
     }
-    pub fn on_night_priority(game: &mut Game, priority: Priority){
-        if priority == Priority::Kill{
-            PuppeteerMarionette::kill_marionettes(game);
+    pub fn on_remove_insider(game: &mut Game, _event: &OnRemoveInsider, _fold: &mut (), _priority: ()){
+        Tags::set_viewers(game, super::tags::TagSetID::PuppeteerMarionette, &InsiderGroupID::Mafia.players(game).clone());
+    }
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, midnight_variables: &mut MidnightVariables, priority: OnMidnightPriority){
+        if priority == OnMidnightPriority::Kill{
+            PuppeteerMarionette::kill_marionettes(game, midnight_variables);
         }
     }
 }

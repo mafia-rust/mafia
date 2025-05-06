@@ -2,18 +2,18 @@
 use rand::seq::IndexedRandom;
 use serde::Serialize;
 
+use crate::game::ability_input::AvailablePlayerListSelection;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
-use crate::game::components::detained::Detained;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::phase::{PhaseType, PhaseState};
 use crate::game::player::PlayerReference;
 
 use crate::game::verdict::Verdict;
 
 use crate::game::Game;
-use crate::vec_set;
 use super::{
-    AbilitySelection, ControllerID, ControllerParametersMap, GetClientRoleState, PlayerListSelection, Priority, Role, RoleStateImpl
+    ControllerID, ControllerParametersMap, GetClientRoleState, Role, RoleStateImpl
 };
 
 #[derive(Clone, Debug, Default)]
@@ -31,23 +31,20 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Jester {
     type ClientRoleState = ClientRoleState;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::TopPriority {return;}
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if priority != OnMidnightPriority::TopPriority {return;}
         if actor_ref.alive(game) {return;}
         if !self.lynched_yesterday {return}
         
         
-    
 
-        let target_ref = if let Some(PlayerListSelection(selection)) = game.saved_controllers
-            .get_controller_current_selection_player_list(ControllerID::role(actor_ref, Role::Jester, 0)){
-            selection.first().cloned()
-        }else{
-            None
-        };
 
-        let target_ref = if let Some(target_ref) = target_ref {
-            target_ref
+
+        let target_ref = if let Some(target_ref) = ControllerID::role(actor_ref, Role::Jester, 0)
+            .get_player_list_selection(game)
+            .and_then(|s|s.0.first())
+        {
+            *target_ref
         }else{
             let all_killable_players: Vec<PlayerReference> = PlayerReference::all_players(game)
                 .filter(|player_ref|{
@@ -64,38 +61,27 @@ impl RoleStateImpl for Jester {
         };
         
         
-        target_ref.try_night_kill_single_attacker(actor_ref, game, 
+        target_ref.try_night_kill_single_attacker(actor_ref, game, midnight_variables,
             crate::game::grave::GraveKiller::Role(super::Role::Jester), AttackPower::ProtectionPiercing, true
         );
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        let grayed_out = 
-            actor_ref.alive(game) || 
-            Detained::is_detained(game, actor_ref) ||
-            !self.lynched_yesterday;
-
-        // Note: Sam, when you fix this, don't forget to fix Santa Claus in the same manner
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Jester, 0),
-            super::AvailableAbilitySelection::new_player_list(
-                PlayerReference::all_players(game)
-                    .into_iter()
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Jester, 0))
+            .available_selection(AvailablePlayerListSelection {
+                available_players: PlayerReference::all_players(game)
                     .filter(|p| *p != actor_ref)
                     .filter(|player| 
                         player.alive(game) &&
                         player.verdict(game) != Verdict::Innocent
                     )
                     .collect(),
-                false,
-                Some(1)
-            ),
-            AbilitySelection::new_player_list(vec![]),
-            grayed_out,
-            Some(PhaseType::Obituary),
-            false,
-            vec_set!(actor_ref),
-        )
+                can_choose_duplicates: false,
+                max_players: Some(1)
+            })
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(!self.lynched_yesterday)
+            .build_map()
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         match game.current_phase() {
@@ -107,7 +93,7 @@ impl RoleStateImpl for Jester {
                     });
                 }
             }
-            PhaseState::Obituary => {
+            PhaseState::Obituary { .. } => {
                 actor_ref.set_role_state(game, Jester { 
                     lynched_yesterday: false,
                     won: self.won

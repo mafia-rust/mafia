@@ -1,7 +1,6 @@
 pub mod obscured_graves;
-pub mod random_love_links;
 pub mod dead_can_chat;
-pub mod no_abstaining;
+pub mod abstaining;
 pub mod no_death_cause;
 pub mod role_set_grave_killers;
 pub mod no_due_process;
@@ -10,23 +9,22 @@ pub mod no_trial;
 pub mod no_whispers;
 pub mod no_night_chat;
 pub mod no_chat;
-pub mod scheduled_nominations;
+pub mod unscheduled_nominations;
 pub mod skip_day_1;
 pub mod hidden_whispers;
 
 use dead_can_chat::DeadCanChat;
 use hidden_whispers::HiddenWhispers;
-use no_abstaining::NoAbstaining;
+use abstaining::Abstaining;
 use no_chat::NoChat;
 use no_due_process::AutoGuilty;
 use no_night_chat::NoNightChat;
 use no_trial::NoTrialPhases;
 use no_whispers::NoWhispers;
 use obscured_graves::ObscuredGraves;
-use random_love_links::RandomLoveLinks;
 use no_death_cause::NoDeathCause;
 use role_set_grave_killers::RoleSetGraveKillers;
-use scheduled_nominations::ScheduledNominations;
+use unscheduled_nominations::UnscheduledNominations;
 
 use serde::{Deserialize, Serialize};
 use skip_day_1::SkipDay1;
@@ -34,29 +32,35 @@ use two_thirds_majority::TwoThirdsMajority;
 
 use crate::{vec_map::VecMap, vec_set::VecSet};
 
-use super::{grave::GraveReference, Game};
+use super::{ability_input::AbilityInput,
+    event::{
+        on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority},
+        on_whisper::{OnWhisper, WhisperFold, WhisperPriority}
+    },
+    grave::GraveReference, player::PlayerReference, Game
+};
 
 
 #[enum_delegate::register]
 pub trait ModifierTrait where Self: Clone + Sized{
-    fn on_ability_input_received(self, _game: &mut Game, _actor_ref: crate::game::player::PlayerReference, _input: crate::game::ability_input::AbilityInput) {}
-    fn on_night_priority(self, _game: &mut Game, _priority: crate::game::role::Priority) {}
+    fn on_ability_input_received(self, _game: &mut Game, _actor_ref: PlayerReference, _input: AbilityInput) {}
+    fn on_midnight(self, _game: &mut Game, _priority: OnMidnightPriority) {}
     fn before_phase_end(self, _game: &mut Game, _phase: super::phase::PhaseType) {}
     fn on_phase_start(self, _game: &mut Game, _phase: super::phase::PhaseState) {}
     fn on_grave_added(self, _game: &mut Game, _event: GraveReference) {}
     fn on_game_start(self, _game: &mut Game) {}
-    fn on_any_death(self, _game: &mut Game, _player: crate::game::player::PlayerReference) {}
+    fn on_any_death(self, _game: &mut Game, _player: PlayerReference) {}
     fn before_initial_role_creation(self, _game: &mut Game) {}
+    fn on_whisper(self, _game: &mut Game, _event: &OnWhisper, _fold: &mut WhisperFold, _priority: WhisperPriority) {}
 }
 
 #[enum_delegate::implement(ModifierTrait)]
 #[derive(Clone, PartialEq, Eq)]
 pub enum ModifierState{
     ObscuredGraves(ObscuredGraves),
-    RandomLoveLinks(RandomLoveLinks),
     SkipDay1(SkipDay1),
     DeadCanChat(DeadCanChat),
-    NoAbstaining(NoAbstaining),
+    Abstaining(Abstaining),
     NoDeathCause(NoDeathCause),
     RoleSetGraveKillers(RoleSetGraveKillers),
     AutoGuilty(AutoGuilty),
@@ -66,16 +70,15 @@ pub enum ModifierState{
     NoNightChat(NoNightChat),
     NoChat(NoChat),
     HiddenWhispers(HiddenWhispers),
-    ScheduledNominations(ScheduledNominations),
+    UnscheduledNominations(UnscheduledNominations),
 }
 #[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Debug, Hash)]
 #[serde(rename_all = "camelCase")]
 pub enum ModifierType{
     ObscuredGraves,
-    RandomLoveLinks,
     SkipDay1,
     DeadCanChat,
-    NoAbstaining,
+    Abstaining,
     NoDeathCause,
     RoleSetGraveKillers,
     AutoGuilty,
@@ -85,26 +88,25 @@ pub enum ModifierType{
     NoNightChat,
     NoChat,
     HiddenWhispers,
-    ScheduledNominations,
+    UnscheduledNominations,
 }
 impl ModifierType{
     pub fn default_state(&self)->ModifierState{
         match self{
-            Self::ObscuredGraves => ModifierState::ObscuredGraves(ObscuredGraves::default()),
-            Self::RandomLoveLinks => ModifierState::RandomLoveLinks(RandomLoveLinks::default()),
-            Self::SkipDay1 => ModifierState::SkipDay1(SkipDay1::default()),
-            Self::DeadCanChat => ModifierState::DeadCanChat(DeadCanChat::default()),
-            Self::NoAbstaining => ModifierState::NoAbstaining(NoAbstaining::default()),
-            Self::NoDeathCause => ModifierState::NoDeathCause(NoDeathCause::default()),
-            Self::RoleSetGraveKillers => ModifierState::RoleSetGraveKillers(RoleSetGraveKillers::default()),
-            Self::AutoGuilty => ModifierState::AutoGuilty(AutoGuilty::default()),
-            Self::TwoThirdsMajority => ModifierState::TwoThirdsMajority(TwoThirdsMajority::default()),
-            Self::NoTrialPhases => ModifierState::NoTrialPhases(NoTrialPhases::default()),
-            Self::NoWhispers => ModifierState::NoWhispers(NoWhispers::default()),
-            Self::NoNightChat => ModifierState::NoNightChat(NoNightChat::default()),
-            Self::NoChat => ModifierState::NoChat(NoChat::default()),
-            Self::HiddenWhispers => ModifierState::HiddenWhispers(HiddenWhispers::default()),
-            Self::ScheduledNominations => ModifierState::ScheduledNominations(ScheduledNominations::default()),
+            Self::ObscuredGraves => ModifierState::ObscuredGraves(ObscuredGraves),
+            Self::SkipDay1 => ModifierState::SkipDay1(SkipDay1),
+            Self::DeadCanChat => ModifierState::DeadCanChat(DeadCanChat),
+            Self::Abstaining => ModifierState::Abstaining(Abstaining),
+            Self::NoDeathCause => ModifierState::NoDeathCause(NoDeathCause),
+            Self::RoleSetGraveKillers => ModifierState::RoleSetGraveKillers(RoleSetGraveKillers),
+            Self::AutoGuilty => ModifierState::AutoGuilty(AutoGuilty),
+            Self::TwoThirdsMajority => ModifierState::TwoThirdsMajority(TwoThirdsMajority),
+            Self::NoTrialPhases => ModifierState::NoTrialPhases(NoTrialPhases),
+            Self::NoWhispers => ModifierState::NoWhispers(NoWhispers),
+            Self::NoNightChat => ModifierState::NoNightChat(NoNightChat),
+            Self::NoChat => ModifierState::NoChat(NoChat),
+            Self::HiddenWhispers => ModifierState::HiddenWhispers(HiddenWhispers),
+            Self::UnscheduledNominations => ModifierState::UnscheduledNominations(UnscheduledNominations),
         }
     }
 }
@@ -112,10 +114,9 @@ impl From<&ModifierState> for ModifierType{
     fn from(state: &ModifierState)->Self{
         match state {
             ModifierState::ObscuredGraves(_) => Self::ObscuredGraves,
-            ModifierState::RandomLoveLinks(_) => Self::RandomLoveLinks,
             ModifierState::SkipDay1(_) => Self::SkipDay1,
             ModifierState::DeadCanChat(_) => Self::DeadCanChat,
-            ModifierState::NoAbstaining(_) => Self::NoAbstaining,
+            ModifierState::Abstaining(_) => Self::Abstaining,
             ModifierState::NoDeathCause(_) => Self::NoDeathCause,
             ModifierState::RoleSetGraveKillers(_) => Self::RoleSetGraveKillers,
             ModifierState::AutoGuilty(_) => Self::AutoGuilty,
@@ -125,7 +126,7 @@ impl From<&ModifierState> for ModifierType{
             ModifierState::NoNightChat(_) => Self::NoNightChat,
             ModifierState::NoChat(_) => Self::NoChat,
             ModifierState::HiddenWhispers(_) => Self::HiddenWhispers,
-            ModifierState::ScheduledNominations(_) => Self::ScheduledNominations,
+            ModifierState::UnscheduledNominations(_) => Self::UnscheduledNominations,
         }
     }
 }
@@ -139,7 +140,7 @@ pub struct Modifiers{
 }
 
 impl Modifiers{
-    pub fn modifier_is_enabled(game: &Game, modifier: ModifierType)->bool{
+    pub fn is_enabled(game: &Game, modifier: ModifierType)->bool{
         game.modifiers.modifiers.contains(&modifier)
     }
     pub fn get_modifier(game: &Game, modifier: ModifierType)->Option<&ModifierState>{
@@ -151,10 +152,9 @@ impl Modifiers{
         // ModifierState: TryInto<T>,
         &'a ModifierState: TryInto<&'a T>,
     {
-        game.modifiers.modifiers.get(&modifier).map(|s|
+        game.modifiers.modifiers.get(&modifier).and_then(|s|
             s.try_into().ok()
         )
-        .flatten()
     }
     pub fn set_modifier(game: &mut Game, state: ModifierState){
         game.modifiers.modifiers.insert(
@@ -169,9 +169,9 @@ impl Modifiers{
             modifiers,
         }
     }
-    pub fn on_night_priority(game: &mut Game, priority: crate::game::role::Priority){
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, _fold: &mut MidnightVariables, priority: OnMidnightPriority){
         for modifier in game.modifiers.modifiers.clone(){
-            modifier.1.on_night_priority(game, priority);
+            modifier.1.on_midnight(game, priority);
         }
     }
     pub fn on_ability_input_received(game: &mut Game, actor_ref: crate::game::player::PlayerReference, input: crate::game::ability_input::AbilityInput){
@@ -207,6 +207,11 @@ impl Modifiers{
     pub fn before_initial_role_creation(game: &mut Game){
         for modifier in game.modifiers.modifiers.clone(){
             modifier.1.before_initial_role_creation(game);
+        }
+    }
+    pub fn on_whisper(game: &mut Game, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority) {
+        for modifier in game.modifiers.modifiers.clone(){
+            modifier.1.on_whisper(game, event, fold, priority);
         }
     }
 }

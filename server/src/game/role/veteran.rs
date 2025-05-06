@@ -1,13 +1,15 @@
 use serde::Serialize;
 
+use crate::game::ability_input::{AvailableBooleanSelection, ControllerParametersMap};
 use crate::game::attack_power::AttackPower;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, grave::GraveKiller};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 use crate::game::Game;
 
-use super::{common_role, BooleanSelection, ControllerID, GetClientRoleState, Priority, Role, RoleStateImpl};
+use super::{BooleanSelection, ControllerID, GetClientRoleState, Role, RoleStateImpl};
 
 #[derive(Debug, Clone)]
 pub struct Veteran { 
@@ -42,19 +44,11 @@ impl RoleStateImpl for Veteran {
             ..Self::default()
         }
     }
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::TopPriority => {
+            OnMidnightPriority::TopPriority => {
                 let can_alert = self.alerts_remaining > 0 && game.day_number() > 1;
-                let chose_to_alert = 
-                    if let Some(BooleanSelection(true)) = game.saved_controllers.get_controller_current_selection_boolean(
-                        ControllerID::role(actor_ref, Role::Veteran, 0)
-                    ){
-                        true
-                    }else{
-                        false
-                    };
-
+                let chose_to_alert = matches!(ControllerID::role(actor_ref, Role::Veteran, 0).get_boolean_selection(game), Some(BooleanSelection(true)));
                 if can_alert && chose_to_alert{
                     actor_ref.set_role_state(game, Veteran { 
                         alerts_remaining: self.alerts_remaining.saturating_sub(1), 
@@ -62,39 +56,39 @@ impl RoleStateImpl for Veteran {
                     });
                 }
             }
-            Priority::Heal=>{
+            OnMidnightPriority::Heal=>{
                 if !self.alerting_tonight {return}
-                actor_ref.increase_defense_to(game, DefensePower::Protection);
+                actor_ref.increase_defense_to(game, midnight_variables, DefensePower::Protected);
             }
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
                 if !self.alerting_tonight {return}
 
-                for other_player_ref in actor_ref.all_night_visitors_cloned(game)
+                for other_player_ref in actor_ref.all_night_visitors_cloned(midnight_variables)
                     .into_iter().filter(|other_player_ref|
                         other_player_ref.alive(game) &&
                         *other_player_ref != actor_ref
                     ).collect::<Vec<PlayerReference>>()
                 {
-                    other_player_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Veteran), AttackPower::ArmorPiercing, false);
+                    other_player_ref.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Role(Role::Veteran), AttackPower::ArmorPiercing, false);
                 }
             }
             _=>{}
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        common_role::controller_parameters_map_boolean(
-            game,
-            actor_ref,
-            self.alerts_remaining <= 0 || game.day_number() <= 1,
-            ControllerID::role(actor_ref, Role::Veteran, 0)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Veteran, 0))
+            .available_selection(AvailableBooleanSelection)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(self.alerts_remaining == 0 || game.day_number() <= 1)
+            .build_map()
     }
     fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, _phase: PhaseType){
         actor_ref.set_role_state(
             game,
             Veteran { alerts_remaining: self.alerts_remaining, alerting_tonight: false });   
     }
-    fn on_player_roleblocked(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
+    fn on_player_roleblocked(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _player: PlayerReference, _invisible: bool) {}
 }
 impl GetClientRoleState<ClientRoleState> for Veteran {
     fn get_client_role_state(self, _game: &Game, _actor_ref: PlayerReference) -> ClientRoleState {

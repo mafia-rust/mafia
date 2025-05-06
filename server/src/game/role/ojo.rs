@@ -1,153 +1,96 @@
+use rand::seq::SliceRandom;
 use serde::Serialize;
 
-use crate::game::ability_input::ControllerID;
-use crate::game::attack_power::DefensePower;
+use crate::game::ability_input::ControllerParametersMap;
+use crate::game::attack_power::AttackPower;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::components::detained::Detained;
-use crate::game::phase::PhaseType;
-use crate::game::role_outline_reference::RoleOutlineReference;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
+use crate::game::event::on_whisper::{OnWhisper, WhisperFold, WhisperPriority};
+use crate::game::{attack_power::DefensePower, grave::GraveKiller};
+use crate::game::player::{PlayerIndex, PlayerReference};
+
 use crate::game::visit::Visit;
-use crate::game::{attack_power::AttackPower, grave::GraveKiller};
-use crate::game::player::PlayerReference;
 
 use crate::game::Game;
-use crate::vec_map::VecMap;
-use crate::vec_set;
-use super::auditor::AuditorResult;
-use super::{common_role, AbilitySelection, AvailableAbilitySelection, ControllerParametersMap, Priority, Role, RoleOptionSelection, RoleStateImpl, TwoRoleOutlineOptionSelection};
+use super::{common_role, ControllerID, Role, RoleStateImpl};
 
 
-#[derive(Clone, Debug, Serialize, Default)]
-#[serde(rename_all = "camelCase")]
-pub struct Ojo{
-    pub previously_given_results: VecMap<RoleOutlineReference, AuditorResult>,
-}
+#[derive(Debug, Clone, Serialize, Default)]
+pub struct Ojo;
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armored;
 
 impl RoleStateImpl for Ojo {
     type ClientRoleState = Ojo;
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        
-        if actor_ref.night_blocked(game) {return;}
-
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::Kill => {
-                if game.day_number() == 1 {return;}
-                for visit in actor_ref.untagged_night_visits_cloned(game).clone() {
-                    if visit.attack {
-                        visit.target.try_night_kill_single_attacker(
-                            actor_ref, game, 
-                            GraveKiller::Role(Role::Ojo), 
-                            AttackPower::ArmorPiercing, 
-                            true
-                        );
-                    }
-                }
-            },
-            Priority::Investigative => {
-                let visited_me = actor_ref.all_night_visitors_cloned(game);
-
-                for player in PlayerReference::all_players(game) {
-                    if visited_me.contains(&player) {
-                        actor_ref.insert_role_label(game, player);
-                    }
-                }
-
-                if let Some(TwoRoleOutlineOptionSelection(a, b)) = game.saved_controllers.get_controller_current_selection_two_role_outline_option(
-                    ControllerID::role(actor_ref, Role::Ojo, 0)
-                ){
-                    if let Some(chosen_outline) = a{
-                        let result = Self::get_result(game, chosen_outline);
-                        actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                            role_outline: chosen_outline.deref(&game).clone(),
-                            result: result.clone()
-                        });
-                        self.previously_given_results.insert(chosen_outline, result);
-                    }
+            OnMidnightPriority::Kill => {
+                if game.day_number() == 1 {return}
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
+                if let Some(visit) = actor_visits.first(){
+                    let target_ref = visit.target;
             
-                    if let Some(chosen_outline) = b{
-                        let result = Self::get_result(game, chosen_outline);
-                        actor_ref.push_night_message(game, ChatMessageVariant::AuditorResult {
-                            role_outline: chosen_outline.deref(&game).clone(),
-                            result: result.clone()
-                        });
-                        self.previously_given_results.insert(chosen_outline, result);
-                    }
+                    target_ref.try_night_kill_single_attacker(
+                        actor_ref,
+                        game,
+                        midnight_variables,
+                        GraveKiller::Role(Role::Ojo),
+                        AttackPower::Basic,
+                        true
+                    );
                 }
-        
-                actor_ref.set_role_state(game, self);
             },
-            _ => {}
+            OnMidnightPriority::Investigative => {
+                PlayerReference::all_players(game)
+                    .for_each(|player_ref|{
+
+                    let mut players: Vec<PlayerIndex> = player_ref.all_night_visits_cloned(midnight_variables).into_iter().map(|p|p.target.index()).collect();
+                    players.shuffle(&mut rand::rng());
+
+                    actor_ref.push_night_message(midnight_variables, 
+                        ChatMessageVariant::WerewolfTrackingResult{
+                            tracked_player: player_ref.index(), 
+                            players
+                        }
+                    );
+                });
+            }
+            _ => ()
         }
     }
-    
-    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Ojo, 0),
-            AvailableAbilitySelection::new_two_role_outline_option(
-                RoleOutlineReference::all_outlines(game)
-                    .filter(|o|!self.previously_given_results.contains(o))
-                    .map(|o|Some(o))
-                    .chain(std::iter::once(None))
-                    .collect()
-            ),
-            AbilitySelection::new_two_role_outline_option(None, None),
-            actor_ref.ability_deactivated_from_death(game) || 
-            Detained::is_detained(game, actor_ref),
-            Some(PhaseType::Obituary),
-            false,
-            vec_set![actor_ref],
-        ).combine_overwrite_owned(
-            ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::role(actor_ref, Role::Ojo, 1),
-                AvailableAbilitySelection::new_role_option(
-                    Role::values().into_iter().map(|r|Some(r)).chain(std::iter::once(None)).collect()
-                ),
-                AbilitySelection::new_role_option(None),
-                actor_ref.ability_deactivated_from_death(game) || 
-                Detained::is_detained(game, actor_ref) ||
-                game.day_number() == 1,
-                Some(PhaseType::Obituary),
-                false,
-                vec_set![actor_ref],
-            )
-        )
+    fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Ojo, 0))
+            .single_player_selection_typical(actor_ref, false, false)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(game.day_number() <= 1)
+            .build_map()  
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
-        let mut out = vec![];
-        //Auditor visits
-        out.extend(common_role::convert_controller_selection_to_visits(
+        common_role::convert_controller_selection_to_visits(
             game,
             actor_ref,
             ControllerID::role(actor_ref, Role::Ojo, 0),
-            false
-        ));
-        //Kira/Doomsayer visits
-        if game.day_number() > 1 {
-            if let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
-                ControllerID::role(actor_ref, Role::Ojo, 1)
-            ) {
-                for player in PlayerReference::all_players(game){
-                    if player.alive(game) && player.role(game) == role {
-                        out.push(Visit::new_none(actor_ref, player, true));
-                    }
-                }
-            }
-        }
-
-        out
+            true
+        )
     }
-}
+    fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference) {
+        PlayerReference::all_players(game).for_each(|p|actor_ref.reveal_players_role(game, p));
+    }
+    fn on_conceal_role(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, concealed_player: PlayerReference){
+        if player != actor_ref {return};
 
-impl Ojo{
-    //panics if chosen_outline is not found
-    pub fn get_result(game: &Game, chosen_outline: RoleOutlineReference) -> AuditorResult {
-        let (role, _) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-        AuditorResult::One{role}
+        actor_ref.reveal_players_role(game, concealed_player);
+    }
+    fn on_whisper(self, game: &mut Game, actor_ref: PlayerReference, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority) {
+        if priority == WhisperPriority::Send && !fold.cancelled && event.receiver != actor_ref && event.sender != actor_ref {
+            actor_ref.add_private_chat_message(game, ChatMessageVariant::Whisper {
+                from_player_index: event.sender.into(),
+                to_player_index: event.receiver.into(),
+                text: event.message.clone()
+            });
+        }
     }
 }

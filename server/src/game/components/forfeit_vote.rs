@@ -1,7 +1,12 @@
-use crate::{game::{
-    ability_input::*,
-    phase::PhaseType, player::PlayerReference, role::Role, Game
-}, vec_set};
+use crate::{
+    game::{
+        ability_input::*,
+        phase::PhaseType, player::PlayerReference, role::Role, Game
+    },
+    vec_set::{vec_set, VecSet}
+};
+
+use super::{silenced::Silenced, tags::{TagSetID, Tags}};
 
 pub struct ForfeitVote;
 impl ForfeitVote{
@@ -10,33 +15,46 @@ impl ForfeitVote{
             return ControllerParametersMap::default();
         }
 
-        let mut out = ControllerParametersMap::default();
-
-        for player in PlayerReference::all_players(game) {
-            out.combine_overwrite(
-                ControllerParametersMap::new_controller_fast(
-                    game,
-                    ControllerID::forfeit_vote(player),
-                    AvailableAbilitySelection::new_boolean(),
-                    AbilitySelection::new_boolean(false),
-                    !player.alive(game) || game.current_phase().phase() != PhaseType::Discussion,
-                    Some(PhaseType::Obituary),
-                    false,
-                    vec_set![player]
+        ControllerParametersMap::combine(
+            PlayerReference::all_players(game)
+                .map(|player|
+                    ControllerParametersMap::builder(game)
+                        .id(ControllerID::forfeit_vote(player))
+                        .available_selection(AvailableBooleanSelection)
+                        .add_grayed_out_condition(!player.alive(game) || game.current_phase().phase() != PhaseType::Discussion)
+                        .reset_on_phase_start(PhaseType::Obituary)
+                        .allow_players(vec_set![player])
+                        .build_map()
                 )
-            );
-        }
-
-        out
+        )
     }
 
-    pub fn on_validated_ability_input_received(game: &mut Game, actor_ref: PlayerReference, input: AbilityInput){
-        let Some(selection) = input.get_boolean_selection_if_id(ControllerID::forfeit_vote(actor_ref)) else {return};
-        if 
-            game.current_phase().phase() == PhaseType::Discussion &&
-            actor_ref.alive(game)
-        {
-            actor_ref.set_forfeit_vote(game, selection.0);
+    /// Must go before saved_controllers on phase start
+    pub fn on_phase_start(game: &mut Game, phase: PhaseType){
+        match phase {
+            PhaseType::Nomination => {
+                for player in PlayerReference::all_players(game){
+                    let choose_forfeit = matches!(ControllerID::forfeit_vote(player).get_boolean_selection(game),Some(BooleanSelection(true)));
+                    if 
+                        (Silenced::silenced(game, player) || choose_forfeit) &&
+                        player.alive(game)
+                    {
+                        Tags::add_tag(game, TagSetID::ForfeitVote, player);
+                    }
+                }
+            },
+            PhaseType::Dusk => {
+                Tags::set_tagged(game, TagSetID::ForfeitVote, &VecSet::new());
+            },
+            _ => {}
         }
+    }
+
+    pub fn on_game_start(game: &mut Game){
+        Tags::set_viewers(game, TagSetID::ForfeitVote, &PlayerReference::all_players(game).collect());
+    }
+
+    pub fn forfeited_vote(game: &Game, player: PlayerReference)->bool{
+        Tags::has_tag(game, TagSetID::ForfeitVote, player)
     }
 }

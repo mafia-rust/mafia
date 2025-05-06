@@ -3,9 +3,9 @@ import { RoleSet } from "./roleListState.d"
 import ROLES from "./../resources/roles.json";
 import { ChatMessageVariant } from "../components/ChatMessage";
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
-import { Hypnotist } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeHypnotistMenu";
 import { Doomsayer } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
 import { TwoRoleOptionSelection } from "./abilityInput";
+import { Hypnotist } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/HypnotistMenu";
 
 export type RoleState = {
     type: "jailor",
@@ -18,7 +18,11 @@ export type RoleState = {
 } | {
     type: "transporter"
 } | {
+    type: "porter"
+} | {
     type: "coxswain"
+} | {
+    type: "polymath"
 } | {
     type: "detective"
 } | {
@@ -187,7 +191,6 @@ Doomsayer
     type: "werewolf",
 } | {
     type: "ojo"
-    previouslyGivenResults: [number, AuditorResult][]
 } | {
     type: "puppeteer"
     marionettesRemaining: number

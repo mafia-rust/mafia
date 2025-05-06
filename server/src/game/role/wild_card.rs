@@ -1,13 +1,13 @@
 use serde::{Serialize, Deserialize};
 
-use crate::{game::attack_power::DefensePower, vec_set};
+use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::role_can_generate;
 use crate::game::Game;
 
-use super::{AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap, Role, RoleOptionSelection, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
@@ -23,35 +23,27 @@ impl RoleStateImpl for Wildcard {
         match phase {
             PhaseType::Night => {
                 if actor_ref.ability_deactivated_from_death(game) {return;}
-                self.become_role(game, actor_ref);
+                Wildcard::become_role(game, actor_ref, Role::Wildcard);
             },
             _ => {}
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Wildcard, 0),
-            AvailableAbilitySelection::new_role_option(
-                Role::values().into_iter().filter(|role|
-                    game.settings.enabled_roles.contains(role) && *role != Role::Wildcard
-                ).map(|r|Some(r)).chain(std::iter::once(None)).collect()
-            ),
-            AbilitySelection::new_role_option(None),
-            actor_ref.ability_deactivated_from_death(game),
-            None,
-            false,
-            vec_set!(actor_ref)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Wildcard, 0))
+            .single_role_selection_typical(game, |role|*role != Role::Wildcard)
+            .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
+            .allow_players([actor_ref])
+            .build_map()
     }
 }
 
 impl Wildcard {
-    fn become_role(&self, game: &mut Game, actor_ref: PlayerReference) {
+    pub fn become_role(game: &mut Game, actor_ref: PlayerReference, role: Role) {
 
-        let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
-            ControllerID::role(actor_ref, Role::Wildcard, 0)
-        ) else {return};
+        let Some(&role) = ControllerID::role(actor_ref, role, 0)
+            .get_role_list_selection_first(game)
+            else {return};
 
         if 
             role_can_generate(

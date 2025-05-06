@@ -1,15 +1,17 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
+use crate::game::ability_input::AvailablePlayerListSelection;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::components::detained::Detained;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::game_conclusion::GameConclusion;
 use crate::game::phase::PhaseType;
-use crate::game::win_condition::WinCondition;
+
+use crate::game::components::win_condition::WinCondition;
 use crate::game::attack_power::{AttackPower, DefensePower};
 use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 use crate::game::Game;
-use crate::vec_set::{vec_set, VecSet};
-use super::{AbilitySelection, ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
+use crate::vec_set::VecSet;
+use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 #[derive(Clone, Debug, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -17,7 +19,7 @@ pub struct SantaClaus {
     pub ability_used_last_night: Option<SantaListKind>,
 }
 
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum SantaListKind{
     Naughty,
@@ -30,69 +32,67 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for SantaClaus {
     type ClientRoleState = SantaClaus;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        if priority != Priority::Convert { return }
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        if priority != OnMidnightPriority::Convert { return }
 
         match self.get_next_santa_ability() {
             SantaListKind::Nice => {
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game).into_iter();
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables).into_iter();
                 let targets = actor_visits.map(|v| v.target);
 
                 for target_ref in targets {
                     let WinCondition::GameConclusionReached { mut win_if_any } = target_ref.win_condition(game).clone() else {
-                        actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::YourConvertFailed);
                         continue
                     };
 
                     if
-                        !AttackPower::ArmorPiercing.can_pierce(target_ref.defense(game)) ||
+                        !AttackPower::ArmorPiercing.can_pierce(target_ref.night_defense(game, midnight_variables)) ||
                         !get_eligible_players(game, actor_ref).contains(&target_ref)
                     {
-                        actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::YourConvertFailed);
                         continue;
                     }
                     
                     win_if_any.insert(GameConclusion::NiceList);
                     target_ref.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any });
-                    target_ref.push_night_message(game, ChatMessageVariant::AddedToNiceList);
+                    target_ref.push_night_message(midnight_variables, ChatMessageVariant::AddedToNiceList);
 
                     actor_ref.set_role_state(game, Self {
                         ability_used_last_night: Some(SantaListKind::Nice),
-                        ..self
                     });
                 }
             }
             SantaListKind::Naughty => {
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game).into_iter();
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables).into_iter();
                 let targets = actor_visits.map(|v| v.target);
 
                 for target_ref in targets {
                     let WinCondition::GameConclusionReached { mut win_if_any } = target_ref.win_condition(game).clone() else {
-                        actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::YourConvertFailed);
                         continue
                     };
 
                     if
-                        !AttackPower::ArmorPiercing.can_pierce(target_ref.defense(game)) ||
+                        !AttackPower::ArmorPiercing.can_pierce(target_ref.night_defense(game, midnight_variables)) ||
                         !get_eligible_players(game, actor_ref).contains(&target_ref)
                     {
-                        actor_ref.push_night_message(game, ChatMessageVariant::YourConvertFailed);
+                        actor_ref.push_night_message(midnight_variables, ChatMessageVariant::YourConvertFailed);
                         continue;
                     }
                     
                     win_if_any.insert(GameConclusion::NaughtyList);
                     target_ref.set_win_condition(game, WinCondition::GameConclusionReached { win_if_any });
-                    target_ref.push_night_message(game, ChatMessageVariant::AddedToNaughtyList);
+                    target_ref.push_night_message(midnight_variables, ChatMessageVariant::AddedToNaughtyList);
 
                     actor_ref.set_role_state(game, Self {
                         ability_used_last_night: Some(SantaListKind::Naughty),
-                        ..self
                     });
                     
                     for krampus in PlayerReference::all_players(game) {
                         if krampus.role(game) != Role::Krampus { continue }
 
-                        krampus.push_night_message(game, 
+                        krampus.push_night_message(midnight_variables, 
                             ChatMessageVariant::SantaAddedPlayerToNaughtyList { player: target_ref }
                         );
                     }
@@ -103,38 +103,26 @@ impl RoleStateImpl for SantaClaus {
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         match self.get_next_santa_ability() {
             SantaListKind::Nice => {
-                ControllerParametersMap::new_controller_fast(
-                    game,
-                    ControllerID::role(actor_ref, Role::SantaClaus, 0),
-                    super::AvailableAbilitySelection::new_player_list(
-                        get_selectable_players(game, actor_ref),
-                        false,
-                        Some(1)
-                    ),
-                    AbilitySelection::new_player_list(vec![]),
-                    Detained::is_detained(game, actor_ref) ||
-                    actor_ref.ability_deactivated_from_death(game),
-                    Some(PhaseType::Obituary),
-                    false,
-                    vec_set!(actor_ref),
-                )
+                ControllerParametersMap::builder(game)
+                    .id(ControllerID::role(actor_ref, Role::SantaClaus, 0))
+                    .available_selection(AvailablePlayerListSelection {
+                        available_players: get_selectable_players(game, actor_ref),
+                        can_choose_duplicates: false,
+                        max_players: Some(1)
+                    })
+                    .night_typical(actor_ref)
+                    .build_map()
             }
             SantaListKind::Naughty => {
-                ControllerParametersMap::new_controller_fast(
-                    game,
-                    ControllerID::role(actor_ref, Role::SantaClaus, 1),
-                    super::AvailableAbilitySelection::new_player_list(
-                        get_selectable_players(game, actor_ref),
-                        false,
-                        Some(1)
-                    ),
-                    AbilitySelection::new_player_list(vec![]),
-                    Detained::is_detained(game, actor_ref) ||
-                    actor_ref.ability_deactivated_from_death(game),
-                    Some(PhaseType::Obituary),
-                    false,
-                    vec_set!(actor_ref),
-                )
+                ControllerParametersMap::builder(game)
+                    .id(ControllerID::role(actor_ref, Role::SantaClaus, 1))
+                    .available_selection(AvailablePlayerListSelection {
+                        available_players: get_selectable_players(game, actor_ref),
+                        can_choose_duplicates: false,
+                        max_players: Some(1)
+                    })
+                    .night_typical(actor_ref)
+                    .build_map()
             }
         }
     }

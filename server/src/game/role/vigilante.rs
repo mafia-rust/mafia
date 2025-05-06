@@ -2,6 +2,7 @@
 use serde::Serialize;
 
 use crate::game::attack_power::AttackPower;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::{attack_power::DefensePower, game_conclusion::GameConclusion};
 use crate::game::grave::GraveKiller;
 use crate::game::player::PlayerReference;
@@ -9,7 +10,7 @@ use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleState, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Role, RoleState, RoleStateImpl};
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -39,24 +40,24 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Vigilante {
     type ClientRoleState = Vigilante;
-    fn do_night_action(mut self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(mut self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority{
-            Priority::TopPriority => {
+            OnMidnightPriority::TopPriority => {
                 if VigilanteState::WillSuicide == self.state {
-                    actor_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Suicide, AttackPower::ProtectionPiercing, false);
+                    actor_ref.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Suicide, AttackPower::ProtectionPiercing, false);
                     self.state = VigilanteState::Suicided;
                 }
             },
-            Priority::Kill => {
+            OnMidnightPriority::Kill => {
             
                 match self.state {
                     VigilanteState::Loaded { bullets } if bullets > 0 => {
-                        let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                        let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                         if let Some(visit) = actor_visits.first(){
 
                             let target_ref = visit.target;
 
-                            let killed = target_ref.try_night_kill_single_attacker(actor_ref, game, GraveKiller::Role(Role::Vigilante), AttackPower::Basic, false);
+                            let killed = target_ref.try_night_kill_single_attacker(actor_ref, game, midnight_variables, GraveKiller::Role(Role::Vigilante), AttackPower::Basic, false);
                             self.state = VigilanteState::Loaded { bullets: bullets.saturating_sub(1) };
 
                             if killed && target_ref.win_condition(game).is_loyalist_for(GameConclusion::Town) {
@@ -84,14 +85,12 @@ impl RoleStateImpl for Vigilante {
             false
         };
         
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            true,
-            !can_shoot,
-            ControllerID::role(actor_ref, Role::Vigilante, 0)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Vigilante, 0))
+            .single_player_selection_typical(actor_ref, false, true)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(!can_shoot)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(

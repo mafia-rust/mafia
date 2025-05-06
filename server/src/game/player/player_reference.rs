@@ -23,14 +23,21 @@ impl PlayerReference{
             Ok(PlayerReference::new_unchecked(index))
         }
     }
+    /// # Safety
+    /// Check to make sure the index is less than the number of players in the game,
+    /// otherwise, this could cause a panic.
     pub unsafe fn new_unchecked(index: PlayerIndex) -> PlayerReference {
         PlayerReference { index }
     }
     pub fn deref<'a>(&self, game: &'a Game)->&'a Player{
-        &game.players[self.index as usize]
+        unsafe { 
+            game.players.get_unchecked(self.index as usize)
+        }
     }
     pub fn deref_mut<'a>(&self, game: &'a mut Game)->&'a mut Player{
-        &mut game.players[self.index as usize]
+        unsafe {
+            game.players.get_unchecked_mut(self.index as usize)
+        }
     }
     pub fn index(&self) -> PlayerIndex {
         self.index
@@ -61,18 +68,22 @@ impl PlayerReference{
     pub fn index_vec_to_ref(game: &Game, index_vec: &Vec<PlayerIndex>)->Result<Vec<PlayerReference>, InvalidPlayerReferenceError>{
         let mut out = Vec::new();
         for index in index_vec{
-            out.push(match Self::new(game, *index){
-                Ok(player_ref) => player_ref,
-                Err(e) => return Err(e),
-            });
+            out.push(Self::new(game, *index)?);
         }
         Ok(out)
     }
 
     pub fn all_players(game: &Game) -> PlayerReferenceIterator {
+        unsafe { Self::all_players_from_count(
+            game.players.len().try_into().unwrap_or(u8::MAX)
+        )}
+    }
+    /// # Safety
+    /// player_count is less than or equal to the number of players in the game
+    pub unsafe fn all_players_from_count(player_count: u8) -> PlayerReferenceIterator {
         PlayerReferenceIterator {
             current: 0,
-            end: game.players.len() as PlayerIndex
+            end: player_count
         }
     }
 }
@@ -99,13 +110,17 @@ impl Iterator for PlayerReferenceIterator {
         } else {
             // This unsafe should be fine as long as the iterator itself is fine
             let ret = unsafe {PlayerReference::new_unchecked(self.current)};
-            self.current += 1;
+            if let Some(new) = self.current.checked_add(1) {
+                self.current = new;
+            } else {
+                return None
+            }
             Some(ret)
         }
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        let size = (self.end - self.current) as usize;
+        let size = self.end.saturating_sub(self.current) as usize;
         (size, Some(size))
     }
 }

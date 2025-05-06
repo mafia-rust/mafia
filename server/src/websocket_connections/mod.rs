@@ -1,7 +1,7 @@
 use std::sync::{Mutex, Arc, MutexGuard};
 
 pub mod connection;
-pub mod websocket_listener;
+pub mod websocket_server;
 
 pub trait ForceLock {
     type Inner;
@@ -17,7 +17,7 @@ impl<'a, T> ForceLock for &'a Arc<Mutex<T>> {
 
     fn force_lock(self) -> Self::Inner {
         match self.lock() {
-            Ok(lobbies) => lobbies,
+            Ok(inner) => inner,
             Err(err) => {
                 self.clear_poison();
                 err.into_inner()

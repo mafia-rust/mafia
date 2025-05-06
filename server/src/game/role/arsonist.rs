@@ -1,12 +1,16 @@
 use serde::Serialize;
 
-use crate::game::{attack_power::DefensePower, components::arsonist_doused::ArsonistDoused};
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
+use crate::game::attack_power::AttackPower;
+use crate::game::components::tags::{TagSetID, Tags};
+use crate::game::grave::GraveKiller;
+use crate::game::attack_power::DefensePower;
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use super::{ControllerID, ControllerParametersMap, Priority, Role, RoleStateImpl};
+use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -14,34 +18,36 @@ pub struct Arsonist;
 
 
 pub(super) const MAXIMUM_COUNT: Option<u8> = None;
-pub(super) const DEFENSE: DefensePower = DefensePower::Armor;
+pub(super) const DEFENSE: DefensePower = DefensePower::Armored;
 
 impl RoleStateImpl for Arsonist {
     type ClientRoleState = Arsonist;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         match priority {
-            Priority::Deception => {
+            OnMidnightPriority::Deception => {
                 //douse target
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);
                 if let Some(visit) = actor_visits.first(){
                     let target_ref = visit.target;
-                    ArsonistDoused::douse(game, target_ref);
+                    Self::douse(game, target_ref);
                 }
                 
                 //douse all visitors
-                for other_player_ref in actor_ref.all_night_visitors_cloned(game)
+                for other_player_ref in actor_ref.all_night_visitors_cloned(midnight_variables)
                     .into_iter()
                     .filter(|other_player_ref| *other_player_ref != actor_ref)
                     .collect::<Vec<PlayerReference>>()
                 {
-                    ArsonistDoused::douse(game, other_player_ref);
+                    Self::douse(game, other_player_ref);
                 }
             },
-            Priority::Kill => {
-                let actor_visits = actor_ref.untagged_night_visits_cloned(game);             
+            OnMidnightPriority::Kill => {
+                if game.day_number() <= 1 {return};
+
+                let actor_visits = actor_ref.untagged_night_visits_cloned(midnight_variables);             
                 if let Some(visit) = actor_visits.first(){
                     if actor_ref == visit.target{
-                        ArsonistDoused::ignite(game, actor_ref);
+                        Self::ignite(game, actor_ref, midnight_variables);
                     }
                 }
             }
@@ -49,14 +55,12 @@ impl RoleStateImpl for Arsonist {
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            true,
-            true,
-            false,
-            ControllerID::role(actor_ref, Role::Arsonist, 0)
-        )
+        ControllerParametersMap::builder(game)
+            .id(ControllerID::role(actor_ref, Role::Arsonist, 0))
+            .single_player_selection_typical(actor_ref, game.day_number() > 1, true)
+            .night_typical(actor_ref)
+            .add_grayed_out_condition(false)
+            .build_map()
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
@@ -67,6 +71,42 @@ impl RoleStateImpl for Arsonist {
         )
     }
     fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
-        ArsonistDoused::clean_doused(game, actor_ref);
+        Tags::remove_tag(game, TagSetID::ArsonistDoused, actor_ref);
+        Tags::add_viewer(game, TagSetID::ArsonistDoused, actor_ref);
+    }
+    fn before_role_switch(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _new: super::RoleState, _old: super::RoleState) {
+        if actor_ref == player {
+            Tags::remove_viewer(game, TagSetID::ArsonistDoused, actor_ref); 
+        }
+    }
+}
+impl Arsonist{
+    fn douse(game: &mut Game, player: PlayerReference){
+        if player.role(game) == Role::Arsonist {
+            return
+        }
+
+        Tags::add_tag(game, TagSetID::ArsonistDoused, player);
+    }
+    pub fn ignite(game: &mut Game, igniter: PlayerReference, midnight_variables: &mut MidnightVariables) {
+        for player in Tags::tagged(game, TagSetID::ArsonistDoused) {
+            if player.role(game) == Role::Arsonist {continue;}
+            if !player.alive(game) {continue;}
+            player.try_night_kill_single_attacker(
+                igniter,
+                game,
+                midnight_variables,
+                GraveKiller::Role(Role::Arsonist),
+                AttackPower::ProtectionPiercing,
+                true
+            );
+        }
+    }
+    pub fn has_suspicious_aura_douse(game: &Game, player: PlayerReference) -> bool {
+        Tags::has_tag(game, TagSetID::ArsonistDoused, player) &&
+        PlayerReference::all_players(game).any(|player_ref|
+            !player_ref.ability_deactivated_from_death(game) &&
+            player_ref.role(game) == Role::Arsonist
+        )
     }
 }

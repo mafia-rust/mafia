@@ -1,18 +1,17 @@
 import { useGameState, usePlayerState } from "../../../../components/useHooks";
 import React, { ReactElement } from "react";
 import AuditorMenu from "./RoleSpecificMenus/AuditorMenu";
-import LargeHypnotistMenu from "./RoleSpecificMenus/LargeHypnotistMenu";
 import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
 import Counter from "../../../../components/Counter";
 import StyledText from "../../../../components/StyledText";
 import translate from "../../../../game/lang";
 import SmallPuppeteerMenu from "./RoleSpecificMenus/SmallPuppeteerMenu";
 import StewardMenu from "./RoleSpecificMenus/StewardMenu";
-import OjoMenu from "./RoleSpecificMenus/OjoMenu";
 import RecruiterMenu from "./RoleSpecificMenus/RecruiterMenu";
 import { RoleState } from "../../../../game/roleState.d";
 import { PhaseState } from "../../../../game/gameState.d";
 import DetailsSummary from "../../../../components/DetailsSummary";
+import HypnotistMenu from "./RoleSpecificMenus/HypnotistMenu";
 
     
 
@@ -62,7 +61,7 @@ function roleSpecificSectionInner(
         case "auditor":
             return <AuditorMenu roleState={roleState}/>;
         case "hypnotist":
-            return <LargeHypnotistMenu/>;
+            return <HypnotistMenu roleState={roleState}/>;
         case "doomsayer":
             return <LargeDoomsayerMenu/>;
         case "jailor": 
@@ -151,8 +150,6 @@ function roleSpecificSectionInner(
             >
                 <StyledText>{translate("role.mortician.roleDataText", roleState.cremationsRemaining)}</StyledText>
             </Counter>
-        case "ojo":
-            return <OjoMenu roleState={roleState}/>;
         case "steward":
             return <StewardMenu roleState={roleState}/>;
         case "spiral": 
@@ -200,7 +197,7 @@ function roleSpecificSectionInner(
 function MarksmanRoleSpecificMenu(props: Readonly<{
     roleState: (RoleState & { type: "marksman" })
 }>): ReactElement {
-    let stateText;
+    let stateText = "";
     switch(props.roleState.state.type){
         case "notLoaded":
         case "loaded":

@@ -17,29 +17,29 @@ pub struct Settings{
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PhaseTimeSettings{
-    pub briefing: u64,
-    pub obituary: u64,
-    pub discussion: u64,
-    pub nomination: u64,
-    pub testimony: u64,
-    pub judgement: u64,
-    pub final_words: u64,
-    pub dusk: u64,
-    pub night: u64,
+    pub briefing: u16,
+    pub obituary: u16,
+    pub discussion: u16,
+    pub nomination: u16,
+    pub testimony: u16,
+    pub judgement: u16,
+    pub final_words: u16,
+    pub dusk: u16,
+    pub night: u16,
 }
 impl PhaseTimeSettings {
-    pub fn get_time_for(&self, phase: PhaseType) -> Duration {
+    pub fn get_time_for(&self, phase: PhaseType) -> Option<Duration> {
         match phase {
-            PhaseType::Briefing => Duration::from_secs(self.briefing),
-            PhaseType::Discussion => Duration::from_secs(self.discussion),
-            PhaseType::FinalWords => Duration::from_secs(self.final_words),
-            PhaseType::Dusk => Duration::from_secs(self.dusk),
-            PhaseType::Judgement => Duration::from_secs(self.judgement),
-            PhaseType::Obituary => Duration::from_secs(self.obituary),
-            PhaseType::Night => Duration::from_secs(self.night),
-            PhaseType::Testimony => Duration::from_secs(self.testimony),
-            PhaseType::Nomination => Duration::from_secs(self.nomination),
-            PhaseType::Recess => Duration::MAX
+            PhaseType::Briefing => Some(Duration::from_secs(self.briefing as u64)),
+            PhaseType::Discussion => Some(Duration::from_secs(self.discussion as u64)),
+            PhaseType::FinalWords => Some(Duration::from_secs(self.final_words as u64)),
+            PhaseType::Dusk => Some(Duration::from_secs(self.dusk as u64)),
+            PhaseType::Judgement => Some(Duration::from_secs(self.judgement as u64)),
+            PhaseType::Obituary => Some(Duration::from_secs(self.obituary as u64)),
+            PhaseType::Night => Some(Duration::from_secs(self.night as u64)),
+            PhaseType::Testimony => Some(Duration::from_secs(self.testimony as u64)),
+            PhaseType::Nomination => Some(Duration::from_secs(self.nomination as u64)),
+            PhaseType::Recess => None
         }
     }
     pub fn game_ends_instantly(&self)->bool{
@@ -49,15 +49,15 @@ impl PhaseTimeSettings {
 impl Default for PhaseTimeSettings{
     fn default() -> Self {
         Self{
-            briefing: 45,
-            obituary: 60,
-            discussion: 120,
-            nomination: 120,
-            testimony: 30,
-            judgement: 60,
-            final_words: 30,
-            dusk: 30,
-            night: 60,
+            briefing:45,
+            obituary:20,
+            discussion:100,
+            nomination:100,
+            testimony:30,
+            judgement:30,
+            final_words:10,
+            dusk:30,
+            night:60,
         }
     }
 }

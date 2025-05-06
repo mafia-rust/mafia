@@ -1,47 +1,38 @@
 use std::collections::HashSet;
 
-use crate::game::{chat::ChatMessageVariant, phase::PhaseType, player::PlayerReference, role::Priority, Game};
+use crate::game::{chat::ChatMessageVariant, event::on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority}, phase::PhaseType, player::PlayerReference, Game};
 
 use super::insider_group::InsiderGroupID;
 
 #[derive(Default)]
 pub struct Detained{
     //resets every obituary
-    pub players: HashSet<PlayerReference>,
+    players: HashSet<PlayerReference>,
 }
 impl Detained{
     pub fn on_phase_start(game: &mut Game, phase: PhaseType){
-        match phase {
-            PhaseType::Obituary => {
-                Detained::clear_detain(game);
-            }
-            _ => {}
+        if phase == PhaseType::Obituary {
+            Detained::clear_detain(game);
         }
     }
-    pub fn on_night_priority(game: &mut Game, priority: Priority){
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, midnight_variables: &mut MidnightVariables, priority: OnMidnightPriority){
         match priority {
-            Priority::Ward => {
+            OnMidnightPriority::Ward => {
                 for player in PlayerReference::all_players(game){
                     if Self::is_detained(game, player){
-                        player.ward(game);
+                        player.ward(game, midnight_variables, &[]);
                     }
                 }
             }
-            Priority::Roleblock => {
+            OnMidnightPriority::Roleblock => {
                 for player in PlayerReference::all_players(game){
                     if Self::is_detained(game, player){
-                        player.roleblock(game, true);
+                        player.roleblock(game, midnight_variables, true);
                     }
                 }
             }
             _ => {}
         }
-    }
-    pub fn detained<'a>(game: &'a Game)->&'a Detained{
-        &game.detained
-    }
-    pub fn detained_mut<'a>(game: &'a mut Game)->&'a mut Detained{
-        &mut game.detained
     }
 
     pub fn add_detain(game: &mut Game, player: PlayerReference){

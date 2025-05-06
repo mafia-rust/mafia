@@ -3,7 +3,10 @@ use serde::{Deserialize, Serialize};
 use crate::{
     game::{
         chat::ChatMessageVariant, components::{
-            forfeit_vote::ForfeitVote, insider_group::InsiderGroupID, mafia::Mafia, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem
+            forward_messages::ForwardMessages, insider_group::InsiderGroupID,
+            mafia::Mafia, pitchfork::Pitchfork, syndicate_gun_item::SyndicateGunItem,
+            forfeit_vote::ForfeitVote,
+            nomination_controller::NominationController,
         }, 
         event::{
             on_controller_selection_changed::OnControllerSelectionChanged,
@@ -17,7 +20,7 @@ use super::*;
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SavedControllersMap{
-    saved_controllers: VecMap<ControllerID, SavedController>,
+    pub(super) saved_controllers: VecMap<ControllerID, SavedController>,
 }
 
 impl SavedControllersMap{
@@ -45,11 +48,13 @@ impl SavedControllersMap{
             return false;
         }
 
-        OnValidatedAbilityInputReceived::new(actor, ability_input).invoke(game);
-
-        Self::send_selection_message(game, actor, id, incoming_selection);
+        if id.should_send_chat_message() {
+            Self::send_selection_message(game, actor, id, incoming_selection);
+        }
         
         Self::send_saved_controllers_to_clients(game);
+
+        OnValidatedAbilityInputReceived::new(actor, ability_input).invoke(game);
 
         true
     }
@@ -69,26 +74,20 @@ impl SavedControllersMap{
 
     // mutators
     fn update_controllers_from_parameters(game: &mut Game){
-        let mut new_controller_parameters_map = ControllerParametersMap::default();
-
-        for player in PlayerReference::all_players(game) {
-            new_controller_parameters_map.combine_overwrite(player.controller_parameters_map(game));
-        }
-
-        new_controller_parameters_map.combine_overwrite(
-            SyndicateGunItem::controller_parameters_map(game)
-        );
-        new_controller_parameters_map.combine_overwrite(
-            Mafia::controller_parameters_map(game)
-        );
-        new_controller_parameters_map.combine_overwrite(
-            ForfeitVote::controller_parameters_map(game)
-        );
-        new_controller_parameters_map.combine_overwrite(
-            Pitchfork::controller_parameters_map(game)
-        );
-
         let current_controller_parameters = &game.saved_controllers.controller_parameters();
+
+        let new_controller_parameters_map = ControllerParametersMap::combine([
+            ControllerParametersMap::combine(
+                PlayerReference::all_players(game)
+                    .map(|player| player.controller_parameters_map(game))
+            ),
+            NominationController::controller_parameters_map(game),
+            SyndicateGunItem::controller_parameters_map(game),
+            Mafia::controller_parameters_map(game),
+            ForfeitVote::controller_parameters_map(game),
+            Pitchfork::controller_parameters_map(game),
+            ForwardMessages::controller_parameters_map(game)
+        ]);
 
         if *current_controller_parameters != new_controller_parameters_map {
             Self::set_controller_parameters(game, new_controller_parameters_map);
@@ -108,7 +107,7 @@ impl SavedControllersMap{
         };
 
         let mut target_message_sent = false;
-        for insider_group in InsiderGroupID::all_insider_groups_with_player(game, player_ref){
+        for insider_group in InsiderGroupID::all_groups_with_player(game, player_ref){
             game.add_message_to_chat_group( insider_group.get_insider_chat_group(), chat_message.clone());
             target_message_sent = true;
         }
@@ -136,7 +135,7 @@ impl SavedControllersMap{
             let mut kept_old_selection = false;
             
 
-            if let Some(SavedController{selection: old_selection, ..}) = game.saved_controllers.saved_controllers.get(&id) {
+            if let Some(SavedController{selection: old_selection, ..}) = game.saved_controllers.saved_controllers.get(id) {
                 if 
                     controller_parameters.validate_selection(game, old_selection) &&
                     !controller_parameters.dont_save() &&
@@ -171,9 +170,11 @@ impl SavedControllersMap{
         game: &mut Game,
         actor: PlayerReference,
         id: ControllerID,
-        selection: AbilitySelection,
+        selection: impl Into<AbilitySelection>,
         overwrite_gray_out: bool
     )->bool{
+        let selection = selection.into();
+        
         Self::update_controllers_from_parameters(game);
 
         // validate input using available selection
@@ -187,7 +188,7 @@ impl SavedControllersMap{
                 !available_ability_data.validate_selection(game, &selection) ||
                 (!overwrite_gray_out && available_ability_data.grayed_out()) ||
                 !available_ability_data.allowed_players().contains(&actor) ||
-                (*saved_selection == selection && selection != AbilitySelection::new_unit())
+                (*saved_selection == selection && selection != AbilitySelection::Unit(UnitSelection))
             {
                 return false;
             }
@@ -242,129 +243,6 @@ impl SavedControllersMap{
                 .collect()
         )
     }
-
-    pub fn get_controller(&self, id: ControllerID)->Option<&SavedController>{
-        self.saved_controllers.get(&id)
-    }
-
-    pub fn get_controller_current_selection(&self, id: ControllerID)->Option<AbilitySelection>{
-        self
-            .get_controller(id)
-            .map(|saved_controller| saved_controller.selection.clone())
-    }
-
-    // selection type queries
-
-    pub fn get_controller_current_selection_boolean(&self,id: ControllerID)->Option<BooleanSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::Boolean { selection } = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-
-    pub fn get_controller_current_selection_player_list(&self,id: ControllerID)->Option<PlayerListSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::PlayerList { selection } = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-
-    pub fn get_controller_current_selection_two_player_option(&self,id: ControllerID)->Option<TwoPlayerOptionSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::TwoPlayerOption { selection } = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-
-    pub fn get_controller_current_selection_role_option(&self,id: ControllerID)->Option<RoleOptionSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::RoleOption { selection } = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-
-    pub fn get_controller_current_selection_two_role_option(&self,id: ControllerID)->Option<TwoRoleOptionSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::TwoRoleOption { selection } = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-
-    pub fn get_controller_current_selection_two_role_outline_option(&self,id: ControllerID)->Option<TwoRoleOutlineOptionSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::TwoRoleOutlineOption { selection } = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-
-    pub fn get_controller_current_selection_string(&self,id: ControllerID)->Option<StringSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::String { selection } = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-
-    pub fn get_controller_current_selection_integer(&self,id: ControllerID)->Option<IntegerSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::Integer { selection } = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-    
-    pub fn get_controller_current_selection_kira(&self,id: ControllerID)->Option<KiraSelection>{
-        self
-            .get_controller_current_selection(id)
-            .and_then(|selection| 
-                if let AbilitySelection::Kira { selection } = selection {
-                    Some(selection)
-                }else{
-                    None
-                }
-            )
-    }
-    
-    
-    
     // game stuff
     
     pub fn send_saved_controllers_to_clients(game: &Game){

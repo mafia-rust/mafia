@@ -1,4 +1,4 @@
-use std::{ops::DivAssign, time::Duration};
+use std::{ops::Div, time::Duration};
 
 use serde::{Serialize, Deserialize};
 
@@ -7,10 +7,10 @@ use crate::{game::modifiers::{ModifierType, Modifiers}, packet::ToClientPacket};
 use super::{
     chat::{ChatGroup, ChatMessageVariant},
     event::{
-        before_phase_end::BeforePhaseEnd, on_any_death::OnAnyDeath,
-        on_night_priority::OnNightPriority, on_phase_start::OnPhaseStart
+        before_phase_end::BeforePhaseEnd,
+        on_midnight::{OnMidnight, MidnightVariables}, on_phase_start::OnPhaseStart, Event
     },
-    grave::Grave, player::PlayerReference, role::Priority, settings::PhaseTimeSettings, Game
+    grave::Grave, player::PlayerReference, settings::PhaseTimeSettings, Game
 };
 
 
@@ -28,28 +28,41 @@ pub enum PhaseType {
     Night,
     Recess
 }
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum PhaseState {
     Briefing,
-    Obituary,
+    Obituary { 
+        #[serde(skip)]
+        last_night: MidnightVariables
+    },
     Discussion,
     #[serde(rename_all = "camelCase")]
-    Nomination { trials_left: u8, nomination_time_remaining: Duration },
+    Nomination { trials_left: u8, nomination_time_remaining: Option<Duration> },
     #[serde(rename_all = "camelCase")]
-    Testimony { trials_left: u8, player_on_trial: PlayerReference, nomination_time_remaining: Duration },
+    Testimony { trials_left: u8, player_on_trial: PlayerReference, nomination_time_remaining: Option<Duration> },
     #[serde(rename_all = "camelCase")]
-    Judgement { trials_left: u8, player_on_trial: PlayerReference, nomination_time_remaining: Duration },
+    Judgement { trials_left: u8, player_on_trial: PlayerReference, nomination_time_remaining: Option<Duration> },
     #[serde(rename_all = "camelCase")]
     FinalWords { player_on_trial: PlayerReference },
     Dusk,
     Night,
     Recess
 }
+impl PartialOrd for PhaseState{
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl Ord for PhaseState{
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.phase().cmp(&other.phase())
+    }
+}
 
 pub struct PhaseStateMachine {
-    pub time_remaining: Duration,
+    pub time_remaining: Option<Duration>,
     pub current_state: PhaseState,
     pub day_number: u8, // Hopefully nobody is having more than 256 days anyway
 }
@@ -65,11 +78,11 @@ impl PhaseStateMachine {
         }
     }
 
-    pub fn get_time_remaining(&self) -> Duration {
+    pub fn get_time_remaining(&self) -> Option<Duration> {
         self.time_remaining
     }
 
-    pub fn set_time_remaining(&mut self, time: Duration) {
+    pub fn set_time_remaining(&mut self, time: Option<Duration>) {
         self.time_remaining = time;
     }
 
@@ -88,18 +101,18 @@ impl PhaseStateMachine {
         OnPhaseStart::new(game.current_phase().clone()).invoke(game);
     }
 
-    pub fn get_phase_time_length(game: &Game, phase: PhaseType) -> Duration {
+    pub fn get_phase_time_length(game: &Game, phase: PhaseType) -> Option<Duration> {
         let mut time = game.settings.phase_times.get_time_for(phase);
         //if there are less than 3 players alive then the game is sped up by 2x
         if PlayerReference::all_players(game).filter(|p|p.alive(game)).count() <= 3{
-            time /= 2;
+            time = time.map(|o|o.div(2));
         }
 
         if
             phase == PhaseType::Nomination &&
-            Modifiers::modifier_is_enabled(game, ModifierType::ScheduledNominations)
+            !Modifiers::is_enabled(game, ModifierType::UnscheduledNominations)
         {
-            time.div_assign(3);
+            time = time.map(|o|o.div(3));
         }
 
         time
@@ -110,7 +123,7 @@ impl PhaseState {
     pub const fn phase(&self) -> PhaseType {
         match self {
             PhaseState::Briefing => PhaseType::Briefing,
-            PhaseState::Obituary => PhaseType::Obituary,
+            PhaseState::Obituary {..} => PhaseType::Obituary,
             PhaseState::Discussion => PhaseType::Discussion,
             PhaseState::Nomination {..} => PhaseType::Nomination,
             PhaseState::Testimony {..} => PhaseType::Testimony,
@@ -138,25 +151,22 @@ impl PhaseState {
         );
         
         match game.current_phase().clone() {
-            PhaseState::Obituary => {
-
+            PhaseState::Obituary { last_night } => {
                 for player in PlayerReference::all_players(game){
-                    let Some(role_state) = player.night_convert_role_to(game).clone() else {continue};
+                    let Some(role_state) = player.night_convert_role_to(&last_night).clone() else {continue};
                     player.set_role(game, role_state);
                 }
 
-                let mut events = Vec::<OnAnyDeath>::new();
-
                 for player_ref in PlayerReference::all_players(game) {
-                    if player_ref.night_died(game) {
-                        let new_grave = Grave::from_player_night(game, player_ref);
-                        if let Some(event) = player_ref.die_return_event(game, new_grave){
-                            events.push(event);
-                        }
+                    if player_ref.night_died(&last_night) {
+                        game.add_grave(Grave::from_player_night(game, &last_night, player_ref));
                     }
                 }
-
-                events.into_iter().for_each(|f| f.invoke(game));
+                for player_ref in PlayerReference::all_players(game) {
+                    if player_ref.night_died(&last_night) {
+                        player_ref.die(game);
+                    }
+                }
 
                 game.phase_machine.day_number = game.phase_machine.day_number.saturating_add(1);
             },
@@ -167,8 +177,7 @@ impl PhaseState {
                 game.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::TrialInformation { required_votes, trials_left });
                 
 
-                let packet = ToClientPacket::new_player_votes(game);
-                game.send_packet_to_all(packet);
+                game.send_packet_to_all(ToClientPacket::PlayerVotes{votes_for_player: game.create_voted_player_map()});
             },
             PhaseState::Testimony { player_on_trial, .. } => {
                 game.add_message_to_chat_group(ChatGroup::All, 
@@ -180,7 +189,6 @@ impl PhaseState {
                             .collect()
                     }
                 );
-                game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() });
             },
             PhaseState::Briefing 
             | PhaseState::Night
@@ -199,7 +207,7 @@ impl PhaseState {
             PhaseState::Briefing => {
                 Self::Dusk
             },
-            PhaseState::Obituary => {
+            PhaseState::Obituary { .. }=> {
                 Self::Discussion
             },
             PhaseState::Discussion => {
@@ -211,12 +219,9 @@ impl PhaseState {
             PhaseState::Nomination {trials_left, ..} => {
 
 
-                if Modifiers::modifier_is_enabled(game, ModifierType::ScheduledNominations){
+                if !Modifiers::is_enabled(game, ModifierType::UnscheduledNominations){
                     
                     if let Some(player_on_trial) = game.count_nomination_and_start_trial(false){    
-
-                        game.send_packet_to_all(ToClientPacket::PlayerOnTrial { player_index: player_on_trial.index() } );
-    
                         Self::Testimony{
                             trials_left: trials_left.saturating_sub(1), 
                             player_on_trial, 
@@ -260,8 +265,8 @@ impl PhaseState {
                     innocent, guilty 
                 });
 
-                let hang = if Modifiers::modifier_is_enabled(game, ModifierType::TwoThirdsMajority) {
-                    innocent <= 2 * guilty
+                let hang = if Modifiers::is_enabled(game, ModifierType::TwoThirdsMajority) {
+                    innocent <= guilty.div(2)
                 } else {
                     innocent < guilty
                 };
@@ -275,7 +280,7 @@ impl PhaseState {
                 }
             },
             PhaseState::FinalWords { player_on_trial } => {
-                player_on_trial.die(game, Grave::from_player_lynch(game, player_on_trial));
+                player_on_trial.die_and_add_grave(game, Grave::from_player_lynch(game, player_on_trial));
 
                 Self::Dusk
             },
@@ -283,27 +288,7 @@ impl PhaseState {
                 Self::Night
             },
             PhaseState::Night => {
-                for player_ref in PlayerReference::all_players(game){
-                    player_ref.set_night_grave_will(game, player_ref.will(game).clone());
-                }
-
-                for player_ref in PlayerReference::all_players(game){
-                    let visits = player_ref.convert_selection_to_visits(game);
-                    player_ref.set_night_visits(game, visits.clone());
-                }
-
-                for priority in Priority::values(){
-                    OnNightPriority::new(priority).invoke(game);
-                    for player_ref in PlayerReference::all_players(game){
-                        player_ref.do_night_action(game, priority);
-                    }
-                }
-
-                for player_ref in PlayerReference::all_players(game){
-                    player_ref.push_night_messages_to_player(game);
-                }
-
-                Self::Obituary
+                Self::Obituary { last_night: OnMidnight::new().invoke(game) }
             },
             PhaseState::Recess => Self::Recess
         };

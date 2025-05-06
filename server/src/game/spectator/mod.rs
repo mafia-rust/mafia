@@ -13,7 +13,6 @@ pub struct SpectatorInitializeParameters {
 }
 pub struct Spectator {
     pub connection: ClientConnection,
-    pub host: bool,
     pub fast_forward_vote: bool,
 
     pub queued_chat_messages: Vec<ChatMessageVariant>,
@@ -22,14 +21,10 @@ impl Spectator {
     pub fn new(params: SpectatorInitializeParameters) -> Self {
         Self {
             connection: params.connection,
-            host: params.host,
             fast_forward_vote: false,
 
             queued_chat_messages: Vec::new(),
         }
-    }
-    pub fn is_host(&self) -> bool {
-        self.host
     }
     pub fn send_packet(&self, packet: ToClientPacket) {
         self.connection.send_packet(packet);

@@ -14,17 +14,10 @@ import ChatMessage, { translateChatMessage } from "../../../components/ChatMessa
 import GraveComponent, { translateGraveRole } from "../../../components/grave";
 import { ChatMessageSection, ChatTextInput } from "./ChatMenu";
 
-function usePlayerVotedFor(): PlayerIndex | null {
-    return usePlayerState(
-        (playerState, gameState) => gameState.phaseState.type === "nomination" ? playerState.voted ?? null : null,
-        ["phase", "yourVoting"]
-    ) ?? null;
-}
-
 export default function PlayerListMenu(): ReactElement {
     const players = useGameState(
         gameState => gameState.players,
-        ["gamePlayers", "yourButtons", "playerAlive", "yourPlayerTags", "yourRoleLabels", "playerVotes"]
+        ["gamePlayers", "playerAlive", "yourPlayerTags", "yourRoleLabels", "playerVotes"]
     )!
 
     const graves = useGameState(
@@ -39,26 +32,33 @@ export default function PlayerListMenu(): ReactElement {
         <div className="player-list">
             {players
                 .filter(player => player.alive)
-                .map(player => <div key={player.index} className="player-card-holder"><PlayerCard playerIndex={player.index}/></div>)}
+                .map(player => <div key={player.index} className="player-card-holder"><PlayerCard playerIndex={player.index}/></div>)
+            }
 
-            {graves.length === 0 || <>
-                <div className="dead-players-separator">
-                    <StyledText>{translate("grave.icon")} {translate("graveyard")}</StyledText>
-                </div>
-                {graves.map((grave, index) => <div key={grave.player} className="player-card-holder"><PlayerCard graveIndex={index} playerIndex={grave.player}/></div>)}
-            </>}
+            {graves.length === 0 || 
+                <>
+                    <div className="dead-players-separator">
+                        <StyledText>{translate("grave.icon")} {translate("graveyard")}</StyledText>
+                    </div>
+                    {graves.map((grave, index) => <div key={grave.player} className="player-card-holder"><PlayerCard graveIndex={index} playerIndex={grave.player}/></div>)}
+                </>
+            }
+
             {players
                 .filter(
                     player => !player.alive && 
                     graves.find(grave => grave.player === player.index) === undefined
-                ).length === 0 || <>
-                <div className="dead-players-separator">
-                    <StyledText>{translate("grave.icon")} {translate("graveyard")}</StyledText>
-                </div>
-                {players
-                    .filter(player => !player.alive)
-                    .map(player => <div key={player.index} className="player-card-holder"><PlayerCard playerIndex={player.index}/></div>)}
-            </>}
+                ).length === 0 || 
+                <>
+                    <div className="dead-players-separator">
+                        <StyledText>{translate("grave.icon")} {translate("graveyard")}</StyledText>
+                    </div>
+                    {players
+                        .filter(player => !player.alive)
+                        .map(player => <div key={player.index} className="player-card-holder"><PlayerCard playerIndex={player.index}/></div>)
+                    }
+                </>
+            }
         </div>
     </div>
 }
@@ -82,7 +82,7 @@ function PlayerCard(props: Readonly<{
     )!;
     const phaseState = useGameState(
         gameState => gameState.phaseState,
-        ["phase", "playerOnTrial"]
+        ["phase"]
     )!
     const numVoted = useGameState(
         gameState => gameState.players[props.playerIndex].numVoted,
@@ -179,7 +179,6 @@ function PlayerCard(props: Readonly<{
             phaseState.type === "nomination" && playerAlive && 
             <StyledText>{translate("menu.playerList.player.votes", numVoted)}</StyledText>
         }
-        <VoteButton playerIndex={props.playerIndex} />
         {spectator ||
             <Button 
                 disabled={isPlayerSelf || whispersDisabled}
@@ -235,32 +234,6 @@ function PlayerCard(props: Readonly<{
         />}
     </div>}
     </>
-}
-
-function VoteButton(props: Readonly<{
-    playerIndex: PlayerIndex
-}>): ReactElement | null {
-    const playerVotedFor = usePlayerVotedFor();
-
-    const canVote = usePlayerState(
-        (playerState, gameState) => gameState.players[props.playerIndex].buttons.vote,
-        ["yourButtons"],
-        false
-    )!;
-        
-
-    if (canVote) {
-        return <Button 
-            onClick={()=>GAME_MANAGER.sendVotePacket(props.playerIndex)}
-        >{translate("menu.playerList.button.vote")}</Button>
-    } else if (playerVotedFor === props.playerIndex) {
-        return <Button
-            highlighted={true}
-            onClick={() => GAME_MANAGER.sendVotePacket(null)}
-        >{translate("button.clear")}</Button>
-    } else {
-        return null
-    }
 }
 
 function findLast<T>(array: T[], predicate: (e: T, i: number, array: T[])=>boolean): T | undefined {

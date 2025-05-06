@@ -2,29 +2,21 @@ use serde::Serialize;
 
 use crate::game::ability_input::*;
 use crate::game::attack_power::DefensePower;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::grave::GraveInformation;
 use crate::game::player::PlayerReference;
 
 use crate::game::visit::Visit;
 
 use crate::game::Game;
-use crate::vec_set;
 use super::godfather::Godfather;
-use super::{Priority, Role, RoleStateImpl};
+use super::{Role, RoleStateImpl};
 
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Default, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Impostor{
     pub backup: Option<PlayerReference>
-}
-
-impl Default for Impostor {
-    fn default() -> Self {
-        Self {
-            backup: None,
-        }
-    }
 }
 
 
@@ -33,8 +25,8 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Impostor {
     type ClientRoleState = Impostor;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
-        Godfather::night_ability(game, actor_ref, priority);
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
+        Godfather::night_kill_ability(game, midnight_variables, actor_ref, priority);
     }
     fn convert_selection_to_visits(self, game: &Game, actor_ref: PlayerReference) -> Vec<Visit> {
         crate::game::role::common_role::convert_controller_selection_to_visits(
@@ -45,32 +37,26 @@ impl RoleStateImpl for Impostor {
         )
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
-        crate::game::role::common_role::controller_parameters_map_player_list_night_typical(
-            game,
-            actor_ref,
-            false,
-            false,
-            game.day_number() <= 1,
-            ControllerID::role(actor_ref, Role::Impostor, 0)
-        ).combine_overwrite_owned(ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Impostor, 1),
-            AvailableAbilitySelection::new_role_option(
-                Role::values().into_iter()
-                    .map(|role| Some(role))
-                    .collect()
-            ),
-            AbilitySelection::new_role_option(Some(Role::Impostor)),
-            actor_ref.ability_deactivated_from_death(game),
-            None,
-            false,
-            vec_set!(actor_ref)
-        ))
+        ControllerParametersMap::combine([
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Impostor, 0))
+                .single_player_selection_typical(actor_ref, false, false)
+                .night_typical(actor_ref)
+                .add_grayed_out_condition(game.day_number() <= 1)
+                .build_map(),
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Impostor, 1))
+                .single_role_selection_typical(game, |_|true)
+                .default_selection(RoleListSelection(vec!(Role::Impostor)))
+                .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
+                .allow_players([actor_ref])
+                .build_map()
+        ])
     }
     fn on_grave_added(self, game: &mut Game, actor_ref: PlayerReference, grave: crate::game::grave::GraveReference) {
-        let Some(RoleOptionSelection(Some(role))) = game.saved_controllers.get_controller_current_selection_role_option(
-            ControllerID::role(actor_ref, Role::Impostor, 1)
-        )else{return};
+        let Some(RoleListSelection(roles)) = ControllerID::role(actor_ref, Role::Impostor, 1)
+            .get_role_list_selection(game).cloned() else {return};
+        let Some(role) = roles.first().copied() else {return};
         
         
         if grave.deref(game).player == actor_ref {

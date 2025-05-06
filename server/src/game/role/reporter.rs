@@ -2,18 +2,20 @@ use std::collections::HashSet;
 
 use serde::Serialize;
 
+use crate::game::ability_input::{AvailableBooleanSelection, AvailableStringSelection};
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::{ChatGroup, ChatMessageVariant};
 use crate::game::components::insider_group::InsiderGroupID;
+use crate::game::components::silenced::Silenced;
+use crate::game::event::on_midnight::{MidnightVariables, OnMidnightPriority};
 use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 
 
 use crate::game::Game;
-use crate::vec_set;
 use super::{
-    AbilitySelection, AvailableAbilitySelection, ControllerID, ControllerParametersMap,
-    PlayerListSelection, Priority, Role, RoleStateImpl
+    ControllerID, ControllerParametersMap,
+    PlayerListSelection, Role, RoleStateImpl
 };
 
 #[derive(Clone, Debug, Serialize, Default)]
@@ -28,13 +30,13 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for Reporter {
     type ClientRoleState = Reporter;
-    fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority) {
+    fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority) {
         if 
-            priority == Priority::Investigative &&
+            priority == OnMidnightPriority::Investigative &&
             Self::get_public(game, actor_ref) && 
             !actor_ref.ability_deactivated_from_death(game) &&
-            !actor_ref.night_blocked(game) &&
-            !actor_ref.night_silenced(game)
+            !actor_ref.night_blocked(midnight_variables) &&
+            !Silenced::silenced(game, actor_ref)
         {
             game.add_message_to_chat_group(
                 ChatGroup::All, 
@@ -44,46 +46,29 @@ impl RoleStateImpl for Reporter {
     }
     
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
-        ControllerParametersMap::new_controller_fast(
-            game,
-            ControllerID::role(actor_ref, Role::Reporter, 0),
-            AvailableAbilitySelection::new_player_list(
-                PlayerReference::all_players(game)
-                    .filter(|p|p.alive(game) && *p != actor_ref)
-                    .collect(),
-                false,
-                Some(1)
-            ),
-            AbilitySelection::new_player_list(vec![]),
-            actor_ref.ability_deactivated_from_death(game),
-            Some(PhaseType::Night),
-            false,
-            vec_set![actor_ref]
-        ).combine_overwrite_owned(
-            //publicize
-            ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::role(actor_ref, Role::Reporter, 1),
-                AvailableAbilitySelection::new_boolean(),
-                AbilitySelection::new_boolean(false),
-                actor_ref.ability_deactivated_from_death(game),
-                None,
-                false,
-                vec_set![actor_ref]
-            )
-        ).combine_overwrite_owned(
-            //report
-            ControllerParametersMap::new_controller_fast(
-                game,
-                ControllerID::role(actor_ref, Role::Reporter, 2),
-                AvailableAbilitySelection::new_string(),
-                AbilitySelection::new_string(String::new()),
-                actor_ref.ability_deactivated_from_death(game),
-                None,
-                false,
-                vec_set![actor_ref]
-            )
-        )
+        ControllerParametersMap::combine([
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Reporter, 0))
+                .single_player_selection_typical(actor_ref, false, true)
+                .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
+                .reset_on_phase_start(PhaseType::Night)
+                .allow_players([actor_ref])
+                .build_map(),
+            // Publish
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Reporter, 1))
+                .available_selection(AvailableBooleanSelection)
+                .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
+                .allow_players([actor_ref])
+                .build_map(),
+            // Report
+            ControllerParametersMap::builder(game)
+                .id(ControllerID::role(actor_ref, Role::Reporter, 2))
+                .available_selection(AvailableStringSelection)
+                .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
+                .allow_players([actor_ref])
+                .build_map()
+        ])
     }
     fn get_current_send_chat_groups(self,  game: &Game, actor_ref: PlayerReference) -> HashSet<ChatGroup> {
         crate::game::role::common_role::get_current_send_chat_groups(game, actor_ref, 
@@ -112,20 +97,20 @@ impl RoleStateImpl for Reporter {
     fn on_phase_start(mut self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
         match phase {
             PhaseType::Night => {
-                let Some(PlayerListSelection(target)) = game.saved_controllers.get_controller_current_selection_player_list(
-                    ControllerID::role(actor_ref, Role::Reporter, 0)
-                ) else {return};
-                let Some(target) = target.first() else {return};
+                let Some(PlayerListSelection(target)) = ControllerID::role(actor_ref, Role::Reporter, 0)
+                    .get_player_list_selection(game)
+                    else {return};
+                let Some(target) = target.first().copied() else {return};
 
                 if actor_ref.ability_deactivated_from_death(game) || !target.alive(game) {return};
                 
-                self.interviewed_target = Some(*target);
+                self.interviewed_target = Some(target);
                 
                 actor_ref.set_role_state(game, self);
 
                 InsiderGroupID::send_message_in_available_insider_chat_or_private(
                     game,
-                    *target,
+                    target,
                     ChatMessageVariant::PlayerIsBeingInterviewed { player_index: target.index() },
                     true
                 );
@@ -141,13 +126,9 @@ impl RoleStateImpl for Reporter {
 
 impl Reporter{
     fn get_report(game: &Game, actor_ref: PlayerReference)->String{
-        game.saved_controllers.get_controller_current_selection_string(
-            ControllerID::role(actor_ref, Role::Reporter, 2)
-        ).map_or_else(||String::new(), |s|s.0)
+        ControllerID::role(actor_ref, Role::Reporter, 2).get_string_selection(game).map_or_else(String::new, |s|s.0.clone())
     }
     fn get_public(game: &Game, actor_ref: PlayerReference)->bool{
-        game.saved_controllers.get_controller_current_selection_boolean(
-            ControllerID::role(actor_ref, Role::Reporter, 1)
-        ).map_or_else(||false, |b|b.0)
+        ControllerID::role(actor_ref, Role::Reporter, 1).get_boolean_selection(game).is_some_and(|b|b.0)
     }
 }

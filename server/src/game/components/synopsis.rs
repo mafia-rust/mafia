@@ -1,8 +1,10 @@
 use std::cmp::Ordering;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-use crate::game::{game_conclusion::GameConclusion, phase::PhaseType, player::PlayerReference, role::Role, win_condition::WinCondition, Game};
+use crate::game::{game_conclusion::GameConclusion, phase::PhaseType, player::PlayerReference, role::Role, Game};
+
+use super::win_condition::WinCondition;
 
 pub struct SynopsisTracker {
     player_synopses: Vec<PartialPlayerSynopsis>
@@ -25,6 +27,7 @@ impl SynopsisTracker {
                 .enumerate()
                 .map(|(player_index, player_synopsis)|
                     player_synopsis.get(
+                        #[expect(clippy::cast_possible_truncation, reason = "Game can only have 255 players")]
                         unsafe { PlayerReference::new_unchecked(player_index as u8).get_won_game(game) }
                     )
                 ).collect(),
@@ -63,7 +66,7 @@ impl SynopsisTracker {
     }
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Synopsis {
     player_synopses: Vec<PlayerSynopsis>,
@@ -91,7 +94,7 @@ impl Ord for Synopsis {
     }
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PlayerSynopsis {
     crumbs: Vec<SynopsisCrumb>,
@@ -125,7 +128,7 @@ impl PartialPlayerSynopsis {
     }
 }
 
-#[derive(Clone, Debug, Serialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct SynopsisCrumb {
     night: Option<u8>,

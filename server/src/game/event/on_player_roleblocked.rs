@@ -2,6 +2,8 @@ use crate::game::{
     chat::ChatMessageVariant, components::{mafia::Mafia, syndicate_gun_item::SyndicateGunItem}, player::PlayerReference, Game
 };
 
+use super::on_midnight::MidnightVariables;
+
 #[must_use = "Event must be invoked"]
 pub struct OnPlayerRoleblocked{
     player: PlayerReference,
@@ -11,18 +13,18 @@ impl OnPlayerRoleblocked{
     pub fn new(player: PlayerReference, invisible: bool) -> Self{
         Self{player, invisible}
     }
-    pub fn invoke(self, game: &mut Game){
-        self.player.set_night_blocked(game, true);
+    pub fn invoke(self, game: &mut Game, midnight_variables: &mut MidnightVariables){
+        self.player.set_night_blocked(midnight_variables, true);
         if !self.invisible {
-            self.player.push_night_message(game,
+            self.player.push_night_message(midnight_variables,
                 ChatMessageVariant::RoleBlocked
             );
         }
         
         for player_ref in PlayerReference::all_players(game){
-            player_ref.on_player_roleblocked(game, self.player, self.invisible);
+            player_ref.on_player_roleblocked(game, midnight_variables, self.player, self.invisible);
         }
-        Mafia::on_player_roleblocked(game, self.player);
-        SyndicateGunItem::on_player_roleblocked(game, self.player);
+        Mafia::on_player_roleblocked(game, midnight_variables, self.player);
+        SyndicateGunItem::on_player_roleblocked(game, midnight_variables, self.player);
     }
 }

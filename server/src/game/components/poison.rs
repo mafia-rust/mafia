@@ -1,7 +1,7 @@
 use crate::{game::{
     attack_power::AttackPower, chat::ChatMessageVariant,
-    grave::GraveKiller, player::PlayerReference,
-    role::Priority, Game
+    event::on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority},
+    grave::GraveKiller, player::PlayerReference, Game,
 }, vec_set::VecSet};
 
 impl Game {
@@ -44,7 +44,7 @@ impl PlayerPoison{
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Eq)]
 pub enum PoisonAlert {
     NoAlert,
     Alert
@@ -52,8 +52,10 @@ pub enum PoisonAlert {
 
 impl Poison{
     /// run this at night
+    #[expect(clippy::too_many_arguments, reason = "This will be addressed in a future PR")]
     pub fn poison_player(
         game: &mut Game,
+        midnight_variables: &mut MidnightVariables,
         player: PlayerReference,
         attack_power: AttackPower,
         grave_killer: GraveKiller,
@@ -68,28 +70,29 @@ impl Poison{
 
         if alert == PoisonAlert::Alert {
             for poison in poison.poisons.iter(){
-                poison.player.push_night_message(game, ChatMessageVariant::YouArePoisoned);
+                poison.player.push_night_message(midnight_variables, ChatMessageVariant::YouArePoisoned);
             }
         }
 
         game.set_poison(poison);
     }
-    pub fn on_night_priority(game: &mut Game, priority: Priority){
-        if priority != Priority::Kill{ return; }
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, midnight_variables: &mut MidnightVariables, priority: OnMidnightPriority){
+        if priority != OnMidnightPriority::Kill{ return; }
 
         let mut poison = game.poison().clone();
 
         for poison in poison.poisons.iter_mut(){
-            Self::attack_poisoned_player(game, poison.clone());
+            Self::attack_poisoned_player(game, midnight_variables, poison.clone());
         }
         poison.poisons.clear();
         
         game.set_poison(poison);
     }
-    fn attack_poisoned_player(game: &mut Game, poison: PlayerPoison){
+    fn attack_poisoned_player(game: &mut Game, midnight_variables: &mut MidnightVariables, poison: PlayerPoison){
         poison.player.try_night_kill(
             &poison.attackers,
             game,
+            midnight_variables,
             poison.grave_killer,
             poison.attack_power,
             poison.leave_death_note

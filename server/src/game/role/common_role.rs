@@ -1,138 +1,83 @@
 use std::collections::HashSet;
 
-use crate::{game::{
+use crate::game::{
     ability_input::*,
     chat::ChatGroup,
     components::{
         detained::Detained,
-        puppeteer_marionette::PuppeteerMarionette
+        puppeteer_marionette::PuppeteerMarionette, silenced::Silenced, win_condition::WinCondition
     },
     game_conclusion::GameConclusion,
     modifiers::{ModifierType, Modifiers},
     phase::{PhaseState, PhaseType}, player::PlayerReference,
-    role_list::RoleSet, visit::Visit, win_condition::WinCondition,
+    role_list::RoleSet, visit::{Visit, VisitTag},
     Game
-}, vec_set};
+};
 
 use super::{medium::Medium, reporter::Reporter, warden::Warden, InsiderGroupID, Role, RoleState};
 
-pub fn controller_parameters_map_player_list_night_typical(
-    game: &Game,
-    actor_ref: PlayerReference,
-    can_select_self: bool,
-    can_select_insiders: bool,
-    grayed_out: bool,
-    ability_id: ControllerID,
-) -> ControllerParametersMap {
-    
-    let grayed_out = 
-        actor_ref.ability_deactivated_from_death(game) ||
-        Detained::is_detained(game, actor_ref) ||
-        grayed_out;
-
-    ControllerParametersMap::new_controller_fast(
-        game,
-        ability_id,
-        AvailableAbilitySelection::new_player_list(
-            PlayerReference::all_players(game)
-                .into_iter()
-                .filter(|player|
-                    if !player.alive(game){
-                        false
-                    }else if *player == actor_ref{
-                        can_select_self
-                    }else if InsiderGroupID::in_same_revealed_group(game, actor_ref, *player){
-                        can_select_insiders
-                    }else{
-                        true
-                    }
-
-                )
-                .collect(),
-                false,
-                Some(1)
-            ),
-        AbilitySelection::new_player_list(Vec::new()),
-        grayed_out,
-        Some(PhaseType::Obituary),
-        false,
-        vec_set!(actor_ref)
-    )
-}
-
-pub fn controller_parameters_map_boolean(
-    game: &Game,
-    actor_ref: PlayerReference,
-    grayed_out: bool,
-    ability_id: ControllerID,
-) -> ControllerParametersMap {
-    let grayed_out = 
-        actor_ref.ability_deactivated_from_death(game) || 
-        Detained::is_detained(game, actor_ref) ||
-        grayed_out;
-
-    ControllerParametersMap::new_controller_fast(
-        game,
-        ability_id,
-        AvailableAbilitySelection::Boolean,
-        AbilitySelection::new_boolean(false),
-        grayed_out,
-        Some(PhaseType::Obituary),
-        false,
-        vec_set!(actor_ref)
-    )
-}
-
 
 /// This function uses defaults. When using this function, consider if you need to override the defaults.
-pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: PlayerReference, ability_id: ControllerID, attack: bool) -> Vec<Visit> {
+/// Defaults to VisitTag::Role { role: actor_ref.role(game), id: 0 }
+pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: PlayerReference, controller_id: ControllerID, attack: bool) -> Vec<Visit> {
+    convert_controller_selection_to_visits_visit_tag(game, actor_ref, controller_id, attack, VisitTag::Role { role: actor_ref.role(game), id: 0 })
+}
+
+pub(super) fn convert_controller_selection_to_visits_visit_tag(game: &Game, actor_ref: PlayerReference, controller_id: ControllerID, attack: bool, tag: VisitTag) -> Vec<Visit> {
     
-    let Some(selection) = game.saved_controllers.get_controller_current_selection(ability_id) else {return Vec::new()};
-    
+    let Some(selection) = controller_id.get_selection(game) else {return Vec::new()};
+
     match selection {
-        AbilitySelection::Unit => vec![Visit::new_none(actor_ref, actor_ref, attack)],
-        AbilitySelection::TwoPlayerOption { selection } => {
+        AbilitySelection::Unit(_) => vec![Visit::new(actor_ref, actor_ref, attack, tag)],
+        AbilitySelection::TwoPlayerOption(selection) => {
             if let Some((target_1, target_2)) = selection.0 {
-                vec![Visit::new_none(actor_ref, target_1, attack), Visit::new_none(actor_ref, target_2, attack)]
+                vec![Visit::new(actor_ref, target_1, attack, tag), Visit::new(actor_ref, target_2, attack, tag)]
             }else{
                 vec![]
             }
         },
-        AbilitySelection::PlayerList { selection } => {
+        AbilitySelection::PlayerList(selection) => {
             selection.0
                 .iter()
-                .map(|target_ref| Visit::new_none(actor_ref, *target_ref, attack))
+                .map(|target_ref| Visit::new(actor_ref, *target_ref, attack, tag))
                 .collect()
         }
-        AbilitySelection::RoleOption { selection } => {
+        AbilitySelection::RoleList(selection) => {
+            selection.0
+                .iter()
+                .flat_map(|role|
+                    PlayerReference::all_players(game)
+                        .filter_map(|player|
+                            if player.role(game) == *role {
+                                Some(Visit::new(actor_ref, player, attack, tag))
+                            }else{
+                                None
+                            }
+                        )
+                )
+                .collect()
+        }
+        AbilitySelection::TwoRoleOption(selection) => {
             let mut out = Vec::new();
             for player in PlayerReference::all_players(game){
                 if Some(player.role(game)) == selection.0 {
-                    out.push(Visit::new_none(actor_ref, player, attack));
+                    out.push(Visit::new(actor_ref, player, attack, tag));
+                }
+                if Some(player.role(game)) == selection.1 {
+                    out.push(Visit::new(actor_ref, player, attack, tag));
                 }
             }
             out
         }
-        AbilitySelection::TwoRoleOption { selection } => {
-            let mut out = Vec::new();
-            for player in PlayerReference::all_players(game){
-                if Some(player.role(game)) == selection.0 {
-                    out.push(Visit::new_none(actor_ref, player, attack));
-                }else if Some(player.role(game)) == selection.1 {
-                    out.push(Visit::new_none(actor_ref, player, attack));
-                }
-            }
-            out
-        }
-        AbilitySelection::TwoRoleOutlineOption { selection } => {
+        AbilitySelection::TwoRoleOutlineOption(selection) => {
             let mut out = vec![];
             if let Some(chosen_outline) = selection.0{
                 let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-                out.push(Visit::new_none(actor_ref, player, false));
+                out.push(Visit::new(actor_ref, player, false, tag));
             }
             if let Some(chosen_outline) = selection.1{
                 let (_, player) = chosen_outline.deref_as_role_and_player_originally_generated(game);
-                out.push(Visit::new_none(actor_ref, player, false));
+                out.push(Visit::new(actor_ref, player, false, tag));
             }
             out
         },
@@ -140,36 +85,54 @@ pub(super) fn convert_controller_selection_to_visits(game: &Game, actor_ref: Pla
     }
 }
 
+pub(super) fn convert_controller_selection_to_visits_possession(game: &Game, actor_ref: PlayerReference, controller_id: ControllerID) -> Vec<Visit> {
+    let Some(selection) = controller_id.get_selection(game) else {return Vec::new()};
+
+    if let AbilitySelection::TwoPlayerOption(selection) = selection {
+        if let Some((target_1, target_2)) = selection.0 {
+            vec![Visit::new(actor_ref, target_1, false, VisitTag::Role { role: actor_ref.role(game), id: 0 }), Visit::new(actor_ref, target_2, false, VisitTag::Role { role: actor_ref.role(game), id: 1 })]
+        }else{
+            vec![]
+        }
+    }else{
+        vec![]
+    }
+}
+
+
+
+
+
 pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReference, mut night_chat_groups: Vec<ChatGroup>) -> HashSet<ChatGroup> {
     if game.current_phase().phase() == PhaseType::Recess {
         return vec![ChatGroup::All].into_iter().collect()
     }
     if 
         !actor_ref.alive(game) && 
-        !Modifiers::modifier_is_enabled(game, ModifierType::DeadCanChat)
+        !Modifiers::is_enabled(game, ModifierType::DeadCanChat)
     {
         if PuppeteerMarionette::marionettes_and_puppeteer(game).contains(&actor_ref){
             return vec![ChatGroup::Dead, ChatGroup::Puppeteer].into_iter().collect();
         }
         return vec![ChatGroup::Dead].into_iter().collect();
     }
-    if actor_ref.night_silenced(game){
+    if Silenced::silenced(game, actor_ref) {
         return HashSet::new();
     }
 
     match game.current_phase() {
         PhaseState::Briefing => HashSet::new(),
-        PhaseState::Obituary => {
+        PhaseState::Obituary { .. } => {
             let mut out = HashSet::new();
 
             //evil chat groups
-            if InsiderGroupID::Puppeteer.is_player_in_revealed_group(game, actor_ref) {
+            if InsiderGroupID::Puppeteer.contains_player(game, actor_ref) {
                 out.insert(ChatGroup::Puppeteer);
             }
-            if InsiderGroupID::Cult.is_player_in_revealed_group(game, actor_ref) {
+            if InsiderGroupID::Cult.contains_player(game, actor_ref) {
                 out.insert(ChatGroup::Cult);
             }
-            if InsiderGroupID::Mafia.is_player_in_revealed_group(game, actor_ref) {
+            if InsiderGroupID::Mafia.contains_player(game, actor_ref) {
                 out.insert(ChatGroup::Mafia);
             }
 
@@ -264,13 +227,13 @@ pub(super) fn get_current_send_chat_groups(game: &Game, actor_ref: PlayerReferen
             ) {
                 vec![ChatGroup::Kidnapped]
             }else{
-                if InsiderGroupID::Puppeteer.is_player_in_revealed_group(game, actor_ref){
+                if InsiderGroupID::Puppeteer.contains_player(game, actor_ref){
                     night_chat_groups.push(ChatGroup::Puppeteer);
                 }
-                if InsiderGroupID::Mafia.is_player_in_revealed_group(game, actor_ref){
+                if InsiderGroupID::Mafia.contains_player(game, actor_ref){
                     night_chat_groups.push(ChatGroup::Mafia);
                 }
-                if InsiderGroupID::Cult.is_player_in_revealed_group(game, actor_ref){
+                if InsiderGroupID::Cult.contains_player(game, actor_ref){
                     night_chat_groups.push(ChatGroup::Cult);
                 }
                 night_chat_groups
@@ -291,13 +254,13 @@ pub(super) fn get_current_receive_chat_groups(game: &Game, actor_ref: PlayerRefe
         out.push(ChatGroup::Dead);
     }
 
-    if InsiderGroupID::Mafia.is_player_in_revealed_group(game, actor_ref) {
+    if InsiderGroupID::Mafia.contains_player(game, actor_ref) {
         out.push(ChatGroup::Mafia);
     }
-    if InsiderGroupID::Cult.is_player_in_revealed_group(game, actor_ref) {
+    if InsiderGroupID::Cult.contains_player(game, actor_ref) {
         out.push(ChatGroup::Cult);
     }
-    if InsiderGroupID::Puppeteer.is_player_in_revealed_group(game, actor_ref){
+    if InsiderGroupID::Puppeteer.contains_player(game, actor_ref){
         out.push(ChatGroup::Puppeteer);
     }
 

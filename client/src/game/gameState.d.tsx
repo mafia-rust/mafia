@@ -40,8 +40,21 @@ export type LobbyState = {
 }
 export type LobbyClient = {
     ready: "host" | "ready" | "notReady",
-    connection: "connected" | "disconnected" | "couldReconnect",
+    connection: ClientConnection,
     clientType: LobbyClientType
+}
+export type ClientConnection = "connected" | "disconnected" | "couldReconnect";
+export type GameClient = {
+    clientType: GameClientType,
+    connection: ClientConnection,
+    host: boolean,
+}
+export type GameClientType = {
+    type: "spectator",
+    index: number
+} | {
+    type: "player",
+    index: number,
 }
 export type LobbyClientType = {
     type: "spectator"
@@ -65,7 +78,7 @@ type GameState = {
     players: Player[],
     
     phaseState: PhaseState,
-    timeLeftMs: number,
+    timeLeftMs: number | null,
     dayNumber: number,
 
     fastForward: boolean,
@@ -78,7 +91,9 @@ type GameState = {
     ticking: boolean,
 
     clientState: PlayerGameState | {type: "spectator"},
-    host: boolean,
+    host: null | {
+        clients: ListMap<LobbyClientID, GameClient>
+    },
 
     missedChatMessages: boolean
 }
@@ -96,8 +111,6 @@ export type PlayerGameState = {
     crossedOutOutlines: number[],
     chatFilter: ChatFilter,
     deathNote: string,
-    targets: PlayerIndex[],
-    voted: PlayerIndex | null,
     judgement: Verdict,
 
     savedControllers: ListMapData<ControllerID, SavedController>,
@@ -136,9 +149,9 @@ export type ChatGroup = "all" | "dead" | "mafia" | "cult" | "jail" | "kidnapper"
 export type InsiderGroup = (typeof INSIDER_GROUPS)[number];
 export const INSIDER_GROUPS = ["mafia", "cult", "puppeteer"] as const;
 export type PhaseTimes = Record<Exclude<PhaseType, "recess">, number>;
+export type DefensePower = "none"|"armored"|"protected"|"invincible";
 
 export type Tag = 
-    "disguise" |
     "syndicateGun" |
     "godfatherBackup" |
     "werewolfTracked" |
@@ -146,30 +159,26 @@ export type Tag =
     "revolutionaryTarget" |
     "morticianTagged" |
     "puppeteerMarionette" |
-    "loveLinked" |
     "frame" |
     "forfeitVote" |
     "spiraling";
 
 export const MODIFIERS = [
-    "obscuredGraves", "randomLoveLinks",
+    "obscuredGraves",
     "skipDay1",
-    "deadCanChat", "noAbstaining",
+    "deadCanChat", "abstaining",
     "noDeathCause",
     "roleSetGraveKillers", "autoGuilty", 
     "twoThirdsMajority", "noTrialPhases", 
     "noWhispers", "hiddenWhispers",
     "noNightChat", "noChat", 
-    "scheduledNominations"
+    "unscheduledNominations"
 ] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 
 export type Player = {
     name: string,
-    index: number
-    buttons: {
-        vote: boolean,
-    },
+    index: number,
     numVoted: number,
     alive: boolean,
     roleLabel: Role | null,

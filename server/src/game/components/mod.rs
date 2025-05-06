@@ -1,8 +1,6 @@
 pub mod mafia;
 pub mod cult;
-pub mod arsonist_doused;
 pub mod puppeteer_marionette;
-pub mod love_linked;
 pub mod verdicts_today;
 pub mod mafia_recruits;
 pub mod pitchfork;
@@ -16,3 +14,14 @@ pub mod night_visits;
 pub mod syndicate_gun_item;
 pub mod synopsis;
 pub mod dead_can_still_play_message;
+pub mod nomination_controller;
+pub mod forward_messages;
+pub mod silenced;
+pub mod tags;
+pub mod enfranchise;
+pub mod guard;
+pub mod fragile_vest;
+pub mod transport;
+pub mod win_condition;
+
+pub mod player_component;

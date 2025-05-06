@@ -3,9 +3,9 @@ use std::time::Duration;
 use crate::{
     client_connection::ClientConnection, 
     game::{
-        available_buttons::AvailableButtons, chat::ChatMessageVariant, components::insider_group::InsiderGroupID, phase::PhaseState, Game, GameOverReason
+        chat::ChatMessageVariant, components::{insider_group::InsiderGroups, tags::Tags},
+        Game, GameOverReason
     },
-    lobby::GAME_DISCONNECT_TIMER_SECS,
     packet::ToClientPacket, websocket_connections::connection::ClientSender
 };
 
@@ -17,7 +17,7 @@ impl PlayerReference{
         self.send_join_game_data(game);
     }
     pub fn lose_connection(&self, game: &mut Game){
-        self.deref_mut(game).connection = ClientConnection::CouldReconnect { disconnect_timer: Duration::from_secs(GAME_DISCONNECT_TIMER_SECS) };
+        self.deref_mut(game).connection = ClientConnection::CouldReconnect { disconnect_timer: Duration::from_secs(Game::DISCONNECT_TIMER_SECS as u64) };
     }
     pub fn quit(&self, game: &mut Game) {
         self.deref_mut(game).connection = ClientConnection::Disconnected;
@@ -52,7 +52,6 @@ impl PlayerReference{
     }
     pub fn send_repeating_data(&self, game: &mut Game){
         self.send_chat_messages(game);
-        self.send_available_buttons(game);
     }
     pub fn send_join_game_data(&self, game: &mut Game){
         // General
@@ -74,15 +73,8 @@ impl PlayerReference{
             self.send_packet(game, ToClientPacket::GameOver { reason: GameOverReason::Draw })
         }
 
-        if let PhaseState::Testimony { player_on_trial, .. }
-            | PhaseState::Judgement { player_on_trial, .. }
-            | PhaseState::FinalWords { player_on_trial } = game.current_phase() {
-            self.send_packet(game, ToClientPacket::PlayerOnTrial{
-                player_index: player_on_trial.index()
-            });
-        }
-        let votes_packet = ToClientPacket::new_player_votes(game);
-        self.send_packet(game, votes_packet);
+
+        self.send_packet(game, ToClientPacket::PlayerVotes{votes_for_player: game.create_voted_player_map()});
         for grave in game.graves.iter(){
             self.send_packet(game, ToClientPacket::AddGrave { grave: grave.clone() });
         }
@@ -90,9 +82,9 @@ impl PlayerReference{
         // Player specific
         self.requeue_chat_messages(game);
         self.send_chat_messages(game);
-        self.send_available_buttons(game);
-        InsiderGroupID::send_player_insider_groups(game, *self);
-        InsiderGroupID::send_fellow_insiders(game, *self);
+        InsiderGroups::send_player_insider_groups_packet(game, *self);
+        InsiderGroups::send_fellow_insiders_packets(game, *self);
+        Tags::send_to_client(game, *self);
 
         self.send_packets(game, vec![
             ToClientPacket::YourSendChatGroups {
@@ -105,19 +97,13 @@ impl PlayerReference{
                 role_state: self.role_state(game).clone().get_client_role_state(game, *self)
             },
             ToClientPacket::YourRoleLabels { 
-                role_labels: PlayerReference::ref_vec_map_to_index(self.role_label_map(game)) 
-            },
-            ToClientPacket::YourPlayerTags { 
-                player_tags: PlayerReference::ref_vec_map_to_index(self.player_tags(game).clone())
+                role_labels: PlayerReference::ref_vec_map_to_index(self.revealed_players_map(game)) 
             },
             ToClientPacket::YourJudgement{
                 verdict: self.verdict(game)
             },
             ToClientPacket::YourAllowedControllers { 
                 save: game.saved_controllers.controllers_allowed_to_player(*self).all_controllers().clone(),
-            },
-            ToClientPacket::YourVoting{ 
-                player_index: PlayerReference::ref_option_to_index(&self.chosen_vote(game))
             },
             ToClientPacket::YourWill{
                 will: self.will(game).clone()
@@ -128,14 +114,11 @@ impl PlayerReference{
             ToClientPacket::YourCrossedOutOutlines{
                 crossed_out_outlines: self.crossed_out_outlines(game).clone()
             },
-            ToClientPacket::YourButtons{
-                buttons: AvailableButtons::from_player(game, *self)
-            },
             ToClientPacket::Phase { 
                 phase: game.current_phase().clone(),
                 day_number: game.phase_machine.day_number 
             },
-            ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.as_secs() },
+            ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.map(|o|o.as_secs().try_into().expect("Phase time should be below 18 hours")) },
             ToClientPacket::GameInitializationComplete
         ]);
     }
@@ -164,20 +147,9 @@ impl PlayerReference{
 
         self.send_chat_messages(game);
     }
-    #[allow(unused)]
+    #[expect(clippy::assigning_clones, reason = "Reference rules prevents this")]
     fn requeue_chat_messages(&self, game: &mut Game){
         self.deref_mut(game).queued_chat_messages = self.deref(game).chat_messages.clone();
-    }   
-
-    fn send_available_buttons(&self, game: &mut Game){
-        let new_buttons = AvailableButtons::from_player(game, *self);
-        if new_buttons == self.deref(game).last_sent_buttons{
-            return;
-        }
-        
-        self.send_packet(game, ToClientPacket::YourButtons { buttons: new_buttons.clone() });
-        self.deref_mut(game).last_sent_buttons = new_buttons
     }
-
 }
 

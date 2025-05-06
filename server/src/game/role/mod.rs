@@ -1,8 +1,7 @@
-#![allow(clippy::single_match)]
-#![allow(clippy::get_first)]
+#![allow(clippy::single_match, reason = "May add more cases for more priorities later")]
 
 use std::collections::HashSet;
-use crate::vec_set::VecSet;
+use crate::vec_set::{vec_set, VecSet};
 
 use crate::game::player::PlayerReference;
 use crate::game::visit::Visit;
@@ -13,8 +12,11 @@ use crate::game::attack_power::DefensePower;
 
 use serde::{Serialize, Deserialize};
 
+use super::components::win_condition::WinCondition;
 use super::{
-    ability_input::*, components::{insider_group::InsiderGroupID, night_visits::NightVisits}, grave::GraveReference, visit::VisitTag, win_condition::WinCondition
+    ability_input::*, components::{insider_group::InsiderGroupID, night_visits::NightVisits},
+    event::{on_midnight::{MidnightVariables, OnMidnightPriority}, on_whisper::{OnWhisper, WhisperFold, WhisperPriority}},
+    grave::GraveReference, visit::VisitTag,
 };
 
 pub trait GetClientRoleState<CRS> {
@@ -29,7 +31,7 @@ impl<T> GetClientRoleState<T> for T {
 
 pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<<Self as RoleStateImpl>::ClientRoleState> {
     type ClientRoleState: Clone + std::fmt::Debug + Serialize;
-    fn do_night_action(self, _game: &mut Game, _actor_ref: PlayerReference, _priority: Priority) {}
+    fn on_midnight(self, _game: &mut Game, _midnight_variables: &mut MidnightVariables, _actor_ref: PlayerReference, _priority: OnMidnightPriority) {}
 
     fn controller_parameters_map(self, _game: &Game, _actor_ref: PlayerReference) -> ControllerParametersMap {
         ControllerParametersMap::default()
@@ -67,20 +69,22 @@ pub trait RoleStateImpl: Clone + std::fmt::Debug + Default + GetClientRoleState<
     fn on_game_ending(self, _game: &mut Game, _actor_ref: PlayerReference) {}
     fn on_game_start(self, _game: &mut Game, _actor_ref: PlayerReference) {}
     fn before_initial_role_creation(self, _game: &mut Game, _actor_ref: PlayerReference) {}
-    fn on_player_roleblocked(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, _invisible: bool) {
+    fn on_conceal_role(self, _game: &mut Game, _actor_ref: PlayerReference, _player: PlayerReference, _concealed_player: PlayerReference) {}
+    fn on_player_roleblocked(self, _game: &mut Game, midnight_machinations: &mut MidnightVariables, actor_ref: PlayerReference, player: PlayerReference, _invisible: bool) {
         if player != actor_ref {return}
 
-        NightVisits::retain(game, |v|
-            v.tag != VisitTag::Role || v.visitor != actor_ref
+        NightVisits::retain(midnight_machinations, |v|
+            !matches!(v.tag, VisitTag::Role{..}) || v.visitor != actor_ref
         );
     }
-    fn on_visit_wardblocked(self, game: &mut Game, actor_ref: PlayerReference, visit: Visit) {
+    fn on_visit_wardblocked(self, _game: &mut Game, midnight_machinations: &mut MidnightVariables, actor_ref: PlayerReference, visit: Visit) {
         if actor_ref != visit.visitor {return};
 
-        NightVisits::retain(game, |v|
-            v.tag != VisitTag::Role || v.visitor != actor_ref
+        NightVisits::retain(midnight_machinations, |v|
+            !matches!(v.tag, VisitTag::Role{..}) || v.visitor != actor_ref
         );
     }
+    fn on_whisper(self, _game: &mut Game, _actor_ref: PlayerReference, _event: &OnWhisper, _fold: &mut WhisperFold, _priority: WhisperPriority) {}
 }
 
 // Creates the Role enum
@@ -120,7 +124,9 @@ macros::roles! {
     Reporter : reporter,
     Mayor : mayor,
     Transporter : transporter,
+    Porter : porter,
     Coxswain : coxswain,
+    Polymath : polymath,
 
     // Mafia
     Godfather : godfather,
@@ -143,7 +149,6 @@ macros::roles! {
     Disguiser : disguiser,
     Forger : forger,
     Reeducator : reeducator,
-    Cupid : cupid,
     Ambusher : ambusher,
     MafiaSupportWildcard: mafia_support_wildcard,
 
@@ -181,32 +186,6 @@ macros::roles! {
     Zealot : zealot
 }
 
-macros::priorities! {
-    TopPriority,
-    Ward,
-
-    Transporter,
-    Warper,
-
-    Possess,
-    Roleblock,
-
-    Deception,
-
-    Bodyguard,
-
-    Heal,
-    Kill,
-    Convert,    //role swap & win condition change
-    Poison,
-    Investigative,
-
-    Cupid,
-    SpyBug,
-
-    StealMessages
-}
-
 pub(crate) mod common_role;
 
 mod macros {
@@ -223,8 +202,8 @@ mod macros {
                 $($name),*
             }
             impl Role {
-                pub fn values() -> Vec<Role> {
-                    return vec![$(Role::$name),*];
+                pub fn values() -> VecSet<Role> {
+                    return vec_set![$(Role::$name),*];
                 }
                 pub fn default_state(&self) -> RoleState {
                     match self {
@@ -267,19 +246,19 @@ mod macros {
                     }
                 }
                 
-                pub fn on_player_roleblocked(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, invisible: bool){
+                pub fn on_player_roleblocked(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, player: PlayerReference, invisible: bool){
                     match self {
-                        $(Self::$name(role_struct) => role_struct.on_player_roleblocked(game, actor_ref, player, invisible)),*
+                        $(Self::$name(role_struct) => role_struct.on_player_roleblocked(game, midnight_variables, actor_ref, player, invisible)),*
                     }
                 }
-                pub fn on_visit_wardblocked(self, game: &mut Game, actor_ref: PlayerReference, visit: Visit) {
+                pub fn on_visit_wardblocked(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, visit: Visit) {
                     match self {
-                        $(Self::$name(role_struct) => role_struct.on_visit_wardblocked(game, actor_ref, visit)),*
+                        $(Self::$name(role_struct) => role_struct.on_visit_wardblocked(game, midnight_variables, actor_ref, visit)),*
                     }
                 }
-                pub fn do_night_action(self, game: &mut Game, actor_ref: PlayerReference, priority: Priority){
+                pub fn on_midnight(self, game: &mut Game, midnight_variables: &mut MidnightVariables, actor_ref: PlayerReference, priority: OnMidnightPriority){
                     match self {
-                        $(Self::$name(role_struct) => role_struct.do_night_action(game, actor_ref, priority)),*
+                        $(Self::$name(role_struct) => role_struct.on_midnight(game, midnight_variables, actor_ref, priority)),*
                     }
                 }
                 pub fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> ControllerParametersMap {
@@ -332,6 +311,11 @@ mod macros {
                         $(Self::$name(role_struct) => role_struct.on_phase_start(game, actor_ref, phase)),*
                     }
                 }
+                pub fn on_conceal_role(self, game: &mut Game, actor_ref: PlayerReference, player: PlayerReference, concealed_player: PlayerReference){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_conceal_role(game, actor_ref, player, concealed_player)),*
+                    }
+                }
                 pub fn on_role_creation(self, game: &mut Game, actor_ref: PlayerReference){
                     match self {
                         $(Self::$name(role_struct) => role_struct.on_role_creation(game, actor_ref)),*
@@ -372,6 +356,11 @@ mod macros {
                         $(Self::$name(role_struct) => ClientRoleStateEnum::$name(role_struct.get_client_role_state(game, actor_ref))),*
                     }
                 }
+                pub fn on_whisper(self, game: &mut Game, actor_ref: PlayerReference, event: &OnWhisper, fold: &mut WhisperFold, priority: WhisperPriority){
+                    match self {
+                        $(Self::$name(role_struct) => role_struct.on_whisper(game, actor_ref, event, fold, priority)),*
+                    }
+                }
             }
             $(
                 impl From<$file::$name> for RoleState where $name: RoleStateImpl {
@@ -382,37 +371,17 @@ mod macros {
             )*
         }
     }
-
-    macro_rules! priorities {
-        (
-            $($name:ident),*
-        )=>{
-            #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-            #[serde(rename_all = "camelCase")]
-            pub enum Priority {
-                $($name,)*
-            }
-            impl Priority {
-                pub fn values() -> Vec<Self> {
-                    return vec![$(Self::$name),*];
-                }
-            }
-        }
-    }
-
-    pub(super) use {roles, priorities};
+    pub(super) use roles;
 }
-#[allow(clippy::match_like_matches_macro)]
 impl Role{
     pub fn possession_immune(&self)->bool{
-        match self {
+        matches!(self, 
             | Role::Bouncer
             | Role::Veteran | Role::Coxswain
             | Role::Transporter | Role::Retributionist
-            | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper
-            | Role::MafiaWitch | Role::Necromancer => true,
-            _ => false,
-        }
+            | Role::Witch | Role::Doomsayer | Role::Scarecrow | Role::Warper | Role::Porter
+            | Role::MafiaWitch | Role::Necromancer 
+        )
     }
     pub fn has_innocent_aura(&self, game: &Game)->bool{
         match self {

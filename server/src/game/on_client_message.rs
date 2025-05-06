@@ -1,55 +1,127 @@
-use crate::{log, packet::ToServerPacket, strings::TidyableString};
+use crate::{lobby::{lobby_client::LobbyClient, Lobby}, log, packet::{ToClientPacket, ToServerPacket}, room::{RemoveRoomClientResult, RoomClientID, RoomState}, strings::TidyableString, vec_map::VecMap, websocket_connections::connection::ClientSender};
 
 use super::{
-    chat::{ChatGroup, ChatMessageVariant, MessageSender}, event::on_fast_forward::OnFastForward, modifiers::{ModifierType, Modifiers}, phase::{PhaseState, PhaseType}, player::{PlayerIndex, PlayerReference}, role::{
-        mayor::Mayor, politician::Politician,
+    chat::{ChatGroup, ChatMessageVariant, MessageSender}, event::{on_fast_forward::OnFastForward, on_game_ending::OnGameEnding, on_whisper::OnWhisper, Event}, game_client::GameClientLocation, game_conclusion::GameConclusion, phase::PhaseType, player::PlayerReference, role::{
         Role, RoleState
-    }, spectator::spectator_pointer::{SpectatorIndex, SpectatorPointer}, Game
+    }, spectator::spectator_pointer::SpectatorPointer, Game
 };
 
 
 
+pub enum GameClientMessageResult {
+    BackToLobby(Lobby),
+    Close,
+    None
+}
 
 impl Game {
-    pub fn on_spectator_message(&mut self, sender_index: SpectatorIndex, incoming_packet: ToServerPacket){
-        let sender_pointer = SpectatorPointer::new(sender_index);
-
-        #[allow(clippy::single_match)]
+    #[expect(clippy::match_single_binding, unused, reason="Surely spectators will do something in the future")]
+    pub fn on_spectator_message(&mut self, sender_ref: SpectatorPointer, incoming_packet: ToServerPacket){
         match incoming_packet {
-            ToServerPacket::VoteFastForwardPhase { fast_forward } => {
-                if sender_pointer.host(self) && fast_forward && !self.phase_machine.time_remaining.is_zero(){
-                    OnFastForward::invoke(self);
-                }
-            },
-            _ => {
-            }
+            _ => {}
         }
     }
-    pub fn on_client_message(&mut self, sender_player_index: PlayerIndex, incoming_packet: ToServerPacket){
-
-        let sender_player_ref = match PlayerReference::new(self, sender_player_index){
-            Ok(sender_player_ref) => sender_player_ref,
-            Err(_) => {
-                log!(error "Game"; "Received message from invalid player index: {}", sender_player_index);
-                return;
+    
+    pub fn on_client_message(&mut self, _: &ClientSender, room_client_id: RoomClientID, incoming_packet: ToServerPacket) -> GameClientMessageResult {
+        if let Some(client) = self.clients.get(&room_client_id) {
+            match client.client_location {
+                GameClientLocation::Player(player) => {
+                    self.on_player_message(room_client_id, player, incoming_packet)
+                }
+                GameClientLocation::Spectator(spectator) => {
+                    self.on_spectator_message(spectator, incoming_packet);
+                    GameClientMessageResult::None
+                }
             }
-        };
+        } else {
+            log!(error "Game"; "Received message from invalid client id: {}", room_client_id);
+            GameClientMessageResult::None
+        }
+    }
 
+    pub fn on_player_message(&mut self, room_client_id: RoomClientID, sender_player_ref: PlayerReference, incoming_packet: ToServerPacket) -> GameClientMessageResult {
         'packet_match: {match incoming_packet {
-            ToServerPacket::Vote { player_index: player_voted_index } => {
-                let &PhaseState::Nomination { .. } = self.current_phase() else {break 'packet_match};
-
-                let player_voted_ref = match PlayerReference::index_option_to_ref(self, &player_voted_index){
-                    Ok(player_voted_ref) => player_voted_ref,
-                    Err(_) => break 'packet_match,
-                };
-
-                sender_player_ref.set_chosen_vote(self, player_voted_ref, true);
-
-                self.count_nomination_and_start_trial(
-                    !Modifiers::modifier_is_enabled(self, ModifierType::ScheduledNominations)
-                );
+            ToServerPacket::SetName{ name } => {
+                self.set_player_name(sender_player_ref, name);
             },
+            ToServerPacket::Leave => {
+                if let RemoveRoomClientResult::RoomShouldClose = self.remove_client(room_client_id) {
+                    return GameClientMessageResult::Close;
+                }
+            },
+            ToServerPacket::HostForceBackToLobby => {
+                if let Some(player) = self.clients.get(&room_client_id){
+                    if !player.host {break 'packet_match}
+                }
+
+                self.settings.role_list.simplify();
+                let role_list = self.settings.role_list.clone();
+                
+                self.send_to_all(ToClientPacket::RoleList { role_list });
+
+                let mut new_clients = VecMap::new();
+                for (room_client_id, game_client) in self.clients.clone() {
+                    new_clients.insert(room_client_id, LobbyClient::new_from_game_client(self, game_client));
+                }
+
+                self.send_to_all(ToClientPacket::BackToLobby);
+
+                let lobby = Lobby::new_from_game(self.room_name.clone(), self.settings.clone(), new_clients);
+
+                return GameClientMessageResult::BackToLobby(lobby);
+            }
+            ToServerPacket::HostForceEndGame => {
+                if let Some(player) = self.clients.get(&room_client_id){
+                    if !player.host {break 'packet_match}
+                }
+
+                let conclusion = GameConclusion::get_premature_conclusion(self);
+
+                OnGameEnding::new(conclusion).invoke(self);
+            }
+            ToServerPacket::HostForceSkipPhase => {
+                if let Some(player) = self.clients.get(&room_client_id){
+                    if !player.host {break 'packet_match}
+                }
+                
+                OnFastForward::invoke(self);
+            }
+            ToServerPacket::HostDataRequest => {
+                if let Some(player) = self.clients.get(&room_client_id){
+                    if !player.host {break 'packet_match}
+                }
+
+                self.resend_host_data(sender_player_ref.connection(self));
+            }
+            ToServerPacket::HostForceSetPlayerName { id, name } => {
+                if let Some(player) = self.clients.get(&room_client_id){
+                    if !player.host {break 'packet_match}
+                }
+                if let Some(player) = self.clients.get(&id) {
+                    if let GameClientLocation::Player(player) = player.client_location {
+                        self.set_player_name(player, name);
+                    }
+                }
+            }
+            ToServerPacket::SetPlayerHost { player_id } => {
+                if let Some(player) = self.clients.get(&room_client_id){
+                    if !player.host {break 'packet_match}
+                }
+                if let Some(player) = self.clients.get_mut(&player_id) {
+                    player.set_host();
+                }
+                self.send_players();
+                self.resend_host_data_to_all_hosts();
+            }
+            ToServerPacket::RelinquishHost => {
+                if let Some(player) = self.clients.get_mut(&room_client_id){
+                    if !player.host {break 'packet_match}
+                    player.relinquish_host();
+                }
+                self.ensure_host_exists(Some(room_client_id));
+                self.send_players();
+                self.resend_host_data_to_all_hosts();
+            }
             ToServerPacket::Judgement { verdict } => {
                 if self.current_phase().phase() != PhaseType::Judgement {break 'packet_match;}
                 
@@ -74,7 +146,7 @@ impl Game {
                         },
                         ChatGroup::Dead => {
                             if sender_player_ref.alive(self) {
-                                Some(MessageSender::LivingToDead{ player: sender_player_index })
+                                Some(MessageSender::LivingToDead{ player: sender_player_ref.index() })
                             }else{None}
                         },
                         ChatGroup::Interview => {
@@ -85,7 +157,7 @@ impl Game {
                         _ => {None}
                     };
 
-                    let message_sender = message_sender.unwrap_or(MessageSender::Player { player: sender_player_index });
+                    let message_sender = message_sender.unwrap_or(MessageSender::Player { player: sender_player_ref.index() });
 
 
                     self.add_message_to_chat_group(
@@ -99,66 +171,15 @@ impl Game {
                 }
             },
             ToServerPacket::SendWhisper { player_index: whispered_to_player_index, text } => {
-                if Modifiers::modifier_is_enabled(self, ModifierType::NoWhispers) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
-                    break 'packet_match
-                }
-
-                let whisperee_ref = match PlayerReference::new(self, whispered_to_player_index){
-                    Ok(whisperee_ref) => whisperee_ref,
+                let whisperee_ref = match PlayerReference::new(self, whispered_to_player_index) {
+                    Ok(receiver_ref) => receiver_ref,
                     Err(_) => {
                         sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
-                        break 'packet_match
-                    },
-                };
-
-                if !self.current_phase().is_day() || 
-                    whisperee_ref.alive(self) != sender_player_ref.alive(self) ||
-                    whisperee_ref == sender_player_ref || 
-                    !sender_player_ref.get_current_send_chat_groups(self).contains(&ChatGroup::All) ||
-                    text.replace(['\n', '\r'], "").trim().is_empty()
-                {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
-                    break 'packet_match;
-                }
-
-                if let RoleState::Mayor(Mayor{revealed: true}) = whisperee_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
-                    break 'packet_match;
-                }
-                if let RoleState::Mayor(Mayor{revealed: true}) = sender_player_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
-                    break 'packet_match;
-                }
-                if let RoleState::Politician(Politician{revealed: true, ..}) = whisperee_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
-                    break 'packet_match;
-                }
-                if let RoleState::Politician(Politician{revealed: true, ..}) = sender_player_ref.role_state(self) {
-                    sender_player_ref.add_private_chat_message(self, ChatMessageVariant::InvalidWhisper);
-                    break 'packet_match;
-                }
-
-                if !Modifiers::modifier_is_enabled(self, ModifierType::HiddenWhispers) {
-                    self.add_message_to_chat_group(ChatGroup::All, ChatMessageVariant::BroadcastWhisper { whisperer: sender_player_index, whisperee: whispered_to_player_index });
-                }
-
-                let message = ChatMessageVariant::Whisper { 
-                    from_player_index: sender_player_index, 
-                    to_player_index: whispered_to_player_index, 
-                    text 
-                };
-        
-                sender_player_ref.add_private_chat_message(self, message.clone());
-
-                for player in PlayerReference::all_players(self){
-                    if 
-                        player.role(self) == Role::Informant ||
-                        whisperee_ref == player
-                    {
-                        player.add_private_chat_message(self, message.clone());
+                        break 'packet_match;
                     }
-                }
+                };
+
+                OnWhisper::new(sender_player_ref, whisperee_ref, text).invoke(self);
             },
             ToServerPacket::SaveWill { will } => {
                 sender_player_ref.set_will(self, will);
@@ -184,20 +205,20 @@ impl Game {
                 roleblock, 
                 you_were_roleblocked_message, 
                 you_survived_attack_message, 
-                you_were_protected_message, 
+                you_were_guarded_message, 
                 you_were_transported_message, 
                 you_were_possessed_message, 
-                your_target_was_jailed_message 
+                you_were_wardblocked_message 
             } => {
                 if let RoleState::Hypnotist(mut hypnotist) = sender_player_ref.role_state(self).clone(){
                     hypnotist.roleblock = roleblock;
 
                     hypnotist.you_were_roleblocked_message = you_were_roleblocked_message;
                     hypnotist.you_survived_attack_message = you_survived_attack_message;
-                    hypnotist.you_were_protected_message = you_were_protected_message;
+                    hypnotist.you_were_guarded_message = you_were_guarded_message;
                     hypnotist.you_were_transported_message = you_were_transported_message;
                     hypnotist.you_were_possessed_message = you_were_possessed_message;
-                    hypnotist.your_target_was_jailed_message = your_target_was_jailed_message;
+                    hypnotist.you_were_wardblocked_message = you_were_wardblocked_message;
 
                     //There must be at least one message enabled, so if none are, enable roleblocked message
                     hypnotist.ensure_at_least_one_message();
@@ -209,8 +230,7 @@ impl Game {
                 sender_player_ref.set_fast_forward_vote(self, fast_forward);
             },
             _ => {
-                log!(fatal "Game"; "Unimplemented ToServerPacket: {incoming_packet:?}");
-                unreachable!();
+                log!(error "Game"; "Recieved invalid packet for Game state: {incoming_packet:?}");
             }
         }}
         
@@ -221,5 +241,6 @@ impl Game {
             spectator_ref.send_repeating_data(self)
         }
 
+        GameClientMessageResult::None
     }
 }

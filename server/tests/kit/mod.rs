@@ -1,7 +1,6 @@
 use mafia_server::game::{
     chat::ChatMessageVariant, 
     player::PlayerReference, 
-    role::RoleState, 
     settings::Settings, 
     test::mock_game, 
     Game
@@ -28,7 +27,8 @@ macro_rules! scenario {
         $($name:ident: $role:ident),*
     ) => {
         let mut scenario = kit::_init::create_basic_scenario(
-            vec![$(RoleState::$role($role::default())),*]
+            // vec![$(RoleState::$role($role::default())),*]
+            vec![$(Role::$role),*]
         );
 
         let game = &mut scenario.game;
@@ -54,7 +54,7 @@ macro_rules! assert_contains {
 #[allow(unused)]
 macro_rules! assert_not_contains {
     ($container:expr, $value:expr) => {
-        assert!(!$container.contains(&$value), "{}", format!("Expected {:#?} not to contain {:?}", $container, $value));
+        assert!(!$container.contains(&$value), "{}", format!("Expected {:#?} not to contain {:?}", $container, $value))
     };
 }
 
@@ -74,40 +74,60 @@ pub fn _format_messages_debug(messages: Vec<ChatMessageVariant>) -> String{
         string += "\n";
     }
     string += "]";
-    return string;
+    string
 }
 
 /// Stuff that shouldn't be called directly - only in macro invocations.
 #[doc(hidden)]
 pub mod _init {
-    use mafia_server::game::{role::Role, role_list::{RoleList, RoleOutline, RoleOutlineOption, RoleOutlineOptionInsiderGroups, RoleOutlineOptionRoles, RoleOutlineOptionWinCondition}};
+    use mafia_server::game::{
+        role::Role,
+        role_list::{
+            RoleList, RoleOutline, RoleOutlineOption, RoleOutlineOptionInsiderGroups,
+            RoleOutlineOptionRoles, RoleOutlineOptionWinCondition
+        }
+    };
     use vec1::vec1;
 
     use super::*;
 
-    pub fn create_basic_scenario(roles: Vec<RoleState>) -> TestScenario {
+    pub fn create_basic_scenario(roles: Vec<Role>) -> TestScenario {
         let mut role_list = Vec::new();
         for role in roles.iter() {
             role_list.push(RoleOutline { options: 
                 vec1![RoleOutlineOption {
-                    roles: RoleOutlineOptionRoles::Role { role: role.role() },
+                    roles: RoleOutlineOptionRoles::Role { role: *role },
                     insider_groups: RoleOutlineOptionInsiderGroups::RoleDefault,
                     win_condition: RoleOutlineOptionWinCondition::RoleDefault,
                 }]
             });
         }
     
-        let game = match mock_game(Settings {
+        let (game, mut assignments) = match mock_game(Settings {
             role_list: RoleList(role_list),
             enabled_roles: Role::values().into_iter().collect(),
             ..Default::default()
-        }, roles.len()){
+        }, roles.len() as u8){
             Ok(game) => game,
             Err(err) => panic!("Failed to create game: {:?}", err),
         };
+
+        let mut players_out: Vec<PlayerReference> = PlayerReference::all_players(&game).collect();
+
+        //reorder players to be in the same order as roleoutline
+        for player in players_out.iter_mut(){
+            let role = roles.get(player.index() as usize)
+                .expect("test scenario assert");
+            let found_player = *assignments
+                .iter()
+                .find(|(_,(_,r))|r.role() == *role)
+                .map(|(p,_)|p)
+                .expect("test scenario assert");
+
+            assignments.remove(&found_player);
+            *player = found_player;
+        }
     
-        let players = PlayerReference::all_players(&game).collect();
-    
-        TestScenario { game, players }
+        TestScenario { game, players: players_out }
     }
 }

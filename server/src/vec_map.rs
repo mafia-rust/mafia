@@ -42,6 +42,12 @@ impl<K, V> VecMap<K, V> where K: Eq {
     pub fn get_mut(&mut self, key: &K) -> Option<&mut V> {
         self.get_kvp_mut(key).map(|(_, v)| v)
     }
+    /// # Safety
+    /// This function is unsafe because it does not check if the key exists in the map
+    /// and will panic if the key does not exist
+    pub unsafe fn get_unchecked_mut(&mut self, key: &K) -> &mut V {
+        self.get_unchecked_kvp_mut(key).1
+    }
 
     pub fn get_kvp(&self, key: &K) -> Option<(&K, &V)> {
         for (k, v) in &self.vec {
@@ -59,6 +65,13 @@ impl<K, V> VecMap<K, V> where K: Eq {
             }
         }
         None
+    }
+
+    /// # Safety
+    /// This function is unsafe because it does not check if the key exists in the map
+    /// and will panic if the key does not exist
+    pub unsafe fn get_unchecked_kvp_mut(&mut self, key: &K) -> (&K, &mut V) {
+        self.get_kvp_mut(key).expect("Key not found")
     }
 
     pub fn contains_key(&self, key: &K) -> bool {
@@ -168,7 +181,7 @@ mod macros {
     #[macro_export]
     macro_rules! vec_map {
         ($(($key:expr, $value:expr)),*) => {{
-            let mut map = VecMap::new();
+            let mut map = $crate::vec_map::VecMap::new();
             $(map.insert($key, $value);)*
             map
         }};

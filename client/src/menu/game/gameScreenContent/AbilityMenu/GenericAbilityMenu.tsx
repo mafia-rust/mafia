@@ -7,7 +7,7 @@ import {
     translateControllerID,
     AvailableAbilitySelection,
     TwoRoleOutlineOptionSelection,
-    RoleOptionSelection,
+    RoleListSelection,
     SavedController,
     controllerIdToLink,
     singleAbilityJsonData,
@@ -25,7 +25,7 @@ import TwoRoleOptionSelectionMenu from "./AbilitySelectionTypes/TwoRoleOptionSel
 import TwoPlayerOptionSelectionMenu from "./AbilitySelectionTypes/TwoPlayerOptionSelectionMenu";
 import StyledText from "../../../../components/StyledText";
 import KiraSelectionMenu, { KiraSelection } from "./AbilitySelectionTypes/KiraSelectionMenu";
-import RoleOptionSelectionMenu from "./AbilitySelectionTypes/RoleOptionSelectionMenu";
+import RoleListSelectionMenu from "./AbilitySelectionTypes/RoleListSelectionMenu";
 import "./genericAbilityMenu.css";
 import DetailsSummary from "../../../../components/DetailsSummary";
 import translate from "../../../../game/lang";
@@ -75,6 +75,16 @@ function translateGroupName(id: ControllerID): string {
     }
 }
 
+/// True if this controller should be in this menu
+function showThisController(id: ControllerID): boolean {
+    switch(id.type){
+        case "forwardMessage":
+            return false
+        default:
+            return true
+    }
+}
+
 export default function GenericAbilityMenu(): ReactElement {
     const savedAbilities = usePlayerState(
         playerState => playerState.savedControllers,
@@ -84,6 +94,9 @@ export default function GenericAbilityMenu(): ReactElement {
     let controllerGroupsMap: ControllerGroupsMap = new ListMap();
     //build this map ^
     for(let [controllerID, controller] of savedAbilities) {
+
+        if (!showThisController(controllerID)) {continue;}
+
         let groupName = getGroupNameFromControllerID(controllerID);
         
         let controllers = controllerGroupsMap.get(groupName);
@@ -245,7 +258,7 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
                 onClick={()=>{
                     GAME_MANAGER.sendAbilityInput({
                         id, 
-                        selection: {type: "unit"}
+                        selection: {type: "unit", selection: null}
                     });
                 }}
             >
@@ -323,25 +336,25 @@ function SwitchSingleAbilityMenuType(props: Readonly<{
                 }}
             />;
         }
-        case "roleOption":{
-            let input: RoleOptionSelection;
+        case "roleList":{
+            let input: RoleListSelection;
             if(
                 props.selected === null ||
-                props.selected.type !== "roleOption"
+                props.selected.type !== "roleList"
             ){
-                input = null;
+                input = [];
             }else{
                 input = props.selected.selection;
             }
 
-            return <RoleOptionSelectionMenu
+            return <RoleListSelectionMenu
                 selection={input}
-                enabledRoles={available.selection}
+                availableSelection={available.selection}
                 onChoose={(selection) => {
                     GAME_MANAGER.sendAbilityInput({
                         id, 
                         selection: {
-                            type: "roleOption",
+                            type: "roleList",
                             selection
                         }
                     });

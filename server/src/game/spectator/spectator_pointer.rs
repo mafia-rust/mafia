@@ -1,7 +1,9 @@
 use std::time::Duration;
 
+use serde::Serialize;
+
 use crate::{
-    client_connection::ClientConnection, game::{chat::{ChatGroup, ChatMessage}, phase::PhaseState, player::PlayerReference, Game, GameOverReason}, packet::ToClientPacket
+    client_connection::ClientConnection, game::{chat::{ChatGroup, ChatMessage}, player::PlayerReference, Game, GameOverReason}, packet::ToClientPacket
 };
 
 use super::Spectator;
@@ -9,12 +11,18 @@ use super::Spectator;
 pub type SpectatorIndex = u8;
 ///
 /// This does not guarantee that the spectator exists
+#[derive(Debug, Clone, Copy)]
 pub struct SpectatorPointer {
-    pub index: SpectatorIndex,
+    index: SpectatorIndex,
 }
 impl SpectatorPointer {
     pub fn new(index: SpectatorIndex) -> Self {
         SpectatorPointer { index }
+    }
+
+    #[must_use]
+    pub fn index(&self) -> SpectatorIndex {
+        self.index
     }
 
     pub fn deref_mut<'a>(&self, game: &'a mut Game)->Option<&'a mut Spectator>{
@@ -24,11 +32,12 @@ impl SpectatorPointer {
         game.spectators.get(self.index as usize)
     }
 
-    pub fn host(&self, game: &Game)->bool {
-        self.deref(game).map(|s|s.host).unwrap_or(false)
-    }
     pub fn connection(&self, game: &Game) -> ClientConnection {
         self.deref(game).map(|s|s.connection.clone()).unwrap_or(ClientConnection::Disconnected)
+    }
+
+    pub fn is_connected(&self, game: &Game) -> bool {
+        matches!(self.connection(game), ClientConnection::Connected(..))
     }
 
     pub fn send_packet(&self, game: &Game, packet: ToClientPacket){
@@ -45,7 +54,7 @@ impl SpectatorPointer {
     pub fn all_spectators(game: &Game) -> SpectatorPointerIterator {
         SpectatorPointerIterator {
             current: 0,
-            end: game.spectators.len() as SpectatorIndex
+            end: game.spectators.len().try_into().unwrap_or(SpectatorIndex::MAX)
         }
     }
 
@@ -87,15 +96,7 @@ impl SpectatorPointer {
             self.send_packet(game, ToClientPacket::GameOver { reason: GameOverReason::Draw })
         }
 
-        if let PhaseState::Testimony { player_on_trial, .. }
-            | PhaseState::Judgement { player_on_trial, .. }
-            | PhaseState::FinalWords { player_on_trial } = game.current_phase() {
-            self.send_packet(game, ToClientPacket::PlayerOnTrial{
-                player_index: player_on_trial.index()
-            });
-        }
-        let votes_packet = ToClientPacket::new_player_votes(game);
-        self.send_packet(game, votes_packet);
+        self.send_packet(game, ToClientPacket::PlayerVotes{votes_for_player: game.create_voted_player_map()});
         for grave in game.graves.iter(){
             self.send_packet(game, ToClientPacket::AddGrave { grave: grave.clone() });
         }
@@ -105,7 +106,7 @@ impl SpectatorPointer {
                 phase: game.current_phase().clone(),
                 day_number: game.phase_machine.day_number 
             },
-            ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.as_secs() }
+            ToClientPacket::PhaseTimeLeft { seconds_left: game.phase_machine.time_remaining.map(|o|o.as_secs().try_into().expect("Phase time should be below 18 hours")) }
         ]);
 
         self.requeue_chat_messages(game);
@@ -122,7 +123,7 @@ impl SpectatorPointer {
             None=> return
         };
 
-        for msg in msgs.into_iter(){
+        for msg in msgs {
             s.queued_chat_messages.push(msg);
         }
     }
@@ -174,15 +175,28 @@ impl Iterator for SpectatorPointerIterator {
             None
         } else {
             let ret = SpectatorPointer::new(self.current);
-            self.current += 1;
+            if let Some(new) = self.current.checked_add(1) {
+                self.current = new;
+            } else {
+                return None
+            }
             Some(ret)
         }
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        let size = (self.end - self.current) as usize;
+        let size = self.end.saturating_sub(self.current) as usize;
         (size, Some(size))
     }
 }
 
 impl ExactSizeIterator for SpectatorPointerIterator {}
+
+impl Serialize for SpectatorPointer {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer
+    {
+        serializer.serialize_u8(self.index)
+    }
+}

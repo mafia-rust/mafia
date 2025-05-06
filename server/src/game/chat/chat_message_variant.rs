@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use crate::game::{
-    ability_input::*, components::synopsis::Synopsis, grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
+    ability_input::*, attack_power::DefensePower, components::{synopsis::Synopsis, tags::Tag, win_condition::WinCondition}, grave::Grave, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{
         auditor::AuditorResult, engineer::TrapState, kira::KiraResult, krampus::KrampusAbility, santa_claus::SantaListKind, spy::SpyBug, Role
-    }, role_list::RoleOutline, tag::Tag, verdict::Verdict, win_condition::WinCondition
+    }, role_list::RoleOutline, verdict::Verdict
 };
 
 
@@ -18,7 +18,7 @@ pub enum MessageSender {
 }
 
 // Determines message color
-#[derive(PartialOrd, Ord, Clone, Debug, Serialize, PartialEq, Eq)]
+#[derive(PartialOrd, Ord, Clone, Debug, Serialize, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum ChatMessageVariant {
@@ -50,8 +50,8 @@ pub enum ChatMessageVariant {
     PlayerDied{grave: Grave},
     PlayersRoleRevealed{player: PlayerIndex, role: Role},
     PlayersRoleConcealed{player: PlayerIndex},
-    TagAdded{player: PlayerIndex, tag: Tag},
-    TagRemoved{player: PlayerIndex, tag: Tag},
+    TagAdded{player: PlayerReference, tag: Tag},
+    TagRemoved{player: PlayerReference, tag: Tag},
     
     #[serde(rename_all = "camelCase")]
     GameOver { synopsis: Synopsis },
@@ -128,9 +128,6 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     WardenPlayersImprisoned{players: Vec<PlayerReference>},
     WerewolfTracked,
-    
-    #[serde(rename_all = "camelCase")]
-    PlayerDiedOfABrokenHeart{player: PlayerIndex, lover: PlayerIndex},
 
     PuppeteerPlayerIsNowMarionette{player: PlayerIndex},
     RecruiterPlayerIsNowRecruit{player: PlayerIndex},
@@ -147,8 +144,8 @@ pub enum ChatMessageVariant {
 
     SomeoneSurvivedYourAttack,
     YouSurvivedAttack,
-    TargetWasAttacked,
-    YouWereProtected,
+    YouGuardedSomeone,
+    YouWereGuarded,
     YouDied,
     YouWereAttacked,
     YouAttackedSomeone,
@@ -173,6 +170,7 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     AuditorResult{role_outline: RoleOutline, result: AuditorResult},
     SnoopResult{townie: bool},
+    PolymathSnoopResult{inno: bool},
     GossipResult{enemies: bool},
     #[serde(rename_all = "camelCase")]
     TallyClerkResult{evil_count: u8},
@@ -180,9 +178,9 @@ pub enum ChatMessageVariant {
     EngineerVisitorsRole{role: Role},
     TrapState{state: TrapState},
     TrapStateEndOfNight{state: TrapState},
-
     
-    ArmorsmithArmorBroke,
+    #[serde(rename_all = "camelCase")]
+    FragileVestBreak{player_with_vest: PlayerReference, defense: DefensePower},
 
     Transported,
 
@@ -196,7 +194,7 @@ pub enum ChatMessageVariant {
     #[serde(rename_all = "camelCase")]
     PlayerRoleAndAlibi { player: PlayerReference, role: Role, will: String },
     #[serde(rename_all = "camelCase")]
-    InformantResult{ role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
+    InformantResult{player: PlayerReference, role: Role, visited_by: Vec<PlayerIndex>, visited: Vec<PlayerIndex>},
     #[serde(rename_all = "camelCase")]
     FramerResult{ mafia_member: PlayerIndex, visitors: Vec<Role>},
     #[serde(rename_all = "camelCase")]
@@ -207,15 +205,13 @@ pub enum ChatMessageVariant {
     TargetIsPossessionImmune,
     YouWerePossessed { immune: bool },
     TargetsMessage{message: Box<ChatMessageVariant>},
+    PlayerForwardedMessage{forwarder: PlayerReference, message: Box<ChatMessageVariant>},
     TargetHasRole { role: Role },
     #[serde(rename_all = "camelCase")]
     TargetHasWinCondition { win_condition: WinCondition },
 
     #[serde(rename_all = "camelCase")]
     WerewolfTrackingResult{tracked_player: PlayerIndex, players: Vec<PlayerIndex>},
-
-    #[serde(rename_all = "camelCase")]
-    YouAreLoveLinked{player: PlayerIndex},
 
     JesterWon,
     RevolutionaryWon,

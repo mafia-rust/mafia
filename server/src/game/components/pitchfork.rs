@@ -1,10 +1,8 @@
-use std::ops::Mul;
-
 use crate::{
     game::{
-        ability_input::*, attack_power::AttackPower, game_conclusion::GameConclusion, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::{Priority, Role}, role_list::RoleSet, Game
+        ability_input::*, attack_power::AttackPower, event::on_midnight::{MidnightVariables, OnMidnight, OnMidnightPriority}, game_conclusion::GameConclusion, grave::GraveKiller, phase::PhaseType, player::PlayerReference, role::Role, role_list::RoleSet, Game
     },
-    vec_map::VecMap, vec_set::{vec_set, VecSet}
+    vec_map::VecMap, vec_set::VecSet
 };
 
 #[derive(Clone)]
@@ -43,64 +41,53 @@ impl Pitchfork{
         }
     }
     pub fn controller_parameters_map(game: &Game)->ControllerParametersMap{
-        if
-            !game.settings.enabled_roles.contains(&Role::Rabblerouser)
-        {
+        if !game.settings.enabled_roles.contains(&Role::Rabblerouser) {
             return ControllerParametersMap::default();
         }
 
-        let mut out = ControllerParametersMap::default();
-        
-        for player in PlayerReference::all_players(game){
-            out.combine_overwrite(
-                ControllerParametersMap::new_controller_fast(
-                    game,
-                    ControllerID::pitchfork_vote(player),
-                    AvailableAbilitySelection::new_player_list(
-                        PlayerReference::all_players(game)
-                            .into_iter()
+        ControllerParametersMap::combine(
+            PlayerReference::all_players(game).map(|player|
+                ControllerParametersMap::builder(game)
+                    .id(ControllerID::pitchfork_vote(player))
+                    .available_selection(AvailablePlayerListSelection{
+                        available_players: PlayerReference::all_players(game)
                             .filter(|p|p.alive(game))
                             .collect(),
-                            false,
-                            Some(1)
-                    ),
-                    AbilitySelection::new_player_list(vec![]),
-                    game.day_number() == 1 ||
+                        can_choose_duplicates: false,
+                        max_players: Some(1)
+                    })
+                    .add_grayed_out_condition(
+                        game.day_number() == 1 ||
                         !player.alive(game) ||
-                        !player.win_condition(game).is_loyalist_for(GameConclusion::Town),
-                        Some(PhaseType::Obituary),
-                        false,
-                        vec_set![player]
-                )
-            );
-        }
-        
-        out
+                        !player.win_condition(game).is_loyalist_for(GameConclusion::Town)
+                    )
+                    .reset_on_phase_start(PhaseType::Obituary)
+                    .allow_players([player])
+                    .build_map()
+            )
+        )
     }
     
 
     pub fn before_phase_end(game: &mut Game, phase: PhaseType){
-        match phase{
-            PhaseType::Night => {
-                Pitchfork::set_angry_mobbed_player(game, None);
-                if Pitchfork::pitchfork_uses_remaining(game) > 0 {
-                    if let Some(target) = Pitchfork::player_is_voted(game){
-                        Pitchfork::set_angry_mobbed_player(game, Some(target));
-                    }
+        if phase == PhaseType::Night {
+            Pitchfork::set_angry_mobbed_player(game, None);
+            if Pitchfork::pitchfork_uses_remaining(game) > 0 {
+                if let Some(target) = Pitchfork::player_is_voted(game){
+                    Pitchfork::set_angry_mobbed_player(game, Some(target));
                 }
-            },
-            _ => {}
+            }
         }
     }
-    pub fn on_night_priority(game: &mut Game, priority: Priority){
-        if priority != Priority::Kill {return;}
+    pub fn on_midnight(game: &mut Game, _event: &OnMidnight, midnight_variables: &mut MidnightVariables, priority: OnMidnightPriority){
+        if priority != OnMidnightPriority::Kill {return;}
         if game.day_number() <= 1 {return;}
-        if Pitchfork::usable_pitchfork_owners(game).len() < 1 {return;}
+        if Pitchfork::usable_pitchfork_owners(game, midnight_variables).is_empty() {return;}
         
         if let Some(target) = Pitchfork::angry_mobbed_player(game) {
             target.try_night_kill(
-                &Pitchfork::usable_pitchfork_owners(game), 
-                game, 
+                &Pitchfork::usable_pitchfork_owners(game, midnight_variables), 
+                game, midnight_variables,
                 GraveKiller::RoleSet(RoleSet::Town), 
                 AttackPower::ProtectionPiercing, 
                 false
@@ -111,10 +98,10 @@ impl Pitchfork{
         }
     }
 
-    pub fn usable_pitchfork_owners(game: &Game) -> VecSet<PlayerReference> {
+    pub fn usable_pitchfork_owners(game: &Game, midnight_variables: &MidnightVariables) -> VecSet<PlayerReference> {
         Pitchfork::pitchfork_owners(game).iter()
-            .filter(|p|p.alive(game) && !p.night_blocked(game))
-            .map(|p|*p).collect()
+            .filter(|p|p.alive(game) && !p.night_blocked(midnight_variables))
+            .copied().collect()
     }
 
     
@@ -123,8 +110,8 @@ impl Pitchfork{
 
 
         for voter in PlayerReference::all_players(game){
-            let Some(PlayerListSelection(target)) = game.saved_controllers
-                .get_controller_current_selection_player_list(ControllerID::pitchfork_vote(voter))
+            let Some(PlayerListSelection(target)) = ControllerID::pitchfork_vote(voter)
+                .get_player_list_selection(game)
                 else {continue};
             let Some(target) = target.first() else {continue};
             if 
@@ -134,8 +121,8 @@ impl Pitchfork{
             {continue;}
 
 
-            let count: u8 = if let Some(count) = votes.get(&target){
-                *count + 1
+            let count: u8 = if let Some(count) = votes.get(target){
+                count.saturating_add(1)
             }else{
                 1
             };
@@ -146,10 +133,21 @@ impl Pitchfork{
     }
 
     pub fn number_of_votes_needed(game: &Game) -> u8 {
-        let x = PlayerReference::all_players(game).filter(|p|
+        let eligible_voters = PlayerReference::all_players(game).filter(|p|
             p.alive(game) && p.win_condition(game).is_loyalist_for(GameConclusion::Town)
-        ).count().mul(2).div_ceil(3) as u8;
-        if x == 0 {1} else {x}
+        ).count().try_into().unwrap_or(u8::MAX);
+        // equivalent to x - (x - (x + 1)/3)/2 to prevent overflow issues
+        let two_thirds = eligible_voters
+        .saturating_sub(
+            eligible_voters
+            .saturating_sub(
+                eligible_voters
+                .saturating_add(1)
+                .saturating_div(3)
+            )
+            .saturating_div(2)
+        );
+        if two_thirds == 0 {1} else {two_thirds}
     }
 
 
