@@ -2,7 +2,6 @@ import React, { useContext, useMemo } from "react"
 import { ReactElement } from "react"
 import translate from "../game/lang"
 import StyledText, { KeywordDataMap, PLAYER_KEYWORD_DATA } from "./StyledText"
-import { useGameState, usePlayerState } from "./useHooks"
 import "./playerNamePlate.css"
 import { GameStateContext } from "../menu/game/GameStateContext"
 
