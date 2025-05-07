@@ -1,4 +1,3 @@
-import { ANCHOR_CONTROLLER } from "./../menu/Anchor";
 import StartMenu from "./../menu/main/StartMenu";
 import GAME_MANAGER from "./../index";
 import messageListener from "./messageListener";

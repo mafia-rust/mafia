@@ -10,6 +10,7 @@ import StartMenu from "./main/StartMenu";
 import React from "react";
 import translate from "../game/lang";
 import { isValidPhaseTime } from "../game/gameManager";
+import LoadingScreen from "./LoadingScreen";
 
 export const WebsocketContext = createContext<WebSocketContext | undefined>(undefined);
 
@@ -21,6 +22,10 @@ type WebSocketContext = {
     open(): Promise<boolean>;
     sendPacket(packets: ToServerPacket): void;
     close(): void;
+
+    content: JSX.Element,
+
+    setContent(e: JSX.Element): void,
 
     sendLobbyListRequest(): void;
     /**
@@ -90,11 +95,15 @@ export function useWebSocketContext(){
     const anchorContext = useContext(AnchorContext)!;
 
     const [lastMessageRecieved, setLastMessageRecieved] = useState<ToClientPacket | null>(null);
+    const [content, setContent] = useState<JSX.Element>(<LoadingScreen type="join"/>);
 
     const defaultWebsocketContext: WebSocketContext = {
         webSocket: null,
 
         lastMessageRecieved,
+
+        content,
+        setContent: (e: JSX.Element)=>setContent(e),
 
         open: () => {
             let address = process.env.REACT_APP_WS_ADDRESS;

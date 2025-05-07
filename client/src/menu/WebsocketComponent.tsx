@@ -1,11 +1,11 @@
 import { ReactElement } from "react";
 import { useWebSocketContext, WebsocketContext } from "./WebsocketContext";
 
-export default function WebsocketComponent(props: {children: JSX.Element}): ReactElement{
+export default function WebsocketComponent(): ReactElement{
 
     const ctx = useWebSocketContext();
 
     return <WebsocketContext.Provider value={ctx}>
-        {props.children}
+        {ctx.content}
     </WebsocketContext.Provider>
 }

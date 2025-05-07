@@ -18,8 +18,8 @@ import CheckBox from "./CheckBox";
 
 export function setWikiSearchPage(page: WikiArticleLink, anchorController: AnchorContext, menuController?: MenuContext) {
     if (GAME_MANAGER.wikiArticleCallbacks.length === 0) {
-        if (menuController?.menuIsAvailable(ContentMenu.WikiMenu)) {
-            menuController.openMenu(ContentMenu.WikiMenu, () => {
+        if (menuController?.menuIsAvailable(GameScreenMenuType.WikiMenu)) {
+            menuController.openMenu(GameScreenMenuType.WikiMenu, () => {
                 GAME_MANAGER.setWikiArticle(page);
             });
         } else {

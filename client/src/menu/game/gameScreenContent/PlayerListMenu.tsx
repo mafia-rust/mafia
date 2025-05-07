@@ -1,33 +1,27 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useContext } from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import "./playerListMenu.css"
 import "./../gameScreen.css"
 import { PlayerIndex } from "../../../game/gameState.d";
-import { ContentMenu, ContentTab } from "../GameScreen";
 import StyledText from "../../../components/StyledText";
 import Icon from "../../../components/Icon";
 import { Button } from "../../../components/Button";
-import { useGameState, usePlayerNames, usePlayerState, useSpectator } from "../../../components/useHooks";
 import PlayerNamePlate from "../../../components/PlayerNamePlate";
 import ChatMessage, { translateChatMessage } from "../../../components/ChatMessage";
 import GraveComponent, { translateGraveRole } from "../../../components/grave";
 import { ChatMessageSection, ChatTextInput } from "./ChatMenu";
+import { GameStateContext } from "../GameStateContext";
+import GameScreenMenuTab from "../GameScreenMenuTab";
+import { GameScreenMenuType } from "../GameScreenMenuContext";
 
 export default function PlayerListMenu(): ReactElement {
-    const players = useGameState(
-        gameState => gameState.players,
-        ["gamePlayers", "playerAlive", "yourPlayerTags", "yourRoleLabels", "playerVotes"]
-    )!
-
-    const graves = useGameState(
-        gameState => gameState.graves,
-        ["addGrave"]
-    )!
+    const players = useContext(GameStateContext)!.players;
+    const graves = useContext(GameStateContext)!.graves;
 
 
     return <div className="player-list-menu player-list-menu-colors">
-        <ContentTab close={ContentMenu.PlayerListMenu} helpMenu={"standard/playerList"}>{translate("menu.playerList.title")}</ContentTab>
+        <GameScreenMenuTab close={GameScreenMenuType.PlayerListMenu} helpMenu={"standard/playerList"}>{translate("menu.playerList.title")}</GameScreenMenuTab>
 
         <div className="player-list">
             {players
@@ -146,7 +140,7 @@ function PlayerCard(props: Readonly<{
         false
     );
 
-    const spectator = useSpectator();
+    const spectator = useContext(GameStateContext)!.clientState.type === "spectator";
 
     return <><div 
         className={`player-card`}

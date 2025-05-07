@@ -3,10 +3,10 @@ import HeaderMenu, { MenuButtons } from "./HeaderMenu";
 import { DEV_ENV } from "../..";
 import "../../index.css";
 import "./gameScreen.css";
-import { MobileContext } from "../Anchor";
 import { loadSettingsParsed } from "../../game/localStorage";
-import { GameScreenMenuContext, GameScreenMenuType, MENU_REACT_ELEMENTS, useGameScreenMenuContext } from "./GameScreenMenuContext";
+import { GameScreenMenuContext, GameScreenMenuType, useGameScreenMenuContext } from "./GameScreenMenuContext";
 import GameScreenMenus from "./GameScreenMenus";
+import { MobileContext } from "../MobileContext";
 
 export default function GameScreen(props: {isSpectator: boolean}): ReactElement {
     const mobile = useContext(MobileContext)!;

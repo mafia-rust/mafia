@@ -94,7 +94,7 @@ export function useAnchorContext(){
 
     const anchorContext: AnchorContext = {
         reload,
-        setContent: setContent,
+        setContent,
         contentType: content.type,
         getCoverCard: () => {
             return coverCard;

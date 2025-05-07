@@ -3,7 +3,6 @@ import GAME_MANAGER from "../../index";
 import "../../index.css"
 import "./startMenu.css"
 import translate from "../../game/lang";
-import { AnchorControllerContext } from "../Anchor";
 import PlayMenu from "./PlayMenu";
 import LoadingScreen from "../LoadingScreen";
 import GameModesEditor from "../../components/gameModeSettings/GameModesEditor";
@@ -13,9 +12,10 @@ import StandaloneWiki from "./StandaloneWiki";
 import { Button } from "../../components/Button";
 import Credits from "./Credits";
 import StyledText from "../../components/StyledText";
+import { AnchorContext } from "../AnchorContext";
 
 export default function StartMenu(): ReactElement {
-    const { setContent: setAnchorContent, setCoverCard } = useContext(AnchorControllerContext)!;
+    const { setContent, setCoverCard } = useContext(AnchorContext)!;
     return <div className="sm">
         <header>
             <h1>
@@ -26,11 +26,11 @@ export default function StartMenu(): ReactElement {
             <div className="satellite">
                 <div className="left">
                     <Button onClick={async () => {
-                        setAnchorContent(<LoadingScreen type="default"/>);
+                        setContent(<LoadingScreen type="default"/>);
                         if (await GAME_MANAGER.setOutsideLobbyState()) {
-                            setAnchorContent(<PlayMenu/>);
+                            setContent(<PlayMenu/>);
                         } else {
-                            setAnchorContent(<StartMenu/>);
+                            setContent(<StartMenu/>);
                         }
                     }}>
                         <Icon>play_arrow</Icon> {translate("menu.start.button.play")}
@@ -44,7 +44,7 @@ export default function StartMenu(): ReactElement {
                     <Button onClick={() => setCoverCard(<GameModesEditor/>)}>
                         <Icon>edit</Icon> {translate("menu.globalMenu.gameSettingsEditor")}
                     </Button>
-                    <Button onClick={() => setAnchorContent(<StandaloneWiki/>)}>
+                    <Button onClick={() => setContent(<StandaloneWiki/>)}>
                         <Icon>menu_book</Icon> {translate("menu.wiki.title")}
                     </Button>
                 </div>
@@ -57,7 +57,7 @@ export default function StartMenu(): ReactElement {
             }}>
                 <Icon>public</Icon> Discord
             </Button>
-            <Button onClick={()=>{setAnchorContent(<Credits/>)}}>{translate("credits")}</Button>
+            <Button onClick={()=>{setContent(<Credits/>)}}>{translate("credits")}</Button>
             <a className="button" href="https://mafia.dev.jackpapel.com">Dev (Experimental)</a>
         </footer>
     </div>

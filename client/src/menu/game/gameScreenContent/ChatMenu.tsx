@@ -1,17 +1,17 @@
-import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import translate from "../../../game/lang";
 import GAME_MANAGER from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
 import { PlayerClientType, PlayerIndex } from "../../../game/gameState.d";
 import ChatElement, { translateChatMessage } from "../../../components/ChatMessage";
-import { ContentMenu, ContentTab } from "../GameScreen";
 import { HistoryPoller, HistoryQueue } from "../../../history";
 import { Button } from "../../../components/Button";
 import Icon from "../../../components/Icon";
 import StyledText, { KeywordDataMap, PLAYER_KEYWORD_DATA, PLAYER_SENDER_KEYWORD_DATA } from "../../../components/StyledText";
-import { useGameState, useLobbyOrGameState, usePlayerNames, usePlayerState } from "../../../components/useHooks";
 import { Virtuoso } from 'react-virtuoso';
+import GameScreenMenuTab from "../GameScreenMenuTab";
+import { GameStateContext } from "../GameStateContext";
 
 
 export default function ChatMenu(): ReactElement {
@@ -40,7 +40,7 @@ export default function ChatMenu(): ReactElement {
     }, [filter, playerNames]);
 
     return <div className="chat-menu chat-menu-colors">
-        <ContentTab close={ContentMenu.ChatMenu} helpMenu={"standard/chat"}>{translate("menu.chat.title")}</ContentTab>
+        <GameScreenMenuTab close={GameScreenMenuType.ChatMenu} helpMenu={"standard/chat"}>{translate("menu.chat.title")}</GameScreenMenuTab>
         {filter === undefined || filter === null || <div className="chat-filter-zone highlighted">
             <StyledText>{translate("menu.chat.playerFilter", filterString)}</StyledText>
             <Button 
@@ -75,7 +75,7 @@ export type ChatFilter = {
 export function ChatMessageSection(props: Readonly<{
     filter?: ChatFilter,
 }>): ReactElement {
-    const players = useGameState((gameState)=>{return gameState.players}, ["gamePlayers"])!;
+    const players = useContext(GameStateContext)!.players;
     const filter = useMemo(() => props.filter ?? null, [props.filter]);
     const messages = useLobbyOrGameState(
         state => state.chatMessages,

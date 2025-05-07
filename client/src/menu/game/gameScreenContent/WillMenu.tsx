@@ -41,7 +41,7 @@ export default function WillMenu(): ReactElement {
     
     return <div className="will-menu will-menu-colors">
         <ContentTab
-            close={ContentMenu.WillMenu}
+            close={GameScreenMenuType.WillMenu}
             helpMenu={"standard/alibi"}
         >
                 {translate("menu.will.title")}

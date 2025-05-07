@@ -4,19 +4,17 @@ import Icon from "../../components/Icon";
 import StyledText from "../../components/StyledText";
 import { GameScreenMenuContext, GameScreenMenuType } from "./GameScreenMenuContext";
 import { WikiArticleLink } from "../../components/WikiArticleLink";
-import { MobileContext } from "../Anchor";
 import GAME_MANAGER from "../..";
+import { GameStateContext } from "./GameStateContext";
+import { MobileContext } from "../MobileContext";
 
-export default function ContentTab(props: Readonly<{
+export default function GameScreenMenuTab(props: Readonly<{
     helpMenu: WikiArticleLink | null
     close: GameScreenMenuType | false, 
     children: string 
 }>): ReactElement {
     const menuController = useContext(GameScreenMenuContext)!;
-    const spectator = useGameState(
-        gameState => gameState.clientState.type === "spectator",
-        ["gamePlayers"]
-    )!;
+    const spectator = useContext(GameStateContext)!.clientState.type === "spectator";
     const mobile = useContext(MobileContext)!;
 
     return <div className="content-tab">

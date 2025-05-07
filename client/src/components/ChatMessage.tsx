@@ -1,5 +1,5 @@
 import translate, { translateChecked } from "../game/lang";
-import React, { ReactElement } from "react";
+import React, { ReactElement, useContext } from "react";
 import GAME_MANAGER, { find, replaceMentions } from "..";
 import StyledText, { KeywordDataMap, PLAYER_SENDER_KEYWORD_DATA } from "./StyledText";
 import "./chatMessage.css"
@@ -10,13 +10,13 @@ import DOMPurify from "dompurify";
 import GraveComponent from "./grave";
 import { RoleList, RoleOutline, translateRoleOutline } from "../game/roleListState.d";
 import { CopyButton } from "./ClipboardButtons";
-import { useGameState, useLobbyOrGameState, usePlayerNames, usePlayerState, useSpectator } from "./useHooks";
 import { KiraResult, KiraResultDisplay } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
 import { ControllerID, AbilitySelection, translateControllerID, controllerIdToLink } from "../game/abilityInput";
 import DetailsSummary from "./DetailsSummary";
 import ListMap from "../ListMap";
 import { Button } from "./Button";
+import { GameStateContext } from "../menu/game/GameStateContext";
 
 const ChatElement = React.memo((
     props: {
@@ -44,10 +44,7 @@ const ChatElement = React.memo((
         ["yourPlayerIndex"]
     );
     
-    const roleList = useGameState(
-        state => state.roleList,
-        ["roleList"]
-    );
+    const roleList = useContext(GameStateContext)!.roleList;
 
     const [mouseHovering, setMouseHovering] = React.useState(false); 
 
@@ -212,7 +209,7 @@ function PlayerDiedChatMessage(props: Readonly<{
             break;
     }
 
-    const spectator = useSpectator();
+    const spectator = useContext(GameStateContext)!.clientState.type === "spectator";
 
     return <div className={"chat-message-div"}>
         <DetailsSummary
