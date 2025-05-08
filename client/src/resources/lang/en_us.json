@@ -803,7 +803,7 @@
     "obscuredGraves": "Obscured Graves",
     "skipDay1": "Skip Day 1",
     "deadCanChat": "Dead Can Chat",
-    "unscheduledNominations": "Unscheduled Nominations",
+    "unscheduledNominations": "Instant Nominations",
     "abstaining": "Abstaining",
     "noDeathCause": "No Death Cause",
     "roleSetGraveKillers": "Role Set Grave Killers",
@@ -821,7 +821,7 @@
     "modifierMenu.fake.popularVote": "Popular Vote",
     "modifierMenu.fake.broadcastWhispers": "Broadcast Whispers",
     "modifierMenu.fake.allChat": "All Chat",
-    "modifierMenu.fake.normalGraves": "Normal Graves",
+    "modifierMenu.fake.roleGraveKillers": "Role Grave Killers",
 
     "modifierMenu.trialPhases": "Trial Phases:",
     "modifierMenu.chat": "Chat:",
@@ -830,7 +830,7 @@
     "modifierMenu.abstaining": "Allow Abstaining:",
     "modifierMenu.whispers": "Whispers:",
     "modifierMenu.skipDay1": "Skip Day 1:",
-    "modifierMenu.graves": "Graves:",
+    "modifierMenu.graveInfo": "Grave Info:",
 
 
     

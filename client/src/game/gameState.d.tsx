@@ -175,7 +175,7 @@ export const MODIFIERS = [
 ] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 
-export function toModifierType(modifier: string): ModifierType | undefined {
+export function toModifierType(modifier: string | undefined | null): ModifierType | undefined {
     return MODIFIERS.find(mod => {return mod.toString() === modifier})
 }
 
