@@ -4,6 +4,7 @@ import translate from "../../game/lang";
 import { GameModeContext } from "./GameModesEditor";
 import CheckBox from "../CheckBox";
 import Select, { SelectOptionsSearch, set_option_typical as setOptionTypical, set_options_typical as setOptionsTypical } from "../Select";
+import "./enabledModifiersSelector.css";
 
 export function EnabledModifiersSelector(props: Readonly<{
     disabled?: boolean,
@@ -14,9 +15,9 @@ export function EnabledModifiersSelector(props: Readonly<{
     enabledModifiers = props.enabledModifiers ?? enabledModifiers;
     
 
-    return <div className="chat-menu-colors selector-section">
+    return <div className="chat-menu-colors selector-section modifier-selectors">
         <h2>{translate("modifiers")}</h2>
-        <EnabledModifiersDisplay
+        <EnabledModifiersDisplay 
             disabled={props.disabled===undefined ? false : props.disabled}
             modifiable={!props.disabled}
             enabledModifiers={enabledModifiers}
@@ -54,22 +55,23 @@ type EnabledModifiersDisplayProps = {
         onDisableModifiers: (modifiers: ModifierType[]) => void,
         onEnableModifiers: (modifiers: ModifierType[]) => void,
         disabled?: boolean,
-    } |
-    {
+    } | {
         modifiable?: false,
     }
 )
 
-type ModifierSelectionType =
-    {
-        type: "dropdown",
-        fakeModifier: string,
-        modifiers: ModifierType[],
-    } | {
-        type: "checkbox",
-        modifier: ModifierType,
-        inverted: boolean,
-    }
+type ModifierSelectionType = {
+    type: "dropdown",
+    fakeModifier: string,
+    modifiers: ModifierType[],
+} | {
+    type: "checkbox",
+    modifier: ModifierType,
+    inverted: boolean,
+} | {
+    type: "boolean",
+    modifier: ModifierType, //the two options are determined by modifierMenu.<name>.true & modifierMenu.<name>.false
+}
     
 class ModifierSelection {
     name: string
@@ -78,16 +80,11 @@ class ModifierSelection {
         this.name = name
         this.data = data
     }
-    generateDisplay(props: EnabledModifiersDisplayProps, columnOptions: string[] | undefined) {
+    generateDisplay(props: EnabledModifiersDisplayProps) {
         switch(this.data.type){
-            case "dropdown":
+            case "dropdown": {
                 const data = this.data;
                 const defaultValue = "modifierMenu.fake."+data.fakeModifier;
-
-                if(columnOptions !== undefined) {
-                    data.modifiers.forEach(modifier=>{columnOptions.push(modifier)})
-                    columnOptions.push(defaultValue)
-                }
 
                 function selectedOption(): ModifierType | typeof defaultValue {
                     let selected = data.modifiers.find(modifier => {return props.enabledModifiers.includes(modifier)});
@@ -97,10 +94,9 @@ class ModifierSelection {
                 const optionsMap: SelectOptionsSearch<ModifierType | typeof defaultValue> = new Map();
                 setOptionTypical(optionsMap, defaultValue)
                 setOptionsTypical(optionsMap, data.modifiers);
-
-                return <>
-                    <td style={{paddingRight:"1em", textAlign:"right"}}>{translate("modifierMenu."+this.name)}</td>
-                    <td style={{textAlign:"left"}}><Select 
+                return <div className="placard modifier-selector">
+                    <span>{translate("modifierMenu."+this.name)}</span>
+                    <span><Select 
                         value={selectedOption()}
                         onChange={value => {
                             if(props.modifiable === true){
@@ -113,25 +109,59 @@ class ModifierSelection {
                             }
                         }}
                         optionsSearch = {optionsMap}
-                    /></td>
-                </>            
+                    /></span>
+                </div>
+            }
 
-            case "checkbox":
-                const data_ = this.data;
-                return <>
-                    <td style={{paddingRight:"1em", textAlign:"right"}}>{translate(this.name)}</td>
-                    <td style={{textAlign:"left"}}><CheckBox
-                    checked={props.enabledModifiers.includes(data_.modifier) !== data_.inverted}
-                    onChange={checked => {
-                        if (props.modifiable) {
-                            if (checked !== data_.inverted) {
-                                props.onEnableModifiers([data_.modifier]);
-                            } else {
-                                props.onDisableModifiers([data_.modifier]);
+            case "checkbox": {
+                const data = this.data;
+                return <div className="placard">
+                    <span>{translate("modifierMenu."+this.name)}</span>
+                    <CheckBox
+                        checked={props.enabledModifiers.includes(data.modifier) !== data.inverted}
+                        onChange={checked => {
+                            if (props.modifiable) {
+                                if (checked !== data.inverted) {
+                                    props.onEnableModifiers([data.modifier]);
+                                } else {
+                                    props.onDisableModifiers([data.modifier]);
+                                }
                             }
+                    } } />
+                </div>
+            }
+            
+            case "boolean": {
+                const data = this.data;
+
+                const falseSelection = "modifierMenu."+this.name+".false";
+                const trueSelection = "modifierMenu."+this.name+".true";
+
+                const optionsMap: SelectOptionsSearch<ModifierType> = new Map();
+                setOptionTypical(optionsMap, falseSelection);
+                setOptionTypical(optionsMap, trueSelection);
+
+                return <div className="placard modifier-selector">
+                    <span>{translate("modifierMenu."+this.name)}</span>
+                    <span><Select 
+                        value={
+                            props.enabledModifiers.includes(data.modifier) ? 
+                            trueSelection :
+                            falseSelection
                         }
-                    } } /></td>
-                </>
+                        onChange={value => {
+                            if(props.modifiable === true){
+                                if(value.endsWith("true")) {
+                                    props.onEnableModifiers([data.modifier])
+                                } else {
+                                    props.onDisableModifiers([data.modifier])
+                                }
+                            }
+                        }}
+                        optionsSearch = {optionsMap}
+                    /></span>
+                </div>
+            }
         }
     }
     static dropdown(name: string, fakeModifier: string, modifiers: ModifierType[]): ModifierSelection {
@@ -139,18 +169,27 @@ class ModifierSelection {
                 name, 
             {
                 type: "dropdown",
-                fakeModifier: fakeModifier,
-                modifiers: modifiers
+                fakeModifier,
+                modifiers
             }
         )
     }
-    static checkbox(modifier: ModifierType, inverted: boolean, name: string ="modifierMenu."+modifier): ModifierSelection {
+    static checkbox(modifier: ModifierType, inverted: boolean, name: string =modifier): ModifierSelection {
         return new ModifierSelection(
                 name, 
             {
                 type: "checkbox",
-                modifier: modifier,
-                inverted: inverted,
+                modifier,
+                inverted,
+            }
+        )
+    }
+    static boolean(name:string, modifier: ModifierType): ModifierSelection {
+        return new ModifierSelection(
+            name,
+            {
+                type:"boolean",
+                modifier
             }
         )
     }
@@ -161,60 +200,18 @@ const MODIFIER_SELECTIONS = [
     ModifierSelection.checkbox("abstaining", false),
     ModifierSelection.dropdown("guiltyVoteRequirement", "popularVote", ["twoThirdsMajority", "autoGuilty"]),
     ModifierSelection.dropdown("graveInfo", "roleGraveKillers", ["noDeathCause", "roleSetGraveKillers", "obscuredGraves"]),
-    ModifierSelection.checkbox("skipDay1", false),
     ModifierSelection.dropdown("chat", "allChat", ["noNightChat", "noChat"]),
     ModifierSelection.checkbox("deadCanChat", false),
     ModifierSelection.dropdown("whispers", "broadcastWhispers", ["hiddenWhispers", "noWhispers"]),
+    ModifierSelection.checkbox("skipDay1", false),
 ] as const
 
-
 export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): ReactElement {
-    let columnPairs = 2;
-    let columnsOptions: string[][] = [];
-    for(let i = 1; i<columnPairs; i++){//intentionally is 1 less
-        columnsOptions.push([])
+    let display = <></>
+    for(const selector of MODIFIER_SELECTIONS){
+        display = <>{display}{selector.generateDisplay(props)}</>
     }
-    function get_padding(): ReactElement {
-        function columnPairPadding(columnOptions: string[]): ReactElement {
-            let longest: number = 3;
-            columnOptions.forEach(option => {longest = Math.max(longest, translate(option).length)})
-            longest += 2;
-            return <>
-                <td></td>
-                <td style = {{paddingRight: longest.toString() +"ch"}}></td>
-            </>
-        }
-        let paddings: ReactElement =  <></>;
-        for(let i = 0; i+1<columnPairs; i++){
-            paddings = <>{paddings}{columnPairPadding(columnsOptions[i])}{}</>;
-        }
-        return <tfoot>
-            {paddings}
-            <td></td>
-            <td></td>
-        </tfoot>
-    }
-    let tbody = <></>
-    
-    for(let rowIndex = 0; rowIndex<=MODIFIER_SELECTIONS.length/columnPairs; rowIndex++){
-        let row = <></>;
-        for(let i = 0; i<columnPairs; i++){
-            let selection = MODIFIER_SELECTIONS[i+columnPairs*rowIndex];
-            if(selection == undefined) {
-                row = <>{row}<td></td><td></td></>
-            } else {
-                row = <>{row}{selection.generateDisplay(props, columnsOptions[i])}</>
-            }
-        }
-        tbody = <>{tbody}{<tr>{row}</tr>}</>
-    }
-
-    return <div>
-        <table style={{width:"100%"}}>
-            <tbody >
-                {tbody}
-            </tbody>
-            {get_padding()}
-        </table>
+    return <div className="modifier-selector">
+        {display}
     </div>
 }
