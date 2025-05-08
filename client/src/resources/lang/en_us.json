@@ -816,21 +816,28 @@
     "noChat": "No Chat",
     "syndicateGunItem": "Syndicate Gun",
     "nightMessages": "Night Messages",
-    
-    "modifierMenu.fake.scheduledNominations": "Scheduled Nominations",
-    "modifierMenu.fake.popularVote": "Popular Vote",
-    "modifierMenu.fake.broadcastWhispers": "Broadcast Whispers",
-    "modifierMenu.fake.allChat": "All Chat",
-    "modifierMenu.fake.roleGraveKillers": "Role Grave Killers",
 
+    
     "modifierMenu.trialPhases": "Trial Phases:",
+    "modifierMenu.trialPhases.fake": "Scheduled Nominations",
+
     "modifierMenu.chat": "Chat:",
+    "modifierMenu.chat.fake": "All Chat",
+
     "modifierMenu.guiltyVoteRequirement": "Guilty Vote Requirement:",
+    "modifierMenu.guiltyVoteRequirement.fake": "Popular Vote",
+
     "modifierMenu.deadCanChat": "Dead Can Chat:",
+
     "modifierMenu.abstaining": "Allow Abstaining:",
+
     "modifierMenu.whispers": "Whispers:",
+    "modifierMenu.whispers.fake": "Broadcast Whispers",
+
     "modifierMenu.skipDay1": "Skip Day 1:",
+
     "modifierMenu.graveInfo": "Grave Info:",
+    "modifierMenu.graveInfo.fake": "Role Grave Killers",
 
 
     

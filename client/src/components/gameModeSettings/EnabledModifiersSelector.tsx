@@ -62,7 +62,6 @@ type EnabledModifiersDisplayProps = {
 
 type ModifierSelectionType = {
     type: "dropdown",
-    fakeModifier: string,
     modifiers: ModifierType[],
 } | {
     type: "checkbox",
@@ -72,7 +71,7 @@ type ModifierSelectionType = {
     type: "boolean",
     modifier: ModifierType, //the two options are determined by modifierMenu.<name>.true & modifierMenu.<name>.false
 }
-    
+
 class ModifierSelection {
     name: string
     data: ModifierSelectionType
@@ -84,7 +83,7 @@ class ModifierSelection {
         switch(this.data.type){
             case "dropdown": {
                 const data = this.data;
-                const defaultValue = "modifierMenu.fake."+data.fakeModifier;
+                const defaultValue = "modifierMenu."+this.name+".fake";
 
                 function selectedOption(): ModifierType | typeof defaultValue {
                     let selected = data.modifiers.find(modifier => {return props.enabledModifiers.includes(modifier)});
@@ -164,12 +163,11 @@ class ModifierSelection {
             }
         }
     }
-    static dropdown(name: string, fakeModifier: string, modifiers: ModifierType[]): ModifierSelection {
+    static dropdown(name: string, modifiers: ModifierType[]): ModifierSelection {
         return new ModifierSelection(
                 name, 
             {
                 type: "dropdown",
-                fakeModifier,
                 modifiers
             }
         )
@@ -196,13 +194,13 @@ class ModifierSelection {
 }
 
 const MODIFIER_SELECTIONS = [
-    ModifierSelection.dropdown("trialPhases", "scheduledNominations", ["unscheduledNominations", "noTrialPhases"]),
+    ModifierSelection.dropdown("trialPhases", ["unscheduledNominations", "noTrialPhases"]),
     ModifierSelection.checkbox("abstaining", false),
-    ModifierSelection.dropdown("guiltyVoteRequirement", "popularVote", ["twoThirdsMajority", "autoGuilty"]),
-    ModifierSelection.dropdown("graveInfo", "roleGraveKillers", ["noDeathCause", "roleSetGraveKillers", "obscuredGraves"]),
-    ModifierSelection.dropdown("chat", "allChat", ["noNightChat", "noChat"]),
+    ModifierSelection.dropdown("guiltyVoteRequirement", ["twoThirdsMajority", "autoGuilty"]),
+    ModifierSelection.dropdown("graveInfo", ["noDeathCause", "roleSetGraveKillers", "obscuredGraves"]),
+    ModifierSelection.dropdown("chat", ["noNightChat", "noChat"]),
     ModifierSelection.checkbox("deadCanChat", false),
-    ModifierSelection.dropdown("whispers", "broadcastWhispers", ["hiddenWhispers", "noWhispers"]),
+    ModifierSelection.dropdown("whispers", ["hiddenWhispers", "noWhispers"]),
     ModifierSelection.checkbox("skipDay1", false),
 ] as const
 
