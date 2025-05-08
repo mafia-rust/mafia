@@ -182,9 +182,9 @@ class ModifierSelection {
             }
         )
     }
-    static boolean(name:string, modifier: ModifierType): ModifierSelection {
+    static boolean(modifier: ModifierType): ModifierSelection {
         return new ModifierSelection(
-            name,
+            modifier,
             {
                 type:"boolean",
                 modifier
@@ -195,13 +195,13 @@ class ModifierSelection {
 
 const MODIFIER_SELECTIONS = [
     ModifierSelection.dropdown("trialPhases", ["unscheduledNominations", "noTrialPhases"]),
-    ModifierSelection.checkbox("abstaining", false),
+    ModifierSelection.boolean("abstaining"),
     ModifierSelection.dropdown("guiltyVoteRequirement", ["twoThirdsMajority", "autoGuilty"]),
     ModifierSelection.dropdown("graveInfo", ["noDeathCause", "roleSetGraveKillers", "obscuredGraves"]),
     ModifierSelection.dropdown("chat", ["noNightChat", "noChat"]),
-    ModifierSelection.checkbox("deadCanChat", false),
+    ModifierSelection.boolean("deadCanChat"),
     ModifierSelection.dropdown("whispers", ["hiddenWhispers", "noWhispers"]),
-    ModifierSelection.checkbox("skipDay1", false),
+    ModifierSelection.boolean("skipDay1"),
 ] as const
 
 export function EnabledModifiersDisplay(props: EnabledModifiersDisplayProps): ReactElement {
