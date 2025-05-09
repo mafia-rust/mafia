@@ -23,13 +23,15 @@ const ChatElement = React.memo((
         message: ChatMessage,
         playerNames?: string[],
         playerKeywordData?: KeywordDataMap,
-        playerSenderKeywordData?: KeywordDataMap
+        playerSenderKeywordData?: KeywordDataMap,
+        canCopyPaste?: boolean
     }, 
 ) => {
-    const roleState = usePlayerState(
-        playerState => playerState.roleState,
-        ["yourRoleState"]
+    const canCopyPasteDefault = usePlayerState(
+        //if forger or counterfieter then true
     );
+    const canCopyPaste = props.canCopyPaste??canCopyPasteDefault;
+    
     const forwardButton = usePlayerState(
         playerState => {
             let controller = new ListMap(playerState.savedControllers, (a,b)=>a.type===b.type)
@@ -86,7 +88,7 @@ const ChatElement = React.memo((
                 style={style}
                 chatGroupIcon={chatGroupIcon!}
                 playerNames={playerNames}
-                roleState={roleState}
+                canCopyPaste={canCopyPaste}
                 playerKeywordData={props.playerKeywordData}
                 playerSenderKeywordData={props.playerSenderKeywordData}
                 mouseHovering={mouseHovering}
@@ -258,7 +260,7 @@ function NormalChatMessage(props: Readonly<{
     style: string,
     chatGroupIcon: string,
     playerNames: string[],
-    roleState: RoleState | undefined,
+    canCopyPaste: boolean,
     playerKeywordData: KeywordDataMap | undefined,
     playerSenderKeywordData: KeywordDataMap | undefined,
     mouseHovering: boolean,
@@ -319,8 +321,7 @@ function NormalChatMessage(props: Readonly<{
             className="chat-message-div-small-button-div"
         >
             {
-                (props.roleState?.type === "forger" || props.roleState?.type === "counterfeiter")
-                && <CopyButton
+                props.canCopyPaste && <CopyButton
                     className="chat-message-div-small-button"
                     text={translateChatMessage(props.message.variant, props.playerNames, props.roleList)}
                 />

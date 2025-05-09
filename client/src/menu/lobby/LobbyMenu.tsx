@@ -4,7 +4,6 @@ import LobbyPlayerList from "./LobbyPlayerList";
 import "./lobbyMenu.css";
 import translate from "../../game/lang";
 import { StateListener } from "../../game/gameManager.d";
-import { AnchorControllerContext, MobileContext } from "../Anchor";
 import { RoomLinkButton } from "../GlobalMenu";
 import { RoleList, getAllRoles } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
@@ -16,24 +15,23 @@ import EnabledRoleSelector from "../../components/gameModeSettings/EnabledRoleSe
 import Icon from "../../components/Icon";
 import { GameModeSelector } from "../../components/gameModeSettings/GameModeSelector";
 import LobbyChatMenu from "./LobbyChatMenu";
-import { useLobbyState } from "../../components/useHooks";
 import { Button } from "../../components/Button";
 import { EnabledModifiersSelector } from "../../components/gameModeSettings/EnabledModifiersSelector";
 import LobbyNamePane from "./LobbyNamePane";
+import { MobileContext } from "../MobileContext";
+import { AnchorContext } from "../AnchorContext";
+import { LobbyStateContext, useLobbyStateContext } from "./LobbyContext";
 
 export default function LobbyMenu(): ReactElement {
-    const isSpectator = useLobbyState(
-        lobbyState => lobbyState.players.get(lobbyState.myId!)?.clientType.type === "spectator",
-        ["playersHost", "lobbyClients"]
-    )!;
-    const isHost = useLobbyState(
-        lobbyState => {
-            const myClient = lobbyState.players.get(lobbyState.myId!);
-            if (myClient === null) return true;
-            return myClient.ready === "host";
-        },
-        ["playersHost", "lobbyClients", "yourId"]
-    )!;
+    const lobbyState = useLobbyStateContext();
+
+    const isSpectator = lobbyState.players.get(lobbyState.myId!)?.clientType.type === "spectator";
+
+    const myClient = lobbyState.players.get(lobbyState.myId!);
+    let isHost = true;
+    if (myClient !== null){
+        isHost = myClient.ready === "host";
+    }
     const mobile = useContext(MobileContext)!;
 
     const [advancedView, setAdvancedView] = useState<boolean>(isHost || mobile);
@@ -51,56 +49,47 @@ export default function LobbyMenu(): ReactElement {
         return () => window.removeEventListener("beforeunload", onBeforeUnload);
     }, [])
 
-    return <div className="lm">
-        <div>
-            <LobbyMenuHeader isHost={isHost} advancedView={advancedView} setAdvancedView={setAdvancedView}/>
-            {advancedView 
-                ? <main>
-                    <div>
-                        <LobbyNamePane />
-                        <LobbyPlayerList />
-                        <LobbyChatMenu spectator={isSpectator}/>
-                    </div>
-                    <div>
-                        <LobbyMenuSettings isHost={isHost}/>
-                    </div>
-                </main>
-                : <main>
-                    <div>
-                        <LobbyNamePane />
-                        <LobbyPlayerList />
-                    </div>
-                    <div>
-                        <LobbyChatMenu spectator={isSpectator}/>
-                    </div>
-                </main>
-            }
+    return <LobbyStateContext.Provider value={lobbyState}>
+        <div className="lm">
+            <div>
+                <LobbyMenuHeader isHost={isHost} advancedView={advancedView} setAdvancedView={setAdvancedView}/>
+                {advancedView 
+                    ? <main>
+                        <div>
+                            <LobbyNamePane/>
+                            <LobbyPlayerList/>
+                            <LobbyChatMenu spectator={isSpectator}/>
+                        </div>
+                        <div>
+                            <LobbyMenuSettings isHost={isHost}/>
+                        </div>
+                    </main>
+                    : <main>
+                        <div>
+                            <LobbyNamePane/>
+                            <LobbyPlayerList/>
+                        </div>
+                        <div>
+                            <LobbyChatMenu spectator={isSpectator}/>
+                        </div>
+                    </main>
+                }
+            </div>
         </div>
-    </div>
+    </LobbyStateContext.Provider>
 }
 
 function LobbyMenuSettings(props: Readonly<{
     isHost: boolean,
 }>): JSX.Element {
-    const roleList = useLobbyState(
-        lobbyState => lobbyState.roleList,
-        ["roleList", "roleOutline"]
-    )!;
-    const enabledRoles = useLobbyState(
-        lobbyState => lobbyState.enabledRoles,
-        ["enabledRoles"]
-    )!;
-    const phaseTimes = useLobbyState(
-        lobbyState => lobbyState.phaseTimes,
-        ["phaseTimes"]
-    )!;
-    const enabledModifiers = useLobbyState(
-        lobbyState => lobbyState.enabledModifiers,
-        ["enabledModifiers"]
-    )!;
+    const lobbyState = useContext(LobbyStateContext)!;
+    const roleList = lobbyState.roleList;
+    const enabledRoles = lobbyState.enabledRoles;
+    const phaseTimes = lobbyState.phaseTimes;
+    const enabledModifiers = lobbyState.enabledModifiers;
 
     const mobile = useContext(MobileContext)!;
-    const { setContent: setAnchorContent } = useContext(AnchorControllerContext)!;
+    const { setContent: setAnchorContent } = useContext(AnchorContext)!;
 
     useEffect(() => {
         const listener: StateListener = (type) => {
@@ -171,7 +160,7 @@ function LobbyMenuHeader(props: Readonly<{
 }>): JSX.Element {
     const [lobbyName, setLobbyName] = useState<string>(GAME_MANAGER.state.stateType === "lobby" ? GAME_MANAGER.state.lobbyName : "Mafia Lobby");
     const mobile = useContext(MobileContext)!;
-    const { setContent: setAnchorContent } = useContext(AnchorControllerContext)!;
+    const { setContent: setAnchorContent } = useContext(AnchorContext)!;
 
     useEffect(() => {
         const listener: StateListener = (type) => {

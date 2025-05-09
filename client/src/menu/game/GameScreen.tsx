@@ -7,10 +7,12 @@ import { loadSettingsParsed } from "../../game/localStorage";
 import { GameScreenMenuContext, GameScreenMenuType, useGameScreenMenuContext } from "./GameScreenMenuContext";
 import GameScreenMenus from "./GameScreenMenus";
 import { MobileContext } from "../MobileContext";
+import { GameStateContext, useGameStateContext } from "./GameStateContext";
 
 export default function GameScreen(props: {isSpectator: boolean}): ReactElement {
     const mobile = useContext(MobileContext)!;
     const { maxMenus, menuOrder } = loadSettingsParsed();
+    const gameState = useGameStateContext();
 
     let menusOpen: [GameScreenMenuType, boolean | undefined][];
     if(props.isSpectator){
@@ -47,13 +49,15 @@ export default function GameScreen(props: {isSpectator: boolean}): ReactElement 
         return () => window.removeEventListener("beforeunload", onBeforeUnload);
     }, [])
 
-    return <GameScreenMenuContext.Provider value={menuController}>
-        <div className="game-screen">
-            <div className="header">
-                <HeaderMenu/>
+    return <GameStateContext.Provider value={gameState}>
+        <GameScreenMenuContext.Provider value={menuController}>
+            <div className="game-screen">
+                <div className="header">
+                    <HeaderMenu/>
+                </div>
+                <GameScreenMenus/>
+                {mobile && <MenuButtons/>}
             </div>
-            <GameScreenMenus/>
-            {mobile && <MenuButtons/>}
-        </div>
-    </GameScreenMenuContext.Provider>
+        </GameScreenMenuContext.Provider>
+    </GameStateContext.Provider>
 }
