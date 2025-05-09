@@ -44,7 +44,6 @@ impl RoleStateImpl for Warper {
         if
             actor_ref.alive(game) &&
             PlayerReference::all_players(game)
-                .filter(|p|p.alive(game))
                 .filter(|p|p.keeps_game_running(game))
                 .all(|p|
                     WinCondition::are_friends(p.win_condition(game), actor_ref.win_condition(game))

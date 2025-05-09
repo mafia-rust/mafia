@@ -157,7 +157,7 @@ macros::roles! {
     Revolutionary : revolutionary,
     Politician : politician,
     Doomsayer : doomsayer,
-    Wildcard : wild_card,
+    Wildcard : wildcard,
     TrueWildcard : true_wildcard,
     Martyr : martyr,
     SantaClaus : santa_claus,

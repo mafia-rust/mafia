@@ -1,11 +1,12 @@
 use serde::{Serialize, Deserialize};
 
+use crate::game::{ability_input::AbilityInput, role_list::RoleSet};
 use crate::game::attack_power::DefensePower;
 use crate::game::chat::ChatMessageVariant;
-use crate::game::phase::PhaseType;
 use crate::game::player::PlayerReference;
 use crate::game::role_list::role_can_generate;
 use crate::game::Game;
+use crate::vec_set;
 
 use super::{ControllerID, ControllerParametersMap, Role, RoleStateImpl};
 
@@ -19,19 +20,15 @@ pub(super) const DEFENSE: DefensePower = DefensePower::None;
 
 impl RoleStateImpl for TrueWildcard {
     type ClientRoleState = TrueWildcard;
-    fn on_phase_start(self, game: &mut Game, actor_ref: PlayerReference, phase: PhaseType) {
-        match phase {
-            PhaseType::Night => {
-                if actor_ref.ability_deactivated_from_death(game) {return;}
-                self.become_role(game, actor_ref);
-            },
-            _ => {}
+    fn on_validated_ability_input_received(self, game: &mut Game, actor_ref: PlayerReference, input_player: PlayerReference, _: AbilityInput) {
+        if input_player == actor_ref {
+            Self::become_role(game, actor_ref, Role::TrueWildcard);
         }
     }
     fn controller_parameters_map(self, game: &Game, actor_ref: PlayerReference) -> super::ControllerParametersMap {
         ControllerParametersMap::builder(game)
             .id(ControllerID::role(actor_ref, Role::TrueWildcard, 0))
-            .single_role_selection_typical(game, |role|*role != Role::TrueWildcard)
+            .single_role_selection_role_set(game, RoleSet::Any, &vec_set![Role::TrueWildcard])
             .add_grayed_out_condition(actor_ref.ability_deactivated_from_death(game))
             .allow_players([actor_ref])
             .build_map()
@@ -39,16 +36,16 @@ impl RoleStateImpl for TrueWildcard {
 }
 
 impl TrueWildcard {
-    fn become_role(&self, game: &mut Game, actor_ref: PlayerReference) {
-
-        let Some(&role) = ControllerID::role(actor_ref, Role::TrueWildcard, 0)
-            .get_role_list_selection_first(game) else {return};
-
+    ///Function allows for inputting which wildcard for future proofing in the case of something like True Fiends Wildcard.
+    pub fn become_role(game: &mut Game, actor_ref: PlayerReference, wildcard: Role) {
+        let Some(&role) = ControllerID::role(actor_ref, wildcard, 0)
+            .get_role_list_selection_first(game)
+            else {return};
         if 
             role_can_generate(
                 role, 
                 &game.settings.enabled_roles, 
-                &Vec::new(),    //True wildcard can be whatever they want
+                &[],
             )
         {
             actor_ref.set_role_and_win_condition_and_revealed_group(game, role.new_state(game));
