@@ -16,7 +16,7 @@ import { ControllerID, AbilitySelection, translateControllerID, controllerIdToLi
 import DetailsSummary from "./DetailsSummary";
 import ListMap from "../ListMap";
 import { Button } from "./Button";
-import { GameStateContext, getMyPlayerState } from "../menu/game/GameStateContext";
+import { GameStateContext, usePlayerNames, usePlayerState } from "../menu/game/GameStateContext";
 
 const ChatElement = React.memo((
     props: {
@@ -29,8 +29,11 @@ const ChatElement = React.memo((
 ) => {
     
     const gameState = useContext(GameStateContext);
-    const playerState = getMyPlayerState(gameState);
+    const playerState = usePlayerState(gameState);
     const myIndex = playerState?.myIndex;
+    
+    const realPlayerNames = usePlayerNames(gameState);
+    const playerNames = props.playerNames ?? realPlayerNames;
     
 
     const canCopyPaste =
@@ -55,8 +58,6 @@ const ChatElement = React.memo((
     const [mouseHovering, setMouseHovering] = React.useState(false); 
 
     const message = props.message;
-    const realPlayerNames = usePlayerNames();
-    const playerNames = props.playerNames ?? realPlayerNames;
     const chatMessageStyles = require("../resources/styling/chatMessage.json");
     if(message.variant === undefined){
         console.error("ChatElement message with undefined variant:");
