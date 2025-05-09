@@ -22,7 +22,7 @@ export function usePlayerNames(state?: GameState | LobbyState): string[] | undef
     if(state===undefined){
         return undefined
     }
-    if(state.stateType === "game"){
+    if(state.type === "game"){
         return state.players.map((p)=>p.name)
     }
     return state.players.values()

@@ -95,7 +95,7 @@ export function useGameScreenMenuContext<C extends Partial<Record<GameScreenMenu
         closeMenu(menu) {
             setContentMenu(menu, false)
 
-            if (GAME_MANAGER.state.stateType === "game" && menu === GameScreenMenuType.ChatMenu){
+            if (GAME_MANAGER.state.type === "game" && menu === GameScreenMenuType.ChatMenu){
                 GAME_MANAGER.state.missedChatMessages = false;
             }
             GAME_MANAGER.invokeStateListeners("closeGameMenu");
@@ -103,7 +103,7 @@ export function useGameScreenMenuContext<C extends Partial<Record<GameScreenMenu
         openMenu(menu, callback) {
             setContentMenu(menu, true);
 
-            if (GAME_MANAGER.state.stateType === "game" && menu === GameScreenMenuType.ChatMenu){
+            if (GAME_MANAGER.state.type === "game" && menu === GameScreenMenuType.ChatMenu){
                 GAME_MANAGER.state.missedChatMessages = false;
             }
 

@@ -146,14 +146,14 @@ function KiraGuessPicker(props: {
 }): ReactElement {
 
     const [players, setPlayers] = useState(() => {
-        if(GAME_MANAGER.state.stateType === "game")
+        if(GAME_MANAGER.state.type === "game")
             return GAME_MANAGER.state.players;
         return [];
     });
 
     useEffect(()=>{
         const listener = ()=>{
-            if(GAME_MANAGER.state.stateType === "game")
+            if(GAME_MANAGER.state.type === "game")
                 setPlayers(GAME_MANAGER.state.players);
         };
 

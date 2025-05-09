@@ -18,7 +18,7 @@ export default function HostMenu(): ReactElement {
 
     usePacketListener(type => {
         // Check on every packet since like 1 million packets can affect this
-        if (!(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.host !== null)) {
+        if (!(GAME_MANAGER.state.type === "game" && GAME_MANAGER.state.host !== null)) {
             anchorController.clearCoverCard();
         }
 

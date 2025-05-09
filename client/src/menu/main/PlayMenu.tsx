@@ -142,7 +142,7 @@ function PlayMenuTable(props: Readonly<{
 
     useEffect(() => {
         const listener: StateListener = (type) => {
-            if (GAME_MANAGER.state.stateType === "outsideLobby" && type === "lobbyList") {
+            if (GAME_MANAGER.state.type === "outsideLobby" && type === "lobbyList") {
                 setLobbies(GAME_MANAGER.state.lobbies);
             }
         }

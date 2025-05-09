@@ -179,7 +179,7 @@ function PlayerCard(props: Readonly<{
                 onClick={()=>{
                     // GAME_MANAGER.prependWhisper(props.playerIndex); return true;
                     setWhisperChatOpen(!whisperChatOpen);
-                    if(GAME_MANAGER.state.stateType === 'game' && GAME_MANAGER.state.clientState.type === 'player'){
+                    if(GAME_MANAGER.state.type === 'game' && GAME_MANAGER.state.clientState.type === 'player'){
                         GAME_MANAGER.state.clientState.missedWhispers = 
                             GAME_MANAGER.state.clientState.missedWhispers.filter(player => player !== props.playerIndex);
                     }

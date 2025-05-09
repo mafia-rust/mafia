@@ -53,7 +53,7 @@ export default class LargeDoomsayerMenu extends React.Component<LargeDoomsayerMe
             [number, DoomsayerGuess]
         ];
         if(
-            GAME_MANAGER.state.stateType === "game" &&
+            GAME_MANAGER.state.type === "game" &&
             GAME_MANAGER.state.clientState.type === "player" &&
             GAME_MANAGER.state.clientState.roleState?.type === "doomsayer"
         ){
@@ -66,17 +66,17 @@ export default class LargeDoomsayerMenu extends React.Component<LargeDoomsayerMe
             ];
         }
         
-        if(GAME_MANAGER.state.stateType === "game")
+        if(GAME_MANAGER.state.type === "game")
             this.state = {
                 gameState : GAME_MANAGER.state,
                 localDoomsayerGuesses: defaultGuess
             };
         this.listener = (type)=>{
-            if(GAME_MANAGER.state.stateType === "game")
+            if(GAME_MANAGER.state.type === "game")
                 this.setState({
                     gameState: GAME_MANAGER.state
                 });
-            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player" && type==="yourRoleState" && GAME_MANAGER.state.clientState.roleState?.type === "doomsayer"){
+            if(GAME_MANAGER.state.type === "game" && GAME_MANAGER.state.clientState.type === "player" && type==="yourRoleState" && GAME_MANAGER.state.clientState.roleState?.type === "doomsayer"){
                 this.setState({
                     localDoomsayerGuesses: GAME_MANAGER.state.clientState.roleState.guesses
                 });

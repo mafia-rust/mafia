@@ -158,18 +158,18 @@ function LobbyMenuHeader(props: Readonly<{
     advancedView: boolean,
     setAdvancedView: (advancedView: boolean) => void
 }>): JSX.Element {
-    const [lobbyName, setLobbyName] = useState<string>(GAME_MANAGER.state.stateType === "lobby" ? GAME_MANAGER.state.lobbyName : "Mafia Lobby");
+    const [lobbyName, setLobbyName] = useState<string>(GAME_MANAGER.state.type === "lobby" ? GAME_MANAGER.state.lobbyName : "Mafia Lobby");
     const mobile = useContext(MobileContext)!;
     const { setContent: setAnchorContent } = useContext(AnchorContext)!;
 
     useEffect(() => {
         const listener: StateListener = (type) => {
-            if (type === "lobbyName" && GAME_MANAGER.state.stateType === "lobby") {
+            if (type === "lobbyName" && GAME_MANAGER.state.type === "lobby") {
                 setLobbyName(GAME_MANAGER.state.lobbyName);
             }
         };
 
-        if(GAME_MANAGER.state.stateType === "lobby")
+        if(GAME_MANAGER.state.type === "lobby")
             setLobbyName(GAME_MANAGER.state.lobbyName);
 
         GAME_MANAGER.addStateListener(listener)

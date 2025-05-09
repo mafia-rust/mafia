@@ -17,6 +17,7 @@ import DetailsSummary from "./DetailsSummary";
 import ListMap from "../ListMap";
 import { Button } from "./Button";
 import { GameStateContext, usePlayerNames, usePlayerState } from "../menu/game/GameStateContext";
+import { LobbyStateContext } from "../menu/lobby/LobbyContext";
 
 const ChatElement = React.memo((
     props: {
@@ -31,9 +32,10 @@ const ChatElement = React.memo((
     const gameState = useContext(GameStateContext);
     const playerState = usePlayerState(gameState);
     const myIndex = playerState?.myIndex;
+    const lobbyState = useContext(LobbyStateContext);
     
-    const realPlayerNames = usePlayerNames(gameState);
-    const playerNames = props.playerNames ?? realPlayerNames;
+    let playerNames = props.playerNames ?? usePlayerNames(gameState) ?? usePlayerNames(lobbyState)!;
+    
     
 
     const canCopyPaste =
@@ -345,26 +347,21 @@ function NormalChatMessage(props: Readonly<{
 }
 
 function useContainsMention(message: ChatMessageVariant & { text: string }, playerNames: string[]): boolean {
-    const myNumber = usePlayerState(
-        gameState => gameState.myIndex,
-        ["yourPlayerIndex"]
-    );
-
-    const myName = useLobbyOrGameState(
-        state => {
-            if (state.stateType === "game" && state.clientState.type === "player")
-                return state.players[state.clientState.myIndex].name
-            else if (state.stateType === "lobby" && state.myId) {
-                const me = state.players.get(state.myId)
-                if (me?.clientType.type === "player") {
-                    return me.clientType.name
-                }
-            } else {
-                return undefined;
-            }
-        },
-        ["lobbyClients", "yourId", "yourPlayerIndex", "gamePlayers"]
-    );
+    const gameState = useContext(GameStateContext);
+    const playerState = usePlayerState(gameState);
+    const myIndex = playerState?.myIndex;
+    
+    const lobbyState = useContext(LobbyStateContext);
+    
+    let myName = undefined;
+    if(gameState!==undefined && myIndex!==undefined){
+        myName = gameState.players[myIndex].name
+    }else if(lobbyState !== undefined){
+        let myPlayer = lobbyState.players.get(lobbyState.myId!)!;
+        if(myPlayer.clientType.type === "player"){
+            myName = myPlayer.clientType.name
+        }
+    }
 
     if (myName === undefined) {
         return false;
@@ -372,8 +369,8 @@ function useContainsMention(message: ChatMessageVariant & { text: string }, play
     return (
         find(myName).test(sanitizePlayerMessage(replaceMentions(message.text, playerNames))) ||
         (
-            myNumber !== undefined && 
-            find("" + (myNumber + 1)).test(sanitizePlayerMessage(replaceMentions(message.text, playerNames)))
+            myIndex !== undefined && 
+            find("" + (myIndex + 1)).test(sanitizePlayerMessage(replaceMentions(message.text, playerNames)))
         )
     )
 }
@@ -520,7 +517,7 @@ export function translateChatMessage(
         case "trialVerdict":{
             let hang;
             // Damn
-            if (GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.enabledModifiers.includes("twoThirdsMajority")) {
+            if (GAME_MANAGER.state.type === "game" && GAME_MANAGER.state.enabledModifiers.includes("twoThirdsMajority")) {
                 hang = message.innocent <= 2 * message.guilty
             } else {
                 hang = message.innocent < message.guilty

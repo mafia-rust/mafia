@@ -64,21 +64,21 @@ export default function WillMenu(): ReactElement {
                     savedText={note}
                     cantPost={cantPost}
                     onAdd={() => {
-                        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                        if(GAME_MANAGER.state.type === "game" && GAME_MANAGER.state.clientState.type === "player"){
                             const notes = [...GAME_MANAGER.state.clientState.notes];
                             notes.splice(i+1, 0, "");
                             GAME_MANAGER.sendSaveNotesPacket(notes);
                         }
                     }}
                     onSubtract={() => {
-                        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                        if(GAME_MANAGER.state.type === "game" && GAME_MANAGER.state.clientState.type === "player"){
                             const notes = [...GAME_MANAGER.state.clientState.notes];
                             notes.splice(i, 1);
                             GAME_MANAGER.sendSaveNotesPacket(notes);
                         }
                     }}
                     onSave={(text) => {
-                        if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+                        if(GAME_MANAGER.state.type === "game" && GAME_MANAGER.state.clientState.type === "player"){
                             const notes = [...GAME_MANAGER.state.clientState.notes];
                             notes[i] = text;
                             GAME_MANAGER.sendSaveNotesPacket(notes);
