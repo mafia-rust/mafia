@@ -52,14 +52,13 @@ impl GameConclusion {
         }
         
         //if nobody is left to hold game hostage
-        if !PlayerReference::all_players(game).any(|player| player.alive(game) && player.keeps_game_running(game)){
+        if !PlayerReference::all_players(game).any(|player|player.keeps_game_running(game)){
             return Some(GameConclusion::Draw);
         }
 
         //find one end game condition that everyone agrees on
         GameConclusion::all().into_iter().find(|resolution| 
             PlayerReference::all_players(game)
-                .filter(|p|p.alive(game))
                 .filter(|p|p.keeps_game_running(game))
                 .all(|p|
                     match p.win_condition(game){
@@ -81,14 +80,14 @@ impl GameConclusion {
     /// A detective and a witch game never ends so this needs to make sure they dont keep the game running
     /// For simplicity, i will just say only fiends, MK, apostle and zealot keep the game running
     pub fn keeps_game_running(role: Role)->bool{
-        if
-            RoleSet::Fiends.get_roles().contains(&role) ||
-            RoleSet::MafiaKilling.get_roles().contains(&role)  
-        {
-            true
-        }else{
-            matches!(role, Role::Apostle | Role::Zealot | Role::Krampus)
-        }
+        RoleSet::Fiends.get_roles().contains(&role) ||
+        RoleSet::MafiaKilling.get_roles().contains(&role) ||
+        matches!(
+            role, 
+            Role::Apostle | Role::Zealot | 
+            Role::Krampus | 
+            Role::Wildcard | Role::TrueWildcard
+        )
     }
 }
 
