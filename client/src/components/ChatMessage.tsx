@@ -3,12 +3,12 @@ import React, { ReactElement } from "react";
 import GAME_MANAGER, { find, replaceMentions } from "..";
 import StyledText, { KeywordDataMap, PLAYER_SENDER_KEYWORD_DATA } from "./StyledText";
 import "./chatMessage.css"
-import { ChatGroup, Conclusion, DefensePower, PhaseState, PlayerIndex, Tag, translateConclusion, translateWinCondition, Verdict, WinCondition } from "../game/gameState.d";
+import { ChatGroup, Conclusion, DefensePower, RoleOutlineReference, PhaseState, PlayerIndex, Tag, translateConclusion, translateWinCondition, Verdict, WinCondition } from "../game/gameState.d";
 import { Role, RoleState } from "../game/roleState.d";
 import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
 import GraveComponent from "./grave";
-import { RoleList, RoleOutline, translateRoleOutline } from "../game/roleListState.d";
+import { RoleList, RoleOutline, translateRoleOutline, translateSpecificRoleOutline } from "../game/roleListState.d";
 import { CopyButton } from "./ClipboardButtons";
 import { useGameState, useLobbyOrGameState, usePlayerNames, usePlayerState, useSpectator } from "./useHooks";
 import { KiraResult, KiraResultDisplay } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
@@ -695,7 +695,16 @@ export function translateChatMessage(
             );
         case "auditorResult":
             return translate("chatMessage.auditorResult", 
-                translateRoleOutline(message.roleOutline),
+                translateSpecificRoleOutline(roleList, message.outline),
+                message.result.map((role)=>translate("role."+role+".name")).join(", ")
+            );
+        case "exampleAuditorResult":
+            let outlineText = translateRoleOutline(message.outline);
+            if(message.index !== null){
+                outlineText = translate("numberedRoleOutline.multiple", outlineText, message.index)
+            }
+            return translate("chatMessage.auditorResult", 
+                outlineText,
                 message.result.map((role)=>translate("role."+role+".name")).join(", ")
             );
         case "engineerVisitorsRole":
@@ -1034,8 +1043,13 @@ export type ChatMessageVariant = {
 } | {
     type: "psychicFailed"
 } | {
-    type: "auditorResult",
-    roleOutline: RoleOutline,
+    type: "auditorResult",  
+    outline: RoleOutlineReference,
+    result: AuditorResult,
+} | {
+    type: "exampleAuditorResult",  
+    index: number | null,
+    outline: RoleOutline,
     result: AuditorResult,
 } | {
     type: "engineerVisitorsRole",

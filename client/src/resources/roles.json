@@ -149,10 +149,10 @@
         "canWriteDeathNote": false,
         "canBeConvertedTo": [],
         "chatMessages":[
-            {"type": "auditorResult", "roleOutline":[{"roleSet": "any"}],"result": ["godfather","jester","apostle","escort"]},
-            {"type": "auditorResult", "roleOutline":[{"role":"vigilante"},{"role":"marksman"}],"result": ["vigilante"]},
-            {"type": "auditorResult", "roleOutline":[{"role":"arsonist"}],"result": ["arsonist"]},
-            {"type": "auditorResult", "roleOutline":[{"roleSet":"townSupport"}],"result": ["escort","medium","coxswain"]}
+            {"type": "exampleAuditorResult", "outline":[{"roleSet": "any"}],"result": ["godfather","jester","apostle","escort"], "index": null},
+            {"type": "exampleAuditorResult", "outline":[{"role":"vigilante"},{"role":"marksman"}],"result": ["vigilante"], "index": null},
+            {"type": "exampleAuditorResult", "outline":[{"roleSet":"fiends"}],"result": ["arsonist"], "index": 2},
+            {"type": "exampleAuditorResult", "outline":[{"roleSet":"townSupport"}],"result": ["escort","medium","coxswain"], "index": 1}
         ]
     },
     "snoop": {
