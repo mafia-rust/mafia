@@ -8,9 +8,10 @@ import { LobbyPreviewData } from "../../game/packet";
 import LobbyMenu from "../lobby/LobbyMenu";
 import PlayMenuJoinPopup from "./PlayMenuJoinPopup";
 import { Button } from "../../components/Button";
+import { AnchorContext } from "../AnchorContext";
 
 export default function PlayMenu(): ReactElement {
-    const { setContent: setAnchorContent } = useContext(AnchorControllerContext)!;
+    const { setContent: setAnchorContent } = useContext(AnchorContext)!;
     
     useEffect(() => {
         GAME_MANAGER.sendLobbyListRequest();
@@ -138,7 +139,7 @@ function PlayMenuTable(props: Readonly<{
     joinGame: (roomCode?: number, playerId?: number) => Promise<boolean>
 }>): ReactElement {
     const [lobbies, setLobbies] = useState<LobbyMap>(new Map());
-    const { setCoverCard } = useContext(AnchorControllerContext)!;
+    const { setCoverCard } = useContext(AnchorContext)!;
 
     useEffect(() => {
         const listener: StateListener = (type) => {

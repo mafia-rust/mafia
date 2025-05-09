@@ -11,9 +11,10 @@ import PlayerNamePlate from "../../../components/PlayerNamePlate";
 import ChatMessage, { translateChatMessage } from "../../../components/ChatMessage";
 import GraveComponent, { translateGraveRole } from "../../../components/grave";
 import { ChatMessageSection, ChatTextInput } from "./ChatMenu";
-import { GameStateContext } from "../GameStateContext";
+import { GameStateContext, useGameStateContext, usePlayerNames, usePlayerState } from "../GameStateContext";
 import GameScreenMenuTab from "../GameScreenMenuTab";
 import { GameScreenMenuType } from "../GameScreenMenuContext";
+import { GameModeContext } from "../../../components/gameModeSettings/GameModesEditor";
 
 export default function PlayerListMenu(): ReactElement {
     const players = useContext(GameStateContext)!.players;
@@ -61,32 +62,32 @@ function PlayerCard(props: Readonly<{
     graveIndex?: number,
     playerIndex: number
 }>): ReactElement{
-    const isPlayerSelf = usePlayerState(
-        playerState => playerState.myIndex === props.playerIndex,
-        ["yourPlayerIndex"],
-        false
-    )!;
-    const chatFilter = usePlayerState(
-        playerState => playerState.chatFilter,
-        ["filterUpdate"],
-    );
-    const playerAlive = useGameState(
-        gameState => gameState.players[props.playerIndex].alive,
-        ["gamePlayers", "playerAlive"]
-    )!;
-    const phaseState = useGameState(
-        gameState => gameState.phaseState,
-        ["phase"]
-    )!
-    const numVoted = useGameState(
-        gameState => gameState.players[props.playerIndex].numVoted,
-        ["gamePlayers", "playerVotes"]
-    )!;
-    const sendChatGroups = usePlayerState(
-        playerState => playerState.sendChatGroups,
-        ["yourSendChatGroups"]
-    );
-    const playerNames = usePlayerNames();
+    const [alibiOpen, setAlibiOpen] = React.useState(false);
+    const [graveOpen, setGraveOpen] = React.useState(false);
+    const [whisperChatOpen, setWhisperChatOpen] = React.useState(false);
+
+    const gameState = useContext(GameStateContext)!;
+    const playerState = usePlayerState(gameState);
+
+    const playerAlive = gameState.players[props.playerIndex].alive;
+    const numVoted = gameState.players[props.playerIndex].numVoted
+    const phaseState = gameState.phaseState;
+
+    let isPlayerSelf = false;
+    let chatFilter = undefined;
+    let sendChatGroups = undefined;
+    let whisperNotification = false;
+    if(playerState !== undefined){
+        isPlayerSelf = playerState.myIndex === props.playerIndex;
+        chatFilter = playerState?.chatFilter;
+        sendChatGroups = playerState?.sendChatGroups;
+        
+        whisperNotification = playerState.missedWhispers.some(player => player === props.playerIndex) &&
+            !isPlayerSelf &&
+            !whisperChatOpen;
+    }
+
+    const playerNames = usePlayerNames(gameState) as string[];
 
     type NonAnonymousBlockMessage = {
         variant: {
@@ -104,41 +105,19 @@ function PlayerCard(props: Readonly<{
         chatGroup: "all"
     }
 
-    const mostRecentBlockMessage: undefined | NonAnonymousBlockMessage = useGameState(
-        gameState => findLast(gameState.chatMessages, message =>
-                message.chatGroup === "all" && 
-                message.variant.type === "normal" &&
-                message.variant.block &&
-                (message.variant.messageSender.type === "player" || message.variant.messageSender.type === "livingToDead") &&
-                message.variant.messageSender.player === props.playerIndex
-            ),
-        ["addChatMessages", "gamePlayers"]
+    const mostRecentBlockMessage: undefined | NonAnonymousBlockMessage = findLast(
+        gameState.chatMessages,
+        message => message.chatGroup === "all" && 
+            message.variant.type === "normal" &&
+            message.variant.block &&
+            (message.variant.messageSender.type === "player" || message.variant.messageSender.type === "livingToDead") &&
+            message.variant.messageSender.player === props.playerIndex
     ) as undefined | NonAnonymousBlockMessage;
+    
 
-    const [alibiOpen, setAlibiOpen] = React.useState(false);
-    const [graveOpen, setGraveOpen] = React.useState(false);
-    const [whisperChatOpen, setWhisperChatOpen] = React.useState(false);
-    const whispersDisabled = useGameState(
-        gameState => gameState.enabledModifiers.includes("noWhispers"),
-        ["enabledModifiers"]
-    )!;
+    const whispersDisabled = gameState.enabledModifiers.includes("noWhispers");
 
-    const grave = useGameState(
-        gameState => {
-            if(props.graveIndex === undefined) return undefined;
-            return gameState.graves[props.graveIndex]
-        },
-        ["addGrave"]
-    )!
-
-    const whisperNotification = usePlayerState(
-        gameState =>
-            gameState.missedWhispers.some(player => player === props.playerIndex) &&
-            !isPlayerSelf &&
-            !whisperChatOpen,
-        ["addChatMessages", "whisperChatOpenOrClose"],
-        false
-    );
+    const grave = props.graveIndex === undefined?undefined:gameState.graves[props.graveIndex];
 
     const spectator = useContext(GameStateContext)!.clientState.type === "spectator";
 
