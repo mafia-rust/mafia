@@ -1,5 +1,5 @@
 import { createContext, JSXElementConstructor, useCallback, useEffect, useMemo, useState } from "react";
-import { ErrorData } from "./Anchor";
+import { ErrorCard, ErrorData } from "./Anchor";
 import { Theme } from "..";
 import LoadingScreen from "./LoadingScreen";
 import React from "react";

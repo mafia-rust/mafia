@@ -26,8 +26,8 @@ export default function Anchor(props: Readonly<{
         const settings = loadSettingsParsed();
 
         AudioController.setVolume(settings.volume);
-        setFontSize(settings.fontSize);
-        setAccessibilityFontEnabled(settings.accessibilityFont);
+        anchorContext.setFontSize(settings.fontSize);
+        anchorContext.setAccessibilityFontEnabled(settings.accessibilityFont);
         switchLanguage(settings.language);
         computeKeywordData();
     }, [])
@@ -62,15 +62,6 @@ export default function Anchor(props: Readonly<{
             </div>
         </AnchorContext.Provider>
     </MobileContext.Provider>
-}
-
-let swipeEventListeners: ((right: boolean) => void)[] = [];
-
-export function addSwipeEventListener(listener: (right: boolean) => void) {
-    swipeEventListeners = [...swipeEventListeners, listener];
-}
-export function removeSwipeEventListener(listener: (right: boolean) => void) {
-    swipeEventListeners = swipeEventListeners.filter((l) => l !== listener);
 }
 
 function CoverCard(props: Readonly<{
@@ -114,7 +105,7 @@ export type ErrorData = {
     body: string
 }
 
-function ErrorCard(props: Readonly<{
+export function ErrorCard(props: Readonly<{
     error: ErrorData,
     onClose: () => void
 }>) {

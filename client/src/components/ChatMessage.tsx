@@ -4,7 +4,7 @@ import GAME_MANAGER, { find, replaceMentions } from "..";
 import StyledText, { KeywordDataMap, PLAYER_SENDER_KEYWORD_DATA } from "./StyledText";
 import "./chatMessage.css"
 import { ChatGroup, Conclusion, DefensePower, PhaseState, PlayerIndex, Tag, translateConclusion, translateWinCondition, Verdict, WinCondition } from "../game/gameState.d";
-import { Role, RoleState } from "../game/roleState.d";
+import { Role } from "../game/roleState.d";
 import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
 import GraveComponent from "./grave";
@@ -16,7 +16,7 @@ import { ControllerID, AbilitySelection, translateControllerID, controllerIdToLi
 import DetailsSummary from "./DetailsSummary";
 import ListMap from "../ListMap";
 import { Button } from "./Button";
-import { GameStateContext } from "../menu/game/GameStateContext";
+import { GameStateContext, getMyPlayerState } from "../menu/game/GameStateContext";
 
 const ChatElement = React.memo((
     props: {
@@ -27,24 +27,28 @@ const ChatElement = React.memo((
         canCopyPaste?: boolean
     }, 
 ) => {
-    const canCopyPasteDefault = usePlayerState(
-        //if forger or counterfieter then true
-    );
-    const canCopyPaste = props.canCopyPaste??canCopyPasteDefault;
     
-    const forwardButton = usePlayerState(
-        playerState => {
-            let controller = new ListMap(playerState.savedControllers, (a,b)=>a.type===b.type)
-                .get({type: "forwardMessage", player: playerState.myIndex});
+    const gameState = useContext(GameStateContext);
+    const playerState = getMyPlayerState(gameState);
+    const myIndex = playerState?.myIndex;
+    
 
-            return controller!==null&&!controller.availableAbilityData.grayedOut;
-        },
-        ["yourPlayerIndex", "yourAllowedControllers"]
-    );
-    const myIndex = usePlayerState(
-        playerState => playerState.myIndex,
-        ["yourPlayerIndex"]
-    );
+    const canCopyPaste =
+        props.canCopyPaste??
+        (
+            playerState?.roleState.type==="forger" || 
+            playerState?.roleState.type==="counterfeiter" || 
+            playerState===undefined
+        );
+    
+    const forwardMessageController = playerState===undefined?undefined:
+        new ListMap(playerState.savedControllers, (a,b)=>a.type===b.type)
+        .get({type: "forwardMessage", player: playerState.myIndex});
+        
+    const forwardButton = 
+        forwardMessageController!==undefined&&
+        forwardMessageController!==null&&
+        !forwardMessageController.availableAbilityData.grayedOut
     
     const roleList = useContext(GameStateContext)!.roleList;
 
@@ -173,8 +177,7 @@ const ChatElement = React.memo((
             className="chat-message-div-small-button-div"
         >
             {
-                (roleState?.type === "forger" || roleState?.type === "counterfeiter")
-                && <CopyButton
+                canCopyPaste && <CopyButton
                     className="chat-message-div-small-button"
                     text={translateChatMessage(message.variant, playerNames, roleList)}
                 />

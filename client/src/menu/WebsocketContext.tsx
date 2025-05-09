@@ -175,7 +175,7 @@ export function useWebSocketContext(){
             
             defaultWebsocketContext.webSocket.close();
             defaultWebsocketContext.webSocket = null;
-        }
+        },
 
 
         sendLobbyListRequest() {

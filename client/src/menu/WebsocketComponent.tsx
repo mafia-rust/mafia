@@ -1,7 +1,8 @@
 import { ReactElement } from "react";
 import { useWebSocketContext, WebsocketContext } from "./WebsocketContext";
+import React from "react";
 
-export default function WebsocketComponent(): ReactElement{
+export function WebsocketComponent(): ReactElement{
 
     const ctx = useWebSocketContext();
 

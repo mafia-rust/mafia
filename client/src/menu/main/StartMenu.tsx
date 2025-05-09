@@ -13,6 +13,7 @@ import { Button } from "../../components/Button";
 import Credits from "./Credits";
 import StyledText from "../../components/StyledText";
 import { AnchorContext } from "../AnchorContext";
+import { WebsocketComponent } from "../WebsocketComponent";
 
 export default function StartMenu(): ReactElement {
     const { setContent, setCoverCard } = useContext(AnchorContext)!;
@@ -26,6 +27,7 @@ export default function StartMenu(): ReactElement {
             <div className="satellite">
                 <div className="left">
                     <Button onClick={async () => {
+                        setContent(<WebsocketComponent/>);
                         setContent(<LoadingScreen type="default"/>);
                         if (await GAME_MANAGER.setOutsideLobbyState()) {
                             setContent(<PlayMenu/>);
