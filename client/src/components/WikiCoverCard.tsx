@@ -3,7 +3,6 @@ import translate from '../game/lang';
 import Wiki from '../components/Wiki';
 import "./wiki.css";
 import { WikiArticleLink } from './WikiArticleLink';
-import { useLobbyOrGameState } from './useHooks';
 import { MODIFIERS, ModifierType } from '../game/gameState.d';
 import { getAllRoles } from '../game/roleListState.d';
 

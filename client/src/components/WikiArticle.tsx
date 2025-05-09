@@ -9,7 +9,6 @@ import DUMMY_NAMES from "../resources/dummyNames.json";
 import { ARTICLES, GeneratedArticle, getArticleTitle, WikiArticleLink, wikiPageIsEnabled } from "./WikiArticleLink";
 import "./wiki.css";
 import GAME_MANAGER, { replaceMentions } from "..";
-import { useLobbyOrGameState } from "./useHooks";
 import DetailsSummary from "./DetailsSummary";
 import { partitionWikiPages, WikiCategory } from "./Wiki";
 import { MODIFIERS, ModifierType } from "../game/gameState.d";

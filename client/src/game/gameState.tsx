@@ -18,7 +18,7 @@ export function defaultPhaseTimes(): PhaseTimes {
 
 export function createLobbyState(): LobbyState {
     return {
-        stateType: "lobby",
+        type: "lobby",
         roomCode: 0,
         lobbyName: "Mafia Lobby",
 
@@ -36,7 +36,7 @@ export function createLobbyState(): LobbyState {
 
 export function createGameState(): GameState {
     return {
-        stateType: "game",
+        type: "game",
         roomCode: 0,
         lobbyName: "",
 

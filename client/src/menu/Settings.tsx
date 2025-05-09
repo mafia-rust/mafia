@@ -4,11 +4,11 @@ import translate, { Language, languageName, LANGUAGES, switchLanguage } from "..
 import StyledText, { computeKeywordData } from "../components/StyledText";
 import Icon from "../components/Icon";
 import { loadSettingsParsed, saveSettings } from "../game/localStorage";
-import { AnchorControllerContext, ANCHOR_CONTROLLER } from "./Anchor";
 import AudioController from "./AudioController";
 import CheckBox from "../components/CheckBox";
 import { DragAndDrop } from "../components/DragAndDrop";
-import { MENU_THEMES, MENU_TRANSLATION_KEYS } from "./game/GameScreen";
+import { AnchorContext } from "./AnchorContext";
+import { MENU_CSS_THEMES, MENU_TRANSLATION_KEYS } from "./game/GameScreenMenuContext";
 
 export default function SettingsMenu(): ReactElement {
     const [volume, setVolume] = useState<number>(loadSettingsParsed().volume);
@@ -17,12 +17,12 @@ export default function SettingsMenu(): ReactElement {
     const [accessibilityFontEnabled, setAccessibilityFontEnabled] = useState(loadSettingsParsed().accessibilityFont);
     const [menuOrder, setMenuOrder] = useState(loadSettingsParsed().menuOrder);
     const [maxMenus, setMaxMenus] = useState(loadSettingsParsed().maxMenus);
-    const anchorController = useContext(AnchorControllerContext)!;
+    const anchorCtx = useContext(AnchorContext)!;
 
     useEffect(() => {
         AudioController.setVolume(volume);
-        ANCHOR_CONTROLLER?.setFontSize(fontSizeState);
-        ANCHOR_CONTROLLER?.setAccessibilityFontEnabled(accessibilityFontEnabled);
+        anchorCtx?.setFontSize(fontSizeState);
+        anchorCtx?.setAccessibilityFontEnabled(accessibilityFontEnabled);
     }, [volume, fontSizeState, accessibilityFontEnabled]);
 
     return <div className="settings-menu-card">
@@ -77,7 +77,7 @@ export default function SettingsMenu(): ReactElement {
                             switchLanguage(language);
                             saveSettings({language});
                             computeKeywordData()
-                            anchorController.reload();
+                            anchorCtx.reload();
                         }}
                     >
                         {LANGUAGES.map(lang => <option key={lang} value={lang}>{languageName(lang)}</option>)}
@@ -106,7 +106,7 @@ export default function SettingsMenu(): ReactElement {
                         <div className="menu-list">
                             <DragAndDrop
                                 items={menuOrder}
-                                render={menu => <div className={"placard " + (MENU_THEMES[menu] ?? "")}>
+                                render={menu => <div className={"placard " + (MENU_CSS_THEMES[menu] ?? "")}>
                                     {translate(MENU_TRANSLATION_KEYS[menu] + ".icon")}
                                 </div>}
                                 onDragEnd={newItems => {
@@ -134,7 +134,7 @@ export default function SettingsMenu(): ReactElement {
                     <button onClick={()=>{
                         if(!window.confirm(translate("confirmDelete"))) return;
                         localStorage.clear();
-                        anchorController.clearCoverCard();
+                        anchorCtx.clearCoverCard();
                     }}><Icon>delete_forever</Icon> {translate('menu.settings.eraseSaveData')}</button>
                 </section>
             </div>

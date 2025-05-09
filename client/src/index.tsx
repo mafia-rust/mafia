@@ -43,9 +43,7 @@ new MutationObserver(mutations => {
 }).observe(document.body, { subtree: true, childList: true });
 
 ROOT.render(
-    <Anchor onMount={anchorController => route(anchorController, window.location)}>
-        <LoadingScreen type="default"/>
-    </Anchor>
+    <Anchor onMount={anchorController => route(anchorController, window.location)}/>
 );
 
 export function find(text: string): RegExp {

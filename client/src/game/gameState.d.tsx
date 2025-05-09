@@ -11,11 +11,11 @@ import ListMap, { ListMapData } from "../ListMap";
 export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;
 
 export type Disconnected = {
-    stateType: "disconnected"
+    type: "disconnected"
 }
 
 export type OutsideLobbyState = {
-    stateType: "outsideLobby",
+    type: "outsideLobby",
 
     selectedRoomCode: string | null,
     lobbies: Map<number, LobbyPreviewData>,
@@ -24,7 +24,7 @@ export type OutsideLobbyState = {
 
 //Change this to use PlayerID for player map and playerID for who I AM instead of myName and host
 export type LobbyState = {
-    stateType: "lobby"
+    type: "lobby"
     roomCode: number,
     lobbyName: string,
 
@@ -65,7 +65,7 @@ export type PlayerClientType = {
 }
 
 type GameState = {
-    stateType: "game",
+    type: "game",
     roomCode: number,
     lobbyName: string,
     

@@ -1,6 +1,6 @@
 import React from "react";
 import { ARTICLES, WikiArticleLink } from "./components/WikiArticleLink";
-import { AnchorController } from "./menu/Anchor";
+import { AnchorContext } from "./menu/Anchor";
 import StandaloneWiki from "./menu/main/StandaloneWiki";
 import { deleteReconnectData, loadReconnectData } from "./game/localStorage";
 import GAME_MANAGER from ".";
@@ -17,7 +17,7 @@ function uriAsFileURI(path: string): string {
     }
 }
 
-async function routeWiki(anchorController: AnchorController, page: string) {
+async function routeWiki(anchorController: AnchorContext, page: string) {
     const wikiPage = uriAsFileURI(page);
 
     if (wikiPage === "") {
@@ -29,7 +29,7 @@ async function routeWiki(anchorController: AnchorController, page: string) {
     }
 }
 
-async function routeLobby(anchorController: AnchorController, roomCode: string) {
+async function routeLobby(anchorController: AnchorContext, roomCode: string) {
     const reconnectData = loadReconnectData();
 
     if (!await GAME_MANAGER.setOutsideLobbyState()) {
@@ -64,7 +64,7 @@ async function routeLobby(anchorController: AnchorController, roomCode: string) 
     }
 }
 
-async function routeGameMode(anchorController: AnchorController, gameModeString: string) {
+async function routeGameMode(anchorController: AnchorContext, gameModeString: string) {
     window.history.replaceState({}, "", "/");
     
     let gameMode: any;
@@ -86,7 +86,7 @@ async function routeGameMode(anchorController: AnchorController, gameModeString:
     }
 }
 
-async function route404(anchorController: AnchorController, path: string) {
+async function route404(anchorController: AnchorContext, path: string) {
     anchorController.setContent(
         <div className="hero" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem" }}>
             <h1>404</h1>
@@ -95,7 +95,7 @@ async function route404(anchorController: AnchorController, path: string) {
     )
 }
 
-async function routeMainButFirstTryUsingReconnectData(anchorController: AnchorController) {
+async function routeMainButFirstTryUsingReconnectData(anchorController: AnchorContext) {
     window.history.replaceState({}, "", "/");
 
     const reconnectData = loadReconnectData();
@@ -119,7 +119,7 @@ async function routeMainButFirstTryUsingReconnectData(anchorController: AnchorCo
     // This is where we *should* handle joining the lobby, but it's handled in messageListener... grumble grumble
 }
 
-export default async function route(anchorController: AnchorController, url: Location) {
+export default async function route(anchorController: AnchorContext, url: Location) {
 
     if (url.pathname.startsWith("/wiki")) {
         return await routeWiki(anchorController, url.pathname.substring(5));
