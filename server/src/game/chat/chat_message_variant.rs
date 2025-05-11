@@ -158,10 +158,10 @@ pub enum ChatMessageVariant {
     RoleBlocked,
     Wardblocked,
 
-    SheriffResult {suspicious: bool},
+    DetectiveResult {suspicious: bool},
     LookoutResult{players: Vec<PlayerIndex>},
     TrackerResult{players: Vec<PlayerIndex>},
-    SeerResult{enemies: bool},
+    PhilosopherResult{enemies: bool},
     SpyMafiaVisit{players: Vec<PlayerIndex>},
     SpyBug{bug: SpyBug},
     PsychicGood{player: PlayerReference},

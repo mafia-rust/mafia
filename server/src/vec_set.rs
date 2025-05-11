@@ -1,3 +1,5 @@
+use std::{collections::HashSet, hash::Hash};
+
 use serde::{Deserialize, Serialize};
 
 use crate::vec_map::VecMap;
@@ -15,6 +17,9 @@ impl<K> Default for VecSet<K> where K: Eq {
 impl <K> VecSet<K> where K: Eq {
     pub fn new() -> Self {
         VecSet { vec: VecMap::new() }
+    }
+    pub fn len(&self) -> usize {
+        self.vec.len()
     }
 
     pub fn insert(&mut self, key: K) -> Option<K> {
@@ -116,6 +121,17 @@ impl<T: Eq> PartialOrd for VecSet<T> {
 impl<T: Eq> Ord for VecSet<T> {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.count().cmp(&other.count())
+    }
+}
+#[expect(clippy::from_over_into, reason="using into allows access of private variables, meaning K does not need to implement Clone nor does it need to be cloned or be accessed as a reference")]
+impl<K> Into<HashSet<K>> for VecSet<K> where K: Eq+Hash{
+    /// Is consuming
+    fn into(self) -> HashSet<K> {
+        let mut hash_set = HashSet::with_capacity(self.len());
+        for key in self.vec {
+            hash_set.insert(key.0);
+        }
+        hash_set
     }
 }
 

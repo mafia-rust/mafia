@@ -1,5 +1,7 @@
 use mafia_server::{game::{ability_input::*, chat::ChatMessageVariant, phase::PhaseState, player::{PlayerIndex, PlayerReference}, role::{Role, RoleState}, verdict::Verdict, Game}, packet::ToServerPacket};
 
+use super::game::TestGame;
+
 #[derive(Clone, Copy, Debug)]
 pub struct TestPlayer(PlayerReference, *mut Game);
 
@@ -172,6 +174,12 @@ impl TestPlayer {
     pub fn get_won_game(&self) -> bool {
         self.0.get_won_game(game!(self))
     }
+
+    pub fn all_players(game: &TestGame) -> Vec<Self> {
+        PlayerReference::all_players(game)
+            .map(|p|Self::new(p, &game))
+            .collect()
+    }
 }
 
 impl From<TestPlayer> for Vec<TestPlayer> {
@@ -179,3 +187,11 @@ impl From<TestPlayer> for Vec<TestPlayer> {
         vec![value]
     }
 }
+
+impl PartialEq for TestPlayer {
+    fn eq(&self, other: &TestPlayer) -> bool{
+        self.0 == other.0
+    }
+}
+
+impl Eq for TestPlayer {}
