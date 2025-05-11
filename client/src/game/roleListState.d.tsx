@@ -1,5 +1,5 @@
 
-import { Conclusion, InsiderGroup, translateWinCondition } from "./gameState.d";
+import { Conclusion, InsiderGroup, RoleOutlineReference, translateWinCondition } from "./gameState.d";
 import translate from "./lang";
 import { Role, roleJsonData } from "./roleState.d";
 
@@ -55,6 +55,7 @@ export type RoleOutlineOption = ({
     insiderGroups?: InsiderGroup[]
 }
 
+
 export type RoleOrRoleSet = ({
     type: "roleSet",
     roleSet: RoleSet
@@ -68,6 +69,38 @@ export type RoleOrRoleSet = ({
 
 export function translateRoleOutline(roleOutline: RoleOutline): string {
     return roleOutline.map(translateRoleOutlineOption).join(" "+translate("union")+" ")
+}
+export function translateSpecificRoleOutline(roleList: RoleOutline[] | undefined, outline: RoleOutlineReference): string {
+    if (roleList === undefined) {
+        return "Translation Error. Passed undefined role list to translateSpecificRoleOutline. outline index = "+outline
+    }
+    if (outline === undefined) {
+        return "Translation Error. Passed undefined outline to translateSpecificRoleOutline. outline index = "+outline
+    }
+    if (!(outline < roleList.length && outline >= 0)) {
+        return "Translation Error. Passed out of bounds outline to translateSpecificRoleOutline. outline index = "+outline
+    }
+    const outlineText = translateRoleOutline(roleList[outline]);
+
+    let count = 1;
+    for(let i = 0; i<outline; i++){
+        if(translateRoleOutline(roleList[i])===outlineText) {
+            count++
+        }
+    }
+    if(count === 1) {
+        let single = true;
+        for(let i = outline+1; i<roleList.length; i++){
+            if(translateRoleOutline(roleList[i])===outlineText) {
+                single = false;
+                break;
+            }
+        }
+        if(single) {
+            return translate("numberedRoleOutline.single", outlineText)
+        }
+    }
+    return translate("numberedRoleOutline.multiple", outlineText, count.toString());
 }
 export function translateRoleOutlineOption(roleOutlineOption: RoleOutlineOption): string {
     let out = "";

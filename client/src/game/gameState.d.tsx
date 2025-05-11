@@ -124,6 +124,7 @@ export type PlayerGameState = {
 }
 
 export type PlayerIndex = number;
+export type RoleOutlineReference = number;
 export type LobbyClientID = number;
 export type Verdict = "innocent"|"guilty"|"abstain";
 export const PHASES = ["briefing", "obituary", "discussion", "nomination", "testimony", "judgement", "finalWords", "dusk", "night", "recess"] as const;
