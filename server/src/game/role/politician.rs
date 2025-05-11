@@ -150,7 +150,6 @@ impl Politician {
             !self.state.countdown_started() &&
             actor_ref.alive(game) &&
             PlayerReference::all_players(game)
-                .filter(|p|p.alive(game))
                 .filter(|p|p.keeps_game_running(game))
                 .all(|p|
                     !p.win_condition(game).is_loyalist_for(GameConclusion::Town)
@@ -180,7 +179,6 @@ impl Politician {
             PlayerReference::all_players(game)
             .filter(|p|*p != actor_ref)
             .filter(|p|p.keeps_game_running(game))
-            .filter(|p|p.alive(game))
             .all(|player| {
                 player.win_condition(game).is_loyalist_for(GameConclusion::Town)
             })
