@@ -1,4 +1,3 @@
-
 import { createPlayer } from "./gameState";
 import { chatMessageToAudio } from "./../menu/Anchor";
 import GAME_MANAGER from "./../index";
@@ -10,17 +9,17 @@ import translate from "./lang";
 import { computePlayerKeywordData, computePlayerKeywordDataForLobby } from "../components/StyledText";
 import { deleteReconnectData, loadSettingsParsed, saveReconnectData } from "./localStorage";
 import { WikiArticleLink } from "../components/WikiArticleLink";
-import React from "react";
+import React, { useContext } from "react";
 import WikiArticle from "../components/WikiArticle";
 import LobbyMenu from "../menu/lobby/LobbyMenu";
 import LoadingScreen from "../menu/LoadingScreen";
 import AudioController from "../menu/AudioController";
 import NightMessagePopup from "../components/NightMessagePopup";
 import PlayMenu from "../menu/main/PlayMenu";
-import StartMenu from "../menu/main/StartMenu";
 import { defaultAlibi } from "../menu/game/gameScreenContent/WillMenu";
 import ListMap from "../ListMap";
 import { sortControllerIdCompare } from "./abilityInput";
+import { AnchorContext } from "../menu/AnchorContext";
 
 function sendDefaultName() {
     const defaultName = loadSettingsParsed().defaultName;
@@ -32,6 +31,8 @@ function sendDefaultName() {
 export default function messageListener(packet: ToClientPacket){
     console.log(JSON.stringify(packet, null, 2));
 
+    const anchorController = useContext(AnchorContext)!;
+
     switch(packet.type) {
         case "pong":
             if (GAME_MANAGER.state.type !== "disconnected") {
@@ -41,15 +42,15 @@ export default function messageListener(packet: ToClientPacket){
             }
         break;
         case "rateLimitExceeded":
-            ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rateLimitExceeded"), body: "" });
+            anchorController.pushErrorCard({ title: translate("notification.rateLimitExceeded"), body: "" });
         break;
         case "forcedOutsideLobby":
             GAME_MANAGER.setOutsideLobbyState();
-            ANCHOR_CONTROLLER?.setContent(<PlayMenu/>);
+            anchorController.setContent(<PlayMenu/>);
         break;
         case "forcedDisconnect":
             GAME_MANAGER.setDisconnectedState();
-            ANCHOR_CONTROLLER?.setContent(<StartMenu/>);
+            anchorController.setContent({type:"main"});
         break
         case "lobbyList":
             if(GAME_MANAGER.state.type === "outsideLobby"){
@@ -62,13 +63,13 @@ export default function messageListener(packet: ToClientPacket){
         case "acceptJoin":
             if(packet.inGame && packet.spectator){
                 GAME_MANAGER.setSpectatorGameState();
-                ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
+                anchorController.setContent(<LoadingScreen type="join" />)
             }else if(packet.inGame && !packet.spectator){
                 GAME_MANAGER.setGameState();
-                ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
+                anchorController.setContent(<LoadingScreen type="join" />)
             }else{
                 GAME_MANAGER.setLobbyState();
-                ANCHOR_CONTROLLER?.setContent(<LobbyMenu/>);
+                anchorController.setContent(<LobbyMenu/>);
             }
             
 
@@ -79,33 +80,33 @@ export default function messageListener(packet: ToClientPacket){
 
             saveReconnectData(packet.roomCode, packet.playerId);
             sendDefaultName();
-            ANCHOR_CONTROLLER?.clearCoverCard();
+            anchorController.clearCoverCard();
         break;
         case "rejectJoin":
             switch(packet.reason) {
                 case "roomDoesntExist":
-                    ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.roomDoesntExist") });
+                    anchorController.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.roomDoesntExist") });
                     // If the room doesn't exist, don't suggest the user to reconnect to it.
                     deleteReconnectData();
-                    ANCHOR_CONTROLLER?.clearCoverCard();
+                    anchorController.clearCoverCard();
                 break;
                 case "gameAlreadyStarted":
-                    ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.gameAlreadyStarted") });
+                    anchorController.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.gameAlreadyStarted") });
                 break;
                 case "roomFull":
-                    ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.roomFull") });
+                    anchorController.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.roomFull") });
                 break;
                 case "serverBusy":
-                    ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.serverBusy") });
+                    anchorController.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.serverBusy") });
                 break;
                 case "playerTaken":
-                    ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.playerTaken") });
+                    anchorController.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.playerTaken") });
                 break;
                 case "playerDoesntExist":
-                    ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.playerDoesntExist") });
+                    anchorController.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.playerDoesntExist") });
                 break;
                 default:
-                    ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectJoin"), body: `${packet.type} message response not implemented: ${packet.reason}` });
+                    anchorController.pushErrorCard({ title: translate("notification.rejectJoin"), body: `${packet.type} message response not implemented: ${packet.reason}` });
                     console.error(`${packet.type} message response not implemented: ${packet.reason}`);
                     console.error(packet);
                 break;
@@ -116,22 +117,22 @@ export default function messageListener(packet: ToClientPacket){
         case "rejectStart":
             switch(packet.reason) {
                 case "gameEndsInstantly":
-                    ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectStart"), body: translate("notification.rejectStart.gameEndsInstantly") });
+                    anchorController.pushErrorCard({ title: translate("notification.rejectStart"), body: translate("notification.rejectStart.gameEndsInstantly") });
                 break;
                 case "roleListTooSmall":
-                    ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectStart"), body: translate("notification.rejectStart.roleListTooSmall") });
+                    anchorController.pushErrorCard({ title: translate("notification.rejectStart"), body: translate("notification.rejectStart.roleListTooSmall") });
                 break;
                 case "roleListCannotCreateRoles":
-                    ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectStart"), body: translate("notification.rejectStart.roleListCannotCreateRoles") });
+                    anchorController.pushErrorCard({ title: translate("notification.rejectStart"), body: translate("notification.rejectStart.roleListCannotCreateRoles") });
                 break;
                 case "zeroTimeGame":
-                    ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectStart"), body: translate("notification.rejectStart.zeroTimeGame") });
+                    anchorController.pushErrorCard({ title: translate("notification.rejectStart"), body: translate("notification.rejectStart.zeroTimeGame") });
                 break;
                 case "tooManyCLients":
-                    ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectStart"), body: translate("notification.rejectStart.tooManyClients") });
+                    anchorController.pushErrorCard({ title: translate("notification.rejectStart"), body: translate("notification.rejectStart.tooManyClients") });
                 break;
                 default:
-                    ANCHOR_CONTROLLER?.pushErrorCard({ title: translate("notification.rejectStart"), body: "" });
+                    anchorController.pushErrorCard({ title: translate("notification.rejectStart"), body: "" });
                     console.error(`${packet.type} message response not implemented: ${packet.reason}`);
                     console.error(packet);
                 break;
@@ -242,10 +243,10 @@ export default function messageListener(packet: ToClientPacket){
                 const isSpectator = GAME_MANAGER.state.players.get(GAME_MANAGER.state.myId!)?.clientType.type === "spectator";
                 if(isSpectator){
                     GAME_MANAGER.setSpectatorGameState();
-                    ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
+                    anchorController.setContent(<LoadingScreen type="join" />)
                 }else{
                     GAME_MANAGER.setGameState();
-                    ANCHOR_CONTROLLER?.setContent(<LoadingScreen type="join" />)
+                    anchorController.setContent(<LoadingScreen type="join" />)
                 }
     
                 AudioController.queueFile("audio/start_game.mp3");
@@ -255,12 +256,12 @@ export default function messageListener(packet: ToClientPacket){
             if (GAME_MANAGER.state.type === "game") {
                 const isSpectator = GAME_MANAGER.state.clientState.type === "spectator";
                 GAME_MANAGER.state.initialized = true;
-                ANCHOR_CONTROLLER?.setContent(<GameScreen isSpectator={isSpectator}/>);
+                anchorController.setContent(<GameScreen isSpectator={isSpectator}/>);
             }
             break;
         case "backToLobby":
             GAME_MANAGER.setLobbyState();
-            ANCHOR_CONTROLLER?.setContent(<LobbyMenu/>);
+            anchorController.setContent(<LobbyMenu/>);
         break;
         case "gamePlayers":
             if(GAME_MANAGER.state.type === "game"){
@@ -326,7 +327,7 @@ export default function messageListener(packet: ToClientPacket){
                 if(packet.phase.type === "briefing" && GAME_MANAGER.state.clientState.type === "player"){
                     const role = GAME_MANAGER.state.clientState.roleState?.type;
                     if(role !== undefined){
-                        ANCHOR_CONTROLLER?.setCoverCard(<WikiArticle article={"role/"+role as WikiArticleLink}/>);
+                        anchorController.setCoverCard(<WikiArticle article={"role/"+role as WikiArticleLink}/>);
                     }
                 }
             }
@@ -487,8 +488,8 @@ export default function messageListener(packet: ToClientPacket){
         case "nightMessages":
             if(GAME_MANAGER.state.type === "game" || GAME_MANAGER.state.type === "lobby"){
 
-                if(ANCHOR_CONTROLLER?.getCoverCard()===null && packet.chatMessages.length!==0){
-                    ANCHOR_CONTROLLER?.setCoverCard(<NightMessagePopup messages={packet.chatMessages}/>)
+                if(anchorController.getCoverCard()===null && packet.chatMessages.length!==0){
+                    anchorController.setCoverCard(<NightMessagePopup messages={packet.chatMessages}/>)
                 }
             }
         break;

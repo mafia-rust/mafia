@@ -1,16 +1,30 @@
-import { createContext, JSXElementConstructor, useCallback, useEffect, useMemo, useState } from "react";
+import { createContext, useState } from "react";
 import { ErrorCard, ErrorData } from "./Anchor";
 import { Theme } from "..";
-import LoadingScreen from "./LoadingScreen";
 import React from "react";
 import WikiCoverCard from "../components/WikiCoverCard";
 import WikiArticle from "../components/WikiArticle";
+import { WebsocketComponent } from "./WebsocketComponent";
+import StandaloneWiki from "./main/StandaloneWiki";
+import { WikiArticleLink } from "../components/WikiArticleLink";
+import StartMenu from "./main/StartMenu";
+
+type AnchorContentType = {
+    type: "main"
+}|{
+    type: "manual",
+    article?: WikiArticleLink
+}|{
+    type:"connect"
+}|{
+    type:"404",
+    path: string
+};
 
 export type AnchorContext = {
-    reload: () => void,
-
-    setContent: (content: JSX.Element) => void,
-    contentType: string | JSXElementConstructor<any>,
+    setContent: (content: AnchorContentType) => void,
+    
+    contentType: AnchorContentType,
     content: JSX.Element | null,
 
     getCoverCard: () => JSX.Element | null,
@@ -33,69 +47,48 @@ export type AnchorContext = {
 export const AnchorContext = createContext<AnchorContext | undefined>(undefined);
 
 export function useAnchorContext(){
-    const [content, setContent] = useState<JSX.Element>(<LoadingScreen type="default"/>);
-    const [setChildrenCallbacks, setSetContentCallbacks] = useState<(() => void)[]>([]);
-    useEffect(() => {
-        for (const callback of setChildrenCallbacks) {
-            callback()
-        }
-        if (setChildrenCallbacks.length !== 0) {
-            setSetContentCallbacks([])
-        }
-    }, [content, setChildrenCallbacks]);
+    const [content, setContent] = useState<JSX.Element>(<StartMenu/>);
+    const [contentType, setContentType] = useState<AnchorContentType>({type: "main"});
 
     const [coverCard, setCoverCard] = useState<JSX.Element | null>(null);
     const [coverCardTheme, setCoverCardTheme] = useState<Theme | null>(null);
-    const [setCoverCardCallbacks, setSetCoverCardCallbacks] = useState<(() => void)[]>([])
-    useEffect(() => {
-        for (const callback of setCoverCardCallbacks) {
-            callback()
-        }
-        if (setCoverCardCallbacks.length !== 0) {
-            setSetCoverCardCallbacks([])
-        }
-    }, [coverCard, setCoverCardCallbacks]);
 
     const [errorCard, setErrorCard] = useState<JSX.Element | null>(null);
-    const [setErrorCardCallbacks, setSetErrorCardCallbacks] = useState<(() => void)[]>([])
-    useEffect(() => {
-        for (const callback of setErrorCardCallbacks) {
-            callback()
-        }
-        if (setErrorCardCallbacks.length !== 0) {
-            setSetErrorCardCallbacks([])
-        }
-    }, [errorCard, setErrorCardCallbacks]);
 
     const [globalMenuOpen, setGlobalMenuOpen] = useState<boolean>(false);
 
-    const reload = useCallback(() => {
-        setSetContentCallbacks(setChildrenCallbacks =>
-            setChildrenCallbacks.concat(() => {
-                setContent(() => content);
-            }
-        ));
-        setContent(<LoadingScreen type="default"/>);
-
-        setSetCoverCardCallbacks(setCoverCardCallbacks => 
-            setCoverCardCallbacks.concat(() => {
-                setCoverCard(() => coverCard)
-            }
-        ));
-        setCoverCard(null);
-
-        setSetErrorCardCallbacks(setErrorCardCallbacks =>
-            setErrorCardCallbacks.concat(() => {
-                setErrorCard(() => errorCard)
-            })
-        );
-        setErrorCard(null);
-    }, [content, coverCard, errorCard]);
-
     const anchorContext: AnchorContext = {
-        reload,
-        setContent,
-        contentType: content.type,
+        content,
+        contentType,
+        coverCard,
+        coverCardTheme,
+        globalMenuOpen,
+        errorCard,
+
+        setContent: (contentType)=>{
+            switch(contentType.type){
+                case "main":
+                    setContent(<StartMenu/>);
+                break;
+                case "connect":
+                    setContent(<WebsocketComponent/>);
+                break;
+                case "manual":
+                    if(contentType.article !== undefined){
+                        setContent(<StandaloneWiki initialWikiPage={contentType.article}/>);
+                    }else{
+                        setContent(<StandaloneWiki/>);
+                    }
+                break;
+                case "404":
+                    setContent(<div className="hero" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem" }}>
+                        <h1>404</h1>
+                        <p>The requested path ({contentType.path}) could not be found</p>
+                    </div>);
+                break;
+            }
+            setContentType(contentType);
+        },
         getCoverCard: () => {
             return coverCard;
         },
@@ -105,9 +98,6 @@ export function useAnchorContext(){
                 coverCardTheme = "wiki-menu-colors";
             }
 
-            if (callback) {
-                setSetCoverCardCallbacks(setCoverCardCallbacks => setCoverCardCallbacks.concat(callback));
-            }
             setCoverCard(coverCard);
             setCoverCardTheme(coverCardTheme);
         },
@@ -141,11 +131,6 @@ export function useAnchorContext(){
             document.documentElement.style.setProperty('--legible-computer-font', getFont('legible-computer-font', enabled));
             document.documentElement.style.setProperty('--icon-factor', iconFactor);
         },
-        content,
-        coverCard,
-        coverCardTheme,
-        globalMenuOpen,
-        errorCard,
     };
 
     return anchorContext;

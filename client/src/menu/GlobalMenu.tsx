@@ -1,18 +1,16 @@
-import React, { JSXElementConstructor, ReactElement, useContext, useEffect, useRef } from 'react';
+import React, {JSXElementConstructor, ReactElement, useContext, useEffect, useRef } from 'react';
 import "./globalMenu.css";
 import translate from '../game/lang';
 import GAME_MANAGER from '..';
-import { AnchorControllerContext } from './Anchor';
-import StartMenu from './main/StartMenu';
 import LoadingScreen from './LoadingScreen';
 import GameModesEditor from '../components/gameModeSettings/GameModesEditor';
 import { CopyButton } from '../components/ClipboardButtons';
 import WikiCoverCard from '../components/WikiCoverCard';
 import Icon from '../components/Icon';
 import SettingsMenu from './Settings';
-import { useLobbyOrGameState } from '../components/useHooks';
 import { Button } from '../components/Button';
 import HostMenu from './HostMenu';
+import { AnchorContext } from './AnchorContext';
 
 export default function GlobalMenu(): ReactElement {
     const lobbyName = useLobbyOrGameState(
@@ -34,7 +32,7 @@ export default function GlobalMenu(): ReactElement {
         ["acceptJoin", "rejectJoin", "rejectStart", "gameInitializationComplete", "startGame"]
     )!;
     const ref = useRef<HTMLDivElement>(null);
-    const anchorController = useContext(AnchorControllerContext)!;
+    const anchorController = useContext(AnchorContext)!;
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -58,13 +56,13 @@ export default function GlobalMenu(): ReactElement {
         anchorController.setContent(<LoadingScreen type="disconnect"/>)
         window.history.replaceState({}, '', '/')
         await GAME_MANAGER.setDisconnectedState();
-        anchorController.setContent(<StartMenu/>)
+        anchorController.setContent({type:"main"})
     }
     function goToRolelistEditor() {
         anchorController.setCoverCard(<GameModesEditor/>);
         anchorController.closeGlobalMenu();
     }
-    const quitButtonBlacklist: (string | JSXElementConstructor<any>)[] = [StartMenu, LoadingScreen];
+    const quitButtonBlacklist: (string | JSXElementConstructor<any>)[] = ["main"];
 
     return (
         <div className="chat-menu-colors global-menu slide-in" ref={ref}>
@@ -83,18 +81,18 @@ export default function GlobalMenu(): ReactElement {
                 </section>
             }
             <section>
-                { quitButtonBlacklist.includes(anchorController.contentType) ||
-                    <button onClick={() => quitToMainMenu()}><Icon>not_interested</Icon> {translate("menu.globalMenu.quitToMenu")}</button>
+                {quitButtonBlacklist.includes(anchorController.contentType.type) ||
+                    <Button onClick={() => quitToMainMenu()}><Icon>not_interested</Icon> {translate("menu.globalMenu.quitToMenu")}</Button>
                 }
-                <button onClick={() => {
+                <Button onClick={() => {
                     anchorController.setCoverCard(<SettingsMenu />)
                     anchorController.closeGlobalMenu();
-                }}><Icon>settings</Icon> {translate("menu.globalMenu.settings")}</button>
-                <button onClick={() => goToRolelistEditor()}><Icon>edit</Icon> {translate("menu.globalMenu.gameSettingsEditor")}</button>
-                <button onClick={() => {
+                }}><Icon>settings</Icon> {translate("menu.globalMenu.settings")}</Button>
+                <Button onClick={() => goToRolelistEditor()}><Icon>edit</Icon> {translate("menu.globalMenu.gameSettingsEditor")}</Button>
+                <Button onClick={() => {
                     anchorController.setCoverCard(<WikiCoverCard />);
                     anchorController.closeGlobalMenu();
-                }}><Icon>menu_book</Icon> {translate("menu.wiki.title")}</button>
+                }}><Icon>menu_book</Icon> {translate("menu.wiki.title")}</Button>
             </section>
         </div>
     );

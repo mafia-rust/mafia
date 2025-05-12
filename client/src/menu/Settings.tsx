@@ -77,7 +77,6 @@ export default function SettingsMenu(): ReactElement {
                             switchLanguage(language);
                             saveSettings({language});
                             computeKeywordData()
-                            anchorCtx.reload();
                         }}
                     >
                         {LANGUAGES.map(lang => <option key={lang} value={lang}>{languageName(lang)}</option>)}

@@ -30,9 +30,9 @@ export default function StartMenu(): ReactElement {
                         setContent(<WebsocketComponent/>);
                         setContent(<LoadingScreen type="default"/>);
                         if (await GAME_MANAGER.setOutsideLobbyState()) {
-                            setContent(<PlayMenu/>);
+                            setContent({type:"connect"});
                         } else {
-                            setContent(<StartMenu/>);
+                            setContent({type:"main"});
                         }
                     }}>
                         <Icon>play_arrow</Icon> {translate("menu.start.button.play")}
@@ -46,7 +46,7 @@ export default function StartMenu(): ReactElement {
                     <Button onClick={() => setCoverCard(<GameModesEditor/>)}>
                         <Icon>edit</Icon> {translate("menu.globalMenu.gameSettingsEditor")}
                     </Button>
-                    <Button onClick={() => setContent(<StandaloneWiki/>)}>
+                    <Button onClick={() => setContent({type:"manual"})}>
                         <Icon>menu_book</Icon> {translate("menu.wiki.title")}
                     </Button>
                 </div>

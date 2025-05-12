@@ -1,13 +1,11 @@
 import React from "react";
 import { ARTICLES, WikiArticleLink } from "./components/WikiArticleLink";
-import { AnchorContext } from "./menu/Anchor";
-import StandaloneWiki from "./menu/main/StandaloneWiki";
 import { deleteReconnectData, loadReconnectData } from "./game/localStorage";
 import GAME_MANAGER from ".";
-import StartMenu from "./menu/main/StartMenu";
 import GameModesEditor from "./components/gameModeSettings/GameModesEditor";
 import parseFromJson from "./components/gameModeSettings/gameMode/dataFixer";
 import { isFailure } from "./components/gameModeSettings/gameMode/parse";
+import { AnchorContext } from "./menu/AnchorContext";
 
 function uriAsFileURI(path: string): string {
     if (path.endsWith('/')) {
@@ -20,11 +18,16 @@ function uriAsFileURI(path: string): string {
 async function routeWiki(anchorController: AnchorContext, page: string) {
     const wikiPage = uriAsFileURI(page);
 
-    if (wikiPage === "") {
-        anchorController.setContent(<StandaloneWiki />)
-    } else if (ARTICLES.includes(wikiPage.substring(1) as any)) {
-        anchorController.setContent(<StandaloneWiki initialWikiPage={wikiPage.substring(1) as WikiArticleLink}/>)
-    } else {
+    if(wikiPage === "") {
+        anchorController.setContent({
+            type:"manual"
+        });
+    }else if(ARTICLES.includes(wikiPage.substring(1) as any)){
+        anchorController.setContent({
+            type:"manual",
+            article: wikiPage.substring(1) as WikiArticleLink
+        });
+    }else{
         return await route404(anchorController, `/wiki${page}`);
     }
 }
@@ -33,7 +36,7 @@ async function routeLobby(anchorController: AnchorContext, roomCode: string) {
     const reconnectData = loadReconnectData();
 
     if (!await GAME_MANAGER.setOutsideLobbyState()) {
-        anchorController.setContent(<StartMenu/>);
+        anchorController.setContent({type:"main"});
         return;
     }
     
@@ -60,7 +63,7 @@ async function routeLobby(anchorController: AnchorContext, roomCode: string) {
     if (!success) {
         await GAME_MANAGER.setDisconnectedState();
         anchorController.clearCoverCard();
-        anchorController.setContent(<StartMenu/>)
+        anchorController.setContent({type:"main"})
     }
 }
 
@@ -81,7 +84,7 @@ async function routeGameMode(anchorController: AnchorContext, gameModeString: st
         console.log(verifiedGameMode.snippet);
         return await route404(anchorController, `/gameMode/?mode=${gameModeString}`);
     } else {
-        anchorController.setContent(<StartMenu/>)
+        anchorController.setContent({type:"main"})
         anchorController.setCoverCard(<GameModesEditor initialGameMode={verifiedGameMode.value}/>)
     }
 }
@@ -101,17 +104,17 @@ async function routeMainButFirstTryUsingReconnectData(anchorController: AnchorCo
     const reconnectData = loadReconnectData();
     
     if (!reconnectData) {
-        anchorController.setContent(<StartMenu/>)
+        anchorController.setContent({type:"main"})
         return;
     }
 
     if (!await GAME_MANAGER.setOutsideLobbyState()) {
-        anchorController.setContent(<StartMenu/>);
+        anchorController.setContent({type:"main"});
         return;
     }
 
     if (!await GAME_MANAGER.sendRejoinPacket(reconnectData.roomCode, reconnectData.playerId)) {
-        anchorController.setContent(<StartMenu/>);
+        anchorController.setContent({type:"main"});
         deleteReconnectData();
         return;
     }

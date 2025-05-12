@@ -19,7 +19,11 @@ export default function Anchor(props: Readonly<{
 
     const mobileContext = useMobileContext();
     const anchorContext = useAnchorContext();
-
+    type TickData = {count: number, timeDelta: number}
+    const [tickData, setTickData] = useState<TickData>({
+        count: 0,
+        timeDelta: 0
+    });
 
     // Load settings
     useEffect(() => {
@@ -30,18 +34,28 @@ export default function Anchor(props: Readonly<{
         anchorContext.setAccessibilityFontEnabled(settings.accessibilityFont);
         switchLanguage(settings.language);
         computeKeywordData();
+
+
+        const TICK_TIME_DELTA = 1000;
+        let tickInterval = setInterval(()=>{
+            tickData.count += 1;
+            tickData.timeDelta = TICK_TIME_DELTA;
+            setTickData({...tickData});
+        }, TICK_TIME_DELTA);
+
+        return ()=>{
+            clearInterval(tickInterval)
+        }
     }, [])
 
     useEffect(() => {
         props.onMount(anchorContext);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props])
 
     return <MobileContext.Provider value={mobileContext} >
         <AnchorContext.Provider value={anchorContext}>
-            <div
-                className="anchor"
-            >
+            <div className="anchor">
                 <Button className="global-menu-button" 
                     onClick={() => {
                         if (!anchorContext.globalMenuOpen) {

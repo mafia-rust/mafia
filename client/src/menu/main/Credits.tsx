@@ -10,7 +10,7 @@ export default function Credits(): ReactElement {
 
     return <div className="credits-menu">
         <button onClick={() => {
-            anchorContext.setContent(<StartMenu/>);
+            anchorContext.setContent({type:"main"});
         }}>{translate("menu.globalMenu.quitToMenu")}</button>
         <div>
             <h3>{translate("leadDevelopers")}</h3>

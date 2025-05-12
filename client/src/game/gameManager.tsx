@@ -546,7 +546,7 @@ function createServer(){
                     title: translate("notification.connectionFailed"), 
                     body: ""
                 });
-                ANCHOR_CONTROLLER?.setContent(<StartMenu/>);
+                ANCHOR_CONTROLLER?.setContent({type:"main"});
             };
             Server.ws.onmessage = (event: MessageEvent<string>)=>{
                 GAME_MANAGER.messageListener(
