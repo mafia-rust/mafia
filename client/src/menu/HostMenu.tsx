@@ -2,13 +2,12 @@ import React, { ReactElement, useContext, useEffect, useState } from "react";
 import translate from "../game/lang";
 import GAME_MANAGER from "..";
 import { Button } from "../components/Button";
-import { usePacketListener } from "../components/useHooks";
-import { AnchorControllerContext } from "./Anchor";
 import "./lobby/lobbyMenu.css"
 import LobbyPlayerList from "./lobby/LobbyPlayerList";
+import { AnchorContext } from "./AnchorContext";
 
 export default function HostMenu(): ReactElement {
-    const anchorController = useContext(AnchorControllerContext)!;
+    const anchorController = useContext(AnchorContext)!;
 
     useEffect(() => {
         GAME_MANAGER.sendHostDataRequest();
@@ -16,16 +15,16 @@ export default function HostMenu(): ReactElement {
 
     const [lastRefreshed, setLastRefreshed] = useState(new Date());
 
-    usePacketListener(type => {
-        // Check on every packet since like 1 million packets can affect this
-        if (!(GAME_MANAGER.state.type === "game" && GAME_MANAGER.state.host !== null)) {
-            anchorController.clearCoverCard();
-        }
+    // usePacketListener(type => {
+    //     // Check on every packet since like 1 million packets can affect this
+    //     if (!(GAME_MANAGER.state.type === "game" && GAME_MANAGER.state.host !== null)) {
+    //         anchorController.clearCoverCard();
+    //     }
 
-        if (type === "hostData") {
-            setLastRefreshed(new Date(Date.now()))
-        }
-    });
+    //     if (type === "hostData") {
+    //         setLastRefreshed(new Date(Date.now()))
+    //     }
+    // });
 
     return <div className="settings-menu-card">
         <header>

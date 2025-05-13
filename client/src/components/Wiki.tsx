@@ -7,16 +7,17 @@ import WikiArticle, { getSearchStrings, PageCollection } from "./WikiArticle";
 import { ARTICLES, WikiArticleLink, getArticleTitle, wikiPageIsEnabled } from "./WikiArticleLink";
 import StyledText from "./StyledText";
 import Icon from "./Icon";
-import { ContentMenu, MenuContext } from "../menu/game/GameScreen";
-import { AnchorContext } from "../menu/Anchor";
 import WikiCoverCard from "./WikiCoverCard";
 import { getAllRoles } from "../game/roleListState.d";
 import { MODIFIERS, ModifierType } from "../game/gameState.d";
 import Masonry from "react-responsive-masonry";
 import CheckBox from "./CheckBox";
+import { GameScreenMenuContext, GameScreenMenuType } from "../menu/game/GameScreenMenuContext";
+import { AnchorContext } from "../menu/AnchorContext";
+import { useLobbyOrGameState } from "../menu/lobby/LobbyContext";
 
 
-export function setWikiSearchPage(page: WikiArticleLink, anchorController: AnchorContext, menuController?: MenuContext) {
+export function setWikiSearchPage(page: WikiArticleLink, anchorController: AnchorContext, menuController?: GameScreenMenuContext) {
     if (GAME_MANAGER.wikiArticleCallbacks.length === 0) {
         if (menuController?.menuIsAvailable(GameScreenMenuType.WikiMenu)) {
             menuController.openMenu(GameScreenMenuType.WikiMenu, () => {
@@ -133,16 +134,8 @@ function WikiSearchResults(props: Readonly<{
     onChooseArticle: (article: WikiArticleLink) => void,
     static: boolean
 }>): ReactElement {
-    const enabledRoles = useLobbyOrGameState(
-        gameState => gameState.enabledRoles,
-        ["enabledRoles"],
-        getAllRoles()
-    )!;
-    const enabledModifiers = useLobbyOrGameState(
-        gameState => gameState.enabledModifiers,
-        ["enabledModifiers"],
-        MODIFIERS as any as ModifierType[]
-    )!;
+    const enabledRoles = useLobbyOrGameState(gameState => gameState.enabledRoles)??getAllRoles();
+    const enabledModifiers = useLobbyOrGameState(gameState => gameState.enabledModifiers)??MODIFIERS as any as ModifierType[];
 
     const [hideDisabled, setHideDisabled] = useState(true);
 

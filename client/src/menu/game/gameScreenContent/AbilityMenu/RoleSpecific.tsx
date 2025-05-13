@@ -1,5 +1,4 @@
-import { useGameState, usePlayerState } from "../../../../components/useHooks";
-import React, { ReactElement } from "react";
+import React, { ReactElement, useContext } from "react";
 import AuditorMenu from "./RoleSpecificMenus/AuditorMenu";
 import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
 import Counter from "../../../../components/Counter";
@@ -12,27 +11,18 @@ import { RoleState } from "../../../../game/roleState.d";
 import { PhaseState } from "../../../../game/gameState.d";
 import DetailsSummary from "../../../../components/DetailsSummary";
 import HypnotistMenu from "./RoleSpecificMenus/HypnotistMenu";
+import { GameStateContext, usePlayerState } from "../../GameStateContext";
 
     
 
 export default function RoleSpecificSection(): ReactElement{
-    const roleState = usePlayerState(
-        playerState => playerState.roleState,
-        ["yourRoleState"]
-    )!;
-    const phaseState = useGameState(
-        gameState => gameState.phaseState,
-        ["phase"]
-    )!;
+    const gameState = useContext(GameStateContext)!;
 
-    const dayNumber = useGameState(
-        gameState => gameState.dayNumber,
-        ["phase"]
-    )!;
-    const numPlayers = useGameState(
-        gameState => gameState.players.length,
-        ["gamePlayers"]
-    )!;
+    const roleState = usePlayerState()!.roleState;
+    const phaseState = gameState!.phaseState;
+
+    const dayNumber = gameState.dayNumber;
+    const numPlayers = gameState.players.length;
 
     const inner = roleSpecificSectionInner(phaseState, dayNumber, roleState, numPlayers);
 
@@ -214,10 +204,8 @@ function MarksmanRoleSpecificMenu(props: Readonly<{
 function MediumRoleSpecificMenu(props: Readonly<{
     roleState: RoleState & { type: "medium" }
 }>): ReactElement {
-    const players = useGameState(
-        gameState => gameState.players,
-        ["gamePlayers"]
-    )!;
+    const gameState = useContext(GameStateContext)!;
+    const players = gameState.players;
 
     const counter = <Counter
         max={3}
@@ -244,11 +232,9 @@ function MediumRoleSpecificMenu(props: Readonly<{
     }
 }
 
-function SpiralMenu(props: {}): ReactElement | null {
-    const spiralingPlayers = useGameState(
-        gameState => gameState.players.filter(p => p.playerTags.includes("spiraling")),
-        ["yourPlayerTags"]
-    )!
+function SpiralMenu(): ReactElement | null {
+    const gameState = useContext(GameStateContext)!;
+    const spiralingPlayers = gameState.players.filter(p => p.playerTags.includes("spiraling"))!
 
     if (spiralingPlayers.length !== 0) {
         return <div className="role-information">

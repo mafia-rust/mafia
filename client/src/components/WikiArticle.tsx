@@ -13,6 +13,7 @@ import DetailsSummary from "./DetailsSummary";
 import { partitionWikiPages, WikiCategory } from "./Wiki";
 import { MODIFIERS, ModifierType } from "../game/gameState.d";
 import Masonry from "react-responsive-masonry";
+import { useLobbyOrGameState } from "../menu/lobby/LobbyContext";
 
 function WikiStyledText(props: Omit<StyledTextProps, 'markdown' | 'playerKeywordData'>): ReactElement {
     return <StyledText {...props} markdown={true} playerKeywordData={DUMMY_NAMES_KEYWORD_DATA} />
@@ -123,17 +124,8 @@ function CategoryArticle(props: Readonly<{ category: WikiCategory }>): ReactElem
     const title = translate(`wiki.category.${props.category}`);
     const description = translateChecked(`wiki.category.${props.category}.text`);
 
-    const enabledRoles = useLobbyOrGameState(
-        state => state.enabledRoles,
-        ["enabledRoles"],
-        getAllRoles()
-    )!;
-
-    const enabledModifiers = useLobbyOrGameState(
-        state => state.enabledModifiers,
-        ["enabledModifiers"],
-        MODIFIERS as any as ModifierType[]
-    )!;
+    const enabledRoles = useLobbyOrGameState(state => state.enabledRoles)??getAllRoles();
+    const enabledModifiers = useLobbyOrGameState(state => state.enabledModifiers)??MODIFIERS as any as ModifierType[];
 
     return <section className="wiki-article">
         <WikiStyledText className="wiki-article-standard">
@@ -189,11 +181,7 @@ function GeneratedArticleElement(props: Readonly<{ article: GeneratedArticle }>)
 }
 
 function RoleSetArticle(): ReactElement {
-    const enabledRoles = useLobbyOrGameState(
-        state => state.enabledRoles,
-        ["enabledRoles"],
-        getAllRoles()
-    )!;
+    const enabledRoles = useLobbyOrGameState(state => state.enabledRoles)??getAllRoles();
 
     const ref = useRef<HTMLDivElement>(null);
 

@@ -7,11 +7,11 @@ import { Role, getMainRoleSetFromRole, roleJsonData } from "../game/roleState.d"
 import "./styledText.css";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { ARTICLES, WikiArticleLink, getArticleLangKey } from "./WikiArticleLink";
-import { MenuControllerContext } from "../menu/game/GameScreen";
-import { Player } from "../game/gameState.d";
-import { AnchorControllerContext } from "../menu/Anchor";
 import { setWikiSearchPage } from "./Wiki";
 import { getRoleSetsFromRole } from "../game/roleListState.d";
+import { AnchorContext } from "../menu/AnchorContext";
+import { GameScreenMenuContext } from "../menu/game/GameScreenMenuContext";
+import { Player } from "../menu/game/GameStateContext";
 
 export type TokenData = {
     style?: string, 
@@ -54,8 +54,8 @@ export type StyledTextProps = {
  */
 export default function StyledText(props: Readonly<StyledTextProps>): ReactElement {
     const playerKeywordData = props.playerKeywordData ?? PLAYER_KEYWORD_DATA;
-    const menuController = useContext(MenuControllerContext);
-    const anchorController = useContext(AnchorControllerContext)!;
+    const menuController = useContext(GameScreenMenuContext);
+    const anchorController = useContext(AnchorContext)!;
 
     useEffect(() => {
         (window as any).setWikiSearchPage = (page: WikiArticleLink) => {

@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, useContext } from "react";
 import { 
     TwoPlayerOptionSelection, 
     TwoRoleOptionSelection, 
@@ -17,7 +17,6 @@ import {
     IntegerSelection
 } from "../../../../game/abilityInput";
 import React from "react";
-import { usePlayerState } from "../../../../components/useHooks";
 import { Button } from "../../../../components/Button";
 import TwoRoleOutlineOptionSelectionMenu from "./AbilitySelectionTypes/TwoRoleOutlineOptionSelectionMenu";
 import GAME_MANAGER from "../../../..";
@@ -37,6 +36,7 @@ import Icon from "../../../../components/Icon";
 import PlayerListSelectionMenu from "./AbilitySelectionTypes/PlayerListSelectionMenu";
 import IntegerSelectionMenu from "./AbilitySelectionTypes/IntegerSelectionMenu";
 import BooleanSelectionMenu from "./AbilitySelectionTypes/BooleanSelectionMenu";
+import { GameStateContext, usePlayerState } from "../../GameStateContext";
 
 type GroupName = `${PlayerIndex}/${Role}` | "syndicateGunItem" | "backup" | ControllerID["type"];
 
@@ -86,10 +86,7 @@ function showThisController(id: ControllerID): boolean {
 }
 
 export default function GenericAbilityMenu(): ReactElement {
-    const savedAbilities = usePlayerState(
-        playerState => playerState.savedControllers,
-        ["yourAllowedControllers"]
-    )!;
+    const savedAbilities = usePlayerState()!.savedControllers;
 
     let controllerGroupsMap: ControllerGroupsMap = new ListMap();
     //build this map ^

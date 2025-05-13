@@ -12,7 +12,7 @@ export function WebsocketComponent(): ReactElement{
         if(ctx.lastMessageRecieved){
             useMessageListener(ctx.lastMessageRecieved, ctx);
         }
-    }, [ctx.lastMessageRecieved]);
+    }, [ctx, ctx.lastMessageRecieved]);
 
     return <WebsocketContext.Provider value={ctx}>
         {ctx.content}

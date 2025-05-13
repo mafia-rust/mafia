@@ -67,7 +67,7 @@ function PlayerCard(props: Readonly<{
     const [whisperChatOpen, setWhisperChatOpen] = React.useState(false);
 
     const gameState = useContext(GameStateContext)!;
-    const playerState = usePlayerState(gameState);
+    const playerState = usePlayerState();
 
     const playerAlive = gameState.players[props.playerIndex].alive;
     const numVoted = gameState.players[props.playerIndex].numVoted
@@ -158,9 +158,8 @@ function PlayerCard(props: Readonly<{
                 onClick={()=>{
                     // GAME_MANAGER.prependWhisper(props.playerIndex); return true;
                     setWhisperChatOpen(!whisperChatOpen);
-                    if(GAME_MANAGER.state.type === 'game' && GAME_MANAGER.state.clientState.type === 'player'){
-                        GAME_MANAGER.state.clientState.missedWhispers = 
-                            GAME_MANAGER.state.clientState.missedWhispers.filter(player => player !== props.playerIndex);
+                    if(playerState !== undefined){
+                        playerState.missedWhispers = playerState.missedWhispers.filter(player => player !== props.playerIndex);
                     }
                     GAME_MANAGER.invokeStateListeners("whisperChatOpenOrClose");
                 }}

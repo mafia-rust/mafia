@@ -11,26 +11,23 @@ import SettingsMenu from './Settings';
 import { Button } from '../components/Button';
 import HostMenu from './HostMenu';
 import { AnchorContext } from './AnchorContext';
+import { GameStateContext } from './game/GameStateContext';
+import { LobbyStateContext, useLobbyOrGameState } from './lobby/LobbyContext';
 
 export default function GlobalMenu(): ReactElement {
-    const lobbyName = useLobbyOrGameState(
-        state => state.lobbyName,
-        ["lobbyName"]
-    )!;
+
+    const lobbyName = useLobbyOrGameState()!.lobbyName;
     const host = useLobbyOrGameState(
         state => {
-            if (state.stateType === "game") {
+            if (state.type === "game") {
                 return state.host !== null
             } else {
                 return state.players.get(state.myId!)?.ready === "host"
             }
-        },
-        ["lobbyClients", "playersHost", "gamePlayers"]
+        }
     )!;
-    const stateType = useLobbyOrGameState(
-        state => state.stateType,
-        ["acceptJoin", "rejectJoin", "rejectStart", "gameInitializationComplete", "startGame"]
-    )!;
+    const stateType = useLobbyOrGameState(state => state.type)!;
+
     const ref = useRef<HTMLDivElement>(null);
     const anchorController = useContext(AnchorContext)!;
 
@@ -105,7 +102,7 @@ export function RoomLinkButton(): JSX.Element {
             code.pathname = "/connect"
             code.searchParams.set("code", state.roomCode.toString(18))
             return code;
-        }, ["acceptJoin", "backToLobby"]
+        }
     )!;
     
     return <CopyButton text={code.toString()}>

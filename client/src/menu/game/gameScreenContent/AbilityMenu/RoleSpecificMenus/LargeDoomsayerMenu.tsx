@@ -1,9 +1,9 @@
 import React from "react"
 import "./largeDoomsayerMenu.css"
 import translate, { translateChecked } from "../../../../../game/lang";
-import GameState from "../../../../../game/gameState.d";
 import { StateEventType } from "../../../../../game/gameManager.d";
 import GAME_MANAGER from "../../../../..";
+import GameState from "../../../GameStateContext";
 
 
 export type Doomsayer = {

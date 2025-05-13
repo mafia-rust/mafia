@@ -17,7 +17,7 @@ import DetailsSummary from "./DetailsSummary";
 import ListMap from "../ListMap";
 import { Button } from "./Button";
 import { GameStateContext, usePlayerNames, usePlayerState } from "../menu/game/GameStateContext";
-import { LobbyStateContext } from "../menu/lobby/LobbyContext";
+import { useLobbyOrGameState } from "../menu/lobby/LobbyContext";
 
 const ChatElement = React.memo((
     props: {
@@ -28,13 +28,11 @@ const ChatElement = React.memo((
         canCopyPaste?: boolean
     }, 
 ) => {
-    
-    const gameState = useContext(GameStateContext);
-    const playerState = usePlayerState(gameState);
+    const playerState = usePlayerState();
     const myIndex = playerState?.myIndex;
-    const lobbyState = useContext(LobbyStateContext);
-    
-    let playerNames = props.playerNames ?? usePlayerNames(gameState) ?? usePlayerNames(lobbyState)!;
+
+    const defaultPlayersNames = usePlayerNames(useLobbyOrGameState())!;
+    let playerNames = props.playerNames ?? defaultPlayersNames;
     
     
 
@@ -347,25 +345,24 @@ function NormalChatMessage(props: Readonly<{
 }
 
 function useContainsMention(message: ChatMessageVariant & { text: string }, playerNames: string[]): boolean {
-    const gameState = useContext(GameStateContext);
-    const playerState = usePlayerState(gameState);
+    const playerState = usePlayerState();
     const myIndex = playerState?.myIndex;
     
-    const lobbyState = useContext(LobbyStateContext);
-    
-    let myName = undefined;
-    if(gameState!==undefined && myIndex!==undefined){
-        myName = gameState.players[myIndex].name
-    }else if(lobbyState !== undefined){
-        let myPlayer = lobbyState.players.get(lobbyState.myId!)!;
-        if(myPlayer.clientType.type === "player"){
-            myName = myPlayer.clientType.name
+    const myName = useLobbyOrGameState((state)=>{
+        if(state.type === "game" && myIndex !== undefined){
+            return state.players[myIndex].name;
+        }else if(state.type === "lobby"){
+            let myPlayer = state.players.get(state.myId!)!;
+            if(myPlayer.clientType.type === "player"){
+                return myPlayer.clientType.name;
+            }
         }
-    }
+    })!;
 
-    if (myName === undefined) {
+    if(myIndex === undefined || myName === undefined){
         return false;
     }
+
     return (
         find(myName).test(sanitizePlayerMessage(replaceMentions(message.text, playerNames))) ||
         (

@@ -1,14 +1,5 @@
-import { Grave } from "./graveState";
-import { ChatMessage } from "../components/ChatMessage";
-import { Role, RoleState } from "./roleState.d";
-import { RoleList } from "./roleListState.d";
 import { LobbyPreviewData } from "./packet";
-import { ChatFilter } from "../menu/game/gameScreenContent/ChatMenu";
-import { ControllerID, SavedController } from "./abilityInput";
 import translate from "./lang";
-import ListMap, { ListMapData } from "../ListMap";
-
-export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;
 
 export type Disconnected = {
     type: "disconnected"

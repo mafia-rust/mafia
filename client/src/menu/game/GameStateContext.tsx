@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { ChatGroup, GameClient, InsiderGroup, LobbyClientID, LobbyState, ModifierType, PhaseState, PhaseTimes, Player, PlayerGameState, PlayerIndex, Tag, Verdict } from "../../game/gameState.d";
+import { ChatGroup, GameClient, InsiderGroup, LobbyClientID, ModifierType, PhaseState, PhaseTimes, PlayerIndex, Tag, Verdict } from "../../game/gameState.d";
 import { Role, RoleState } from "../../game/roleState.d";
 import { ChatMessage } from "../../components/ChatMessage";
 import { Grave } from "../../game/graveState";
@@ -7,6 +7,8 @@ import { RoleList } from "../../game/roleListState.d";
 import ListMap, { ListMapData } from "../../ListMap";
 import { ChatFilter } from "./gameScreenContent/ChatMenu";
 import { ControllerID, SavedController } from "../../game/abilityInput";
+import { defaultPhaseTimes } from "../../game/localStorage";
+import { LobbyState } from "../lobby/LobbyContext";
 
 
 export function useGameStateContext(): GameState{
@@ -18,7 +20,8 @@ export function useGameStateContext(): GameState{
     return gameState;
 }
 
-export function usePlayerState(gameState?: GameState): PlayerGameState | undefined {
+export function usePlayerState(): PlayerGameState | undefined {
+    const gameState = useContext(GameStateContext)!;
     if(gameState === undefined || gameState.clientState.type==="spectator"){
         return undefined;
     }else{
@@ -36,7 +39,6 @@ export function usePlayerNames(state?: GameState | LobbyState): string[] | undef
         .filter((c)=>c.clientType.type==="player")
         //thanks typescript very cool
         .map((c)=>c.clientType.type==="player"?c.clientType.name:undefined) as string[]
-
 }
 
 const GameStateContext = createContext<GameState | undefined>(undefined)

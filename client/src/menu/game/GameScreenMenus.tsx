@@ -1,8 +1,8 @@
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { GameScreenMenuContext, GameScreenMenuType, MENU_REACT_ELEMENTS } from "./GameScreenMenuContext";
 import React, { ReactElement, useContext } from "react";
-import { MobileContext } from "../Anchor";
 import translate from "../../game/lang";
+import { MobileContext } from "../MobileContext";
 
 export default function GameScreenMenus(): ReactElement {
     const menuController = useContext(GameScreenMenuContext)!;

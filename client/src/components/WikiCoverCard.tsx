@@ -5,20 +5,13 @@ import "./wiki.css";
 import { WikiArticleLink } from './WikiArticleLink';
 import { MODIFIERS, ModifierType } from '../game/gameState.d';
 import { getAllRoles } from '../game/roleListState.d';
+import { useLobbyOrGameState } from '../menu/lobby/LobbyContext';
 
 export default function WikiCoverCard(props: Readonly<{
     initialWikiPage?: WikiArticleLink
 }>): ReactElement {
-    const enabledRoles = useLobbyOrGameState(
-        state => state.enabledRoles,
-        ["enabledRoles"],
-        getAllRoles()
-    )!;
-    const enabledModifiers = useLobbyOrGameState(
-        state => state.enabledModifiers,
-        ["enabledModifiers"],
-        MODIFIERS as any as ModifierType[]
-    )!;
+    const enabledRoles = useLobbyOrGameState(state => state.enabledRoles)??getAllRoles();
+    const enabledModifiers = useLobbyOrGameState(state => state.enabledModifiers)??MODIFIERS as any as ModifierType[];
 
     return <div className='wiki-cover-card'>
         <h1>{translate("menu.wiki.title")}</h1>

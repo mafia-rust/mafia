@@ -1,13 +1,13 @@
 import React, { ReactElement, useContext, useMemo } from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
-import { PhaseState, Player, Verdict } from "../../game/gameState.d";
+import { PhaseState, Verdict } from "../../game/gameState.d";
 import "./headerMenu.css";
 import StyledText from "../../components/StyledText";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import { GameScreenMenuContext, GameScreenMenuType, MENU_CSS_THEMES, MENU_TRANSLATION_KEYS } from "./GameScreenMenuContext";
-import { GameStateContext } from "./GameStateContext";
+import { GameStateContext, Player, usePlayerState } from "./GameStateContext";
 import { MobileContext } from "../MobileContext";
 
 
@@ -63,14 +63,10 @@ function Information(): ReactElement {
     const phaseState = useContext(GameStateContext)!.phaseState;
     const players = useContext(GameStateContext)!.players;
 
-    const myIndex = usePlayerState(
-        gameState => gameState.myIndex,
-        ["yourPlayerIndex"]
-    )
-    const roleState = usePlayerState(
-        clientState => clientState.roleState,
-        ["yourRoleState"]
-    )
+    const playerState = usePlayerState();
+
+    const myIndex = playerState!==undefined?playerState.myIndex:undefined;
+    const roleState = playerState!==undefined?playerState.roleState:undefined;
     const myName = useMemo(() => {
         return myIndex === undefined ? undefined : players[myIndex]?.toString()
     }, [myIndex, players])
@@ -115,7 +111,7 @@ function Information(): ReactElement {
 export function PhaseSpecificInformation(props: Readonly<{
     phaseState: PhaseState,
     players: Player[],
-    myIndex: number | undefined
+    myIndex?: number
 }>): ReactElement | null {
     const enabledModifiers = useContext(GameStateContext)!.enabledModifiers;
     const spectator = useContext(GameStateContext)!.clientState.type === "spectator";
@@ -156,10 +152,7 @@ export function PhaseSpecificInformation(props: Readonly<{
 }
 
 function VerdictButton(props: Readonly<{ verdict: Verdict }>) {
-    const judgement = usePlayerState(
-        clientState => clientState.judgement,
-        ["yourJudgement"]
-    )!
+    const judgement = usePlayerState()!.judgement;
 
     return <Button
         highlighted={judgement === props.verdict}

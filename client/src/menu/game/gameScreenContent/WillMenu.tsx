@@ -5,6 +5,7 @@ import { getSingleRoleJsonData } from "../../../game/roleState.d";
 import { TextDropdownArea } from "../../../components/TextAreaDropdown";
 import { GameScreenMenuType } from "../GameScreenMenuContext";
 import GameScreenMenuTab from "../GameScreenMenuTab";
+import { usePlayerState } from "../GameStateContext";
 
 export function defaultAlibi(): string {
     return DEFAULT_ALIBI;
@@ -12,28 +13,13 @@ export function defaultAlibi(): string {
 const DEFAULT_ALIBI = "ROLE\nNight 1: \nNight 2:";
 
 export default function WillMenu(): ReactElement {
-    const cantChat = usePlayerState(
-        playerState => playerState.sendChatGroups.length === 0,
-        ["yourSendChatGroups"]
-    )!;
+    const cantChat = usePlayerState()!.sendChatGroups.length === 0;
 
-    const role = usePlayerState(
-        playerState => playerState.roleState.type,
-        ["yourRoleState"]
-    )!;
+    const role = usePlayerState()!.roleState.type;
 
-    const alibi = usePlayerState(
-        playerState => playerState.will,
-        ["yourWill"]
-    )!;
-    const notes = usePlayerState(
-        playerState => playerState.notes,
-        ["yourNotes"]
-    )!;
-    const deathNote = usePlayerState(
-        playerState => playerState.deathNote,
-        ["yourDeathNote"]
-    )!;
+    const alibi = usePlayerState()!.will;
+    const notes = usePlayerState()!.notes;
+    const deathNote = usePlayerState()!.deathNote;
 
     const cantPost = useMemo(() => {
         return cantChat

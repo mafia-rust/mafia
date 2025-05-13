@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from "react"
+import React, { ReactElement, useContext, useEffect, useState } from "react"
 import "./kiraSelectionMenu.css";
 import GAME_MANAGER from "../../../../..";
 import translate, { translateChecked } from "../../../../../game/lang";
@@ -7,7 +7,7 @@ import Select, { SelectOptionsSearch } from "../../../../../components/Select";
 import { PlayerIndex } from "../../../../../game/gameState.d";
 import ListMap, { ListMapData } from "../../../../../ListMap";
 import { AvailableKiraSelection } from "../../../../../game/abilityInput";
-import { useGameState, usePlayerState } from "../../../../../components/useHooks";
+import { GameStateContext, usePlayerState } from "../../../GameStateContext";
 
 export const KIRA_GUESSES = [
     "none",
@@ -108,15 +108,9 @@ export default function KiraSelectionMenu(props: Readonly<{
     onChange: (selection: KiraSelection)=>void;
 }>): ReactElement {
 
-    const myIndex = usePlayerState(
-        (playerState)=>playerState.myIndex
-    )!;
-
-    const guessable = useGameState(
-        (gameState)=>gameState.players.filter((p)=>p.alive&&p.index!==myIndex).map((p)=>p.index)
-    )!;
+    const myIndex = usePlayerState()!.myIndex;
+    const guessable = useContext(GameStateContext)!.players.filter((p)=>p.alive&&p.index!==myIndex).map((p)=>p.index);
     
-
     function sendSetKiraGuess(guesses: KiraSelection){
         props.onChange(guesses);
     }

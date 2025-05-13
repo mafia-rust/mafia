@@ -1,4 +1,4 @@
-import React, { ReactElement, useRef, useState } from "react";
+import React, { ReactElement, useContext, useRef, useState } from "react";
 import translate from "../../game/lang";
 import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
@@ -8,6 +8,8 @@ import { Button, RawButton } from "../../components/Button";
 import Popover from "../../components/Popover";
 import { dropdownPlacementFunction } from "../../components/Select";
 import StyledText from "../../components/StyledText";
+import { GameStateContext } from "../game/GameStateContext";
+import { LobbyStateContext } from "./LobbyContext";
 
 type PlayerDisplayData = {
     id: number,
@@ -20,51 +22,45 @@ type PlayerDisplayData = {
 }
 
 export default function LobbyPlayerList(): ReactElement {
-    const players: PlayerDisplayData[] = useLobbyOrGameState(
-        state => {
-            if (state.stateType === "lobby") {
-                return state.players.entries().map(([id, player]) => {
-                    const name = player.clientType.type === "player" ? player.clientType.name : null;
-                    return {
-                        id,
-                        clientType: player.clientType.type,
-                        ready: player.ready === "ready",
-                        connection: player.connection,
-                        host: player.ready === "host",
-                        name,
-                        displayName: name ?? "Spectator",
-                    }
-                })
-            } else if (state.host !== null) {
-                return state.host.clients.entries().map(([id, player]) => {
-                    return {
-                        id,
-                        clientType: player.clientType.type,
-                        connection: player.connection,
-                        ready: null,
-                        host: player.host,
-                        name: player.clientType.type === "player"
-                            ? state.players[player.clientType.index].name
-                            : player.clientType.index.toString(),
-                        displayName: player.clientType.type === "player"
-                            ? state.players[player.clientType.index].toString()
-                            : player.clientType.index.toString(),
-                    }
-                })
-            }
-        },
-        ["playersHost", "playersLostConnection", "lobbyClients", "playersReady", "hostData", "gamePlayers"]
-    ) ?? [];
 
-    const host = useLobbyOrGameState(
-        state => {
-            if (state.stateType === "lobby")
-                return state.players.get(state.myId!)?.ready === "host"
-            else
-                return state.host !== null
-        },
-        ["playersHost", "lobbyClients", "yourId", "playersReady", "hostData"]
-    )!;
+    let players: undefined | PlayerDisplayData[] = undefined;
+    let host = false;
+    const gameState = useContext(GameStateContext);
+    const lobbyState = useContext(LobbyStateContext);
+
+    if(gameState!==undefined && gameState.host!==null){
+        host = gameState.host !== null;
+        players = gameState.host.clients.entries().map(([id, player]) => {
+            return {
+                id,
+                clientType: player.clientType.type,
+                connection: player.connection,
+                ready: null,
+                host: player.host,
+                name: player.clientType.type === "player"
+                    ? gameState.players[player.clientType.index].name
+                    : player.clientType.index.toString(),
+                displayName: player.clientType.type === "player"
+                    ? gameState.players[player.clientType.index].toString()
+                    : player.clientType.index.toString(),
+            }
+        })
+    }else if(lobbyState!==undefined){
+        host = lobbyState.players.get(lobbyState.myId!)?.ready === "host";
+        players = lobbyState.players.entries().map(([id, player]) => {
+            const name = player.clientType.type === "player" ? player.clientType.name : null;
+            return {
+                id,
+                clientType: player.clientType.type,
+                ready: player.ready === "ready",
+                connection: player.connection,
+                host: player.ready === "host",
+                name,
+                displayName: name ?? "Spectator",
+            }
+        })
+    }
+    players = players!;
 
     return <section className="player-list-menu-colors selector-section">
         <h2>{translate("menu.lobby.players")}</h2>
@@ -72,7 +68,7 @@ export default function LobbyPlayerList(): ReactElement {
             <ol>
                 {players
                     .filter(player => player.clientType === "player")
-                    .map(player => <LobbyPlayerListPlayer key={player.id} player={player}/>)
+                    .map(player => <LobbyPlayerListPlayer key={player.id} player={player} host={host}/>)
                 }
             </ol>
         </div>
@@ -82,7 +78,7 @@ export default function LobbyPlayerList(): ReactElement {
                 <ol>
                     {players
                         .filter(player => player.clientType === "spectator")
-                        .map(player => <LobbyPlayerListPlayer key={player.id} player={player}/>)
+                        .map(player => <LobbyPlayerListPlayer key={player.id} player={player} host={host}/>)
                     }
                 </ol>
             </div>
@@ -96,16 +92,8 @@ export default function LobbyPlayerList(): ReactElement {
     </section>
 }
 
-function LobbyPlayerListPlayer(props: Readonly<{ player: PlayerDisplayData }>): ReactElement {
-    const host = useLobbyOrGameState(
-        state => {
-            if (state.stateType === "lobby")
-                return state.players.get(state.myId!)?.ready === "host"
-            else
-                return state.host !== null
-        },
-        ["playersHost", "lobbyClients", "yourId", "playersReady", "hostData"]
-    )!;
+function LobbyPlayerListPlayer(props: Readonly<{host: boolean, player: PlayerDisplayData }>): ReactElement {
+    const host = props.host;
 
     const [renameOpen, setRenameOpen] = useState(false);
     const renameButtonRef = useRef<HTMLButtonElement>(null);

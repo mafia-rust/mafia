@@ -11,21 +11,15 @@ import Icon from "../../../components/Icon";
 import StyledText, { KeywordDataMap, PLAYER_KEYWORD_DATA, PLAYER_SENDER_KEYWORD_DATA } from "../../../components/StyledText";
 import { Virtuoso } from 'react-virtuoso';
 import GameScreenMenuTab from "../GameScreenMenuTab";
-import { GameStateContext } from "../GameStateContext";
+import { GameStateContext, usePlayerNames, usePlayerState } from "../GameStateContext";
+import { LobbyStateContext, useLobbyOrGameState } from "../../lobby/LobbyContext";
+import { GameScreenMenuType } from "../GameScreenMenuContext";
 
 
 export default function ChatMenu(): ReactElement {
-    const filter = usePlayerState(
-        playerState => playerState.chatFilter,
-        ["filterUpdate"]
-    );
-
-    const sendChatGroups = usePlayerState(
-        playerState => playerState.sendChatGroups,
-        ["yourSendChatGroups"]
-    );
-
-    const playerNames = usePlayerNames();
+    const filter = usePlayerState()?.chatFilter;
+    const sendChatGroups = usePlayerState()?.sendChatGroups;
+    const playerNames = usePlayerNames()!;
 
     const filterString = useMemo(() => {
         if (filter === undefined || filter === null) {
@@ -75,16 +69,22 @@ export type ChatFilter = {
 export function ChatMessageSection(props: Readonly<{
     filter?: ChatFilter,
 }>): ReactElement {
+    const gameState = useContext(GameStateContext)!;
+    const lobbyState = useContext(GameStateContext)!;
+
     const players = useContext(GameStateContext)!.players;
     const filter = useMemo(() => props.filter ?? null, [props.filter]);
-    const messages = useLobbyOrGameState(
-        state => state.chatMessages,
-        ["addChatMessages"]
-    )!;
-    const myPlayerIndex = usePlayerState(
-        (gameState)=>gameState.myIndex,
-        ["yourPlayerIndex"]
-    );
+
+    let messages = undefined;
+    if(gameState!==undefined){
+        messages = gameState.chatMessages;
+    }else if(lobbyState!==undefined){
+        messages = lobbyState.chatMessages;
+    }
+    messages = messages!;
+    
+    const myPlayerIndex = usePlayerState()!.myIndex;
+
 
     const allMessages = messages
         .filter((msg)=>{
@@ -191,6 +191,9 @@ export function ChatTextInput(props: Readonly<{
     disabled?: boolean,
     whispering?: PlayerIndex | null,
 }>): ReactElement {
+    const gameState = useContext(GameStateContext)!;
+    const lobbyState = useContext(LobbyStateContext)!;
+    
     const [chatBoxText, setChatBoxText] = useState<string>("");
     const [drawAttentionSeconds, setDrawAttentionSeconds] = useState<number>(0);
     const ref = useRef<HTMLTextAreaElement>(null);
@@ -204,29 +207,19 @@ export function ChatTextInput(props: Readonly<{
         }
     }, [props.whispering, whisperingState]);
 
-    const gamePlayers = useGameState(
-        gameState => gameState.players,
-        ["gamePlayers"]
-    );
-    const myIndex = usePlayerState(
-        playerState => playerState.myIndex,
-        ["yourPlayerIndex"]
-    );
-    const stateType = useLobbyOrGameState(
-        state => state.stateType,
-        ["acceptJoin", "gameInitializationComplete", "startGame", "backToLobby"]
-    )!;
-    const playerStrings = useLobbyOrGameState(
-        state => {
-            if (state.stateType === "game") {
-                return state.players.map(player => player.toString())
-            } else if (state.stateType === "lobby") {
-                return Array.from(state.players.values())
-                    .filter(player => player.clientType.type === "player")
-                    .map(player => (player.clientType as PlayerClientType).name)
-            }
+    const gamePlayers = gameState.players;
+    const myIndex = usePlayerState()?.myIndex;
+
+    const stateType = useLobbyOrGameState()!.type;
+    const playerStrings = useLobbyOrGameState<string[]>((state)=>{
+        if(state.type === "game"){
+            return state.players.map(player => player.toString());
+        }else{
+            return Array.from(lobbyState.players.values())
+                .filter(player => player.clientType.type === "player")
+                .map(player => (player.clientType as PlayerClientType).name);
         }
-    )!;
+    })!;
 
     const whisperingPlayer = useMemo(() => {
         return whispering!==null ? playerStrings[whispering] : null

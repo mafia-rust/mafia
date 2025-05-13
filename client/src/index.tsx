@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import Anchor from './menu/Anchor';
 import { GameManager, createGameManager } from './game/gameManager';
-import LoadingScreen from './menu/LoadingScreen';
 import route from './routing';
 
 export const DEV_ENV = process.env.NODE_ENV !== 'production';

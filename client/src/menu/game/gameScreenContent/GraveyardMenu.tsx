@@ -8,7 +8,7 @@ import { translateRoleOutline } from "../../../game/roleListState.d";
 import { Button } from "../../../components/Button";
 import DetailsSummary from "../../../components/DetailsSummary";
 import { EnabledModifiersDisplay } from "../../../components/gameModeSettings/EnabledModifiersSelector";
-import { GameStateContext } from "../GameStateContext";
+import { GameStateContext, usePlayerState } from "../GameStateContext";
 import { GameScreenMenuType } from "../GameScreenMenuContext";
 import GameScreenMenuTab from "../GameScreenMenuTab";
 
@@ -29,11 +29,8 @@ export default function GraveyardMenu(): ReactElement {
 
 function RoleListDisplay(): ReactElement {
     const roleList = useContext(GameStateContext)!.roleList;
-    const crossedOutOutlines = usePlayerState(
-        clientState => clientState.crossedOutOutlines,
-        ["yourCrossedOutOutlines"],
-        []
-    )!
+    const playerState = usePlayerState();
+    const crossedOutOutlines = playerState!==undefined?playerState.crossedOutOutlines:[];
 
     const spectator = useContext(GameStateContext)!.clientState.type === "spectator";
 

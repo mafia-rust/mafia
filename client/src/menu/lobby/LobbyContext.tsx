@@ -4,6 +4,8 @@ import ListMap from "../../ListMap";
 import { RoleList } from "../../game/roleListState.d";
 import { Role } from "../../game/roleState.d";
 import { ChatMessage } from "../../components/ChatMessage";
+import { defaultPhaseTimes } from "../../game/localStorage";
+import GameState, { GameStateContext } from "../game/GameStateContext";
 
 
 export function useLobbyStateContext(){
@@ -55,16 +57,17 @@ function createLobbyState(): LobbyState {
         chatMessages: [],
     }
 }
-function defaultPhaseTimes(): PhaseTimes {
-    return {
-        briefing: 45,
-        obituary: 60,
-        discussion: 120,
-        nomination: 120,
-        testimony: 30,
-        judgement: 60,
-        finalWords: 30,
-        dusk: 30,
-        night: 60,
+export function useLobbyOrGameState<T = GameState|LobbyState>(
+    map?: (state: GameState|LobbyState)=>T = (state)=>state as T
+):T{
+    const gameState = useContext(GameStateContext)!;
+    const lobbyState = useContext(LobbyStateContext)!;
+
+    if(gameState!==undefined){
+        return map(gameState);
+    }else if(lobbyState!==undefined){
+        return map(lobbyState);
+    }else{
+        throw new Error("useLobbyOrGameState cant find either");
     }
 }

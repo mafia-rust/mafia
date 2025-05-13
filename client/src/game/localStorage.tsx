@@ -5,6 +5,7 @@ import { Role } from "./roleState.d";
 import parseFromJson from "../components/gameModeSettings/gameMode/dataFixer";
 import { ParseResult, Success } from "../components/gameModeSettings/gameMode/parse";
 import { GameScreenMenuType } from "../menu/game/GameScreenMenuContext";
+import { PhaseTimes } from "./gameState.d";
 
 
 export function saveReconnectData(roomCode: number, playerId: number) {
@@ -59,6 +60,19 @@ export type Settings = {
 
 export type RoleSpecificMenuType = "playerList" | "standalone";
 
+export function defaultPhaseTimes(): PhaseTimes {
+    return {
+        briefing: 45,
+        obituary: 60,
+        discussion: 120,
+        nomination: 120,
+        testimony: 30,
+        judgement: 60,
+        finalWords: 30,
+        dusk: 30,
+        night: 60,
+    }
+}
 
 
 export function loadSettingsParsed(): Settings {
