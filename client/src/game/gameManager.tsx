@@ -1,5 +1,3 @@
-import { ANCHOR_CONTROLLER } from "./../menu/Anchor";
-import StartMenu from "./../menu/main/StartMenu";
 import GAME_MANAGER from "./../index";
 import messageListener from "./messageListener";
 import React from "react";
@@ -33,12 +31,12 @@ export function createGameManager(): GameManager {
                 GAME_MANAGER.server.close();
 
                 GAME_MANAGER.state = {
-                    stateType: "disconnected"
+                    type: "disconnected"
                 };
                 return promise;
             } else {
                 GAME_MANAGER.state = {
-                    stateType: "disconnected"
+                    type: "disconnected"
                 };
                 return Promise.resolve();
             }
@@ -46,7 +44,7 @@ export function createGameManager(): GameManager {
         setLobbyState() {
             
             let gameState = null
-            if (GAME_MANAGER.state.stateType === "game") {
+            if (GAME_MANAGER.state.type === "game") {
                 gameState = {...GAME_MANAGER.state};
             }
 
@@ -63,7 +61,7 @@ export function createGameManager(): GameManager {
         setGameState() {
 
             let lobbyState = null;
-            if (GAME_MANAGER.state.stateType === "lobby") {
+            if (GAME_MANAGER.state.type === "lobby") {
                 lobbyState = {...GAME_MANAGER.state};
             }
 
@@ -71,7 +69,7 @@ export function createGameManager(): GameManager {
             AudioController.clearQueue();
             AudioController.unpauseQueue();
             GAME_MANAGER.state = createGameState();
-            if (lobbyState !== null && GAME_MANAGER.state.stateType === "game") {
+            if (lobbyState !== null && GAME_MANAGER.state.type === "game") {
                 GAME_MANAGER.state.roomCode = lobbyState.roomCode;
                 GAME_MANAGER.state.lobbyName = lobbyState.lobbyName;
                 GAME_MANAGER.state.roleList = lobbyState.roleList;
@@ -87,7 +85,7 @@ export function createGameManager(): GameManager {
         },
         setSpectatorGameState() {
             this.setGameState();
-            if(GAME_MANAGER.state.stateType === "game")
+            if(GAME_MANAGER.state.type === "game")
                 GAME_MANAGER.state.clientState = {
                     type: "spectator"
                 };
@@ -102,7 +100,7 @@ export function createGameManager(): GameManager {
             }
 
             GAME_MANAGER.state = {
-                stateType: "outsideLobby",
+                type: "outsideLobby",
                 selectedRoomCode: null,
                 lobbies: new Map<number, LobbyPreviewData>()
             };
@@ -111,11 +109,11 @@ export function createGameManager(): GameManager {
         },
 
         state: {
-            stateType: "disconnected"
+            type: "disconnected"
         },
 
         updateChatFilter(filter: PlayerIndex | null) {
-            if(GAME_MANAGER.state.stateType === "game" && GAME_MANAGER.state.clientState.type === "player"){
+            if(GAME_MANAGER.state.type === "game" && GAME_MANAGER.state.clientState.type === "player"){
                 GAME_MANAGER.state.clientState.chatFilter = filter===null?null:{
                     type: "playerNameInMessage",
                     player: filter
@@ -165,7 +163,7 @@ export function createGameManager(): GameManager {
 
 
         leaveGame() {
-            if (this.state.stateType !== "disconnected") {
+            if (this.state.type !== "disconnected") {
                 this.server.sendPacket({ type: "leave" });
             }
             deleteReconnectData();
@@ -488,7 +486,7 @@ export function createGameManager(): GameManager {
         },
 
         tick(timePassedMs) {
-            if (gameManager.state.stateType !== "game") {return}
+            if (gameManager.state.type !== "game") {return}
             if (!gameManager.state.ticking) return;
             if(gameManager.state.timeLeftMs === null) {return}
 
@@ -547,7 +545,7 @@ function createServer(){
                     title: translate("notification.connectionFailed"), 
                     body: ""
                 });
-                ANCHOR_CONTROLLER?.setContent(<StartMenu/>);
+                ANCHOR_CONTROLLER?.setContent({type:"main"});
             };
             Server.ws.onmessage = (event: MessageEvent<string>)=>{
                 GAME_MANAGER.messageListener(

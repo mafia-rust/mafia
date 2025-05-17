@@ -3,8 +3,9 @@ import { CurrentFormat, GameModeStorage } from "../components/gameModeSettings/g
 import { Language } from "./lang";
 import { Role } from "./roleState.d";
 import parseFromJson from "../components/gameModeSettings/gameMode/dataFixer";
-import { ContentMenu } from "../menu/game/GameScreen";
 import { ParseResult, Success } from "../components/gameModeSettings/gameMode/parse";
+import { GameScreenMenuType } from "../menu/game/GameScreenMenuContext";
+import { PhaseTimes } from "./gameState.d";
 
 
 export function saveReconnectData(roomCode: number, playerId: number) {
@@ -53,12 +54,25 @@ export type Settings = {
     defaultName: string | null;
     language: Language;
     maxMenus: number;
-    menuOrder: ContentMenu[]
+    menuOrder: GameScreenMenuType[]
     roleSpecificMenus: Role[] // RoleSpecificMenuType=standalone for all listed roles, otherwise it should be playerlist
 };
 
 export type RoleSpecificMenuType = "playerList" | "standalone";
 
+export function defaultPhaseTimes(): PhaseTimes {
+    return {
+        briefing: 45,
+        obituary: 60,
+        discussion: 120,
+        nomination: 120,
+        testimony: 30,
+        judgement: 60,
+        finalWords: 30,
+        dusk: 30,
+        night: 60,
+    }
+}
 
 
 export function loadSettingsParsed(): Settings {
@@ -79,12 +93,12 @@ export function getDefaultSettings(): Readonly<Settings> {
         defaultName: null,
         maxMenus: window.innerWidth < 600 ? 1 : 6,
         menuOrder: [
-            ContentMenu.WikiMenu, 
-            ContentMenu.GraveyardMenu, 
-            ContentMenu.PlayerListMenu, 
-            ContentMenu.ChatMenu, 
-            ContentMenu.WillMenu, 
-            ContentMenu.RoleSpecificMenu
+            GameScreenMenuType.WikiMenu, 
+            GameScreenMenuType.GraveyardMenu, 
+            GameScreenMenuType.PlayerListMenu, 
+            GameScreenMenuType.ChatMenu, 
+            GameScreenMenuType.WillMenu, 
+            GameScreenMenuType.RoleSpecificMenu
         ],
         roleSpecificMenus: []
     }

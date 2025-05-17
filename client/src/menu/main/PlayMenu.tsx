@@ -1,6 +1,5 @@
 import React, { ReactElement, useCallback, useContext, useEffect, useState } from "react";
 import translate from "../../game/lang";
-import { AnchorControllerContext } from "../Anchor";
 import GAME_MANAGER from "../..";
 import LoadingScreen from "../LoadingScreen";
 import "./playMenu.css";
@@ -8,9 +7,11 @@ import { StateListener } from "../../game/gameManager.d";
 import { LobbyPreviewData } from "../../game/packet";
 import LobbyMenu from "../lobby/LobbyMenu";
 import PlayMenuJoinPopup from "./PlayMenuJoinPopup";
+import { Button } from "../../components/Button";
+import { AnchorContext } from "../AnchorContext";
 
 export default function PlayMenu(): ReactElement {
-    const { setContent: setAnchorContent } = useContext(AnchorControllerContext)!;
+    const { setContent: setAnchorContent } = useContext(AnchorContext)!;
     
     useEffect(() => {
         GAME_MANAGER.sendLobbyListRequest();
@@ -49,7 +50,7 @@ export default function PlayMenu(): ReactElement {
                     {translate("menu.play.title")}
                 </h2>
                 <div>
-                    <button onClick={async () => {
+                    <Button onClick={async () => {
                         setAnchorContent(<LoadingScreen type="host"/>);
                         if (await GAME_MANAGER.sendHostPacket()) {
                             setAnchorContent(<LobbyMenu/>)
@@ -58,10 +59,10 @@ export default function PlayMenu(): ReactElement {
                         }
                     }}>
                         {translate("menu.play.button.host")}
-                    </button>
-                    <button onClick={()=>{GAME_MANAGER.sendLobbyListRequest()}}>
+                    </Button>
+                    <Button onClick={()=>{GAME_MANAGER.sendLobbyListRequest()}}>
                         {translate("refresh")}
-                    </button>
+                    </Button>
                 </div>
             </header>
             <div className="play-menu-center">
@@ -138,11 +139,11 @@ function PlayMenuTable(props: Readonly<{
     joinGame: (roomCode?: number, playerId?: number) => Promise<boolean>
 }>): ReactElement {
     const [lobbies, setLobbies] = useState<LobbyMap>(new Map());
-    const { setCoverCard } = useContext(AnchorControllerContext)!;
+    const { setCoverCard } = useContext(AnchorContext)!;
 
     useEffect(() => {
         const listener: StateListener = (type) => {
-            if (GAME_MANAGER.state.stateType === "outsideLobby" && type === "lobbyList") {
+            if (GAME_MANAGER.state.type === "outsideLobby" && type === "lobbyList") {
                 setLobbies(GAME_MANAGER.state.lobbies);
             }
         }
