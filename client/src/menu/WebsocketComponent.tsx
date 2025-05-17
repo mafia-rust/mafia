@@ -5,7 +5,7 @@ import { ToClientPacket } from "../game/packet";
 import { AnchorContext } from "./AnchorContext";
 import translate from "../game/lang";
 
-export function WebsocketComponent(): ReactElement{
+export default function WebsocketComponent(): ReactElement{
     const ctx = useWebSocketContext();
 
     useEffect(()=>{
@@ -19,7 +19,7 @@ export function WebsocketComponent(): ReactElement{
     </WebsocketContext.Provider>
 }
 
-export default function useMessageListener(packet: ToClientPacket, websocketContext: WebSocketContextType){
+function useMessageListener(packet: ToClientPacket, websocketContext: WebSocketContextType){
     console.log(JSON.stringify(packet, null, 2));
 
     const anchorController = useContext(AnchorContext)!;

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { ChatGroup, GameClient, InsiderGroup, LobbyClientID, ModifierType, PhaseState, PhaseTimes, PlayerIndex, Tag, Verdict } from "../../game/gameState.d";
 import { Role, RoleState } from "../../game/roleState.d";
 import { ChatMessage } from "../../components/ChatMessage";
@@ -9,15 +9,27 @@ import { ChatFilter } from "./gameScreenContent/ChatMenu";
 import { ControllerID, SavedController } from "../../game/abilityInput";
 import { defaultPhaseTimes } from "../../game/localStorage";
 import { LobbyState } from "../lobby/LobbyContext";
-
+import { WebsocketContext } from "../WebsocketContext";
+import { ToClientPacket } from "../../game/packet";
 
 export function useGameStateContext(): GameState{
     const [gameState, setGameState] = useState<GameState>(createGameState());
+    const websocketContext = useContext(WebsocketContext)!;
+
+    useEffect(()=>{
+        if(websocketContext){
+            useMessageListener(websocketContext.lastMessageRecieved, gameState);
+        }
+    }, [websocketContext, websocketContext.lastMessageRecieved]);
     
     const incomingPacketFuck = useContext();
     whenever message then setGameState
 
     return gameState;
+}
+
+function useMessageListener(packet: ToClientPacket, gameState: GameState){
+    
 }
 
 export function usePlayerState(): PlayerGameState | undefined {
@@ -30,7 +42,7 @@ export function usePlayerState(): PlayerGameState | undefined {
 }
 export function usePlayerNames(state?: GameState | LobbyState): string[] | undefined {
     if(state===undefined){
-        return undefined
+        return undefined;
     }
     if(state.type === "game"){
         return state.players.map((p)=>p.name)

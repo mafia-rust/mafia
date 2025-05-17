@@ -1,4 +1,3 @@
-import StartMenu from "./../menu/main/StartMenu";
 import GAME_MANAGER from "./../index";
 import messageListener from "./messageListener";
 import React from "react";
