@@ -1,7 +1,6 @@
 import React, {JSXElementConstructor, ReactElement, useContext, useEffect, useRef } from 'react';
 import "./globalMenu.css";
 import translate from '../game/lang';
-import GAME_MANAGER from '..';
 import LoadingScreen from './LoadingScreen';
 import GameModesEditor from '../components/gameModeSettings/GameModesEditor';
 import { CopyButton } from '../components/ClipboardButtons';

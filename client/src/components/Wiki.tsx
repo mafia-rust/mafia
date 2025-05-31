@@ -2,7 +2,7 @@ import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState 
 import translate from "../game/lang";
 import "./wiki.css";
 import { Role, getMainRoleSetFromRole } from "../game/roleState.d";
-import GAME_MANAGER, { regEscape } from "..";
+import { regEscape } from "..";
 import WikiArticle, { getSearchStrings, PageCollection } from "./WikiArticle";
 import { ARTICLES, WikiArticleLink, getArticleTitle, wikiPageIsEnabled } from "./WikiArticleLink";
 import StyledText from "./StyledText";

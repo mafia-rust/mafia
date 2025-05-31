@@ -1,8 +1,8 @@
 import React from "react"
 import "./largeDoomsayerMenu.css"
 import translate, { translateChecked } from "../../../../../game/lang";
-import { StateEventType } from "../../../../../game/gameManager.d";
-import GAME_MANAGER from "../../../../..";
+// import { StateEventType } from "../../../../../game/gameManager.d";
+// import GAME_MANAGER from "../../../../..";
 import GameState from "../../../GameStateContext";
 
 

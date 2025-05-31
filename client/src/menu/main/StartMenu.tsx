@@ -1,14 +1,11 @@
 import React, { ReactElement, useContext } from "react";
-import GAME_MANAGER from "../../index";
 import "../../index.css"
 import "./startMenu.css"
 import translate from "../../game/lang";
-import PlayMenu from "./PlayMenu";
 import LoadingScreen from "../LoadingScreen";
 import GameModesEditor from "../../components/gameModeSettings/GameModesEditor";
 import Icon from "../../components/Icon";
 import SettingsMenu from "../Settings";
-import StandaloneWiki from "./StandaloneWiki";
 import { Button } from "../../components/Button";
 import Credits from "./Credits";
 import StyledText from "../../components/StyledText";
@@ -27,13 +24,7 @@ export default function StartMenu(): ReactElement {
             <div className="satellite">
                 <div className="left">
                     <Button onClick={async () => {
-                        setContent(<WebsocketComponent/>);
-                        setContent(<LoadingScreen type="default"/>);
-                        if (await GAME_MANAGER.setOutsideLobbyState()) {
-                            setContent({type:"connect"});
-                        } else {
-                            setContent({type:"main"});
-                        }
+                        setContent({type:"connect"});
                     }}>
                         <Icon>play_arrow</Icon> {translate("menu.start.button.play")}
                     </Button>
@@ -59,7 +50,7 @@ export default function StartMenu(): ReactElement {
             }}>
                 <Icon>public</Icon> Discord
             </Button>
-            <Button onClick={()=>{setContent(<Credits/>)}}>{translate("credits")}</Button>
+            <Button onClick={()=>{setContent({type:"credits"})}}>{translate("credits")}</Button>
             <a className="button" href="https://mafia.dev.jackpapel.com">Dev (Experimental)</a>
         </footer>
     </div>

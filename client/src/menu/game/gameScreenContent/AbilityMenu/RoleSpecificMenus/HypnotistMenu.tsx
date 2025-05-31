@@ -1,12 +1,13 @@
-import { ReactElement } from "react";
+import { ReactElement, useContext } from "react";
 import { RoleState } from "../../../../../game/roleState.d";
 import CheckBox from "../../../../../components/CheckBox";
 import ChatElement from "../../../../../components/ChatMessage";
 import StyledText from "../../../../../components/StyledText";
 import React from "react";
 import translate from "../../../../../game/lang";
-import GAME_MANAGER from "../../../../..";
+// import GAME_MANAGER from "../../../../..";
 import "./largeHypnotistMenu.css"
+import { WebsocketContext } from "../../../../WebsocketContext";
 
 export type Hypnotist = {
     roleblock: boolean,
@@ -21,8 +22,12 @@ export type Hypnotist = {
 
 export default function HypnotistMenu(props: {roleState: RoleState & {type: "hypnotist"}}): ReactElement{
     
+    const {
+        sendSetConsortOptions
+    } = useContext(WebsocketContext)!;
+
     function handleRoleblockToggle(){
-        GAME_MANAGER.sendSetConsortOptions(
+        sendSetConsortOptions(
             !props.roleState.roleblock, 
             props.roleState.youWereRoleblockedMessage, 
             props.roleState.youSurvivedAttackMessage, 
@@ -33,7 +38,7 @@ export default function HypnotistMenu(props: {roleState: RoleState & {type: "hyp
         );
     }
     function handleYouWereRoleblockedMessageToggle(){
-        GAME_MANAGER.sendSetConsortOptions(
+        sendSetConsortOptions(
             props.roleState.roleblock, 
             !props.roleState.youWereRoleblockedMessage, 
             props.roleState.youSurvivedAttackMessage, 
@@ -44,7 +49,7 @@ export default function HypnotistMenu(props: {roleState: RoleState & {type: "hyp
         );
     }
     function handleYouSurvivedAttackMessageToggle(){
-        GAME_MANAGER.sendSetConsortOptions(
+        sendSetConsortOptions(
             props.roleState.roleblock, 
             props.roleState.youWereRoleblockedMessage, 
             !props.roleState.youSurvivedAttackMessage, 
@@ -55,7 +60,7 @@ export default function HypnotistMenu(props: {roleState: RoleState & {type: "hyp
         );
     }
     function handleYouWereGuardedMessageToggle(){
-        GAME_MANAGER.sendSetConsortOptions(
+        sendSetConsortOptions(
             props.roleState.roleblock, 
             props.roleState.youWereRoleblockedMessage, 
             props.roleState.youSurvivedAttackMessage, 
@@ -66,7 +71,7 @@ export default function HypnotistMenu(props: {roleState: RoleState & {type: "hyp
         );
     }
     function handleYouWereTransportedMessageToggle(){
-        GAME_MANAGER.sendSetConsortOptions(
+        sendSetConsortOptions(
             props.roleState.roleblock, 
             props.roleState.youWereRoleblockedMessage, 
             props.roleState.youSurvivedAttackMessage, 
@@ -77,7 +82,7 @@ export default function HypnotistMenu(props: {roleState: RoleState & {type: "hyp
         );
     }
     function handleYouWerePossessedMessageToggle(){
-        GAME_MANAGER.sendSetConsortOptions(
+        sendSetConsortOptions(
             props.roleState.roleblock, 
             props.roleState.youWereRoleblockedMessage, 
             props.roleState.youSurvivedAttackMessage, 
@@ -88,7 +93,7 @@ export default function HypnotistMenu(props: {roleState: RoleState & {type: "hyp
         );
     }
     function handleYourTargetWasJailedMessageToggle(){
-        GAME_MANAGER.sendSetConsortOptions(
+        sendSetConsortOptions(
             props.roleState.roleblock, 
             props.roleState.youWereRoleblockedMessage, 
             props.roleState.youSurvivedAttackMessage, 

@@ -8,6 +8,7 @@ import WebsocketComponent from "./WebsocketComponent";
 import StandaloneWiki from "./main/StandaloneWiki";
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import StartMenu from "./main/StartMenu";
+import Credits from "./main/Credits";
 
 type AnchorContentType = {
     type: "main"
@@ -19,6 +20,8 @@ type AnchorContentType = {
 }|{
     type:"404",
     path: string
+}|{
+    type:"credits",
 };
 
 export type AnchorContextType = {
@@ -85,6 +88,9 @@ export function useAnchorContext(){
                         <h1>404</h1>
                         <p>The requested path ({contentType.path}) could not be found</p>
                     </div>);
+                break;
+                case "credits":
+                    setContent(<Credits/>);
                 break;
             }
             setContentType(contentType);

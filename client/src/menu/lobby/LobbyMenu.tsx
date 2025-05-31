@@ -1,13 +1,11 @@
 import React, { ReactElement, useContext, useEffect, useMemo, useState } from "react";
-import GAME_MANAGER, { DEV_ENV } from "../../index";
+import { DEV_ENV } from "../../index";
 import LobbyPlayerList from "./LobbyPlayerList";
 import "./lobbyMenu.css";
 import translate from "../../game/lang";
-import { StateListener } from "../../game/gameManager.d";
 import { RoomLinkButton } from "../GlobalMenu";
 import { RoleList, getAllRoles } from "../../game/roleListState.d";
 import LoadingScreen from "../LoadingScreen";
-import StartMenu from "../main/StartMenu";
 import { GameModeContext } from "../../components/gameModeSettings/GameModesEditor";
 import PhaseTimesSelector from "../../components/gameModeSettings/PhaseTimeSelector";
 import { OutlineListSelector } from "../../components/gameModeSettings/OutlineSelector";
@@ -21,6 +19,7 @@ import LobbyNamePane from "./LobbyNamePane";
 import { MobileContext } from "../MobileContext";
 import { AnchorContext } from "../AnchorContext";
 import { LobbyStateContext, useLobbyStateContext } from "./LobbyContext";
+import { WebsocketContext } from "../WebsocketContext";
 
 export default function LobbyMenu(): ReactElement {
     const lobbyState = useLobbyStateContext();
@@ -89,28 +88,16 @@ function LobbyMenuSettings(props: Readonly<{
     const enabledModifiers = lobbyState.enabledModifiers;
 
     const mobile = useContext(MobileContext)!;
-    const { setContent: setAnchorContent } = useContext(AnchorContext)!;
-
-    useEffect(() => {
-        const listener: StateListener = (type) => {
-            if(type === "rejectJoin"){
-                // Kicked, probably
-                setAnchorContent(<LoadingScreen type="disconnect"/>);
-                GAME_MANAGER.setDisconnectedState();
-                setAnchorContent(<StartMenu />);
-            }
-        }
-
-        GAME_MANAGER.addStateListener(listener);
-        return ()=>{GAME_MANAGER.removeStateListener(listener);}
-    }, [setAnchorContent]);
+    const {
+        sendSetPhaseTimesPacket, sendEnabledRolesPacket, sendSetRoleListPacket, sendEnabledModifiersPacket, sendSetRoleOutlinePacket
+    } = useContext(WebsocketContext)!;
 
     const sendRoleList = (newRoleList: RoleList) => {
         const combinedRoleList = structuredClone(roleList);
         newRoleList.forEach((role, index) => {
             combinedRoleList[index] = role
         })
-        GAME_MANAGER.sendSetRoleListPacket(combinedRoleList);
+        sendSetRoleListPacket(combinedRoleList);
     };
 
     const context = useMemo(() => {
@@ -122,31 +109,31 @@ function LobbyMenuSettings(props: Readonly<{
         {props.isHost === true && <GameModeSelector 
             canModifySavedGameModes={false}
             loadGameMode={gameMode => {
-                GAME_MANAGER.sendSetPhaseTimesPacket(gameMode.phaseTimes);
-                GAME_MANAGER.sendEnabledRolesPacket(gameMode.enabledRoles);
-                GAME_MANAGER.sendSetRoleListPacket(gameMode.roleList);
-                GAME_MANAGER.sendEnabledModifiersPacket(gameMode.enabledModifiers);
+                sendSetPhaseTimesPacket(gameMode.phaseTimes);
+                sendEnabledRolesPacket(gameMode.enabledRoles);
+                sendSetRoleListPacket(gameMode.roleList);
+                sendEnabledModifiersPacket(gameMode.enabledModifiers);
             }}
         />}
         <EnabledModifiersSelector
             disabled={!props.isHost}
-            onChange={modifiers => GAME_MANAGER.sendEnabledModifiersPacket(modifiers)}
+            onChange={modifiers => sendEnabledModifiersPacket(modifiers)}
         />
         <PhaseTimesSelector 
             disabled={!props.isHost}
-            onChange={pts => GAME_MANAGER.sendSetPhaseTimesPacket(pts)}
+            onChange={pts => sendSetPhaseTimesPacket(pts)}
         />
         <OutlineListSelector
             disabled={!props.isHost}
-            onChangeRolePicker={(value, index) => GAME_MANAGER.sendSetRoleOutlinePacket(index, value)}
+            onChangeRolePicker={(value, index) => sendSetRoleOutlinePacket(index, value)}
             onAddNewOutline={undefined}
             onRemoveOutline={undefined}
             setRoleList={sendRoleList}
         />
         <EnabledRoleSelector
-            onEnableRoles={roles => GAME_MANAGER.sendEnabledRolesPacket([...enabledRoles, ...roles])}
-            onDisableRoles={roles => GAME_MANAGER.sendEnabledRolesPacket(enabledRoles.filter(role => !roles.includes(role)))}
-            onIncludeAll={() => GAME_MANAGER.sendEnabledRolesPacket(getAllRoles())}
+            onEnableRoles={roles => sendEnabledRolesPacket([...enabledRoles, ...roles])}
+            onDisableRoles={roles => sendEnabledRolesPacket(enabledRoles.filter(role => !roles.includes(role)))}
+            onIncludeAll={() => sendEnabledRolesPacket(getAllRoles())}
             disabled={!props.isHost}
         />
     </GameModeContext.Provider>
@@ -158,29 +145,18 @@ function LobbyMenuHeader(props: Readonly<{
     advancedView: boolean,
     setAdvancedView: (advancedView: boolean) => void
 }>): JSX.Element {
-    const [lobbyName, setLobbyName] = useState<string>(GAME_MANAGER.state.type === "lobby" ? GAME_MANAGER.state.lobbyName : "Mafia Lobby");
+    const { lobbyName } = useContext(LobbyStateContext)!;
+    const { sendStartGamePacket, sendSetLobbyNamePacket } = useContext(WebsocketContext)!;
     const mobile = useContext(MobileContext)!;
     const { setContent: setAnchorContent } = useContext(AnchorContext)!;
-
-    useEffect(() => {
-        const listener: StateListener = (type) => {
-            if (type === "lobbyName" && GAME_MANAGER.state.type === "lobby") {
-                setLobbyName(GAME_MANAGER.state.lobbyName);
-            }
-        };
-
-        if(GAME_MANAGER.state.type === "lobby")
-            setLobbyName(GAME_MANAGER.state.lobbyName);
-
-        GAME_MANAGER.addStateListener(listener)
-        return ()=>{GAME_MANAGER.removeStateListener(listener);}
-    }, [setLobbyName]);
-
+    
+    const [localLobbyName, setLobbyName] = useState<string>(lobbyName ?? "Mafia Lobby");
+    
     return <header>
         <div>
             <Button disabled={!props.isHost} className="start" onClick={async ()=>{
                 setAnchorContent(<LoadingScreen type="default"/>);
-                if (!await GAME_MANAGER.sendStartGamePacket()) {
+                if (!await sendStartGamePacket()) {
                     setAnchorContent(<LobbyMenu/>)
                 }
             }}>
@@ -205,13 +181,13 @@ function LobbyMenuHeader(props: Readonly<{
                     
                     const newLobbyName = (e.target as HTMLInputElement).value;
                     setLobbyName(newLobbyName);
-                    GAME_MANAGER.sendSetLobbyNamePacket(newLobbyName);
+                    sendSetLobbyNamePacket(newLobbyName);
                     
                 }}
                 onBlur={e => {
                     const newLobbyName = (e.target as HTMLInputElement).value;
                     setLobbyName(newLobbyName);
-                    GAME_MANAGER.sendSetLobbyNamePacket(newLobbyName);
+                    sendSetLobbyNamePacket(newLobbyName);
                 }}
             /> : 
             <h3>{lobbyName}</h3>

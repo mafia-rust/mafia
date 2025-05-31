@@ -1,6 +1,6 @@
 import React, { ReactElement, useContext } from "react";
 import AuditorMenu from "./RoleSpecificMenus/AuditorMenu";
-import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
+// import LargeDoomsayerMenu from "./RoleSpecificMenus/LargeDoomsayerMenu";
 import Counter from "../../../../components/Counter";
 import StyledText from "../../../../components/StyledText";
 import translate from "../../../../game/lang";
@@ -52,8 +52,8 @@ function roleSpecificSectionInner(
             return <AuditorMenu roleState={roleState}/>;
         case "hypnotist":
             return <HypnotistMenu roleState={roleState}/>;
-        case "doomsayer":
-            return <LargeDoomsayerMenu/>;
+        // case "doomsayer":
+        //     return <LargeDoomsayerMenu/>;
         case "jailor": 
             return <Counter 
                 max={maxChargesCounter} 

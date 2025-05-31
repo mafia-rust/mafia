@@ -4,7 +4,6 @@ import Icon from "../../components/Icon";
 import StyledText from "../../components/StyledText";
 import { GameScreenMenuContext, GameScreenMenuType } from "./GameScreenMenuContext";
 import { WikiArticleLink } from "../../components/WikiArticleLink";
-import GAME_MANAGER from "../..";
 import { GameStateContext } from "./GameStateContext";
 import { MobileContext } from "../MobileContext";
 
