@@ -1,25 +1,24 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useContext } from "react";
 import GAME_MANAGER from "../..";
 import translate from "../../game/lang";
 import Icon from "../../components/Icon";
-import { useLobbyState } from "../../components/useHooks";
 import { Button } from "../../components/Button";
+import { LobbyStateContext } from "./LobbyContext";
 
 
 
 export default function LobbyNamePane(): ReactElement {
-    const isSpectator = useLobbyState(
-        lobbyState => lobbyState.players.get(lobbyState.myId!)?.clientType.type === "spectator",
-        ["lobbyClients", "yourId"]
-    )!;
-
-    const ready = useLobbyState(
-        lobbyState => lobbyState.players.get(lobbyState.myId!)?.ready,
-        ["lobbyClients", "playersHost", "playersReady", "yourId"]
-    )!;
+    const lobbyState = useContext(LobbyStateContext)!;
+    const client = lobbyState.players.get(lobbyState.myId!)!;
+    const isSpectator = client.clientType.type === "spectator";
+    const ready = client.ready;
+    let myName = "";
+    if(client.clientType.type === "player"){
+        myName = client.clientType.name
+    }
 
     return <section className="player-list-menu-colors selector-section lobby-name-pane">
-        {!isSpectator && <NameSelector/>}
+        {!isSpectator && <NameSelector name={myName}/>}
         <div className="name-pane-buttons">
             <Button onClick={() => GAME_MANAGER.sendSetSpectatorPacket(!isSpectator)}>
                 {isSpectator
@@ -40,21 +39,13 @@ export default function LobbyNamePane(): ReactElement {
     </section>
 }
 
-function NameSelector(): ReactElement {
-    const myName = useLobbyState(
-        state => {
-            const client = state.players.get(state.myId!);
-            if(client === undefined || client === null) return undefined;
-            if(client.clientType.type === "spectator") return undefined;
-            return client.clientType.name;
-        },
-        ["lobbyClients", "yourId"]
-    );
+function NameSelector(props: {name: String}): ReactElement {
+    
     const [enteredName, setEnteredName] = React.useState("");
 
     return <div className="name-pane-selector">
         <div className="lobby-name">
-            <section><h2>{myName ?? ""}</h2></section>
+            <section><h2>{props.name ?? ""}</h2></section>
         </div>
         <div className="name-box">
             <input type="text" value={enteredName}

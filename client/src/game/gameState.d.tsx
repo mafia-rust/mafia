@@ -1,48 +1,19 @@
-import { Grave } from "./graveState";
-import { ChatMessage } from "../components/ChatMessage";
-import { Role, RoleState } from "./roleState.d";
-import { RoleList } from "./roleListState.d";
 import { LobbyPreviewData } from "./packet";
-import { ChatFilter } from "../menu/game/gameScreenContent/ChatMenu";
-import { ControllerID, SavedController } from "./abilityInput";
 import translate from "./lang";
-import ListMap, { ListMapData } from "../ListMap";
-
-export type State = Disconnected | OutsideLobbyState | LobbyState | GameState;
 
 export type Disconnected = {
-    stateType: "disconnected"
+    type: "disconnected"
 }
 
 export type OutsideLobbyState = {
-    stateType: "outsideLobby",
+    type: "outsideLobby",
 
     selectedRoomCode: string | null,
     lobbies: Map<number, LobbyPreviewData>,
 }
 
 
-//Change this to use PlayerID for player map and playerID for who I AM instead of myName and host
-export type LobbyState = {
-    stateType: "lobby"
-    roomCode: number,
-    lobbyName: string,
 
-    myId: number | null,
-
-    roleList: RoleList,
-    phaseTimes: PhaseTimes,
-    enabledRoles: Role[],
-    enabledModifiers: ModifierType[],
-
-    players: ListMap<LobbyClientID, LobbyClient>,
-    chatMessages: ChatMessage[],
-}
-export type LobbyClient = {
-    ready: "host" | "ready" | "notReady",
-    connection: ClientConnection,
-    clientType: LobbyClientType
-}
 export type ClientConnection = "connected" | "disconnected" | "couldReconnect";
 export type GameClient = {
     clientType: GameClientType,
@@ -64,64 +35,7 @@ export type PlayerClientType = {
     name: string,
 }
 
-type GameState = {
-    stateType: "game",
-    roomCode: number,
-    lobbyName: string,
-    
-    initialized: boolean,
 
-    myId: number | null,
-
-    chatMessages : ChatMessage[],
-    graves: Grave[],
-    players: Player[],
-    
-    phaseState: PhaseState,
-    timeLeftMs: number | null,
-    dayNumber: number,
-
-    fastForward: boolean,
-    
-    roleList: RoleList,
-    enabledRoles: Role[],
-    phaseTimes: PhaseTimes,
-    enabledModifiers: ModifierType[],
-
-    ticking: boolean,
-
-    clientState: PlayerGameState | {type: "spectator"},
-    host: null | {
-        clients: ListMap<LobbyClientID, GameClient>
-    },
-
-    missedChatMessages: boolean
-}
-export default GameState;
-
-export type PlayerGameState = {
-    type: "player",
-
-    myIndex: PlayerIndex,
-    
-    roleState: RoleState,
-
-    will: string,
-    notes: string[],
-    crossedOutOutlines: number[],
-    chatFilter: ChatFilter,
-    deathNote: string,
-    judgement: Verdict,
-
-    savedControllers: ListMapData<ControllerID, SavedController>,
-
-    fellowInsiders: PlayerIndex[],
-
-    sendChatGroups: ChatGroup[],
-    insiderGroups: InsiderGroup[],
-    
-    missedWhispers: PlayerIndex[]
-}
 
 export type PlayerIndex = number;
 export type LobbyClientID = number;
@@ -176,16 +90,6 @@ export const MODIFIERS = [
 ] as const;
 export type ModifierType = (typeof MODIFIERS)[number];
 
-export type Player = {
-    name: string,
-    index: number,
-    numVoted: number,
-    alive: boolean,
-    roleLabel: Role | null,
-    playerTags: Tag[]
-
-    toString(): string
-}
 
 export const CONCLUSIONS = ["town", "mafia", "cult", "fiends", "politician", "niceList", "naughtyList", "draw"] as const;
 export type Conclusion = (typeof CONCLUSIONS)[number];

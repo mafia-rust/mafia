@@ -9,10 +9,10 @@ import { ModifierType, PhaseTimes } from "../../game/gameState.d";
 import EnabledRoleSelector from "./EnabledRoleSelector";
 import { Role } from "../../game/roleState.d";
 import "./selectorSection.css";
-import { defaultPhaseTimes } from "../../game/gameState";
 import { GameModeSelector } from "./GameModeSelector";
 import { ShareableGameMode } from "./gameMode";
 import { EnabledModifiersSelector } from "./EnabledModifiersSelector";
+import { defaultPhaseTimes } from "../../game/localStorage";
 
 const GameModeContext = createContext({
     roleList: [] as RoleList,
