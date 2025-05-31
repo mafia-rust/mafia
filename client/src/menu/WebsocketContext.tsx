@@ -8,11 +8,11 @@ import { RoleList, RoleOutline } from "../game/roleListState.d";
 import { AnchorContext } from "./AnchorContext";
 import React from "react";
 import translate from "../game/lang";
-import { isValidPhaseTime } from "../game/gameManager";
 import LoadingScreen, { LoadingScreenType } from "./LoadingScreen";
 import PlayMenu from "./main/PlayMenu";
 import GameScreen from "./game/GameScreen";
 import LobbyMenu from "./lobby/LobbyMenu";
+import { isValidPhaseTime } from "../components/gameModeSettings/PhaseTimeSelector";
 
 export const WebsocketContext = createContext<WebSocketContextType | undefined>(undefined);
 
@@ -97,7 +97,7 @@ export function useWebSocketContext(): WebSocketContextType{
     const anchorContext = useContext(AnchorContext)!;
 
     const [lastMessageRecieved, setLastMessageRecieved] = useState<ToClientPacket | null>(null);
-    const [content, setContent] = useState<JSX.Element>(<LoadingScreen type="join"/>);
+    const [content, setContent] = useState<JSX.Element>(<LoadingScreen type={"join"}/>);
     const webSocket = useRef<WebSocket | null>(null);
 
     const defaultWebsocketContext: WebSocketContextType = {

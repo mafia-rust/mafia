@@ -11,8 +11,8 @@ import GameState, { GameStateContext } from "../game/GameStateContext";
 export function useLobbyStateContext(){
     const [lobbyState, setLobbyState] = useState<LobbyState>(createLobbyState());
     
-    const incomingPacketFuck = useContext();
-    whenever message then setLobbyState
+    // const incomingPacketFuck = useContext();
+    // whenever message then setLobbyState
 
     return lobbyState;
 }
@@ -58,7 +58,7 @@ function createLobbyState(): LobbyState {
     }
 }
 export function useLobbyOrGameState<T = GameState|LobbyState>(
-    map?: (state: GameState|LobbyState)=>T = (state)=>state as T
+    map: (state: GameState|LobbyState)=>T = (state)=>state as T
 ):T{
     const gameState = useContext(GameStateContext)!;
     const lobbyState = useContext(LobbyStateContext)!;

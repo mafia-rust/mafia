@@ -2,7 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import Anchor from './menu/Anchor';
-import { GameManager, createGameManager } from './game/gameManager';
+// import { GameManager, createGameManager } from './game/gameManager';
 import route from './routing';
 
 export const DEV_ENV = process.env.NODE_ENV !== 'production';
@@ -19,13 +19,13 @@ const THEME_CSS_ATTRIBUTES = [
 export { THEME_CSS_ATTRIBUTES }
 
 const ROOT = createRoot(document.querySelector("#root")!);
-const GAME_MANAGER: GameManager = createGameManager();
-const TIME_PERIOD = 1000;
-export default GAME_MANAGER;
+// const GAME_MANAGER: GameManager = createGameManager();
+// const TIME_PERIOD = 1000;
+// export default GAME_MANAGER;
 
-setInterval(() => {
-    GAME_MANAGER.tick(TIME_PERIOD);
-}, TIME_PERIOD);
+// setInterval(() => {
+//     GAME_MANAGER.tick(TIME_PERIOD);
+// }, TIME_PERIOD);
 
 new MutationObserver(mutations => {
     for (const mutation of mutations) {

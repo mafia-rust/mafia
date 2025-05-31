@@ -583,8 +583,4 @@ function createServer(){
     return Server;
 }
 
-export function isValidPhaseTime(time: number) {
-    return Number.isSafeInteger(time) && time <= 1000 && 0 <= time;
-}
-
 export type { GameManager, Server } from "./gameManager.d";

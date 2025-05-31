@@ -15,27 +15,6 @@ import { ToClientPacket } from "../../game/packet";
 export function useGameStateContext(): GameState{
     const [gameState, setGameState] = useState<GameState>(createGameState());
 
-
-    type TickData = {count: number, timeDelta: number}
-    const [tickData, setTickData] = useState<TickData>({
-        count: 0,
-        timeDelta: 0
-    });
-
-    //start tick
-    useEffect(() => {
-        const TICK_TIME_DELTA = 1000;
-        let tickInterval = setInterval(()=>{
-            setTickData(tickData => ({
-                count: tickData.count + 1,
-                timeDelta: TICK_TIME_DELTA
-            }));
-        }, TICK_TIME_DELTA);
-
-        return ()=>clearInterval(tickInterval)
-    }, []);
-
-
     const websocketContext = useContext(WebsocketContext)!;
 
     useEffect(()=>{
@@ -78,7 +57,6 @@ export function usePlayerNames(state?: GameState | LobbyState): string[] | undef
 }
 const GameStateContext = createContext<GameState | undefined>(undefined)
 export { GameStateContext }
-
 
 type GameState = {
     type: "game",

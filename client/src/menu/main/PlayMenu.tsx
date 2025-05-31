@@ -46,6 +46,8 @@ export default function PlayMenu(): ReactElement {
     const {lastMessageRecieved, sendLobbyListRequest, sendJoinPacket, sendRejoinPacket, sendHostPacket} = useContext(WebsocketContext)!;
     const playMenuContext = usePlayMenuContext();
 
+    const {setContent} = useContext(WebsocketContext)!;
+
     useEffect(()=>{
         if(lastMessageRecieved){
             playMenuMessageListener(lastMessageRecieved, playMenuContext);
@@ -61,23 +63,16 @@ export default function PlayMenu(): ReactElement {
     })
 
     const joinGame = useCallback(
-        async (roomCode?: number, playerId?: number): Promise<boolean> => {
+        async (roomCode?: number, playerId?: number) => {
             if (roomCode === undefined) return false;
         
-            setAnchorContent(<LoadingScreen type="join"/>);
+            setContent({type:"loading"});
         
-            let success: boolean;
             if (playerId === undefined) {
-                success = await sendJoinPacket(roomCode);
+                sendJoinPacket(roomCode);
             } else {
-                success = await sendRejoinPacket(roomCode, playerId);
+                sendRejoinPacket(roomCode, playerId);
             }
-        
-            if (!success) {
-                setAnchorContent(<PlayMenu/>);
-            }
-        
-            return success;
         },
         [setAnchorContent]
     );
@@ -93,11 +88,12 @@ export default function PlayMenu(): ReactElement {
                     <div>
                         <Button onClick={async () => {
                             setAnchorContent(<LoadingScreen type="host"/>);
-                            if (await sendHostPacket()) {
-                                setAnchorContent(<LobbyMenu/>)
-                            } else {
-                                setAnchorContent(<PlayMenu/>)
-                            }
+                            sendHostPacket()
+                            // if (await sendHostPacket()) {
+                            //     setAnchorContent(<LobbyMenu/>)
+                            // } else {
+                            //     setAnchorContent(<PlayMenu/>)
+                            // }
                         }}>
                             {translate("menu.play.button.host")}
                         </Button>
@@ -116,7 +112,7 @@ export default function PlayMenu(): ReactElement {
 }
 
 function PlayMenuFooter(props: Readonly<{
-    joinGame: (roomCode?: number, playerId?: number) => Promise<boolean>
+    joinGame: (roomCode?: number, playerId?: number)=>void
 }>): ReactElement {
     const [roomCode, setRoomCode] = useState<number | undefined>(undefined);
     const [playerID, setPlayerID] = useState<number | undefined>(undefined);
@@ -176,7 +172,7 @@ function PlayMenuFooter(props: Readonly<{
 }
 
 function PlayMenuTable(props: Readonly<{
-    joinGame: (roomCode?: number, playerId?: number) => Promise<boolean>
+    joinGame: (roomCode?: number, playerId?: number)=>void
 }>): ReactElement {
     const { setCoverCard } = useContext(AnchorContext)!;
     const { lobbies } = useContext(PlayMenuContext)!;

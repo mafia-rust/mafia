@@ -13,11 +13,11 @@ import { MODIFIERS, ModifierType } from "../game/gameState.d";
 import Masonry from "react-responsive-masonry";
 import CheckBox from "./CheckBox";
 import { GameScreenMenuContext, GameScreenMenuType } from "../menu/game/GameScreenMenuContext";
-import { AnchorContext } from "../menu/AnchorContext";
 import { useLobbyOrGameState } from "../menu/lobby/LobbyContext";
+import { AnchorContextType } from "../menu/AnchorContext";
 
 
-export function setWikiSearchPage(page: WikiArticleLink, anchorController: AnchorContext, menuController?: GameScreenMenuContext) {
+export function setWikiSearchPage(page: WikiArticleLink, anchorController: AnchorContextType, menuController?: GameScreenMenuContext) {
     if (GAME_MANAGER.wikiArticleCallbacks.length === 0) {
         if (menuController?.menuIsAvailable(GameScreenMenuType.WikiMenu)) {
             menuController.openMenu(GameScreenMenuType.WikiMenu, () => {

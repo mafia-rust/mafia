@@ -21,13 +21,6 @@ import ListMap from "../ListMap";
 import { sortControllerIdCompare } from "./abilityInput";
 import { AnchorContext } from "../menu/AnchorContext";
 
-function sendDefaultName() {
-    const defaultName = loadSettingsParsed().defaultName;
-    if(defaultName !== null && defaultName !== undefined && defaultName !== ""){
-        GAME_MANAGER.sendSetNamePacket(defaultName)
-    }
-} 
-
 export default function messageListener(packet: ToClientPacket){
     console.log(JSON.stringify(packet, null, 2));
 
