@@ -3,40 +3,36 @@ import { ReactElement } from "react"
 import translate from "../game/lang"
 import StyledText, { KeywordDataMap, PLAYER_KEYWORD_DATA } from "./StyledText"
 import "./playerNamePlate.css"
-import { GameStateContext } from "../menu/game/GameStateContext"
+import { GameStateContext, usePlayerState } from "../menu/game/GameStateContext"
 
 export default function PlayerNamePlate(props: Readonly<{
     playerIndex: number,    //guarantee this index is valid please
 }>): ReactElement {
-    const phaseState = useContext(GameStateContext)!.phaseState;
-    const myRoleState = usePlayerState(
-        (playerState) => playerState.roleState,
-        ["yourRoleState"]
+    const {
+        players,
+        phaseState
+    } = useContext(GameStateContext)!;
+    
+    const {
+        roleLabel: playerRoleLabel,
+        alive: playerAlive,
+        name: playerName,
+        playerTags
+    } = useMemo(()=>
+        players[props.playerIndex],
+        [players, props.playerIndex]
     );
-    const myIndex = usePlayerState(
-        (gameState) => gameState.myIndex,
-        ["yourPlayerIndex"]
-    )!;
-    const playerRoleLabel = useGameState(
-        (gameState) => gameState.players[props.playerIndex].roleLabel,
-        ["gamePlayers", "yourRoleLabels"]
+
+    const playerNameToString = useMemo(()=>
+        players[props.playerIndex].toString(),
+        [players, props.playerIndex]
     );
-    const playerTags = useGameState(
-        (gameState) => gameState.players[props.playerIndex].playerTags,
-        ["gamePlayers", "yourPlayerTags"]
-    )!;
-    const playerAlive = useGameState(
-        (gameState) => gameState.players[props.playerIndex].alive,
-        ["gamePlayers", "playerAlive"]
-    )!;
-    const playerNameToString = useGameState(
-        (gameState) => gameState.players[props.playerIndex].toString(),
-        ["gamePlayers"]
-    )!;
-    const playerName = useGameState(
-        (gameState) => gameState.players[props.playerIndex].name,
-        ["gamePlayers"]
-    )!;
+
+    const {
+        roleState: myRoleState,
+        myIndex
+    } = usePlayerState() ?? {};
+
 
     const roleString = useMemo(()=>{
         if(props.playerIndex === myIndex){
@@ -51,7 +47,6 @@ export default function PlayerNamePlate(props: Readonly<{
     }, [props.playerIndex, myIndex, myRoleState, playerAlive, playerRoleLabel]);
 
 
-
     const newKeywordData: KeywordDataMap = {...PLAYER_KEYWORD_DATA};
     if(myIndex === props.playerIndex){
         newKeywordData[playerNameToString] = [
@@ -60,8 +55,6 @@ export default function PlayerNamePlate(props: Readonly<{
             { style: "keyword-player-important keyword-player-sender", replacement: playerName }
         ];
     }
-
-
 
 
     return <div 

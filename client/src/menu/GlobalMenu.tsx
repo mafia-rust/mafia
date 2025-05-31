@@ -11,8 +11,7 @@ import SettingsMenu from './Settings';
 import { Button } from '../components/Button';
 import HostMenu from './HostMenu';
 import { AnchorContext } from './AnchorContext';
-import { GameStateContext } from './game/GameStateContext';
-import { LobbyStateContext, useLobbyOrGameState } from './lobby/LobbyContext';
+import { useLobbyOrGameState } from './lobby/LobbyContext';
 
 export default function GlobalMenu(): ReactElement {
 

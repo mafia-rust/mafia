@@ -10,16 +10,16 @@ export default function WebsocketComponent(): ReactElement{
 
     useEffect(()=>{
         if(ctx.lastMessageRecieved){
-            useMessageListener(ctx.lastMessageRecieved, ctx);
+            websocketComponentMessageListener(ctx.lastMessageRecieved, ctx);
         }
-    }, [ctx, ctx.lastMessageRecieved]);
+    }, [ctx.lastMessageRecieved]);
 
     return <WebsocketContext.Provider value={ctx}>
         {ctx.content}
     </WebsocketContext.Provider>
 }
 
-function useMessageListener(packet: ToClientPacket, websocketContext: WebSocketContextType){
+function websocketComponentMessageListener(packet: ToClientPacket, websocketContext: WebSocketContextType){
     console.log(JSON.stringify(packet, null, 2));
 
     const anchorController = useContext(AnchorContext)!;

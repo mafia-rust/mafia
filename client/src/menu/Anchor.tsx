@@ -1,4 +1,7 @@
-import React, { ReactElement, useRef, useContext, useState, useEffect, useCallback } from "react";
+import React, {
+    ReactElement, useRef, useContext,
+    useEffect, useCallback
+} from "react";
 import "../index.css";
 import "./anchor.css";
 import { switchLanguage } from "../game/lang";
@@ -10,20 +13,15 @@ import { Button } from "../components/Button";
 import { ChatMessage } from "../components/ChatMessage";
 import AudioController from "./AudioController";
 import { computeKeywordData } from "../components/StyledText";
-import { AnchorContext, useAnchorContext } from "./AnchorContext";
+import { AnchorContext, AnchorContextType, useAnchorContext } from "./AnchorContext";
 import { MobileContext, useMobileContext } from "./MobileContext";
 
 export default function Anchor(props: Readonly<{
-    onMount: (anchorContext: AnchorContext) => void,
+    onMount: (anchorContext: AnchorContextType) => void,
 }>): ReactElement {
 
     const mobileContext = useMobileContext();
     const anchorContext = useAnchorContext();
-    type TickData = {count: number, timeDelta: number}
-    const [tickData, setTickData] = useState<TickData>({
-        count: 0,
-        timeDelta: 0
-    });
 
     // Load settings
     useEffect(() => {
@@ -34,18 +32,7 @@ export default function Anchor(props: Readonly<{
         anchorContext.setAccessibilityFontEnabled(settings.accessibilityFont);
         switchLanguage(settings.language);
         computeKeywordData();
-
-
-        const TICK_TIME_DELTA = 1000;
-        let tickInterval = setInterval(()=>{
-            tickData.count += 1;
-            tickData.timeDelta = TICK_TIME_DELTA;
-            setTickData({...tickData});
-        }, TICK_TIME_DELTA);
-
-        return ()=>{
-            clearInterval(tickInterval)
-        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {

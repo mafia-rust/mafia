@@ -7,6 +7,7 @@ import Icon from "./Icon";
 import translate from "../game/lang";
 import "./textAreaDropdown.css";
 import DetailsSummary from "./DetailsSummary";
+import { usePlayerNames } from "../menu/game/GameStateContext";
 
 export function TextDropdownArea(props: Readonly<{
     titleString: string,

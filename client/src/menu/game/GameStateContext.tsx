@@ -14,30 +14,54 @@ import { ToClientPacket } from "../../game/packet";
 
 export function useGameStateContext(): GameState{
     const [gameState, setGameState] = useState<GameState>(createGameState());
+
+
+    type TickData = {count: number, timeDelta: number}
+    const [tickData, setTickData] = useState<TickData>({
+        count: 0,
+        timeDelta: 0
+    });
+
+    //start tick
+    useEffect(() => {
+        const TICK_TIME_DELTA = 1000;
+        let tickInterval = setInterval(()=>{
+            setTickData(tickData => ({
+                count: tickData.count + 1,
+                timeDelta: TICK_TIME_DELTA
+            }));
+        }, TICK_TIME_DELTA);
+
+        return ()=>clearInterval(tickInterval)
+    }, []);
+
+
     const websocketContext = useContext(WebsocketContext)!;
 
     useEffect(()=>{
-        if(websocketContext){
-            useMessageListener(websocketContext.lastMessageRecieved, gameState);
+        if(websocketContext.lastMessageRecieved){
+            gameStateMessageListener(websocketContext.lastMessageRecieved, gameState);
+            //for now
+            setGameState(gameState);
         }
-    }, [websocketContext, websocketContext.lastMessageRecieved]);
-    
-    const incomingPacketFuck = useContext();
-    whenever message then setGameState
+    }, [websocketContext.lastMessageRecieved]);
 
     return gameState;
 }
 
-function useMessageListener(packet: ToClientPacket, gameState: GameState){
+function gameStateMessageListener(packet: ToClientPacket, gameState: GameState){
     
 }
 
 export function usePlayerState(): PlayerGameState | undefined {
-    const gameState = useContext(GameStateContext)!;
-    if(gameState === undefined || gameState.clientState.type==="spectator"){
-        return undefined;
-    }else{
-        return gameState.clientState;
+    const gameState = useContext(GameStateContext);
+    if(gameState === undefined){return undefined};
+    const { clientState } = gameState
+
+    if (clientState.type === "player") {
+        return clientState
+    } else {
+        return undefined
     }
 }
 export function usePlayerNames(state?: GameState | LobbyState): string[] | undefined {
@@ -52,7 +76,6 @@ export function usePlayerNames(state?: GameState | LobbyState): string[] | undef
         //thanks typescript very cool
         .map((c)=>c.clientType.type==="player"?c.clientType.name:undefined) as string[]
 }
-
 const GameStateContext = createContext<GameState | undefined>(undefined)
 export { GameStateContext }
 

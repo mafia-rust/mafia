@@ -60,12 +60,18 @@ export function find(text: string): RegExp {
     }
 }
 
+//escapes weird characters, adding a backslash first
 export function regEscape(text: string) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
 }
 
-export function replaceMentions(rawText: string, playerNames: string[]) {
+export function replaceMentions(rawText: string, playerNames: string[] | undefined) {
     let text = rawText;
+
+    if(playerNames===undefined){
+        return text;
+    }
+
     playerNames.forEach((player, i) => {
         text = text.replace(find(`@${i + 1}`), player);
     });

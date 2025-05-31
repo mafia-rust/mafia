@@ -1,30 +1,37 @@
 import React, { ReactElement, useContext, useEffect, useState } from "react";
 import translate from "../game/lang";
-import GAME_MANAGER from "..";
 import { Button } from "../components/Button";
 import "./lobby/lobbyMenu.css"
 import LobbyPlayerList from "./lobby/LobbyPlayerList";
 import { AnchorContext } from "./AnchorContext";
+import { WebsocketContext } from "./WebsocketContext";
+import { GameStateContext } from "./game/GameStateContext";
 
 export default function HostMenu(): ReactElement {
     const anchorController = useContext(AnchorContext)!;
+    const {
+        sendHostDataRequest, sendBackToLobbyPacket, sendHostEndGamePacket, sendHostSkipPhase,
+        lastMessageRecieved
+    } = useContext(WebsocketContext)!;
+
+    const gameState = useContext(GameStateContext);
 
     useEffect(() => {
-        GAME_MANAGER.sendHostDataRequest();
-    }, [])
+        sendHostDataRequest();
+    }, [sendHostDataRequest])
 
     const [lastRefreshed, setLastRefreshed] = useState(new Date());
 
-    // usePacketListener(type => {
-    //     // Check on every packet since like 1 million packets can affect this
-    //     if (!(GAME_MANAGER.state.type === "game" && GAME_MANAGER.state.host !== null)) {
-    //         anchorController.clearCoverCard();
-    //     }
+    useEffect(()=>{
+        // Check on every packet since like 1 million packets can affect this
+        if (gameState === undefined || gameState.host === null) {
+            anchorController.clearCoverCard();
+        }
 
-    //     if (type === "hostData") {
-    //         setLastRefreshed(new Date(Date.now()))
-    //     }
-    // });
+        if (lastMessageRecieved?.type === "hostData") {
+            setLastRefreshed(new Date(Date.now()))
+        }
+    }, [lastMessageRecieved])
 
     return <div className="settings-menu-card">
         <header>
@@ -32,7 +39,7 @@ export default function HostMenu(): ReactElement {
             {translate("menu.hostSettings.lastRefresh", lastRefreshed.toLocaleTimeString())}
         </header>
         
-        <Button onClick={() => GAME_MANAGER.sendHostDataRequest()}
+        <Button onClick={() => sendHostDataRequest()}
         >{translate("refresh")}</Button>
         
         <main className="settings-menu">
@@ -40,13 +47,13 @@ export default function HostMenu(): ReactElement {
             <div className="chat-menu-colors">
                 <h2>{translate("menu.hostSettings.lobby")}</h2>
                 <section>
-                    <Button onClick={()=>GAME_MANAGER.sendBackToLobbyPacket()}>
+                    <Button onClick={()=>sendBackToLobbyPacket()}>
                         {translate("backToLobby")}
                     </Button>
-                    <Button onClick={()=>GAME_MANAGER.sendHostEndGamePacket()}>
+                    <Button onClick={()=>sendHostEndGamePacket()}>
                         {translate("menu.hostSettings.endGame")}
                     </Button>
-                    <Button onClick={()=>GAME_MANAGER.sendHostSkipPhase()}>
+                    <Button onClick={()=>sendHostSkipPhase()}>
                         {translate("menu.hostSettings.skipPhase")}
                     </Button>
                 </section>

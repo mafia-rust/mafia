@@ -5,7 +5,7 @@ import GAME_MANAGER from ".";
 import GameModesEditor from "./components/gameModeSettings/GameModesEditor";
 import parseFromJson from "./components/gameModeSettings/gameMode/dataFixer";
 import { isFailure } from "./components/gameModeSettings/gameMode/parse";
-import { AnchorContext } from "./menu/AnchorContext";
+import { AnchorContextType } from "./menu/AnchorContext";
 
 function uriAsFileURI(path: string): string {
     if (path.endsWith('/')) {
@@ -15,7 +15,7 @@ function uriAsFileURI(path: string): string {
     }
 }
 
-async function routeWiki(anchorController: AnchorContext, page: string) {
+async function routeWiki(anchorController: AnchorContextType, page: string) {
     const wikiPage = uriAsFileURI(page);
 
     if(wikiPage === "") {
@@ -32,7 +32,7 @@ async function routeWiki(anchorController: AnchorContext, page: string) {
     }
 }
 
-async function routeLobby(anchorController: AnchorContext, roomCode: string) {
+async function routeLobby(anchorController: AnchorContextType, roomCode: string) {
     const reconnectData = loadReconnectData();
 
     if (!await GAME_MANAGER.setOutsideLobbyState()) {
@@ -67,7 +67,7 @@ async function routeLobby(anchorController: AnchorContext, roomCode: string) {
     }
 }
 
-async function routeGameMode(anchorController: AnchorContext, gameModeString: string) {
+async function routeGameMode(anchorController: AnchorContextType, gameModeString: string) {
     window.history.replaceState({}, "", "/");
     
     let gameMode: any;
@@ -89,7 +89,7 @@ async function routeGameMode(anchorController: AnchorContext, gameModeString: st
     }
 }
 
-async function route404(anchorController: AnchorContext, path: string) {
+async function route404(anchorController: AnchorContextType, path: string) {
     anchorController.setContent(
         <div className="hero" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem" }}>
             <h1>404</h1>
@@ -98,7 +98,7 @@ async function route404(anchorController: AnchorContext, path: string) {
     )
 }
 
-async function routeMainButFirstTryUsingReconnectData(anchorController: AnchorContext) {
+async function routeMainButFirstTryUsingReconnectData(anchorController: AnchorContextType) {
     window.history.replaceState({}, "", "/");
 
     const reconnectData = loadReconnectData();
@@ -122,7 +122,7 @@ async function routeMainButFirstTryUsingReconnectData(anchorController: AnchorCo
     // This is where we *should* handle joining the lobby, but it's handled in messageListener... grumble grumble
 }
 
-export default async function route(anchorController: AnchorContext, url: Location) {
+export default async function route(anchorController: AnchorContextType, url: Location) {
 
     if (url.pathname.startsWith("/wiki")) {
         return await routeWiki(anchorController, url.pathname.substring(5));

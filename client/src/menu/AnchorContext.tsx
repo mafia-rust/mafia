@@ -4,7 +4,7 @@ import { Theme } from "..";
 import React from "react";
 import WikiCoverCard from "../components/WikiCoverCard";
 import WikiArticle from "../components/WikiArticle";
-import { WebsocketComponent } from "./WebsocketComponent";
+import WebsocketComponent from "./WebsocketComponent";
 import StandaloneWiki from "./main/StandaloneWiki";
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import StartMenu from "./main/StartMenu";
@@ -21,7 +21,7 @@ type AnchorContentType = {
     path: string
 };
 
-export type AnchorContext = {
+export type AnchorContextType = {
     setContent: (content: AnchorContentType) => void,
     
     contentType: AnchorContentType,
@@ -44,7 +44,7 @@ export type AnchorContext = {
     setAccessibilityFontEnabled: (accessibilityFontEnabled: boolean) => void
 }
 
-export const AnchorContext = createContext<AnchorContext | undefined>(undefined);
+export const AnchorContext = createContext<AnchorContextType | undefined>(undefined);
 
 export function useAnchorContext(){
     const [content, setContent] = useState<JSX.Element>(<StartMenu/>);
@@ -57,7 +57,7 @@ export function useAnchorContext(){
 
     const [globalMenuOpen, setGlobalMenuOpen] = useState<boolean>(false);
 
-    const anchorContext: AnchorContext = {
+    const anchorContext: AnchorContextType = {
         content,
         contentType,
         coverCard,

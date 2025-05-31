@@ -42,21 +42,9 @@ export type WebSocketContextType = {
 
 
     sendLobbyListRequest(): void;
-    /**
-     * @returns A promise that will be fulfilled as true if the join was 
-     *          successful and false if the join was unsuccessful
-     */
-    sendHostPacket(): Promise<boolean>;
-    /**
-     * @returns A promise that will be fulfilled as true if the join was 
-     *          successful and false if the join was unsuccessful
-     */
-    sendRejoinPacket(roomCode: number, playerId: number): Promise<boolean>;
-    /**
-     * @returns A promise that will be fulfilled as true if the join was 
-     *          successful and false if the join was unsuccessful
-     */
-    sendJoinPacket(roomCode: number): Promise<boolean>;
+    sendHostPacket(): void;
+    sendRejoinPacket(roomCode: number, playerId: number): void;
+    sendJoinPacket(roomCode: number): void;
     sendKickPlayerPacket(playerId: number): void;
     sendSetPlayerHostPacket(playerId: number): void;
     sendRelinquishHostPacket(): void;
@@ -209,40 +197,20 @@ export function useWebSocketContext(): WebSocketContextType{
             defaultWebsocketContext.sendPacket({ type: "lobbyListRequest" });
         },
         sendHostPacket() {
-            let completePromise: (success: boolean) => void;
-            const promise = new Promise<boolean>((resolver) => {
-                completePromise = resolver;
-            });
             defaultWebsocketContext.sendPacket({ type: "host" });
-    
-            return promise;
         },
         sendRejoinPacket(roomCode: number, playerId: number) {
-            let completePromise: (success: boolean) => void;
-            const promise = new Promise<boolean>((resolver) => {
-                completePromise = resolver;
-            });
-    
             defaultWebsocketContext.sendPacket({
                 type: "reJoin",
                 roomCode,
                 playerId
             });
-    
-            return promise;
         },
         sendJoinPacket(roomCode: number) {
-            let completePromise: (success: boolean) => void;
-            const promise = new Promise<boolean>((resolver) => {
-                completePromise = resolver;
-            });
-    
             defaultWebsocketContext.sendPacket({
                 type: "join",
                 roomCode
             });
-    
-            return promise;
         },
         sendKickPlayerPacket(playerId: number) {
             defaultWebsocketContext.sendPacket({
