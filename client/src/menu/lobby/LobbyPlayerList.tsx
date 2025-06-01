@@ -1,6 +1,5 @@
 import React, { ReactElement, useContext, useRef, useState } from "react";
 import translate from "../../game/lang";
-import GAME_MANAGER from "../../index";
 import "./lobbyMenu.css";
 import { ClientConnection } from "../../game/gameState.d";
 import Icon from "../../components/Icon";
@@ -10,6 +9,7 @@ import { dropdownPlacementFunction } from "../../components/Select";
 import StyledText from "../../components/StyledText";
 import { GameStateContext } from "../game/GameStateContext";
 import { LobbyStateContext } from "./LobbyContext";
+import { WebsocketContext } from "../WebsocketContext";
 
 type PlayerDisplayData = {
     id: number,
@@ -98,6 +98,8 @@ function LobbyPlayerListPlayer(props: Readonly<{host: boolean, player: PlayerDis
     const [renameOpen, setRenameOpen] = useState(false);
     const renameButtonRef = useRef<HTMLButtonElement>(null);
 
+    const {sendSetPlayerHostPacket, sendKickPlayerPacket} = useContext(WebsocketContext)!;
+
     return <li key={props.player.id} className={props.player.connection==="connected" ? "" : "keyword-dead"}>
         <div>
             {props.player.connection === "couldReconnect" && <Icon>signal_cellular_connected_no_internet_4_bar</Icon>}
@@ -108,10 +110,10 @@ function LobbyPlayerListPlayer(props: Readonly<{host: boolean, player: PlayerDis
         </div>
         <div>
             {host && !props.player.host && <button
-                onClick={() => GAME_MANAGER.sendSetPlayerHostPacket(props.player.id)}
+                onClick={() => sendSetPlayerHostPacket(props.player.id)}
             ><Icon>add_moderator</Icon></button>}
             {host && props.player.connection !== "disconnected" && <button 
-                onClick={() => GAME_MANAGER.sendKickPlayerPacket(props.player.id)}
+                onClick={() => sendKickPlayerPacket(props.player.id)}
             ><Icon>person_remove</Icon></button>}
             {host && props.player.clientType === "player" && <>
                 <RawButton
@@ -132,6 +134,8 @@ function LobbyPlayerListPlayer(props: Readonly<{host: boolean, player: PlayerDis
 function LobbyPlayerListPlayerRename(props: Readonly<{ player: PlayerDisplayData }>): ReactElement {
     const [playerName, setPlayerName] = useState(props.player.name ?? "");
     
+    const {sendHostSetPlayerNamePacket} = useContext(WebsocketContext)!;
+
     return <div className="lobby-player-list-player-rename">
         <input 
             value={playerName}
@@ -140,12 +144,12 @@ function LobbyPlayerListPlayerRename(props: Readonly<{ player: PlayerDisplayData
                 if (e.key === "Enter") {
                     const newName = (e.target as HTMLInputElement).value;
                     setPlayerName(newName);
-                    GAME_MANAGER.sendHostSetPlayerNamePacket(props.player.id, newName);
+                    sendHostSetPlayerNamePacket(props.player.id, newName);
                 }
             }}
         />
         <Button 
-            onClick={() => GAME_MANAGER.sendHostSetPlayerNamePacket(props.player.id, playerName)}
+            onClick={() => sendHostSetPlayerNamePacket(props.player.id, playerName)}
         >{translate("menu.lobby.button.setName")}</Button>
     </div>
 }

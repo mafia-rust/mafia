@@ -1,6 +1,5 @@
 import React, { ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER from "../../../index";
 import "../gameScreen.css";
 import "./chatMenu.css"
 import { PlayerClientType, PlayerIndex } from "../../../game/gameState.d";
@@ -14,6 +13,7 @@ import GameScreenMenuTab from "../GameScreenMenuTab";
 import { GameStateContext, usePlayerNames, usePlayerState } from "../GameStateContext";
 import { LobbyStateContext, useLobbyOrGameState } from "../../lobby/LobbyContext";
 import { GameScreenMenuType } from "../GameScreenMenuContext";
+import { WebsocketContext } from "../../WebsocketContext";
 
 
 export default function ChatMenu(): ReactElement {
@@ -193,6 +193,7 @@ export function ChatTextInput(props: Readonly<{
 }>): ReactElement {
     const gameState = useContext(GameStateContext)!;
     const lobbyState = useContext(LobbyStateContext)!;
+    const {sendSendWhisperPacket, sendSendChatMessagePacket, sendSendLobbyMessagePacket} = useContext(WebsocketContext)!;
     
     const [chatBoxText, setChatBoxText] = useState<string>("");
     const [drawAttentionSeconds, setDrawAttentionSeconds] = useState<number>(0);
@@ -264,12 +265,12 @@ export function ChatTextInput(props: Readonly<{
         historyPoller.reset();
         if (stateType === "game") {
             if (whispering !== null) {
-                GAME_MANAGER.sendSendWhisperPacket(whispering, text);
+                sendSendWhisperPacket(whispering, text);
             } else {
-                GAME_MANAGER.sendSendChatMessagePacket(text, false);
+                sendSendChatMessagePacket(text, false);
             }
         } else if (stateType === "lobby") {
-            GAME_MANAGER.sendSendLobbyMessagePacket(text);
+            sendSendLobbyMessagePacket(text);
         }
     }, [chatBoxText, history, historyPoller, stateType, whispering]);
 

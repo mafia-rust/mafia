@@ -8,7 +8,7 @@ import { WebsocketContext } from "./WebsocketContext";
 import { GameStateContext } from "./game/GameStateContext";
 
 export default function HostMenu(): ReactElement {
-    const anchorController = useContext(AnchorContext)!;
+    const anchorContext = useContext(AnchorContext)!;
     const {
         sendHostDataRequest, sendBackToLobbyPacket, sendHostEndGamePacket, sendHostSkipPhase,
         lastMessageRecieved
@@ -25,7 +25,7 @@ export default function HostMenu(): ReactElement {
     useEffect(()=>{
         // Check on every packet since like 1 million packets can affect this
         if (gameState === undefined || gameState.host === null) {
-            anchorController.clearCoverCard();
+            anchorContext.clearCoverCard();
         }
 
         if (lastMessageRecieved?.type === "hostData") {

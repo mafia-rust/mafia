@@ -11,8 +11,10 @@ import { Button } from '../components/Button';
 import HostMenu from './HostMenu';
 import { AnchorContext } from './AnchorContext';
 import { useLobbyOrGameState } from './lobby/LobbyContext';
+import { WebsocketContext } from './WebsocketContext';
 
 export default function GlobalMenu(): ReactElement {
+    const { sendBackToLobbyPacket } = useContext(WebsocketContext)!;
 
     const lobbyName = useLobbyOrGameState()!.lobbyName;
     const host = useLobbyOrGameState(
@@ -46,11 +48,11 @@ export default function GlobalMenu(): ReactElement {
         if (stateType === "game") {
             GAME_MANAGER.leaveGame();
         }
+
         anchorController.closeGlobalMenu();
         anchorController.clearCoverCard();
         anchorController.setContent(<LoadingScreen type="disconnect"/>)
-        window.history.replaceState({}, '', '/')
-        await GAME_MANAGER.setDisconnectedState();
+        window.history.replaceState({}, '', '/');
         anchorController.setContent({type:"main"})
     }
     function goToRolelistEditor() {
@@ -66,7 +68,7 @@ export default function GlobalMenu(): ReactElement {
                     <h2>{lobbyName}</h2>
                     <RoomLinkButton/>
                     {(stateType === "game" && host) && <>
-                        <Button onClick={()=>GAME_MANAGER.sendBackToLobbyPacket()}>
+                        <Button onClick={()=>sendBackToLobbyPacket()}>
                             {translate("backToLobby")}
                         </Button>
                         <Button onClick={()=>anchorController.setCoverCard(<HostMenu />)}>

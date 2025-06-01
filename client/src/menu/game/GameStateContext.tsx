@@ -12,6 +12,15 @@ import { LobbyState } from "../lobby/LobbyContext";
 import { WebsocketContext } from "../WebsocketContext";
 import { ToClientPacket } from "../../game/packet";
 
+function updateChatFilter(filter: PlayerIndex | null) {
+    if(GAME_MANAGER.state.type === "game" && GAME_MANAGER.state.clientState.type === "player"){
+        GAME_MANAGER.state.clientState.chatFilter = filter===null?null:{
+            type: "playerNameInMessage",
+            player: filter
+        };
+    }
+}
+
 export function useGameStateContext(): GameState{
     const [gameState, setGameState] = useState<GameState>(createGameState());
 
@@ -89,7 +98,7 @@ type GameState = {
         clients: ListMap<LobbyClientID, GameClient>
     },
 
-    missedChatMessages: boolean
+    missedChatMessages: boolean,
 }
 export default GameState;
 

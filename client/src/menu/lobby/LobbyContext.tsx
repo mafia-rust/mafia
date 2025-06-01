@@ -59,15 +59,15 @@ function createLobbyState(): LobbyState {
 }
 export function useLobbyOrGameState<T = GameState|LobbyState>(
     map: (state: GameState|LobbyState)=>T = (state)=>state as T
-):T{
-    const gameState = useContext(GameStateContext)!;
-    const lobbyState = useContext(LobbyStateContext)!;
+):T | undefined{
+    const gameState = useContext(GameStateContext);
+    const lobbyState = useContext(LobbyStateContext);
 
     if(gameState!==undefined){
         return map(gameState);
     }else if(lobbyState!==undefined){
         return map(lobbyState);
     }else{
-        throw new Error("useLobbyOrGameState cant find either");
+        return undefined;
     }
 }

@@ -1,11 +1,11 @@
-import { ReactElement } from "react"
+import { ReactElement, useContext } from "react"
 import React from "react"
 import { Role, RoleState } from "../../../../../game/roleState.d"
 import TwoRoleOutlineOptionSelectionMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionSelectionMenu"
-import GAME_MANAGER from "../../../../.."
 import { controllerIdToLink, TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput"
 import ListMap from "../../../../../ListMap"
 import { usePlayerState } from "../../../GameStateContext"
+import { WebsocketContext } from "../../../../WebsocketContext"
 
 export type AuditorResult = Role[];
 
@@ -17,8 +17,10 @@ export default function AuditorMenu(props: Readonly<{
 
     const savedAbilitiesMap = new ListMap(savedAbilities, (k1, k2) => controllerIdToLink(k1) === controllerIdToLink(k2));
 
+    const { sendAbilityInput } = useContext(WebsocketContext)!;
+
     const onInput = (selection: TwoRoleOutlineOptionSelection) => {
-        GAME_MANAGER.sendAbilityInput({
+        sendAbilityInput({
             id: {
                 type: "role",
                 role: "auditor",
