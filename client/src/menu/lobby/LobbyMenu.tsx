@@ -17,12 +17,14 @@ import { Button } from "../../components/Button";
 import { EnabledModifiersSelector } from "../../components/gameModeSettings/EnabledModifiersSelector";
 import LobbyNamePane from "./LobbyNamePane";
 import { MobileContext } from "../MobileContext";
-import { AppContext } from "../AppContext";
 import { LobbyStateContext, useLobbyStateContext } from "./LobbyContext";
 import { WebsocketContext } from "../WebsocketContext";
 
-export default function LobbyMenu(): ReactElement {
-    const lobbyState = useLobbyStateContext();
+export default function LobbyMenu(props: {
+    roomCode: number,
+    myId: number
+}): ReactElement {
+    const lobbyState = useLobbyStateContext(props.roomCode, props.myId);
 
     const isSpectator = lobbyState.players.get(lobbyState.myId!)?.clientType.type === "spectator";
 
@@ -148,17 +150,18 @@ function LobbyMenuHeader(props: Readonly<{
     const { lobbyName } = useContext(LobbyStateContext)!;
     const { sendStartGamePacket, sendSetLobbyNamePacket } = useContext(WebsocketContext)!;
     const mobile = useContext(MobileContext)!;
-    const { setContent: setAnchorContent } = useContext(AppContext)!;
+    // const { setContent: setAnchorContent } = useContext(AppContext)!;
     
     const [localLobbyName, setLobbyName] = useState<string>(lobbyName ?? "Mafia Lobby");
     
     return <header>
         <div>
             <Button disabled={!props.isHost} className="start" onClick={async ()=>{
-                setAnchorContent(<LoadingScreen type="default"/>);
-                if (!await sendStartGamePacket()) {
-                    setAnchorContent(<LobbyMenu/>)
-                }
+                sendStartGamePacket()
+                // setAnchorContent(<LoadingScreen type="default"/>);
+                // if (!await sendStartGamePacket()) {
+                //     setAnchorContent(<LobbyMenu/>)
+                // }
             }}>
                 <Icon>play_arrow</Icon>{translate("menu.lobby.button.start")}
             </Button>

@@ -68,7 +68,7 @@ export default function PlayMenu(): ReactElement {
         if(lastMessageRecieved){
             playMenuMessageListener(lastMessageRecieved, playMenuContext);
         }
-    }, [lastMessageRecieved, playMenuContext]);
+    }, [lastMessageRecieved]);
 
     const joinGame = useCallback(
         async (roomCode?: number, playerId?: number) => {

@@ -128,6 +128,8 @@ export default function WebSocketContextProvider(props: { children: React.ReactN
             };
             websocketContext.webSocket.current.onmessage = (event: MessageEvent<string>)=>{
                 const parsed = JSON.parse(event.data) as ToClientPacket;
+                // console.log(JSON.stringify(parsed, null, 2));
+                console.log("message receieved: "+parsed.type);
                 setLastMessageRecieved(parsed);
                 // GAME_MANAGER.messageListener(parsed);
             };
@@ -463,10 +465,10 @@ export default function WebSocketContextProvider(props: { children: React.ReactN
     }, [])
 
     useEffect(()=>{
-        if(websocketContext.lastMessageRecieved){
-            websocketComponentMessageListener(websocketContext.lastMessageRecieved, websocketContext, appContext!);
+        if(lastMessageRecieved !== null && lastMessageRecieved !== undefined){
+            websocketComponentMessageListener(lastMessageRecieved, websocketContext, appContext!);
         }
-    }, [appContext, websocketContext]);
+    }, [lastMessageRecieved]);
 
     return <WebsocketContext.Provider value={websocketContext}>
         {props.children}
@@ -481,7 +483,7 @@ function sendDefaultName(websocketContext: WebSocketContextType) {
 }
 
 function websocketComponentMessageListener(packet: ToClientPacket, websocketContext: WebSocketContextType, appContext: AppContextType){
-    console.log(JSON.stringify(packet, null, 2));
+    console.log("useeffect saw:"+packet.type);
 
     
 
@@ -502,18 +504,18 @@ function websocketComponentMessageListener(packet: ToClientPacket, websocketCont
         break
         case "acceptJoin":
             if(packet.inGame && packet.spectator){
+                //waiting for gameInitialization, will get set to gamescreen when X packet recieved?
                 appContext.setContent({type:"loading"});
             }else if(packet.inGame && !packet.spectator){
+                //waiting for gameInitialization, will get set to gamescreen when X packet recieved?
                 appContext.setContent({type:"loading"});
             }else{
-                appContext.setContent({type:"lobbyScreen"});
+                appContext.setContent({
+                    type:"lobbyScreen",
+                    roomCode: packet.roomCode,
+                    myId: packet.playerId
+                });
             }
-            
-
-            // if(GAME_MANAGER.state.type === "lobby" || GAME_MANAGER.state.stateType === "game"){
-            //     GAME_MANAGER.state.roomCode = packet.roomCode;
-            //     GAME_MANAGER.state.myId = packet.playerId;
-            // }
 
             saveReconnectData(packet.roomCode, packet.playerId);
             sendDefaultName(websocketContext);
@@ -551,9 +553,9 @@ function websocketComponentMessageListener(packet: ToClientPacket, websocketCont
             deleteReconnectData();
             
         break;
-        default:
-            console.error(`incoming message response not implemented: ${(packet as any)?.type}`);
-            console.error(packet);
-        break;
+        // default:
+        //     console.error(`incoming message response not implemented: ${(packet as any)?.type}`);
+        //     console.error(packet);
+        // break;
     }
 }

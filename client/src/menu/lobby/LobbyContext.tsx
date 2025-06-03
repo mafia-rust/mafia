@@ -8,8 +8,8 @@ import { defaultPhaseTimes } from "../../game/localStorage";
 import GameState, { GameStateContext } from "../game/GameStateContext";
 
 
-export function useLobbyStateContext(){
-    const [lobbyState, setLobbyState] = useState<LobbyState>(createLobbyState());
+export function useLobbyStateContext(roomCode: number, myId: number){
+    const [lobbyState, setLobbyState] = useState<LobbyState>(createLobbyState(roomCode, myId));
     
     // const incomingPacketFuck = useContext();
     // whenever message then setLobbyState
@@ -40,13 +40,13 @@ export type LobbyClient = {
     connection: ClientConnection,
     clientType: LobbyClientType
 }
-function createLobbyState(): LobbyState {
+function createLobbyState(roomCode: number, myId: number): LobbyState {
     return {
         type: "lobby",
-        roomCode: 0,
+        roomCode,
         lobbyName: "Mafia Lobby",
 
-        myId: null,
+        myId,
 
         roleList: [],
         phaseTimes: defaultPhaseTimes(),
