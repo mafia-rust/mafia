@@ -13,21 +13,23 @@ import Masonry from "react-responsive-masonry";
 import CheckBox from "./CheckBox";
 import { useLobbyOrGameState } from "../menu/lobby/LobbyContext";
 import { Button } from "./Button";
+import { GameScreenMenuContext } from "../menu/game/GameScreenMenuContext";
+import { AppContextType } from "../menu/AppContext";
 
 
-// export function setWikiSearchPage(page: WikiArticleLink, anchorController: AnchorContextType, menuController?: GameScreenMenuContext) {
-//     if (GAME_MANAGER.wikiArticleCallbacks.length === 0) {
-//         if (menuController?.menuIsAvailable(GameScreenMenuType.WikiMenu)) {
-//             menuController.openMenu(GameScreenMenuType.WikiMenu, () => {
-//                 GAME_MANAGER.setWikiArticle(page);
-//             });
-//         } else {
-//             anchorController.setCoverCard(<WikiCoverCard initialWikiPage={page}/>)
-//         }
-//     } else {
-//         GAME_MANAGER.setWikiArticle(page);
-//     }
-// }
+export function setWikiSearchPage(page: WikiArticleLink, anchorController: AppContextType, menuController?: GameScreenMenuContext) {
+    // TODO if (GAME_MANAGER.wikiArticleCallbacks.length === 0) {
+    //     if (menuController?.menuIsAvailable(GameScreenMenuType.WikiMenu)) {
+    //         menuController.openMenu(GameScreenMenuType.WikiMenu, () => {
+    //             GAME_MANAGER.setWikiArticle(page);
+    //         });
+    //     } else {
+    //         anchorController.setCoverCard(<WikiCoverCard initialWikiPage={page}/>)
+    //     }
+    // } else {
+    //     GAME_MANAGER.setWikiArticle(page);
+    // }
+}
 
 
 export default function Wiki(props: Readonly<{

@@ -6,12 +6,14 @@ import { GameScreenMenuContext, GameScreenMenuType } from "./GameScreenMenuConte
 import { WikiArticleLink } from "../../components/WikiArticleLink";
 import { GameStateContext } from "./GameStateContext";
 import { MobileContext } from "../MobileContext";
+import { AppContext } from "../AppContext";
 
 export default function GameScreenMenuTab(props: Readonly<{
     helpMenu: WikiArticleLink | null
     close: GameScreenMenuType | false, 
     children: string 
 }>): ReactElement {
+    const appContext = useContext(AppContext)!;
     const menuController = useContext(GameScreenMenuContext)!;
     const spectator = useContext(GameStateContext)!.clientState.type === "spectator";
     const mobile = useContext(MobileContext)!;
@@ -31,7 +33,7 @@ export default function GameScreenMenuTab(props: Readonly<{
         {props.helpMenu && !spectator && <Button className="help"
             onClick={()=>{
                 menuController.openMenu(GameScreenMenuType.WikiMenu, ()=>{
-                    props.helpMenu && GAME_MANAGER.setWikiArticle(props.helpMenu);
+                    props.helpMenu && appContext.setWikiArticle(props.helpMenu);
                 });
             }}
         >

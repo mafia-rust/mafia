@@ -3,12 +3,12 @@ import translate from "../game/lang";
 import { Button } from "../components/Button";
 import "./lobby/lobbyMenu.css"
 import LobbyPlayerList from "./lobby/LobbyPlayerList";
-import { AnchorContext } from "./AnchorContext";
+import { AppContext } from "./AppContext";
 import { WebsocketContext } from "./WebsocketContext";
 import { GameStateContext } from "./game/GameStateContext";
 
 export default function HostMenu(): ReactElement {
-    const anchorContext = useContext(AnchorContext)!;
+    const anchorContext = useContext(AppContext)!;
     const {
         sendHostDataRequest, sendBackToLobbyPacket, sendHostEndGamePacket, sendHostSkipPhase,
         lastMessageRecieved

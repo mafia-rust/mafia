@@ -1,6 +1,6 @@
 import translate, { translateChecked } from "../game/lang";
 import React, { ReactElement, useContext } from "react";
-import GAME_MANAGER, { find, replaceMentions } from "..";
+import { find, replaceMentions } from "..";
 import StyledText, { KeywordDataMap, PLAYER_SENDER_KEYWORD_DATA } from "./StyledText";
 import "./chatMessage.css"
 import { ChatGroup, Conclusion, DefensePower, PhaseState, PlayerIndex, Tag, translateConclusion, translateWinCondition, Verdict, WinCondition } from "../game/gameState.d";
@@ -18,6 +18,7 @@ import ListMap from "../ListMap";
 import { Button } from "./Button";
 import { GameStateContext, usePlayerNames, usePlayerState } from "../menu/game/GameStateContext";
 import { useLobbyOrGameState } from "../menu/lobby/LobbyContext";
+import { WebsocketContext } from "../menu/WebsocketContext";
 
 const ChatElement = React.memo((
     props: {
@@ -56,6 +57,8 @@ const ChatElement = React.memo((
     const roleList = useContext(GameStateContext)!.roleList;
 
     const [mouseHovering, setMouseHovering] = React.useState(false); 
+
+    const websocketContext = useContext(WebsocketContext)!;
 
     const message = props.message;
     const chatMessageStyles = require("../resources/styling/chatMessage.json");
@@ -187,7 +190,7 @@ const ChatElement = React.memo((
                 myIndex!==undefined && mouseHovering && forwardButton
                 && <Button
                     className="chat-message-div-small-button material-icons-round"
-                    onClick={()=>GAME_MANAGER.sendAbilityInput({
+                    onClick={()=>websocketContext.sendAbilityInput({
                         id: {type: "forwardMessage", player: myIndex}, 
                         selection: {type: "chatMessage", selection: props.message}
                     })}
@@ -273,6 +276,8 @@ function NormalChatMessage(props: Readonly<{
     forwardButton: boolean | undefined,
     roleList: RoleList | undefined
 }>): ReactElement {
+    const websocketContext = useContext(WebsocketContext)!;
+
     let style = props.style;
     let chatGroupIcon = props.chatGroupIcon;
 
@@ -334,7 +339,7 @@ function NormalChatMessage(props: Readonly<{
                 props.myIndex!==undefined && props.mouseHovering && props.forwardButton
                 && <Button
                     className="chat-message-div-small-button material-icons-round"
-                    onClick={()=>GAME_MANAGER.sendAbilityInput({
+                    onClick={()=>websocketContext.sendAbilityInput({
                         id: {type: "forwardMessage", player: props.myIndex?props.myIndex:0}, 
                         selection: {type: "chatMessage", selection: props.message}
                     })}
@@ -514,8 +519,8 @@ export function translateChatMessage(
         case "trialVerdict":{
             let hang;
             // Damn
-            if (GAME_MANAGER.state.type === "game" && GAME_MANAGER.state.enabledModifiers.includes("twoThirdsMajority")) {
-                hang = message.innocent <= 2 * message.guilty
+            if (false /* TODO */) {
+                // hang = message.innocent <= 2 * message.guilty
             } else {
                 hang = message.innocent < message.guilty
             }

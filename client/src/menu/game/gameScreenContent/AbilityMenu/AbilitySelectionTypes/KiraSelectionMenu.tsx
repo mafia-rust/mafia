@@ -1,6 +1,5 @@
 import React, { ReactElement, useContext, useEffect, useState } from "react"
 import "./kiraSelectionMenu.css";
-import GAME_MANAGER from "../../../../..";
 import translate, { translateChecked } from "../../../../../game/lang";
 import StyledText, { KeywordDataMap } from "../../../../../components/StyledText";
 import Select, { SelectOptionsSearch } from "../../../../../components/Select";
@@ -138,23 +137,7 @@ function KiraGuessPicker(props: {
     guess: KiraGuess,
     onChange: (guess: KiraGuess) => void
 }): ReactElement {
-
-    const [players, setPlayers] = useState(() => {
-        if(GAME_MANAGER.state.type === "game")
-            return GAME_MANAGER.state.players;
-        return [];
-    });
-
-    useEffect(()=>{
-        const listener = ()=>{
-            if(GAME_MANAGER.state.type === "game")
-                setPlayers(GAME_MANAGER.state.players);
-        };
-
-        listener();
-        GAME_MANAGER.addStateListener(listener);
-        return ()=>GAME_MANAGER.removeStateListener(listener);
-    }, [setPlayers]);
+    const { players } = useContext(GameStateContext)!;
 
     const guessOptions: SelectOptionsSearch<KiraGuess> = new Map();
     for(let guess of KIRA_GUESSES){

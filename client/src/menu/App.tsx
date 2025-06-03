@@ -3,7 +3,7 @@ import React, {
     useEffect, useCallback
 } from "react";
 import "../index.css";
-import "./anchor.css";
+import "./app.css";
 import { switchLanguage } from "../game/lang";
 import GlobalMenu from "./GlobalMenu";
 import { loadSettingsParsed } from "../game/localStorage";
@@ -13,56 +13,64 @@ import { Button } from "../components/Button";
 import { ChatMessage } from "../components/ChatMessage";
 import AudioController from "./AudioController";
 import { computeKeywordData } from "../components/StyledText";
-import { AnchorContext, AnchorContextType, useAnchorContext } from "./AnchorContext";
-import { MobileContext, useMobileContext } from "./MobileContext";
+import AppContextProvider, { AppContext, AppContextType } from "./AppContext";
+import MobileContextProvider from "./MobileContext";
+import WebsocketContextProvider, { WebsocketContext, WebSocketContextType } from "./WebsocketContext";
 
-export default function Anchor(props: Readonly<{
-    onMount: (anchorContext: AnchorContextType) => void,
+export default function App(props: Readonly<{
+    onMount: (appContext: AppContextType, websocketContext: WebSocketContextType) => void,
 }>): ReactElement {
+    return <MobileContextProvider>
+        <WebsocketContextProvider>
+            <AppContextProvider>
+                <AppInner {...props}/>
+            </AppContextProvider>
+        </WebsocketContextProvider>
+    </MobileContextProvider>
+}
 
-    const mobileContext = useMobileContext();
-    const anchorContext = useAnchorContext();
+function AppInner(props: Readonly<{
+    onMount: (appContext: AppContextType, websocketContext: WebSocketContextType) => void,
+}>): ReactElement {
+    const appContext = useContext(AppContext)!;
+    const websocketContext = useContext(WebsocketContext)!;
 
     // Load settings
     useEffect(() => {
         const settings = loadSettingsParsed();
 
         AudioController.setVolume(settings.volume);
-        anchorContext.setFontSize(settings.fontSize);
-        anchorContext.setAccessibilityFontEnabled(settings.accessibilityFont);
+        appContext.setFontSize(settings.fontSize);
+        appContext.setAccessibilityFontEnabled(settings.accessibilityFont);
         switchLanguage(settings.language);
         computeKeywordData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
-        props.onMount(anchorContext);
+        props.onMount(appContext, websocketContext);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props])
 
-    return <MobileContext.Provider value={mobileContext} >
-        <AnchorContext.Provider value={anchorContext}>
-            <div className="anchor">
-                <Button className="global-menu-button" 
-                    onClick={() => {
-                        if (!anchorContext.globalMenuOpen) {
-                            anchorContext.openGlobalMenu()
-                        }else{
-                            anchorContext.openGlobalMenu()
-                        }
-                    }}
-                >
-                    <Icon>menu</Icon>
-                </Button>
-                {anchorContext.globalMenuOpen && <GlobalMenu />}
-                {anchorContext.content}
-                {anchorContext.coverCard && <CoverCard
-                    theme={anchorContext.coverCardTheme}
-                >{anchorContext.coverCard}</CoverCard>}
-                {anchorContext.errorCard}
-            </div>
-        </AnchorContext.Provider>
-    </MobileContext.Provider>
+    return <div className="anchor">
+        <Button className="global-menu-button" 
+            onClick={() => {
+                if (!appContext.globalMenuOpen) {
+                    appContext.openGlobalMenu()
+                }else{
+                    appContext.openGlobalMenu()
+                }
+            }}
+        >
+            <Icon>menu</Icon>
+        </Button>
+        {appContext.globalMenuOpen && <GlobalMenu />}
+        {appContext.content}
+        {appContext.coverCard && <CoverCard
+            theme={appContext.coverCardTheme}
+        >{appContext.coverCard}</CoverCard>}
+        {appContext.errorCard}
+    </div>
 }
 
 function CoverCard(props: Readonly<{
@@ -70,13 +78,13 @@ function CoverCard(props: Readonly<{
     theme: Theme | null
 }>): ReactElement {
     const ref = useRef<HTMLDivElement>(null);
-    const anchorController = useContext(AnchorContext)!;
+    const appController = useContext(AppContext)!;
 
     const escFunction = useCallback((event: KeyboardEvent) =>{
         if(event.key === "Escape") {
-            anchorController.clearCoverCard();
+            appController.clearCoverCard();
         }
-    }, [anchorController]);
+    }, [appController]);
     useEffect(() => {
         document.addEventListener("keydown", escFunction, false);
         return () => {
@@ -86,12 +94,12 @@ function CoverCard(props: Readonly<{
     return <div 
         className={`anchor-cover-card-background-cover ${props.theme ?? ""}`} 
         onClick={e => {
-            if (e.target === ref.current) anchorController.clearCoverCard()
+            if (e.target === ref.current) appController.clearCoverCard()
         }}
         ref={ref}
     >
         <div className="anchor-cover-card">
-            <Button className="close-button" onClick={anchorController.clearCoverCard}>
+            <Button className="close-button" onClick={appController.clearCoverCard}>
                 <Icon>close</Icon>
             </Button>
             <div className="anchor-cover-card-content">

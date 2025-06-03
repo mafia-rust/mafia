@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
-import Anchor from './menu/Anchor';
+import App from './menu/App';
 // import { GameManager, createGameManager } from './game/gameManager';
 import route from './routing';
 
@@ -42,7 +42,7 @@ new MutationObserver(mutations => {
 }).observe(document.body, { subtree: true, childList: true });
 
 ROOT.render(
-    <Anchor onMount={anchorController => route(anchorController, window.location)}/>
+    <App onMount={(appContext, websocketContext) => route(appContext, websocketContext, window.location)}/>
 );
 
 export function find(text: string): RegExp {

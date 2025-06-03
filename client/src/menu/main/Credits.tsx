@@ -3,10 +3,10 @@ import { ReactElement } from "react";
 import translate from "../../game/lang";
 import "./credits.css";
 import StartMenu from "./StartMenu";
-import { AnchorContext } from "../AnchorContext";
+import { AppContext } from "../AppContext";
 
 export default function Credits(): ReactElement {
-    const anchorContext = useContext(AnchorContext)!;
+    const anchorContext = useContext(AppContext)!;
 
     return <div className="credits-menu">
         <button onClick={() => {

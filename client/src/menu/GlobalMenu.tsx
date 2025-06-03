@@ -9,14 +9,15 @@ import Icon from '../components/Icon';
 import SettingsMenu from './Settings';
 import { Button } from '../components/Button';
 import HostMenu from './HostMenu';
-import { AnchorContext } from './AnchorContext';
+import { AppContext } from './AppContext';
 import { useLobbyOrGameState } from './lobby/LobbyContext';
 import { WebsocketContext } from './WebsocketContext';
+import { deleteReconnectData } from '../game/localStorage';
 
 export default function GlobalMenu(): ReactElement {
     const { sendBackToLobbyPacket } = useContext(WebsocketContext)!;
 
-    const lobbyName = useLobbyOrGameState()!.lobbyName;
+    const lobbyName = useLobbyOrGameState()?.lobbyName;
     const host = useLobbyOrGameState(
         state => {
             if (state.type === "game") {
@@ -25,11 +26,12 @@ export default function GlobalMenu(): ReactElement {
                 return state.players.get(state.myId!)?.ready === "host"
             }
         }
-    )!;
-    const stateType = useLobbyOrGameState(state => state.type)!;
+    ) ?? false;
+    const stateType = useLobbyOrGameState(state => state.type);
 
     const ref = useRef<HTMLDivElement>(null);
-    const anchorController = useContext(AnchorContext)!;
+    const anchorController = useContext(AppContext)!;
+    const websocketContext = useContext(WebsocketContext)!;
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -46,7 +48,9 @@ export default function GlobalMenu(): ReactElement {
     
     async function quitToMainMenu() {
         if (stateType === "game") {
-            GAME_MANAGER.leaveGame();
+            websocketContext.sendPacket({ type: "leave" })
+            deleteReconnectData();
+            websocketContext.close();
         }
 
         anchorController.closeGlobalMenu();

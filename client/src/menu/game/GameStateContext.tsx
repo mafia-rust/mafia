@@ -12,17 +12,25 @@ import { LobbyState } from "../lobby/LobbyContext";
 import { WebsocketContext } from "../WebsocketContext";
 import { ToClientPacket } from "../../game/packet";
 
-function updateChatFilter(filter: PlayerIndex | null) {
-    if(GAME_MANAGER.state.type === "game" && GAME_MANAGER.state.clientState.type === "player"){
-        GAME_MANAGER.state.clientState.chatFilter = filter===null?null:{
-            type: "playerNameInMessage",
-            player: filter
-        };
-    }
-}
-
 export function useGameStateContext(): GameState{
     const [gameState, setGameState] = useState<GameState>(createGameState());
+
+    setGameState(gameState => {
+        return {
+            ...gameState,
+            updateChatFilter: (filter: number | null) => {
+                if(gameState.clientState.type === "player"){
+                    gameState.clientState.chatFilter = filter===null?null:{
+                        type: "playerNameInMessage",
+                        player: filter
+                    };
+                }
+            },
+            setPrependWhisperFunction: (f) => {
+                gameState.prependWhisper = f;
+            },
+        }
+    })
 
     const websocketContext = useContext(WebsocketContext)!;
 
@@ -99,6 +107,11 @@ type GameState = {
     },
 
     missedChatMessages: boolean,
+
+    updateChatFilter: (filter: number | null) => void,
+
+    setPrependWhisperFunction: (f: ((index: PlayerIndex) => void)) => void,
+    prependWhisper: (index: PlayerIndex) => void
 }
 export default GameState;
 
@@ -139,7 +152,7 @@ export type Player = {
     toString(): string
 }
 export function createGameState(): GameState {
-    return {
+    const gameState: GameState = {
         type: "game",
         roomCode: 0,
         lobbyName: "",
@@ -152,7 +165,7 @@ export function createGameState(): GameState {
         graves: [],
         players: [],
         
-        phaseState: {type:"briefing"},
+        phaseState: { type:"briefing" },
         timeLeftMs: 0,
         dayNumber: 1,
 
@@ -168,8 +181,14 @@ export function createGameState(): GameState {
         clientState: createPlayerGameState(),
         host: null,
 
-        missedChatMessages: false
+        missedChatMessages: false,
+
+        updateChatFilter: _ => {},
+        setPrependWhisperFunction: _ => {},
+        prependWhisper: _ => {}
     }
+
+    return gameState;
 }
 function createPlayerGameState(): PlayerGameState {
     return {
