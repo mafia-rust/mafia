@@ -123,7 +123,9 @@ export type PlayerGameState = {
     sendChatGroups: ChatGroup[],
     insiderGroups: InsiderGroup[],
     
-    missedWhispers: PlayerIndex[]
+    missedWhispers: PlayerIndex[],
+
+    updateChatFilter: (filter: PlayerIndex | null)=>void
 }
 
 export type Player = {
@@ -191,7 +193,11 @@ function createPlayerGameState(): PlayerGameState {
         sendChatGroups: [],
         insiderGroups: [],
 
-        missedWhispers: []
+        missedWhispers: [],
+
+        updateChatFilter(filter) {
+            
+        },
     }
 }
 function createPlayer(name: string, index: number): Player {
