@@ -19,12 +19,39 @@ import LobbyNamePane from "./LobbyNamePane";
 import { MobileContext } from "../MobileContext";
 import { LobbyStateContext, useLobbyStateContext } from "./LobbyContext";
 import { WebsocketContext } from "../WebsocketContext";
+import { AppContext } from "../AppContext";
 
-export default function LobbyMenu(props: {
+function LobbyStateContextProvider(props: Readonly<{ roomCode: number, myId: number, children: ReactElement }>): ReactElement {
+    const lobbyStateContext = useLobbyStateContext(props.roomCode, props.myId);
+    return <LobbyStateContext.Provider value={lobbyStateContext}>
+        {props.children}
+    </LobbyStateContext.Provider>;
+}
+
+export default function LobbyMenu(props: Readonly<{
     roomCode: number,
     myId: number
-}): ReactElement {
-    const lobbyState = useLobbyStateContext(props.roomCode, props.myId);
+}>): ReactElement {
+    const websocketContext = useContext(WebsocketContext)!;
+    const [loading, setLoading] = useState<boolean>(true);
+
+    // This doesn't catch all the packets :(
+    useEffect(() => {
+        console.log(websocketContext.lastMessageRecieved?.type)
+        if (websocketContext.lastMessageRecieved?.type === "lobbyName") {
+            setLoading(false);
+        }
+    }, [websocketContext.lastMessageRecieved]);
+
+    return <LobbyStateContextProvider roomCode={props.roomCode} myId={props.myId}>
+        {loading
+            ? <LoadingScreen type="join" />
+            : <LobbyMenuInner/>}
+    </LobbyStateContextProvider>
+}
+
+function LobbyMenuInner(): ReactElement {
+    const lobbyState = useContext(LobbyStateContext)!;
 
     const isSpectator = lobbyState.players.get(lobbyState.myId!)?.clientType.type === "spectator";
 
@@ -50,34 +77,32 @@ export default function LobbyMenu(props: {
         return () => window.removeEventListener("beforeunload", onBeforeUnload);
     }, [])
 
-    return <LobbyStateContext.Provider value={lobbyState}>
-        <div className="lm">
-            <div>
-                <LobbyMenuHeader isHost={isHost} advancedView={advancedView} setAdvancedView={setAdvancedView}/>
-                {advancedView 
-                    ? <main>
-                        <div>
-                            <LobbyNamePane/>
-                            <LobbyPlayerList/>
-                            <LobbyChatMenu spectator={isSpectator}/>
-                        </div>
-                        <div>
-                            <LobbyMenuSettings isHost={isHost}/>
-                        </div>
-                    </main>
-                    : <main>
-                        <div>
-                            <LobbyNamePane/>
-                            <LobbyPlayerList/>
-                        </div>
-                        <div>
-                            <LobbyChatMenu spectator={isSpectator}/>
-                        </div>
-                    </main>
-                }
-            </div>
+    return <div className="lm">
+        <div>
+            <LobbyMenuHeader isHost={isHost} advancedView={advancedView} setAdvancedView={setAdvancedView}/>
+            {advancedView 
+                ? <main>
+                    <div>
+                        <LobbyNamePane/>
+                        <LobbyPlayerList/>
+                        <LobbyChatMenu spectator={isSpectator}/>
+                    </div>
+                    <div>
+                        <LobbyMenuSettings isHost={isHost}/>
+                    </div>
+                </main>
+                : <main>
+                    <div>
+                        <LobbyNamePane/>
+                        <LobbyPlayerList/>
+                    </div>
+                    <div>
+                        <LobbyChatMenu spectator={isSpectator}/>
+                    </div>
+                </main>
+            }
         </div>
-    </LobbyStateContext.Provider>
+    </div>
 }
 
 function LobbyMenuSettings(props: Readonly<{
@@ -150,7 +175,7 @@ function LobbyMenuHeader(props: Readonly<{
     const { lobbyName } = useContext(LobbyStateContext)!;
     const { sendStartGamePacket, sendSetLobbyNamePacket } = useContext(WebsocketContext)!;
     const mobile = useContext(MobileContext)!;
-    // const { setContent: setAnchorContent } = useContext(AppContext)!;
+    const { setContent: setAnchorContent } = useContext(AppContext)!;
     
     const [localLobbyName, setLobbyName] = useState<string>(lobbyName ?? "Mafia Lobby");
     
@@ -158,10 +183,11 @@ function LobbyMenuHeader(props: Readonly<{
         <div>
             <Button disabled={!props.isHost} className="start" onClick={async ()=>{
                 sendStartGamePacket()
-                // setAnchorContent(<LoadingScreen type="default"/>);
-                // if (!await sendStartGamePacket()) {
-                //     setAnchorContent(<LobbyMenu/>)
-                // }
+                setAnchorContent(<LoadingScreen type="default"/>);
+                if (await sendStartGamePacket()) {
+                    // TODO HARDCODED FOR NOW
+                    setAnchorContent({ type: "gameScreen", spectator: false })
+                }
             }}>
                 <Icon>play_arrow</Icon>{translate("menu.lobby.button.start")}
             </Button>

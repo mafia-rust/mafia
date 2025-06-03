@@ -1,4 +1,4 @@
-import { createContext, ReactElement, useState } from "react";
+import { createContext, ReactElement, useMemo, useState } from "react";
 import { ErrorCard, ErrorData } from "./App";
 import { Theme } from "..";
 import React from "react";
@@ -64,7 +64,7 @@ export type AppContextType = {
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export default function AppContextProvider(props: { children: React.ReactNode }): ReactElement {
+export default function AppContextProvider(props: Readonly<{ children: React.ReactNode }>): ReactElement {
     const [content, setContent] = useState<JSX.Element>(<StartMenu/>);
     const [contentType, setContentType] = useState<AppContentType>({type: "main"});
 
@@ -75,7 +75,7 @@ export default function AppContextProvider(props: { children: React.ReactNode })
 
     const [globalMenuOpen, setGlobalMenuOpen] = useState<boolean>(false);
 
-    const appContext: AppContextType = {
+    const appContext: AppContextType = useMemo(() => ({
         content,
         contentType,
         coverCard,
@@ -170,7 +170,7 @@ export default function AppContextProvider(props: { children: React.ReactNode })
         setWikiArticle: (article) => {
             // TODO
         }
-    };
+    }), [content, contentType, coverCard, coverCardTheme, errorCard, globalMenuOpen]);
 
     return <AppContext.Provider value={appContext}>
         {props.children}

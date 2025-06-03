@@ -96,12 +96,12 @@ export default function PlayMenu(): ReactElement {
                     <div>
                         <Button onClick={async () => {
                             setAnchorContent(<LoadingScreen type="host"/>);
-                            sendHostPacket()
-                            // if (await sendHostPacket()) {
-                            //     setAnchorContent(<LobbyMenu/>)
-                            // } else {
-                            //     setAnchorContent(<PlayMenu/>)
-                            // }
+                            const joinData = await sendHostPacket();
+                            if (joinData !== null) {
+                                setAnchorContent({ type: "lobbyScreen", ...joinData })
+                            } else {
+                                setAnchorContent({ type: "gameBrowser" })
+                            }
                         }}>
                             {translate("menu.play.button.host")}
                         </Button>

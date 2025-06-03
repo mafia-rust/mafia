@@ -24,8 +24,9 @@ export type WebSocketContextType = {
 
 
     awaitPacket<T>(listener: (packet: ToClientPacket) => T | undefined): Promise<T>;
+    awaitCloseOrError(): Promise<"close" | "error">;
     sendLobbyListRequest(): void;
-    sendHostPacket(): void;
+    sendHostPacket(): Promise<{ roomCode: number, myId: number } | null>;
     sendRejoinPacket(roomCode: number, playerId: number): Promise<boolean>;
     sendJoinPacket(roomCode: number): Promise<boolean>;
     sendKickPlayerPacket(playerId: number): void;
@@ -77,11 +78,21 @@ export type WebSocketContextType = {
     sendHostSetPlayerNamePacket(player_id: number, name: string): void;
 }
 
-export default function WebSocketContextProvider(props: { children: React.ReactNode }): ReactElement {
-    const appContext = useContext(AppContext);
-
+export default function WebSocketContextProvider(props: Readonly<{ children: React.ReactNode }>): ReactElement {
+    // TODO: This is kind of dumb, let's do something else
+    const messagesQueue = useRef<ToClientPacket[]>([]);
     const [lastMessageRecieved, setLastMessageRecieved] = useState<ToClientPacket | null>(null);
     const webSocket = useRef<WebSocket | null>(null);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (messagesQueue.current.length !== 0) {
+                const last = messagesQueue.current.shift()!;
+                setLastMessageRecieved(last)
+            }
+        }, 0);
+        return () => clearInterval(interval);
+    })
 
     const websocketContext: WebSocketContextType = useMemo(() => ({
         webSocket,
@@ -119,27 +130,17 @@ export default function WebSocketContextProvider(props: { children: React.ReactN
                 completePromise(false);
                 if (websocketContext.webSocket.current === null) return; // We closed it ourselves
                 websocketContext.webSocket.current = null;
-
-                appContext?.pushErrorCard({
-                    title: translate("notification.connectionFailed"), 
-                    body: ""
-                });
-                appContext?.setContent({type:"main"});
             };
             websocketContext.webSocket.current.onmessage = (event: MessageEvent<string>)=>{
                 const parsed = JSON.parse(event.data) as ToClientPacket;
                 // console.log(JSON.stringify(parsed, null, 2));
                 console.log("message receieved: "+parsed.type);
-                setLastMessageRecieved(parsed);
+                messagesQueue.current.push(parsed);
                 // GAME_MANAGER.messageListener(parsed);
             };
             websocketContext.webSocket.current.onerror = (event: Event) => {
                 websocketContext.close();
                 completePromise(false);
-                appContext?.pushErrorCard({
-                    title: translate("notification.connectionFailed"), 
-                    body: translate("notification.serverNotFound")
-                });
             };
             
             return promise;
@@ -175,8 +176,8 @@ export default function WebSocketContextProvider(props: { children: React.ReactN
             let completePromise: (result: any) => void;
             const promise = new Promise<any>(resolve => completePromise = resolve)
 
-            const websocketListener = (packet: MessageEvent<ToClientPacket>) => {
-                const result = packetListener(packet.data);
+            const websocketListener = (packet: MessageEvent<string>) => {
+                const result = packetListener(JSON.parse(packet.data));
                 if (result !== undefined) {
                     completePromise(result);
                     websocketContext.webSocket.current!.removeEventListener("message", websocketListener);
@@ -186,11 +187,36 @@ export default function WebSocketContextProvider(props: { children: React.ReactN
 
             return promise;
         },
+        awaitCloseOrError() {
+            let completePromise: (result: "close" | "error") => void;
+            const promise = new Promise<"close" | "error">(resolve => completePromise = resolve)
+
+            const websocketListener = (ev: Event | CloseEvent) => {
+                completePromise(ev.type as "close" | "error");
+                websocketContext.webSocket.current!.removeEventListener("close", websocketListener);
+                websocketContext.webSocket.current!.removeEventListener("error", websocketListener);
+            };
+            websocketContext.webSocket.current?.addEventListener("close", websocketListener);
+            websocketContext.webSocket.current?.addEventListener("error", websocketListener);
+
+            return promise;
+        },
         sendLobbyListRequest() {
             websocketContext.sendPacket({ type: "lobbyListRequest" });
         },
         sendHostPacket() {
+            const promise = websocketContext.awaitPacket(packet => {
+                switch (packet.type) {
+                    case "acceptJoin":
+                        return { roomCode: packet.roomCode, myId: packet.playerId }
+                    case "rejectJoin":
+                        return null
+                }
+            })
+
             websocketContext.sendPacket({ type: "host" });
+
+            return promise
         },
         sendRejoinPacket(roomCode: number, playerId: number) {
             const promise = websocketContext.awaitPacket(packet => {
@@ -454,7 +480,7 @@ export default function WebSocketContextProvider(props: { children: React.ReactN
                 name
             })
         }
-    }), [appContext, lastMessageRecieved]);
+    }), [lastMessageRecieved]);
 
     useEffect(()=>{
         return ()=>{
@@ -464,98 +490,7 @@ export default function WebSocketContextProvider(props: { children: React.ReactN
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    useEffect(()=>{
-        if(lastMessageRecieved !== null && lastMessageRecieved !== undefined){
-            websocketComponentMessageListener(lastMessageRecieved, websocketContext, appContext!);
-        }
-    }, [lastMessageRecieved]);
-
     return <WebsocketContext.Provider value={websocketContext}>
         {props.children}
     </WebsocketContext.Provider>
-}
-
-function sendDefaultName(websocketContext: WebSocketContextType) {
-    const defaultName = loadSettingsParsed().defaultName;
-    if(defaultName !== null && defaultName !== undefined && defaultName !== ""){
-        websocketContext.sendSetNamePacket(defaultName)
-    }
-}
-
-function websocketComponentMessageListener(packet: ToClientPacket, websocketContext: WebSocketContextType, appContext: AppContextType){
-    console.log("useeffect saw:"+packet.type);
-
-    
-
-    switch(packet.type) {
-        case "pong":
-            websocketContext.sendPacket({
-                type: "ping"
-            });
-        break;
-        case "rateLimitExceeded":
-            appContext.pushErrorCard({ title: translate("notification.rateLimitExceeded"), body: "" });
-        break;
-        case "forcedOutsideLobby":
-            appContext.setContent({type:"gameBrowser"});
-        break;
-        case "forcedDisconnect":
-            appContext.setContent({type:"main"});
-        break
-        case "acceptJoin":
-            if(packet.inGame && packet.spectator){
-                //waiting for gameInitialization, will get set to gamescreen when X packet recieved?
-                appContext.setContent({type:"loading"});
-            }else if(packet.inGame && !packet.spectator){
-                //waiting for gameInitialization, will get set to gamescreen when X packet recieved?
-                appContext.setContent({type:"loading"});
-            }else{
-                appContext.setContent({
-                    type:"lobbyScreen",
-                    roomCode: packet.roomCode,
-                    myId: packet.playerId
-                });
-            }
-
-            saveReconnectData(packet.roomCode, packet.playerId);
-            sendDefaultName(websocketContext);
-            appContext.clearCoverCard();
-        break;
-        case "rejectJoin":
-            switch(packet.reason) {
-                case "roomDoesntExist":
-                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.roomDoesntExist") });
-                    // If the room doesn't exist, don't suggest the user to reconnect to it.
-                    deleteReconnectData();
-                    appContext.clearCoverCard();
-                break;
-                case "gameAlreadyStarted":
-                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.gameAlreadyStarted") });
-                break;
-                case "roomFull":
-                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.roomFull") });
-                break;
-                case "serverBusy":
-                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.serverBusy") });
-                break;
-                case "playerTaken":
-                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.playerTaken") });
-                break;
-                case "playerDoesntExist":
-                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.playerDoesntExist") });
-                break;
-                default:
-                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: `${packet.type} message response not implemented: ${packet.reason}` });
-                    console.error(`${packet.type} message response not implemented: ${packet.reason}`);
-                    console.error(packet);
-                break;
-            }
-            deleteReconnectData();
-            
-        break;
-        // default:
-        //     console.error(`incoming message response not implemented: ${(packet as any)?.type}`);
-        //     console.error(packet);
-        // break;
-    }
 }

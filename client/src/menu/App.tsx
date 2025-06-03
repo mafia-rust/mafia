@@ -4,9 +4,9 @@ import React, {
 } from "react";
 import "../index.css";
 import "./app.css";
-import { switchLanguage } from "../game/lang";
+import translate, { switchLanguage } from "../game/lang";
 import GlobalMenu from "./GlobalMenu";
-import { loadSettingsParsed } from "../game/localStorage";
+import { deleteReconnectData, loadSettingsParsed, saveReconnectData } from "../game/localStorage";
 import { Theme } from "..";
 import Icon from "../components/Icon";
 import { Button } from "../components/Button";
@@ -16,6 +16,7 @@ import { computeKeywordData } from "../components/StyledText";
 import AppContextProvider, { AppContext, AppContextType } from "./AppContext";
 import MobileContextProvider from "./MobileContext";
 import WebsocketContextProvider, { WebsocketContext, WebSocketContextType } from "./WebsocketContext";
+import { ToClientPacket } from "../game/packet";
 
 export default function App(props: Readonly<{
     onMount: (appContext: AppContextType, websocketContext: WebSocketContextType) => void,
@@ -51,6 +52,31 @@ function AppInner(props: Readonly<{
         props.onMount(appContext, websocketContext);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props])
+
+    useEffect(() => {
+        if (websocketContext.lastMessageRecieved) {
+            appMessageListener(websocketContext.lastMessageRecieved, appContext, websocketContext)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [websocketContext.lastMessageRecieved]);
+    
+    useEffect(() => {
+        websocketContext.awaitCloseOrError().then(type => {
+            if (type === "close") {
+                appContext?.pushErrorCard({
+                    title: translate("notification.connectionFailed"), 
+                    body: ""
+                });
+                appContext?.setContent({type:"main"});
+            } else if (type === "error") {
+                appContext?.pushErrorCard({
+                    title: translate("notification.connectionFailed"), 
+                    body: translate("notification.serverNotFound")
+                });
+            }
+        })
+        // Don't need to close the listener, won't mess anything up except take some memory
+    }, [appContext, websocketContext])
 
     return <div className="anchor">
         <Button className="global-menu-button" 
@@ -162,5 +188,83 @@ export function chatMessageToAudio(msg: ChatMessage): AudioFilePath | null {
         return `audio/${file}`;
     }else{
         return null
+    }
+}
+
+function sendDefaultName(websocketContext: WebSocketContextType) {
+    const defaultName = loadSettingsParsed().defaultName;
+    if(defaultName !== null && defaultName !== undefined && defaultName !== ""){
+        websocketContext.sendSetNamePacket(defaultName)
+    }
+}
+
+function appMessageListener(packet: ToClientPacket, appContext: AppContextType, websocketContext: WebSocketContextType){
+    console.log("useeffect saw:"+packet.type);
+
+    
+    switch(packet.type) {
+        case "pong":
+            websocketContext.sendPacket({
+                type: "ping"
+            });
+        break;
+        case "rateLimitExceeded":
+            appContext.pushErrorCard({ title: translate("notification.rateLimitExceeded"), body: "" });
+        break;
+        case "forcedOutsideLobby":
+            appContext.setContent({type:"gameBrowser"});
+        break;
+        case "forcedDisconnect":
+            appContext.setContent({type:"main"});
+        break
+        case "acceptJoin":
+            if(packet.inGame && packet.spectator){
+                //waiting for gameInitialization, will get set to gamescreen when X packet recieved?
+                appContext.setContent({type:"loading"});
+            }else if(packet.inGame && !packet.spectator){
+                //waiting for gameInitialization, will get set to gamescreen when X packet recieved?
+                appContext.setContent({type:"loading"});
+            }
+
+            saveReconnectData(packet.roomCode, packet.playerId);
+            sendDefaultName(websocketContext);
+            appContext.clearCoverCard();
+        break;
+        case "rejectJoin":
+            switch(packet.reason) {
+                case "roomDoesntExist":
+                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.roomDoesntExist") });
+                    // If the room doesn't exist, don't suggest the user to reconnect to it.
+                    deleteReconnectData();
+                    appContext.clearCoverCard();
+                break;
+                case "gameAlreadyStarted":
+                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.gameAlreadyStarted") });
+                break;
+                case "roomFull":
+                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.roomFull") });
+                break;
+                case "serverBusy":
+                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.serverBusy") });
+                break;
+                case "playerTaken":
+                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.playerTaken") });
+                break;
+                case "playerDoesntExist":
+                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.playerDoesntExist") });
+                break;
+                default:
+                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: `${packet.type} message response not implemented: ${packet.reason}` });
+                    console.error(`${packet.type} message response not implemented: ${packet.reason}`);
+                    console.error(packet);
+                break;
+            }
+            deleteReconnectData();
+            
+        break;
+        // default:
+        //     console.error(`incoming message response not implemented: ${(packet as any)?.type}`);
+        //     console.error(packet);
+        // break;
     }
 }
