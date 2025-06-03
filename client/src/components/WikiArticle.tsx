@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import { ReactElement, ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { Role, roleJsonData } from "../game/roleState.d";
 import React from "react";
 import translate, { langText, translateChecked } from "../game/lang";
@@ -8,12 +8,13 @@ import ChatElement, { ChatMessageVariant } from "./ChatMessage";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { ARTICLES, GeneratedArticle, getArticleTitle, WikiArticleLink, wikiPageIsEnabled } from "./WikiArticleLink";
 import "./wiki.css";
-import GAME_MANAGER, { replaceMentions } from "..";
-import { useLobbyOrGameState } from "./useHooks";
+import { replaceMentions } from "..";
 import DetailsSummary from "./DetailsSummary";
 import { partitionWikiPages, WikiCategory } from "./Wiki";
 import { MODIFIERS, ModifierType } from "../game/gameState.d";
 import Masonry from "react-responsive-masonry";
+import { useLobbyOrGameState } from "../menu/lobby/LobbyContext";
+import { AppContext } from "../menu/AppContext";
 
 function WikiStyledText(props: Omit<StyledTextProps, 'markdown' | 'playerKeywordData'>): ReactElement {
     return <StyledText {...props} markdown={true} playerKeywordData={DUMMY_NAMES_KEYWORD_DATA} />
@@ -124,17 +125,8 @@ function CategoryArticle(props: Readonly<{ category: WikiCategory }>): ReactElem
     const title = translate(`wiki.category.${props.category}`);
     const description = translateChecked(`wiki.category.${props.category}.text`);
 
-    const enabledRoles = useLobbyOrGameState(
-        state => state.enabledRoles,
-        ["enabledRoles"],
-        getAllRoles()
-    )!;
-
-    const enabledModifiers = useLobbyOrGameState(
-        state => state.enabledModifiers,
-        ["enabledModifiers"],
-        MODIFIERS as any as ModifierType[]
-    )!;
+    const enabledRoles = useLobbyOrGameState(state => state.enabledRoles)??getAllRoles();
+    const enabledModifiers = useLobbyOrGameState(state => state.enabledModifiers)??MODIFIERS as any as ModifierType[];
 
     return <section className="wiki-article">
         <WikiStyledText className="wiki-article-standard">
@@ -157,6 +149,8 @@ export function PageCollection(props: Readonly<{
     enabledModifiers: ModifierType[],
     children?: ReactNode
 }>): ReactElement | null {
+    const appContext = useContext(AppContext)!;
+
     if (props.pages.length === 0) {
         return null;
     }
@@ -168,7 +162,7 @@ export function PageCollection(props: Readonly<{
         {props.children}
         {props.pages.map((page) => {
             return <button key={page} className={wikiPageIsEnabled(page, props.enabledRoles, props.enabledModifiers) ? "" : "keyword-disabled"} 
-                onClick={() => GAME_MANAGER.setWikiArticle(page)}
+                onClick={() => appContext.setWikiArticle(page)}
             >
                 <StyledText noLinks={true}>{getArticleTitle(page)}</StyledText>
             </button>
@@ -190,11 +184,7 @@ function GeneratedArticleElement(props: Readonly<{ article: GeneratedArticle }>)
 }
 
 function RoleSetArticle(): ReactElement {
-    const enabledRoles = useLobbyOrGameState(
-        state => state.enabledRoles,
-        ["enabledRoles"],
-        getAllRoles()
-    )!;
+    const enabledRoles = useLobbyOrGameState(state => state.enabledRoles)??getAllRoles();
 
     const ref = useRef<HTMLDivElement>(null);
 

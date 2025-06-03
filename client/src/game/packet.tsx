@@ -1,4 +1,8 @@
-import { PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, LobbyClientID, ChatGroup, PhaseState, LobbyClient, ModifierType, InsiderGroup, GameClient } from "./gameState.d"
+import {
+    PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, LobbyClientID,
+    ChatGroup, PhaseState, ModifierType, InsiderGroup,
+    GameClient
+} from "./gameState.d"
 import { Grave } from "./graveState"
 import { ChatMessage } from "../components/ChatMessage"
 import { RoleList, RoleOutline } from "./roleListState.d"
@@ -7,6 +11,7 @@ import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleS
 import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu"
 import { AbilityInput, ControllerID, SavedController } from "./abilityInput"
 import { ListMapData } from "../ListMap"
+import { LobbyClient } from "../menu/lobby/LobbyContext"
 
 export type LobbyPreviewData = {
     name: string,

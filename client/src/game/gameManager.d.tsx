@@ -14,7 +14,7 @@ export type Server = {
     close(): void;
 }
 
-export type StateEventType = ToClientPacket["type"] | "tick" | "filterUpdate" | "openGameMenu" | "closeGameMenu" | "whisperChatOpenOrClose" | "connectionClosed";
+export type StateEventType = ToClientPacket["type"] | "tick" | "filterUpdate" | "openGameMenu" | "closeGameMenu" | "connectionClosed";
 export type StateListener = (type?: StateEventType) => void;
 
 export type GameManager = {

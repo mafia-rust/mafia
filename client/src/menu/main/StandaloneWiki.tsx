@@ -25,7 +25,6 @@ export default function StandaloneWiki(props: Readonly<{
                         window.history.replaceState({}, '', `/wiki`)
                     }
                 }}
-                static={true}
             />
         </div>
     </div>
