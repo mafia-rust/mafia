@@ -1,9 +1,9 @@
 import React, { ReactElement, useContext } from "react";
-import GAME_MANAGER from "../..";
 import translate from "../../game/lang";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import { LobbyStateContext } from "./LobbyContext";
+import { WebsocketContext } from "../WebsocketContext";
 
 
 
@@ -12,6 +12,8 @@ export default function LobbyNamePane(): ReactElement {
     const client = lobbyState.players.get(lobbyState.myId!)!;
     const isSpectator = client.clientType.type === "spectator";
     const ready = client.ready;
+    const websocketContext = useContext(WebsocketContext)!;
+
     let myName = "";
     if(client.clientType.type === "player"){
         myName = client.clientType.name
@@ -20,16 +22,16 @@ export default function LobbyNamePane(): ReactElement {
     return <section className="player-list-menu-colors selector-section lobby-name-pane">
         {!isSpectator && <NameSelector name={myName}/>}
         <div className="name-pane-buttons">
-            <Button onClick={() => GAME_MANAGER.sendSetSpectatorPacket(!isSpectator)}>
+            <Button onClick={() => websocketContext.sendSetSpectatorPacket(!isSpectator)}>
                 {isSpectator
                     ? <><Icon>sports_esports</Icon> {translate("switchToPlayer")}</>
                     : <><Icon>visibility</Icon> {translate("switchToSpectator")}</>}
             </Button>
             {ready === "host" && <button
-                onClick={() => GAME_MANAGER.sendRelinquishHostPacket()}
+                onClick={() => websocketContext.sendRelinquishHostPacket()}
             ><Icon>remove_moderator</Icon> {translate("menu.lobby.button.relinquishHost")}</button>}
             {ready !== "host" && <Button
-                onClick={() => {GAME_MANAGER.sendReadyUpPacket(ready === "notReady")}}
+                onClick={() => {websocketContext.sendReadyUpPacket(ready === "notReady")}}
             >
                 {ready === "ready"
                     ? <><Icon>clear</Icon> {translate("menu.lobby.button.unready")}</>
@@ -42,6 +44,7 @@ export default function LobbyNamePane(): ReactElement {
 function NameSelector(props: {name: String}): ReactElement {
     
     const [enteredName, setEnteredName] = React.useState("");
+    const websocketContext = useContext(WebsocketContext)!;
 
     return <div className="name-pane-selector">
         <div className="lobby-name">
@@ -53,11 +56,11 @@ function NameSelector(props: {name: String}): ReactElement {
                 placeholder={translate("menu.lobby.field.namePlaceholder")}
                 onKeyUp={(e)=>{
                     if(e.key === 'Enter')
-                        GAME_MANAGER.sendSetNamePacket(enteredName);
+                        websocketContext.sendSetNamePacket(enteredName);
                 }}
             />
             <button onClick={()=>{
-                GAME_MANAGER.sendSetNamePacket(enteredName)
+                websocketContext.sendSetNamePacket(enteredName)
             }}>{translate("menu.lobby.button.setName")}</button>
         </div>
     </div>

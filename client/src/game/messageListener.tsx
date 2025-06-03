@@ -19,12 +19,12 @@ import PlayMenu from "../menu/main/PlayMenu";
 import { defaultAlibi } from "../menu/game/gameScreenContent/WillMenu";
 import ListMap from "../ListMap";
 import { sortControllerIdCompare } from "./abilityInput";
-import { AnchorContext } from "../menu/AnchorContext";
+import { AppContext } from "../menu/AnchorContext";
 
 export default function messageListener(packet: ToClientPacket){
     console.log(JSON.stringify(packet, null, 2));
 
-    const anchorController = useContext(AnchorContext)!;
+    const anchorController = useContext(AppContext)!;
 
     switch(packet.type) {
         case "pong":

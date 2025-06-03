@@ -9,7 +9,7 @@ import DUMMY_NAMES from "../resources/dummyNames.json";
 import { ARTICLES, WikiArticleLink, getArticleLangKey } from "./WikiArticleLink";
 import { setWikiSearchPage } from "./Wiki";
 import { getRoleSetsFromRole } from "../game/roleListState.d";
-import { AnchorContext } from "../menu/AnchorContext";
+import { AppContext } from "../menu/AppContext";
 import { GameScreenMenuContext } from "../menu/game/GameScreenMenuContext";
 import { Player } from "../menu/game/GameStateContext";
 
@@ -55,7 +55,7 @@ export type StyledTextProps = {
 export default function StyledText(props: Readonly<StyledTextProps>): ReactElement {
     const playerKeywordData = props.playerKeywordData ?? PLAYER_KEYWORD_DATA;
     const menuController = useContext(GameScreenMenuContext);
-    const anchorController = useContext(AnchorContext)!;
+    const anchorController = useContext(AppContext)!;
 
     useEffect(() => {
         (window as any).setWikiSearchPage = (page: WikiArticleLink) => {

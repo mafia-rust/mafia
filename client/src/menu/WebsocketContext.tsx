@@ -1,50 +1,33 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, ReactElement, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { ToClientPacket, ToServerPacket } from "../game/packet";
 import { DoomsayerGuess } from "./game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
 import { AbilityInput } from "../game/abilityInput";
 import { ModifierType, PhaseTimes, PhaseType, Verdict } from "../game/gameState.d";
 import { Role } from "../game/roleState.d";
 import { RoleList, RoleOutline } from "../game/roleListState.d";
-import { AnchorContext } from "./AnchorContext";
+import { AppContext } from "./AppContext";
 import React from "react";
 import translate from "../game/lang";
-import LoadingScreen, { LoadingScreenType } from "./LoadingScreen";
-import PlayMenu from "./main/PlayMenu";
-import GameScreen from "./game/GameScreen";
-import LobbyMenu from "./lobby/LobbyMenu";
 import { isValidPhaseTime } from "../components/gameModeSettings/PhaseTimeSelector";
+import { deleteReconnectData, loadSettingsParsed, saveReconnectData } from "../game/localStorage";
+import { AppContextType } from "./AppContext";
 
 export const WebsocketContext = createContext<WebSocketContextType | undefined>(undefined);
-
-export type WebsocketContentType = {
-    type:"gameBrowser"
-}|{
-    type:"gameScreen",
-    spectator: boolean
-}|{
-    type:"lobbyScreen"
-}|{
-    type:"loading"
-    loadingType?: LoadingScreenType,
-}
 
 export type WebSocketContextType = {
     webSocket: React.MutableRefObject<WebSocket | null>,
     lastMessageRecieved: ToClientPacket | null,
 
-    content: JSX.Element,
-
     open(): Promise<boolean>;
     sendPacket(packets: ToServerPacket): void;
-    close(): void;
-
-    setContent(e: WebsocketContentType): void,
+    close(): Promise<void>;
 
 
+    awaitPacket<T>(listener: (packet: ToClientPacket) => T | undefined): Promise<T>;
     sendLobbyListRequest(): void;
     sendHostPacket(): void;
-    sendRejoinPacket(roomCode: number, playerId: number): void;
-    sendJoinPacket(roomCode: number): void;
+    sendRejoinPacket(roomCode: number, playerId: number): Promise<boolean>;
+    sendJoinPacket(roomCode: number): Promise<boolean>;
     sendKickPlayerPacket(playerId: number): void;
     sendSetPlayerHostPacket(playerId: number): void;
     sendRelinquishHostPacket(): void;
@@ -93,41 +76,24 @@ export type WebSocketContextType = {
     sendHostSkipPhase(): void;
     sendHostSetPlayerNamePacket(player_id: number, name: string): void;
 }
-export function useWebSocketContext(): WebSocketContextType{
-    const anchorContext = useContext(AnchorContext)!;
+
+export default function WebSocketContextProvider(props: { children: React.ReactNode }): ReactElement {
+    const appContext = useContext(AppContext);
 
     const [lastMessageRecieved, setLastMessageRecieved] = useState<ToClientPacket | null>(null);
-    const [content, setContent] = useState<JSX.Element>(<LoadingScreen type={"join"}/>);
     const webSocket = useRef<WebSocket | null>(null);
 
-    const defaultWebsocketContext: WebSocketContextType = {
+    const websocketContext: WebSocketContextType = useMemo(() => ({
         webSocket,
         lastMessageRecieved,
-        content,
 
-        setContent: (e: WebsocketContentType)=>{
-            switch(e.type){
-                case "gameBrowser":
-                    setContent(<PlayMenu/>);
-                break;
-                case "gameScreen":
-                    setContent(<GameScreen isSpectator={e.spectator}/>);
-                break;
-                case "lobbyScreen":
-                    setContent(<LobbyMenu/>);
-                break;
-                case "loading":
-                    setContent(<LoadingScreen type={e.loadingType??"default"}/>);
-                break;
-            }
-        },
         open: () => {
             let address = process.env.REACT_APP_WS_ADDRESS;
             if(!address){
-                throw new Error("Missing env var REACT_APP_WS_ADDRES, make sure you defined it in .env");
+                throw new Error("Missing env var REACT_APP_WS_ADDRESS, make sure you defined it in .env");
             }
             try {
-                defaultWebsocketContext.webSocket.current = new WebSocket(address);
+                websocketContext.webSocket.current = new WebSocket(address);
             } catch {
                 return Promise.resolve(false);
             }
@@ -144,31 +110,31 @@ export function useWebSocketContext(): WebSocketContextType{
                 })
             ]);
 
-            defaultWebsocketContext.webSocket.current.onopen = (event: Event)=>{
+            websocketContext.webSocket.current.onopen = (event: Event)=>{
                 completePromise(true);
                 console.log("Connected to server.");
             };
-            defaultWebsocketContext.webSocket.current.onclose = (event: CloseEvent)=>{
+            websocketContext.webSocket.current.onclose = (event: CloseEvent)=>{
                 console.log("Disconnected from server.");
                 completePromise(false);
-                if (defaultWebsocketContext.webSocket.current === null) return; // We closed it ourselves
-                defaultWebsocketContext.webSocket.current = null;
+                if (websocketContext.webSocket.current === null) return; // We closed it ourselves
+                websocketContext.webSocket.current = null;
 
-                anchorContext?.pushErrorCard({
+                appContext?.pushErrorCard({
                     title: translate("notification.connectionFailed"), 
                     body: ""
                 });
-                anchorContext.setContent({type:"main"});
+                appContext?.setContent({type:"main"});
             };
-            defaultWebsocketContext.webSocket.current.onmessage = (event: MessageEvent<string>)=>{
+            websocketContext.webSocket.current.onmessage = (event: MessageEvent<string>)=>{
                 const parsed = JSON.parse(event.data) as ToClientPacket;
                 setLastMessageRecieved(parsed);
                 // GAME_MANAGER.messageListener(parsed);
             };
-            defaultWebsocketContext.webSocket.current.onerror = (event: Event) => {
-                defaultWebsocketContext.close();
+            websocketContext.webSocket.current.onerror = (event: Event) => {
+                websocketContext.close();
                 completePromise(false);
-                anchorContext.pushErrorCard({
+                appContext?.pushErrorCard({
                     title: translate("notification.connectionFailed"), 
                     body: translate("notification.serverNotFound")
                 });
@@ -178,111 +144,162 @@ export function useWebSocketContext(): WebSocketContextType{
         },
 
         sendPacket: (packet: ToServerPacket)=>{
-            if (defaultWebsocketContext.webSocket.current === null) {
+            if (websocketContext.webSocket.current === null) {
                 console.error("Attempted to send packet to null websocket!");
             } else {
-                defaultWebsocketContext.webSocket.current.send(JSON.stringify(packet));
+                websocketContext.webSocket.current.send(JSON.stringify(packet));
             }
         },
 
-        close: ()=>{
-            if(defaultWebsocketContext.webSocket.current === null) return;
+        close: async () => {
+            if(websocketContext.webSocket.current === null) return;
+
+            let completePromise: (value: void) => void;
+            const promise = new Promise<void>((resolve) => {
+                completePromise = resolve;
+            })
+
+            websocketContext.webSocket.current.addEventListener("close", () => {
+                completePromise();
+            })
             
-            defaultWebsocketContext.webSocket.current.close();
-            defaultWebsocketContext.webSocket.current = null;
+            websocketContext.webSocket.current.close();
+            websocketContext.webSocket.current = null;
+
+            return promise;
         },
 
+        awaitPacket(packetListener) {
+            let completePromise: (result: any) => void;
+            const promise = new Promise<any>(resolve => completePromise = resolve)
 
+            const websocketListener = (packet: MessageEvent<ToClientPacket>) => {
+                const result = packetListener(packet.data);
+                if (result !== undefined) {
+                    completePromise(result);
+                    websocketContext.webSocket.current!.removeEventListener("message", websocketListener);
+                }
+            };
+            websocketContext.webSocket.current!.addEventListener("message", websocketListener);
+
+            return promise;
+        },
         sendLobbyListRequest() {
-            defaultWebsocketContext.sendPacket({ type: "lobbyListRequest" });
+            websocketContext.sendPacket({ type: "lobbyListRequest" });
         },
         sendHostPacket() {
-            defaultWebsocketContext.sendPacket({ type: "host" });
+            websocketContext.sendPacket({ type: "host" });
         },
         sendRejoinPacket(roomCode: number, playerId: number) {
-            defaultWebsocketContext.sendPacket({
+            const promise = websocketContext.awaitPacket(packet => {
+                switch (packet.type) {
+                    case "acceptJoin":
+                        return true;
+                    case "rejectJoin":
+                        return false;
+                }
+            });
+
+            websocketContext.sendPacket({
                 type: "reJoin",
                 roomCode,
                 playerId
             });
+
+            return promise;
         },
         sendJoinPacket(roomCode: number) {
-            defaultWebsocketContext.sendPacket({
+            const promise = websocketContext.awaitPacket(packet => {
+                switch (packet.type) {
+                    case "acceptJoin":
+                        return true;
+                    case "rejectJoin":
+                        return false;
+                }
+            });
+
+            websocketContext.sendPacket({
                 type: "join",
                 roomCode
             });
+
+            return promise;
         },
         sendKickPlayerPacket(playerId: number) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "kick",
                 playerId: playerId
             });
         },
         sendSetPlayerHostPacket(playerId: number) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "setPlayerHost",
                 playerId: playerId
             });
         },
         sendRelinquishHostPacket() {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "relinquishHost",
             });
         },
     
         sendSetSpectatorPacket(spectator) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "setSpectator",
                 spectator: spectator
             });
         },
     
         sendSetNamePacket(name) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "setName",
                 name: name
             });
         },
     
         sendReadyUpPacket(ready) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "readyUp",
                 ready: ready
             });
         },
         sendSendLobbyMessagePacket(text) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "sendLobbyMessage",
                 text: text
             });
         },
     
         sendSetLobbyNamePacket(name) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "setLobbyName",
                 name: name
             });
         },
         sendStartGamePacket() {
-            let completePromise: (success: boolean) => void;
-            let promise = new Promise<boolean>((resolver) => {
-                completePromise = resolver;
-            });
-    
-            defaultWebsocketContext.sendPacket({
+            const promise = websocketContext.awaitPacket(packet => {
+                switch (packet.type) {
+                    case "startGame":
+                        return true;
+                    case "rejectStart":
+                        return false;
+                }
+            })
+
+            websocketContext.sendPacket({
                 type: "startGame"
             });
-    
+
             return promise;
         },
         sendBackToLobbyPacket() {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "hostForceBackToLobby"
             });
         },
         sendSetPhaseTimePacket(phase: PhaseType, time: number) {
             if (isValidPhaseTime(time)) {
-                defaultWebsocketContext.sendPacket({
+                websocketContext.sendPacket({
                     type: "setPhaseTime",
                     phase: phase,
                     time: time
@@ -290,96 +307,96 @@ export function useWebSocketContext(): WebSocketContextType{
             }
         },
         sendSetPhaseTimesPacket(phaseTimeSettings: PhaseTimes) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "setPhaseTimes",
                 phaseTimeSettings
             });
         },
         sendSetRoleListPacket(roleListEntries: RoleOutline[]) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "setRoleList",
                 roleList: roleListEntries
             });
         },
         sendSetRoleOutlinePacket(index: number, roleOutline: RoleOutline) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "setRoleOutline",
                 index,
                 roleOutline
             });
         },
         sendSimplifyRoleListPacket() {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "simplifyRoleList"
             });
         },
     
         sendJudgementPacket(judgement: Verdict) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "judgement",
                 verdict: judgement
             });
         },
     
         sendSaveWillPacket(will) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "saveWill",
                 will: will
             });
         },
         sendSaveNotesPacket(notes) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "saveNotes",
                 notes: notes
             });
         },
         sendSaveCrossedOutOutlinesPacket(crossedOutOutlines) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "saveCrossedOutOutlines",
                 crossedOutOutlines: crossedOutOutlines
             });
         },
         sendSaveDeathNotePacket(notes) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "saveDeathNote",
                 deathNote: notes.trim().length === 0 ? null : notes
             });
         },
         sendSendChatMessagePacket(text, block) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "sendChatMessage",
                 text: text,
                 block: block
             });
         },
         sendSendWhisperPacket(playerIndex, text) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "sendWhisper",
                 playerIndex: playerIndex,
                 text: text
             });
         },
         sendEnabledRolesPacket(roles) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "setEnabledRoles",
                 roles: roles
             });
         },
         sendEnabledModifiersPacket(modifiers) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "setEnabledModifiers",
                 modifiers: modifiers
             });
         },
     
         sendAbilityInput(input) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "abilityInput",
                 abilityInput: input
             });
         },
         sendSetDoomsayerGuess(guesses) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "setDoomsayerGuess",
                 guesses: guesses
             });
@@ -393,7 +410,7 @@ export function useWebSocketContext(): WebSocketContextType{
             youWerePossessedMessage: boolean,
             youWereWardblockedMessage: boolean
         ): void {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "setConsortOptions",
                 roleblock: roleblock,
     
@@ -407,43 +424,136 @@ export function useWebSocketContext(): WebSocketContextType{
         },
     
         sendVoteFastForwardPhase(fastForward: boolean) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "voteFastForwardPhase",
                 fastForward: fastForward
             });
         },
     
         sendHostDataRequest() {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "hostDataRequest"
             })
         },
         sendHostEndGamePacket() {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "hostForceEndGame"
             })
         },
         sendHostSkipPhase() {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "hostForceSkipPhase"
             })
         },
         sendHostSetPlayerNamePacket(playerId, name) {
-            defaultWebsocketContext.sendPacket({
+            websocketContext.sendPacket({
                 type: "hostForceSetPlayerName",
                 id: playerId,
                 name
             })
         }
-    }
+    }), [appContext, lastMessageRecieved]);
 
     useEffect(()=>{
-        defaultWebsocketContext.open();
         return ()=>{
             webSocket.current?.close();
             webSocket.current = null;
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    return defaultWebsocketContext;
+    useEffect(()=>{
+        if(websocketContext.lastMessageRecieved){
+            websocketComponentMessageListener(websocketContext.lastMessageRecieved, websocketContext, appContext!);
+        }
+    }, [appContext, websocketContext]);
+
+    return <WebsocketContext.Provider value={websocketContext}>
+        {props.children}
+    </WebsocketContext.Provider>
+}
+
+function sendDefaultName(websocketContext: WebSocketContextType) {
+    const defaultName = loadSettingsParsed().defaultName;
+    if(defaultName !== null && defaultName !== undefined && defaultName !== ""){
+        websocketContext.sendSetNamePacket(defaultName)
+    }
+}
+
+function websocketComponentMessageListener(packet: ToClientPacket, websocketContext: WebSocketContextType, appContext: AppContextType){
+    console.log(JSON.stringify(packet, null, 2));
+
+    
+
+    switch(packet.type) {
+        case "pong":
+            websocketContext.sendPacket({
+                type: "ping"
+            });
+        break;
+        case "rateLimitExceeded":
+            appContext.pushErrorCard({ title: translate("notification.rateLimitExceeded"), body: "" });
+        break;
+        case "forcedOutsideLobby":
+            appContext.setContent({type:"gameBrowser"});
+        break;
+        case "forcedDisconnect":
+            appContext.setContent({type:"main"});
+        break
+        case "acceptJoin":
+            if(packet.inGame && packet.spectator){
+                appContext.setContent({type:"loading"});
+            }else if(packet.inGame && !packet.spectator){
+                appContext.setContent({type:"loading"});
+            }else{
+                appContext.setContent({type:"lobbyScreen"});
+            }
+            
+
+            // if(GAME_MANAGER.state.type === "lobby" || GAME_MANAGER.state.stateType === "game"){
+            //     GAME_MANAGER.state.roomCode = packet.roomCode;
+            //     GAME_MANAGER.state.myId = packet.playerId;
+            // }
+
+            saveReconnectData(packet.roomCode, packet.playerId);
+            sendDefaultName(websocketContext);
+            appContext.clearCoverCard();
+        break;
+        case "rejectJoin":
+            switch(packet.reason) {
+                case "roomDoesntExist":
+                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.roomDoesntExist") });
+                    // If the room doesn't exist, don't suggest the user to reconnect to it.
+                    deleteReconnectData();
+                    appContext.clearCoverCard();
+                break;
+                case "gameAlreadyStarted":
+                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.gameAlreadyStarted") });
+                break;
+                case "roomFull":
+                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.roomFull") });
+                break;
+                case "serverBusy":
+                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.serverBusy") });
+                break;
+                case "playerTaken":
+                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.playerTaken") });
+                break;
+                case "playerDoesntExist":
+                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: translate("notification.rejectJoin.playerDoesntExist") });
+                break;
+                default:
+                    appContext.pushErrorCard({ title: translate("notification.rejectJoin"), body: `${packet.type} message response not implemented: ${packet.reason}` });
+                    console.error(`${packet.type} message response not implemented: ${packet.reason}`);
+                    console.error(packet);
+                break;
+            }
+            deleteReconnectData();
+            
+        break;
+        default:
+            console.error(`incoming message response not implemented: ${(packet as any)?.type}`);
+            console.error(packet);
+        break;
+    }
 }

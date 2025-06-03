@@ -21,6 +21,8 @@ export default function ChatMenu(): ReactElement {
     const sendChatGroups = usePlayerState()?.sendChatGroups;
     const playerNames = usePlayerNames()!;
 
+    const gameState = useContext(GameStateContext)!;
+
     const filterString = useMemo(() => {
         if (filter === undefined || filter === null) {
             return "";
@@ -38,7 +40,7 @@ export default function ChatMenu(): ReactElement {
         {filter === undefined || filter === null || <div className="chat-filter-zone highlighted">
             <StyledText>{translate("menu.chat.playerFilter", filterString)}</StyledText>
             <Button 
-                onClick={()=> GAME_MANAGER.updateChatFilter(null)}
+                onClick={()=> gameState.updateChatFilter(null)}
                 highlighted={true}
                 aria-label={translate("menu.chat.clearFilter")}
             >
@@ -247,9 +249,9 @@ export function ChatTextInput(props: Readonly<{
     }, [drawAttentionSeconds])
 
     useEffect(() => {
-        GAME_MANAGER.setPrependWhisperFunction(prependWhisper);
-        return () => GAME_MANAGER.setPrependWhisperFunction(() => {});
-    }, [prependWhisper]);
+        gameState.setPrependWhisperFunction(prependWhisper);
+        return () => gameState.setPrependWhisperFunction(() => {});
+    }, [prependWhisper, gameState]);
 
 
     const history: HistoryQueue<string> = useMemo(() => new HistoryQueue(40), []);

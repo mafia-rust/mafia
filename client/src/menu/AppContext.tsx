@@ -1,33 +1,44 @@
-import { createContext, useState } from "react";
-import { ErrorCard, ErrorData } from "./Anchor";
+import { createContext, ReactElement, useState } from "react";
+import { ErrorCard, ErrorData } from "./App";
 import { Theme } from "..";
 import React from "react";
 import WikiCoverCard from "../components/WikiCoverCard";
 import WikiArticle from "../components/WikiArticle";
-import WebsocketComponent from "./WebsocketComponent";
 import StandaloneWiki from "./main/StandaloneWiki";
 import { WikiArticleLink } from "../components/WikiArticleLink";
 import StartMenu from "./main/StartMenu";
 import Credits from "./main/Credits";
+import LoadingScreen, { LoadingScreenType } from "./LoadingScreen";
+import PlayMenu from "./main/PlayMenu";
+import GameScreen from "./game/GameScreen";
+import LobbyMenu from "./lobby/LobbyMenu";
 
-type AnchorContentType = {
+type AppContentType = {
     type: "main"
-}|{
+} | {
     type: "manual",
     article?: WikiArticleLink
-}|{
-    type:"connect"
-}|{
+} | {
     type:"404",
     path: string
-}|{
+} | {
     type:"credits",
-};
+} | {
+    type:"gameBrowser"
+} | {
+    type:"gameScreen",
+    spectator: boolean
+} | {
+    type:"lobbyScreen"
+} | {
+    type:"loading"
+    loadingType?: LoadingScreenType,
+}
 
-export type AnchorContextType = {
-    setContent: (content: AnchorContentType) => void,
+export type AppContextType = {
+    setContent: (content: AppContentType) => void,
     
-    contentType: AnchorContentType,
+    contentType: AppContentType,
     content: JSX.Element | null,
 
     getCoverCard: () => JSX.Element | null,
@@ -44,14 +55,16 @@ export type AnchorContextType = {
     globalMenuOpen: boolean,
 
     setFontSize: (fontSize: number) => void,
-    setAccessibilityFontEnabled: (accessibilityFontEnabled: boolean) => void
+    setAccessibilityFontEnabled: (accessibilityFontEnabled: boolean) => void,
+
+    setWikiArticle: (article: WikiArticleLink) => void,
 }
 
-export const AnchorContext = createContext<AnchorContextType | undefined>(undefined);
+export const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export function useAnchorContext(){
+export default function AppContextProvider(props: { children: React.ReactNode }): ReactElement {
     const [content, setContent] = useState<JSX.Element>(<StartMenu/>);
-    const [contentType, setContentType] = useState<AnchorContentType>({type: "main"});
+    const [contentType, setContentType] = useState<AppContentType>({type: "main"});
 
     const [coverCard, setCoverCard] = useState<JSX.Element | null>(null);
     const [coverCardTheme, setCoverCardTheme] = useState<Theme | null>(null);
@@ -60,7 +73,7 @@ export function useAnchorContext(){
 
     const [globalMenuOpen, setGlobalMenuOpen] = useState<boolean>(false);
 
-    const anchorContext: AnchorContextType = {
+    const appContext: AppContextType = {
         content,
         contentType,
         coverCard,
@@ -72,9 +85,6 @@ export function useAnchorContext(){
             switch(contentType.type){
                 case "main":
                     setContent(<StartMenu/>);
-                break;
-                case "connect":
-                    setContent(<WebsocketComponent/>);
                 break;
                 case "manual":
                     if(contentType.article !== undefined){
@@ -91,6 +101,18 @@ export function useAnchorContext(){
                 break;
                 case "credits":
                     setContent(<Credits/>);
+                break;
+                case "gameBrowser":
+                    setContent(<PlayMenu/>);
+                break;
+                case "gameScreen":
+                    setContent(<GameScreen isSpectator={contentType.spectator}/>);
+                break;
+                case "lobbyScreen":
+                    setContent(<LobbyMenu/>);
+                break;
+                case "loading":
+                    setContent(<LoadingScreen type={contentType.loadingType??"default"}/>);
                 break;
             }
             setContentType(contentType);
@@ -137,7 +159,13 @@ export function useAnchorContext(){
             document.documentElement.style.setProperty('--legible-computer-font', getFont('legible-computer-font', enabled));
             document.documentElement.style.setProperty('--icon-factor', iconFactor);
         },
+        
+        setWikiArticle: (article) => {
+            // TODO
+        }
     };
 
-    return anchorContext;
+    return <AppContext.Provider value={appContext}>
+        {props.children}
+    </AppContext.Provider>
 }

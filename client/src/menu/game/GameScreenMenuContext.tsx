@@ -1,11 +1,12 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import ChatMenu from "./gameScreenContent/ChatMenu";
 import PlayerListMenu from "./gameScreenContent/PlayerListMenu";
 import AbilityMenu from "./gameScreenContent/AbilityMenu/AbilityMenu";
 import WillMenu from "./gameScreenContent/WillMenu";
 import GraveyardMenu from "./gameScreenContent/GraveyardMenu";
 import WikiMenu from "./gameScreenContent/WikiMenu";
-import GAME_MANAGER, { Theme } from "../..";
+import { Theme } from "../..";
+import { GameStateContext } from "./GameStateContext";
 
 export enum GameScreenMenuType {
     ChatMenu = "ChatMenu",
@@ -59,6 +60,7 @@ export function useGameScreenMenuContext<C extends Partial<Record<GameScreenMenu
     initialOpenMenus: C,
 ): GameScreenMenuContext {
     const [contentMenus, setContentMenus] = useState<C>(initialOpenMenus);
+    const gameState = useContext(GameStateContext)!;
 
     //call callbacks for openMenu
     const [callbacks, setCallbacks] = useState<(() => void)[]>([]);
@@ -95,23 +97,20 @@ export function useGameScreenMenuContext<C extends Partial<Record<GameScreenMenu
         closeMenu(menu) {
             setContentMenu(menu, false)
 
-            if (GAME_MANAGER.state.type === "game" && menu === GameScreenMenuType.ChatMenu){
-                GAME_MANAGER.state.missedChatMessages = false;
+            if (gameState.type === "game" && menu === GameScreenMenuType.ChatMenu){
+                gameState.missedChatMessages = false;
             }
-            GAME_MANAGER.invokeStateListeners("closeGameMenu");
         },
         openMenu(menu, callback) {
             setContentMenu(menu, true);
 
-            if (GAME_MANAGER.state.type === "game" && menu === GameScreenMenuType.ChatMenu){
-                GAME_MANAGER.state.missedChatMessages = false;
+            if (gameState.type === "game" && menu === GameScreenMenuType.ChatMenu){
+                gameState.missedChatMessages = false;
             }
 
             if (callback) {
                 setCallbacks(callbacks => callbacks.concat(callback))
             }
-
-            GAME_MANAGER.invokeStateListeners("openGameMenu");
         },
         menusOpen(): GameScreenMenuType[] {
             return Object.entries(contentMenus)

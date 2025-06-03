@@ -1,6 +1,5 @@
 import React, { ReactElement, useContext } from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER from "../../../index";
 import "./playerListMenu.css"
 import "./../gameScreen.css"
 import { PlayerIndex } from "../../../game/gameState.d";
@@ -161,7 +160,6 @@ function PlayerCard(props: Readonly<{
                     if(playerState !== undefined){
                         playerState.missedWhispers = playerState.missedWhispers.filter(player => player !== props.playerIndex);
                     }
-                    GAME_MANAGER.invokeStateListeners("whisperChatOpenOrClose");
                 }}
                 pressedChildren={() => <Icon>done</Icon>}
             >
@@ -177,7 +175,7 @@ function PlayerCard(props: Readonly<{
                 className={"filter"} 
                 highlighted={isFilterSet}
                 onClick={() => {
-                    GAME_MANAGER.updateChatFilter(isFilterSet ? null : filter);
+                    gameState.updateChatFilter(isFilterSet ? null : filter);
                     return true;
                 }}
                 pressedChildren={result => <Icon>{result ? "done" : "warning"}</Icon>}

@@ -17,7 +17,7 @@ import { Button } from "../../components/Button";
 import { EnabledModifiersSelector } from "../../components/gameModeSettings/EnabledModifiersSelector";
 import LobbyNamePane from "./LobbyNamePane";
 import { MobileContext } from "../MobileContext";
-import { AnchorContext } from "../AnchorContext";
+import { AppContext } from "../AppContext";
 import { LobbyStateContext, useLobbyStateContext } from "./LobbyContext";
 import { WebsocketContext } from "../WebsocketContext";
 
@@ -148,7 +148,7 @@ function LobbyMenuHeader(props: Readonly<{
     const { lobbyName } = useContext(LobbyStateContext)!;
     const { sendStartGamePacket, sendSetLobbyNamePacket } = useContext(WebsocketContext)!;
     const mobile = useContext(MobileContext)!;
-    const { setContent: setAnchorContent } = useContext(AnchorContext)!;
+    const { setContent: setAnchorContent } = useContext(AppContext)!;
     
     const [localLobbyName, setLobbyName] = useState<string>(lobbyName ?? "Mafia Lobby");
     

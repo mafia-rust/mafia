@@ -1,6 +1,5 @@
 import React, { ReactElement, useContext, useMemo } from "react";
 import translate from "../../game/lang";
-import GAME_MANAGER from "../../index";
 import { PhaseState, Verdict } from "../../game/gameState.d";
 import "./headerMenu.css";
 import StyledText from "../../components/StyledText";
@@ -9,6 +8,7 @@ import { Button } from "../../components/Button";
 import { GameScreenMenuContext, GameScreenMenuType, MENU_CSS_THEMES, MENU_TRANSLATION_KEYS } from "./GameScreenMenuContext";
 import { GameStateContext, Player, usePlayerState } from "./GameStateContext";
 import { MobileContext } from "../MobileContext";
+import { WebsocketContext } from "../WebsocketContext";
 
 
 export default function HeaderMenu(): ReactElement {
@@ -153,10 +153,11 @@ export function PhaseSpecificInformation(props: Readonly<{
 
 function VerdictButton(props: Readonly<{ verdict: Verdict }>) {
     const judgement = usePlayerState()!.judgement;
+    const websocketContext = useContext(WebsocketContext)!;
 
     return <Button
         highlighted={judgement === props.verdict}
-        onClick={()=>{GAME_MANAGER.sendJudgementPacket(props.verdict)}}
+        onClick={()=>{websocketContext.sendJudgementPacket(props.verdict)}}
     >
         <StyledText noLinks={true}>
             {translate("verdict." + props.verdict)}
@@ -197,13 +198,14 @@ export function MenuButtons(): ReactElement | null {
 
 export function FastForwardButton(props: { spectatorAndHost: boolean }): ReactElement {
     const fastForward = useContext(GameStateContext)!.fastForward;
+    const websocketContext = useContext(WebsocketContext)!;
 
     return <Button 
         onClick={() => {
             if (props.spectatorAndHost) {
-                GAME_MANAGER.sendHostSkipPhase()
+                websocketContext.sendHostSkipPhase()
             } else {
-                GAME_MANAGER.sendVoteFastForwardPhase(!fastForward)
+                websocketContext.sendVoteFastForwardPhase(!fastForward)
             }
         }}
         className="fast-forward-button"

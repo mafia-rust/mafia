@@ -1,11 +1,11 @@
-import React, { ReactElement, useMemo } from "react";
+import React, { ReactElement, useContext, useMemo } from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER from "../../../index";
 import { getSingleRoleJsonData } from "../../../game/roleState.d";
 import { TextDropdownArea } from "../../../components/TextAreaDropdown";
 import { GameScreenMenuType } from "../GameScreenMenuContext";
 import GameScreenMenuTab from "../GameScreenMenuTab";
-import { usePlayerState } from "../GameStateContext";
+import { GameStateContext, usePlayerState } from "../GameStateContext";
+import { WebsocketContext } from "../../WebsocketContext";
 
 export function defaultAlibi(): string {
     return DEFAULT_ALIBI;
@@ -20,6 +20,9 @@ export default function WillMenu(): ReactElement {
     const alibi = usePlayerState()!.will;
     const notes = usePlayerState()!.notes;
     const deathNote = usePlayerState()!.deathNote;
+
+    const gameState = useContext(GameStateContext)!;
+    const websocketContext = useContext(WebsocketContext)!;
 
     const cantPost = useMemo(() => {
         return cantChat
@@ -39,7 +42,7 @@ export default function WillMenu(): ReactElement {
                 savedText={alibi}
                 cantPost={cantPost}
                 onSave={(text) => {
-                    GAME_MANAGER.sendSaveWillPacket(text);
+                    websocketContext.sendSaveWillPacket(text);
                 }}
             />
             {(notes.length === 0 ? [""] : notes).map((note: string, i: number) => {
@@ -50,24 +53,24 @@ export default function WillMenu(): ReactElement {
                     savedText={note}
                     cantPost={cantPost}
                     onAdd={() => {
-                        if(GAME_MANAGER.state.type === "game" && GAME_MANAGER.state.clientState.type === "player"){
-                            const notes = [...GAME_MANAGER.state.clientState.notes];
+                        if(gameState.type === "game" && gameState.clientState.type === "player"){
+                            const notes = [...gameState.clientState.notes];
                             notes.splice(i+1, 0, "");
-                            GAME_MANAGER.sendSaveNotesPacket(notes);
+                            websocketContext.sendSaveNotesPacket(notes);
                         }
                     }}
                     onSubtract={() => {
-                        if(GAME_MANAGER.state.type === "game" && GAME_MANAGER.state.clientState.type === "player"){
-                            const notes = [...GAME_MANAGER.state.clientState.notes];
+                        if(gameState.type === "game" && gameState.clientState.type === "player"){
+                            const notes = [...gameState.clientState.notes];
                             notes.splice(i, 1);
-                            GAME_MANAGER.sendSaveNotesPacket(notes);
+                            websocketContext.sendSaveNotesPacket(notes);
                         }
                     }}
                     onSave={(text) => {
-                        if(GAME_MANAGER.state.type === "game" && GAME_MANAGER.state.clientState.type === "player"){
-                            const notes = [...GAME_MANAGER.state.clientState.notes];
+                        if(gameState.type === "game" && gameState.clientState.type === "player"){
+                            const notes = [...gameState.clientState.notes];
                             notes[i] = text;
-                            GAME_MANAGER.sendSaveNotesPacket(notes);
+                            websocketContext.sendSaveNotesPacket(notes);
                         }
                     }}
                 />
@@ -77,7 +80,7 @@ export default function WillMenu(): ReactElement {
                 savedText={deathNote}
                 cantPost={cantPost}
                 onSave={(text) => {
-                    GAME_MANAGER.sendSaveDeathNotePacket(text);
+                    websocketContext.sendSaveDeathNotePacket(text);
                 }}
             />:null}
         </section>

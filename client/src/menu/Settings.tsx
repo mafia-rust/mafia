@@ -7,7 +7,7 @@ import { loadSettingsParsed, saveSettings } from "../game/localStorage";
 import AudioController from "./AudioController";
 import CheckBox from "../components/CheckBox";
 import { DragAndDrop } from "../components/DragAndDrop";
-import { AnchorContext } from "./AnchorContext";
+import { AppContext } from "./AppContext";
 import { MENU_CSS_THEMES, MENU_TRANSLATION_KEYS } from "./game/GameScreenMenuContext";
 
 export default function SettingsMenu(): ReactElement {
@@ -17,12 +17,13 @@ export default function SettingsMenu(): ReactElement {
     const [accessibilityFontEnabled, setAccessibilityFontEnabled] = useState(loadSettingsParsed().accessibilityFont);
     const [menuOrder, setMenuOrder] = useState(loadSettingsParsed().menuOrder);
     const [maxMenus, setMaxMenus] = useState(loadSettingsParsed().maxMenus);
-    const anchorCtx = useContext(AnchorContext)!;
+    const appContext = useContext(AppContext)!;
 
     useEffect(() => {
         AudioController.setVolume(volume);
-        anchorCtx?.setFontSize(fontSizeState);
-        anchorCtx?.setAccessibilityFontEnabled(accessibilityFontEnabled);
+        appContext?.setFontSize(fontSizeState);
+        appContext?.setAccessibilityFontEnabled(accessibilityFontEnabled);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [volume, fontSizeState, accessibilityFontEnabled]);
 
     return <div className="settings-menu-card">
@@ -133,7 +134,7 @@ export default function SettingsMenu(): ReactElement {
                     <button onClick={()=>{
                         if(!window.confirm(translate("confirmDelete"))) return;
                         localStorage.clear();
-                        anchorCtx.clearCoverCard();
+                        appContext.clearCoverCard();
                     }}><Icon>delete_forever</Icon> {translate('menu.settings.eraseSaveData')}</button>
                 </section>
             </div>

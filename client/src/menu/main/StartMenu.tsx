@@ -2,18 +2,15 @@ import React, { ReactElement, useContext } from "react";
 import "../../index.css"
 import "./startMenu.css"
 import translate from "../../game/lang";
-import LoadingScreen from "../LoadingScreen";
 import GameModesEditor from "../../components/gameModeSettings/GameModesEditor";
 import Icon from "../../components/Icon";
 import SettingsMenu from "../Settings";
 import { Button } from "../../components/Button";
-import Credits from "./Credits";
 import StyledText from "../../components/StyledText";
-import { AnchorContext } from "../AnchorContext";
-import WebsocketComponent from "../WebsocketComponent";
+import { AppContext } from "../AppContext";
 
 export default function StartMenu(): ReactElement {
-    const { setContent, setCoverCard } = useContext(AnchorContext)!;
+    const { setContent, setCoverCard } = useContext(AppContext)!;
     return <div className="sm">
         <header>
             <h1>
@@ -24,7 +21,7 @@ export default function StartMenu(): ReactElement {
             <div className="satellite">
                 <div className="left">
                     <Button onClick={async () => {
-                        setContent({type:"connect"});
+                        setContent({ type: "gameBrowser" });
                     }}>
                         <Icon>play_arrow</Icon> {translate("menu.start.button.play")}
                     </Button>

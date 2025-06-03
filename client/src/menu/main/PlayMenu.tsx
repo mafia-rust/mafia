@@ -3,10 +3,9 @@ import translate from "../../game/lang";
 import LoadingScreen from "../LoadingScreen";
 import "./playMenu.css";
 import { LobbyPreviewData, ToClientPacket } from "../../game/packet";
-import LobbyMenu from "../lobby/LobbyMenu";
 import PlayMenuJoinPopup from "./PlayMenuJoinPopup";
 import { Button } from "../../components/Button";
-import { AnchorContext } from "../AnchorContext";
+import { AppContext } from "../AppContext";
 import { WebsocketContext } from "../WebsocketContext";
 
 
@@ -42,31 +41,40 @@ function playMenuMessageListener(packet: ToClientPacket, playMenuContext: PlayMe
 
 
 export default function PlayMenu(): ReactElement {
-    const { setContent: setAnchorContent } = useContext(AnchorContext)!;
-    const {lastMessageRecieved, sendLobbyListRequest, sendJoinPacket, sendRejoinPacket, sendHostPacket} = useContext(WebsocketContext)!;
+    const { setContent: setAnchorContent } = useContext(AppContext)!;
+    const {lastMessageRecieved, sendLobbyListRequest, sendJoinPacket, sendRejoinPacket, sendHostPacket, ...websocketContext} = useContext(WebsocketContext)!;
     const playMenuContext = usePlayMenuContext();
-
-    const {setContent} = useContext(WebsocketContext)!;
+    
+    useEffect(() => {
+        let autoRefreshInterval: NodeJS.Timeout;
+        websocketContext.open().then(result => {
+            if (result) {
+                sendLobbyListRequest();
+                
+                const FIVE_SECONDS = 5000
+                autoRefreshInterval = setInterval(sendLobbyListRequest, FIVE_SECONDS);
+            } else {
+                setAnchorContent({ type: "main" })
+            }
+        })
+        return () => {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval)
+            }
+        };
+    }, [])
 
     useEffect(()=>{
         if(lastMessageRecieved){
             playMenuMessageListener(lastMessageRecieved, playMenuContext);
         }
-    }, [lastMessageRecieved]);
-    
-    useEffect(() => {
-        sendLobbyListRequest();
-        
-        const FIVE_SECONDS = 5000
-        const autoRefresh = setInterval(sendLobbyListRequest, FIVE_SECONDS);
-        return () => clearInterval(autoRefresh);
-    })
+    }, [lastMessageRecieved, playMenuContext]);
 
     const joinGame = useCallback(
         async (roomCode?: number, playerId?: number) => {
             if (roomCode === undefined) return false;
         
-            setContent({type:"loading"});
+            setAnchorContent({type:"loading"});
         
             if (playerId === undefined) {
                 sendJoinPacket(roomCode);
@@ -74,7 +82,7 @@ export default function PlayMenu(): ReactElement {
                 sendRejoinPacket(roomCode, playerId);
             }
         },
-        [setAnchorContent]
+        [setAnchorContent, sendJoinPacket, sendRejoinPacket]
     );
     
 
@@ -174,7 +182,7 @@ function PlayMenuFooter(props: Readonly<{
 function PlayMenuTable(props: Readonly<{
     joinGame: (roomCode?: number, playerId?: number)=>void
 }>): ReactElement {
-    const { setCoverCard } = useContext(AnchorContext)!;
+    const { setCoverCard } = useContext(AppContext)!;
     const { lobbies } = useContext(PlayMenuContext)!;
 
     return <table className="play-menu-table">

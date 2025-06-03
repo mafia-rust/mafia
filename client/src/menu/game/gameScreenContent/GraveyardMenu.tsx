@@ -1,6 +1,5 @@
 import React, { ReactElement, useContext } from "react";
 import translate from "../../../game/lang";
-import GAME_MANAGER from "../../../index";
 import "./graveyardMenu.css";
 import StyledText from "../../../components/StyledText";
 import { EnabledRolesDisplay } from "../../../components/gameModeSettings/EnabledRoleSelector";
@@ -11,6 +10,7 @@ import { EnabledModifiersDisplay } from "../../../components/gameModeSettings/En
 import { GameStateContext, usePlayerState } from "../GameStateContext";
 import { GameScreenMenuType } from "../GameScreenMenuContext";
 import GameScreenMenuTab from "../GameScreenMenuTab";
+import { WebsocketContext } from "../../WebsocketContext";
 
 export default function GraveyardMenu(): ReactElement {
     return <div className="graveyard-menu graveyard-menu-colors">
@@ -33,6 +33,8 @@ function RoleListDisplay(): ReactElement {
     const crossedOutOutlines = playerState!==undefined?playerState.crossedOutOutlines:[];
 
     const spectator = useContext(GameStateContext)!.clientState.type === "spectator";
+    
+    const websocketContext = useContext(WebsocketContext)!;
 
     return <>
         {roleList.map((entry, index)=>{
@@ -49,7 +51,7 @@ function RoleListDisplay(): ReactElement {
                     else
                         newCrossedOutOutlines = crossedOutOutlines.concat(index);
 
-                    GAME_MANAGER.sendSaveCrossedOutOutlinesPacket(newCrossedOutOutlines);
+                    websocketContext.sendSaveCrossedOutOutlinesPacket(newCrossedOutOutlines);
                 }}
             >
                 {

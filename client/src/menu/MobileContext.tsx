@@ -1,11 +1,11 @@
-import { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 
 const MobileContext = createContext<boolean | undefined>(undefined);
 export { MobileContext };
 
 const MOBILE_MAX_WIDTH_PX = 600;
 
-export function useMobileContext(): boolean {
+export default function MobileContextProvider(props: { children: React.ReactNode }): React.ReactElement {
     const [mobile, setMobile] = useState<boolean>(false);
 
     useEffect(() => {
@@ -16,5 +16,7 @@ export function useMobileContext(): boolean {
         return () => window.removeEventListener("resize", onResize);
     }, []);
 
-    return mobile;
+    return <MobileContext.Provider value={mobile}>
+        {props.children}
+    </MobileContext.Provider>;
 }

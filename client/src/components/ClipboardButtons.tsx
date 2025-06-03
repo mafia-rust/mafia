@@ -1,9 +1,9 @@
 import React, { isValidElement, ReactElement, useContext } from "react";
-import { ErrorData } from "../menu/Anchor";
+import { ErrorData } from "../menu/App";
 import translate from "../game/lang";
 import { Button, ButtonProps } from "./Button";
 import Icon from "./Icon";
-import { AnchorContext } from "../menu/AnchorContext";
+import { AppContext } from "../menu/AppContext";
 
 type CopyButtonResult = boolean;
 type CopyButtonProps = ButtonProps<CopyButtonResult> & { onClick?: undefined, ref?: undefined, text: string };
@@ -24,7 +24,7 @@ export function CopyButton(props: CopyButtonProps): ReactElement {
     if (pressedChildren === undefined && isValidElement(children) && children.type === Icon) {
         pressedChildren = success => success ? <Icon>done</Icon> : <Icon>warning</Icon>;
     }
-    const anchorController = useContext(AnchorContext)!;
+    const anchorController = useContext(AppContext)!;
 
     return <Button {...reconcileCopyProps(props)} 
         onClick={() => writeToClipboard(props.text, anchorController.pushErrorCard)}
@@ -58,7 +58,7 @@ export function PasteButton<H>(props: PasteButtonProps<H>): ReactElement {
     if (pressedChildren === undefined && isValidElement(children) && children.type === Icon) {
         pressedChildren = success => success === "success"  ? <Icon>done</Icon> : <Icon>warning</Icon>;
     }
-    const anchorController = useContext(AnchorContext)!;
+    const anchorController = useContext(AppContext)!;
     
     return <Button {...reconcilePasteProps(props)}
         onClick={() => readFromClipboard(anchorController.pushErrorCard).then(text => {
