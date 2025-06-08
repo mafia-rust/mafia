@@ -137,7 +137,7 @@ function KiraGuessPicker(props: {
     guess: KiraGuess,
     onChange: (guess: KiraGuess) => void
 }): ReactElement {
-    const { players } = useContext(GameStateContext)!;
+    const { players } = useContextGameState()!;
 
     const guessOptions: SelectOptionsSearch<KiraGuess> = new Map();
     for(let guess of KIRA_GUESSES){

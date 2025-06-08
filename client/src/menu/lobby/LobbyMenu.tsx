@@ -4,7 +4,7 @@ import LobbyPlayerList from "./LobbyPlayerList";
 import "./lobbyMenu.css";
 import translate from "../../game/lang";
 import { RoomLinkButton } from "../GlobalMenu";
-import { RoleList, getAllRoles } from "../../game/roleListState.d";
+import { RoleList, getAllRoles } from "../../stateContext/roleListState";
 import LoadingScreen from "../LoadingScreen";
 import { GameModeContext } from "../../components/gameModeSettings/GameModesEditor";
 import PhaseTimesSelector from "../../components/gameModeSettings/PhaseTimeSelector";
@@ -17,41 +17,28 @@ import { Button } from "../../components/Button";
 import { EnabledModifiersSelector } from "../../components/gameModeSettings/EnabledModifiersSelector";
 import LobbyNamePane from "./LobbyNamePane";
 import { MobileContext } from "../MobileContext";
-import { LobbyStateContext, useLobbyStateContext } from "./LobbyContext";
 import { WebsocketContext } from "../WebsocketContext";
 import { AppContext } from "../AppContext";
+import { StateContext, useContextLobbyState } from "../../stateContext/StateContext";
 
-function LobbyStateContextProvider(props: Readonly<{ roomCode: number, myId: number, children: ReactElement }>): ReactElement {
-    const lobbyStateContext = useLobbyStateContext(props.roomCode, props.myId);
-    return <LobbyStateContext.Provider value={lobbyStateContext}>
-        {props.children}
-    </LobbyStateContext.Provider>;
-}
-
-export default function LobbyMenu(props: Readonly<{
-    roomCode: number,
-    myId: number
-}>): ReactElement {
+export default function LobbyMenu(props: Readonly<{}>): ReactElement {
+    const stateCtx = useContext(StateContext)!;
     const websocketContext = useContext(WebsocketContext)!;
     const [loading, setLoading] = useState<boolean>(true);
 
     // This doesn't catch all the packets :(
     useEffect(() => {
-        console.log(websocketContext.lastMessageRecieved?.type)
+        console.log(websocketContext.lastMessageRecieved?.type);
         if (websocketContext.lastMessageRecieved?.type === "lobbyName") {
             setLoading(false);
         }
     }, [websocketContext.lastMessageRecieved]);
 
-    return <LobbyStateContextProvider roomCode={props.roomCode} myId={props.myId}>
-        {loading
-            ? <LoadingScreen type="join" />
-            : <LobbyMenuInner/>}
-    </LobbyStateContextProvider>
+    return loading ? <LoadingScreen type="join" /> : <LobbyMenuInner/>
 }
 
 function LobbyMenuInner(): ReactElement {
-    const lobbyState = useContext(LobbyStateContext)!;
+    const lobbyState = useContextLobbyState()!;
 
     const isSpectator = lobbyState.players.get(lobbyState.myId!)?.clientType.type === "spectator";
 
@@ -108,7 +95,7 @@ function LobbyMenuInner(): ReactElement {
 function LobbyMenuSettings(props: Readonly<{
     isHost: boolean,
 }>): JSX.Element {
-    const lobbyState = useContext(LobbyStateContext)!;
+    const lobbyState = useContextLobbyState()!;
     const roleList = lobbyState.roleList;
     const enabledRoles = lobbyState.enabledRoles;
     const phaseTimes = lobbyState.phaseTimes;
@@ -172,7 +159,7 @@ function LobbyMenuHeader(props: Readonly<{
     advancedView: boolean,
     setAdvancedView: (advancedView: boolean) => void
 }>): JSX.Element {
-    const { lobbyName } = useContext(LobbyStateContext)!;
+    const { lobbyName } = useContextLobbyState()!;
     const { sendStartGamePacket, sendSetLobbyNamePacket } = useContext(WebsocketContext)!;
     const mobile = useContext(MobileContext)!;
     const { setContent: setAnchorContent } = useContext(AppContext)!;

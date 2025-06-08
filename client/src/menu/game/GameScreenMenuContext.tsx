@@ -60,7 +60,7 @@ export function useGameScreenMenuContext<C extends Partial<Record<GameScreenMenu
     initialOpenMenus: C,
 ): GameScreenMenuContext {
     const [contentMenus, setContentMenus] = useState<C>(initialOpenMenus);
-    const gameState = useContext(GameStateContext)!;
+    const gameState = useContextGameState()!;
 
     //call callbacks for openMenu
     const [callbacks, setCallbacks] = useState<(() => void)[]>([]);

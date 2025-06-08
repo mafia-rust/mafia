@@ -4,7 +4,7 @@ import translate from "../../game/lang";
 import "./standaloneWiki.css";
 import { WikiArticleLink } from "../../components/WikiArticleLink";
 import { MODIFIERS, ModifierType } from "../../game/gameState.d";
-import { getAllRoles } from "../../game/roleListState.d";
+import { getAllRoles } from "../../stateContext/roleListState";
 
 export default function StandaloneWiki(props: Readonly<{
     initialWikiPage?: WikiArticleLink

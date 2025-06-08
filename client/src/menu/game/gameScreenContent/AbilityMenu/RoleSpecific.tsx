@@ -16,7 +16,7 @@ import { GameStateContext, usePlayerState } from "../../GameStateContext";
     
 
 export default function RoleSpecificSection(): ReactElement{
-    const gameState = useContext(GameStateContext)!;
+    const gameState = useContextGameState()!;
 
     const roleState = usePlayerState()!.roleState;
     const phaseState = gameState!.phaseState;
@@ -204,7 +204,7 @@ function MarksmanRoleSpecificMenu(props: Readonly<{
 function MediumRoleSpecificMenu(props: Readonly<{
     roleState: RoleState & { type: "medium" }
 }>): ReactElement {
-    const gameState = useContext(GameStateContext)!;
+    const gameState = useContextGameState()!;
     const players = gameState.players;
 
     const counter = <Counter
@@ -233,7 +233,7 @@ function MediumRoleSpecificMenu(props: Readonly<{
 }
 
 function SpiralMenu(): ReactElement | null {
-    const gameState = useContext(GameStateContext)!;
+    const gameState = useContextGameState()!;
     const spiralingPlayers = gameState.players.filter(p => p.playerTags.includes("spiraling"))!
 
     if (spiralingPlayers.length !== 0) {

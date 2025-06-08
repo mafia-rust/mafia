@@ -21,7 +21,7 @@ export default function ChatMenu(): ReactElement {
     const sendChatGroups = usePlayerState()?.sendChatGroups;
     const playerNames = usePlayerNames()!;
 
-    const gameState = useContext(GameStateContext)!;
+    const gameState = useContextGameState()!;
 
     const filterString = useMemo(() => {
         if (filter === undefined || filter === null) {
@@ -71,8 +71,8 @@ export type ChatFilter = {
 export function ChatMessageSection(props: Readonly<{
     filter?: ChatFilter,
 }>): ReactElement {
-    const gameState = useContext(GameStateContext)!;
-    const lobbyState = useContext(GameStateContext)!;
+    const gameState = useContextGameState()!;
+    const lobbyState = useContextGameState()!;
 
     const players = useContext(GameStateContext)!.players;
     const filter = useMemo(() => props.filter ?? null, [props.filter]);
@@ -193,8 +193,8 @@ export function ChatTextInput(props: Readonly<{
     disabled?: boolean,
     whispering?: PlayerIndex | null,
 }>): ReactElement {
-    const gameState = useContext(GameStateContext)!;
-    const lobbyState = useContext(LobbyStateContext)!;
+    const gameState = useContextGameState()!;
+    const lobbyState = useContextLobbyState()!;
     const {sendSendWhisperPacket, sendSendChatMessagePacket, sendSendLobbyMessagePacket} = useContext(WebsocketContext)!;
     
     const [chatBoxText, setChatBoxText] = useState<string>("");

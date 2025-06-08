@@ -1,7 +1,7 @@
 import React, { ReactElement, useCallback, useContext, useState } from "react"
 import translate from "../../game/lang"
 import StyledText from "../StyledText"
-import { ROLE_SETS, RoleOrRoleSet, getAllRoles, getRolesFromRoleOrRoleSet } from "../../game/roleListState.d";
+import { ROLE_SETS, RoleOrRoleSet, getAllRoles, getRolesFromRoleOrRoleSet } from "../../stateContext/roleListState";
 import { Role, roleJsonData } from "../../game/roleState.d";
 import { RoleOrRoleSetSelector } from "./OutlineSelector";
 import "./disabledRoleSelector.css"

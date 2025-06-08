@@ -4,7 +4,7 @@ import Wiki from '../components/Wiki';
 import "./wiki.css";
 import { WikiArticleLink } from './WikiArticleLink';
 import { MODIFIERS, ModifierType } from '../game/gameState.d';
-import { getAllRoles } from '../game/roleListState.d';
+import { getAllRoles } from '../stateContext/roleListState';
 import { useLobbyOrGameState } from '../menu/lobby/LobbyContext';
 
 export default function WikiCoverCard(props: Readonly<{

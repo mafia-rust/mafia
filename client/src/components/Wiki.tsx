@@ -7,7 +7,7 @@ import WikiArticle, { getSearchStrings, PageCollection } from "./WikiArticle";
 import { ARTICLES, WikiArticleLink, getArticleTitle, wikiPageIsEnabled } from "./WikiArticleLink";
 import StyledText from "./StyledText";
 import Icon from "./Icon";
-import { getAllRoles } from "../game/roleListState.d";
+import { getAllRoles } from "../stateContext/roleListState";
 import { MODIFIERS, ModifierType } from "../game/gameState.d";
 import Masonry from "react-responsive-masonry";
 import CheckBox from "./CheckBox";

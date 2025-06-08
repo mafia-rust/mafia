@@ -11,7 +11,7 @@ export default function PlayerNamePlate(props: Readonly<{
     const {
         players,
         phaseState
-    } = useContext(GameStateContext)!;
+    } = useContextGameState()!;
     
     const {
         roleLabel: playerRoleLabel,

@@ -8,7 +8,7 @@ import "./styledText.css";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { ARTICLES, WikiArticleLink, getArticleLangKey } from "./WikiArticleLink";
 import { setWikiSearchPage } from "./Wiki";
-import { getRoleSetsFromRole } from "../game/roleListState.d";
+import { getRoleSetsFromRole } from "../stateContext/roleListState";
 import { AppContext } from "../menu/AppContext";
 import { GameScreenMenuContext } from "../menu/game/GameScreenMenuContext";
 import { Player } from "../menu/game/GameStateContext";

@@ -8,7 +8,7 @@ import { Role } from "../game/roleState.d";
 import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
 import GraveComponent from "./grave";
-import { RoleList, RoleOutline, translateRoleOutline } from "../game/roleListState.d";
+import { RoleList, RoleOutline, translateRoleOutline } from "../stateContext/roleListState";
 import { CopyButton } from "./ClipboardButtons";
 import { KiraResult, KiraResultDisplay } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
 import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";

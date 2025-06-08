@@ -1,7 +1,7 @@
 import { VersionConverter } from ".";
 import { PHASES, PhaseTimes } from "../../../../game/gameState.d";
 import { Settings } from "../../../../game/localStorage";
-import { ROLE_SETS, RoleSet, getAllRoles } from "../../../../game/roleListState.d";
+import { ROLE_SETS, RoleSet, getAllRoles } from "../../../../stateContext/roleListState";
 import { Role } from "../../../../game/roleState.d";
 import { Failure, ParseResult, ParseSuccess, Success, isFailure } from "../parse";
 

@@ -5,19 +5,13 @@ import {
 } from "./gameState.d"
 import { Grave } from "./graveState"
 import { ChatMessage } from "../components/ChatMessage"
-import { RoleList, RoleOutline } from "./roleListState.d"
+import { RoleList, RoleOutline } from "../stateContext/roleListState"
 import { Role, RoleState } from "./roleState.d"
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu"
 import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu"
 import { AbilityInput, ControllerID, SavedController } from "./abilityInput"
 import { ListMapData } from "../ListMap"
 import { LobbyClient } from "../menu/lobby/LobbyContext"
-
-export type LobbyPreviewData = {
-    name: string,
-    inGame : boolean,
-    players: [LobbyClientID, string][]
-}
 
 export type ToClientPacket = {
     type: "pong",

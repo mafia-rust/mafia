@@ -1,7 +1,3 @@
-import { PlayerIndex } from "./gameState.d";
-import { RoleSet } from "./roleListState.d";
-import { Role } from "./roleState.d";
-
 export type Grave = {
     player: PlayerIndex,
     diedPhase: GravePhase,

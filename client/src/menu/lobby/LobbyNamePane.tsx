@@ -8,14 +8,14 @@ import { WebsocketContext } from "../WebsocketContext";
 
 
 export default function LobbyNamePane(): ReactElement {
-    const lobbyState = useContext(LobbyStateContext)!;
-    const client = lobbyState.players.get(lobbyState.myId!)!;
-    const isSpectator = client.clientType.type === "spectator";
-    const ready = client.ready;
+    const lobbyState = useContextLobbyState()!;
+    const client = lobbyState.players.get(lobbyState.myId!);
+    const isSpectator = client?.clientType.type === "spectator";
+    const ready = client?.ready??false;
     const websocketContext = useContext(WebsocketContext)!;
 
     let myName = "";
-    if(client.clientType.type === "player"){
+    if(client?.clientType.type === "player"){
         myName = client.clientType.name
     }
 

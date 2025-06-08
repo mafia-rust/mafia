@@ -3,7 +3,7 @@ import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleS
 import { AbilityInput } from "./abilityInput";
 import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, ModifierType } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "./packet";
-import { RoleList, RoleOutline } from "./roleListState.d";
+import { RoleList, RoleOutline } from "../stateContext/roleListState";
 import { Role } from "./roleState.d";
 
 export type Server = {

@@ -3,7 +3,7 @@ import translate, { langJson } from "../game/lang";
 import { Role, roleJsonData } from "../game/roleState.d";
 import { partitionWikiPages, WIKI_CATEGORIES, WikiCategory } from "./Wiki";
 import "./wiki.css";
-import { getAllRoles } from "../game/roleListState.d"
+import { getAllRoles } from "../stateContext/roleListState"
 
 export type WikiArticleLink = 
     `role/${Role}` | 

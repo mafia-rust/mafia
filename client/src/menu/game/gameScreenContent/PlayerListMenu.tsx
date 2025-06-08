@@ -65,7 +65,7 @@ function PlayerCard(props: Readonly<{
     const [graveOpen, setGraveOpen] = React.useState(false);
     const [whisperChatOpen, setWhisperChatOpen] = React.useState(false);
 
-    const gameState = useContext(GameStateContext)!;
+    const gameState = useContextGameState()!;
     const playerState = usePlayerState();
 
     const playerAlive = gameState.players[props.playerIndex].alive;

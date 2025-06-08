@@ -1,7 +1,7 @@
 import { ReactElement, createContext, useCallback, useState } from "react";
 import React from "react";
 import { OutlineListSelector } from "./OutlineSelector";
-import { getAllRoles, RoleList, RoleOutline } from "../../game/roleListState.d";
+import { getAllRoles, RoleList, RoleOutline } from "../../stateContext/roleListState";
 import translate from "../../game/lang";
 import "./gameModesEditor.css";
 import PhaseTimesSelector from "./PhaseTimeSelector";

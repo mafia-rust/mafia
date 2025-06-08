@@ -167,7 +167,7 @@ function VerdictButton(props: Readonly<{ verdict: Verdict }>) {
 
 export function MenuButtons(): ReactElement | null {
     const menuController = useContext(GameScreenMenuContext)!;
-    const missedChatMessages = useContext(GameStateContext)!;
+    const missedChatMessages = useContextGameState()!;
     const chatMenuNotification = useMemo(
         ()=>missedChatMessages && !menuController.menuIsOpen(GameScreenMenuType.ChatMenu),
         [missedChatMessages, menuController.menusOpen()]

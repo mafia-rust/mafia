@@ -21,7 +21,7 @@ export default function WillMenu(): ReactElement {
     const notes = usePlayerState()!.notes;
     const deathNote = usePlayerState()!.deathNote;
 
-    const gameState = useContext(GameStateContext)!;
+    const gameState = useContextGameState()!;
     const websocketContext = useContext(WebsocketContext)!;
 
     const cantPost = useMemo(() => {

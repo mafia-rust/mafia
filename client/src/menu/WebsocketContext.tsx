@@ -1,16 +1,24 @@
-import { createContext, ReactElement, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { createContext, ReactElement, useEffect, useMemo, useRef, useState } from "react";
 import { ToClientPacket, ToServerPacket } from "../game/packet";
 import { DoomsayerGuess } from "./game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
 import { AbilityInput } from "../game/abilityInput";
-import { ModifierType, PhaseTimes, PhaseType, Verdict } from "../game/gameState.d";
-import { Role } from "../game/roleState.d";
-import { RoleList, RoleOutline } from "../game/roleListState.d";
-import { AppContext } from "./AppContext";
+import { RoleList, RoleOutline } from "../stateContext/roleListState";
 import React from "react";
-import translate from "../game/lang";
 import { isValidPhaseTime } from "../components/gameModeSettings/PhaseTimeSelector";
-import { deleteReconnectData, loadSettingsParsed, saveReconnectData } from "../game/localStorage";
-import { AppContextType } from "./AppContext";
+import { ModifierType } from "../stateContext/modifiersState";
+import { Role } from "../stateContext/roleState";
+import { PhaseTimes, Verdict } from "../stateContext/otherState";
+import { PhaseType } from "../stateContext/phaseState";
+
+
+export function useWebsocketMessageListener(websocketContext: WebSocketContextType, listener: (packet: ToClientPacket)=>void): void{
+    useEffect(()=>{
+        websocketContext.addMessageListener(listener);
+        return ()=>{websocketContext.removeMessageListener(listener)}
+    }, []);
+}
+
+
 
 export const WebsocketContext = createContext<WebSocketContextType | undefined>(undefined);
 
@@ -22,9 +30,11 @@ export type WebSocketContextType = {
     sendPacket(packets: ToServerPacket): void;
     close(): Promise<void>;
 
-
+    addMessageListener(listener: (packet: ToClientPacket) => void): void;
+    removeMessageListener(listener: (packet: ToClientPacket) => void): void;
     awaitPacket<T>(listener: (packet: ToClientPacket) => T | undefined): Promise<T>;
     awaitCloseOrError(): Promise<"close" | "error">;
+
     sendLobbyListRequest(): void;
     sendHostPacket(): Promise<{ roomCode: number, myId: number } | null>;
     sendRejoinPacket(roomCode: number, playerId: number): Promise<boolean>;
@@ -84,6 +94,8 @@ export default function WebSocketContextProvider(props: Readonly<{ children: Rea
     const [lastMessageRecieved, setLastMessageRecieved] = useState<ToClientPacket | null>(null);
     const webSocket = useRef<WebSocket | null>(null);
 
+    const messageListeners = useRef<((packet: ToClientPacket)=>void)[]>([]);
+
     useEffect(() => {
         const interval = setInterval(() => {
             if (messagesQueue.current.length !== 0) {
@@ -135,8 +147,10 @@ export default function WebSocketContextProvider(props: Readonly<{ children: Rea
                 const parsed = JSON.parse(event.data) as ToClientPacket;
                 // console.log(JSON.stringify(parsed, null, 2));
                 console.log("message receieved: "+parsed.type);
+                for(let listener of messageListeners.current){
+                    listener(parsed);
+                }
                 messagesQueue.current.push(parsed);
-                // GAME_MANAGER.messageListener(parsed);
             };
             websocketContext.webSocket.current.onerror = (event: Event) => {
                 websocketContext.close();
@@ -145,7 +159,6 @@ export default function WebSocketContextProvider(props: Readonly<{ children: Rea
             
             return promise;
         },
-
         sendPacket: (packet: ToServerPacket)=>{
             if (websocketContext.webSocket.current === null) {
                 console.error("Attempted to send packet to null websocket!");
@@ -153,7 +166,6 @@ export default function WebSocketContextProvider(props: Readonly<{ children: Rea
                 websocketContext.webSocket.current.send(JSON.stringify(packet));
             }
         },
-
         close: async () => {
             if(websocketContext.webSocket.current === null) return;
 
@@ -172,6 +184,12 @@ export default function WebSocketContextProvider(props: Readonly<{ children: Rea
             return promise;
         },
 
+        addMessageListener(listener) {
+            messageListeners.current.push(listener);
+        },
+        removeMessageListener(listener) {
+            messageListeners.current = messageListeners.current.filter((l)=>l!==listener);
+        },
         awaitPacket(packetListener) {
             let completePromise: (result: any) => void;
             const promise = new Promise<any>(resolve => completePromise = resolve)
@@ -201,6 +219,8 @@ export default function WebSocketContextProvider(props: Readonly<{ children: Rea
 
             return promise;
         },
+
+
         sendLobbyListRequest() {
             websocketContext.sendPacket({ type: "lobbyListRequest" });
         },

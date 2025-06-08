@@ -30,8 +30,6 @@ type AppContentType = {
     spectator: boolean
 } | {
     type:"lobbyScreen",
-    roomCode: number,
-    myId: number
 } | {
     type:"loading"
     loadingType?: LoadingScreenType,
@@ -111,12 +109,7 @@ export default function AppContextProvider(props: Readonly<{ children: React.Rea
                     setContent(<GameScreen isSpectator={contentType.spectator}/>);
                 break;
                 case "lobbyScreen":
-                    setContent(
-                        <LobbyMenu
-                            roomCode={contentType.roomCode}
-                            myId={contentType.myId}
-                        />
-                    );
+                    setContent(<LobbyMenu/>);
                 break;
                 case "loading":
                     setContent(<LoadingScreen type={contentType.loadingType??"default"}/>);
