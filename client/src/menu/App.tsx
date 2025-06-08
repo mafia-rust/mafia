@@ -16,7 +16,7 @@ import { computeKeywordData } from "../components/StyledText";
 import AppContextProvider, { AppContext, AppContextType } from "./AppContext";
 import MobileContextProvider from "./MobileContext";
 import WebsocketContextProvider, { WebsocketContext, WebSocketContextType } from "./WebsocketContext";
-import { ToClientPacket } from "../game/packet";
+import { ToClientPacket } from "../packet";
 
 export default function App(props: Readonly<{
     onMount: (appContext: AppContextType, websocketContext: WebSocketContextType) => void,

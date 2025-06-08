@@ -2,7 +2,7 @@ import { createPlayer } from "./gameState";
 import { chatMessageToAudio } from "./../menu/Anchor";
 import GAME_MANAGER from "./../index";
 import GameScreen from "./../menu/game/GameScreen";
-import { ToClientPacket } from "./packet";
+import { ToClientPacket } from "../packet";
 import { GameClient, PlayerIndex, Tag } from "./gameState.d";
 import { Role } from "./roleState.d";
 import translate from "./lang";

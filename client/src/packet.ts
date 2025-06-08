@@ -1,17 +1,18 @@
-import {
-    PhaseType, PlayerIndex, Verdict, PhaseTimes, Tag, LobbyClientID,
-    ChatGroup, PhaseState, ModifierType, InsiderGroup,
-    GameClient
-} from "./gameState.d"
-import { Grave } from "./graveState"
-import { ChatMessage } from "../components/ChatMessage"
-import { RoleList, RoleOutline } from "../stateContext/roleListState"
-import { Role, RoleState } from "./roleState.d"
-import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu"
-import { KiraGuess } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu"
-import { AbilityInput, ControllerID, SavedController } from "./abilityInput"
-import { ListMapData } from "../ListMap"
-import { LobbyClient } from "../menu/lobby/LobbyContext"
+import { ChatMessage } from "./components/ChatMessage"
+import { RoleList, RoleOutline } from "./stateContext/roleListState"
+import { DoomsayerGuess } from "./menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu"
+import { KiraGuess } from "./menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu"
+import { AbilityInput, ControllerID, SavedController } from "./game/abilityInput"
+import { ListMapData } from "./ListMap"
+import { LobbyPreviewData } from "./stateContext/gameBrowserState"
+import { ChatGroup, InsiderGroup, LobbyClientID, PhaseTimes, PlayerIndex, Verdict } from "./stateContext/otherState"
+import { GameClient } from "./stateContext/gameState"
+import { LobbyClient } from "./stateContext/lobbyState"
+import { PhaseState, PhaseType } from "./stateContext/phaseState"
+import { ModifierType } from "./stateContext/modifiersState"
+import { Role, RoleState } from "./stateContext/roleState"
+import { Grave } from "./stateContext/grave"
+import { Tag } from "./stateContext/tagState"
 
 export type ToClientPacket = {
     type: "pong",

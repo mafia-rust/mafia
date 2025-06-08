@@ -10,7 +10,7 @@ import { ControllerID, SavedController } from "../../game/abilityInput";
 import { defaultPhaseTimes } from "../../game/localStorage";
 import { LobbyState } from "../lobby/LobbyContext";
 import { WebsocketContext } from "../WebsocketContext";
-import { ToClientPacket } from "../../game/packet";
+import { ToClientPacket } from "../../packet";
 
 export function useGameStateContext(): GameState{
     const [gameState, setGameState] = useState<GameState>(createGameState());

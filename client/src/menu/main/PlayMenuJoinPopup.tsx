@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { LobbyPreviewData } from "../../game/packet";
+import { LobbyPreviewData } from "../../packet";
 import translate from "../../game/lang";
 import "./playMenuJoinPopup.css";
 

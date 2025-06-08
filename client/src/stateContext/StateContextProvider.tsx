@@ -15,7 +15,7 @@ import { defaultAlibi } from "../menu/game/gameScreenContent/WillMenu";
 import ListMap from "../ListMap";
 import { WebSocketContextType } from "../menu/WebsocketContext";
 import { State } from "../stateContext/state";
-import { ToClientPacket } from "../game/packet";
+import { ToClientPacket } from "../packet";
 import translate from "../game/lang";
 import { GameClient } from "./otherState";
 

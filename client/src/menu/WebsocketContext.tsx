@@ -1,5 +1,5 @@
 import { createContext, ReactElement, useEffect, useMemo, useRef, useState } from "react";
-import { ToClientPacket, ToServerPacket } from "../game/packet";
+import { ToClientPacket, ToServerPacket } from "../packet";
 import { DoomsayerGuess } from "./game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
 import { AbilityInput } from "../game/abilityInput";
 import { RoleList, RoleOutline } from "../stateContext/roleListState";
