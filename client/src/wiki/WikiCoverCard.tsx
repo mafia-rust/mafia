@@ -3,9 +3,9 @@ import translate from '../game/lang';
 import Wiki from './Wiki';
 import "./wiki.css";
 import { WikiArticleLink } from './WikiArticleLink';
-import { MODIFIERS, ModifierType } from '../game/gameState.d';
 import { getAllRoles } from '../stateContext/stateType/roleListState';
-import { useLobbyOrGameState } from '../menu/lobby/LobbyContext';
+import { useLobbyOrGameState } from '../stateContext/useHooks';
+import { MODIFIERS, ModifierType } from '../stateContext/stateType/modifiersState';
 
 export default function WikiCoverCard(props: Readonly<{
     initialWikiPage?: WikiArticleLink

@@ -1,5 +1,4 @@
 import { ReactElement, ReactNode, useContext, useEffect, useRef, useState } from "react";
-import { Role, roleJsonData } from "../game/roleState.d";
 import React from "react";
 import translate, { langText, translateChecked } from "../game/lang";
 import StyledText, { DUMMY_NAMES_KEYWORD_DATA, DUMMY_NAMES_SENDER_KEYWORD_DATA, StyledTextProps } from "../components/StyledText";
@@ -11,10 +10,14 @@ import "./wiki.css";
 import { replaceMentions } from "..";
 import DetailsSummary from "../components/DetailsSummary";
 import { partitionWikiPages, WikiCategory } from "./Wiki";
-import { MODIFIERS, ModifierType } from "../game/gameState.d";
 import Masonry from "react-responsive-masonry";
-import { useLobbyOrGameState } from "../menu/lobby/LobbyContext";
 import { AppContext } from "../menu/AppContext";
+import { State } from "../stateContext/state";
+import { GameState } from "../stateContext/stateType/gameState";
+import { LobbyState } from "../stateContext/stateType/lobbyState";
+import { Role, roleJsonData } from "../stateContext/stateType/roleState";
+import { useLobbyOrGameState } from "../stateContext/useHooks";
+import { MODIFIERS, ModifierType } from "../stateContext/stateType/modifiersState";
 
 function WikiStyledText(props: Omit<StyledTextProps, 'markdown' | 'playerKeywordData'>): ReactElement {
     return <StyledText {...props} markdown={true} playerKeywordData={DUMMY_NAMES_KEYWORD_DATA} />
@@ -125,8 +128,13 @@ function CategoryArticle(props: Readonly<{ category: WikiCategory }>): ReactElem
     const title = translate(`wiki.category.${props.category}`);
     const description = translateChecked(`wiki.category.${props.category}.text`);
 
-    const enabledRoles = useLobbyOrGameState(state => state.enabledRoles)??getAllRoles();
-    const enabledModifiers = useLobbyOrGameState(state => state.enabledModifiers)??MODIFIERS as any as ModifierType[];
+    const enabledRoles = useLobbyOrGameState(
+        (state: LobbyState|GameState) => state.enabledRoles
+    )??getAllRoles();
+    
+    const enabledModifiers = useLobbyOrGameState(
+        (state: LobbyState|GameState) => state.enabledModifiers
+    )??MODIFIERS as any as ModifierType[];
 
     return <section className="wiki-article">
         <WikiStyledText className="wiki-article-standard">

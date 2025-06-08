@@ -1,34 +1,35 @@
 import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import translate from "../game/lang";
 import "./wiki.css";
-import { Role, getMainRoleSetFromRole } from "../game/roleState.d";
 import { regEscape } from "..";
 import WikiArticle, { getSearchStrings, PageCollection } from "./WikiArticle";
 import { ARTICLES, WikiArticleLink, getArticleTitle, wikiPageIsEnabled } from "./WikiArticleLink";
 import StyledText from "../components/StyledText";
 import Icon from "../components/Icon";
 import { getAllRoles } from "../stateContext/stateType/roleListState";
-import { MODIFIERS, ModifierType } from "../game/gameState.d";
 import Masonry from "react-responsive-masonry";
 import CheckBox from "../components/CheckBox";
-import { useLobbyOrGameState } from "../menu/lobby/LobbyContext";
 import { Button } from "../components/Button";
 import { GameScreenMenuContext } from "../menu/game/GameScreenMenuContext";
 import { AppContextType } from "../menu/AppContext";
+import { MODIFIERS, ModifierType } from "../stateContext/stateType/modifiersState";
+import { getMainRoleSetFromRole, Role } from "../stateContext/stateType/roleState";
+import { useLobbyOrGameState } from "../stateContext/useHooks";
 
 
 export function setWikiSearchPage(page: WikiArticleLink, anchorController: AppContextType, menuController?: GameScreenMenuContext) {
-    // TODO if (GAME_MANAGER.wikiArticleCallbacks.length === 0) {
-    //     if (menuController?.menuIsAvailable(GameScreenMenuType.WikiMenu)) {
-    //         menuController.openMenu(GameScreenMenuType.WikiMenu, () => {
-    //             GAME_MANAGER.setWikiArticle(page);
-    //         });
-    //     } else {
-    //         anchorController.setCoverCard(<WikiCoverCard initialWikiPage={page}/>)
-    //     }
-    // } else {
-    //     GAME_MANAGER.setWikiArticle(page);
-    // }
+    // TODO 
+    if (GAME_MANAGER.wikiArticleCallbacks.length === 0) {
+        if (menuController?.menuIsAvailable(GameScreenMenuType.WikiMenu)) {
+            menuController.openMenu(GameScreenMenuType.WikiMenu, () => {
+                GAME_MANAGER.setWikiArticle(page);
+            });
+        } else {
+            anchorController.setCoverCard(<WikiCoverCard initialWikiPage={page}/>)
+        }
+    } else {
+        GAME_MANAGER.setWikiArticle(page);
+    }
 }
 
 
