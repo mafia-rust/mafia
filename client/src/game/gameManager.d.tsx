@@ -1,9 +1,9 @@
-import { WikiArticleLink } from "../components/WikiArticleLink";
+import { WikiArticleLink } from "../wiki/WikiArticleLink";
 import { DoomsayerGuess } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
 import { AbilityInput } from "./abilityInput";
 import { PhaseType, PhaseTimes, PlayerIndex, State, Verdict, ModifierType } from "./gameState.d";
 import { ToClientPacket, ToServerPacket } from "../packet";
-import { RoleList, RoleOutline } from "../stateContext/roleListState";
+import { RoleList, RoleOutline } from "../stateContext/stateType/roleListState";
 import { Role } from "./roleState.d";
 
 export type Server = {

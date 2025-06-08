@@ -1,6 +1,6 @@
-import { GameBrowserState } from "./gameBrowserState";
-import { GameState } from "./gameState";
-import { LobbyState } from "./lobbyState";
+import { GameBrowserState } from "./stateType/gameBrowserState";
+import { GameState } from "./stateType/gameState";
+import { LobbyState } from "./stateType/lobbyState";
 
 export type State = {type: "disconnected"} | GameBrowserState | GameState | LobbyState;
 

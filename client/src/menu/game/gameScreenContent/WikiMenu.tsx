@@ -1,8 +1,8 @@
 import React, { ReactElement } from "react";
 import "./wikiMenu.css"
 import translate from "../../../game/lang";
-import Wiki from "../../../components/Wiki";
-import { getAllRoles } from "../../../stateContext/roleListState";
+import Wiki from "../../../wiki/Wiki";
+import { getAllRoles } from "../../../stateContext/stateType/roleListState";
 import { MODIFIERS, ModifierType } from "../../../game/gameState.d";
 import { GameScreenMenuType } from "../GameScreenMenuContext";
 import GameScreenMenuTab from "../GameScreenMenuTab";

@@ -1,13 +1,13 @@
-import { ChatMessage } from "../components/ChatMessage";
+import { ChatMessage } from "../../components/ChatMessage";
 import { RoleList } from "./roleListState"
-import ListMap, { ListMapData } from "../ListMap"
+import ListMap, { ListMapData } from "../../ListMap"
 import { Grave } from "./grave";
 import { ChatGroup, ClientConnection, defaultPhaseTimes, InsiderGroup, LobbyClientID, PhaseTimes, PlayerIndex, Verdict } from "./otherState";
 import { PhaseState } from "./phaseState";
 import { Role, RoleState } from "./roleState";
 import { ModifierType } from "./modifiersState";
-import { ChatFilter } from "../menu/game/gameScreenContent/ChatMenu";
-import { ControllerID, SavedController } from "../game/abilityInput";
+import { ChatFilter } from "../../menu/game/gameScreenContent/ChatMenu";
+import { ControllerID, SavedController } from "../../game/abilityInput";
 import { Tag } from "./tagState";
 
 export type GameState = {

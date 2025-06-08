@@ -3,9 +3,9 @@ import { useWebsocketMessageListener, WebsocketContext } from "../menu/Websocket
 import { AppContext, AppContextType } from "../menu/AppContext";
 import GameScreen from "./../menu/game/GameScreen";
 import { computePlayerKeywordData, computePlayerKeywordDataForLobby } from "../components/StyledText";
-import { WikiArticleLink } from "../components/WikiArticleLink";
+import { WikiArticleLink } from "../wiki/WikiArticleLink";
 import React, { ReactElement, useContext } from "react";
-import WikiArticle from "../components/WikiArticle";
+import WikiArticle from "../wiki/WikiArticle";
 import LobbyMenu from "../menu/lobby/LobbyMenu";
 import LoadingScreen from "../menu/LoadingScreen";
 import AudioController from "../menu/AudioController";
@@ -17,7 +17,7 @@ import { WebSocketContextType } from "../menu/WebsocketContext";
 import { State } from "../stateContext/state";
 import { ToClientPacket } from "../packet";
 import translate from "../game/lang";
-import { GameClient } from "./otherState";
+import { GameClient } from "./stateType/otherState";
 
 function StateContextProvider(props: Readonly<{
     children: React.ReactNode

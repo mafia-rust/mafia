@@ -2,7 +2,7 @@ import { VersionConverter } from ".";
 import { GameMode, GameModeData, GameModeStorage, ShareableGameMode } from "..";
 import { Conclusion, CONCLUSIONS, INSIDER_GROUPS, InsiderGroup } from "../../../../game/gameState.d";
 import { getDefaultSettings, Settings } from "../../../../game/localStorage";
-import { RoleOutline, RoleOutlineOption, RoleSet } from "../../../../stateContext/roleListState";
+import { RoleOutline, RoleOutlineOption, RoleSet } from "../../../../stateContext/stateType/roleListState";
 import { Role } from "../../../../game/roleState.d";
 import { Failure, ParseResult, ParseSuccess, Success, isFailure } from "../parse";
 import { parseName, parsePhaseTimes, parseRole, parseRoleSet } from "./initial";

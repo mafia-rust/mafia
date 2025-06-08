@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
-import { GameState } from "./gameState";
-import { LobbyState } from "./lobbyState";
+import { GameState } from "./stateType/gameState";
+import { LobbyState } from "./stateType/lobbyState";
 import { State } from "./state";
 
 export const StateContext = createContext<State | undefined>(undefined);

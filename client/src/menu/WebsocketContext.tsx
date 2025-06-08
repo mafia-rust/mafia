@@ -2,13 +2,13 @@ import { createContext, ReactElement, useEffect, useMemo, useRef, useState } fro
 import { ToClientPacket, ToServerPacket } from "../packet";
 import { DoomsayerGuess } from "./game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
 import { AbilityInput } from "../game/abilityInput";
-import { RoleList, RoleOutline } from "../stateContext/roleListState";
+import { RoleList, RoleOutline } from "../stateContext/stateType/roleListState";
 import React from "react";
 import { isValidPhaseTime } from "../components/gameModeSettings/PhaseTimeSelector";
-import { ModifierType } from "../stateContext/modifiersState";
-import { Role } from "../stateContext/roleState";
-import { PhaseTimes, Verdict } from "../stateContext/otherState";
-import { PhaseType } from "../stateContext/phaseState";
+import { ModifierType } from "../stateContext/stateType/modifiersState";
+import { Role } from "../stateContext/stateType/roleState";
+import { PhaseTimes, Verdict } from "../stateContext/stateType/otherState";
+import { PhaseType } from "../stateContext/stateType/phaseState";
 
 
 export function useWebsocketMessageListener(websocketContext: WebSocketContextType, listener: (packet: ToClientPacket)=>void): void{

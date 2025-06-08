@@ -3,7 +3,7 @@ import { ChatGroup, GameClient, InsiderGroup, LobbyClientID, ModifierType, Phase
 import { Role, RoleState } from "../../game/roleState.d";
 import { ChatMessage } from "../../components/ChatMessage";
 import { Grave } from "../../game/graveState";
-import { RoleList } from "../../stateContext/roleListState";
+import { RoleList } from "../../stateContext/stateType/roleListState";
 import ListMap, { ListMapData } from "../../ListMap";
 import { ChatFilter } from "./gameScreenContent/ChatMenu";
 import { ControllerID, SavedController } from "../../game/abilityInput";

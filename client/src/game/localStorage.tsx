@@ -4,7 +4,7 @@ import { Language } from "./lang";
 import parseFromJson from "../components/gameModeSettings/gameMode/dataFixer";
 import { ParseResult, Success } from "../components/gameModeSettings/gameMode/parse";
 import { GameScreenMenuType } from "../menu/game/GameScreenMenuContext";
-import { Role } from "../stateContext/roleState";
+import { Role } from "../stateContext/stateType/roleState";
 
 
 export function saveReconnectData(roomCode: number, playerId: number) {

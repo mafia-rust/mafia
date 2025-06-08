@@ -4,7 +4,7 @@ import translate from '../game/lang';
 import LoadingScreen from './LoadingScreen';
 import GameModesEditor from '../components/gameModeSettings/GameModesEditor';
 import { CopyButton } from '../components/ClipboardButtons';
-import WikiCoverCard from '../components/WikiCoverCard';
+import WikiCoverCard from '../wiki/WikiCoverCard';
 import Icon from '../components/Icon';
 import SettingsMenu from './Settings';
 import { Button } from '../components/Button';

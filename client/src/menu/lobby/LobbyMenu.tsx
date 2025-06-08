@@ -4,7 +4,7 @@ import LobbyPlayerList from "./LobbyPlayerList";
 import "./lobbyMenu.css";
 import translate from "../../game/lang";
 import { RoomLinkButton } from "../GlobalMenu";
-import { RoleList, getAllRoles } from "../../stateContext/roleListState";
+import { RoleList, getAllRoles } from "../../stateContext/stateType/roleListState";
 import LoadingScreen from "../LoadingScreen";
 import { GameModeContext } from "../../components/gameModeSettings/GameModesEditor";
 import PhaseTimesSelector from "../../components/gameModeSettings/PhaseTimeSelector";

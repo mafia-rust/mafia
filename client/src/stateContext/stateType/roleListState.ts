@@ -1,4 +1,4 @@
-import translate from "../game/lang";
+import translate from "../../game/lang";
 import { Conclusion, translateWinCondition } from "./conclusionState";
 import { InsiderGroup } from "./otherState";
 import { Role, roleJsonData } from "./roleState";

@@ -1,4 +1,4 @@
-import translate from "../game/lang"
+import translate from "../../game/lang"
 
 export type WinCondition = {
     type: "gameConclusionReached"

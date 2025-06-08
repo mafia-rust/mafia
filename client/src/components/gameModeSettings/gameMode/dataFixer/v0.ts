@@ -1,6 +1,6 @@
 import { VersionConverter } from ".";
 import { GameMode, GameModeData, GameModeStorage, ShareableGameMode } from "..";
-import { getRolesComplement } from "../../../../stateContext/roleListState";
+import { getRolesComplement } from "../../../../stateContext/stateType/roleListState";
 import { Failure, ParseResult, ParseSuccess, Success, isFailure } from "../parse";
 import { parseDisabledRoles, parseName, parsePhaseTimes, parseRoleList } from "./initial";
 

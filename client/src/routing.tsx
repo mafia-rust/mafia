@@ -1,5 +1,5 @@
 import React from "react";
-import { ARTICLES, WikiArticleLink } from "./components/WikiArticleLink";
+import { ARTICLES, WikiArticleLink } from "./wiki/WikiArticleLink";
 import { deleteReconnectData, loadReconnectData } from "./game/localStorage";
 import GameModesEditor from "./components/gameModeSettings/GameModesEditor";
 import parseFromJson from "./components/gameModeSettings/gameMode/dataFixer";

@@ -3,7 +3,7 @@ import translate from "../../../game/lang";
 import "./graveyardMenu.css";
 import StyledText from "../../../components/StyledText";
 import { EnabledRolesDisplay } from "../../../components/gameModeSettings/EnabledRoleSelector";
-import { translateRoleOutline } from "../../../stateContext/roleListState";
+import { translateRoleOutline } from "../../../stateContext/stateType/roleListState";
 import { Button } from "../../../components/Button";
 import DetailsSummary from "../../../components/DetailsSummary";
 import { EnabledModifiersDisplay } from "../../../components/gameModeSettings/EnabledModifiersSelector";

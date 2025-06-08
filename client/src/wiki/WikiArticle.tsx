@@ -2,14 +2,14 @@ import { ReactElement, ReactNode, useContext, useEffect, useRef, useState } from
 import { Role, roleJsonData } from "../game/roleState.d";
 import React from "react";
 import translate, { langText, translateChecked } from "../game/lang";
-import StyledText, { DUMMY_NAMES_KEYWORD_DATA, DUMMY_NAMES_SENDER_KEYWORD_DATA, StyledTextProps } from "./StyledText";
-import { ROLE_SETS, getAllRoles, getRolesFromRoleSet } from "../stateContext/roleListState";
-import ChatElement, { ChatMessageVariant } from "./ChatMessage";
+import StyledText, { DUMMY_NAMES_KEYWORD_DATA, DUMMY_NAMES_SENDER_KEYWORD_DATA, StyledTextProps } from "../components/StyledText";
+import { ROLE_SETS, getAllRoles, getRolesFromRoleSet } from "../stateContext/stateType/roleListState";
+import ChatElement, { ChatMessageVariant } from "../components/ChatMessage";
 import DUMMY_NAMES from "../resources/dummyNames.json";
 import { ARTICLES, GeneratedArticle, getArticleTitle, WikiArticleLink, wikiPageIsEnabled } from "./WikiArticleLink";
 import "./wiki.css";
 import { replaceMentions } from "..";
-import DetailsSummary from "./DetailsSummary";
+import DetailsSummary from "../components/DetailsSummary";
 import { partitionWikiPages, WikiCategory } from "./Wiki";
 import { MODIFIERS, ModifierType } from "../game/gameState.d";
 import Masonry from "react-responsive-masonry";

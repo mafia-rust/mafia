@@ -1,5 +1,5 @@
 import { ModifierType, PhaseTimes } from "../../../game/gameState.d";
-import { RoleList } from "../../../stateContext/roleListState";
+import { RoleList } from "../../../stateContext/stateType/roleListState";
 import { Role } from "../../../game/roleState.d";
 
 

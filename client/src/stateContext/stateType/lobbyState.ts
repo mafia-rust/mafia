@@ -1,8 +1,8 @@
-import { ChatMessage } from "../components/ChatMessage"
+import { ChatMessage } from "../../components/ChatMessage"
 import { LobbyClientID, ModifierType, PhaseTimes } from "../game/gameState.d"
 import { RoleList } from "./roleListState"
 import { Role } from "../game/roleState.d"
-import ListMap from "../ListMap"
+import ListMap from "../../ListMap"
 
 export type LobbyState = {
     type: "lobby"

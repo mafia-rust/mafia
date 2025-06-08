@@ -4,7 +4,7 @@ import React from "react";
 import { PhaseType, PhaseTimes, Verdict, PlayerIndex } from "./gameState.d";
 import { GameManager, Server, StateListener } from "./gameManager.d";
 import { LobbyPreviewData, ToClientPacket, ToServerPacket } from "../packet";
-import { RoleOutline } from "../stateContext/roleListState";
+import { RoleOutline } from "../stateContext/stateType/roleListState";
 import translate from "./lang";
 import PlayMenu from "../menu/main/PlayMenu";
 import { createGameState, createLobbyState } from "./gameState";

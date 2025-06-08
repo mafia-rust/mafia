@@ -3,7 +3,7 @@ import { Button } from "../../components/Button";
 import Icon from "../../components/Icon";
 import StyledText from "../../components/StyledText";
 import { GameScreenMenuContext, GameScreenMenuType } from "./GameScreenMenuContext";
-import { WikiArticleLink } from "../../components/WikiArticleLink";
+import { WikiArticleLink } from "../../wiki/WikiArticleLink";
 import { GameStateContext } from "./GameStateContext";
 import { MobileContext } from "../MobileContext";
 import { AppContext } from "../AppContext";

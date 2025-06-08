@@ -1,9 +1,9 @@
-import ROLES from "./../resources/roles.json";
-import { ChatMessageVariant } from "../components/ChatMessage";
-import { AuditorResult } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
-import { Doomsayer } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
-import { Hypnotist } from "../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/HypnotistMenu";
-import { TwoRoleOptionSelection } from "../game/abilityInput";
+import ROLES from "../../resources/roles.json";
+import { ChatMessageVariant } from "../../components/ChatMessage";
+import { AuditorResult } from "../../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/AuditorMenu";
+import { Doomsayer } from "../../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/LargeDoomsayerMenu";
+import { Hypnotist } from "../../menu/game/gameScreenContent/AbilityMenu/RoleSpecificMenus/HypnotistMenu";
+import { TwoRoleOptionSelection } from "../../game/abilityInput";
 import { PlayerIndex } from "./otherState";
 import { RoleSet } from "./roleListState";
 
