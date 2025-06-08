@@ -16,8 +16,8 @@ import { GameScreenMenuType } from "../GameScreenMenuContext";
 import { GameModeContext } from "../../../components/gameModeSettings/GameModesEditor";
 
 export default function PlayerListMenu(): ReactElement {
-    const players = useContext(GameStateContext)!.players;
-    const graves = useContext(GameStateContext)!.graves;
+    const players = useContextGameState()!.players;
+    const graves = useContextGameState()!.graves;
 
 
     return <div className="player-list-menu player-list-menu-colors">
@@ -118,7 +118,7 @@ function PlayerCard(props: Readonly<{
 
     const grave = props.graveIndex === undefined?undefined:gameState.graves[props.graveIndex];
 
-    const spectator = useContext(GameStateContext)!.clientState.type === "spectator";
+    const spectator = useContextGameState()!.clientState.type === "spectator";
 
     return <><div 
         className={`player-card`}

@@ -108,7 +108,7 @@ export default function KiraSelectionMenu(props: Readonly<{
 }>): ReactElement {
 
     const myIndex = usePlayerState()!.myIndex;
-    const guessable = useContext(GameStateContext)!.players.filter((p)=>p.alive&&p.index!==myIndex).map((p)=>p.index);
+    const guessable = useContextGameState()!.players.filter((p)=>p.alive&&p.index!==myIndex).map((p)=>p.index);
     
     function sendSetKiraGuess(guesses: KiraSelection){
         props.onChange(guesses);

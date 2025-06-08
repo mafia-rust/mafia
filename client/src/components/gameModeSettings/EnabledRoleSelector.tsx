@@ -2,13 +2,13 @@ import React, { ReactElement, useCallback, useContext, useState } from "react"
 import translate from "../../game/lang"
 import StyledText from "../StyledText"
 import { ROLE_SETS, RoleOrRoleSet, getAllRoles, getRolesFromRoleOrRoleSet } from "../../stateContext/stateType/roleListState";
-import { Role, roleJsonData } from "../../game/roleState.d";
 import { RoleOrRoleSetSelector } from "./OutlineSelector";
 import "./disabledRoleSelector.css"
 import Icon from "../Icon";
 import { Button } from "../Button";
 import { GameModeContext } from "./GameModesEditor";
 import CheckBox from "../CheckBox";
+import { Role, roleJsonData } from "../../stateContext/stateType/roleState";
 
 
 

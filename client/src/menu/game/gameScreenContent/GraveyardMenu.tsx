@@ -28,11 +28,11 @@ export default function GraveyardMenu(): ReactElement {
 }
 
 function RoleListDisplay(): ReactElement {
-    const roleList = useContext(GameStateContext)!.roleList;
+    const roleList = useContextGameState()!.roleList;
     const playerState = usePlayerState();
     const crossedOutOutlines = playerState!==undefined?playerState.crossedOutOutlines:[];
 
-    const spectator = useContext(GameStateContext)!.clientState.type === "spectator";
+    const spectator = useContextGameState()!.clientState.type === "spectator";
     
     const websocketContext = useContext(WebsocketContext)!;
 
@@ -69,7 +69,7 @@ function RoleListDisplay(): ReactElement {
 }
 
 function EnabledRoles(): ReactElement {
-    const enabledRoles = useContext(GameStateContext)!.enabledRoles;
+    const enabledRoles = useContextGameState()!.enabledRoles;
 
     return <div className="graveyard-menu-excludedRoles">
         <DetailsSummary
@@ -81,7 +81,7 @@ function EnabledRoles(): ReactElement {
 }
 
 function EnabledModifiers(): ReactElement {
-    const enabledModifiers = useContext(GameStateContext)!.enabledModifiers;
+    const enabledModifiers = useContextGameState()!.enabledModifiers;
 
     return <div className="graveyard-menu-excludedRoles">
         <DetailsSummary

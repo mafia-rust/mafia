@@ -8,7 +8,7 @@ import GameScreenMenuTab from "../../GameScreenMenuTab";
 import { GameScreenMenuType } from "../../GameScreenMenuContext";
 
 export default function AbilityMenu(): ReactElement {
-    const IsSpectator = useContext(GameStateContext)!.clientState.type === "spectator";
+    const IsSpectator = useContextGameState()!.clientState.type === "spectator";
 
     return <div className="ability-menu role-specific-colors">
         <GameScreenMenuTab close={GameScreenMenuType.RoleSpecificMenu} helpMenu={"standard/abilityMenu"}>

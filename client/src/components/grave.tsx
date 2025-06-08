@@ -1,12 +1,12 @@
 
 import { replaceMentions } from "..";
-import { Grave, GraveInformation } from "../game/graveState";
 import translate from "../game/lang";
 import { sanitizePlayerMessage } from "./ChatMessage";
 import StyledText from "./StyledText";
-import React, { ReactElement, useContext, useMemo } from "react";
+import React, { ReactElement, useMemo } from "react";
 import "./grave.css";
-import { GameStateContext } from "../menu/game/GameStateContext";
+import { useContextGameState } from "../stateContext/useHooks";
+import { Grave, GraveInformation } from "../stateContext/stateType/grave";
 
 export function translateGraveRole(grave: Grave): string {
     if(grave.information.type === "obscured") {
@@ -21,7 +21,7 @@ export default function GraveComponent(props: Readonly<{
     playerNames?: string[]
     onClick?: () => void
 }>): ReactElement {
-    const gamePlayerNames = useContext(GameStateContext)!.players.map(player => player.toString());
+    const gamePlayerNames = useContextGameState()!.players.map(player => player.toString());
 
     const playerNames = props.playerNames ?? gamePlayerNames;
 

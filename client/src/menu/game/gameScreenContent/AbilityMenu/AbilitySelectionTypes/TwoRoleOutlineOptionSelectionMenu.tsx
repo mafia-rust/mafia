@@ -24,7 +24,7 @@ export default function TwoRoleOutlineOptionSelectionMenu(props: {
     previouslyGivenResults?: [number, AuditorResult][],
     onChoose: (chosenOutlines: TwoRoleOutlineOptionSelection)=>void
 }): ReactElement {
-    const roleList = useContext(GameStateContext)!.roleList;
+    const roleList = useContextGameState()!.roleList;
 
     const previouslyGivenResults = props.previouslyGivenResults ?? [];
     const chosenOutlines = props.selection ?? [null, null];

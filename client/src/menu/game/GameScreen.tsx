@@ -1,4 +1,4 @@
-import React, { ReactElement, useContext, useEffect, useState } from "react";
+import React, { ReactElement, useContext, useEffect } from "react";
 import HeaderMenu, { MenuButtons } from "./HeaderMenu";
 import { DEV_ENV } from "../..";
 import "../../index.css";
@@ -7,13 +7,11 @@ import { loadSettingsParsed } from "../../game/localStorage";
 import { GameScreenMenuContext, GameScreenMenuType, useGameScreenMenuContext } from "./GameScreenMenuContext";
 import GameScreenMenus from "./GameScreenMenus";
 import { MobileContext } from "../MobileContext";
-import { GameStateContext, useGameStateContext } from "./GameStateContext";
 import { TickContext, useTickContext } from "./TickContext";
 
 export default function GameScreen(props: {isSpectator: boolean}): ReactElement {
     const mobile = useContext(MobileContext)!;
     const { maxMenus, menuOrder } = loadSettingsParsed();
-    const gameState = useGameStateContext();
 
     let menusOpen: [GameScreenMenuType, boolean | undefined][];
     if(props.isSpectator){
@@ -53,7 +51,6 @@ export default function GameScreen(props: {isSpectator: boolean}): ReactElement 
     const tickContext = useTickContext();
 
     return <TickContext.Provider value={tickContext}>
-        <GameStateContext.Provider value={gameState}>
             <GameScreenMenuContext.Provider value={menuController}>
                 <div className="game-screen">
                     <div className="header">
@@ -63,6 +60,5 @@ export default function GameScreen(props: {isSpectator: boolean}): ReactElement 
                     {mobile && <MenuButtons/>}
                 </div>
             </GameScreenMenuContext.Provider>
-        </GameStateContext.Provider>
     </TickContext.Provider>
 }

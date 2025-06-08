@@ -13,8 +13,8 @@ import { WebsocketContext } from "../WebsocketContext";
 
 export default function HeaderMenu(): ReactElement {
     const mobile = useContext(MobileContext)!;
-    const phaseState = useContext(GameStateContext)!.phaseState;
-    const host = useContext(GameStateContext)!.host !== null;
+    const phaseState = useContextGameState()!.phaseState;
+    const host = useContextGameState()!.host !== null;
 
     const backgroundStyle = 
         phaseState.type === "briefing" ? "background-none" :
@@ -22,7 +22,7 @@ export default function HeaderMenu(): ReactElement {
         "background-day";
 
 
-    const spectator = useContext(GameStateContext)!.clientState.type === "spectator";
+    const spectator = useContextGameState()!.clientState.type === "spectator";
 
 
     return <div className={"header-menu " + backgroundStyle}>
@@ -34,10 +34,10 @@ export default function HeaderMenu(): ReactElement {
 }
 
 function Timer(): ReactElement {
-    let timeLeftMs = useContext(GameStateContext)!.timeLeftMs;
+    let timeLeftMs = useContextGameState()!.timeLeftMs;
     if(timeLeftMs===null){timeLeftMs = 0};
-    const phaseTimes = useContext(GameStateContext)!.phaseTimes;
-    const phaseType = useContext(GameStateContext)!.phaseState.type;
+    const phaseTimes = useContextGameState()!.phaseTimes;
+    const phaseType = useContextGameState()!.phaseState.type;
 
     let phaseLength = 0
     if (phaseType !== "recess"){
@@ -57,11 +57,11 @@ function Timer(): ReactElement {
 }
 
 function Information(): ReactElement {
-    const dayNumber = useContext(GameStateContext)!.dayNumber;
-    let timeLeftMs = useContext(GameStateContext)!.timeLeftMs;
+    const dayNumber = useContextGameState()!.dayNumber;
+    let timeLeftMs = useContextGameState()!.timeLeftMs;
     if(timeLeftMs===null){timeLeftMs = 0};
-    const phaseState = useContext(GameStateContext)!.phaseState;
-    const players = useContext(GameStateContext)!.players;
+    const phaseState = useContextGameState()!.phaseState;
+    const players = useContextGameState()!.players;
 
     const playerState = usePlayerState();
 
@@ -88,7 +88,7 @@ function Information(): ReactElement {
         }
     }, [dayNumber, phaseState.type])
 
-    const spectator = useContext(GameStateContext)!.clientState.type === "spectator";
+    const spectator = useContextGameState()!.clientState.type === "spectator";
     
 
     return <div className="information"> 
@@ -113,8 +113,8 @@ export function PhaseSpecificInformation(props: Readonly<{
     players: Player[],
     myIndex?: number
 }>): ReactElement | null {
-    const enabledModifiers = useContext(GameStateContext)!.enabledModifiers;
-    const spectator = useContext(GameStateContext)!.clientState.type === "spectator";
+    const enabledModifiers = useContextGameState()!.enabledModifiers;
+    const spectator = useContextGameState()!.clientState.type === "spectator";
 
     if (
         props.phaseState.type === "testimony"
@@ -197,7 +197,7 @@ export function MenuButtons(): ReactElement | null {
 }
 
 export function FastForwardButton(props: { spectatorAndHost: boolean }): ReactElement {
-    const fastForward = useContext(GameStateContext)!.fastForward;
+    const fastForward = useContextGameState()!.fastForward;
     const websocketContext = useContext(WebsocketContext)!;
 
     return <Button 

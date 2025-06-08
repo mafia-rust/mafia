@@ -74,7 +74,7 @@ export function ChatMessageSection(props: Readonly<{
     const gameState = useContextGameState()!;
     const lobbyState = useContextGameState()!;
 
-    const players = useContext(GameStateContext)!.players;
+    const players = useContextGameState()!.players;
     const filter = useMemo(() => props.filter ?? null, [props.filter]);
 
     let messages = undefined;

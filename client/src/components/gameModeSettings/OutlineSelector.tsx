@@ -2,16 +2,17 @@ import React, { ReactElement, useCallback, useContext, useMemo, useRef, useState
 import "./outlineSelector.css";
 import translate from "../../game/lang";
 import { getAllRoles, getRolesFromRoleSet, ROLE_SETS, RoleList, RoleOrRoleSet, RoleOutline, simplifyRoleOutline, translateRoleOutline, translateRoleOrRoleSet} from "../../stateContext/stateType/roleListState";
-import { Role } from "../../game/roleState.d";
 import Icon from "../Icon";
 import { DragAndDrop } from "../DragAndDrop";
 import { GameModeContext } from "./GameModesEditor";
 import Select, { dropdownPlacementFunction, SelectOptionsSearch } from "../Select";
 import StyledText from "../StyledText";
 import { Button, RawButton } from "../Button";
-import { Conclusion, CONCLUSIONS, INSIDER_GROUPS, InsiderGroup, translateConclusion, translateWinCondition } from "../../game/gameState.d";
 import Popover from "../Popover";
-import { useLobbyOrGameState } from "../../menu/lobby/LobbyContext";
+import { Conclusion, CONCLUSIONS, translateConclusion, translateWinCondition } from "../../stateContext/stateType/conclusionState";
+import { INSIDER_GROUPS, InsiderGroup } from "../../stateContext/stateType/otherState";
+import { useLobbyOrGameState } from "../../stateContext/useHooks";
+import { Role } from "../../stateContext/stateType/roleState";
 
 type RoleOutlineSelectorProps = {
     roleOutline: RoleOutline,

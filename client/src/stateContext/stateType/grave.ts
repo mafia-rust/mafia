@@ -1,3 +1,8 @@
+import translate from "../../game/lang"
+import { PlayerIndex } from "./otherState"
+import { RoleSet } from "./roleListState"
+import { Role } from "./roleState"
+
 export type Grave = {
     player: PlayerIndex,
     diedPhase: GravePhase,
@@ -14,6 +19,14 @@ export type GraveInformation ={
     will: string,
     deathCause: GraveDeathCause,
     deathNotes: string[],
+}
+export function translateGraveRole(graveInformation: GraveInformation): string{
+    switch (graveInformation.type) {
+        case "obscured":
+            return translate("obscured");
+        case "normal":
+            return translate("role."+graveInformation.role+".name");
+    }
 }
 
 export type GraveDeathCause = {

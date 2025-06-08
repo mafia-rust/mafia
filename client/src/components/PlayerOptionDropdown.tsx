@@ -14,7 +14,7 @@ export default function PlayerOptionDropdown(props: {
     choosablePlayers?: PlayerIndex[],
     canChooseNone?: boolean
 }): ReactElement {
-    const players = useContext(GameStateContext)!
+    const players = useContextGameState()!
         .players
         .map(player => [player.index, player.toString()] as [PlayerIndex, string]);
 

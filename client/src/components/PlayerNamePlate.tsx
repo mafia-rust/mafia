@@ -3,7 +3,7 @@ import { ReactElement } from "react"
 import translate from "../game/lang"
 import StyledText, { KeywordDataMap, PLAYER_KEYWORD_DATA } from "./StyledText"
 import "./playerNamePlate.css"
-import { GameStateContext, usePlayerState } from "../menu/game/GameStateContext"
+import { useContextGameState, usePlayerState } from "../stateContext/useHooks"
 
 export default function PlayerNamePlate(props: Readonly<{
     playerIndex: number,    //guarantee this index is valid please

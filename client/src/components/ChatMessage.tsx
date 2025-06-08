@@ -3,11 +3,8 @@ import React, { ReactElement, useContext } from "react";
 import { find, replaceMentions } from "..";
 import StyledText, { KeywordDataMap, PLAYER_SENDER_KEYWORD_DATA } from "./StyledText";
 import "./chatMessage.css"
-import { ChatGroup, Conclusion, DefensePower, PhaseState, PlayerIndex, Tag, translateConclusion, translateWinCondition, Verdict, WinCondition } from "../game/gameState.d";
-import { Role } from "../game/roleState.d";
-import { Grave } from "../game/graveState";
 import DOMPurify from "dompurify";
-import GraveComponent from "./grave";
+import GraveComponent, { translateGraveRole } from "./grave";
 import { RoleList, RoleOutline, translateRoleOutline } from "../stateContext/stateType/roleListState";
 import { CopyButton } from "./ClipboardButtons";
 import { KiraResult, KiraResultDisplay } from "../menu/game/gameScreenContent/AbilityMenu/AbilitySelectionTypes/KiraSelectionMenu";
@@ -16,9 +13,14 @@ import { ControllerID, AbilitySelection, translateControllerID, controllerIdToLi
 import DetailsSummary from "./DetailsSummary";
 import ListMap from "../ListMap";
 import { Button } from "./Button";
-import { GameStateContext, usePlayerNames, usePlayerState } from "../menu/game/GameStateContext";
-import { useLobbyOrGameState } from "../menu/lobby/LobbyContext";
 import { WebsocketContext } from "../menu/WebsocketContext";
+import { useContextGameState, useLobbyOrGameState, usePlayerNames, usePlayerState } from "../stateContext/useHooks";
+import { ChatGroup, DefensePower, PlayerIndex, Verdict } from "../stateContext/stateType/otherState";
+import { Role } from "../stateContext/stateType/roleState";
+import { Conclusion, translateConclusion, translateWinCondition, WinCondition } from "../stateContext/stateType/conclusionState";
+import { Grave } from "../stateContext/stateType/grave";
+import { Tag } from "../stateContext/stateType/tagState";
+import { PhaseState } from "../stateContext/stateType/phaseState";
 
 const ChatElement = React.memo((
     props: {
@@ -32,7 +34,7 @@ const ChatElement = React.memo((
     const playerState = usePlayerState();
     const myIndex = playerState?.myIndex;
 
-    const defaultPlayersNames = usePlayerNames(useLobbyOrGameState())!;
+    const defaultPlayersNames = usePlayerNames()!;
     let playerNames = props.playerNames ?? defaultPlayersNames;
     
     
@@ -54,7 +56,7 @@ const ChatElement = React.memo((
         forwardMessageController!==null&&
         !forwardMessageController.availableAbilityData.grayedOut
     
-    const roleList = useContext(GameStateContext)!.roleList;
+    const roleList = useContextGameState()!.roleList;
 
     const [mouseHovering, setMouseHovering] = React.useState(false); 
 
@@ -208,17 +210,9 @@ function PlayerDiedChatMessage(props: Readonly<{
     playerNames: string[],
     message: ChatMessage & { variant: { type: "playerDied" } }
 }>): ReactElement {
-    let graveRoleString: string;
-    switch (props.message.variant.grave.information.type) {
-        case "obscured":
-            graveRoleString = translate("obscured");
-            break;
-        case "normal":
-            graveRoleString = translate("role."+props.message.variant.grave.information.role+".name");
-            break;
-    }
+    let graveRoleString = translateGraveRole(props.message.variant.grave.information);
 
-    const spectator = useContext(GameStateContext)!.clientState.type === "spectator";
+    const spectator = useContextGameState()!.clientState.type === "spectator";
 
     return <div className={"chat-message-div"}>
         <DetailsSummary

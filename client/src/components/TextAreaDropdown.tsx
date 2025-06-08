@@ -7,8 +7,8 @@ import Icon from "./Icon";
 import translate from "../game/lang";
 import "./textAreaDropdown.css";
 import DetailsSummary from "./DetailsSummary";
-import { usePlayerNames } from "../menu/game/GameStateContext";
 import { WebsocketContext } from "../menu/WebsocketContext";
+import { usePlayerNames } from "../stateContext/useHooks";
 
 export function TextDropdownArea(props: Readonly<{
     titleString: string,

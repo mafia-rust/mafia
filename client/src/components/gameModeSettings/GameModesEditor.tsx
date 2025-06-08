@@ -5,14 +5,14 @@ import { getAllRoles, RoleList, RoleOutline } from "../../stateContext/stateType
 import translate from "../../game/lang";
 import "./gameModesEditor.css";
 import PhaseTimesSelector from "./PhaseTimeSelector";
-import { ModifierType, PhaseTimes } from "../../game/gameState.d";
 import EnabledRoleSelector from "./EnabledRoleSelector";
-import { Role } from "../../game/roleState.d";
 import "./selectorSection.css";
 import { GameModeSelector } from "./GameModeSelector";
 import { ShareableGameMode } from "./gameMode";
 import { EnabledModifiersSelector } from "./EnabledModifiersSelector";
-import { defaultPhaseTimes } from "../../game/localStorage";
+import { defaultPhaseTimes, PhaseTimes } from "../../stateContext/stateType/otherState";
+import { ModifierType } from "../../stateContext/stateType/modifiersState";
+import { Role } from "../../stateContext/stateType/roleState";
 
 const GameModeContext = createContext({
     roleList: [] as RoleList,
