@@ -16,14 +16,14 @@ export function useLobbyOrGameState<T = GameState|LobbyState>(
 }
 export function useContextLobbyState(): State & {type: "lobby"} | undefined{
     const stateCtx = useContext(StateContext)!;
-    if(stateCtx.type==="lobby"){
+    if(stateCtx.state.type==="lobby"){
         return stateCtx;
     }
     return undefined;
 }
 export function useContextGameState(): State & {type: "game"} | undefined{
     const stateCtx = useContext(StateContext)!;
-    if(stateCtx.type==="game"){
+    if(stateCtx.state.type==="game"){
         return stateCtx;
     }
     return undefined;

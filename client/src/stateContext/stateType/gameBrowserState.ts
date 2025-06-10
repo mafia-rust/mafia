@@ -16,3 +16,11 @@ export type LobbyPreviewData = {
     inGame : boolean,
     players: [LobbyClientID, string][]
 }
+
+export function createGameBrowserState(): GameBrowserState{
+    return {
+        type: "gameBrowser",
+        selectedRoomCode: null,
+        lobbies: new Map<number, LobbyPreviewData>(),
+    }
+}

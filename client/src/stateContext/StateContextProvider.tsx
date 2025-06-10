@@ -22,5 +22,3 @@ function StateContextProvider(props: Readonly<{
         {props.children}
     </StateContext.Provider>
 }
-
-

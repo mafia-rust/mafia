@@ -1,8 +1,9 @@
 import { ChatMessage } from "../../components/ChatMessage"
-import { LobbyClientID, ModifierType, PhaseTimes } from "../game/gameState.d"
 import { RoleList } from "./roleListState"
-import { Role } from "../game/roleState.d"
 import ListMap from "../../ListMap"
+import { ClientConnection, defaultPhaseTimes, LobbyClientID, LobbyClientType, PhaseTimes } from "./otherState"
+import { ModifierType } from "./modifiersState"
+import { Role } from "./roleState"
 
 export type LobbyState = {
     type: "lobby"
@@ -19,7 +20,7 @@ export type LobbyState = {
     players: ListMap<LobbyClientID, LobbyClient>,
     chatMessages: ChatMessage[],
 }
-function createLobbyState(roomCode: number, myId: number): LobbyState {
+export function createLobbyState(roomCode: number, myId: number): LobbyState {
     return {
         type: "lobby",
         roomCode,

@@ -48,7 +48,7 @@ export type GameState = {
     setPrependWhisperFunction: (f: ((index: PlayerIndex) => void)) => void,
     prependWhisper: (index: PlayerIndex) => void
 }
-export function createGameState(): GameState {
+export function createGameState(spectator: boolean): GameState {
     const gameState: GameState = {
         type: "game",
         roomCode: 0,
@@ -75,7 +75,7 @@ export function createGameState(): GameState {
 
         ticking: true,
 
-        clientState: createPlayerGameState(),
+        clientState: spectator?{type: "spectator"}:createPlayerGameState(),
         host: null,
 
         missedChatMessages: false,
