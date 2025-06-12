@@ -1,13 +1,12 @@
 import { ReactElement, useContext } from "react";
-import { RoleState } from "../../../../../game/roleState.d";
 import CheckBox from "../../../../../components/CheckBox";
 import ChatElement from "../../../../../components/ChatMessage";
 import StyledText from "../../../../../components/StyledText";
 import React from "react";
 import translate from "../../../../../game/lang";
-// import GAME_MANAGER from "../../../../..";
 import "./largeHypnotistMenu.css"
 import { WebsocketContext } from "../../../../WebsocketContext";
+import { RoleState } from "../../../../../stateContext/stateType/roleState";
 
 export type Hypnotist = {
     roleblock: boolean,
@@ -20,7 +19,9 @@ export type Hypnotist = {
     youWereWardblockedMessage: boolean
 }
 
-export default function HypnotistMenu(props: {roleState: RoleState & {type: "hypnotist"}}): ReactElement{
+export default function HypnotistMenu(props: {
+    roleState: RoleState & {type: "hypnotist"}
+}): ReactElement{
     
     const {
         sendSetConsortOptions

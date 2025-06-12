@@ -29,14 +29,14 @@ import DetailsSummary from "../../../../components/DetailsSummary";
 import translate from "../../../../game/lang";
 import StringSelectionMenu from "./AbilitySelectionTypes/StringSelectionMenu";
 import ListMap from "../../../../ListMap";
-import { Role } from "../../../../game/roleState.d";
-import { PlayerIndex } from "../../../../game/gameState.d";
 import Icon from "../../../../components/Icon";
 import PlayerListSelectionMenu from "./AbilitySelectionTypes/PlayerListSelectionMenu";
 import IntegerSelectionMenu from "./AbilitySelectionTypes/IntegerSelectionMenu";
 import BooleanSelectionMenu from "./AbilitySelectionTypes/BooleanSelectionMenu";
-import { usePlayerState } from "../../GameStateContext";
 import { WebsocketContext } from "../../../WebsocketContext";
+import { PlayerIndex } from "../../../../stateContext/stateType/otherState";
+import { Role } from "../../../../stateContext/stateType/roleState";
+import { usePlayerState } from "../../../../stateContext/useHooks";
 
 type GroupName = `${PlayerIndex}/${Role}` | "syndicateGunItem" | "backup" | ControllerID["type"];
 

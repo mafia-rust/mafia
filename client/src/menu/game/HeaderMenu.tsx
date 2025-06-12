@@ -1,14 +1,16 @@
 import React, { ReactElement, useContext, useMemo } from "react";
 import translate from "../../game/lang";
-import { PhaseState, Verdict } from "../../game/gameState.d";
 import "./headerMenu.css";
 import StyledText from "../../components/StyledText";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
 import { GameScreenMenuContext, GameScreenMenuType, MENU_CSS_THEMES, MENU_TRANSLATION_KEYS } from "./GameScreenMenuContext";
-import { GameStateContext, Player, usePlayerState } from "./GameStateContext";
 import { MobileContext } from "../MobileContext";
 import { WebsocketContext } from "../WebsocketContext";
+import { useContextGameState, usePlayerState } from "../../stateContext/useHooks";
+import { PhaseState } from "../../stateContext/stateType/phaseState";
+import { Player } from "../../stateContext/stateType/gameState";
+import { Verdict } from "../../stateContext/stateType/otherState";
 
 
 export default function HeaderMenu(): ReactElement {

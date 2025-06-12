@@ -19,10 +19,9 @@ import LobbyNamePane from "./LobbyNamePane";
 import { MobileContext } from "../MobileContext";
 import { WebsocketContext } from "../WebsocketContext";
 import { AppContext } from "../AppContext";
-import { StateContext, useContextLobbyState } from "../../stateContext/StateContext";
+import { useContextLobbyState } from "../../stateContext/useHooks";
 
 export default function LobbyMenu(props: Readonly<{}>): ReactElement {
-    const stateCtx = useContext(StateContext)!;
     const websocketContext = useContext(WebsocketContext)!;
     const [loading, setLoading] = useState<boolean>(true);
 

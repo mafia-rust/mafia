@@ -3,10 +3,10 @@ import "./wikiMenu.css"
 import translate from "../../../game/lang";
 import Wiki from "../../../wiki/Wiki";
 import { getAllRoles } from "../../../stateContext/stateType/roleListState";
-import { MODIFIERS, ModifierType } from "../../../game/gameState.d";
 import { GameScreenMenuType } from "../GameScreenMenuContext";
 import GameScreenMenuTab from "../GameScreenMenuTab";
-import { useLobbyOrGameState } from "../../lobby/LobbyContext";
+import { useLobbyOrGameState } from "../../../stateContext/useHooks";
+import { MODIFIERS, ModifierType } from "../../../stateContext/stateType/modifiersState";
 
 export default function WikiMenu(): ReactElement {
     const enabledRoles = useLobbyOrGameState(state => state.enabledRoles)??getAllRoles();

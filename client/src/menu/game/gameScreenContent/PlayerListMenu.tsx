@@ -2,7 +2,6 @@ import React, { ReactElement, useContext } from "react";
 import translate from "../../../game/lang";
 import "./playerListMenu.css"
 import "./../gameScreen.css"
-import { PlayerIndex } from "../../../game/gameState.d";
 import StyledText from "../../../components/StyledText";
 import Icon from "../../../components/Icon";
 import { Button } from "../../../components/Button";
@@ -10,10 +9,10 @@ import PlayerNamePlate from "../../../components/PlayerNamePlate";
 import ChatMessage, { translateChatMessage } from "../../../components/ChatMessage";
 import GraveComponent, { translateGraveRole } from "../../../components/grave";
 import { ChatMessageSection, ChatTextInput } from "./ChatMenu";
-import { GameStateContext, useGameStateContext, usePlayerNames, usePlayerState } from "../GameStateContext";
 import GameScreenMenuTab from "../GameScreenMenuTab";
 import { GameScreenMenuType } from "../GameScreenMenuContext";
-import { GameModeContext } from "../../../components/gameModeSettings/GameModesEditor";
+import { useContextGameState, usePlayerNames, usePlayerState } from "../../../stateContext/useHooks";
+import { PlayerIndex } from "../../../stateContext/stateType/otherState";
 
 export default function PlayerListMenu(): ReactElement {
     const players = useContextGameState()!.players;
@@ -86,7 +85,7 @@ function PlayerCard(props: Readonly<{
             !whisperChatOpen;
     }
 
-    const playerNames = usePlayerNames(gameState) as string[];
+    const playerNames = usePlayerNames()!;
 
     type NonAnonymousBlockMessage = {
         variant: {
@@ -142,7 +141,7 @@ function PlayerCard(props: Readonly<{
         {grave !== undefined ? 
             <Button onClick={()=>setGraveOpen(!graveOpen)}>
                 <StyledText noLinks={true}>
-                    {translateGraveRole(grave)} {translate(grave.diedPhase+".icon")}{grave.dayNumber.toString()}
+                    {translateGraveRole(grave.information)} {translate(grave.diedPhase+".icon")}{grave.dayNumber.toString()}
                 </StyledText>
             </Button>
         : null}

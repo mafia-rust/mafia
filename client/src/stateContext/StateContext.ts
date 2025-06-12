@@ -1,10 +1,11 @@
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { State } from "./state";
 import { createGameState } from "./stateType/gameState";
 import { createLobbyState } from "./stateType/lobbyState";
-import { createGameBrowserState } from "./stateType/gameBrowserState";
+import { createGameBrowserState, LobbyPreviewData } from "./stateType/gameBrowserState";
 import AudioController from "../menu/AudioController";
 import ListMap from "../ListMap";
+import { WebsocketContext } from "../menu/WebsocketContext";
 
 export type StateContext = {
     state: State,
@@ -17,6 +18,8 @@ export type StateContext = {
 
 export const StateContext = createContext<StateContext | undefined>(undefined);
 export function useStateContext(): StateContext {
+    const websocketCtx = useContext(WebsocketContext)!;
+
     const [state, setState] = useState<State>({type: "disconnected" as const});
     
     let setDisconnected = ()=>{setState({type: "disconnected" as const})};
@@ -24,16 +27,7 @@ export function useStateContext(): StateContext {
         AudioController.clearQueue();
         AudioController.pauseQueue();
         
-        if (!GAME_MANAGER.server.ws?.OPEN && !await GAME_MANAGER.server.open()) {
-            await this.setDisconnectedState();
-            return false;
-        }
-
-        GAME_MANAGER.state = {
-            type: "outsideLobby",
-            selectedRoomCode: null,
-            lobbies: new Map<number, LobbyPreviewData>()
-        };
+        websocketCtx.open();
 
         return createGameBrowserState();
     };

@@ -8,11 +8,11 @@ import "./grave.css";
 import { useContextGameState } from "../stateContext/useHooks";
 import { Grave, GraveInformation } from "../stateContext/stateType/grave";
 
-export function translateGraveRole(grave: Grave): string {
-    if(grave.information.type === "obscured") {
+export function translateGraveRole(graveInformation: GraveInformation): string {
+    if(graveInformation.type === "obscured") {
         return translate("obscured");
     }else{
-        return translate(`role.${grave.information.role}.name`);
+        return translate(`role.${graveInformation.role}.name`);
     }
 }
 

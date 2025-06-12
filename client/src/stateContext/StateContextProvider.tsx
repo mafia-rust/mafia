@@ -5,7 +5,7 @@ import React, { ReactElement, useContext } from "react";
 import onWebsocketMessage from "./onWebsocketMessage";
 import { ToClientPacket } from "../packet";
 
-function StateContextProvider(props: Readonly<{
+export default function StateContextProvider(props: Readonly<{
     children: React.ReactNode
 }>): ReactElement{
     const appCtx = useContext(AppContext)!;

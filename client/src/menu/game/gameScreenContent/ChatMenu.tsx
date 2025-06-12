@@ -2,7 +2,6 @@ import React, { ReactElement, useCallback, useContext, useEffect, useMemo, useRe
 import translate from "../../../game/lang";
 import "../gameScreen.css";
 import "./chatMenu.css"
-import { PlayerClientType, PlayerIndex } from "../../../game/gameState.d";
 import ChatElement, { translateChatMessage } from "../../../components/ChatMessage";
 import { HistoryPoller, HistoryQueue } from "../../../history";
 import { Button } from "../../../components/Button";
@@ -10,10 +9,10 @@ import Icon from "../../../components/Icon";
 import StyledText, { KeywordDataMap, PLAYER_KEYWORD_DATA, PLAYER_SENDER_KEYWORD_DATA } from "../../../components/StyledText";
 import { Virtuoso } from 'react-virtuoso';
 import GameScreenMenuTab from "../GameScreenMenuTab";
-import { GameStateContext, usePlayerNames, usePlayerState } from "../GameStateContext";
-import { LobbyStateContext, useLobbyOrGameState } from "../../lobby/LobbyContext";
 import { GameScreenMenuType } from "../GameScreenMenuContext";
 import { WebsocketContext } from "../../WebsocketContext";
+import { useContextGameState, useContextLobbyState, useLobbyOrGameState, usePlayerNames, usePlayerState } from "../../../stateContext/useHooks";
+import { PlayerClientType, PlayerIndex } from "../../../stateContext/stateType/otherState";
 
 
 export default function ChatMenu(): ReactElement {

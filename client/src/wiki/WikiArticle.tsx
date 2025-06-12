@@ -12,7 +12,6 @@ import DetailsSummary from "../components/DetailsSummary";
 import { partitionWikiPages, WikiCategory } from "./Wiki";
 import Masonry from "react-responsive-masonry";
 import { AppContext } from "../menu/AppContext";
-import { State } from "../stateContext/state";
 import { GameState } from "../stateContext/stateType/gameState";
 import { LobbyState } from "../stateContext/stateType/lobbyState";
 import { Role, roleJsonData } from "../stateContext/stateType/roleState";

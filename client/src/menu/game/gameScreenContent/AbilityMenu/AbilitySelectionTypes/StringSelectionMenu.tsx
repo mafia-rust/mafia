@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 import React from "react";
 import { TextDropdownArea } from "../../../../../components/TextAreaDropdown";
 import { ControllerID, translateControllerID } from "../../../../../game/abilityInput";
-import { usePlayerState } from "../../../GameStateContext";
+import { usePlayerState } from "../../../../../stateContext/useHooks";
 
 export default function StringSelectionMenu(props: Readonly<{
     id?: ControllerID

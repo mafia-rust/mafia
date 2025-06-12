@@ -1,11 +1,11 @@
-import React, { ReactElement, useContext } from "react";
+import React, { ReactElement } from "react";
 import translate from "../../../../game/lang";
 import GenericAbilityMenu from "./GenericAbilityMenu";
 import "./abilityMenu.css";
 import RoleSpecificSection from "./RoleSpecific";
-import { GameStateContext } from "../../GameStateContext";
 import GameScreenMenuTab from "../../GameScreenMenuTab";
 import { GameScreenMenuType } from "../../GameScreenMenuContext";
+import { useContextGameState } from "../../../../stateContext/useHooks";
 
 export default function AbilityMenu(): ReactElement {
     const IsSpectator = useContextGameState()!.clientState.type === "spectator";

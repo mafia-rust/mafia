@@ -1,13 +1,13 @@
-import { ReactElement, useContext } from "react"
+import { ReactElement } from "react"
 import React from "react"
 import "./twoRoleOutlineOptionSelectionMenu.css"
-import { Role } from "../../../../../game/roleState.d"
 import { RoleList, translateRoleOutline } from "../../../../../stateContext/stateType/roleListState"
 import StyledText from "../../../../../components/StyledText"
 import translate from "../../../../../game/lang"
 import { Button } from "../../../../../components/Button"
 import { AvailableTwoRoleOutlineOptionSelection, TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput"
-import { GameStateContext } from "../../../GameStateContext"
+import { useContextGameState } from "../../../../../stateContext/useHooks"
+import { Role } from "../../../../../stateContext/stateType/roleState"
 
 export type AuditorResult = Role[];
 type AuditorButtons = ({

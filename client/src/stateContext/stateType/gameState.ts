@@ -17,7 +17,7 @@ export type GameState = {
     
     initialized: boolean,
 
-    myId: number | null,
+    myId: number,
 
     chatMessages : ChatMessage[],
     graves: Grave[],
@@ -56,7 +56,7 @@ export function createGameState(spectator: boolean): GameState {
 
         initialized: false,
 
-        myId: null,
+        myId: -1,
 
         chatMessages : [],
         graves: [],
@@ -80,8 +80,16 @@ export function createGameState(spectator: boolean): GameState {
 
         missedChatMessages: false,
 
-        updateChatFilter: _ => {},
-        setPrependWhisperFunction: _ => {},
+        updateChatFilter: (filter: number | null) => {
+            if(gameState.clientState.type === "player"){
+                gameState.clientState.chatFilter = filter===null?null:{
+                    type: "playerNameInMessage",
+                    player: filter
+                };
+            }},
+        setPrependWhisperFunction: (f) => {
+            gameState.prependWhisper = f;
+        },
         prependWhisper: _ => {}
     }
 

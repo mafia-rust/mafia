@@ -1,11 +1,11 @@
 import { ReactElement, useContext } from "react"
 import React from "react"
-import { Role, RoleState } from "../../../../../game/roleState.d"
 import TwoRoleOutlineOptionSelectionMenu from "../AbilitySelectionTypes/TwoRoleOutlineOptionSelectionMenu"
 import { controllerIdToLink, TwoRoleOutlineOptionSelection } from "../../../../../game/abilityInput"
 import ListMap from "../../../../../ListMap"
-import { usePlayerState } from "../../../GameStateContext"
 import { WebsocketContext } from "../../../../WebsocketContext"
+import { usePlayerState } from "../../../../../stateContext/useHooks"
+import { Role, RoleState } from "../../../../../stateContext/stateType/roleState"
 
 export type AuditorResult = Role[];
 

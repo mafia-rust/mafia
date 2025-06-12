@@ -1,12 +1,12 @@
-import React, { ReactElement, useContext, useEffect, useState } from "react"
+import React, { ReactElement } from "react"
 import "./kiraSelectionMenu.css";
 import translate, { translateChecked } from "../../../../../game/lang";
 import StyledText, { KeywordDataMap } from "../../../../../components/StyledText";
 import Select, { SelectOptionsSearch } from "../../../../../components/Select";
-import { PlayerIndex } from "../../../../../game/gameState.d";
 import ListMap, { ListMapData } from "../../../../../ListMap";
 import { AvailableKiraSelection } from "../../../../../game/abilityInput";
-import { GameStateContext, usePlayerState } from "../../../GameStateContext";
+import { PlayerIndex } from "../../../../../stateContext/stateType/otherState";
+import { useContextGameState, usePlayerState } from "../../../../../stateContext/useHooks";
 
 export const KIRA_GUESSES = [
     "none",

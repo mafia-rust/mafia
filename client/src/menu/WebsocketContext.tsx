@@ -111,6 +111,10 @@ export default function WebSocketContextProvider(props: Readonly<{ children: Rea
         lastMessageRecieved,
 
         open: () => {
+            // if(webSocket.current?.OPEN === 1){
+            //     return
+            // }
+
             let address = process.env.REACT_APP_WS_ADDRESS;
             if(!address){
                 throw new Error("Missing env var REACT_APP_WS_ADDRESS, make sure you defined it in .env");
@@ -211,8 +215,8 @@ export default function WebSocketContextProvider(props: Readonly<{ children: Rea
 
             const websocketListener = (ev: Event | CloseEvent) => {
                 completePromise(ev.type as "close" | "error");
-                websocketContext.webSocket.current!.removeEventListener("close", websocketListener);
-                websocketContext.webSocket.current!.removeEventListener("error", websocketListener);
+                websocketContext.webSocket.current?.removeEventListener("close", websocketListener);
+                websocketContext.webSocket.current?.removeEventListener("error", websocketListener);
             };
             websocketContext.webSocket.current?.addEventListener("close", websocketListener);
             websocketContext.webSocket.current?.addEventListener("error", websocketListener);

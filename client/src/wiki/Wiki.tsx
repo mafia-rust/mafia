@@ -19,17 +19,17 @@ import { useLobbyOrGameState } from "../stateContext/useHooks";
 
 export function setWikiSearchPage(page: WikiArticleLink, anchorController: AppContextType, menuController?: GameScreenMenuContext) {
     // TODO 
-    if (GAME_MANAGER.wikiArticleCallbacks.length === 0) {
-        if (menuController?.menuIsAvailable(GameScreenMenuType.WikiMenu)) {
-            menuController.openMenu(GameScreenMenuType.WikiMenu, () => {
-                GAME_MANAGER.setWikiArticle(page);
-            });
-        } else {
-            anchorController.setCoverCard(<WikiCoverCard initialWikiPage={page}/>)
-        }
-    } else {
-        GAME_MANAGER.setWikiArticle(page);
-    }
+    // if (GAME_MANAGER.wikiArticleCallbacks.length === 0) {
+    //     if (menuController?.menuIsAvailable(GameScreenMenuType.WikiMenu)) {
+    //         menuController.openMenu(GameScreenMenuType.WikiMenu, () => {
+    //             GAME_MANAGER.setWikiArticle(page);
+    //         });
+    //     } else {
+    //         anchorController.setCoverCard(<WikiCoverCard initialWikiPage={page}/>)
+    //     }
+    // } else {
+    //     GAME_MANAGER.setWikiArticle(page);
+    // }
 }
 
 

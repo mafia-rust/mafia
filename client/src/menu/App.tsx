@@ -17,6 +17,7 @@ import AppContextProvider, { AppContext, AppContextType } from "./AppContext";
 import MobileContextProvider from "./MobileContext";
 import WebsocketContextProvider, { WebsocketContext, WebSocketContextType } from "./WebsocketContext";
 import { ToClientPacket } from "../packet";
+import StateContextProvider from "../stateContext/StateContextProvider";
 
 export default function App(props: Readonly<{
     onMount: (appContext: AppContextType, websocketContext: WebSocketContextType) => void,
@@ -24,7 +25,9 @@ export default function App(props: Readonly<{
     return <MobileContextProvider>
         <WebsocketContextProvider>
             <AppContextProvider>
-                <AppInner {...props}/>
+                <StateContextProvider>
+                    <AppInner {...props}/>
+                </StateContextProvider>
             </AppContextProvider>
         </WebsocketContextProvider>
     </MobileContextProvider>
@@ -191,7 +194,7 @@ export function chatMessageToAudio(msg: ChatMessage): AudioFilePath | null {
     }
 }
 
-function sendDefaultName(websocketContext: WebSocketContextType) {
+export function sendDefaultName(websocketContext: WebSocketContextType) {
     const defaultName = loadSettingsParsed().defaultName;
     if(defaultName !== null && defaultName !== undefined && defaultName !== ""){
         websocketContext.sendSetNamePacket(defaultName)

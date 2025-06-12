@@ -5,7 +5,7 @@ import "./lobby/lobbyMenu.css"
 import LobbyPlayerList from "./lobby/LobbyPlayerList";
 import { AppContext } from "./AppContext";
 import { WebsocketContext } from "./WebsocketContext";
-import { GameStateContext } from "./game/GameStateContext";
+import { StateContext } from "../stateContext/StateContext";
 
 export default function HostMenu(): ReactElement {
     const anchorContext = useContext(AppContext)!;
@@ -14,7 +14,7 @@ export default function HostMenu(): ReactElement {
         lastMessageRecieved
     } = useContext(WebsocketContext)!;
 
-    const gameState = useContext(GameStateContext);
+    const stateCtx = useContext(StateContext);
 
     useEffect(() => {
         sendHostDataRequest();
@@ -24,7 +24,7 @@ export default function HostMenu(): ReactElement {
 
     useEffect(()=>{
         // Check on every packet since like 1 million packets can affect this
-        if (gameState === undefined || gameState.host === null) {
+        if (stateCtx === undefined || stateCtx.state.type !== "game" || stateCtx.state.host === null) {
             anchorContext.clearCoverCard();
         }
 

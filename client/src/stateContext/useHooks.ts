@@ -8,33 +8,33 @@ import { State } from "./state";
 export function useLobbyOrGameState<T = GameState|LobbyState>(
     map: (state: GameState|LobbyState)=>T = (state)=>state as T
 ):T | undefined{
-    const state = useContext(StateContext)!;
-    if(state.type==="game"||state.type==="lobby"){
-        return map(state);
+    const stateCtx = useContext(StateContext)!;
+    if(stateCtx.state.type==="game"||stateCtx.state.type==="lobby"){
+        return map(stateCtx.state);
     }
     return undefined;
 }
 export function useContextLobbyState(): State & {type: "lobby"} | undefined{
     const stateCtx = useContext(StateContext)!;
     if(stateCtx.state.type==="lobby"){
-        return stateCtx;
+        return stateCtx.state;
     }
     return undefined;
 }
 export function useContextGameState(): State & {type: "game"} | undefined{
     const stateCtx = useContext(StateContext)!;
     if(stateCtx.state.type==="game"){
-        return stateCtx;
+        return stateCtx.state;
     }
     return undefined;
 }
 
 
 export function usePlayerState(): PlayerGameState | undefined {
-    const gameState = useContext(StateContext);
-    if(gameState?.type !== "game"){return undefined};
-    if(gameState === undefined){return undefined};
-    const { clientState } = gameState
+    const stateCtx = useContext(StateContext);
+    if(stateCtx?.state.type !== "game"){return undefined};
+    if(stateCtx === undefined){return undefined};
+    const { clientState } = stateCtx.state
 
     if (clientState.type === "player") {
         return clientState
@@ -43,12 +43,12 @@ export function usePlayerState(): PlayerGameState | undefined {
     }
 }
 export function usePlayerNames(): string[] | undefined {
-    const state = useContext(StateContext);
-    if(state===undefined){return undefined}
-    if(state.type === "game"){
-        return state.players.map((p)=>p.name)
-    }else if(state.type === "lobby"){
-        return state.players.values()
+    const stateCtx = useContext(StateContext);
+    if(stateCtx===undefined){return undefined}
+    if(stateCtx.state.type === "game"){
+        return stateCtx.state.players.map((p)=>p.name)
+    }else if(stateCtx.state.type === "lobby"){
+        return stateCtx.state.players.values()
             .filter((c)=>c.clientType.type==="player")
             //thanks typescript very cool
             .map((c)=>c.clientType.type==="player"?c.clientType.name:undefined) as string[]

@@ -4,17 +4,20 @@ import { WikiArticleLink } from "../wiki/WikiArticleLink";
 import { defaultAlibi } from "../menu/game/gameScreenContent/WillMenu";
 import ListMap from "../ListMap";
 import { WebSocketContextType } from "../menu/WebsocketContext";
-import { State } from "../stateContext/state";
 import { ToClientPacket } from "../packet";
 import translate from "../game/lang";
 import { AppContextType } from "../menu/AppContext";
 import { Tag } from "./stateType/tagState";
 import { PlayerIndex } from "./stateType/otherState";
 import { Role } from "./stateType/roleState";
-import { chatMessageToAudio } from "../menu/App";
+import { chatMessageToAudio, sendDefaultName } from "../menu/App";
 import { StateContext } from "./StateContext";
 import { deleteReconnectData, saveReconnectData } from "../game/localStorage";
 import { GameClient } from "./stateType/gameState";
+import { sortControllerIdCompare } from "../game/abilityInput";
+import NightMessagePopup from "../components/NightMessagePopup"
+import WikiArticle from "../wiki/WikiArticle";
+import React from "react";
 
 
 export default function onWebsocketMessage(
@@ -71,7 +74,7 @@ export default function onWebsocketMessage(
             }
 
             saveReconnectData(packet.roomCode, packet.playerId);
-            sendDefaultName();
+            sendDefaultName(websocketCtx);
             appCtx.clearCoverCard();
         break;
         case "rejectJoin":
@@ -207,7 +210,7 @@ export default function onWebsocketMessage(
 
                 
                 if (oldMySpectator && !newMySpectator){
-                    sendDefaultName();
+                    sendDefaultName(websocketCtx);
                 }
 
                 // Recompute keyword data, since player names are keywords.
@@ -246,8 +249,13 @@ export default function onWebsocketMessage(
             }
             break;
         case "backToLobby":
-            stateCtx.setLobby();
-            appCtx.setContent({type:"lobbyScreen"});
+            if(stateCtx.state.type==="game"){
+                stateCtx.setLobby(
+                    stateCtx.state.roomCode,
+                    stateCtx.state.myId
+                );
+                appCtx.setContent({type:"lobbyScreen"});
+            }
         break;
         case "gamePlayers":
             if(stateCtx.state.type === "game"){
@@ -505,7 +513,8 @@ export default function onWebsocketMessage(
         break;
     }
 
-    /*BEFORE YOU DELETE THIS LINE, REMEMBER THAT STATECTX STUFF NEEDS SET STATE HERE?!?!??*/stateCtx.state.invokeStateListeners(packet.type);
+    /*BEFORE YOU DELETE THIS LINE, REMEMBER THAT STATECTX STUFF NEEDS SET STATE HERE?!?!??*/
+    // stateCtx.state.invokeStateListeners(packet.type);
 }
 
 function createPlayer(arg0: string, i: number): import("./stateType/gameState").Player {

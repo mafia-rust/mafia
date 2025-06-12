@@ -1,10 +1,10 @@
-import { ReactElement, useContext } from "react"
+import { ReactElement } from "react"
 import React from "react"
 import translate from "../game/lang"
-import { PlayerIndex } from "../game/gameState.d"
 import StyledText from "./StyledText"
 import Select, { SelectOptionsSearch } from "./Select"
-import { GameStateContext } from "../menu/game/GameStateContext"
+import { useContextGameState } from "../stateContext/useHooks"
+import { PlayerIndex } from "../stateContext/stateType/otherState"
 
 /// A dropdown menu for selecting a player.
 /// canChooseNone defaults to false.

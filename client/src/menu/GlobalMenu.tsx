@@ -10,9 +10,9 @@ import SettingsMenu from './Settings';
 import { Button } from '../components/Button';
 import HostMenu from './HostMenu';
 import { AppContext } from './AppContext';
-import { useLobbyOrGameState } from './lobby/LobbyContext';
 import { WebsocketContext } from './WebsocketContext';
 import { deleteReconnectData } from '../game/localStorage';
+import { useLobbyOrGameState } from '../stateContext/useHooks';
 
 export default function GlobalMenu(): ReactElement {
     const { sendBackToLobbyPacket } = useContext(WebsocketContext)!;

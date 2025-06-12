@@ -1,15 +1,14 @@
 import React, { ReactElement, useContext, useRef, useState } from "react";
 import translate from "../../game/lang";
 import "./lobbyMenu.css";
-import { ClientConnection } from "../../game/gameState.d";
 import Icon from "../../components/Icon";
 import { Button, RawButton } from "../../components/Button";
 import Popover from "../../components/Popover";
 import { dropdownPlacementFunction } from "../../components/Select";
 import StyledText from "../../components/StyledText";
-import { GameStateContext } from "../game/GameStateContext";
-import { LobbyStateContext } from "./LobbyContext";
 import { WebsocketContext } from "../WebsocketContext";
+import { ClientConnection } from "../../stateContext/stateType/otherState";
+import { StateContext } from "../../stateContext/StateContext";
 
 type PlayerDisplayData = {
     id: number,
@@ -25,12 +24,12 @@ export default function LobbyPlayerList(): ReactElement {
 
     let players: undefined | PlayerDisplayData[] = undefined;
     let host = false;
-    const gameState = useContext(GameStateContext);
-    const lobbyState = useContext(LobbyStateContext);
+    const stateCtx = useContext(StateContext)!;
+    const { state } = stateCtx;
 
-    if(gameState!==undefined && gameState.host!==null){
-        host = gameState.host !== null;
-        players = gameState.host.clients.entries().map(([id, player]) => {
+    if(state.type === "game" && state.host!==null){
+        host = state.host !== null;
+        players = state.host.clients.entries().map(([id, player]) => {
             return {
                 id,
                 clientType: player.clientType.type,
@@ -38,16 +37,16 @@ export default function LobbyPlayerList(): ReactElement {
                 ready: null,
                 host: player.host,
                 name: player.clientType.type === "player"
-                    ? gameState.players[player.clientType.index].name
+                    ? state.players[player.clientType.index].name
                     : player.clientType.index.toString(),
                 displayName: player.clientType.type === "player"
-                    ? gameState.players[player.clientType.index].toString()
+                    ? state.players[player.clientType.index].toString()
                     : player.clientType.index.toString(),
             }
         })
-    }else if(lobbyState!==undefined){
-        host = lobbyState.players.get(lobbyState.myId!)?.ready === "host";
-        players = lobbyState.players.entries().map(([id, player]) => {
+    }else if(state.type==="lobby"){
+        host = state.players.get(state.myId!)?.ready === "host";
+        players = state.players.entries().map(([id, player]) => {
             const name = player.clientType.type === "player" ? player.clientType.name : null;
             return {
                 id,

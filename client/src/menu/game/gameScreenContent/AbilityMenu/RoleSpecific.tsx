@@ -7,11 +7,11 @@ import translate from "../../../../game/lang";
 import SmallPuppeteerMenu from "./RoleSpecificMenus/SmallPuppeteerMenu";
 import StewardMenu from "./RoleSpecificMenus/StewardMenu";
 import RecruiterMenu from "./RoleSpecificMenus/RecruiterMenu";
-import { RoleState } from "../../../../game/roleState.d";
-import { PhaseState } from "../../../../game/gameState.d";
 import DetailsSummary from "../../../../components/DetailsSummary";
 import HypnotistMenu from "./RoleSpecificMenus/HypnotistMenu";
-import { GameStateContext, usePlayerState } from "../../GameStateContext";
+import { useContextGameState, usePlayerState } from "../../../../stateContext/useHooks";
+import { PhaseState } from "../../../../stateContext/stateType/phaseState";
+import { RoleState } from "../../../../stateContext/stateType/roleState";
 
     
 

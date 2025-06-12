@@ -7,10 +7,10 @@ import { translateRoleOutline } from "../../../stateContext/stateType/roleListSt
 import { Button } from "../../../components/Button";
 import DetailsSummary from "../../../components/DetailsSummary";
 import { EnabledModifiersDisplay } from "../../../components/gameModeSettings/EnabledModifiersSelector";
-import { GameStateContext, usePlayerState } from "../GameStateContext";
 import { GameScreenMenuType } from "../GameScreenMenuContext";
 import GameScreenMenuTab from "../GameScreenMenuTab";
 import { WebsocketContext } from "../../WebsocketContext";
+import { useContextGameState, usePlayerState } from "../../../stateContext/useHooks";
 
 export default function GraveyardMenu(): ReactElement {
     return <div className="graveyard-menu graveyard-menu-colors">

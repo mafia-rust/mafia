@@ -1,11 +1,11 @@
 import React, { ReactElement, useContext, useMemo } from "react";
 import translate from "../../../game/lang";
-import { getSingleRoleJsonData } from "../../../game/roleState.d";
 import { TextDropdownArea } from "../../../components/TextAreaDropdown";
 import { GameScreenMenuType } from "../GameScreenMenuContext";
 import GameScreenMenuTab from "../GameScreenMenuTab";
-import { GameStateContext, usePlayerState } from "../GameStateContext";
 import { WebsocketContext } from "../../WebsocketContext";
+import { useContextGameState, usePlayerState } from "../../../stateContext/useHooks";
+import { getSingleRoleJsonData } from "../../../stateContext/stateType/roleState";
 
 export function defaultAlibi(): string {
     return DEFAULT_ALIBI;

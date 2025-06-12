@@ -2,8 +2,8 @@ import React, { ReactElement, useContext } from "react";
 import translate from "../../game/lang";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
-import { LobbyStateContext } from "./LobbyContext";
 import { WebsocketContext } from "../WebsocketContext";
+import { useContextLobbyState } from "../../stateContext/useHooks";
 
 
 

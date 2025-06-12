@@ -2,11 +2,12 @@ import React, { createContext, ReactElement, useCallback, useContext, useEffect,
 import translate from "../../game/lang";
 import LoadingScreen from "../LoadingScreen";
 import "./playMenu.css";
-import { LobbyPreviewData, ToClientPacket } from "../../packet";
+import { ToClientPacket } from "../../packet";
 import PlayMenuJoinPopup from "./PlayMenuJoinPopup";
 import { Button } from "../../components/Button";
 import { AppContext } from "../AppContext";
 import { WebsocketContext } from "../WebsocketContext";
+import { LobbyPreviewData } from "../../stateContext/stateType/gameBrowserState";
 
 
 type LobbyMap = Map<number, LobbyPreviewData>;
