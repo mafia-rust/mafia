@@ -1,59 +1,50 @@
 import React, { ReactElement, useContext, useMemo } from "react";
 import translate from "../../game/lang";
-import GAME_MANAGER from "../../index";
-import { PhaseState, Player, Verdict } from "../../game/gameState.d";
-import { MenuControllerContext, ContentMenu, MENU_THEMES, MENU_TRANSLATION_KEYS } from "./GameScreen";
 import "./headerMenu.css";
 import StyledText from "../../components/StyledText";
 import Icon from "../../components/Icon";
 import { Button } from "../../components/Button";
-import { useGameState, usePlayerState, useSpectator } from "../../components/useHooks";
-import { MobileContext } from "../Anchor";
+import { GameScreenMenuContext, GameScreenMenuType, MENU_CSS_THEMES, MENU_TRANSLATION_KEYS } from "./GameScreenMenuContext";
+import { MobileContext } from "../MobileContext";
+import { WebsocketContext } from "../WebsocketContext";
+import { useContextGameState, usePlayerState } from "../../stateContext/useHooks";
+import { PhaseState } from "../../stateContext/stateType/phaseState";
+import { Player } from "../../stateContext/stateType/gameState";
+import { Verdict } from "../../stateContext/stateType/otherState";
 
 
-export default function HeaderMenu(props: Readonly<{
-    chatMenuNotification: boolean
-}>): ReactElement {
+export default function HeaderMenu(): ReactElement {
     const mobile = useContext(MobileContext)!;
-    
-    const phaseState = useGameState(
-        gameState => gameState.phaseState,
-        ["phase"]
-    )!
+    const phaseState = useContextGameState()!.phaseState;
+    const host = useContextGameState()!.host !== null;
 
     const backgroundStyle = 
         phaseState.type === "briefing" ? "background-none" :
         (phaseState.type === "night" || phaseState.type === "obituary") ? "background-night" : 
         "background-day";
 
-    const host = useGameState(
-        state => state.host !== null,
-        ["playersHost"]
-    )!;
 
-    const spectator = useSpectator()!;
+    const spectator = useContextGameState()!.clientState.type === "spectator";
 
 
     return <div className={"header-menu " + backgroundStyle}>
         {!(spectator && !host) && <FastForwardButton spectatorAndHost={spectator && host}/>}
         <Information />
-        {!mobile && <MenuButtons chatMenuNotification={props.chatMenuNotification}/>}
+        {!mobile && <MenuButtons/>}
         <Timer />
     </div>
 }
 
 function Timer(): ReactElement {
-    const timeLeftMs = useGameState(
-        gameState => gameState.timeLeftMs,
-        ["phaseTimeLeft", "tick"]
-    )!
-    const phaseLength = useGameState(
-        gameState => {
-            if (gameState.phaseState.type === "recess") return 0;
-            return gameState.phaseTimes[gameState.phaseState.type]
-        },
-        ["phase"]
-    )!
+    let timeLeftMs = useContextGameState()!.timeLeftMs;
+    if(timeLeftMs===null){timeLeftMs = 0};
+    const phaseTimes = useContextGameState()!.phaseTimes;
+    const phaseType = useContextGameState()!.phaseState.type;
+
+    let phaseLength = 0
+    if (phaseType !== "recess"){
+        phaseLength = phaseTimes[phaseType]
+    }
 
     const timerStyle = {
         height: "100%",
@@ -68,31 +59,16 @@ function Timer(): ReactElement {
 }
 
 function Information(): ReactElement {
-    const dayNumber = useGameState(
-        gameState => gameState.dayNumber,
-        ["phase"]
-    )!
-    const timeLeftMs = useGameState(
-        gameState => gameState.timeLeftMs,
-        ["phaseTimeLeft", "tick"]
-    ) ?? null;
-    const phaseState = useGameState(
-        gameState => gameState.phaseState,
-        ["phase"]
-    )!
-    const players = useGameState(
-        gameState => gameState.players,
-        ["gamePlayers"]
-    )!
+    const dayNumber = useContextGameState()!.dayNumber;
+    let timeLeftMs = useContextGameState()!.timeLeftMs;
+    if(timeLeftMs===null){timeLeftMs = 0};
+    const phaseState = useContextGameState()!.phaseState;
+    const players = useContextGameState()!.players;
 
-    const myIndex = usePlayerState(
-        gameState => gameState.myIndex,
-        ["yourPlayerIndex"]
-    )
-    const roleState = usePlayerState(
-        clientState => clientState.roleState,
-        ["yourRoleState"]
-    )
+    const playerState = usePlayerState();
+
+    const myIndex = playerState!==undefined?playerState.myIndex:undefined;
+    const roleState = playerState!==undefined?playerState.roleState:undefined;
     const myName = useMemo(() => {
         return myIndex === undefined ? undefined : players[myIndex]?.toString()
     }, [myIndex, players])
@@ -114,7 +90,7 @@ function Information(): ReactElement {
         }
     }, [dayNumber, phaseState.type])
 
-    const spectator = useSpectator();
+    const spectator = useContextGameState()!.clientState.type === "spectator";
     
 
     return <div className="information"> 
@@ -137,14 +113,10 @@ function Information(): ReactElement {
 export function PhaseSpecificInformation(props: Readonly<{
     phaseState: PhaseState,
     players: Player[],
-    myIndex: number | undefined
+    myIndex?: number
 }>): ReactElement | null {
-    const enabledModifiers = useGameState(
-        gameState => gameState.enabledModifiers,
-        ["enabledModifiers"]
-    )!
-
-    const spectator = useSpectator();
+    const enabledModifiers = useContextGameState()!.enabledModifiers;
+    const spectator = useContextGameState()!.clientState.type === "spectator";
 
     if (
         props.phaseState.type === "testimony"
@@ -182,14 +154,12 @@ export function PhaseSpecificInformation(props: Readonly<{
 }
 
 function VerdictButton(props: Readonly<{ verdict: Verdict }>) {
-    const judgement = usePlayerState(
-        clientState => clientState.judgement,
-        ["yourJudgement"]
-    )!
+    const judgement = usePlayerState()!.judgement;
+    const websocketContext = useContext(WebsocketContext)!;
 
     return <Button
         highlighted={judgement === props.verdict}
-        onClick={()=>{GAME_MANAGER.sendJudgementPacket(props.verdict)}}
+        onClick={()=>{websocketContext.sendJudgementPacket(props.verdict)}}
     >
         <StyledText noLinks={true}>
             {translate("verdict." + props.verdict)}
@@ -197,17 +167,28 @@ function VerdictButton(props: Readonly<{ verdict: Verdict }>) {
     </Button>
 }
 
-export function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>): ReactElement | null {
-    const menuController = useContext(MenuControllerContext)!;
+export function MenuButtons(): ReactElement | null {
+    const menuController = useContext(GameScreenMenuContext)!;
+    const missedChatMessages = useContextGameState()!;
+    const chatMenuNotification = useMemo(
+        ()=>missedChatMessages && !menuController.menuIsOpen(GameScreenMenuType.ChatMenu),
+        [missedChatMessages, menuController.menusOpen()]
+    );
 
     return <div className="menu-buttons">
-        {menuController.menus().map(menu => {
-            return <Button key={menu} className={MENU_THEMES[menu] ?? ""}
+        {menuController.menusAvailable().map(menu => {
+            return <Button key={menu} className={MENU_CSS_THEMES[menu] ?? ""}
                 highlighted={menuController.menusOpen().includes(menu)} 
-                onClick={()=>menuController.closeOrOpenMenu(menu)}
+                onClick={()=>{
+                    if(menuController.menusOpen().includes(menu)){
+                        menuController.closeMenu(menu)
+                    }else{
+                        menuController.openMenu(menu)
+                    }
+                }}
             >
-                {menu === ContentMenu.ChatMenu
-                    && props.chatMenuNotification
+                {menu === GameScreenMenuType.ChatMenu
+                    && chatMenuNotification
                     && <div className="chat-notification highlighted">!</div>
                 }
                 {translate(MENU_TRANSLATION_KEYS[menu] + ".icon")}
@@ -218,17 +199,15 @@ export function MenuButtons(props: Readonly<{ chatMenuNotification: boolean }>):
 }
 
 export function FastForwardButton(props: { spectatorAndHost: boolean }): ReactElement {
-    const fastForward = useGameState(
-        gameState => gameState.fastForward,
-        ["yourVoteFastForwardPhase"]
-    )!
+    const fastForward = useContextGameState()!.fastForward;
+    const websocketContext = useContext(WebsocketContext)!;
 
     return <Button 
         onClick={() => {
             if (props.spectatorAndHost) {
-                GAME_MANAGER.sendHostSkipPhase()
+                websocketContext.sendHostSkipPhase()
             } else {
-                GAME_MANAGER.sendVoteFastForwardPhase(!fastForward)
+                websocketContext.sendVoteFastForwardPhase(!fastForward)
             }
         }}
         className="fast-forward-button"

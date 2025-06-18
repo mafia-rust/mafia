@@ -1,10 +1,10 @@
 import { ReactElement } from "react"
 import React from "react"
 import translate from "../game/lang"
-import { PlayerIndex } from "../game/gameState.d"
-import { useGameState } from "./useHooks"
 import StyledText from "./StyledText"
 import Select, { SelectOptionsSearch } from "./Select"
+import { useContextGameState } from "../stateContext/useHooks"
+import { PlayerIndex } from "../stateContext/stateType/otherState"
 
 /// A dropdown menu for selecting a player.
 /// canChooseNone defaults to false.
@@ -14,12 +14,9 @@ export default function PlayerOptionDropdown(props: {
     choosablePlayers?: PlayerIndex[],
     canChooseNone?: boolean
 }): ReactElement {
-
-    let players = useGameState(
-        gameState => gameState.players.map(player => [player.index, player.toString()] as [PlayerIndex, string]),
-        ["gamePlayers"]
-    )!;
-
+    const players = useContextGameState()!
+        .players
+        .map(player => [player.index, player.toString()] as [PlayerIndex, string]);
 
     const optionMap: SelectOptionsSearch<PlayerIndex | "none"> = new Map();
 
