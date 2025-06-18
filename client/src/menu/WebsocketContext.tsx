@@ -149,8 +149,6 @@ export default function WebSocketContextProvider(props: Readonly<{ children: Rea
             };
             websocketContext.webSocket.current.onmessage = (event: MessageEvent<string>)=>{
                 const parsed = JSON.parse(event.data) as ToClientPacket;
-                // console.log(JSON.stringify(parsed, null, 2));
-                console.log("message receieved: "+parsed.type);
                 for(let listener of messageListeners.current){
                     listener(parsed);
                 }
@@ -166,6 +164,8 @@ export default function WebSocketContextProvider(props: Readonly<{ children: Rea
         sendPacket: (packet: ToServerPacket)=>{
             if (websocketContext.webSocket.current === null) {
                 console.error("Attempted to send packet to null websocket!");
+            } else if (websocketContext.webSocket.current.OPEN !== 1) {
+                console.error("Attempted to send packet to not open websocket!");
             } else {
                 websocketContext.webSocket.current.send(JSON.stringify(packet));
             }

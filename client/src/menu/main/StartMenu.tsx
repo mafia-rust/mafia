@@ -9,10 +9,12 @@ import { Button } from "../../components/Button";
 import StyledText from "../../components/StyledText";
 import { AppContext } from "../AppContext";
 import { WebsocketContext } from "../WebsocketContext";
+import { StateContext } from "../../stateContext/StateContext";
 
 export default function StartMenu(): ReactElement {
     const { setContent, setCoverCard } = useContext(AppContext)!;
     const websocketCtx = useContext(WebsocketContext)!;
+    const stateCtx = useContext(StateContext)!;
 
     return <div className="sm">
         <header>
@@ -24,8 +26,9 @@ export default function StartMenu(): ReactElement {
             <div className="satellite">
                 <div className="left">
                     <Button onClick={async () => {
-                        // websocketCtx.open();
-                        setContent({ type: "gameBrowser" });
+                        setContent({type: "loading", loadingType:"default"});
+                        stateCtx.setGameBrowser();
+                        setTimeout(()=>{setContent({ type: "gameBrowser" });}, 500);
                     }}>
                         <Icon>play_arrow</Icon> {translate("menu.start.button.play")}
                     </Button>

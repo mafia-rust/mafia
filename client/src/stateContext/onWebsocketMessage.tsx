@@ -46,7 +46,7 @@ export default function onWebsocketMessage(
         case "forcedDisconnect":
             stateCtx.setDisconnected();
             appCtx.setContent({type:"main"});
-        break
+        break;
         case "lobbyList":
             if(stateCtx.state.type === "gameBrowser"){
                 stateCtx.state.lobbies = new Map();
@@ -56,15 +56,12 @@ export default function onWebsocketMessage(
             }
         break;
         case "acceptJoin":
-            if(packet.inGame && packet.spectator){
-                stateCtx.setGame(true);
-                appCtx.setContent({type:"gameScreen", spectator: true});
-            }else if(packet.inGame && !packet.spectator){
-                stateCtx.setGame(false);
-                appCtx.setContent({type:"gameScreen", spectator: false});
+            if(packet.inGame){
+                stateCtx.setGame(packet.spectator);
+                setTimeout(()=>{appCtx.setContent({type:"gameScreen", spectator: packet.spectator});}, 500);
             }else{
                 stateCtx.setLobby(packet.roomCode, packet.playerId);
-                appCtx.setContent({type:"lobbyScreen"});
+                setTimeout(()=>{appCtx.setContent({type:"lobbyScreen"});}, 500);
             }
             
 

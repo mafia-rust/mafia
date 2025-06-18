@@ -1,63 +1,25 @@
-import React, { createContext, ReactElement, useCallback, useContext, useEffect, useState } from "react";
+import React, { ReactElement, useCallback, useContext, useEffect, useState } from "react";
 import translate from "../../game/lang";
 import LoadingScreen from "../LoadingScreen";
 import "./playMenu.css";
-import { ToClientPacket } from "../../packet";
 import PlayMenuJoinPopup from "./PlayMenuJoinPopup";
 import { Button } from "../../components/Button";
 import { AppContext } from "../AppContext";
 import { WebsocketContext } from "../WebsocketContext";
 import { LobbyPreviewData } from "../../stateContext/stateType/gameBrowserState";
-
-
-type LobbyMap = Map<number, LobbyPreviewData>;
-type PlayMenuContextType = {
-    lobbies: LobbyMap,
-    setLobbies: (state: LobbyMap)=>void
-}
-const PlayMenuContext = createContext<PlayMenuContextType | undefined>(undefined);
-
-function usePlayMenuContext(): PlayMenuContextType {
-    const [lobbies, setLobbies] = useState(new Map<number, LobbyPreviewData>());
-    return {
-        lobbies, setLobbies
-    };
-}
-
-function playMenuMessageListener(packet: ToClientPacket, playMenuContext: PlayMenuContextType){
-    const {setLobbies} = playMenuContext;
-
-    switch(packet.type){
-        case "lobbyList":{
-            const lobbies = new Map();
-
-            for(let [lobbyId, lobbyData] of Object.entries(packet.lobbies))
-                lobbies.set(Number.parseInt(lobbyId), lobbyData);
-
-            setLobbies(lobbies);
-        }
-        break;
-    }
-}
-
+import { StateContext } from "../../stateContext/StateContext";
 
 export default function PlayMenu(): ReactElement {
     const { setContent: setAnchorContent } = useContext(AppContext)!;
-    const {lastMessageRecieved, sendLobbyListRequest, sendJoinPacket, sendRejoinPacket, sendHostPacket, ...websocketContext} = useContext(WebsocketContext)!;
-    const playMenuContext = usePlayMenuContext();
+    const { sendLobbyListRequest, sendJoinPacket, sendRejoinPacket, sendHostPacket } = useContext(WebsocketContext)!;
+    const stateCtx = useContext(StateContext)!;
     
     useEffect(() => {
         let autoRefreshInterval: NodeJS.Timeout;
-        websocketContext.open().then(result => {
-            if (result) {
-                sendLobbyListRequest();
-                
-                const FIVE_SECONDS = 5000
-                autoRefreshInterval = setInterval(sendLobbyListRequest, FIVE_SECONDS);
-            } else {
-                setAnchorContent({ type: "main" })
-            }
-        })
+        sendLobbyListRequest();
+        
+        const FIVE_SECONDS = 5000;
+        autoRefreshInterval = setInterval(sendLobbyListRequest, FIVE_SECONDS);
         return () => {
             if (autoRefreshInterval) {
                 clearInterval(autoRefreshInterval)
@@ -65,17 +27,12 @@ export default function PlayMenu(): ReactElement {
         };
     }, [])
 
-    useEffect(()=>{
-        if(lastMessageRecieved){
-            playMenuMessageListener(lastMessageRecieved, playMenuContext);
-        }
-    }, [lastMessageRecieved]);
-
     const joinGame = useCallback(
         async (roomCode?: number, playerId?: number) => {
             if (roomCode === undefined) return false;
         
-            setAnchorContent({type:"loading"});
+            setAnchorContent({type:"loading", loadingType:"join"});
+            stateCtx.setGameBrowser();
         
             if (playerId === undefined) {
                 sendJoinPacket(roomCode);
@@ -87,37 +44,31 @@ export default function PlayMenu(): ReactElement {
     );
     
 
-    return <PlayMenuContext.Provider value={playMenuContext}>
-        <div className="play-menu">
-            <div className="play-menu-browser graveyard-menu-colors">
-                <header>
-                    <h2>
-                        {translate("menu.play.title")}
-                    </h2>
-                    <div>
-                        <Button onClick={async () => {
-                            setAnchorContent(<LoadingScreen type="host"/>);
-                            const joinData = await sendHostPacket();
-                            if (joinData !== null) {
-                                setAnchorContent({ type: "lobbyScreen", ...joinData })
-                            } else {
-                                setAnchorContent({ type: "gameBrowser" })
-                            }
-                        }}>
-                            {translate("menu.play.button.host")}
-                        </Button>
-                        <Button onClick={()=>{sendLobbyListRequest()}}>
-                            {translate("refresh")}
-                        </Button>
-                    </div>
-                </header>
-                <div className="play-menu-center">
-                    <PlayMenuTable joinGame={joinGame}/>
+    return <div className="play-menu">
+        <div className="play-menu-browser graveyard-menu-colors">
+            <header>
+                <h2>
+                    {translate("menu.play.title")}
+                </h2>
+                <div>
+                    <Button onClick={async () => {
+                        setAnchorContent({type:"loading", loadingType:"host"});
+                        stateCtx.setGameBrowser();
+                        sendHostPacket();
+                    }}>
+                        {translate("menu.play.button.host")}
+                    </Button>
+                    <Button onClick={()=>{sendLobbyListRequest()}}>
+                        {translate("refresh")}
+                    </Button>
                 </div>
-                <PlayMenuFooter joinGame={joinGame}/>
+            </header>
+            <div className="play-menu-center">
+                <PlayMenuTable joinGame={joinGame}/>
             </div>
+            <PlayMenuFooter joinGame={joinGame}/>
         </div>
-    </PlayMenuContext.Provider>
+    </div>
 }
 
 function PlayMenuFooter(props: Readonly<{
@@ -184,7 +135,7 @@ function PlayMenuTable(props: Readonly<{
     joinGame: (roomCode?: number, playerId?: number)=>void
 }>): ReactElement {
     const { setCoverCard } = useContext(AppContext)!;
-    const { lobbies } = useContext(PlayMenuContext)!;
+    const stateCtx = useContext(StateContext)!;
 
     return <table className="play-menu-table">
         <thead>
@@ -195,7 +146,7 @@ function PlayMenuTable(props: Readonly<{
             </tr>
         </thead>
         <tbody>
-            {Array.from(lobbies.entries()).map((entry)=>{
+            {(stateCtx.state.type === "gameBrowser"?Array.from(stateCtx.state.lobbies.entries()):[]).map((entry)=>{
                 const roomCode = entry[0];
                 const lobby: LobbyPreviewData = entry[1];
 

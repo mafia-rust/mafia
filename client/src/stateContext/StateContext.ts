@@ -22,14 +22,19 @@ export function useStateContext(): StateContext {
 
     const [state, setState] = useState<State>({type: "disconnected" as const});
     
-    let setDisconnected = ()=>{setState({type: "disconnected" as const})};
+    let setDisconnected = ()=>{
+        websocketCtx.close();
+        setState({type: "disconnected" as const});
+    };
     let setGameBrowser = ()=>{
         AudioController.clearQueue();
         AudioController.pauseQueue();
         
-        websocketCtx.open();
-
-        return createGameBrowserState();
+        websocketCtx.open().then(()=>{
+            setState(()=>{
+                return createGameBrowserState();
+            })
+        });
     };
     let setLobby = (roomCode: number, myId: number)=>{
         setState((state)=>{

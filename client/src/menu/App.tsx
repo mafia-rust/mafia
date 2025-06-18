@@ -56,12 +56,12 @@ function AppInner(props: Readonly<{
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props])
 
-    useEffect(() => {
-        if (websocketContext.lastMessageRecieved) {
-            appMessageListener(websocketContext.lastMessageRecieved, appContext, websocketContext)
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [websocketContext.lastMessageRecieved]);
+    // useEffect(() => {
+    //     if (websocketContext.lastMessageRecieved) {
+    //         appMessageListener(websocketContext.lastMessageRecieved, appContext, websocketContext)
+    //     }
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [websocketContext.lastMessageRecieved]);
     
     useEffect(() => {
         websocketContext.awaitCloseOrError().then(type => {
