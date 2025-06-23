@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import translate from "../game/lang";
 import "./wiki.css";
 import { regEscape } from "..";
@@ -14,7 +14,7 @@ import { GameScreenMenuContext } from "../menu/game/GameScreenMenuContext";
 import { AppContextType } from "../menu/AppContext";
 import { MODIFIERS, ModifierType } from "../stateContext/stateType/modifiersState";
 import { getMainRoleSetFromRole, Role } from "../stateContext/stateType/roleState";
-import { useLobbyOrGameState } from "../stateContext/useHooks";
+import { StateContext } from "../stateContext/StateContext";
 
 
 export function setWikiSearchPage(page: WikiArticleLink, anchorController: AppContextType, menuController?: GameScreenMenuContext) {
@@ -120,8 +120,8 @@ function WikiSearchResults(props: Readonly<{
     enabledModifiers: ModifierType[],
     onChooseArticle: (article: WikiArticleLink) => void,
 }>): ReactElement {
-    const enabledRoles = useLobbyOrGameState(gameState => gameState.enabledRoles)??getAllRoles();
-    const enabledModifiers = useLobbyOrGameState(gameState => gameState.enabledModifiers)??MODIFIERS as any as ModifierType[];
+    const enabledRoles = useContext(StateContext)?.enabledRoles??getAllRoles();
+    const enabledModifiers = useContext(StateContext)?.enabledModifiers??MODIFIERS as any as ModifierType[];
 
     const [hideDisabled, setHideDisabled] = useState(true);
 

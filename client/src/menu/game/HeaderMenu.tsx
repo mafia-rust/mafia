@@ -7,24 +7,27 @@ import { Button } from "../../components/Button";
 import { GameScreenMenuContext, GameScreenMenuType, MENU_CSS_THEMES, MENU_TRANSLATION_KEYS } from "./GameScreenMenuContext";
 import { MobileContext } from "../MobileContext";
 import { WebsocketContext } from "../WebsocketContext";
-import { useContextGameState, usePlayerState } from "../../stateContext/useHooks";
+import { usePlayerState } from "../../stateContext/useHooks";
 import { PhaseState } from "../../stateContext/stateType/phaseState";
 import { Player } from "../../stateContext/stateType/gameState";
 import { Verdict } from "../../stateContext/stateType/otherState";
+import { StateContext } from "../../stateContext/StateContext";
 
 
 export default function HeaderMenu(): ReactElement {
     const mobile = useContext(MobileContext)!;
-    const phaseState = useContextGameState()!.phaseState;
-    const host = useContextGameState()!.host !== null;
+    const stateCtx = useContext(StateContext)!;
+    const phaseState = stateCtx.phaseState;
+    const host = stateCtx.host !== null;
 
     const backgroundStyle = 
+        phaseState === null ? "background-none" :
         phaseState.type === "briefing" ? "background-none" :
         (phaseState.type === "night" || phaseState.type === "obituary") ? "background-night" : 
         "background-day";
 
 
-    const spectator = useContextGameState()!.clientState.type === "spectator";
+    const spectator = stateCtx.clientState.type === "spectator";
 
 
     return <div className={"header-menu " + backgroundStyle}>
@@ -36,10 +39,11 @@ export default function HeaderMenu(): ReactElement {
 }
 
 function Timer(): ReactElement {
-    let timeLeftMs = useContextGameState()!.timeLeftMs;
+    const stateCtx = useContext(StateContext)!;
+    let timeLeftMs = stateCtx.timeLeftMs;
     if(timeLeftMs===null){timeLeftMs = 0};
-    const phaseTimes = useContextGameState()!.phaseTimes;
-    const phaseType = useContextGameState()!.phaseState.type;
+    const phaseTimes = stateCtx.phaseTimes;
+    const phaseType = stateCtx.phaseState?.type??"recess";
 
     let phaseLength = 0
     if (phaseType !== "recess"){
@@ -59,11 +63,12 @@ function Timer(): ReactElement {
 }
 
 function Information(): ReactElement {
-    const dayNumber = useContextGameState()!.dayNumber;
-    let timeLeftMs = useContextGameState()!.timeLeftMs;
+    const stateCtx = useContext(StateContext)!;
+    const dayNumber = stateCtx.dayNumber;
+    let timeLeftMs = stateCtx.timeLeftMs;
     if(timeLeftMs===null){timeLeftMs = 0};
-    const phaseState = useContextGameState()!.phaseState;
-    const players = useContextGameState()!.players;
+    const phaseState = stateCtx.phaseState??{type:"recess"};
+    const players = stateCtx.players;
 
     const playerState = usePlayerState();
 
@@ -90,7 +95,7 @@ function Information(): ReactElement {
         }
     }, [dayNumber, phaseState.type])
 
-    const spectator = useContextGameState()!.clientState.type === "spectator";
+    const spectator = stateCtx.clientState.type === "spectator";
     
 
     return <div className="information"> 
@@ -115,8 +120,9 @@ export function PhaseSpecificInformation(props: Readonly<{
     players: Player[],
     myIndex?: number
 }>): ReactElement | null {
-    const enabledModifiers = useContextGameState()!.enabledModifiers;
-    const spectator = useContextGameState()!.clientState.type === "spectator";
+    const stateCtx = useContext(StateContext)!;
+    const enabledModifiers = stateCtx.enabledModifiers;
+    const spectator = stateCtx.clientState.type === "spectator";
 
     if (
         props.phaseState.type === "testimony"
@@ -168,8 +174,9 @@ function VerdictButton(props: Readonly<{ verdict: Verdict }>) {
 }
 
 export function MenuButtons(): ReactElement | null {
+    const stateCtx = useContext(StateContext)!;
     const menuController = useContext(GameScreenMenuContext)!;
-    const missedChatMessages = useContextGameState()!;
+    const missedChatMessages = stateCtx.missedChatMessages;
     const chatMenuNotification = useMemo(
         ()=>missedChatMessages && !menuController.menuIsOpen(GameScreenMenuType.ChatMenu),
         [missedChatMessages, menuController.menusOpen()]
@@ -199,7 +206,7 @@ export function MenuButtons(): ReactElement | null {
 }
 
 export function FastForwardButton(props: { spectatorAndHost: boolean }): ReactElement {
-    const fastForward = useContextGameState()!.fastForward;
+    const fastForward = useContext(StateContext)?.fastForward??false;
     const websocketContext = useContext(WebsocketContext)!;
 
     return <Button 

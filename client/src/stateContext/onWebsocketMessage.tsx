@@ -13,7 +13,7 @@ import { Role } from "./stateType/roleState";
 import { chatMessageToAudio, sendDefaultName } from "../menu/App";
 import { StateContext } from "./StateContext";
 import { deleteReconnectData, saveReconnectData } from "../game/localStorage";
-import { GameClient } from "./stateType/gameState";
+import { createPlayerGameState, GameClient } from "./stateType/gameState";
 import { sortControllerIdCompare } from "../game/abilityInput";
 import NightMessagePopup from "../components/NightMessagePopup"
 import WikiArticle from "../wiki/WikiArticle";
@@ -30,44 +30,37 @@ export default function onWebsocketMessage(
 
     switch(packet.type) {
         case "pong":
-            if (stateCtx.state.type !== "disconnected") {
-                websocketCtx.sendPacket({
-                    type: "ping"
-                });
-            }
+            websocketCtx.sendPacket({
+                type: "ping"
+            });
         break;
         case "rateLimitExceeded":
             appCtx.pushErrorCard({ title: translate("notification.rateLimitExceeded"), body: "" });
         break;
         case "forcedOutsideLobby":
-            stateCtx.setGameBrowser();
             appCtx.setContent({type:"gameBrowser"});
         break;
         case "forcedDisconnect":
-            stateCtx.setDisconnected();
+            websocketCtx.close();
             appCtx.setContent({type:"main"});
         break;
         case "lobbyList":
-            if(stateCtx.state.type === "gameBrowser"){
-                stateCtx.state.lobbies = new Map();
+            stateCtx.lobbies = new Map();
 
-                for(let [lobbyId, lobbyData] of Object.entries(packet.lobbies))
-                    stateCtx.state.lobbies.set(Number.parseInt(lobbyId), lobbyData);
-            }
+            for(let [lobbyId, lobbyData] of Object.entries(packet.lobbies))
+                stateCtx.lobbies.set(Number.parseInt(lobbyId), lobbyData);
         break;
         case "acceptJoin":
-            if(packet.inGame){
-                stateCtx.setGame(packet.spectator);
-                setTimeout(()=>{appCtx.setContent({type:"gameScreen", spectator: packet.spectator});}, 500);
-            }else{
-                stateCtx.setLobby(packet.roomCode, packet.playerId);
-                setTimeout(()=>{appCtx.setContent({type:"lobbyScreen"});}, 500);
-            }
-            
+            stateCtx.setMyId(packet.playerId);
+            stateCtx.setRoomCode(packet.roomCode);
+            stateCtx.setClientState(
+                (packet.spectator?{type: "spectator"}:createPlayerGameState())
+            );
 
-            if(stateCtx.state.type === "lobby" || stateCtx.state.type === "game"){
-                stateCtx.state.roomCode = packet.roomCode;
-                stateCtx.state.myId = packet.playerId;
+            if(packet.inGame){
+                appCtx.setContent({type:"gameScreen", spectator: packet.spectator});
+            }else{
+                appCtx.setContent({type:"lobbyScreen"});
             }
 
             saveReconnectData(packet.roomCode, packet.playerId);
@@ -131,286 +124,244 @@ export default function onWebsocketMessage(
             }
         break;
         case "playersHost":
-            if(stateCtx.state.type === "lobby"){
-                for(let [playerId, player] of stateCtx.state.players.entries()){
-                    if (packet.hosts.includes(playerId)) {
-                        player.ready = "host";
-                    } else {
-                        player.ready = player.ready === "host" ? "ready" : player.ready
-                    }
-                }
-                stateCtx.state.players = new ListMap(stateCtx.state.players.entries());
-            }else if(stateCtx.state.type === "game"){
-                if (packet.hosts.includes(stateCtx.state.myId ?? -1)) {
-                    if (stateCtx.state.host === null) {
-                        stateCtx.state.host = {
-                            clients: new ListMap()
-                        }
-                    }
-
-                    for (const [id, client] of stateCtx.state.host.clients.entries()) {
-                        client.host = packet.hosts.includes(id);
-                    }
+            for(let [playerId, player] of stateCtx.clients.entries()){
+                if (packet.hosts.includes(playerId)) {
+                    player.ready = "host";
                 } else {
-                    stateCtx.state.host = null
+                    player.ready = player.ready === "host" ? "ready" : player.ready
                 }
             }
+            stateCtx.setClients(stateCtx.clients);
+            stateCtx.setHost(packet.hosts.includes(stateCtx.myId??-1));
         break;
         case "playersReady":
-            if(stateCtx.state.type === "lobby"){
-                for(let [playerId, player] of stateCtx.state.players.entries()){
-                    if (packet.ready.includes(playerId)) {
-                        player.ready = "ready";
-                    } else {
-                        player.ready = player.ready === "host" ? "host" : "notReady"
-                    }
+            for(let [playerId, player] of stateCtx.clients.entries()){
+                if (packet.ready.includes(playerId)) {
+                    player.ready = "ready";
+                } else {
+                    player.ready = player.ready === "host" ? "host" : "notReady"
                 }
-                stateCtx.state.players = new ListMap(stateCtx.state.players.entries());
             }
+            stateCtx.setClients(stateCtx.clients);
         break;
         case "playersLostConnection":
-            if(stateCtx.state.type === "lobby"){
-                for(let [playerId, player] of stateCtx.state.players.entries()){
-                    if(packet.lostConnection.includes(playerId))
-                        player.connection = "couldReconnect";
-                }
-                stateCtx.state.players = new ListMap(stateCtx.state.players.entries());
+            for(let [playerId, client] of stateCtx.clients.entries()){
+                if(packet.lostConnection.includes(playerId))
+                    client.connection = "couldReconnect";
             }
+            stateCtx.setClients(stateCtx.clients);
         break;
         /*
         In Lobby/Game 
         */
         case "yourId":
-            if(stateCtx.state.type === "lobby")
-                stateCtx.state.myId = packet.playerId;
+            stateCtx.setMyId(stateCtx.myId);
         break;
         case "yourPlayerIndex":
-            if(stateCtx.state.type === "game" && stateCtx.state.clientState.type === "player")
-                stateCtx.state.clientState.myIndex = packet.playerIndex;
+            if(stateCtx.clientState.type === "player"){
+                stateCtx.clientState.myIndex = packet.playerIndex;
+                stateCtx.setClientState(stateCtx.clientState);
+            }
 
             //TODO jack Im sorry
             AudioController.clearQueue();
         break;
         case "yourFellowInsiders":
-            if(stateCtx.state.type === "game" && stateCtx.state.clientState.type === "player")
-                stateCtx.state.clientState.fellowInsiders = packet.fellowInsiders;
+            if(stateCtx.clientState.type === "player"){
+                stateCtx.clientState.fellowInsiders = packet.fellowInsiders;
+                stateCtx.setClientState(stateCtx.clientState);
+            }
         break;
         case "lobbyClients":
-            if(stateCtx.state.type === "lobby"){
-                const oldMySpectator = stateCtx.state.players.get(stateCtx.state.myId!)?.clientType.type === "spectator";
+            const oldMySpectator = stateCtx.clients.get(stateCtx.myId!)?.clientType.type === "spectator";
 
-                stateCtx.state.players = new ListMap();
-                for(const [clientId, lobbyClient] of packet.clients){
-                    stateCtx.state.players.insert(clientId, lobbyClient);
-                }
-                const newMySpectator = stateCtx.state.players.get(stateCtx.state.myId!)?.clientType.type === "spectator";
-
-                
-                if (oldMySpectator && !newMySpectator){
-                    sendDefaultName(websocketCtx);
-                }
-
-                // Recompute keyword data, since player names are keywords.
-                computePlayerKeywordDataForLobby(
-                    Array.from(stateCtx.state.players.values())
-                        .filter(client => client.clientType.type === "player")
-                        .map(client => (client.clientType as { type: "player", name: string }).name)
-                );
+            stateCtx.clients = new ListMap();
+            for(const [clientId, lobbyClient] of packet.clients){
+                stateCtx.clients.insert(clientId, lobbyClient);
             }
+            const newMySpectator = stateCtx.clients.get(stateCtx.myId!)?.clientType.type === "spectator";
+
+            
+            if (oldMySpectator && !newMySpectator){
+                sendDefaultName(websocketCtx);
+            }
+
+            // Recompute keyword data, since player names are keywords.
+            computePlayerKeywordDataForLobby(
+                Array.from(stateCtx.clients.values())
+                    .filter(client => client.clientType.type === "player")
+                    .map(client => (client.clientType as { type: "player", name: string }).name)
+            );
+            
+            stateCtx.setClients(stateCtx.clients);
         break;
         case "hostData":
-            if (stateCtx.state.type === "game") {
-                stateCtx.state.host = {
-                    clients: new ListMap<number, GameClient>(packet.clients)
-                }
-            } 
+            stateCtx.setClients(new ListMap<number, GameClient>(packet.clients));
         break;
         case "lobbyName":
-            if(stateCtx.state.type === "lobby" || stateCtx.state.type === "game"){
-                stateCtx.state.lobbyName = packet.name;
-            }
+            stateCtx.setLobbyName(packet.name);
         break;
-        case "startGame": 
-            if (stateCtx.state.type === "lobby") {
-                const isSpectator = stateCtx.state.players.get(stateCtx.state.myId!)?.clientType.type === "spectator";
-                stateCtx.setGame(isSpectator);
-    
-                AudioController.queueFile("audio/start_game.mp3");
-            }
+        case "startGame":
+            // const isSpectator = stateCtx.clients.get(stateCtx.myId!)?.clientType.type === "spectator";
+            appCtx.setContent({type:"loading"});
+
+            AudioController.queueFile("audio/start_game.mp3");
             break;
         case "gameInitializationComplete":
-            if (stateCtx.state.type === "game") {
-                const isSpectator = stateCtx.state.clientState.type === "spectator";
-                stateCtx.state.initialized = true;
-                appCtx.setContent({type:"gameScreen", spectator: isSpectator});
-            }
+            stateCtx.setInitialized(true);
+            appCtx.setContent({
+                type:"gameScreen",
+                spectator: stateCtx.clientState.type === "spectator"
+            });
             break;
         case "backToLobby":
-            if(stateCtx.state.type==="game"){
-                stateCtx.setLobby(
-                    stateCtx.state.roomCode,
-                    stateCtx.state.myId
-                );
-                appCtx.setContent({type:"lobbyScreen"});
-            }
+            appCtx.setContent({type:"lobbyScreen"});
         break;
         case "gamePlayers":
-            if(stateCtx.state.type === "game"){
-                //only update the playerlist with the new one if there are any differences
-                let playersChanged = false;
-                if(stateCtx.state.players.length !== packet.players.length)
-                    playersChanged = true;
-                else{
-                    for(let i = 0; i < packet.players.length; i++){
-                        if(stateCtx.state.players[i].name !== packet.players[i]){
-                            playersChanged = true;
-                            break;
-                        }
+            //only update the playerlist with the new one if there are any differences
+            let playersNamesChanged = false;
+            if(stateCtx.players.length !== packet.players.length)
+                playersNamesChanged = true;
+            else{
+                for(let i = 0; i < packet.players.length; i++){
+                    if(stateCtx.players[i].name !== packet.players[i]){
+                        playersNamesChanged = true;
+                        break;
                     }
                 }
-                if(playersChanged){
-                    stateCtx.state.players = [];
-                    for(let i = 0; i < packet.players.length; i++){
-                        stateCtx.state.players.push(createPlayer(packet.players[i], i));
-                    }
-                }
-
-                // Recompute keyword data, since player names are keywords.
-                computePlayerKeywordData(stateCtx.state.players);
             }
+            if(playersNamesChanged){
+                stateCtx.players = [];
+                for(let i = 0; i < packet.players.length; i++){
+                    stateCtx.players.push(createPlayer(packet.players[i], i));
+                }
+            }
+
+            // Recompute keyword data, since player names are keywords.
+            computePlayerKeywordData(stateCtx.players);
+            stateCtx.setPlayers(stateCtx.players);
         break;
         case "roleList":
             //list of role list entriy
-            if(stateCtx.state.type === "lobby" || stateCtx.state.type === "game")
-                stateCtx.state.roleList = packet.roleList;
+            stateCtx.setRoleList(packet.roleList);
         break;
         case "roleOutline":
             //role list entriy
-            if(stateCtx.state.type === "lobby" || stateCtx.state.type === "game") {
-                stateCtx.state.roleList = structuredClone(stateCtx.state.roleList);
-                stateCtx.state.roleList[packet.index] = packet.roleOutline;
-                stateCtx.state.roleList = [...stateCtx.state.roleList];
-            }
+            stateCtx.roleList = structuredClone(stateCtx.roleList);
+            stateCtx.roleList[packet.index] = packet.roleOutline;
+            stateCtx.roleList = [...stateCtx.roleList];
+            stateCtx.setRoleList(stateCtx.roleList);
         break;
         case "phaseTime":
-            if(stateCtx.state.type === "lobby" || stateCtx.state.type === "game") {
-                stateCtx.state.phaseTimes[packet.phase.type] = packet.time;
-                stateCtx.state.phaseTimes = {...stateCtx.state.phaseTimes};
-            }
+            stateCtx.phaseTimes[packet.phase.type] = packet.time;
+            stateCtx.phaseTimes = {...stateCtx.phaseTimes};
+            stateCtx.setPhaseTimes(stateCtx.phaseTimes);
         break;
         case "phaseTimes":
-            if(stateCtx.state.type === "lobby" || stateCtx.state.type === "game")
-                stateCtx.state.phaseTimes = packet.phaseTimeSettings;
+            stateCtx.setPhaseTimes(packet.phaseTimeSettings);
         break;
         case "enabledRoles":
-            if(stateCtx.state.type === "lobby" || stateCtx.state.type === "game")
-                stateCtx.state.enabledRoles = packet.roles;
+            stateCtx.setEnabledRoles(packet.roles);
         break;
         case "enabledModifiers":
-            if(stateCtx.state.type === "lobby" || stateCtx.state.type === "game")
-                stateCtx.state.enabledModifiers = packet.modifiers;
+            stateCtx.setEnabledModifiers(packet.modifiers);
         break;
         case "phase":
-            if(stateCtx.state.type === "game"){
-                stateCtx.state.phaseState = packet.phase;
-                stateCtx.state.dayNumber = packet.dayNumber;
-        
-                if(packet.phase.type === "briefing" && stateCtx.state.clientState.type === "player"){
-                    const role = stateCtx.state.clientState.roleState?.type;
-                    if(role !== undefined){
-                        appCtx.setCoverCard(<WikiArticle article={"role/"+role as WikiArticleLink}/>);
-                    }
+            stateCtx.setPhaseState(packet.phase);
+            stateCtx.setDayNumber(packet.dayNumber);
+    
+            if(packet.phase.type === "briefing" && stateCtx.clientState.type === "player"){
+                const role = stateCtx.clientState.roleState?.type;
+                if(role !== undefined){
+                    appCtx.setCoverCard(<WikiArticle article={"role/"+role as WikiArticleLink}/>);
                 }
             }
         break;
         case "phaseTimeLeft":
-            if(stateCtx.state.type === "game")
-                stateCtx.state.timeLeftMs = packet.secondsLeft!==null?(packet.secondsLeft * 1000):null;
+            stateCtx.setTimeLeftMs(packet.secondsLeft!==null?(packet.secondsLeft * 1000):null);
         break;
         case "playerAlive":
-            if(stateCtx.state.type === "game"){
-                for(let i = 0; i < stateCtx.state.players.length && i < packet.alive.length; i++){
-                    stateCtx.state.players[i].alive = packet.alive[i];
-                }
-                stateCtx.state.players = [...stateCtx.state.players];
+            for(let i = 0; i < stateCtx.players.length && i < packet.alive.length; i++){
+                stateCtx.players[i].alive = packet.alive[i];
             }
+            stateCtx.setPlayers(stateCtx.players);
         break;
         case "playerVotes":
-            if(stateCtx.state.type === "game"){
+            let listMapVotes = new ListMap<PlayerIndex, number>(packet.votesForPlayer);
 
-                let listMapVotes = new ListMap<PlayerIndex, number>(packet.votesForPlayer);
-
-                for(let i = 0; i < stateCtx.state.players.length; i++){
-                    stateCtx.state.players[i].numVoted = 0;
-                    
-                    let numVoted = listMapVotes.get(i);
-                    if(numVoted !== null){
-                        stateCtx.state.players[i].numVoted = numVoted;
-                    }
+            for(let i = 0; i < stateCtx.players.length; i++){
+                stateCtx.players[i].numVoted = 0;
+                
+                let numVoted = listMapVotes.get(i);
+                if(numVoted !== null){
+                    stateCtx.players[i].numVoted = numVoted;
                 }
-                stateCtx.state.players = [...stateCtx.state.players];
             }
+            stateCtx.setPlayers(stateCtx.players);
         break;
         case "yourSendChatGroups":
-            if(stateCtx.state.type === "game" && stateCtx.state.clientState.type === "player"){
-                stateCtx.state.clientState.sendChatGroups = [...packet.sendChatGroups];
+            if(stateCtx.clientState.type === "player"){
+                stateCtx.clientState.sendChatGroups = [...packet.sendChatGroups];
+                stateCtx.setClientState(stateCtx.clientState);
             }
         break;
         case "yourInsiderGroups":
-            if(stateCtx.state.type === "game" && stateCtx.state.clientState.type === "player"){
-                stateCtx.state.clientState.insiderGroups = [...packet.insiderGroups];
+            if(stateCtx.clientState.type === "player"){
+                stateCtx.clientState.insiderGroups = [...packet.insiderGroups];
+                stateCtx.setClientState(stateCtx.clientState);
             }
         break;
         case "yourAllowedControllers":
-            if(stateCtx.state.type === "game" && stateCtx.state.clientState.type === "player"){
-                stateCtx.state.clientState.savedControllers = 
+            if(stateCtx.clientState.type === "player"){
+                stateCtx.clientState.savedControllers = 
                     packet.save.sort((a, b) => sortControllerIdCompare(a[0],b[0]));
-            }
+                stateCtx.setClientState(stateCtx.clientState);
+                }
         break;
         case "yourRoleLabels":
-            if(stateCtx.state.type === "game"){
-                for (const player of stateCtx.state.players) {
-                    player.roleLabel = null;
-                }
-                for (const [key, value] of packet.roleLabels) { 
-                    if(
-                        stateCtx.state.players !== undefined && 
-                        stateCtx.state.players[key] !== undefined
-                    )
-                        stateCtx.state.players[key].roleLabel = value as Role;
-                }
-                stateCtx.state.players = [...stateCtx.state.players];
+            for (const player of stateCtx.players) {
+                player.roleLabel = null;
             }
+            for (const [key, value] of packet.roleLabels) { 
+                if(
+                    stateCtx.players !== undefined && 
+                    stateCtx.players[key] !== undefined
+                )
+                    stateCtx.players[key].roleLabel = value as Role;
+            }
+            stateCtx.setPlayers(stateCtx.players);
+            
         break;
         case "yourPlayerTags":
-            if(stateCtx.state.type === "game"){
-                for(let i = 0; i < stateCtx.state.players.length; i++){
-                    stateCtx.state.players[i].playerTags = [];
-                }
-
-                for(const [key, value] of packet.playerTags){
-                    if(
-                        stateCtx.state.players !== undefined && 
-                        stateCtx.state.players[key] !== undefined
-                    )
-                        stateCtx.state.players[key].playerTags = value as Tag[];
-                }
-                stateCtx.state.players = [...stateCtx.state.players];
+            for(let i = 0; i < stateCtx.players.length; i++){
+                stateCtx.players[i].playerTags = [];
             }
+
+            for(const [key, value] of packet.playerTags){
+                if(
+                    stateCtx.players !== undefined && 
+                    stateCtx.players[key] !== undefined
+                )
+                    stateCtx.players[key].playerTags = value as Tag[];
+            }
+            stateCtx.setPlayers(stateCtx.players);
+            
         break;
         case "yourWill":
-            if(stateCtx.state.type === "game" && stateCtx.state.clientState.type === "player"){
-                stateCtx.state.clientState.will = packet.will;
-
-                if(stateCtx.state.clientState.will === ""){
+            if(stateCtx.clientState.type === "player"){
+                stateCtx.clientState.will = packet.will;
+                
+                if(stateCtx.clientState.will === ""){
                     websocketCtx.sendSaveWillPacket(defaultAlibi());
                 }
+
+                stateCtx.setClientState(stateCtx.clientState);
             }
         break;
         case "yourNotes":
-            if(stateCtx.state.type === "game" && stateCtx.state.clientState.type === "player"){
-                stateCtx.state.clientState.notes = packet.notes;
-                
+            if(stateCtx.clientState.type === "player"){
+                stateCtx.clientState.notes = packet.notes;
+                stateCtx.setClientState(stateCtx.clientState);
                 // old default notes
                 // if(stateCtx.state.clientState.notes.length === 0){
                 //     const myIndex = stateCtx.state.clientState.myIndex;
@@ -428,80 +379,78 @@ export default function onWebsocketMessage(
             }
         break;
         case "yourCrossedOutOutlines":
-            if(stateCtx.state.type === "game" && stateCtx.state.clientState.type === "player")
-                stateCtx.state.clientState.crossedOutOutlines = packet.crossedOutOutlines;
+            if(stateCtx.clientState.type === "player")
+                stateCtx.clientState.crossedOutOutlines = packet.crossedOutOutlines;
+                stateCtx.setClientState(stateCtx.clientState);
         break;
         case "yourDeathNote":
-            if(stateCtx.state.type === "game" && stateCtx.state.clientState.type === "player")
-                stateCtx.state.clientState.deathNote = packet.deathNote ?? "";
+            if(stateCtx.clientState.type === "player")
+                stateCtx.clientState.deathNote = packet.deathNote ?? "";
+            stateCtx.setClientState(stateCtx.clientState);
         break;
         case "yourRoleState":
-            if(stateCtx.state.type === "game" && stateCtx.state.clientState.type === "player"){
-                stateCtx.state.clientState.roleState = packet.roleState;
+            if(stateCtx.clientState.type === "player"){
+                stateCtx.clientState.roleState = packet.roleState;
+                stateCtx.setClientState(stateCtx.clientState);
             }
         break;
         case "yourJudgement":
-            if(stateCtx.state.type === "game" && stateCtx.state.clientState.type === "player")
-                stateCtx.state.clientState.judgement = packet.verdict;
+            if(stateCtx.clientState.type === "player"){
+                stateCtx.clientState.judgement = packet.verdict;
+                stateCtx.setClientState(stateCtx.clientState);
+            }
         break;
         case "yourVoteFastForwardPhase":
-            if(stateCtx.state.type === "game")
-                stateCtx.state.fastForward = packet.fastForward;
+            stateCtx.setFastForward(packet.fastForward);
         break;
         case "addChatMessages":
-            if(stateCtx.state.type === "game" || stateCtx.state.type === "lobby"){
-                stateCtx.state.chatMessages = stateCtx.state.chatMessages.concat(packet.chatMessages);
+            stateCtx.setChatMessages(stateCtx.chatMessages.concat(packet.chatMessages));
 
-                // Chat notification icon state
-                if(stateCtx.state.type === "game" && packet.chatMessages.length !== 0){
-                    stateCtx.state.missedChatMessages = true;
-                    
-                    for(let chatMessage of packet.chatMessages){
-                        if(
-                            chatMessage.variant.type === "whisper" &&
-                            stateCtx.state.clientState.type === "player" &&
-                            chatMessage.variant.toPlayerIndex === stateCtx.state.clientState.myIndex
-                        ){
-                            stateCtx.state.clientState.missedWhispers.push(chatMessage.variant.fromPlayerIndex);
-                        }
-                    }
-                }
-
-                if (stateCtx.state.type !== "game" || stateCtx.state.initialized === true) {
-                    for(let chatMessage of packet.chatMessages){
-                        let audioSrc = chatMessageToAudio(chatMessage);
-                        if(audioSrc)
-                            AudioController.queueFile(audioSrc);
+            // Chat notification icon state
+            if(packet.chatMessages.length !== 0){
+                stateCtx.setMissedChatMessages(true);
+                
+                for(let chatMessage of packet.chatMessages){
+                    if(
+                        chatMessage.variant.type === "whisper" &&
+                        stateCtx.clientState.type === "player" &&
+                        chatMessage.variant.toPlayerIndex === stateCtx.clientState.myIndex
+                    ){
+                        stateCtx.clientState.missedWhispers.push(chatMessage.variant.fromPlayerIndex);
                     }
                 }
             }
+
+            if (stateCtx.initialized === true) {
+                for(let chatMessage of packet.chatMessages){
+                    let audioSrc = chatMessageToAudio(chatMessage);
+                    if(audioSrc)
+                        AudioController.queueFile(audioSrc);
+                }
+            }
+            
+            stateCtx.setClientState(stateCtx.clientState);
         break;
         case "nightMessages":
-            if(stateCtx.state.type === "game" || stateCtx.state.type === "lobby"){
-
-                if(appCtx.getCoverCard()===null && packet.chatMessages.length!==0){
-                    appCtx.setCoverCard(<NightMessagePopup messages={packet.chatMessages}/>)
-                }
+            if(appCtx.getCoverCard()===null && packet.chatMessages.length!==0){
+                appCtx.setCoverCard(<NightMessagePopup messages={packet.chatMessages}/>)
             }
         break;
         case "addGrave":
-            if(stateCtx.state.type === "game")
-                stateCtx.state.graves = [...stateCtx.state.graves, packet.grave];
+            stateCtx.setGraves([...stateCtx.graves, packet.grave]);
         break;
         case "gameOver":
-            if(stateCtx.state.type === "game"){
-                stateCtx.state.ticking = false;
-                switch(packet.reason) {
-                    case "reachedMaxDay":
-                    case "draw":
-                        console.log("Game ended! (naturally)");
-                    break;
-                    default:
-                        // alert("Game ended for an unknown reason!");
-                        console.error(`${packet.type} message response not implemented: ${packet.reason}`);
-                        console.error(packet);
-                    break;
-                }
+            stateCtx.setTicking(false);
+            switch(packet.reason) {
+                case "reachedMaxDay":
+                case "draw":
+                    console.log("Game ended! (naturally)");
+                break;
+                default:
+                    // alert("Game ended for an unknown reason!");
+                    console.error(`${packet.type} message response not implemented: ${packet.reason}`);
+                    console.error(packet);
+                break;
             }
         break;
         default:

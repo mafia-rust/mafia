@@ -11,8 +11,9 @@ import { Virtuoso } from 'react-virtuoso';
 import GameScreenMenuTab from "../GameScreenMenuTab";
 import { GameScreenMenuType } from "../GameScreenMenuContext";
 import { WebsocketContext } from "../../WebsocketContext";
-import { useContextGameState, useContextLobbyState, useLobbyOrGameState, usePlayerNames, usePlayerState } from "../../../stateContext/useHooks";
+import { usePlayerNames, usePlayerNamesToString, usePlayerState } from "../../../stateContext/useHooks";
 import { PlayerClientType, PlayerIndex } from "../../../stateContext/stateType/otherState";
+import { StateContext } from "../../../stateContext/StateContext";
 
 
 export default function ChatMenu(): ReactElement {
@@ -20,7 +21,7 @@ export default function ChatMenu(): ReactElement {
     const sendChatGroups = usePlayerState()?.sendChatGroups;
     const playerNames = usePlayerNames()!;
 
-    const gameState = useContextGameState()!;
+    const gameState = useContext(StateContext)!;
 
     const filterString = useMemo(() => {
         if (filter === undefined || filter === null) {
@@ -39,7 +40,7 @@ export default function ChatMenu(): ReactElement {
         {filter === undefined || filter === null || <div className="chat-filter-zone highlighted">
             <StyledText>{translate("menu.chat.playerFilter", filterString)}</StyledText>
             <Button 
-                onClick={()=> gameState.updateChatFilter(null)}
+                onClick={()=> gameState.setChatFilter(null)}
                 highlighted={true}
                 aria-label={translate("menu.chat.clearFilter")}
             >
@@ -70,24 +71,15 @@ export type ChatFilter = {
 export function ChatMessageSection(props: Readonly<{
     filter?: ChatFilter,
 }>): ReactElement {
-    const gameState = useContextGameState()!;
-    const lobbyState = useContextGameState()!;
+    const gameState = useContext(StateContext)!;
 
-    const players = useContextGameState()!.players;
+    const players = gameState!.players;
     const filter = useMemo(() => props.filter ?? null, [props.filter]);
 
-    let messages = undefined;
-    if(gameState!==undefined){
-        messages = gameState.chatMessages;
-    }else if(lobbyState!==undefined){
-        messages = lobbyState.chatMessages;
-    }
-    messages = messages!;
-    
     const myPlayerIndex = usePlayerState()!.myIndex;
 
 
-    const allMessages = messages
+    const allMessages = gameState.chatMessages
         .filter((msg)=>{
             if(filter === null || filter === undefined)
                 return true;
@@ -191,9 +183,9 @@ export function ChatMessageSection(props: Readonly<{
 export function ChatTextInput(props: Readonly<{
     disabled?: boolean,
     whispering?: PlayerIndex | null,
+    inLobby?: boolean
 }>): ReactElement {
-    const gameState = useContextGameState()!;
-    const lobbyState = useContextLobbyState()!;
+    const gameState = useContext(StateContext)!;
     const {sendSendWhisperPacket, sendSendChatMessagePacket, sendSendLobbyMessagePacket} = useContext(WebsocketContext)!;
     
     const [chatBoxText, setChatBoxText] = useState<string>("");
@@ -212,16 +204,7 @@ export function ChatTextInput(props: Readonly<{
     const gamePlayers = gameState.players;
     const myIndex = usePlayerState()?.myIndex;
 
-    const stateType = useLobbyOrGameState()!.type;
-    const playerStrings = useLobbyOrGameState<string[]>((state)=>{
-        if(state.type === "game"){
-            return state.players.map(player => player.toString());
-        }else{
-            return Array.from(lobbyState.players.values())
-                .filter(player => player.clientType.type === "player")
-                .map(player => (player.clientType as PlayerClientType).name);
-        }
-    })!;
+    const playerStrings = usePlayerNamesToString()!;
 
     const whisperingPlayer = useMemo(() => {
         return whispering!==null ? playerStrings[whispering] : null
@@ -264,16 +247,16 @@ export function ChatTextInput(props: Readonly<{
         if (text === "") return;
         history.push(text);
         historyPoller.reset();
-        if (stateType === "game") {
+        if (props.inLobby === false || props.inLobby === undefined) {
             if (whispering !== null) {
                 sendSendWhisperPacket(whispering, text);
             } else {
                 sendSendChatMessagePacket(text, false);
             }
-        } else if (stateType === "lobby") {
+        } else {
             sendSendLobbyMessagePacket(text);
         }
-    }, [chatBoxText, history, historyPoller, stateType, whispering]);
+    }, [chatBoxText, history, historyPoller, props.inLobby, whispering]);
 
     const handleInputChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
         const text = event.target.value;

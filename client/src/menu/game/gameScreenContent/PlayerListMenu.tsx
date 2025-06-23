@@ -11,12 +11,14 @@ import GraveComponent, { translateGraveRole } from "../../../components/grave";
 import { ChatMessageSection, ChatTextInput } from "./ChatMenu";
 import GameScreenMenuTab from "../GameScreenMenuTab";
 import { GameScreenMenuType } from "../GameScreenMenuContext";
-import { useContextGameState, usePlayerNames, usePlayerState } from "../../../stateContext/useHooks";
+import { usePlayerNames, usePlayerState } from "../../../stateContext/useHooks";
 import { PlayerIndex } from "../../../stateContext/stateType/otherState";
+import { StateContext } from "../../../stateContext/StateContext";
 
 export default function PlayerListMenu(): ReactElement {
-    const players = useContextGameState()!.players;
-    const graves = useContextGameState()!.graves;
+    const stateCtx = useContext(StateContext)!;
+    const players = stateCtx.players;
+    const graves = stateCtx.graves;
 
 
     return <div className="player-list-menu player-list-menu-colors">
@@ -64,12 +66,12 @@ function PlayerCard(props: Readonly<{
     const [graveOpen, setGraveOpen] = React.useState(false);
     const [whisperChatOpen, setWhisperChatOpen] = React.useState(false);
 
-    const gameState = useContextGameState()!;
+    const stateCtx = useContext(StateContext)!;
     const playerState = usePlayerState();
 
-    const playerAlive = gameState.players[props.playerIndex].alive;
-    const numVoted = gameState.players[props.playerIndex].numVoted
-    const phaseState = gameState.phaseState;
+    const playerAlive = stateCtx.players[props.playerIndex].alive;
+    const numVoted = stateCtx.players[props.playerIndex].numVoted
+    const phaseState = stateCtx.phaseState;
 
     let isPlayerSelf = false;
     let chatFilter = undefined;
@@ -104,7 +106,7 @@ function PlayerCard(props: Readonly<{
     }
 
     const mostRecentBlockMessage: undefined | NonAnonymousBlockMessage = findLast(
-        gameState.chatMessages,
+        stateCtx.chatMessages,
         message => message.chatGroup === "all" && 
             message.variant.type === "normal" &&
             message.variant.block &&
@@ -113,11 +115,11 @@ function PlayerCard(props: Readonly<{
     ) as undefined | NonAnonymousBlockMessage;
     
 
-    const whispersDisabled = gameState.enabledModifiers.includes("noWhispers");
+    const whispersDisabled = stateCtx.enabledModifiers.includes("noWhispers");
 
-    const grave = props.graveIndex === undefined?undefined:gameState.graves[props.graveIndex];
+    const grave = props.graveIndex === undefined?undefined:stateCtx.graves[props.graveIndex];
 
-    const spectator = useContextGameState()!.clientState.type === "spectator";
+    const spectator = stateCtx.clientState.type === "spectator";
 
     return <><div 
         className={`player-card`}
@@ -174,7 +176,7 @@ function PlayerCard(props: Readonly<{
                 className={"filter"} 
                 highlighted={isFilterSet}
                 onClick={() => {
-                    gameState.updateChatFilter(isFilterSet ? null : filter);
+                    stateCtx.setChatFilter(isFilterSet ? null : filter);
                     return true;
                 }}
                 pressedChildren={result => <Icon>{result ? "done" : "warning"}</Icon>}

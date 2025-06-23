@@ -14,13 +14,14 @@ import DetailsSummary from "./DetailsSummary";
 import ListMap from "../ListMap";
 import { Button } from "./Button";
 import { WebsocketContext } from "../menu/WebsocketContext";
-import { useContextGameState, useLobbyOrGameState, usePlayerNames, usePlayerState } from "../stateContext/useHooks";
+import { usePlayerNames, usePlayerState } from "../stateContext/useHooks";
 import { ChatGroup, DefensePower, PlayerIndex, Verdict } from "../stateContext/stateType/otherState";
 import { Role } from "../stateContext/stateType/roleState";
 import { Conclusion, translateConclusion, translateWinCondition, WinCondition } from "../stateContext/stateType/conclusionState";
 import { Grave } from "../stateContext/stateType/grave";
 import { Tag } from "../stateContext/stateType/tagState";
 import { PhaseState } from "../stateContext/stateType/phaseState";
+import { StateContext } from "../stateContext/StateContext";
 
 const ChatElement = React.memo((
     props: {
@@ -31,6 +32,7 @@ const ChatElement = React.memo((
         canCopyPaste?: boolean
     }, 
 ) => {
+    const stateCtx = useContext(StateContext)!;
     const playerState = usePlayerState();
     const myIndex = playerState?.myIndex;
 
@@ -56,7 +58,7 @@ const ChatElement = React.memo((
         forwardMessageController!==null&&
         !forwardMessageController.availableAbilityData.grayedOut
     
-    const roleList = useContextGameState()!.roleList;
+    const roleList = stateCtx.roleList;
 
     const [mouseHovering, setMouseHovering] = React.useState(false); 
 
@@ -212,7 +214,8 @@ function PlayerDiedChatMessage(props: Readonly<{
 }>): ReactElement {
     let graveRoleString = translateGraveRole(props.message.variant.grave.information);
 
-    const spectator = useContextGameState()!.clientState.type === "spectator";
+    const stateCtx = useContext(StateContext)!;
+    const spectator = stateCtx.clientState.type === "spectator";
 
     return <div className={"chat-message-div"}>
         <DetailsSummary
@@ -344,19 +347,19 @@ function NormalChatMessage(props: Readonly<{
 }
 
 function useContainsMention(message: ChatMessageVariant & { text: string }, playerNames: string[]): boolean {
+    const stateCtx = useContext(StateContext)!;
     const playerState = usePlayerState();
     const myIndex = playerState?.myIndex;
     
-    const myName = useLobbyOrGameState((state)=>{
-        if(state.type === "game" && myIndex !== undefined){
-            return state.players[myIndex].name;
-        }else if(state.type === "lobby"){
-            let myPlayer = state.players.get(state.myId!)!;
-            if(myPlayer.clientType.type === "player"){
-                return myPlayer.clientType.name;
-            }
+    let myName;
+    if(myIndex !== undefined){
+        myName = stateCtx.players[myIndex].name;
+    }else{
+        let myPlayer = stateCtx.clients.get(stateCtx.myId!)!;
+        if(myPlayer.clientType.type === "player"){
+            myName = myPlayer.clientType.name;
         }
-    })!;
+    }
 
     if(myIndex === undefined || myName === undefined){
         return false;

@@ -11,8 +11,8 @@ import { Button, RawButton } from "../Button";
 import Popover from "../Popover";
 import { Conclusion, CONCLUSIONS, translateConclusion, translateWinCondition } from "../../stateContext/stateType/conclusionState";
 import { INSIDER_GROUPS, InsiderGroup } from "../../stateContext/stateType/otherState";
-import { useLobbyOrGameState } from "../../stateContext/useHooks";
 import { Role } from "../../stateContext/stateType/roleState";
+import { StateContext } from "../../stateContext/StateContext";
 
 type RoleOutlineSelectorProps = {
     roleOutline: RoleOutline,
@@ -351,7 +351,8 @@ export function RoleOrRoleSetSelector(props: Readonly<{
     roleOrRoleSet: RoleOrRoleSet,
     onChange: (value: RoleOrRoleSet) => void,
 }>): ReactElement {
-    const enabledRoles = (useLobbyOrGameState()?.enabledRoles) ?? getAllRoles();
+    const stateCtx = useContext(StateContext);
+    const enabledRoles = (stateCtx?.enabledRoles) ?? getAllRoles();
 
     const isRoleEnabled = useCallback((role: Role) => {
         return enabledRoles.includes(role)

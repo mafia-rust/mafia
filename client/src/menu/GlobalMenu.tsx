@@ -12,21 +12,14 @@ import HostMenu from './HostMenu';
 import { AppContext } from './AppContext';
 import { WebsocketContext } from './WebsocketContext';
 import { deleteReconnectData } from '../game/localStorage';
-import { useLobbyOrGameState } from '../stateContext/useHooks';
+import { StateContext } from '../stateContext/StateContext';
 
 export default function GlobalMenu(): ReactElement {
     const { sendBackToLobbyPacket } = useContext(WebsocketContext)!;
+    const stateCtx = useContext(StateContext)!;
 
-    const lobbyName = useLobbyOrGameState()?.lobbyName;
-    const host = useLobbyOrGameState(
-        state => {
-            if (state.type === "game") {
-                return state.host !== null
-            } else {
-                return state.players.get(state.myId!)?.ready === "host"
-            }
-        }
-    ) ?? false;
+    const lobbyName = stateCtx.lobbyName;
+    const host = stateCtx.host;
     const stateType = useLobbyOrGameState(state => state.type);
 
     const ref = useRef<HTMLDivElement>(null);

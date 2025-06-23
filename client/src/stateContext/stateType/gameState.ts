@@ -122,7 +122,7 @@ export type PlayerGameState = {
 
     updateChatFilter: (filter: PlayerIndex | null)=>void
 }
-function createPlayerGameState(): PlayerGameState {
+export function createPlayerGameState(): PlayerGameState {
     return {
         type: "player",
 

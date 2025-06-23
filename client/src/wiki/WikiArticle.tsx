@@ -12,11 +12,9 @@ import DetailsSummary from "../components/DetailsSummary";
 import { partitionWikiPages, WikiCategory } from "./Wiki";
 import Masonry from "react-responsive-masonry";
 import { AppContext } from "../menu/AppContext";
-import { GameState } from "../stateContext/stateType/gameState";
-import { LobbyState } from "../stateContext/stateType/lobbyState";
 import { Role, roleJsonData } from "../stateContext/stateType/roleState";
-import { useLobbyOrGameState } from "../stateContext/useHooks";
 import { MODIFIERS, ModifierType } from "../stateContext/stateType/modifiersState";
+import { StateContext } from "../stateContext/StateContext";
 
 function WikiStyledText(props: Omit<StyledTextProps, 'markdown' | 'playerKeywordData'>): ReactElement {
     return <StyledText {...props} markdown={true} playerKeywordData={DUMMY_NAMES_KEYWORD_DATA} />
@@ -127,13 +125,8 @@ function CategoryArticle(props: Readonly<{ category: WikiCategory }>): ReactElem
     const title = translate(`wiki.category.${props.category}`);
     const description = translateChecked(`wiki.category.${props.category}.text`);
 
-    const enabledRoles = useLobbyOrGameState(
-        (state: LobbyState|GameState) => state.enabledRoles
-    )??getAllRoles();
-    
-    const enabledModifiers = useLobbyOrGameState(
-        (state: LobbyState|GameState) => state.enabledModifiers
-    )??MODIFIERS as any as ModifierType[];
+    const enabledRoles = useContext(StateContext)?.enabledRoles??getAllRoles();
+    const enabledModifiers = useContext(StateContext)?.enabledModifiers??MODIFIERS as any as ModifierType[];
 
     return <section className="wiki-article">
         <WikiStyledText className="wiki-article-standard">
@@ -142,7 +135,13 @@ function CategoryArticle(props: Readonly<{ category: WikiCategory }>): ReactElem
         </WikiStyledText>
         <PageCollection 
             title={title}
-            pages={partitionWikiPages(ARTICLES, enabledRoles, enabledModifiers)[props.category] ?? []}
+            pages={
+                partitionWikiPages(
+                    ARTICLES,
+                    enabledRoles,
+                    enabledModifiers
+                )[props.category] ?? []
+            }
             enabledRoles={enabledRoles}
             enabledModifiers={enabledModifiers}
         />
@@ -191,7 +190,7 @@ function GeneratedArticleElement(props: Readonly<{ article: GeneratedArticle }>)
 }
 
 function RoleSetArticle(): ReactElement {
-    const enabledRoles = useLobbyOrGameState(state => state.enabledRoles)??getAllRoles();
+    const enabledRoles = useContext(StateContext)?.enabledRoles??getAllRoles();
 
     const ref = useRef<HTMLDivElement>(null);
 
